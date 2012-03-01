@@ -36,6 +36,7 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -194,9 +195,9 @@ public class JettyHttpComponent extends HttpComponent {
 
         String address = uri.startsWith("jetty:") ? remaining : uri;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encode(address));
-        URI endpointUri = URISupport.createRemainingURI(addressUri, httpClientParameters);
+        URI endpointUri = URISupport.createRemainingURI(addressUri, CastUtils.cast(httpClientParameters));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
+        URI httpUri = URISupport.createRemainingURI(addressUri, CastUtils.cast(parameters));
      
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
@@ -344,7 +345,7 @@ public class JettyHttpComponent extends HttpComponent {
     }
 
     private void enableSessionSupport(Server server, String connectorKey) throws Exception {
-        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
+        ServletContextHandler context = (ServletContextHandler)server.getChildHandlerByClass(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
             if (context.isStarted()) {
@@ -356,7 +357,8 @@ public class JettyHttpComponent extends HttpComponent {
     }
     
     private void setFilters(JettyHttpEndpoint endpoint, Server server, String connectorKey) {
-        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
+        ServletContextHandler context = (ServletContextHandler) server
+            .getChildHandlerByClass(ServletContextHandler.class);
         List<Filter> filters = endpoint.getFilters();
         for (Filter filter : filters) {
             FilterHolder filterHolder = new FilterHolder();
@@ -368,13 +370,14 @@ public class JettyHttpComponent extends HttpComponent {
             if (endpoint.isMatchOnUriPrefix()) {
                 pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
             }
-            context.addFilter(filterHolder, pathSpec, null);
+            context.addFilter(filterHolder, pathSpec, 0);
         }
         
     }
     
     private void enableMultipartFilter(HttpEndpoint endpoint, Server server, String connectorKey) throws Exception {
-        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
+        ServletContextHandler context = (ServletContextHandler) server
+                .getChildHandlerByClass(ServletContextHandler.class);
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
         filterHolder.setInitParameter("deleteFiles", "true");
@@ -401,7 +404,7 @@ public class JettyHttpComponent extends HttpComponent {
         if (endpoint.isMatchOnUriPrefix()) {
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
-        context.addFilter(filterHolder, pathSpec, null);
+        context.addFilter(filterHolder, pathSpec, 0);
         LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
     }
 

@@ -43,14 +43,17 @@ public final class JMXNotificationTraceEventHandler implements TraceEventHandler
         this.tracer = tracer;
     }
 
-    public void traceExchangeOut(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
+    @SuppressWarnings("rawtypes")
+    public void traceExchangeOut(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
     }
 
-    public Object traceExchangeIn(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+    @SuppressWarnings("rawtypes")
+    public Object traceExchangeIn(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
         return null;
     }
 
-    public void traceExchange(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+    @SuppressWarnings("rawtypes")
+    public void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
         if (notificationSender != null && tracer.isJmxTraceNotifications()) {
             String body = MessageHelper.extractBodyForLogging(exchange.getIn(), "", false, true, tracer.getTraceBodySize());
             
@@ -58,7 +61,7 @@ public final class JMXNotificationTraceEventHandler implements TraceEventHandler
                 body = "";
             }
             String message = body.substring(0, Math.min(body.length(), MAX_MESSAGE_LENGTH));
-            Map<String, Object> tm = createTraceMessage(node, exchange, body);
+            Map tm = createTraceMessage(node, exchange, body);
 
             Notification notification = new Notification("TraceNotification", exchange.toString(), num++, System.currentTimeMillis(), message);
             notification.setUserData(tm);

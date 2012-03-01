@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SimpleOgnlMapIssueTest extends ContextTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testSimpleOgnlIssueKing() throws Exception {
         getMockEndpoint("mock:king").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -38,6 +39,7 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @SuppressWarnings("unchecked")
     public void testSimpleOgnlIssueOther() throws Exception {
         getMockEndpoint("mock:king").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
@@ -65,13 +67,13 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
     }
 
     public static final class MyObjectMessage {
-        private Map<Object, Object> property;
+        private Map property;
 
         public MyObjectMessage() {
-            this.property = new HashMap<Object, Object>();
+            this.property = new HashMap();
         }
 
-        public Map<Object, Object> getProperty() {
+        public Map getProperty() {
             return property;
         }
     }

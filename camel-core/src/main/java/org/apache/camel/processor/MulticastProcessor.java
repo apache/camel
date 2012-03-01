@@ -458,7 +458,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // mark that index as timed out, which allows us to try to retrieve
                     // any already completed tasks in the next loop
                     if (completion instanceof SubmitOrderedCompletionService) {
-                        ((SubmitOrderedCompletionService<?>) completion).timeoutTask();
+                        ((SubmitOrderedCompletionService) completion).timeoutTask();
                     }
                 } else {
                     // there is a result to aggregate
@@ -967,7 +967,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         // prefer to use per Exchange aggregation strategy over a global strategy
         if (exchange != null) {
-            Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+            Map property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
             Map<Object, AggregationStrategy> map = CastUtils.cast(property);
             if (map != null) {
                 answer = map.get(this);
@@ -987,7 +987,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param aggregationStrategy the strategy
      */
     protected void setAggregationStrategyOnExchange(Exchange exchange, AggregationStrategy aggregationStrategy) {
-        Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+        Map property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
         Map<Object, AggregationStrategy> map = CastUtils.cast(property);
         if (map == null) {
             map = new HashMap<Object, AggregationStrategy>();
@@ -1005,7 +1005,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param exchange the current exchange
      */
     protected void removeAggregationStrategyFromExchange(Exchange exchange) {
-        Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+        Map property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
         Map<Object, AggregationStrategy> map = CastUtils.cast(property);
         if (map == null) {
             return;

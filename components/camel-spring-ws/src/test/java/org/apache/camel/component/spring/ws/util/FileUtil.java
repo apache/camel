@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.spring.ws.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.camel.util.IOHelper;
+import java.io.*;
 
 public final class FileUtil {
 
@@ -32,7 +27,7 @@ public final class FileUtil {
         InputStream is = FileUtil.class.getResourceAsStream(filePath);
         try {
             StringBuilder sb = new StringBuilder();
-            BufferedReader reader = IOHelper.buffered(new InputStreamReader(is, "UTF-8"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String line;
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append("\n");

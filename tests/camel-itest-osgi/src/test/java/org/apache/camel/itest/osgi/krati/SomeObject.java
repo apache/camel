@@ -20,8 +20,6 @@ package org.apache.camel.itest.osgi.krati;
 import java.io.Serializable;
 
 public class SomeObject implements Serializable {
-
-    private static final long serialVersionUID = 1L;
     private String id;
     private String value;
 

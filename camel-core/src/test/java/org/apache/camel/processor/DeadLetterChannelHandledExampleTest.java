@@ -103,7 +103,8 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
          * @return the out payload
          * @throws OrderFailedException is thrown if the order cannot be processed
          */
-        public Object handleOrder(@Headers Map<?, ?> in, @Body String payload, @OutHeaders Map<String, Object> out)
+        @SuppressWarnings("unchecked")
+        public Object handleOrder(@Headers Map in, @Body String payload, @OutHeaders Map out)
             throws OrderFailedException {
             out.put("customerid", in.get("customerid"));
             if ("Order: kaboom".equals(payload)) {
@@ -121,7 +122,8 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
          * @param out     the out headers
          * @return the out payload
          */
-        public Object orderFailed(@Headers Map<?, ?> in, @Body String payload, @OutHeaders Map<String, Object> out) {
+        @SuppressWarnings("unchecked")
+        public Object orderFailed(@Headers Map in, @Body String payload, @OutHeaders Map out) {
             out.put("customerid", in.get("customerid"));
             out.put("orderid", "failed");
             return "Order ERROR";
@@ -134,8 +136,6 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
      * Exception thrown if the order cannot be processed
      */
     public static class OrderFailedException extends Exception {
-
-        private static final long serialVersionUID = 1L;
 
         public OrderFailedException(String message) {
             super(message);

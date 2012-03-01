@@ -52,8 +52,7 @@ public class DefaultIBatisProcessingStategy implements IBatisProcessingStrategy 
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Object> poll(IBatisConsumer consumer, IBatisEndpoint endpoint) throws Exception {
+    public List poll(IBatisConsumer consumer, IBatisEndpoint endpoint) throws Exception {
         SqlMapClient client = endpoint.getSqlMapClient();
         return client.queryForList(endpoint.getStatement(), null);
     }

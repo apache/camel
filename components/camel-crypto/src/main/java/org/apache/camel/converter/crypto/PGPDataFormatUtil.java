@@ -63,15 +63,15 @@ public final class PGPDataFormatUtil {
             NoSuchProviderException {
         PGPPublicKeyRingCollection pgpSec = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(input));
 
-        Iterator<PGPPublicKeyRing> keyRingIter = pgpSec.getKeyRings();
+        Iterator<PGPPublicKeyRing> keyRingIter = (Iterator<PGPPublicKeyRing>) pgpSec.getKeyRings();
         while (keyRingIter.hasNext()) {
             PGPPublicKeyRing keyRing = keyRingIter.next();
 
-            Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys();
+            Iterator<PGPPublicKey> keyIter = (Iterator<PGPPublicKey>) keyRing.getPublicKeys();
             String keyUserId = null;
             while (keyIter.hasNext()) {
                 PGPPublicKey key = keyIter.next();
-                for (Iterator<String> iterator = key.getUserIDs(); iterator.hasNext();) {
+                for (Iterator<String> iterator = (Iterator<String>) key.getUserIDs(); iterator.hasNext();) {
                     keyUserId = iterator.next();
                 }
                 if (key.isEncryptionKey() && keyUserId != null && keyUserId.contains(userid)) {
@@ -102,14 +102,14 @@ public final class PGPDataFormatUtil {
             PGPException, NoSuchProviderException {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input));
 
-        Iterator<PGPSecretKeyRing> keyRingIter = pgpSec.getKeyRings();
+        Iterator<PGPSecretKeyRing> keyRingIter = (Iterator<PGPSecretKeyRing>) pgpSec.getKeyRings();
         while (keyRingIter.hasNext()) {
             PGPSecretKeyRing keyRing = keyRingIter.next();
 
-            Iterator<PGPSecretKey> keyIter = keyRing.getSecretKeys();
+            Iterator<PGPSecretKey> keyIter = (Iterator<PGPSecretKey>) keyRing.getSecretKeys();
             while (keyIter.hasNext()) {
                 PGPSecretKey key = keyIter.next();
-                for (Iterator<String> iterator = key.getUserIDs(); iterator.hasNext();) {
+                for (Iterator<String> iterator = (Iterator<String>) key.getUserIDs(); iterator.hasNext();) {
                     String userId = iterator.next();
                     if (key.isSigningKey() && userId.contains(userid)) {
                         return key.extractPrivateKey(passphrase.toCharArray(), "BC");

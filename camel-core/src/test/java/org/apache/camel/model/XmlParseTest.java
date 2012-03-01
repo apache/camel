@@ -75,7 +75,7 @@ public class XmlParseTest extends XmlTestSupport {
     public void testParseRecipientListXml() throws Exception {
         RouteDefinition route = assertOneRoute("dynamicRecipientList.xml");
         assertFrom(route, "seda:a");
-        RecipientListDefinition<?> node = assertOneProcessorInstanceOf(RecipientListDefinition.class, route);
+        RecipientListDefinition node = assertOneProcessorInstanceOf(RecipientListDefinition.class, route);
         assertExpression(node.getExpression(), "header", "foo");
     }
 
@@ -149,7 +149,7 @@ public class XmlParseTest extends XmlTestSupport {
     public void testParseRoutingSlipXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlip.xml");
         assertFrom(route, "seda:a");
-        RoutingSlipDefinition<?> node = assertOneProcessorInstanceOf(RoutingSlipDefinition.class, route);
+        RoutingSlipDefinition node = assertOneProcessorInstanceOf(RoutingSlipDefinition.class, route);
         assertEquals("destinations", node.getExpression().getExpression());
         assertEquals(RoutingSlipDefinition.DEFAULT_DELIMITER, node.getUriDelimiter());
     }
@@ -157,7 +157,7 @@ public class XmlParseTest extends XmlTestSupport {
     public void testParseRoutingSlipWithHeaderSetXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlipHeaderSet.xml");
         assertFrom(route, "seda:a");
-        RoutingSlipDefinition<?> node = assertOneProcessorInstanceOf(RoutingSlipDefinition.class, route);
+        RoutingSlipDefinition node = assertOneProcessorInstanceOf(RoutingSlipDefinition.class, route);
         assertEquals("theRoutingSlipHeader", node.getExpression().getExpression());
         assertEquals(RoutingSlipDefinition.DEFAULT_DELIMITER, node.getUriDelimiter());
     }
@@ -165,7 +165,7 @@ public class XmlParseTest extends XmlTestSupport {
     public void testParseRoutingSlipWithHeaderAndDelimiterSetXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlipHeaderAndDelimiterSet.xml");
         assertFrom(route, "seda:a");
-        RoutingSlipDefinition<?> node = assertOneProcessorInstanceOf(RoutingSlipDefinition.class, route);
+        RoutingSlipDefinition node = assertOneProcessorInstanceOf(RoutingSlipDefinition.class, route);
         assertEquals("theRoutingSlipHeader", node.getExpression().getExpression());
         assertEquals("#", node.getUriDelimiter());
     }
@@ -357,7 +357,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertChildTo(ProcessorDefinition<?> route, String... uris) {
-        List<ProcessorDefinition<?>> list = assertListSize(route.getOutputs(), uris.length);
+        List<ProcessorDefinition> list = assertListSize(route.getOutputs(), uris.length);
         int idx = 0;
         for (String uri : uris) {
             assertTo("output[" + idx + "] ", list.get(idx++), uri);
@@ -365,7 +365,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertChildTo(ProcessorDefinition<?> route, String uri, int toIdx) {
-        List<ProcessorDefinition<?>> list = route.getOutputs();
+        List<ProcessorDefinition> list = route.getOutputs();
         assertTo("to and idx=" + toIdx, list.get(toIdx), uri);
     }
 

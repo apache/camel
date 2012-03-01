@@ -32,7 +32,7 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
         HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
         queue = hazelcastInstance.getQueue("bar");
         queue.clear();

@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
  * @version 
  */
 @ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.test.JavaConfigWithNestedConfigClassTest$ContextConfig", loader = JavaConfigContextLoader.class)
+
 @Component
 public class JavaConfigWithNestedConfigClassTest extends AbstractJUnit4SpringContextTests implements Cheese {
     private boolean doCheeseCalled;
@@ -36,6 +37,7 @@ public class JavaConfigWithNestedConfigClassTest extends AbstractJUnit4SpringCon
     @Test
     public void testPostProcessorInjectsMe() throws Exception {
         assertEquals("doCheese() should be called", true, doCheeseCalled);
+
     }
 
     public void doCheese() {

@@ -192,11 +192,11 @@ public class ServicePoolTest extends ContextTestSupport {
         final Endpoint endpoint = context.getEndpoint("mock:foo");
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
-        List<Future<Integer>> response = new ArrayList<Future<Integer>>();
+        List<Future> response = new ArrayList<Future>();
         for (int i = 0; i < 5; i++) {
             final int index = i;
-            Future<Integer> out = executor.submit(new Callable<Integer>() {
-                public Integer call() throws Exception {
+            Future out = executor.submit(new Callable<Object>() {
+                public Object call() throws Exception {
                     Producer producer = pool.acquire(endpoint);
                     if (producer == null) {
                         producer = pool.addAndAcquire(endpoint, new MyProducer(endpoint));
@@ -211,7 +211,7 @@ public class ServicePoolTest extends ContextTestSupport {
         }
 
         for (int i = 0; i < 5; i++) {
-            assertEquals(i, response.get(i).get().intValue());
+            assertEquals(i, response.get(i).get());
         }
         executor.shutdownNow();
     }
@@ -220,11 +220,11 @@ public class ServicePoolTest extends ContextTestSupport {
         final Endpoint endpoint = context.getEndpoint("mock:foo");
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
-        List<Future<Integer>> response = new ArrayList<Future<Integer>>();
+        List<Future> response = new ArrayList<Future>();
         for (int i = 0; i < 5; i++) {
             final int index = i;
-            Future<Integer> out = executor.submit(new Callable<Integer>() {
-                public Integer call() throws Exception {
+            Future out = executor.submit(new Callable<Object>() {
+                public Object call() throws Exception {
                     for (int j = 0; j < 100; j++) {
                         Producer producer = pool.acquire(endpoint);
                         if (producer == null) {
@@ -241,7 +241,7 @@ public class ServicePoolTest extends ContextTestSupport {
         }
 
         for (int i = 0; i < 5; i++) {
-            assertEquals(i, response.get(i).get().intValue());
+            assertEquals(i, response.get(i).get());
         }
         executor.shutdownNow();
     }

@@ -34,9 +34,9 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
 
     private String repositoryPath;
 
-    private DataSet<byte[]> dataSet;
+    private DataSet dataSet;
     private int initialCapacity = 100;
-    private Serializer<String> serializer = new KratiDefaultSerializer<String>();
+    private Serializer serializer = new KratiDefaultSerializer();
     private SegmentFactory segmentFactory = new ChannelSegmentFactory();
 
     public KratiIdempotentRepository(String repositoryPath) {
@@ -76,7 +76,7 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     @Override
-    @ManagedOperation(description = "Removes the given key from the store")
+    @ManagedOperation(description = "Does the store contain the given key")
     public boolean remove(String s) {
         byte[] bytes = serializer.serialize(s);
         try {
@@ -114,11 +114,11 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
         this.repositoryPath = repositoryPath;
     }
 
-    public DataSet<byte[]> getDataSet() {
+    public DataSet getDataSet() {
         return dataSet;
     }
 
-    public void setDataSet(DataSet<byte[]> dataSet) {
+    public void setDataSet(DataSet dataSet) {
         this.dataSet = dataSet;
     }
 
@@ -130,11 +130,11 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
         this.initialCapacity = initialCapacity;
     }
 
-    public Serializer<String> getSerializer() {
+    public Serializer getSerializer() {
         return serializer;
     }
 
-    public void setSerializer(Serializer<String> serializer) {
+    public void setSerializer(Serializer serializer) {
         this.serializer = serializer;
     }
 

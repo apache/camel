@@ -111,9 +111,6 @@ public interface ManagedCamelContextMBean {
     @ManagedOperation(description = "Adds or updates existing routes from XML")
     void addOrUpdateRoutesFromXml(String xml) throws Exception;
 
-    @ManagedOperation(description = "Dumps the routes stats as XML")
-    String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
-
     /**
      * Creates the endpoint by the given uri
      *

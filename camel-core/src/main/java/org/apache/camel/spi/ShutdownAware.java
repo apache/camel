@@ -27,7 +27,7 @@ import org.apache.camel.ShutdownRunningTask;
  * @version 
  * @see org.apache.camel.spi.ShutdownStrategy
  */
-public interface ShutdownAware extends ShutdownPrepared {
+public interface ShutdownAware {
 
     /**
      * To defer shutdown during first phase of shutdown. This allows any pending exchanges to be completed
@@ -53,4 +53,10 @@ public interface ShutdownAware extends ShutdownPrepared {
      */
     int getPendingExchangesSize();
 
+    /**
+     * Prepares the consumer for shutdown.
+     * <p/>
+     * For example by graceful stopping any threads or the likes.
+     */
+    void prepareShutdown();
 }

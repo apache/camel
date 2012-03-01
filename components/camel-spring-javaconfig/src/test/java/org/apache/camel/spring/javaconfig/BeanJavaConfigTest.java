@@ -55,6 +55,7 @@ public class BeanJavaConfigTest extends AbstractJUnit4SpringContextTests {
     }
 
     public static class SomeBean {
+
         @Handler
         public String someMethod(String body) {
             return "Hello " + body;
@@ -63,6 +64,7 @@ public class BeanJavaConfigTest extends AbstractJUnit4SpringContextTests {
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
+
         @Bean
         @Override
         public RouteBuilder route() {

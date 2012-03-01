@@ -101,8 +101,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         return endpoint.getQueue().size();
     }
 
-    @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown() {
         // signal we want to shutdown
         shutdownPending = true;
 

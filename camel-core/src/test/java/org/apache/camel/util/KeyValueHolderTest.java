@@ -23,19 +23,20 @@ import junit.framework.TestCase;
  */
 public class KeyValueHolderTest extends TestCase {
 
+    @SuppressWarnings("unchecked")
     public void testKeyValueHolder() {
-        KeyValueHolder<String, Integer> foo = new KeyValueHolder<String, Integer>("foo", 123);
+        KeyValueHolder foo = new KeyValueHolder("foo", 123);
 
         assertEquals("foo", foo.getKey());
-        assertEquals(123, foo.getValue().intValue());
+        assertEquals(123, foo.getValue());
 
-        KeyValueHolder<String, Integer> bar = new KeyValueHolder<String, Integer>("bar", 456);
+        KeyValueHolder bar = new KeyValueHolder("bar", 456);
 
         assertFalse("Should not be equals", foo.equals(bar));
 
         assertNotSame(foo.hashCode(), bar.hashCode());
 
-        KeyValueHolder<String, Integer> bar2 = new KeyValueHolder<String, Integer>("bar", 456);
+        KeyValueHolder bar2 = new KeyValueHolder("bar", 456);
         assertTrue("Should be equals", bar.equals(bar2));
 
         assertEquals("foo -> 123", foo.toString());

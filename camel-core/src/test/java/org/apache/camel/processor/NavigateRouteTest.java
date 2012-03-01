@@ -66,7 +66,7 @@ public class NavigateRouteTest extends ContextTestSupport {
 
             // navigate children
             if (child instanceof Navigate) {
-                navigateRoute((Navigate<Processor>) child);
+                navigateRoute((Navigate) child);
             } 
         }
     }

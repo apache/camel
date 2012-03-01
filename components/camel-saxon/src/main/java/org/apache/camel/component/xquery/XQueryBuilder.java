@@ -43,15 +43,16 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.query.DynamicQueryContext;
+import net.sf.saxon.query.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Whitespace;
+
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -70,8 +71,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * Creates an XQuery builder.
  * <p/>
@@ -88,7 +87,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private Map<String, String> namespacePrefixes = new HashMap<String, String>();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
-    private Class<?> resultType;
+    private Class resultType;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private boolean stripsAllWhiteSpace = true;
     private ModuleURIResolver moduleURIResolver;
@@ -112,6 +111,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return exchange.getContext().getTypeConverter().convertTo(type, result);
     }
 
+    @SuppressWarnings("unchecked")
     public Object evaluate(Exchange exchange) {
         try {
             LOG.debug("Evaluation: {} for exchange: {}", expression, exchange);
@@ -147,7 +147,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         }
     }
 
-    public List<?> evaluateAsList(Exchange exchange) throws Exception {
+    public List evaluateAsList(Exchange exchange) throws Exception {
         initialize(exchange);
 
         return getExpression().evaluate(createDynamicContext(exchange));
@@ -205,7 +205,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public boolean matches(Exchange exchange) {
         try {
-            List<?> list = evaluateAsList(exchange);
+            List list = evaluateAsList(exchange);
             return matches(exchange, list);
         } catch (Exception e) {
             throw new RuntimeExpressionException(e);
@@ -213,7 +213,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public void assertMatches(String text, Exchange exchange) throws AssertionError {
-        List<?> list;
+        List list;
 
         try {
             list = evaluateAsList(exchange);
@@ -285,7 +285,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return this;
     }
 
-    public XQueryBuilder resultType(Class<?> resultType) {
+    public XQueryBuilder resultType(Class resultType) {
         setResultType(resultType);
         return this;
     }
@@ -405,11 +405,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         this.resultsFormat = resultsFormat;
     }
 
-    public Class<?> getResultType() {
+    public Class getResultType() {
         return resultType;
     }
 
-    public void setResultType(Class<?> resultType) {
+    public void setResultType(Class resultType) {
         this.resultType = resultType;
     }
 
@@ -490,7 +490,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     throw new NoTypeConversionAvailableException(body, Source.class);
                 }
 
-                DocumentInfo doc = config.buildDocument(source);
+                DocumentInfo doc = getStaticQueryContext().buildDocument(source);
                 dynamicQueryContext.setContextItem(doc);
             } finally {
                 // can deal if is is null
@@ -597,7 +597,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         }
     }
 
-    protected boolean matches(Exchange exchange, List<?> results) {
+    protected boolean matches(Exchange exchange, List results) {
         return ObjectHelper.matches(results);
     }
 
@@ -612,7 +612,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             configuration.setHostLanguage(Configuration.XQUERY);
             configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
 
-            staticQueryContext = getConfiguration().newStaticQueryContext();
+            staticQueryContext = new StaticQueryContext(getConfiguration());
             if (moduleURIResolver != null) {
                 staticQueryContext.setModuleURIResolver(moduleURIResolver);
             }

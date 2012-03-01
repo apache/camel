@@ -207,8 +207,8 @@ public enum HdfsFileType {
             try {
                 Closeable rout;
                 HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
-                Class<?> keyWritableClass = configuration.getKeyType().getWritableClass();
-                Class<?> valueWritableClass = configuration.getValueType().getWritableClass();
+                Class keyWritableClass = configuration.getKeyType().getWritableClass();
+                Class valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = SequenceFile.createWriter(hdfsInfo.getFileSystem(), hdfsInfo.getConf(), hdfsInfo.getPath(), keyWritableClass,
                         valueWritableClass, configuration.getBufferSize(), configuration.getReplication(), configuration.getBlockSize(),
                         configuration.getCompressionType(), configuration.getCompressionCodec().getCodec(), new Progressable() {
@@ -243,7 +243,7 @@ public enum HdfsFileType {
                 Writable keyWritable = getWritable(key, typeConverter, keySize);
                 Holder<Integer> valueSize = new Holder<Integer>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
-                ((MapFile.Writer) hdfsostr.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
+                ((MapFile.Writer) hdfsostr.getOut()).append((WritableComparable) keyWritable, valueWritable);
                 return keySize.value + valueSize.value;
             } catch (Exception ex) {
                 throw new RuntimeCamelException(ex);
@@ -255,7 +255,7 @@ public enum HdfsFileType {
             try {
                 MapFile.Reader reader = (MapFile.Reader) hdfsistr.getIn();
                 Holder<Integer> keySize = new Holder<Integer>();
-                WritableComparable<?> keyWritable = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
+                WritableComparable keyWritable = (WritableComparable) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
                 Holder<Integer> valueSize = new Holder<Integer>();
                 Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
                 if (reader.next(keyWritable, valueWritable)) {
@@ -271,13 +271,13 @@ public enum HdfsFileType {
         }
 
         @Override
-        @SuppressWarnings("rawtypes")
+        @SuppressWarnings("unchecked")
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
                 HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
-                Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
-                Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
+                Class keyWritableClass = configuration.getKeyType().getWritableClass();
+                Class valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new MapFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, keyWritableClass, valueWritableClass,
                         configuration.getCompressionType(), configuration.getCompressionCodec().getCodec(), new Progressable() {
                             @Override
@@ -311,7 +311,7 @@ public enum HdfsFileType {
                 Writable keyWritable = getWritable(key, typeConverter, keySize);
                 Holder<Integer> valueSize = new Holder<Integer>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
-                ((BloomMapFile.Writer) hdfsostr.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
+                ((BloomMapFile.Writer) hdfsostr.getOut()).append((WritableComparable) keyWritable, valueWritable);
                 return keySize.value + valueSize.value;
             } catch (Exception ex) {
                 throw new RuntimeCamelException(ex);
@@ -323,7 +323,7 @@ public enum HdfsFileType {
             try {
                 MapFile.Reader reader = (BloomMapFile.Reader) hdfsistr.getIn();
                 Holder<Integer> keySize = new Holder<Integer>();
-                WritableComparable<?> keyWritable = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
+                WritableComparable keyWritable = (WritableComparable) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
                 Holder<Integer> valueSize = new Holder<Integer>();
                 Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
                 if (reader.next(keyWritable, valueWritable)) {
@@ -338,14 +338,14 @@ public enum HdfsFileType {
             }
         }
 
-        @SuppressWarnings("rawtypes")
         @Override
+        @SuppressWarnings("unchecked")
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
                 HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
-                Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
-                Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
+                Class keyWritableClass = configuration.getKeyType().getWritableClass();
+                Class valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new BloomMapFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, keyWritableClass, valueWritableClass,
                         configuration.getCompressionType(), configuration.getCompressionCodec().getCodec(), new Progressable() {
                             @Override
@@ -401,13 +401,13 @@ public enum HdfsFileType {
             }
         }
 
-        @SuppressWarnings("rawtypes")
         @Override
+        @SuppressWarnings("unchecked")
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
                 HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
-                Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
+                Class valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new ArrayFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, valueWritableClass,
                         configuration.getCompressionType(), new Progressable() {
                             @Override
@@ -433,7 +433,6 @@ public enum HdfsFileType {
         }
     };
 
-    @SuppressWarnings({"rawtypes"})
     private static final class WritableCache {
 
         private static Map<Class, HdfsWritableFactories.HdfsWritableFactory> writables = new HashMap<Class, HdfsWritableFactories.HdfsWritableFactory>();
@@ -468,7 +467,7 @@ public enum HdfsFileType {
     }
 
     private static Writable getWritable(Object obj, TypeConverter typeConverter, Holder<Integer> size) {
-        Class<?> objCls = obj == null ? null : obj.getClass();
+        Class objCls = obj == null ? null : obj.getClass();
         HdfsWritableFactories.HdfsWritableFactory objWritableFactory = WritableCache.writables.get(objCls);
         if (objWritableFactory == null) {
             objWritableFactory = new HdfsWritableFactories.HdfsObjectWritableFactory();
@@ -477,7 +476,7 @@ public enum HdfsFileType {
     }
 
     private static Object getObject(Writable writable, Holder<Integer> size) {
-        Class<?> writableClass = NullWritable.class;
+        Class writableClass = NullWritable.class;
         if (writable != null) {
             writableClass = writable.getClass();
         }
@@ -509,7 +508,8 @@ public enum HdfsFileType {
             }
         } finally {
             if (close) {
-                IOHelper.close(out, in);
+                IOHelper.close(out);
+                IOHelper.close(in);
             }
         }
         return numBytes;

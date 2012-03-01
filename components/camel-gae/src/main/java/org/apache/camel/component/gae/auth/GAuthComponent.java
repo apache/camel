@@ -18,8 +18,6 @@ package org.apache.camel.component.gae.auth;
 
 import java.util.Map;
 
-import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.OutboundBinding;
@@ -80,11 +78,12 @@ public class GAuthComponent extends DefaultComponent {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         GAuthEndpoint endpoint = new GAuthEndpoint(uri, this, remaining);
-        OutboundBinding<GAuthEndpoint, GoogleOAuthParameters, GoogleOAuthParameters> authorizeBinding = resolveAndRemoveReferenceParameter(
+        OutboundBinding authorizeBinding = resolveAndRemoveReferenceParameter(
                 parameters, "authorizeBindingRef", GAuthAuthorizeBinding.class, new GAuthAuthorizeBinding());
-        OutboundBinding<GAuthEndpoint, GoogleOAuthParameters, GoogleOAuthParameters> upgradeBinding = resolveAndRemoveReferenceParameter(
+        OutboundBinding upgradeBinding = resolveAndRemoveReferenceParameter(
                 parameters, "upgradeBindingRef", GAuthUpgradeBinding.class, new GAuthUpgradeBinding());
         GAuthService service = resolveAndRemoveReferenceParameter(
                 parameters, "serviceRef", GAuthService.class, new GAuthServiceImpl(endpoint));

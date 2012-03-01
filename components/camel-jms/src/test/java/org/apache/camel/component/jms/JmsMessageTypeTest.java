@@ -213,7 +213,6 @@ public class JmsMessageTypeTest extends CamelTestSupport {
 
     public static final class MyFooBean implements TypeConverter, Serializable {
 
-        private static final long serialVersionUID = 1L;
         private String name;
 
         private MyFooBean() {

@@ -56,4 +56,9 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
                 "/org/apache/camel/spring/interceptor/transactionalClientWithAnnotatedBeanTest.xml");
     }
 
+    @Override
+    protected int getExpectedRouteCount() {
+        return 1;
+    }
+
 }

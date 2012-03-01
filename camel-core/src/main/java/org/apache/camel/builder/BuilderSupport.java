@@ -184,7 +184,7 @@ public abstract class BuilderSupport {
         if (beanOrBeanRef instanceof String) {
             expression = new MethodCallExpression((String) beanOrBeanRef, method);
         } else {
-            expression = new MethodCallExpression(beanOrBeanRef, method);
+            expression = new MethodCallExpression((Object) beanOrBeanRef, method);
         }
         return new ValueBuilder(expression);
     }

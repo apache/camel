@@ -89,4 +89,9 @@ public class BamRouteTest extends CamelSpringTestSupport {
         // END SNIPPET: example
     }
 
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
+
 }

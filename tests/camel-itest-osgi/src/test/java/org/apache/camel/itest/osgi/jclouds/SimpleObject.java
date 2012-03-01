@@ -20,8 +20,6 @@ package org.apache.camel.itest.osgi.jclouds;
 import java.io.Serializable;
 
 public class SimpleObject implements Serializable {
-
-    private static final long serialVersionUID = 1L;
     private String id;
     private String value;
 

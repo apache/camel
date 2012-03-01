@@ -47,7 +47,7 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     private final MappedXMLInputFactory mif;
     
     public JsonDataFormat() {
-        final Map<?, ?> nstjsons = new HashMap<Object, Object>();
+        final Map nstjsons = new HashMap();
         mof = new MappedXMLOutputFactory(nstjsons);
         mif = new MappedXMLInputFactory(nstjsons);
     }

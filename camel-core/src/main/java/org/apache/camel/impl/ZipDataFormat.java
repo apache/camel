@@ -41,14 +41,14 @@ public class ZipDataFormat implements DataFormat {
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        // ask for a mandatory type conversion to avoid a possible NPE beforehand as we do copy from the InputStream
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
+        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, graph);
 
         DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
         try {
             IOHelper.copy(is, zipOutput);
         } finally {
-            IOHelper.close(is, zipOutput);
+            IOHelper.close(is);
+            IOHelper.close(zipOutput);
         }
     }
 

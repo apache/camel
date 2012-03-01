@@ -60,5 +60,9 @@ public class CamelEndpointSpringConfigureTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {        
         return new ClassPathXmlApplicationContext("/org/apache/camel/component/cxf/transport/CamelEndpointSpringConfigure.xml");
     }
-   
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
+
 }

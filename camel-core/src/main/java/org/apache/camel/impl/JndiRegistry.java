@@ -70,9 +70,10 @@ public class JndiRegistry implements Registry {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Map<String, T> lookupByType(Class<T> type) {
         // not implemented so we return an empty map
-        return Collections.emptyMap();
+        return Collections.EMPTY_MAP;
     }
 
     public void bind(String s, Object o) {
@@ -98,8 +99,9 @@ public class JndiRegistry implements Registry {
         this.context = context;
     }
 
+    @SuppressWarnings("unchecked")
     protected Context createContext() throws NamingException {
-        Hashtable<?, ?> properties = new Hashtable<Object, Object>(System.getProperties());
+        Hashtable properties = new Hashtable(System.getProperties());
         return new InitialContext(properties);
     }
 }

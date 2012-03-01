@@ -24,18 +24,19 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Solr producer.
  */
 public class SolrProducer extends DefaultProducer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(SolrProducer.class);
     private SolrServer solrServer;
-    private SolrServer streamingSolrServer;
 
     public SolrProducer(SolrEndpoint endpoint) {
         super(endpoint);
         solrServer = endpoint.getSolrServer();
-        streamingSolrServer = endpoint.getStreamingSolrServer();
     }
 
     @Override
@@ -48,9 +49,7 @@ public class SolrProducer extends DefaultProducer {
         }
 
         if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT)) {
-            insert(exchange, false);
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT_STREAMING)) {
-            insert(exchange, true);
+            insert(exchange);
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_ID)) {
             solrServer.deleteById(exchange.getIn().getBody(String.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_QUERY)) {
@@ -68,7 +67,7 @@ public class SolrProducer extends DefaultProducer {
         }
     }
 
-    private void insert(Exchange exchange, boolean isStreaming) throws Exception {
+    private void insert(Exchange exchange) throws Exception {
 
         Object body = exchange.getIn().getBody();
 
@@ -83,34 +82,19 @@ public class SolrProducer extends DefaultProducer {
                 }
             }
 
-            if (isStreaming) {
-                updateRequest.process(streamingSolrServer);
-            } else {
-                updateRequest.process(solrServer);
-            }
-
+            updateRequest.process(solrServer);
         } else {
+            SolrInputDocument doc = new SolrInputDocument();
+            for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+                if (entry.getKey().startsWith(SolrConstants.FIELD)) {
+                    String fieldName = entry.getKey().substring(SolrConstants.FIELD.length());
+                    doc.setField(fieldName, entry.getValue());
+                }
+            }
 
             UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
-
-            if (body instanceof SolrInputDocument) {
-                updateRequest.add((SolrInputDocument) body);
-            } else {
-                SolrInputDocument doc = new SolrInputDocument();
-                for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-                    if (entry.getKey().startsWith(SolrConstants.FIELD)) {
-                        String fieldName = entry.getKey().substring(SolrConstants.FIELD.length());
-                        doc.setField(fieldName, entry.getValue());
-                    }
-                }
-                updateRequest.add(doc);
-            }
-
-            if (isStreaming) {
-                updateRequest.process(streamingSolrServer);
-            } else {
-                updateRequest.process(solrServer);
-            }
+            updateRequest.add(doc);
+            updateRequest.process(solrServer);
         }
     }
 

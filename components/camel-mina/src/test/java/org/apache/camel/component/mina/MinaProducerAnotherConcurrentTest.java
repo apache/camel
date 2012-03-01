@@ -53,11 +53,11 @@ public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future<String>> responses = new ConcurrentHashMap<Integer, Future<String>>();
+        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
+            Future out = executor.submit(new Callable<Object>() {
+                public Object call() throws Exception {
                     return template.requestBody("direct:start", index, String.class);
                 }
             });

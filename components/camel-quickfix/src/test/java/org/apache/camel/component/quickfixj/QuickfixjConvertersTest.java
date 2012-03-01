@@ -95,7 +95,6 @@ public class QuickfixjConvertersTest {
         assertThat((SessionID)value, is(new SessionID("FIX.4.0", "FOO", "BAR")));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void convertToExchange() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
@@ -114,7 +113,6 @@ public class QuickfixjConvertersTest {
         assertThat((String)exchange.getIn().getHeader(QuickfixjEndpoint.MESSAGE_TYPE_KEY), is(MsgType.ORDER_SINGLE));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void convertToExchangeWithNullMessage() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");

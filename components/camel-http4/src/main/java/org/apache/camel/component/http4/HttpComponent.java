@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -191,7 +192,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure);
-        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
+        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
         // create the endpoint and set the http uri to be null
         HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, clientConnectionManager, configurer);
         // configure the endpoint
@@ -206,7 +207,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         // build up the http uri
-        URI httpUri = URISupport.createRemainingURI(new URI(httpUriAddress), parameters);
+        URI httpUri = URISupport.createRemainingURI(new URI(httpUriAddress), CastUtils.cast(parameters));
 
         // validate http uri that end-user did not duplicate the http part that can be a common error
         String part = httpUri.getSchemeSpecificPart();

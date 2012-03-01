@@ -48,4 +48,8 @@ public class TransactionClientDataSourceSupport extends SpringTestSupport {
         return useTransactionErrorHandler;
     }
 
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
 }

@@ -178,7 +178,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     protected JAXBContext createJaxbContext() throws JAXBException {
         StringBuilder packages = new StringBuilder();
-        for (Class<?> cl : getJaxbPackages()) {
+        for (Class cl : getJaxbPackages()) {
             if (packages.length() > 0) {
                 packages.append(":");
             }
@@ -187,8 +187,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
     }
 
-    protected Set<Class<?>> getJaxbPackages() {
-        Set<Class<?>> classes = new HashSet<Class<?>>();
+    protected Set<Class> getJaxbPackages() {
+        Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
         classes.add(CamelJMXAgentDefinition.class);
         classes.add(org.apache.camel.ExchangePattern.class);
@@ -275,7 +275,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     protected class CamelContextBeanDefinitionParser extends BeanDefinitionParser {
 
-        public CamelContextBeanDefinitionParser(Class<?> type) {
+        public CamelContextBeanDefinitionParser(Class type) {
             super(type, false);
         }
 

@@ -27,6 +27,7 @@ import org.junit.Test;
  */
 public class HttpAsyncTest extends HttpAsyncTestSupport {
  
+    @SuppressWarnings("unchecked")
     @Test
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         // START SNIPPET: e2
@@ -36,7 +37,7 @@ public class HttpAsyncTest extends HttpAsyncTestSupport {
         mock.expectedBodiesReceived("Claus", "Bye World");
 
         // Send a async request/reply message to the http endpoint
-        Future<Object> future = template.asyncRequestBody("http://0.0.0.0:" + getPort() + "/myservice", "Hello World");
+        Future future = template.asyncRequestBody("http://0.0.0.0:" + getPort() + "/myservice", "Hello World");
 
         // We got the future so in the meantime we can do other stuff, as this is Camel
         // so lets invoke another request/reply route but this time is synchronous
@@ -52,7 +53,7 @@ public class HttpAsyncTest extends HttpAsyncTestSupport {
         // This allows us to do this in a single code line instead of using the
         // JDK Future API to get hold of it, but you can also use that if you want
         // Adding the (String) To make the CS happy
-        String response = template.extractFutureBody(future, String.class);
+        String response = (String) template.extractFutureBody(future, String.class);
         assertEquals("Bye World", response);
 
         assertMockEndpointsSatisfied();

@@ -142,12 +142,13 @@ public abstract class ContextTestSupport extends TestSupport {
 
     /**
      * Whether or not type converters should be lazy loaded (notice core converters is always loaded)
+     * <p/>
+     * We enabled lazy by default as it would speedup unit testing.
      *
-     * @return <tt>false</tt> by default.
+     * @return <tt>true</tt> by default.
      */
-    @Deprecated
     protected boolean isLazyLoadingTypeConverter() {
-        return false;
+        return true;
     }
 
     protected void stopCamelContext() throws Exception {
@@ -175,7 +176,6 @@ public abstract class ContextTestSupport extends TestSupport {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
         context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());

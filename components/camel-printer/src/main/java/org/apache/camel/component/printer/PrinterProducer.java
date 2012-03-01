@@ -19,6 +19,7 @@ package org.apache.camel.component.printer;
 import java.io.InputStream;
 
 import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
 import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
@@ -70,6 +71,10 @@ public class PrinterProducer extends DefaultProducer {
         printRequestAttributeSet.add(config.getInternalSides());
         
         return printRequestAttributeSet;
+    }
+    
+    private DocPrintJob assignPrintJob(PrintService printService) {
+        return printService.createPrintJob(); 
     }
     
     private PrintService assignPrintService() throws PrintException {

@@ -45,6 +45,8 @@ import org.testng.Assert;
 
 /**
  * A bunch of useful testing methods
+ *
+ * @version $Revision$
  */
 public abstract class TestSupport extends Assert {
     protected static final String LS = System.getProperty("line.separator");

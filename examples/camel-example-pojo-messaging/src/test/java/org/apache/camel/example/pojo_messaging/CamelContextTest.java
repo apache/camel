@@ -26,6 +26,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelContextTest extends CamelSpringTestSupport {
     
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
+        
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/messages");

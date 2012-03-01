@@ -32,5 +32,10 @@ public class TransactionalClientDataSourceWithSpringRouteBuilderTest extends Tra
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/spring/interceptor/transactionalClientDataSourceWithSpringRouteBuilder.xml");
     }
-   
+
+    @Override
+    protected int getExpectedRouteCount() {
+        return 1;
+    }
+
 }

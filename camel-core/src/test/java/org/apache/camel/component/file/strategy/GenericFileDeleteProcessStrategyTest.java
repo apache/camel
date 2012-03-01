@@ -94,36 +94,36 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void testTroubleDeletingFile() throws Exception {
         deleteCounter = 0;
         existsCounter = 0;
 
-        @SuppressWarnings("unchecked")
-        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/foo", GenericFileEndpoint.class);
+        GenericFileEndpoint endpoint = context.getEndpoint("file://target/foo", GenericFileEndpoint.class);
         Exchange exchange = endpoint.createExchange();
 
-        GenericFile<Object> file = new GenericFile<Object>();
+        GenericFile file = new GenericFile();
         file.setAbsoluteFilePath("target/foo/me.txt");
 
-        GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<Object>();
+        GenericFileDeleteProcessStrategy strategy = new GenericFileDeleteProcessStrategy();
         strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file);
 
         assertEquals("Should have tried to delete file 2 times", 2, deleteCounter);
         assertEquals("Should have tried to delete file 2 times", 2, existsCounter);
     }
 
+    @SuppressWarnings("unchecked")
     public void testCannotDeleteFile() throws Exception {
         deleteCounter = 0;
         existsCounter = 0;
 
-        @SuppressWarnings("unchecked")
-        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/foo", GenericFileEndpoint.class);
+        GenericFileEndpoint endpoint = context.getEndpoint("file://target/foo", GenericFileEndpoint.class);
         Exchange exchange = endpoint.createExchange();
 
-        GenericFile<Object> file = new GenericFile<Object>();
+        GenericFile file = new GenericFile();
         file.setAbsoluteFilePath("target/foo/boom.txt");
 
-        GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<Object>();
+        GenericFileDeleteProcessStrategy strategy = new GenericFileDeleteProcessStrategy();
         try {
             strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file);
             fail("Should have thrown an exception");

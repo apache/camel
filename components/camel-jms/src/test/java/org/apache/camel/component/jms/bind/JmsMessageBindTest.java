@@ -49,13 +49,17 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
         MyBean bean = getMandatoryBean(MyBean.class, "myBean");
         assertEquals("body", "SomeBody", bean.getBody());
 
-        Map<?, ?> beanHeaders = bean.getHeaders();
+        Map beanHeaders = bean.getHeaders();
         assertNotNull("No headers!", beanHeaders);
         
         assertEquals("foo header", "bar", beanHeaders.get("foo"));
         assertNull("Should get a null value", beanHeaders.get("binding"));
     }
 
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/bind/spring.xml");

@@ -92,7 +92,4 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Updates the route from XML")
     void updateRouteFromXml(String xml) throws Exception;
 
-    @ManagedOperation(description = "Dumps the routes stats as XML")
-    String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
-
 }

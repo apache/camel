@@ -104,7 +104,6 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     public void process(Exchange exchange) throws Exception {
         LOG.debug("Mina2Producer process");
 
@@ -238,7 +237,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             connector.getSessionConfig().setAll(connectorConfig);
         }
 
-        connector.setHandler(new ResponseHandler());
+        connector.setHandler(new ResponseHandler(getEndpoint()));
         ConnectFuture future = connector.connect(address);
         future.awaitUninterruptibly();
         session = future.getSession();
@@ -440,9 +439,14 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
      */
     private final class ResponseHandler extends IoHandlerAdapter {
 
+        private Mina2Endpoint endpoint;
         private Object message;
         private Throwable cause;
         private boolean messageReceived;
+
+        private ResponseHandler(Mina2Endpoint endpoint) {
+            this.endpoint = endpoint;
+        }
 
         public void reset() {
             this.message = null;

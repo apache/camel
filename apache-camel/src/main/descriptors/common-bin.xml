@@ -38,15 +38,12 @@
         <include>org.apache.camel:camel-apns</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-aws</include>
-        <include>org.apache.camel:camel-avro</include>
         <include>org.apache.camel:camel-bam</include>
-        <include>org.apache.camel:camel-beanio</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-bindy</include>
         <include>org.apache.camel:camel-blueprint</include>
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-castor</include>
-        <include>org.apache.camel:camel-cdi</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-cometd</include>
@@ -67,7 +64,6 @@
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guice</include>
-        <include>org.apache.camel:camel-gson</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-hawtdb</include>
         <include>org.apache.camel:camel-hazelcast</include>
@@ -99,7 +95,6 @@
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-mina2</include>
-        <include>org.apache.camel:camel-mongodb</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-mybatis</include>
@@ -132,19 +127,14 @@
         <include>org.apache.camel:camel-spring-security</include>
         <include>org.apache.camel:camel-spring-ws</include>
         <include>org.apache.camel:camel-sql</include>
-        <include>org.apache.camel:camel-ssh</include>
         <include>org.apache.camel:camel-stax</include>
         <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
         <include>org.apache.camel:camel-syslog</include>
-        <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-test</include>
-        <include>org.apache.camel:camel-test-blueprint</include>
-        <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-testng</include>
-        <include>org.apache.camel:camel-twitter</include>
+        <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-velocity</include>
-        <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>

@@ -45,7 +45,6 @@ public class LdapEndpoint extends DefaultEndpoint {
         this.remaining = remaining;
     }
 
-    @SuppressWarnings("deprecation")
     public LdapEndpoint(String endpointUri, String remaining) throws URISyntaxException {
         super(endpointUri);
         this.remaining = remaining;

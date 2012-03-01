@@ -32,6 +32,10 @@ import org.junit.Test;
  */
 public class QueueToQueueTransactionTest extends AbstractTransactionTest {
 
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
+
     @Test
     public void testRollbackUsingXmlQueueToQueue() throws Exception {
 

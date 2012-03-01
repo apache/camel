@@ -73,11 +73,12 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Map<String, T> lookupByType(Class<T> type) {
-        Map<String, T> answer = Collections.<String, T>emptyMap();
+        Map<String, T> answer = Collections.EMPTY_MAP;
         for (Registry registry : registryList) {
             answer = registry.lookupByType(type);
-            if (!answer.isEmpty()) {
+            if (answer != Collections.EMPTY_MAP) {
                 break;
             }
         }

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.CamelExecutionException;
@@ -40,7 +39,8 @@ import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +52,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
-    protected final ConcurrentMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
-    protected final ConcurrentMap<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
+    protected final ConcurrentHashMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
+    protected final Map<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     protected final List<FallbackTypeConverter> fallbackConverters = new ArrayList<FallbackTypeConverter>();
     protected final PackageScanClassResolver resolver;
@@ -395,15 +395,24 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
      * Loads the core type converters which is mandatory to use Camel
      */
     public void loadCoreTypeConverters() throws Exception {
+        int before = typeMappings.size();
+
         // load all the type converters from camel-core
         CoreTypeConverterLoader core = new CoreTypeConverterLoader();
         core.load(this);
+
+        int delta = typeMappings.size() - before;
+        log.info("Loaded {} core type converters (total {} type converters)" , delta, typeMappings.size());
     }
 
     /**
      * Checks if the registry is loaded and if not lazily load it
      */
     protected void loadTypeConverters() throws Exception {
+        StopWatch watch = new StopWatch();
+        int before = typeMappings.size();
+
+        log.debug("Loading additional type converters ...");
         for (TypeConverterLoader typeConverterLoader : getTypeConverterLoaders()) {
             typeConverterLoader.load(this);
         }
@@ -413,6 +422,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             loadFallbackTypeConverters();
         } catch (NoFactoryAvailableException e) {
             // ignore its fine to have none
+        }
+        log.debug("Loading additional type converters done");
+
+        // report how long time it took to load
+        int delta = typeMappings.size() - before;
+        if (log.isInfoEnabled()) {
+            log.info("Loaded additional " + delta + " type converters (total " + typeMappings.size()
+                    + " type converters) in " + TimeUtils.printDuration(watch.stop()));
         }
     }
 

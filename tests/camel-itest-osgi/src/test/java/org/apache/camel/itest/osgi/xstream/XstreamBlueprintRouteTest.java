@@ -29,6 +29,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
@@ -43,6 +44,7 @@ public class XstreamBlueprintRouteTest extends OSGiBlueprintTestSupport {
     @Test
     public void testUnmarshal() throws Exception {
         getInstalledBundle("CamelBlueprintXstreamTestBundle").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintXstreamTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintXstreamTestBundle)", 10000);
 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);

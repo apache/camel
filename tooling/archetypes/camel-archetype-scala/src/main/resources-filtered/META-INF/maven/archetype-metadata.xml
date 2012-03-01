@@ -30,12 +30,6 @@
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="maven-eclipse-plugin-version">
-      <defaultValue>2.8</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="exec-maven-plugin-version">
-      <defaultValue>1.2.1</defaultValue>
-    </requiredProperty>
     <requiredProperty key="scala-version">
       <defaultValue>${scala-version}</defaultValue>
     </requiredProperty>
@@ -55,18 +49,6 @@
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/resources</directory>
-      <includes>
-        <include>**/*</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" packaged="true" encoding="UTF-8">
-      <directory>src/test/scala</directory>
-      <includes>
-        <include>**/*.scala</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory>src/test/resources</directory>
       <includes>
         <include>**/*</include>
       </includes>

@@ -52,8 +52,8 @@ public abstract class AbstractCamelConsumerTemplateFactoryBean extends AbstractC
         return template;
     }
 
-    public Class<ConsumerTemplate> getObjectType() {
-        return ConsumerTemplate.class;
+    public Class<DefaultConsumerTemplate> getObjectType() {
+        return DefaultConsumerTemplate.class;
     }
 
     public void destroy() throws Exception {

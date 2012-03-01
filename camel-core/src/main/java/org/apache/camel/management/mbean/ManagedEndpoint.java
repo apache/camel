@@ -40,22 +40,18 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
         return endpoint;
     }
 
-    @Override
     public String getCamelId() {
         return endpoint.getCamelContext().getName();
     }
 
-    @Override
     public String getEndpointUri() {
         return endpoint.getEndpointUri();
     }
 
-    @Override
     public boolean isSingleton() {
         return endpoint.isSingleton();
     }
 
-    @Override
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (endpoint instanceof StatefulService) {
@@ -71,9 +67,7 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
         return ServiceStatus.Started.name();
     }
 
-    @Override
-    public Endpoint getInstance() {
+    public Object getInstance() {
         return endpoint;
     }
-
 }

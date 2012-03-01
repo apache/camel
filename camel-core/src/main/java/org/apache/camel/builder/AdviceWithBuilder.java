@@ -23,7 +23,7 @@ import org.apache.camel.model.RouteDefinition;
 /**
  * A builder when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
  */
-public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
+public class AdviceWithBuilder<T extends ProcessorDefinition> {
 
     private final AdviceWithRouteBuilder builder;
     private final String id;
@@ -106,7 +106,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
      *
      * @return the builder to build the nodes.
      */
-    public ProcessorDefinition<?> replace() {
+    public ProcessorDefinition replace() {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
@@ -138,7 +138,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
      *
      * @return the builder to build the nodes.
      */
-    public ProcessorDefinition<?> before() {
+    public ProcessorDefinition before() {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
@@ -156,7 +156,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
      *
      * @return the builder to build the nodes.
      */
-    public ProcessorDefinition<?> after() {
+    public ProcessorDefinition after() {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {

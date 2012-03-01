@@ -25,10 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class DelayerPerRouteTest extends ContextTestSupport {
 
     public void testDelayerPerRoute() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("B", "A");
+        getMockEndpoint("mock:result").expectedBodiesReceived("B", "A", "C");
 
         template.sendBody("seda:a", "A");
         template.sendBody("seda:b", "B");
+        template.sendBody("seda:c", "C");
 
         assertMockEndpointsSatisfied();
     }
@@ -40,9 +41,11 @@ public class DelayerPerRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setDelayer(2000L);
 
-                from("seda:a").to("mock:result");
+                from("seda:a").delayer(1000).to("mock:result");
 
                 from("seda:b").noDelayer().to("mock:result");
+
+                from("seda:c").to("mock:result");
             }
         };
     }

@@ -41,7 +41,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -100,20 +99,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setNameStrategy(CamelContextNameStrategy nameStrategy);
 
     /**
-     * Gets the current management name strategy
-     *
-     * @return management name strategy
-     */
-    ManagementNameStrategy getManagementNameStrategy();
-
-    /**
-     * Sets a custom management name strategy
-     *
-     * @param nameStrategy name strategy
-     */
-    void setManagementNameStrategy(ManagementNameStrategy nameStrategy);
-
-    /**
      * Gets the name this {@link CamelContext} was registered in JMX.
      * <p/>
      * The reason that a {@link CamelContext} can have a different name in JMX is the fact to remedy for name clash
@@ -123,6 +108,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the management name
      */
     String getManagementName();
+
+    /**
+     * Sets the name this {@link CamelContext} was registered in JMX.
+     *
+     * @param name  the actual name used when registering this {@link CamelContext} in JMX
+     */
+    void setManagementName(String name);
 
     /**
      * Gets the version of the this context.
@@ -1040,18 +1032,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Whether or not type converters should be loaded lazy
      *
      * @return <tt>true</tt> to load lazy, <tt>false</tt> to load on startup
-     * @deprecated this option is no longer supported, will be removed in a future Camel release.
      */
-    @Deprecated
     Boolean isLazyLoadTypeConverters();
 
     /**
      * Sets whether type converters should be loaded lazy
      *
      * @param lazyLoadTypeConverters <tt>true</tt> to load lazy, <tt>false</tt> to load on startup
-     * @deprecated this option is no longer supported, will be removed in a future Camel release.
      */
-    @Deprecated
     void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters);
 
     /**

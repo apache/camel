@@ -41,6 +41,7 @@ public class DefaultComponentResolver implements ComponentResolver {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultComponentResolver.class);
     private FactoryFinder factoryFinder;
 
+    @SuppressWarnings("unchecked")
     public Component resolveComponent(String name, CamelContext context) {
         // lookup in registry first
         Object bean = null;
@@ -65,7 +66,7 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
 
         // not in registry then use component factory
-        Class<?> type;
+        Class type;
         try {
             type = findComponent(name, context);
             if (type == null) {

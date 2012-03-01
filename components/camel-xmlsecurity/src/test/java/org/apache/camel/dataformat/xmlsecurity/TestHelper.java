@@ -29,17 +29,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
-
+import org.apache.log4j.Logger;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 
 import org.junit.Assert;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TestHelper {
     
@@ -88,7 +84,7 @@ public class TestHelper {
         HAS_3DES = ok;
     }
     
-    Logger log = LoggerFactory.getLogger(TestHelper.class);
+    Logger log = Logger.getLogger(TestHelper.class);
 
     protected void sendText(final String fragment, CamelContext context) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
@@ -99,7 +95,7 @@ public class TestHelper {
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setBody(fragment);
-                log.info("xmlFragment: {}", fragment);
+                log.info("xmlFragment: " + fragment);
             }
         });
     }

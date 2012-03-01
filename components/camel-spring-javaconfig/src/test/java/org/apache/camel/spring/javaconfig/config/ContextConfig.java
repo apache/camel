@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ContextConfig extends SingleRouteCamelConfiguration {
-
     @Bean
     public RouteBuilder route() {
         return new RouteBuilder() {

@@ -18,8 +18,10 @@ package org.apache.camel.component.mina2;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -33,7 +35,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
 
     @Test
     public void testTCPEncodeUTF8InputIsBytes() throws Exception {
-        final String uri = String.format("mina2:tcp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
+        final String uri = "mina2:tcp://localhost:{{port}}?encoding=UTF-8&sync=false";
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
@@ -55,7 +57,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
 
     @Test
     public void testTCPEncodeUTF8InputIsString() throws Exception {
-        final String uri = String.format("mina2:tcp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
+        final String uri = "mina2:tcp://localhost:{{port}}?encoding=UTF-8&sync=false";
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
@@ -77,7 +79,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
 
     @Test
     public void testTCPEncodeUTF8TextLineInputIsString() throws Exception {
-        final String uri = String.format("mina2:tcp://localhost:%1$s?textline=true&encoding=UTF-8&sync=false", getPort());
+        final String uri = "mina2:tcp://localhost:{{port}}?textline=true&encoding=UTF-8&sync=false";
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
@@ -101,7 +103,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
     // See TextLineEncoder#encode where the message is converted to String using .toString()
     @Test
     public void testUDPEncodeUTF8InputIsBytes() throws Exception {
-        final String uri = String.format("mina2:udp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
+        final String uri = "mina2:udp://localhost:{{port}}?encoding=UTF-8&sync=false";
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
@@ -123,7 +125,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
 
     @Test
     public void testUDPEncodeUTF8InputIsString() throws Exception {
-        final String uri = String.format("mina2:udp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
+        final String uri = "mina2:udp://localhost:{{port}}?encoding=UTF-8&sync=false";
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
@@ -153,7 +155,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
         final String hello = "Hello Thai Elephant \u0E08";
         final String bye = "Hello Thai Elephant \u0E08";
 
-        final String uri = String.format("mina2:udp://localhost:%1$s?sync=true&encoding=UTF-8", getPort());
+        final String uri = "mina2:udp://localhost:{{port}}?sync=true&encoding=UTF-8";
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
@@ -184,7 +186,7 @@ public class Mina2EncodingTest extends BaseMina2Test {
 
     @Test
     public void testInvalidEncoding() throws Exception {
-        final String uri = String.format("mina2:tcp://localhost:%1$s?textline=true&encoding=XXX&sync=false", getPort());
+        final String uri = "mina2:tcp://localhost:{{port}}?textline=true&encoding=XXX&sync=false";
 
         try {
             context.addRoutes(new RouteBuilder() {

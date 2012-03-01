@@ -102,7 +102,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -137,7 +136,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final transient Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
-    private ManagementNameStrategy managementNameStrategy = new DefaultManagementNameStrategy(this);
     private String managementName;
     private ClassLoader applicationContextClassLoader;
     private Map<EndpointKey, Endpoint> endpoints;
@@ -262,14 +260,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.nameStrategy = nameStrategy;
     }
 
-    public ManagementNameStrategy getManagementNameStrategy() {
-        return managementNameStrategy;
-    }
-
-    public void setManagementNameStrategy(ManagementNameStrategy managementNameStrategy) {
-        this.managementNameStrategy = managementNameStrategy;
-    }
-
     public String getManagementName() {
         return managementName;
     }
@@ -390,8 +380,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
-                oldEndpoint = entry.getValue();
+            for (Map.Entry entry : endpoints.entrySet()) {
+                oldEndpoint = (Endpoint)entry.getValue();
                 if (EndpointHelper.matchEndpoint(oldEndpoint.getEndpointUri(), uri)) {
                     try {
                         stopServices(oldEndpoint);
@@ -925,7 +915,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (object instanceof Service) {
             startService((Service)object);
         } else if (object instanceof Collection<?>) {
-            startServices((Collection<?>)object);
+            startServices((Collection)object);
         }
     }
 
@@ -1553,7 +1543,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // stop route inputs in the same order as they was started so we stop the very first inputs first
         try {
-            // force shutting down routes as they may otherwise cause shutdown to hang
+            // force shutting down routes as they mau otherwise cause shutdown to hang
             shutdownStrategy.shutdownForced(this, getRouteStartupOrder());
         } catch (Throwable e) {
             log.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
@@ -1607,7 +1597,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         stopWatch.stop();
         if (log.isInfoEnabled()) {
-            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()) + ". Uptime " + getUptime() + ".");
+            log.info("Uptime: " + getUptime());
+            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()));
         }
 
         // and clear start date
@@ -1677,7 +1668,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // allow us to do custom work before delegating to service helper
         try {
             if (service instanceof Service) {
-                ServiceHelper.stopAndShutdownService(service);
+                ServiceHelper.stopAndShutdownService((Service)service);
             } else if (service instanceof Collection) {
                 ServiceHelper.stopAndShutdownServices((Collection<?>)service);
             }
@@ -1717,7 +1708,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         service.start();
     }
     
-    private void startServices(Collection<?> services) throws Exception {
+    private void startServices(Collection services) throws Exception {
         for (Object element : services) {
             if (element instanceof Service) {
                 startService((Service)element);
@@ -2059,7 +2050,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     /**
      * Lazily create a default implementation
      */
-    @SuppressWarnings("deprecation")
     protected TypeConverter createTypeConverter() {
         BaseTypeConverterRegistry answer;
         if (isLazyLoadTypeConverters()) {
@@ -2298,13 +2288,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public Boolean isAutoStartup() {
         return autoStartup != null && autoStartup;
     }
-
-    @Deprecated
+    
     public Boolean isLazyLoadTypeConverters() {
         return lazyLoadTypeConverters != null && lazyLoadTypeConverters;
     }
-
-    @Deprecated
+    
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }
@@ -2446,7 +2434,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      */
     public static void setContextCounter(int value) {
         DefaultCamelContextNameStrategy.setCounter(value);
-        DefaultManagementNameStrategy.setCounter(value);
     }
 
     private static UuidGenerator createDefaultUuidGenerator() {

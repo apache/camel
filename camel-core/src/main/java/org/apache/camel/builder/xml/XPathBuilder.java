@@ -89,7 +89,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private static XPathFactory defaultXPathFactory;
 
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
-    private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
+    private final Queue<XPathExpression> poolTraceNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
     private final ThreadLocal<MessageVariableResolver> variableResolver = new ThreadLocal<MessageVariableResolver>();
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
@@ -103,7 +103,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private QName resultQName = XPathConstants.NODESET;
     private String objectModelUri;
     private DefaultNamespaceContext namespaceContext;
-    private boolean logNamespaces;
+    private boolean traceNamespaces;
     private XPathFunctionResolver functionResolver;
     private XPathFunction bodyFunction;
     private XPathFunction headerFunction;
@@ -397,8 +397,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      *
      * @return the current builder.
      */
-    public XPathBuilder logNamespaces() {
-        setLogNamespaces(true);
+    public XPathBuilder traceNamespaces() {
+        setTraceNamespaces(true);
         return this;
     }
 
@@ -477,7 +477,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getBodyFunction() {
         if (bodyFunction == null) {
             bodyFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange == null) {
                         return null;
@@ -496,7 +495,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getHeaderFunction() {
         if (headerFunction == null) {
             headerFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -519,7 +517,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getOutBodyFunction() {
         if (outBodyFunction == null) {
             outBodyFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && exchange.get().hasOut()) {
                         return exchange.get().getOut().getBody();
@@ -538,7 +535,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getOutHeaderFunction() {
         if (outHeaderFunction == null) {
             outHeaderFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -561,7 +557,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getPropertiesFunction() {
         if (propertiesFunction == null) {
             propertiesFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -590,7 +585,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getSimpleFunction() {
         if (simpleFunction == null) {
             simpleFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -632,12 +626,12 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
     }
 
-    public void setLogNamespaces(boolean logNamespaces) {
-        this.logNamespaces = logNamespaces;
+    public void setTraceNamespaces(boolean traceNamespaces) {
+        this.traceNamespaces = traceNamespaces;
     }
 
-    public boolean isLogNamespaces() {
-        return logNamespaces;
+    public boolean isTraceNamespaces() {
+        return traceNamespaces;
     }
 
     public String getObjectModelUri() {
@@ -687,8 +681,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             LOG.trace("Acquired XPathExpression from pool");
         }
         try {
-            if (logNamespaces && LOG.isInfoEnabled()) {
-                logNamespaces(exchange);
+            if (traceNamespaces && LOG.isTraceEnabled()) {
+                traceNamespaces(exchange);
             }
             return doInEvaluateAs(xpathExpression, exchange, resultQName);
         } finally {
@@ -698,13 +692,13 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
     }
 
-    private void logNamespaces(Exchange exchange) {
+    private void traceNamespaces(Exchange exchange) {
         InputStream is = null;
         NodeList answer = null;
         XPathExpression xpathExpression = null;
 
         try {
-            xpathExpression = poolLogNamespaces.poll();
+            xpathExpression = poolTraceNamespaces.poll();
             if (xpathExpression == null) {
                 xpathExpression = createTraceNamespaceExpression();
             }
@@ -729,11 +723,11 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
                 answer = (NodeList) xpathExpression.evaluate(document, XPathConstants.NODESET);
             }
         } catch (Exception e) {
-            LOG.warn("Unable to trace discovered namespaces in XPath expression", e);
+            LOG.trace("Unable to trace discovered namespaces in XPath expression", e);
         } finally {
             // IOHelper can handle if is is null
             IOHelper.close(is);
-            poolLogNamespaces.add(xpathExpression);
+            poolTraceNamespaces.add(xpathExpression);
         }
 
         if (answer != null) {
@@ -762,7 +756,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             map.get(prefix).add(namespaces.item(i).getNodeValue());
         }
 
-        LOG.info("Namespaces discovered in message: {}.", map);
+        LOG.trace("Namespaces discovered in message: {}.", map);
     }
 
     protected Object doInEvaluateAs(XPathExpression xpathExpression, Exchange exchange, QName resultQName) {
@@ -823,10 +817,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
 
-        if (!logNamespaces && LOG.isTraceEnabled()) {
+        if (LOG.isTraceEnabled()) {
             LOG.trace("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext().toString());
-        } else if (logNamespaces && LOG.isInfoEnabled()) {
-            LOG.info("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext().toString());
         }
         xPath.setNamespaceContext(getNamespaceContext());
         xPath.setXPathVariableResolver(getVariableResolver());
@@ -923,7 +915,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
 
         if (body instanceof WrappedFile) {
-            body = ((WrappedFile<?>) body).getFile();
+            body = ((WrappedFile) body).getFile();
         }
         if (body instanceof File) {
             // input stream is needed for File to avoid locking the file in case of errors etc
@@ -937,10 +929,11 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     /**
      * Strategy method to extract the document from the exchange.
      */
+    @SuppressWarnings("unchecked")
     protected Object getDocument(Exchange exchange, Object body) {
         Object answer = null;
 
-        Class<?> type = getDocumentType();
+        Class type = getDocumentType();
         if (type != null) {
             // try to get the body as the desired type
             answer = exchange.getContext().getTypeConverter().convertTo(type, exchange, body);
@@ -988,7 +981,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     public void stop() throws Exception {
         pool.clear();
-        poolLogNamespaces.clear();
+        poolTraceNamespaces.clear();
     }
 
     protected synchronized void initDefaultXPathFactory() throws XPathFactoryConfigurationException {
@@ -1001,7 +994,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             if (defaultXPathFactory == null) {
                 // read system property and see if there is a factory set
                 Properties properties = System.getProperties();
-                for (Map.Entry<Object, Object> prop : properties.entrySet()) {
+                for (Map.Entry prop : properties.entrySet()) {
                     String key = (String) prop.getKey();
                     if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
                         String uri = ObjectHelper.after(key, ":");

@@ -77,7 +77,6 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
         };
     }
 
-    @SuppressWarnings("deprecation")
     private static class TestHttpBinding extends DefaultHttpBinding {
     }
 

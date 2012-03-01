@@ -20,7 +20,7 @@
 	<parent>
 		<artifactId>components</artifactId>
 		<groupId>org.apache.camel</groupId>
-		<version>2.10-SNAPSHOT</version>
+		<version>2.9.1</version>
 	</parent>
 
 	<artifactId>camel-spring-security</artifactId>
@@ -66,15 +66,9 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring-security-version}</version>
 	    </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-	    
-	    <!-- test dependencies -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test-spring</artifactId>
+			<artifactId>camel-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -87,7 +81,6 @@
             <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
         </dependency>
-
 	</dependencies>
 
 	<build>

@@ -102,7 +102,6 @@ public class MethodInfo {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
         this.camelContext = camelContext;
@@ -370,7 +369,7 @@ public class MethodInfo {
                 // the parameter values is between the parenthesis
                 String methodParameters = ObjectHelper.between(methodName, "(", ")");
                 // use an iterator to walk the parameter values
-                Iterator<?> it = null;
+                Iterator it = null;
                 if (methodParameters != null) {
                     it = ObjectHelper.createIterator(methodParameters);
                 }

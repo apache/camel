@@ -66,7 +66,7 @@ abstract class AbstractTracked {
      * 
      * @GuardedBy this
      */
-    private final Map<Object, Object> tracked;
+    private final Map tracked;
 
     /**
      * Modification count. This field is initialized to zero and incremented by
@@ -88,7 +88,7 @@ abstract class AbstractTracked {
      * 
      * @GuardedBy this
      */
-    private final List<Object> adding;    
+    private final List adding;    
 
     /**
      * Initial list of items for the tracker. This is used to correctly process
@@ -104,16 +104,16 @@ abstract class AbstractTracked {
      * 
      * @GuardedBy this
      */
-    private final LinkedList<Object> initial;
+    private final LinkedList initial;
 
     /**
      * AbstractTracked constructor.
      */
     AbstractTracked() {
-        tracked = new HashMap<Object, Object>();
+        tracked = new HashMap();
         trackingCount = 0;
-        adding = new ArrayList<Object>(6);
-        initial = new LinkedList<Object>();
+        adding = new ArrayList(6);
+        initial = new LinkedList();
         closed = false;
     }
 
@@ -127,6 +127,7 @@ abstract class AbstractTracked {
      *            entries in the list are ignored.
      * @GuardedBy this
      */
+    @SuppressWarnings("unchecked")
     void setInitial(Object[] list) {
         if (list == null) {
             return;
@@ -149,6 +150,7 @@ abstract class AbstractTracked {
      * be received. This method must be called from Tracker's open method while
      * not synchronized on this object after the add listener call.
      */
+    @SuppressWarnings("unchecked")
     void trackInitial() {
         while (true) {
             Object item;
@@ -206,6 +208,7 @@ abstract class AbstractTracked {
      * @param item Item to be tracked.
      * @param related Action related object.
      */
+    @SuppressWarnings("unchecked")
     void track(final Object item, final Object related) {
         final Object object;
         synchronized (this) {
@@ -250,6 +253,7 @@ abstract class AbstractTracked {
      * @param item Item to be tracked.
      * @param related Action related object.
      */
+    @SuppressWarnings("unchecked")
     private void trackAdding(final Object item, final Object related) {
         if (DEBUG) {
             System.out.println("AbstractTracked.trackAdding: " + item);
@@ -379,6 +383,7 @@ abstract class AbstractTracked {
      *         items or a new array large enough to hold the tracked items.
      * @GuardedBy this
      */
+    @SuppressWarnings("unchecked")
     Object[] getTracked(final Object[] list) {
         return tracked.keySet().toArray(list);
     }

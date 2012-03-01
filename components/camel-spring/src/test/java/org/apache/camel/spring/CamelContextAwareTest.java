@@ -60,4 +60,7 @@ public class CamelContextAwareTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextAwareBean.xml");
     }
 
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
 }

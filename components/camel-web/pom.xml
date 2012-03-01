@@ -19,7 +19,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>2.10-SNAPSHOT</version>
+        <version>2.9.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>camel-web</artifactId>
@@ -251,19 +251,6 @@
                 </executions>
             </plugin>
 
-            <!-- mvn tomcat7:run -->
-            <plugin>  
-              <groupId>org.apache.tomcat.maven</groupId>  
-              <artifactId>tomcat7-maven-plugin</artifactId>  
-              <version>2.0-beta-1</version>
-              <configuration>
-                <path>/</path>  
-                <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>                       
-              </configuration>  
-            </plugin>
-
-
-            <!-- mvn jetty:run -->
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>

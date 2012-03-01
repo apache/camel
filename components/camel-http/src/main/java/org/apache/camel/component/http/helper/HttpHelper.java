@@ -266,14 +266,14 @@ public final class HttpHelper {
      * @param value    the value
      */
     @SuppressWarnings("unchecked")
-    public static void appendHeader(Map<String, Object> headers, String key, Object value) {
+    public static void appendHeader(Map headers, String key, Object value) {
         if (headers.containsKey(key)) {
             Object existing = headers.get(key);
-            List<Object> list;
+            List list;
             if (existing instanceof List) {
-                list = (List<Object>) existing;
+                list = (List) existing;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList();
                 list.add(existing);
             }
             list.add(value);
@@ -295,6 +295,7 @@ public final class HttpHelper {
      * @param value the parameter value
      * @return the extracted parameter value, see more details in javadoc.
      */
+    @SuppressWarnings("unchecked")
     public static Object extractHttpParameterValue(String value) {
         if (value == null || ObjectHelper.isEmpty(value)) {
             return value;
@@ -306,7 +307,7 @@ public final class HttpHelper {
         if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
             // remove the [ ] markers
             trimmed = trimmed.substring(1, trimmed.length() - 1);
-            List<String> list = new ArrayList<String>();
+            List list = new ArrayList<String>();
             String[] values = trimmed.split(",");
             for (String s : values) {
                 list.add(s.trim());

@@ -123,7 +123,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public void setThreadNamePattern(String threadNamePattern) {
         // must set camel id here in the pattern and let the other placeholders be resolved on demand
-        String name = threadNamePattern.replaceFirst("#camelId#", this.camelContext.getName());
+        String name = threadNamePattern.replaceFirst("\\$\\{camelId\\}", this.camelContext.getName());
         this.threadNamePattern = name;
     }
     
@@ -245,18 +245,13 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     public void shutdown(ExecutorService executorService) {
         ObjectHelper.notNull(executorService, "executorService");
 
-        if (!executorService.isShutdown()) {
-            LOG.debug("Shutdown ExecutorService: {}", executorService);
-            executorService.shutdown();
-            LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
+        if (executorService.isShutdown()) {
+            return;
         }
 
-        if (executorService instanceof ThreadPoolExecutor) {
-            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
-            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
-                lifecycle.onThreadPoolRemove(camelContext, threadPool);
-            }
-        }
+        LOG.debug("Shutdown ExecutorService: {}", executorService);
+        executorService.shutdown();
+        LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
 
         // remove reference as its shutdown
         executorServices.remove(executorService);
@@ -270,19 +265,13 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     private List<Runnable> doShutdownNow(ExecutorService executorService, boolean remove) {
         ObjectHelper.notNull(executorService, "executorService");
 
-        List<Runnable> answer = null;
-        if (!executorService.isShutdown()) {
-            LOG.debug("ShutdownNow ExecutorService: {}", executorService);
-            answer = executorService.shutdownNow();
-            LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
+        if (executorService.isShutdown()) {
+            return null;
         }
 
-        if (executorService instanceof ThreadPoolExecutor) {
-            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
-            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
-                lifecycle.onThreadPoolRemove(camelContext, threadPool);
-            }
-        }
+        LOG.debug("ShutdownNow ExecutorService: {}", executorService);
+        List<Runnable> answer = executorService.shutdownNow();
+        LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
 
         // remove reference as its shutdown
         if (remove) {
@@ -305,7 +294,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     protected void doStart() throws Exception {
         if (threadNamePattern == null) {
             // set default name pattern which includes the camel context name
-            threadNamePattern = "Camel (" + camelContext.getName() + ") thread ##counter# - #name#";
+            threadNamePattern = "Camel (" + camelContext.getName() + ") thread #${counter} - ${name}";
         }
     }
 
@@ -359,7 +348,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
         // extract id from source
         if (source instanceof NamedNode) {
-            id = ((OptionalIdentifiedDefinition<?>) source).idOrCreate(this.camelContext.getNodeIdFactory());
+            id = ((OptionalIdentifiedDefinition) source).idOrCreate(this.camelContext.getNodeIdFactory());
             // and let source be the short name of the pattern
             sourceId = ((NamedNode) source).getShortName();
         } else if (source instanceof String) {
@@ -377,7 +366,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
         // extract route id if possible
         if (source instanceof ProcessorDefinition) {
-            RouteDefinition route = ProcessorDefinitionHelper.getRoute((ProcessorDefinition<?>) source);
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute((ProcessorDefinition) source);
             if (route != null) {
                 routeId = route.idOrCreate(this.camelContext.getNodeIdFactory());
             }

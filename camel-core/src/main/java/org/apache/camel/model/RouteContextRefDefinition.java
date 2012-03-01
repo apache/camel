@@ -53,7 +53,7 @@ public class RouteContextRefDefinition {
         this.ref = ref;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     public List<RouteDefinition> lookupRoutes(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext", this);
         ObjectHelper.notNull(ref, "ref", this);

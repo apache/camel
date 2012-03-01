@@ -77,7 +77,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("unused")
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext>
-        implements FactoryBean<SpringCamelContext>, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener<ApplicationEvent> {
+        implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
 
     @XmlAttribute(name = "depends-on", required = false)
@@ -99,13 +99,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute(required = false)
     private String useBreadcrumb;
     @XmlAttribute(required = false)
-    private String managementNamePattern;
-    @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute(required = false)
-    @Deprecated
     private Boolean lazyLoadTypeConverters;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
@@ -125,7 +122,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
             @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
             @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class, required = false)})
-    private List<?> beans;
+    private List beans;
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "routeContextRef", required = false)
@@ -471,20 +468,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.useBreadcrumb = useBreadcrumb;
     }
 
-    public String getManagementNamePattern() {
-        return managementNamePattern;
-    }
-
-    public void setManagementNamePattern(String managementNamePattern) {
-        this.managementNamePattern = managementNamePattern;
-    }
-
-    @Deprecated
     public Boolean getLazyLoadTypeConverters() {
         return lazyLoadTypeConverters;
     }
 
-    @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }

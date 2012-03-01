@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.AbstractCamelRedeliveryPolicyFactoryBean;
-import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -36,7 +35,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 @XmlRootElement(name = "redeliveryPolicyProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelRedeliveryPolicyFactoryBean extends AbstractCamelRedeliveryPolicyFactoryBean implements FactoryBean<RedeliveryPolicy>, ApplicationContextAware {
+public class CamelRedeliveryPolicyFactoryBean extends AbstractCamelRedeliveryPolicyFactoryBean implements FactoryBean, ApplicationContextAware {
 
     @XmlTransient
     private ApplicationContext applicationContext;

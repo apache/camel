@@ -92,7 +92,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private volatile long resultMinimumWaitTime;
     private volatile long assertPeriod;
     private volatile int expectedMinimumCount;
-    private volatile List<?> expectedBodyValues;
+    private volatile List<Object> expectedBodyValues;
     private volatile List<Object> actualBodyValues;
     private volatile Map<String, Object> expectedHeaderValues;
     private volatile Map<String, Object> actualHeaderValues;
@@ -542,7 +542,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that the given body values are received by this
      * endpoint in the specified order
      */
-    public void expectedBodiesReceived(final List<?> bodies) {
+    @SuppressWarnings("unchecked")
+    public void expectedBodiesReceived(final List bodies) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
         this.actualBodyValues = new ArrayList<Object>();
@@ -635,7 +636,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that the given body values are received by this
      * endpoint in any order
      */
-    public void expectedBodiesReceivedInAnyOrder(final List<?> bodies) {
+    @SuppressWarnings("unchecked")
+    public void expectedBodiesReceivedInAnyOrder(final List bodies) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
         this.actualBodyValues = new ArrayList<Object>();

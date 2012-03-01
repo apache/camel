@@ -118,9 +118,5 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
         @Override
         public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId, String threadPoolProfileId) {
         }
-
-        @Override
-        public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
-        }
     }
 }

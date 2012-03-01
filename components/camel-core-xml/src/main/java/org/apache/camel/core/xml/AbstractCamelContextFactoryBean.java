@@ -36,6 +36,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
+import org.apache.camel.core.xml.scan.PatternBasedPackageScanFilter;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
@@ -113,11 +114,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         contextClassLoaderOnStart = Thread.currentThread().getContextClassLoader();
     }
 
-    public T getObject() throws Exception {
+    public Object getObject() throws Exception {
         return getContext();
     }
 
-    public abstract Class<T> getObjectType();
+    public Class getObjectType() {
+        return CamelContext.class;
+    }
 
     public boolean isSingleton() {
         return true;
@@ -330,7 +333,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     protected abstract void initCustomRegistry(T context);
     
-    @SuppressWarnings("deprecation")
     protected void initLazyLoadTypeConverteres() {
         if (getLazyLoadTypeConverters() != null) {
             getContext().setLazyLoadTypeConverters(getLazyLoadTypeConverters());
@@ -395,10 +397,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             PropertiesComponent pc = new PropertiesComponent();
             pc.setLocation(def.getLocation());
-
-            if (def.isIgnoreMissingLocation() != null) {
-                pc.setIgnoreMissingLocation(def.isIgnoreMissingLocation());
-            }
 
             // if using a custom resolver
             if (ObjectHelper.isNotEmpty(def.getPropertiesResolverRef())) {
@@ -498,12 +496,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getUseBreadcrumb();
 
-    public abstract String getManagementNamePattern();
-
-    /**
-     * @deprecated this option is no longer supported, will be removed in a future Camel release.
-     */
-    @Deprecated
     public abstract Boolean getLazyLoadTypeConverters();
 
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();
@@ -561,9 +553,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getUseBreadcrumb() != null) {
             ctx.setUseBreadcrumb(CamelContextHelper.parseBoolean(getContext(), getUseBreadcrumb()));
-        }
-        if (getManagementNamePattern() != null) {
-            ctx.getManagementNameStrategy().setNamePattern(getManagementNamePattern());
         }
         if (getShutdownRoute() != null) {
             ctx.setShutdownRoute(getShutdownRoute());

@@ -72,7 +72,6 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionMisconfigured3() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 onException();
 
@@ -91,7 +90,6 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionMisconfigured4() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 onException().end();
 
@@ -110,7 +108,6 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionMisconfigured5() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
 
                 from("direct:start")
@@ -130,7 +127,6 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionNotMisconfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 onException().handled(true);
 
@@ -144,7 +140,6 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     public void testOnExceptionNotMisconfigured2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 onException().continued(true);
 

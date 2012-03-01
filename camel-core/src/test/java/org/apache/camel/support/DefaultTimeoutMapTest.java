@@ -32,7 +32,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     private ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
 
     public void testDefaultTimeoutMap() {
-        DefaultTimeoutMap<?, ?> map = new DefaultTimeoutMap<Object, Object>(executor);
+        DefaultTimeoutMap map = new DefaultTimeoutMap(executor);
         assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());

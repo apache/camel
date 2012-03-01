@@ -36,7 +36,8 @@ public class GzipDataFormat implements DataFormat {
         try {
             IOHelper.copy(is, zipOutput);
         } finally {
-            IOHelper.close(is, zipOutput);
+            IOHelper.close(is);
+            IOHelper.close(zipOutput);
         }
     }
 

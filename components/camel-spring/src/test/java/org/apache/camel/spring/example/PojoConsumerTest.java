@@ -47,4 +47,7 @@ public class PojoConsumerTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoConsumer.xml");
     }
 
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
 }

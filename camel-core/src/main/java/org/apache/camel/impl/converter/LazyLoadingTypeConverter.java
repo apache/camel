@@ -33,10 +33,8 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * This implementation will lazy load type converters on-demand.
  *
- * @version
- * @deprecated will be removed in a future Camel release.
+ * @version 
  */
-@Deprecated
 public class LazyLoadingTypeConverter extends BaseTypeConverterRegistry {
     private final AtomicBoolean loaded = new AtomicBoolean();
 

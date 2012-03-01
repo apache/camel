@@ -143,7 +143,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
             
             checkName(factoryBean.getEndpointName(), "endpoint/port name");
             checkName(factoryBean.getServiceName(), "service name");
-            return factoryBean.create();
+            return (Client)factoryBean.create();
         }
     }
 

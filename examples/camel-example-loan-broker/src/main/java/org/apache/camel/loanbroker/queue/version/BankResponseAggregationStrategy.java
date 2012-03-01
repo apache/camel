@@ -17,6 +17,7 @@
 package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.loanbroker.webservice.version.bank.BankQuote;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 //START SNIPPET: aggregation

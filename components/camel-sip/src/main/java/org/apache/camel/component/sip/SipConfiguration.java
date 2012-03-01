@@ -327,7 +327,7 @@ public class SipConfiguration {
     }
 
     private void createViaHeaders() throws ParseException, InvalidArgumentException {
-        viaHeaders = new ArrayList<ViaHeader>();
+        viaHeaders = new ArrayList();
         ViaHeader viaHeader = headerFactory.createViaHeader(getFromHost(), getFromPort(),
                 getTransport(), null);
 

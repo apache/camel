@@ -52,8 +52,9 @@ public class NoOutputExpressionNode extends ExpressionNode {
     }
 
     @Override
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return Collections.emptyList();
+    @SuppressWarnings("unchecked")
+    public List<ProcessorDefinition> getOutputs() {
+        return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -62,7 +63,7 @@ public class NoOutputExpressionNode extends ExpressionNode {
     }
 
     @Override
-    public void addOutput(ProcessorDefinition<?> output) {
+    public void addOutput(ProcessorDefinition output) {
         // add it to the parent as we do not support outputs
         getParent().addOutput(output);
     }

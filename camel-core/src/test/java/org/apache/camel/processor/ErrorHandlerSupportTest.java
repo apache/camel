@@ -28,7 +28,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 public class ErrorHandlerSupportTest extends TestCase {
 
     public void testOnePolicyChildFirst() {
-        List<Class<? extends Throwable>> exceptions = new ArrayList<Class<? extends Throwable>>();
+        List<Class> exceptions = new ArrayList<Class>();
         exceptions.add(ChildException.class);
         exceptions.add(ParentException.class);
 
@@ -40,7 +40,7 @@ public class ErrorHandlerSupportTest extends TestCase {
     }
 
     public void testOnePolicyChildLast() {
-        List<Class<? extends Throwable>> exceptions = new ArrayList<Class<? extends Throwable>>();
+        List<Class> exceptions = new ArrayList<Class>();
         exceptions.add(ParentException.class);
         exceptions.add(ChildException.class);
 
@@ -69,17 +69,15 @@ public class ErrorHandlerSupportTest extends TestCase {
         assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 0));
     }
 
-    private static Class<? extends Throwable> getExceptionPolicyFor(ErrorHandlerSupport support, Throwable childException,
+    private static Class getExceptionPolicyFor(ErrorHandlerSupport support, Throwable childException,
                                                int index) {
         return support.getExceptionPolicy(null, childException).getExceptionClasses().get(index);
     }
 
     private static class ParentException extends Exception {
-        private static final long serialVersionUID = 1L;
     }
 
     private static class ChildException extends ParentException {
-        private static final long serialVersionUID = 1L;
     }
 
     private static class ShuntErrorHandlerSupport extends ErrorHandlerSupport {

@@ -100,4 +100,8 @@ public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSu
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringDataSource.xml");
     }
 
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
 }

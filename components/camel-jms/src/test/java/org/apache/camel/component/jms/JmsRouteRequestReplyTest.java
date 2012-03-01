@@ -278,7 +278,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         }
     }
 
-    public class Task implements Callable<Task> {
+    public class Task implements Callable {
         private AtomicInteger counter;
         private String fromUri;
         private volatile boolean ok = true;
@@ -289,7 +289,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             this.fromUri = fromUri;
         }
 
-        public Task call() throws Exception {
+        public Object call() throws Exception {
             for (int i = 0; i < maxCalls; i++) {
                 int callId = counter.incrementAndGet();
                 Object reply = "";
@@ -445,6 +445,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         runRequestReplyThreaded(endpointUriA);
     }
 
+    @SuppressWarnings("unchecked")
     protected void runRequestReplyThreaded(String fromUri) throws Exception {
         // start template
         template.start();

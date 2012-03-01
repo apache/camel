@@ -50,7 +50,6 @@ public class OnExceptionWhenSimpleOgnlTest extends ContextTestSupport {
     }
 
     public static final class MyException extends Exception {
-        private static final long serialVersionUID = 1L;
         private final MyExceptionInfo info;
 
         public MyException(int state) {

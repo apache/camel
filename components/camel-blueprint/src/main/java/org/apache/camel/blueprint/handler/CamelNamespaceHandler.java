@@ -126,7 +126,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return getClass().getClassLoader().getResource("camel-blueprint.xsd");
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     public Set<Class> getManagedClasses() {
         return new HashSet<Class>(Arrays.asList(BlueprintCamelContext.class));
     }
@@ -403,7 +403,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         if (beans != null) {
             for (Object bean : beans) {
                 if (bean instanceof AbstractCamelFactoryBean) {
-                    registerBean(context, contextId, (AbstractCamelFactoryBean<?>) bean);
+                    registerBean(context, contextId, (AbstractCamelFactoryBean) bean);
                 }
             }
         }
@@ -462,7 +462,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     protected JAXBContext createJaxbContext() throws JAXBException {
         StringBuilder packages = new StringBuilder();
-        for (Class<?> cl : getJaxbPackages()) {
+        for (Class cl : getJaxbPackages()) {
             if (packages.length() > 0) {
                 packages.append(":");
             }
@@ -471,8 +471,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
     }
 
-    protected Set<Class<?>> getJaxbPackages() {
-        Set<Class<?>> classes = new HashSet<Class<?>>();
+    protected Set<Class> getJaxbPackages() {
+        Set<Class> classes = new HashSet<Class>();
         classes.add(CamelContextFactoryBean.class);
         classes.add(AbstractCamelContextFactoryBean.class);
         classes.add(org.apache.camel.ExchangePattern.class);
@@ -538,7 +538,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
          * @param bean the bean to be injected
          */
         protected void injectFields(final Object bean, final String beanName) {
-            Class<?> clazz = bean.getClass();
+            Class clazz = bean.getClass();
             do {
                 Field[] fields = clazz.getDeclaredFields();
                 for (Field field : fields) {
@@ -579,7 +579,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
 
         protected void injectMethods(final Object bean, final String beanName) {
-            Class<?> clazz = bean.getClass();
+            Class clazz = bean.getClass();
             do {
                 Method[] methods = clazz.getDeclaredMethods();
                 for (Method method : methods) {
@@ -759,10 +759,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
         }
 
-        @SuppressWarnings({"rawtypes"})
-        private void findOutputComponents(List<ProcessorDefinition<?>> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {
+        @SuppressWarnings("unchecked")
+        private void findOutputComponents(List<ProcessorDefinition> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {
             if (defs != null) {
-                for (ProcessorDefinition<?> def : defs) {
+                for (ProcessorDefinition def : defs) {
                     if (def instanceof SendDefinition) {
                         findUriComponent(((SendDefinition) def).getUri(), components);
                     }
@@ -797,7 +797,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         findLanguage(((SortDefinition) def).getExpression(), languages);
                     }
                     if (def instanceof WireTapDefinition) {
-                        findLanguage(((WireTapDefinition<?>) def).getNewExchangeExpression(), languages);
+                        findLanguage(((WireTapDefinition) def).getNewExchangeExpression(), languages);
                     }
                     findOutputComponents(def.getOutputs(), components, languages, dataformats);
                 }

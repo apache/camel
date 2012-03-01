@@ -138,13 +138,15 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
      *
      * @param errorHandlerBuilder  the error handler to be used by default for all child routes
+     * @return the current builder with the error handler configured
      */
-    public void errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+    public RouteBuilder errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         if (!getRouteCollection().getRoutes().isEmpty()) {
             throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
         setErrorHandlerBuilder(errorHandlerBuilder);
+        return this;
     }
 
     /**
@@ -208,7 +210,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param exception exception to catch
      * @return the builder
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable> exception) {
+    public OnExceptionDefinition onException(Class exception) {
         // is only allowed at the top currently
         if (!getRouteCollection().getRoutes().isEmpty()) {
             throw new IllegalArgumentException("onException must be defined before any routes in the RouteBuilder");
@@ -224,9 +226,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param exceptions list of exceptions to catch
      * @return the builder
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
+    public OnExceptionDefinition onException(Class... exceptions) {
         OnExceptionDefinition last = null;
-        for (Class<? extends Throwable> ex : exceptions) {
+        for (Class ex : exceptions) {
             last = last == null ? onException(ex) : last.onException(ex);
         }
         return last != null ? last : onException(Exception.class);

@@ -21,7 +21,6 @@ package org.apache.camel.component.jetty.proxy;
  */
 public class MyAppException extends Exception {
 
-    private static final long serialVersionUID = 1L;
     private final String name;
 
     public MyAppException(String msg, String name) {

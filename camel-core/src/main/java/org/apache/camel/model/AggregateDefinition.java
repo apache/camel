@@ -63,7 +63,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlTransient
     private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -248,9 +248,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     @Override
-    protected void configureChild(ProcessorDefinition<?> output) {
+    protected void configureChild(ProcessorDefinition output) {
         if (expression != null && expression instanceof ExpressionClause) {
-            ExpressionClause<?> clause = (ExpressionClause<?>) expression;
+            ExpressionClause clause = (ExpressionClause) expression;
             if (clause.getExpressionType() != null) {
                 // if using the Java DSL then the expression may have been set using the
                 // ExpressionClause which is a fancy builder to define expressions and predicates
@@ -780,8 +780,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.expression = expression;
     }
 
-    @Override
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
 
@@ -789,7 +788,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return true;
     }
 
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
     }
 

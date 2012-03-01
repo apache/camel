@@ -31,7 +31,6 @@ import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
 import org.jboss.netty.handler.codec.frame.Delimiters;
-import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.jboss.netty.handler.codec.string.StringDecoder;
@@ -41,6 +40,7 @@ import org.jboss.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("unchecked")
 public class NettyConfiguration implements Cloneable {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
@@ -146,7 +146,7 @@ public class NettyConfiguration implements Cloneable {
                 } else {
                     // object serializable is then used
                     encoders.add(new ObjectEncoder());
-                    decoders.add(new ObjectDecoder(ClassResolvers.weakCachingResolver(null)));
+                    decoders.add(new ObjectDecoder());
 
                     LOG.debug("Using object encoders and decoders");
                 }
@@ -469,10 +469,10 @@ public class NettyConfiguration implements Cloneable {
         return host + ":" + port;
     }
 
-    private <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
+    private <T> void addToHandlersList(List configured, List handlers, Class<? extends T> handlerType) {
         if (handlers != null) {
             for (int x = 0; x < handlers.size(); x++) {
-                T handler = handlers.get(x);
+                Object handler = handlers.get(x);
                 if (handlerType.isInstance(handler)) {
                     configured.add(handler);
                 }

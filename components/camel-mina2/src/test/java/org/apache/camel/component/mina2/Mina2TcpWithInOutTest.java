@@ -40,7 +40,7 @@ public class Mina2TcpWithInOutTest extends BaseMina2Test {
     @Test
     public void testMinaRouteWithInOut() throws Exception {
         latch = new CountDownLatch(1);
-        uri = String.format("mina2:tcp://localhost:%1$s?textline=true", getPort());
+        uri = "mina2:tcp://localhost:{{port}}?textline=true";
 
         Mina2ReverserServer server = new Mina2ReverserServer(getPort());
         server.start();
@@ -85,7 +85,7 @@ public class Mina2TcpWithInOutTest extends BaseMina2Test {
     @Test
     public void testMinaRouteWithInOutLazy() throws Exception {
         latch = new CountDownLatch(1);
-        uri = String.format("mina2:tcp://localhost:%1$s?textline=true&lazySessionCreation=true", getPort());
+        uri = "mina2:tcp://localhost:{{port}}?textline=true&lazySessionCreation=true";
 
         // The server is activated after Camel to check if the lazyness is working
         Mina2ReverserServer server = new Mina2ReverserServer(getPort());

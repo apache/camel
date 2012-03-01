@@ -30,6 +30,9 @@ public class TransactionInterceptSendToEndpointTest extends CamelSpringTestSuppo
             "/org/apache/camel/component/jms/tx/TransactionInterceptSendToEndpointTest.xml");
     }
 
+    protected int getExpectedRouteCount() {
+        return 1;
+    }
 
     @Test
     public void testIntercepted() throws Exception {

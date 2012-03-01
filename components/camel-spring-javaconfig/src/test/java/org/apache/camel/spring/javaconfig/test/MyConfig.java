@@ -24,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class MyConfig {
-
     @Bean
     public MyPostProcessor myPostProcessor() {
         return new MyPostProcessor();

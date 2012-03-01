@@ -36,7 +36,7 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyFileFilter<Object>());
+        jndi.bind("myFilter", new MyFileFilter());
         return jndi;
     }
 
@@ -79,9 +79,9 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter<T> implements GenericFileFilter<T> {
+    public class MyFileFilter implements GenericFileFilter {
 
-        public boolean accept(GenericFile<T> file) {
+        public boolean accept(GenericFile file) {
             // we only want report files 
             return file.getFileName().startsWith("report");
         }

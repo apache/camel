@@ -157,6 +157,7 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         ServiceHelper.stopServices(output, errorHandler, routeContextProcessor);
     }
 
+    @SuppressWarnings("unchecked")
     public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         this.routeContext = routeContext;
         this.definition = outputDefinition;
@@ -319,7 +320,7 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         // determine if we can still run, or the camel context is forcing a shutdown
         boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
         if (forceShutdown) {
-            LOG.debug("Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: {}", exchange);
+            LOG.trace("Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException());
             }

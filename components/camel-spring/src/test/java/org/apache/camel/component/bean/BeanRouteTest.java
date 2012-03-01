@@ -54,6 +54,10 @@ public class BeanRouteTest extends SpringTestSupport {
         }
     }
 
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
+
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/bean/camelContext.xml");
     }

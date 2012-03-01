@@ -16,57 +16,104 @@
  */
 package org.apache.camel.component.file;
 
+import java.lang.reflect.Method;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedString;
+
 /**
- * File filter using AntPathMatcher.
+ * File filter using Spring's AntPathMatcher.
  * <p/>
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  * @param <T>
  */
-public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> {
+public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T>, CamelContextAware {
+    private static final String ANTPATHMATCHER_CLASSNAME = "org.apache.camel.spring.util.SpringAntPathMatcherFileFilter";
 
-    private final AntPathMatcherFileFilter filter;
+    private CamelContext context;
 
-    public AntPathMatcherGenericFileFilter() {
-        filter = new AntPathMatcherFileFilter();
-    }
+    private String[] excludes;
+    private String[] includes;
 
-    public AntPathMatcherGenericFileFilter(String... includes) {
-        filter = new AntPathMatcherFileFilter();
-        filter.setIncludes(includes);
-    }
+    private Object filter;
+    private Method includesMethod;
+    private Method excludesMethod;
+    private Method acceptsMethod;
 
     public boolean accept(GenericFile<T> file) {
-        String path = file.getRelativeFilePath();
-        return filter.acceptPathName(path);
+        try {
+            synchronized (this) {
+                if (filter == null) {
+                    init();
+                }
+            }
+
+            // invoke setIncludes(String), must using string type as invoking with string[] does not work
+            ObjectHelper.invokeMethod(includesMethod, filter, collectionAsCommaDelimitedString(includes));
+
+            // invoke setExcludes(String), must using string type as invoking with string[] does not work
+            ObjectHelper.invokeMethod(excludesMethod, filter, collectionAsCommaDelimitedString(excludes));
+
+            // invoke acceptPathName(String)
+            String path = file.getRelativeFilePath();
+            return (Boolean) ObjectHelper.invokeMethod(acceptsMethod, filter, path);
+
+        } catch (NoSuchMethodException e) {
+            throw new TypeNotPresentException(ANTPATHMATCHER_CLASSNAME, e);
+        }
+    }
+
+    private void init() throws NoSuchMethodException {
+        // we must use reflection to invoke the AntPathMatcherFileFilter that reside in camel-spring.jar
+        // and we don't want camel-core to have runtime dependency on camel-spring.jar
+        // use class resolver from CamelContext to ensure it works with OSGi as well
+        Class<?> clazz = context.getClassResolver().resolveClass(ANTPATHMATCHER_CLASSNAME);
+        ObjectHelper.notNull(clazz, ANTPATHMATCHER_CLASSNAME + " not found in classpath. camel-spring.jar is required in the classpath.");
+
+        filter = ObjectHelper.newInstance(clazz);
+
+        includesMethod = filter.getClass().getMethod("setIncludes", String.class);
+        excludesMethod = filter.getClass().getMethod("setExcludes", String.class);
+        acceptsMethod = filter.getClass().getMethod("acceptPathName", String.class);
     }
 
     public String[] getExcludes() {
-        return filter.getExcludes();
+        return excludes;
     }
 
     public void setExcludes(String[] excludes) {
-        filter.setExcludes(excludes);
+        this.excludes = excludes;
     }
 
     public String[] getIncludes() {
-        return filter.getIncludes();
+        return includes;
     }
 
     public void setIncludes(String[] includes) {
-        filter.setIncludes(includes);
+        this.includes = includes;
     }
 
     /**
      * Sets excludes using a single string where each element can be separated with comma
      */
     public void setExcludes(String excludes) {
-        filter.setExcludes(excludes);
+        setExcludes(excludes.split(","));
     }
 
     /**
      * Sets includes using a single string where each element can be separated with comma
      */
     public void setIncludes(String includes) {
-        filter.setIncludes(includes);
+        setIncludes(includes.split(","));
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.context = camelContext;
+    }
+
+    public CamelContext getCamelContext() {
+        return context;
     }
 }

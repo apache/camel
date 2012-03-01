@@ -66,6 +66,5 @@ public class FilterJUnit4Test extends CamelTestSupport {
             }
         };
     }
-
 }
 // END SNIPPET: example

@@ -192,6 +192,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         return httpExchange;
     }
 
+    @SuppressWarnings("unchecked")
     private void doSetQueryParameters(Exchange exchange, JettyContentExchange httpExchange) throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header
         // overrules endpoint)
@@ -207,7 +208,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         // okay we need to add the query string to the URI so we need to juggle a bit with the parameters
         String uri = httpExchange.getRequestURI();
 
-        Map<String, Object> parameters = URISupport.parseParameters(new URI(uri));
+        Map parameters = URISupport.parseParameters(new URI(uri));
         parameters.putAll(URISupport.parseQuery(queryString));
 
         if (uri.contains("?")) {

@@ -16,24 +16,22 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 public class MyCompletionProcessor implements Processor {
-    private final AtomicInteger aggregationCount = new AtomicInteger();
+    private static int aggregationCount;
 
     public int getAggregationCount() {
-        return aggregationCount.get();
+        return aggregationCount;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        aggregationCount.incrementAndGet();
+        aggregationCount++;
     }
 
     public void reset() {
-        aggregationCount.set(0);
+        aggregationCount = 0;
     }
 }

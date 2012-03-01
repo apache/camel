@@ -145,7 +145,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                 return true;
             }
         });
-        connection.addPacketSendingListener(new XmppLogger("OUTBOUND"), new PacketFilter() {
+        connection.addPacketWriterListener(new XmppLogger("OUTBOUND"), new PacketFilter() {
             public boolean accept(Packet packet) {
                 return true;
             }

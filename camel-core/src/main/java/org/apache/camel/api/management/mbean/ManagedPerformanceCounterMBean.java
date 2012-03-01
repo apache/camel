@@ -83,7 +83,4 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "Statistics enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
 
-    @ManagedOperation(description = "Dumps the statistics as XML")
-    String dumpStatsAsXml(boolean fullStats);
-
 }

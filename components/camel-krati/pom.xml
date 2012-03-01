@@ -21,7 +21,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>2.10-SNAPSHOT</version>
+        <version>2.9.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -50,7 +50,7 @@
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring</artifactId>
+            <artifactId>camel-test</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- logging -->

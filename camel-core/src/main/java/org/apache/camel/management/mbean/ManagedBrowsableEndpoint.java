@@ -26,33 +26,28 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.MessageHelper;
 
 /**
- * @version
+ * @version 
  */
 @ManagedResource(description = "Managed BrowsableEndpoint")
 public class ManagedBrowsableEndpoint extends ManagedEndpoint implements ManagedBrowsableEndpointMBean {
 
+    private BrowsableEndpoint endpoint;
+
     public ManagedBrowsableEndpoint(BrowsableEndpoint endpoint) {
         super(endpoint);
+        this.endpoint = endpoint;
     }
 
-    @Override
     public BrowsableEndpoint getEndpoint() {
-        return (BrowsableEndpoint) super.getEndpoint();
+        return endpoint;
     }
 
-    @Override
-    public BrowsableEndpoint getInstance() {
-        return getEndpoint();
-    }
-
-    @Override
     public long queueSize() {
-        return getEndpoint().getExchanges().size();
+        return endpoint.getExchanges().size();
     }
 
-    @Override
     public String browseExchange(Integer index) {
-        List<Exchange> exchanges = getEndpoint().getExchanges();
+        List<Exchange> exchanges = endpoint.getExchanges();
 
         if (index >= exchanges.size()) {
             return null;
@@ -65,9 +60,8 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         return exchange.toString();
     }
 
-    @Override
     public String browseMessageBody(Integer index) {
-        List<Exchange> exchanges = getEndpoint().getExchanges();
+        List<Exchange> exchanges = endpoint.getExchanges();
 
         if (index >= exchanges.size()) {
             return null;
@@ -88,14 +82,12 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         return body;
     }
 
-    @Override
     public String browseMessageAsXml(Integer index) {
         return browseMessageAsXml(index, true);
     }
 
-    @Override
     public String browseMessageAsXml(Integer index, Boolean includeBody) {
-        List<Exchange> exchanges = getEndpoint().getExchanges();
+        List<Exchange> exchanges = endpoint.getExchanges();
 
         if (index >= exchanges.size()) {
             return null;
@@ -111,12 +103,10 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         return xml;
     }
 
-    @Override
     public String browseAllMessagesAsXml(Boolean includeBody) {
         return browseRangeMessagesAsXml(0, Integer.MAX_VALUE, includeBody);
     }
 
-    @Override
     public String browseRangeMessagesAsXml(Integer fromIndex, Integer toIndex, Boolean includeBody) {
         if (fromIndex == null) {
             fromIndex = 0;
@@ -128,7 +118,7 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
             throw new IllegalArgumentException("From index cannot be larger than to index, was: " + fromIndex + " > " + toIndex);
         }
 
-        List<Exchange> exchanges = getEndpoint().getExchanges();
+        List<Exchange> exchanges = endpoint.getExchanges();
         if (exchanges.size() == 0) {
             return null;
         }

@@ -29,8 +29,12 @@ import krati.store.SerializableObjectStore;
 import krati.util.HashFunction;
 
 import org.apache.camel.RuntimeCamelException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class KratiHelper {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(KratiHelper.class);
 
     private KratiHelper() {
         //Utillity Class
@@ -48,9 +52,9 @@ public final class KratiHelper {
      * @param valueSerializer The serializer used for values,defaults to {@link org.apache.camel.component.krati.serializer.KratiDefaultSerializer}.
      * @return
      */
-    public static <K, V> DataStore<K, V> createDataStore(String path, int initialCapacity, int segmentFileSize, SegmentFactory segmentFactory,
-                                            HashFunction<byte[]> hashFunction, Serializer<K> keySerializer, Serializer<V> valueSerializer) {
-        DataStore<K, V> result = null;
+    public static DataStore createDataStore(String path, int initialCapacity, int segmentFileSize, SegmentFactory segmentFactory,
+                                            HashFunction hashFunction, Serializer keySerializer, Serializer valueSerializer) {
+        DataStore result = null;
         File homeDir = new File(path);
         homeDir.mkdirs();
         try {
@@ -58,8 +62,8 @@ public final class KratiHelper {
             storeConfig.setSegmentFactory(segmentFactory);
             storeConfig.setHashFunction(hashFunction);
             storeConfig.setSegmentFileSizeMB(segmentFileSize);
-            DataStore<byte[], byte[]> dynamicDataStore = new DynamicDataStore(storeConfig);
-            result = new SerializableObjectStore<K, V>(dynamicDataStore, keySerializer, valueSerializer);
+            DataStore dynamicDataStore = new DynamicDataStore(storeConfig);
+            result = new SerializableObjectStore(dynamicDataStore, keySerializer, valueSerializer);
         } catch (Exception e) {
             throw new RuntimeCamelException("Failed to create Krati DataStore.", e);
         }
@@ -75,8 +79,8 @@ public final class KratiHelper {
      * @param segmentFactory  The segment factory, defaults to {@link krati.core.segment.ChannelSegmentFactory}.
      * @return
      */
-    public static DataSet<byte[]> createDataSet(String path, int initialCapacity, SegmentFactory segmentFactory) {
-        DataSet<byte[]> result = null;
+    public static DataSet createDataSet(String path, int initialCapacity, SegmentFactory segmentFactory) {
+        DataSet result = null;
         File homeDir = new File(path);
         homeDir.mkdirs();
         try {

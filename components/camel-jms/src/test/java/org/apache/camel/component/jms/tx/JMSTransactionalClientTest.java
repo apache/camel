@@ -33,6 +33,10 @@ public class JMSTransactionalClientTest extends CamelSpringTestSupport {
             "/org/apache/camel/component/jms/tx/JMSTransactionalClientTest.xml");
     }
 
+    protected int getExpectedRouteCount() {
+        return 1;
+    }
+
     @Test
     public void testTransactionSuccess() throws Exception {
         // START SNIPPET: e1

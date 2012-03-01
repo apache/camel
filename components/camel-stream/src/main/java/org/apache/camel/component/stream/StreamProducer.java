@@ -32,9 +32,7 @@ import java.util.List;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,7 +125,7 @@ public class StreamProducer extends DefaultProducer {
         String s = exchange.getIn().getMandatoryBody(String.class);
         Charset charset = endpoint.getCharset();
         Writer writer = new OutputStreamWriter(outputStream, charset);
-        BufferedWriter bw = IOHelper.buffered(writer);
+        BufferedWriter bw = new BufferedWriter(writer);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Writing as text: {} to {} using encoding: {}", new Object[]{body, outputStream, charset});
         }

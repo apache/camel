@@ -40,9 +40,6 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
         // load type converters up front
         loadCoreTypeConverters();
         loadTypeConverters();
-
-        // report how many type converters we have loaded
-        log.info("Loaded {} type converters", typeMappings.size());
     }
 
 }

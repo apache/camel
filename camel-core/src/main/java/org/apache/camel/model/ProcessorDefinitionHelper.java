@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -43,7 +42,7 @@ public final class ProcessorDefinitionHelper {
      * @param type     the type to look for
      * @return         the found definitions, or <tt>null</tt> if not found
      */
-    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
+    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
         List<T> found = new ArrayList<T>();
         doFindType(outputs, type, found);
         return found.iterator();
@@ -57,7 +56,7 @@ public final class ProcessorDefinitionHelper {
      * @param type     the type to look for
      * @return         the first found type, or <tt>null</tt> if not found
      */
-    public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
+    public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
         List<T> found = new ArrayList<T>();
         doFindType(outputs, type, found);
         if (found.isEmpty()) {
@@ -123,7 +122,7 @@ public final class ProcessorDefinitionHelper {
             return null;
         }
 
-        ProcessorDefinition<?> def = node;
+        ProcessorDefinition def = node;
         // drill to the top
         while (def != null && def.getParent() != null) {
             def = def.getParent();
@@ -138,8 +137,8 @@ public final class ProcessorDefinitionHelper {
 
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found) {
+    @SuppressWarnings("unchecked")
+    private static <T> void doFindType(List<ProcessorDefinition> outputs, Class<T> type, List<T> found) {
         if (outputs == null || outputs.isEmpty()) {
             return;
         }
@@ -152,7 +151,7 @@ public final class ProcessorDefinitionHelper {
             // send is much common
             if (out instanceof SendDefinition) {
                 SendDefinition send = (SendDefinition) out;
-                List<ProcessorDefinition<?>> children = send.getOutputs();
+                List<ProcessorDefinition> children = send.getOutputs();
                 doFindType(children, type, found);
             }
 
@@ -160,19 +159,19 @@ public final class ProcessorDefinitionHelper {
             if (out instanceof ChoiceDefinition) {
                 ChoiceDefinition choice = (ChoiceDefinition) out;
                 for (WhenDefinition when : choice.getWhenClauses()) {
-                    List<ProcessorDefinition<?>> children = when.getOutputs();
+                    List<ProcessorDefinition> children = when.getOutputs();
                     doFindType(children, type, found);
                 }
 
                 // otherwise is optional
                 if (choice.getOtherwise() != null) {
-                    List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
+                    List<ProcessorDefinition> children = choice.getOtherwise().getOutputs();
                     doFindType(children, type, found);
                 }
             }
 
             // try children as well
-            List<ProcessorDefinition<?>> children = out.getOutputs();
+            List<ProcessorDefinition> children = out.getOutputs();
             doFindType(children, type, found);
         }
     }
@@ -186,8 +185,8 @@ public final class ProcessorDefinitionHelper {
      * @param excludeAbstract   whether or not to exclude abstract outputs (e.g. skip onException etc.)
      * @return <tt>true</tt> if has outputs, otherwise <tt>false</tt> is returned
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static boolean hasOutputs(List<ProcessorDefinition<?>> outputs, boolean excludeAbstract) {
+    @SuppressWarnings("unchecked")
+    public static boolean hasOutputs(List<ProcessorDefinition> outputs, boolean excludeAbstract) {
         if (outputs == null || outputs.isEmpty()) {
             return false;
         }

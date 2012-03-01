@@ -55,7 +55,6 @@ public class CxfProducerOperationTest extends CxfProducerTest {
                 params.add(TEST_MESSAGE);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
-                exchange.getIn().setHeader("requestObject", new DefaultCxfBinding());
             }
         });
         return exchange;

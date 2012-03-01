@@ -61,6 +61,7 @@ public class FilterDefinition extends ExpressionNode {
         return "filter";
     }
 
+
     @Override
     public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
         return createFilterProcessor(routeContext);
@@ -70,7 +71,7 @@ public class FilterDefinition extends ExpressionNode {
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
         // filter EIP should have child outputs
         Processor childProcessor = this.createChildProcessor(routeContext, true);
-        return new FilterProcessor(createPredicate(routeContext), childProcessor);
+        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
     }
 
 }

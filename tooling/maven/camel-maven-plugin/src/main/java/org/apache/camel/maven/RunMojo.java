@@ -132,7 +132,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
-    private List<?> remoteRepositories;
+    private List remoteRepositories;
 
     /**
      * @component
@@ -619,7 +619,7 @@ public class RunMojo extends AbstractExecMojo {
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
 
         getLog().info("Classpath = " + classpathURLs);
-        return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
+        return new URLClassLoader((URL[])classpathURLs.toArray(new URL[classpathURLs.size()]));
     }
 
     /**
@@ -635,9 +635,9 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         try {
-            Iterator<Artifact> iter = this.determineRelevantPluginDependencies().iterator();
+            Iterator iter = this.determineRelevantPluginDependencies().iterator();
             while (iter.hasNext()) {
-                Artifact classPathElement = iter.next();
+                Artifact classPathElement = (Artifact)iter.next();
                 getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
                                    + " to classpath");
                 path.add(classPathElement.getFile().toURI().toURL());
@@ -670,9 +670,9 @@ public class RunMojo extends AbstractExecMojo {
                 // MEXEC-17
                 dependencies.addAll(getAllNonTestScopedDependencies());
 
-                Iterator<Artifact> iter = dependencies.iterator();
+                Iterator iter = dependencies.iterator();
                 while (iter.hasNext()) {
-                    Artifact classPathElement = iter.next();
+                    Artifact classPathElement = (Artifact)iter.next();
                     getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
                                        + " to classpath");
                     File file = classPathElement.getFile();
@@ -707,7 +707,7 @@ public class RunMojo extends AbstractExecMojo {
     private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
         List<Artifact> artifacts = new ArrayList<Artifact>();
 
-        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
+        for (Iterator dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
             Dependency dependency = (Dependency)dependencies.next();
 
             String groupId = dependency.getGroupId();
@@ -739,7 +739,7 @@ public class RunMojo extends AbstractExecMojo {
             }
 
             List<String> exclusions = new ArrayList<String>();
-            for (Iterator<?> j = dependency.getExclusions().iterator(); j.hasNext();) {
+            for (Iterator j = dependency.getExclusions().iterator(); j.hasNext();) {
                 Exclusion e = (Exclusion)j.next();
                 exclusions.add(e.getGroupId() + ":" + e.getArtifactId());
             }

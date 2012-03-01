@@ -58,9 +58,9 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 
     public static class MyReallyCoolBean {
 
-        private Map<?, ?> map = new LinkedHashMap<Object, Object>();
+        private Map map = new LinkedHashMap();
 
-        public Map<?, ?> getOther() {
+        public Map getOther() {
             return map;
         }
 

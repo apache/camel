@@ -16,11 +16,8 @@
 #
 
 # keep at least one package in camel-core so the annotation type converter
-# should at least be able to discover one package to scan notice that there
-# are no @Converter classes in org.apache.camel.core. As all camel-core
+# should at least be able to discover one package to scan
+# notice that there are no @Converter classes in util. As all camel-core
 # type converters have been pre-loaded without package scanning, as that is
-# faster. 
-# If you adding a new converter class in camel-core, please added the class
-# into CorePackageScanClassResolver
-
+# faster
 org.apache.camel.core

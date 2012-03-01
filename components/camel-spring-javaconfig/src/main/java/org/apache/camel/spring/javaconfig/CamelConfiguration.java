@@ -34,6 +34,8 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
+
 /**
  * A useful base class for writing
  * <a href="http://www.springsource.org/javaconfig">Spring JavaConfig</a>
@@ -125,8 +127,10 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     @Bean
     public CamelBeanPostProcessor camelBeanPostProcessor() throws Exception {
         CamelBeanPostProcessor answer = new CamelBeanPostProcessor();
-        answer.setApplicationContext(getApplicationContext());
-        // do not set CamelContext as we will lazy evaluate that later
+
+        CamelContext camelContext = getBean(CamelContext.class);
+        // lets lookup a bean
+        answer.setCamelContext(camelContext);        
         return answer;
     }
 

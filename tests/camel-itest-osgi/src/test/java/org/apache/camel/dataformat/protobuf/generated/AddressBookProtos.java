@@ -685,7 +685,7 @@ public final class AddressBookProtos {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
         }
-        if (!result.phone_.isEmpty()) {
+        if (result.phone_ != java.util.Collections.EMPTY_LIST) {
           result.phone_ =
             java.util.Collections.unmodifiableList(result.phone_);
         }
@@ -1100,7 +1100,7 @@ public final class AddressBookProtos {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
         }
-        if (!result.person_.isEmpty()) {
+        if (result.person_ != java.util.Collections.EMPTY_LIST) {
           result.person_ =
             java.util.Collections.unmodifiableList(result.person_);
         }

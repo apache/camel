@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
-import org.apache.camel.util.concurrent.ThreadHelper;
 
 /**
  * Unit test to ensure the {@link org.apache.camel.spi.ExecutorServiceStrategy} still
@@ -45,7 +44,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPattern() throws Exception {
-        context.getExecutorServiceStrategy().setThreadNamePattern("##counter# - #name#");
+        context.getExecutorServiceStrategy().setThreadNamePattern("#${counter} - ${name}");
         String foo = context.getExecutorServiceStrategy().getThreadName("foo");
         String bar = context.getExecutorServiceStrategy().getThreadName("bar");
 
@@ -57,7 +56,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternCamelId() throws Exception {
-        context.getExecutorServiceStrategy().setThreadNamePattern("##camelId# - ##counter# - #name#");
+        context.getExecutorServiceStrategy().setThreadNamePattern("#${camelId} - #${counter} - ${name}");
         String foo = context.getExecutorServiceStrategy().getThreadName("foo");
         String bar = context.getExecutorServiceStrategy().getThreadName("bar");
 
@@ -69,14 +68,14 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternWithDollar() throws Exception {
-        context.getExecutorServiceStrategy().setThreadNamePattern("Hello - #name#");
+        context.getExecutorServiceStrategy().setThreadNamePattern("Hello - ${name}");
         String foo = context.getExecutorServiceStrategy().getThreadName("foo$bar");
 
         assertEquals("Hello - foo$bar", foo);
     }
 
     public void testGetThreadNameCustomPatternLongName() throws Exception {
-        context.getExecutorServiceStrategy().setThreadNamePattern("##counter# - #longName#");
+        context.getExecutorServiceStrategy().setThreadNamePattern("#${counter} - ${longName}");
         String foo = context.getExecutorServiceStrategy().getThreadName("foo?beer=Carlsberg");
         String bar = context.getExecutorServiceStrategy().getThreadName("bar");
 
@@ -88,7 +87,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternWithParameters() throws Exception {
-        context.getExecutorServiceStrategy().setThreadNamePattern("##counter# - #name#");
+        context.getExecutorServiceStrategy().setThreadNamePattern("#${counter} - ${name}");
         String foo = context.getExecutorServiceStrategy().getThreadName("foo?beer=Carlsberg");
         String bar = context.getExecutorServiceStrategy().getThreadName("bar");
 
@@ -100,7 +99,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternNoCounter() throws Exception {
-        context.getExecutorServiceStrategy().setThreadNamePattern("Cool #name#");
+        context.getExecutorServiceStrategy().setThreadNamePattern("Cool ${name}");
         String foo = context.getExecutorServiceStrategy().getThreadName("foo");
         String bar = context.getExecutorServiceStrategy().getThreadName("bar");
 
@@ -110,16 +109,16 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternInvalid() throws Exception {
-        context.getExecutorServiceStrategy().setThreadNamePattern("Cool #xxx#");
+        context.getExecutorServiceStrategy().setThreadNamePattern("Cool ${xxx}");
         try {
             context.getExecutorServiceStrategy().getThreadName("foo");
             fail("Should thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Pattern is invalid: Cool #xxx#", e.getMessage());
+            assertEquals("Pattern is invalid: Cool ${xxx}", e.getMessage());
         }
 
         // reset it so we can shutdown properly
-        context.getExecutorServiceStrategy().setThreadNamePattern(ThreadHelper.DEFAULT_PATTERN);
+        context.getExecutorServiceStrategy().setThreadNamePattern("Camel Thread ${counter} - ${name}");
     }
 
     public void testDefaultThreadPool() throws Exception {
@@ -239,7 +238,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         // should inherit the default values
         assertEquals(10, tp.getCorePoolSize());
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals("CallerRuns", tp.getRejectedExecutionHandler().toString());
+        assertIsInstanceOf(ThreadPoolExecutor.CallerRunsPolicy.class, tp.getRejectedExecutionHandler());
     }
 
     public void testGetThreadPoolProfileInheritCustomDefaultValues() throws Exception {
@@ -265,7 +264,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         // should inherit the default values
         assertEquals(1, tp.getCorePoolSize());
         assertEquals(30, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals("Abort", tp.getRejectedExecutionHandler().toString());
+        assertIsInstanceOf(ThreadPoolExecutor.AbortPolicy.class, tp.getRejectedExecutionHandler());
     }
 
     public void testGetThreadPoolProfileInheritCustomDefaultValues2() throws Exception {
@@ -287,7 +286,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         // should inherit the default values
         assertEquals(50, tp.getMaximumPoolSize());
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals("CallerRuns", tp.getRejectedExecutionHandler().toString());
+        assertIsInstanceOf(ThreadPoolExecutor.CallerRunsPolicy.class, tp.getRejectedExecutionHandler());
     }
 
     public void testNewThreadPoolProfile() throws Exception {

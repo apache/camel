@@ -54,8 +54,8 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
             }
         }
 
-        List<Class<? extends Throwable>> list = exceptionType.getExceptionClasses();
-        for (Class<? extends Throwable> clazz : list) {
+        List<Class> list = exceptionType.getExceptionClasses();
+        for (Class clazz : list) {
             String routeId = null;
             // only get the route id, if the exception type is route scoped
             if (exceptionType.isRouteScoped()) {

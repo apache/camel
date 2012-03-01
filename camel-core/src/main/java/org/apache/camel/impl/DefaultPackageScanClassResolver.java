@@ -122,9 +122,10 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         this.classLoaders.addAll(classLoaders);
     }
 
+    @SuppressWarnings("unchecked")
     public Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
-            return Collections.emptySet();
+            return Collections.EMPTY_SET;
         }
 
         if (log.isDebugEnabled()) {
@@ -142,9 +143,10 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
+    @SuppressWarnings("unchecked")
     public Set<Class<?>> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
         if (packageNames == null) {
-            return Collections.emptySet();
+            return Collections.EMPTY_SET;
         }
 
         if (log.isDebugEnabled()) {
@@ -162,9 +164,10 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
-    public Set<Class<?>> findImplementations(Class<?> parent, String... packageNames) {
+    @SuppressWarnings("unchecked")
+    public Set<Class<?>> findImplementations(Class parent, String... packageNames) {
         if (packageNames == null) {
-            return Collections.emptySet();
+            return Collections.EMPTY_SET;
         }
 
         if (log.isDebugEnabled()) {
@@ -182,9 +185,10 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
+    @SuppressWarnings("unchecked")
     public Set<Class<?>> findByFilter(PackageScanFilter filter, String... packageNames) {
         if (packageNames == null) {
-            return Collections.emptySet();
+            return Collections.EMPTY_SET;
         }
 
         Set<Class<?>> classes = new LinkedHashSet<Class<?>>();

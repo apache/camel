@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -34,6 +35,7 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -133,7 +135,7 @@ public class RouteService extends ChildServiceSupport {
                 // gather list of services to start as we need to start child services as well
                 Set<Service> list = new LinkedHashSet<Service>();
                 for (Service service : services) {
-                    list.addAll(ServiceHelper.getChildServices(service));
+                    doGetChildServices(list, service);
                 }
 
                 // split into consumers and child services as we need to start the consumers
@@ -201,7 +203,7 @@ public class RouteService extends ChildServiceSupport {
             // gather list of services to stop as we need to start child services as well
             Set<Service> list = new LinkedHashSet<Service>();
             for (Service service : services) {
-                list.addAll(ServiceHelper.getChildServices(service));
+                doGetChildServices(list, service);
             }
             stopChildService(route, list, isShutdownCamelContext);
 
@@ -239,7 +241,7 @@ public class RouteService extends ChildServiceSupport {
             // gather list of services to stop as we need to start child services as well
             Set<Service> list = new LinkedHashSet<Service>();
             for (Service service : services) {
-                list.addAll(ServiceHelper.getChildServices(service));
+                doGetChildServices(list, service);
             }
 
             // shutdown services
@@ -329,7 +331,7 @@ public class RouteService extends ChildServiceSupport {
      * Gather all route scoped services from the given route, such as route scoped error handler.
      */
     private void doGetRouteScopedServices(List<Service> services, Route route) {
-        for (ProcessorDefinition<?> output : route.getRouteContext().getRoute().getOutputs()) {
+        for (ProcessorDefinition output : route.getRouteContext().getRoute().getOutputs()) {
             if (output instanceof OnExceptionDefinition) {
                 OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
                 if (onExceptionDefinition.isRouteScoped()) {
@@ -344,6 +346,25 @@ public class RouteService extends ChildServiceSupport {
                     Processor onCompletionProcessor = onCompletionDefinition.getOnCompletion(route.getId());
                     if (onCompletionProcessor != null && onCompletionProcessor instanceof Service) {
                         services.add((Service) onCompletionProcessor);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Gather all child services by navigating the service to recursively gather all child services.
+     */
+    private static void doGetChildServices(Set<Service> services, Service service) throws Exception {
+        services.add(service);
+
+        if (service instanceof Navigate) {
+            Navigate<?> nav = (Navigate<?>) service;
+            if (nav.hasNext()) {
+                List<?> children = nav.next();
+                for (Object child : children) {
+                    if (child instanceof Service) {
+                        doGetChildServices(services, (Service) child);
                     }
                 }
             }

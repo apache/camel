@@ -64,4 +64,7 @@ public class InjectedBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/injectedBean.xml");
     }
 
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
 }

@@ -95,7 +95,6 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
         // must type cast with Spring 2.x
         jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
-        @SuppressWarnings("rawtypes")
         List list = jpaTemplate.find(SELECT_ALL_STRING);
         assertEquals(1, list.size());
         
@@ -110,9 +109,8 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
         transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
-        transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus arg0) {
-                @SuppressWarnings("rawtypes")
+        transactionTemplate.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
                 List list = jpaTemplate.find(SELECT_ALL_STRING);
                 for (Object item : list) {
                     jpaTemplate.remove(item);

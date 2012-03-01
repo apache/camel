@@ -80,7 +80,7 @@ public class DefaultHttpBinding implements HttpBinding {
         Map<String, Object> headers = message.getHeaders();
 
         //apply the headerFilterStrategy
-        Enumeration<?> names = request.getHeaderNames();
+        Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             Object value = request.getHeader(name);
@@ -138,7 +138,7 @@ public class DefaultHttpBinding implements HttpBinding {
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
-        Enumeration<?> names = request.getParameterNames();
+        Enumeration names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             // there may be multiple values for the same name
@@ -182,7 +182,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
-        Enumeration<?> names = request.getAttributeNames();
+        Enumeration names = request.getAttributeNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             Object object = request.getAttribute(name);
@@ -258,7 +258,7 @@ public class DefaultHttpBinding implements HttpBinding {
             String key = entry.getKey();
             Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
-            final Iterator<?> it = ObjectHelper.createIterator(value, null);
+            final Iterator it = ObjectHelper.createIterator(value, null);
             while (it.hasNext()) {
                 String headerValue = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null
@@ -303,7 +303,8 @@ public class DefaultHttpBinding implements HttpBinding {
                 // copy directly from input stream to output stream
                 IOHelper.copy(is, os);
             } finally {
-                IOHelper.close(os, is);
+                IOHelper.close(os);
+                IOHelper.close(is);
             }
         } else {
             // not convertable as a stream so try as a String

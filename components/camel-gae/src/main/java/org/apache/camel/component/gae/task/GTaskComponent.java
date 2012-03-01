@@ -19,11 +19,7 @@ package org.apache.camel.component.gae.task;
 import java.net.URI;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.InboundBinding;
@@ -50,9 +46,9 @@ public class GTaskComponent extends ServletComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String workerRoot = getAndRemoveParameter(
                 parameters, "workerRoot", String.class, "worker");
-        OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding = resolveAndRemoveReferenceParameter(
+        OutboundBinding outboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "outboundBindingRef", OutboundBinding.class, new GTaskBinding());
-        InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding = resolveAndRemoveReferenceParameter(
+        InboundBinding inboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "inboundBindingRef", InboundBinding.class, new GTaskBinding());
         GTaskEndpointInfo info = new GTaskEndpointInfo(uri, remaining);
         GTaskEndpoint endpoint = (GTaskEndpoint)super.createEndpoint(

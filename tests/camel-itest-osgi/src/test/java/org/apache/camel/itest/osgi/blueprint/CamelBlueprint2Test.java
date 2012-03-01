@@ -45,6 +45,7 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
     public void testEndpointInjection() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle10").start();
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle10)", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle10)", 10000);
         Object producer = ctn.getComponentInstance("producer");
         assertNotNull(producer);
         assertEquals(TestProducer.class.getName(), producer.getClass().getName());
@@ -55,6 +56,7 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
     @Test
     public void testRouteContext() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle11").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle11)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle11)", 10000);
         assertEquals(3, ctx.getRoutes().size());
     }
@@ -64,16 +66,17 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
     public void testProxy() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle12").start();
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle12)", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle12)", 10000);
         Object proxy = ctn.getComponentInstance("myProxySender");
         assertNotNull(proxy);
         assertEquals(1, proxy.getClass().getInterfaces().length);
         assertEquals(TestProxySender.class.getName(), proxy.getClass().getInterfaces()[0].getName());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testErrorHandler() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle14").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle14)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle14)", 10000);
         assertEquals(1, ctx.getRoutes().size());
         RouteDefinition rd = ctx.getRouteDefinitions().get(0);

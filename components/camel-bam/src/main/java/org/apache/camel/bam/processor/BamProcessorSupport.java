@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
@@ -75,6 +74,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
         this.correlationKeyExpression = correlationKeyExpression;
     }
 
+    @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) {
         for (int i = 1; i <= retryCount; i++) {
             if (i > 1) {
@@ -86,8 +86,8 @@ public abstract class BamProcessorSupport<T> implements Processor {
                 }
             }
             try {
-                transactionTemplate.execute(new TransactionCallback<T>() {
-                    public T doInTransaction(TransactionStatus status) {
+                transactionTemplate.execute(new TransactionCallback() {
+                    public Object doInTransaction(TransactionStatus status) {
                         try {
                             Object key = getCorrelationKey(exchange);
 
@@ -98,8 +98,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
                             return entity;
                         } catch (Exception e) {
-                            onError(status, e);
-                            return null;
+                            return onError(status, e);
                         }
                     }
                 });
@@ -145,7 +144,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
         return value;
     }
 
-    protected void onError(TransactionStatus status, Exception e) throws RuntimeCamelException {
+    protected Object onError(TransactionStatus status, Exception e) {
         status.setRollbackOnly();
         LOG.error("Caught: " + e, e);
         throw wrapRuntimeCamelException(e);

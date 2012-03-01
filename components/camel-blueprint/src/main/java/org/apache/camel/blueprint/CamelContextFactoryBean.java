@@ -92,15 +92,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private String useBreadcrumb;
     @XmlAttribute(required = false)
-    private String managementNamePattern;
-    @XmlAttribute(required = false)
     private Boolean useBlueprintPropertyResolver;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute(required = false)
-    @Deprecated
     private Boolean lazyLoadTypeConverters = Boolean.FALSE;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
@@ -121,7 +118,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
         @XmlElement(name = "errorHandler", type = CamelErrorHandlerFactoryBean.class, required = false)
     })
-    private List<?> beans;
+    private List beans;
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "routeContextRef", required = false)
@@ -158,7 +155,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private boolean implicitId;
 
 
-    public Class<BlueprintCamelContext> getObjectType() {
+    public Class getObjectType() {
         return BlueprintCamelContext.class;
     }
 
@@ -310,20 +307,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.useBreadcrumb = useBreadcrumb;
     }
 
-    public String getManagementNamePattern() {
-        return managementNamePattern;
-    }
-
-    public void setManagementNamePattern(String managementNamePattern) {
-        this.managementNamePattern = managementNamePattern;
-    }
-
-    @Deprecated
     public Boolean getLazyLoadTypeConverters() {
         return lazyLoadTypeConverters;
     }
 
-    @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }
@@ -464,11 +451,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.camelJMXAgent = camelJMXAgent;
     }
 
-    public List<?> getBeans() {
+    public List getBeans() {
         return beans;
     }
 
-    public void setBeans(List<?> beans) {
+    public void setBeans(List beans) {
         this.beans = beans;
     }
 

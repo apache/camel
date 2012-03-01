@@ -137,7 +137,8 @@ public final class IntrospectionSupport {
      * @param optionPrefix   an optional prefix to append the property key
      * @return <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
-    public static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix) {
+    @SuppressWarnings("unchecked")
+    public static boolean getProperties(Object target, Map properties, String optionPrefix) {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
@@ -145,7 +146,7 @@ public final class IntrospectionSupport {
             optionPrefix = "";
         }
 
-        Class<?> clazz = target.getClass();
+        Class clazz = target.getClass();
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (EXCLUDED_METHODS.contains(method)) {
@@ -170,7 +171,7 @@ public final class IntrospectionSupport {
     public static boolean hasSetter(Object target, Method getter) {
         String name = getGetterShorthandName(getter);
 
-        Class<?> clazz = target.getClass();
+        Class clazz = target.getClass();
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (EXCLUDED_METHODS.contains(method)) {
@@ -376,7 +377,8 @@ public final class IntrospectionSupport {
         return setProperty(target, name, value, false);
     }
 
-    private static Object convert(TypeConverter typeConverter, Class<?> type, Object value)
+    @SuppressWarnings("unchecked")
+    private static Object convert(TypeConverter typeConverter, Class type, Object value)
         throws URISyntaxException, NoTypeConversionAvailableException {
         if (typeConverter != null) {
             return typeConverter.mandatoryConvertTo(type, value);

@@ -40,4 +40,9 @@ public class FooEventRouteTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/fooEventRoute.xml");
     }
 
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
+
 }

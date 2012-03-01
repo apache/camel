@@ -229,7 +229,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         map.put("BAR", 123);
         map.put("baZ", "beer");
 
-        Set<String> keys = map.keySet();
+        Set keys = map.keySet();
 
         // we should be able to lookup no matter what case
         assertTrue(keys.contains("Foo"));
@@ -276,14 +276,14 @@ public class CaseInsensitiveMapTest extends TestCase {
         map.put("BAR", "123");
         map.put("baZ", "Beer");
 
-        Iterator<Object> it = map.values().iterator();
+        Iterator it = map.values().iterator();
 
         // should be String values
         assertEquals("String", it.next().getClass().getSimpleName());
         assertEquals("String", it.next().getClass().getSimpleName());
         assertEquals("String", it.next().getClass().getSimpleName());
 
-        Collection<Object> values = map.values();
+        Collection values = map.values();
         assertEquals(3, values.size());
         assertTrue(values.contains("cheese"));
         assertTrue(values.contains("123"));
@@ -487,7 +487,7 @@ public class CaseInsensitiveMapTest extends TestCase {
 
         // retain maps so we can profile that the map doesn't duplicate
         // camel keys as they are intern
-        List<Map<?, ?>> maps = new ArrayList<Map<?, ?>>();
+        List<Map> maps = new ArrayList<Map>();
 
         for (int i = 0; i < 10000; i++) {
             Map<String, Object> copy = new CaseInsensitiveMap(map);

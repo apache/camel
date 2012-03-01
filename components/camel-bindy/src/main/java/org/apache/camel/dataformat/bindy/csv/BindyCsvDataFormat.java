@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
@@ -36,7 +37,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // the body is not a prepared list so help a bit here and create one for us
         if (exchange.getContext().getTypeConverter().convertTo(List.class, body) == null) {
             models = new ArrayList<Map<String, Object>>();
-            Iterator<Object> it = ObjectHelper.createIterator(body);
+            Iterator it = ObjectHelper.createIterator(body);
             while (it.hasNext()) {
                 Object model = it.next();
                 String name = model.getClass().getName();

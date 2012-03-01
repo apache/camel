@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,11 +28,10 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
 
     private static String foo = "";
     private static String bar = "";
-    private static CountDownLatch latch = new CountDownLatch(2);
 
     public void testShutdownGraceful() throws Exception {
-        getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
 
         template.sendBody("seda:foo", "A");
         template.sendBody("seda:foo", "B");
@@ -51,12 +47,14 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
 
         assertMockEndpointsSatisfied();
 
-        latch.await(10, TimeUnit.SECONDS);
+        // now stop the route before its complete
+        foo = foo + "stop";
+        bar = bar + "stop";
         context.stop();
 
-        // it should wait as there were 2 inflight exchanges and 8 pending messages left
-        assertEquals("Should graceful shutdown", "ABCDE", foo);
-        assertEquals("Should graceful shutdown", "ABCDE", bar);
+        // it should wait as there was 1 inflight exchange and 4 pending messages left
+        assertEquals("Should graceful shutdown", "stopABCDE", foo);
+        assertEquals("Should graceful shutdown", "stopABCDE", bar);
     }
 
     @Override
@@ -67,14 +65,12 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
                 from("seda:foo").to("mock:foo").delay(1000).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         foo = foo + exchange.getIn().getBody(String.class);
-                        latch.countDown();
                     }
                 });
 
                 from("seda:bar").to("mock:bar").delay(500).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         bar = bar + exchange.getIn().getBody(String.class);
-                        latch.countDown();
                     }
                 });
             }

@@ -60,28 +60,14 @@ public final class ProxyBuilder {
     /**
      * Builds the proxy.
      *
-     * @param interfaceClass  the service interface
-     * @return the proxied bean
-     * @throws Exception is thrown if error creating the proxy
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T build(Class<T> interfaceClass) throws Exception {
-        // this method is introduced to avoid compiler warnings about the
-        // generic Class arrays in the case we've got only one single Class
-        // to build a Proxy for
-        return build((Class<T>[]) new Class[] {interfaceClass});
-    }
-
-    /**
-     * Builds the proxy.
-     *
      * @param interfaceClasses  the service interface(s)
      * @return the proxied bean
      * @throws Exception is thrown if error creating the proxy
      */
-    public <T> T build(Class<T>... interfaceClasses) throws Exception {
+    @SuppressWarnings("unchecked")
+    public <T> T build(Class<?>... interfaceClasses) throws Exception {
         ObjectHelper.notNull(endpoint, "endpoint");
-        return ProxyHelper.createProxy(endpoint, interfaceClasses);
+        return (T)ProxyHelper.createProxy(endpoint, interfaceClasses);
     }
 
 }

@@ -200,11 +200,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     throw new IllegalArgumentException("Parsing error detected for field defined at the position: " + pos + ", line: " + line, e);
                 }
             } else {
-                if (!dataField.defaultValue().isEmpty()) {
-                    value = format.parse(dataField.defaultValue());
-                } else {
-                    value = getDefaultValueForPrimitive(field.getType());
-                }
+                value = getDefaultValueForPrimitive(field.getType());
             }
 
             field.set(modelField, value);
@@ -215,16 +211,17 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         LOG.debug("Counter mandatory fields: {}", counterMandatoryFields);
 
+        if (pos < totalFields) {
+            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line: " + line);
+        }
+
         if (counterMandatoryFields < numberMandatoryFields) {
             throw new IllegalArgumentException("Some mandatory fields are missing, line: " + line);
         }
 
-        if (pos < totalFields) {
-            setDefaultValuesForFields(model);
-        }
-
     }
 
+    @SuppressWarnings("unchecked")
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
@@ -239,7 +236,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             LOG.debug("Separator converted: '0x{}', from: {}", Integer.toHexString(separator), this.getSeparator());
         }
 
-        for (Class<?> clazz : models) {
+        for (Class clazz : models) {
             if (model.containsKey(clazz.getName())) {
 
                 Object obj = model.get(clazz.getName());
@@ -256,17 +253,17 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         // Transpose result
-        List<List<String>> l = new ArrayList<List<String>>();
+        List<List> l = new ArrayList<List>();
         if (isOneToMany) {
             l = product(results);
         } else {
             // Convert Map<Integer, List> into List<List>
-            TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(results);
+            TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
             List<String> temp = new ArrayList<String>();
 
-            for (Entry<Integer, List<String>> entry : sortValues.entrySet()) {
+            for (Entry<Integer, List> entry : sortValues.entrySet()) {
                 // Get list of values
-                List<String> val = entry.getValue();
+                List<String> val = (List<String>)entry.getValue();
 
                 // For one to one relation
                 // There is only one item in the list
@@ -284,13 +281,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         if (l != null) {
-            Iterator<List<String>> it = l.iterator();
+            Iterator it = l.iterator();
             while (it.hasNext()) {
-                List<String> tokens = it.next();
-                Iterator<String> itx = tokens.iterator();
+                List<String> tokens = (ArrayList<String>)it.next();
+                Iterator itx = tokens.iterator();
 
                 while (itx.hasNext()) {
-                    String res = itx.next();
+                    String res = (String)itx.next();
                     if (res != null) {
                         // the field may be enclosed in quotes if a quote was configured
                         if (quote != null) {
@@ -316,10 +313,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         return buffer.toString();
     }
 
-    private List<List<String>> product(Map<Integer, List<String>> values) {
-        TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(values);
+    private List<List> product(Map<Integer, List<String>> values) {
+        TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(values);
 
-        List<List<String>> product = new ArrayList<List<String>>();
+        List<List> product = new ArrayList<List>();
         Map<Integer, Integer> index = new HashMap<Integer, Integer>();
 
         int idx = 0;
@@ -369,7 +366,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      * If a relation @OneToMany is defined, than we iterate recursively through this function
      * The result is placed in the Map<Integer, List> results
      */
-    private void generateCsvPositionMap(Class<?> clazz, Object obj, Map<Integer, List<String>> results) throws Exception {
+    private void generateCsvPositionMap(Class clazz, Object obj, Map<Integer, List<String>> results) throws Exception {
 
         String result = "";
 
@@ -385,12 +382,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     // Retrieve the format, pattern and precision associated to
                     // the type
-                    Class<?> type = field.getType();
+                    Class type = field.getType();
                     String pattern = datafield.pattern();
                     int precision = datafield.precision();
 
                     // Create format
-                    Format<?> format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
+                    Format format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
 
                     // Get field value
                     Object value = field.get(obj);
@@ -451,10 +448,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // Will be used during generation of CSV
                 isOneToMany = true;
 
-                ArrayList<?> list = (ArrayList<?>)field.get(obj);
+                ArrayList list = (ArrayList)field.get(obj);
                 if (list != null) {
 
-                    Iterator<?> it = list.iterator();
+                    Iterator it = list.iterator();
                     while (it.hasNext()) {
                         Object target = it.next();
                         generateCsvPositionMap(target.getClass(), target, results);
@@ -559,29 +556,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     // Get section number and add it to the sections
                     sections.put(cl.getName(), section.number());
                 }
-            }
-        }
-    }
-    /**
-     * Set the default values for the non defined fields.
-     * @param The model which has its default fields set.
-     * @throws IllegalAccessException if the underlying fields are inaccessible
-     * @throws Exception In case the field cannot be parsed
-     */
-    private void setDefaultValuesForFields(final Map<String, Object> model) throws IllegalAccessException,
-        Exception {
-        // Set the default values, if defined
-        for (int i = 1; i <= dataFields.size(); i++) {
-            Field field = annotatedFields.get(i);
-            field.setAccessible(true);
-            DataField dataField = dataFields.get(i);
-            Object modelField = model.get(field.getDeclaringClass().getName());
-            if (field.get(modelField) == null && !dataField.defaultValue().isEmpty()) {
-                String pattern = dataField.pattern();
-                Format<?> format = FormatFactory.getFormat(field.getType(), pattern, getLocale(),
-                                                                 dataField.precision());
-                Object value = format.parse(dataField.defaultValue());
-                field.set(modelField, value);
             }
         }
     }

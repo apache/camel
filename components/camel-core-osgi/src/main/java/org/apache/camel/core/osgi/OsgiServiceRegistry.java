@@ -70,9 +70,10 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
         return service;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Map<String, T> lookupByType(Class<T> type) {
         // not implemented so we return an empty map
-        return Collections.<String, T>emptyMap();
+        return Collections.EMPTY_MAP;
     }
 
     public void onComponentAdd(String name, Component component) {
@@ -132,10 +133,6 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
 
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor,
                                 String id, String sourceId, String routeId, String threadPoolProfileId) {
-        // noop
-    }
-
-    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor) {
         // noop
     }
 }

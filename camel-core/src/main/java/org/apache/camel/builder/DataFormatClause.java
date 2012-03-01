@@ -23,7 +23,6 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CastorDataFormat;
@@ -70,24 +69,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public DataFormatClause(T processorType, Operation operation) {
         this.processorType = processorType;
         this.operation = operation;
-    }
-
-
-    /**
-     * Uses the Avro data format
-     */
-    public T avro() {
-        return dataFormat(new AvroDataFormat());
-    }
-
-    public T avro(Object schema) {
-        AvroDataFormat dataFormat = new AvroDataFormat();
-        dataFormat.setSchema(schema);
-        return dataFormat(dataFormat);
-    }
-
-    public T avro(String instanceClassName) {
-        return dataFormat(new AvroDataFormat(instanceClassName));
     }
 
     /**
@@ -239,7 +220,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the JiBX data format with unmarshall class.
      */
-    public T jibx(Class<?> unmarshallClass) {
+    public T jibx(Class unmarshallClass) {
         return dataFormat(new JibxDataFormat(unmarshallClass));
     }
 

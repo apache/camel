@@ -26,7 +26,7 @@
   <packaging>bundle</packaging>
   <version>${version}</version>
 
-  <name>A Camel Blueprint Route</name>
+  <name>A Camel Route</name>
   <url>http://www.myorganization.org</url>
 
   <properties>
@@ -46,6 +46,13 @@
       <version>${camel-version}</version>
     </dependency>
 
+    <!-- for testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>${camel-version}</version>
+      <scope>test</scope>
+    </dependency>
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -58,22 +65,9 @@
       <version>${slf4j-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j-version}</version>
-    </dependency>
-    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>${log4j-version}</version>
-    </dependency>
-
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-blueprint</artifactId>
-      <version>${camel-version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -105,17 +99,7 @@
           </instructions>
         </configuration>
       </plugin>
-
-      <!-- must use fork mode pertest for unit testing with camel-test-blueprint -->
-      <plugin>
-        <groupId>org.apache.maven.surefire</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin-version}</version>
-        <configuration>
-          <forkMode>pertest</forkMode>
-        </configuration>
-      </plugin>
     </plugins>
-  </build>
 
+  </build>
 </project>

@@ -32,11 +32,13 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
-    private final BlockingQueue<Object> queue;
+    private final BlockingQueue queue;
     private final HazelcastSedaConfiguration configuration;
+    private HazelcastInstance hazelcastInstance;
 
     public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri, final HazelcastComponent component, final HazelcastSedaConfiguration configuration) {
         super(component.getHazelcastInstance(), uri, component);
+        this.hazelcastInstance = hazelcastInstance;
         this.queue = hazelcastInstance.getQueue(configuration.getQueueName());
         this.configuration = configuration;
         if (ObjectHelper.isEmpty(configuration.getQueueName())) {
@@ -52,7 +54,7 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
         return new HazelcastSedaConsumer(this, processor);
     }
 
-    public BlockingQueue<Object> getQueue() {
+    public BlockingQueue getQueue() {
         return queue;
     }
 

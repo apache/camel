@@ -1,13 +1,8 @@
-Camel ActiveMQ Project
-======================
+Camel Router Project
+====================
 
-This project embeds Apache ActiveMQ together with Apache Camel.
-
-To build this project use
-
-    mvn install
-
-To run this project use the following maven goal
+To run this router either embed the jar inside Spring
+or to run the route from within maven try
 
     mvn camel:run
 

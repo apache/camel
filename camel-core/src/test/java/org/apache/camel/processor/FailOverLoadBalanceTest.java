@@ -41,11 +41,9 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
     }
     
     public static class MyException extends Exception {
-        private static final long serialVersionUID = 1L;
     }
     
     public static class MyAnotherException extends Exception {
-        private static final long serialVersionUID = 1L;
     }
     
     public static class MyExceptionProcessor implements Processor {        

@@ -18,13 +18,10 @@ package org.apache.camel;
 
 import org.apache.camel.spi.RouteContext;
 
-/**
- * Factory for creating {@link org.apache.camel.processor.ErrorHandler}s.
- */
 public interface ErrorHandlerFactory {
 
     /**
-     * Creates the error handler 
+     * Creates the error handler interceptor
      *
      * @param routeContext the route context
      * @param processor the outer processor

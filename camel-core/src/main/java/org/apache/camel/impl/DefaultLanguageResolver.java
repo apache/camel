@@ -40,6 +40,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
     protected FactoryFinder languageFactory;
     protected FactoryFinder languageResolver;
 
+    @SuppressWarnings("unchecked")
     public Language resolveLanguage(String name, CamelContext context) {
         // lookup in registry first
         Object bean = null;
@@ -60,7 +61,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
             // we do not throw the exception here and try to auto create a Language from META-INF
         }
 
-        Class<?> type = null;
+        Class type = null;
         try {
             type = findLanguage(name, context);
         } catch (NoFactoryAvailableException e) {
@@ -81,8 +82,9 @@ public class DefaultLanguageResolver implements LanguageResolver {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected Language noSpecificLanguageFound(String name, CamelContext context) {
-        Class<?> type = null;
+        Class type = null;
         try {
             type = findLanguageResolver("default", context);
         } catch (NoFactoryAvailableException e) {

@@ -113,7 +113,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     public void testHasProperties() throws Exception {
-        Map<String, Object> empty = Collections.emptyMap();
+        Map<String, Object> empty = CastUtils.cast(Collections.emptyMap());
         assertFalse(IntrospectionSupport.hasProperties(empty, null));
         assertFalse(IntrospectionSupport.hasProperties(empty, ""));
         assertFalse(IntrospectionSupport.hasProperties(empty, "foo."));
@@ -159,7 +159,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setDate(date);
         bean.setGoldCustomer(true);
         bean.setLittle(true);
-        Collection<?> children = new ArrayList<Object>();
+        Collection children = new ArrayList();
         bean.setChildren(children);
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -220,7 +220,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setDate(date);
         bean.setGoldCustomer(true);
         bean.setLittle(true);
-        Collection<?> children = new ArrayList<Object>();
+        Collection children = new ArrayList();
         bean.setChildren(children);
 
         Object name = IntrospectionSupport.getProperty(bean, "name");

@@ -26,6 +26,8 @@ import org.testng.annotations.Test;
 
 /**
  * Tests filtering using Camel Test
+ *
+ * @version $Revision$
  */
 public class FilterTestNGTest extends CamelTestSupport {
 

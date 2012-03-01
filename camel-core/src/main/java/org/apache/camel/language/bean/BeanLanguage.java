@@ -58,7 +58,8 @@ public class BeanLanguage implements Language, IsSingleton {
      * @param method optional name of method to invoke for instance to avoid ambiguity
      * @return the expression
      */
-    public static Expression bean(Class<?> beanType, String method) {
+    @SuppressWarnings("unchecked")
+    public static Expression bean(Class beanType, String method) {
         Object bean = ObjectHelper.newInstance(beanType);
         return bean(bean, method);
     }

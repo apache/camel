@@ -30,12 +30,11 @@ import org.junit.Test;
 
 public class HazelcastMapProducerTest extends CamelTestSupport implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     private IMap<String, Object> map;
 
     @Override
     protected void doPostSetup() throws Exception {
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
         HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
         map = hazelcastInstance.getMap("foo");
         map.clear();
@@ -125,7 +124,7 @@ public class HazelcastMapProducerTest extends CamelTestSupport implements Serial
 
     public class Dummy implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 3688457704655925278L;
 
         private String foo;
         private int bar;

@@ -25,16 +25,11 @@
   <artifactId>${artifactId}</artifactId>
   <version>${version}</version>
 
-  <name>Camel Web Application</name>
+  <name>Camel Router Application</name>
   <description>Camel project that deploys the Camel routes as a WAR</description>
   <url>http://www.myorganization.org</url>
-
+  
   <packaging>war</packaging>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-  </properties>
 
   <dependencies>
 
@@ -62,11 +57,18 @@
       <version>${spring-version}</version>
     </dependency>
 
+    <!-- for testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>${camel-version}</version>
+      <scope>test</scope>
+    </dependency>
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-version}</version>
+      <version>${slf4j-version}</version> 
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -74,18 +76,11 @@
       <version>${slf4j-version}</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j-version}</version>
+      <groupId>log4j</groupId> 
+      <artifactId>log4j</artifactId> 
+      <version>${log4j-version}</version> 
     </dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
-      <version>${camel-version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -101,16 +96,18 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-
+      
       <!-- plugin so you can run mvn jetty:run -->
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-version}</version>
+
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
           </webAppConfig>
+
           <systemProperties>
             <!-- enable easy JMX connection to JConsole -->
             <systemProperty>
@@ -121,7 +118,6 @@
           <scanIntervalSeconds>10</scanIntervalSeconds>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 

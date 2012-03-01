@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.camel.util.IOHelper;
-
 public final class TestUtil {
     private TestUtil() {
     }
@@ -30,7 +28,8 @@ public final class TestUtil {
     public static String readStream(InputStream is) throws IOException {
         try {
             StringBuilder sb = new StringBuilder();
-            BufferedReader reader = IOHelper.buffered(new InputStreamReader(is, "UTF-8"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    is, "UTF-8"));
             String line;
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append("\n");

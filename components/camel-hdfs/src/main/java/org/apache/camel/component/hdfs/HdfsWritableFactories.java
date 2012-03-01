@@ -35,76 +35,74 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableComparable;
 
 public class HdfsWritableFactories {
 
     public enum WritableType {
         NULL {
             @Override
-            public Class<NullWritable> getWritableClass() {
+            public Class getWritableClass() {
                 return NullWritable.class;
             }
         },
 
         BOOLEAN {
             @Override
-            public Class<BooleanWritable> getWritableClass() {
+            public Class getWritableClass() {
                 return BooleanWritable.class;
             }
         },
 
         BYTE {
             @Override
-            public Class<ByteWritable> getWritableClass() {
+            public Class getWritableClass() {
                 return ByteWritable.class;
             }
         },
 
         INT {
             @Override
-            public Class<IntWritable> getWritableClass() {
+            public Class getWritableClass() {
                 return IntWritable.class;
             }
         },
 
         FLOAT {
             @Override
-            public Class<FloatWritable> getWritableClass() {
+            public Class getWritableClass() {
                 return FloatWritable.class;
             }
         },
 
         LONG {
             @Override
-            public Class<LongWritable> getWritableClass() {
+            public Class getWritableClass() {
                 return LongWritable.class;
             }
         },
 
         DOUBLE {
             @Override
-            public Class<DoubleWritable> getWritableClass() {
+            public Class getWritableClass() {
                 return DoubleWritable.class;
             }
         },
 
         TEXT {
             @Override
-            public Class<Text> getWritableClass() {
+            public Class getWritableClass() {
                 return Text.class;
             }
         },
 
         BYTES {
             @Override
-            public Class<BytesWritable> getWritableClass() {
+            public Class getWritableClass() {
                 return BytesWritable.class;
             }
         };
 
-        @SuppressWarnings("rawtypes")
-        public abstract Class<? extends WritableComparable> getWritableClass();
+        public abstract Class getWritableClass();
     }
 
     interface HdfsWritableFactory {

@@ -33,6 +33,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
@@ -50,7 +51,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @XmlTransient
     private boolean initialized;
     @XmlTransient
-    private List<ProcessorDefinition<?>> outputsWithoutCatches;
+    private List<ProcessorDefinition> outputsWithoutCatches;
 
     public TryDefinition() {
     }
@@ -96,28 +97,14 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     // -------------------------------------------------------------------------
 
     /**
-     * Handles the given exception
-     *
-     * @param exceptionType  the exception
-     * @return the try builder
-     */
-    @SuppressWarnings("unchecked")
-    public TryDefinition doCatch(Class<? extends Throwable> exceptionType) {
-        // this method is introduced to avoid compiler warnings about the
-        // generic Class arrays in the case we've got only one single Class
-        // to build a TryDefinition for
-        return doCatch(new Class[] {exceptionType});
-    }
-
-    /**
      * Handles the given exception(s)
      *
      * @param exceptionType  the exception(s)
      * @return the try builder
      */
-    public TryDefinition doCatch(Class<? extends Throwable>... exceptionType) {
+    public TryDefinition doCatch(Class... exceptionType) {
         popBlock();
-        List<Class<? extends Throwable>> list = Arrays.asList(exceptionType);
+        List<Class> list = CastUtils.cast(Arrays.asList(exceptionType));
         CatchDefinition answer = new CatchDefinition(list);
         addOutput(answer);
         pushBlock(answer);
@@ -223,20 +210,20 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         return finallyClause;
     }
 
-    public List<ProcessorDefinition<?>> getOutputsWithoutCatches() {
+    public List<ProcessorDefinition> getOutputsWithoutCatches() {
         if (outputsWithoutCatches == null) {
             checkInitialized();
         }
         return outputsWithoutCatches;
     }
 
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         initialized = false;
         super.setOutputs(outputs);
     }
 
     @Override
-    public void addOutput(ProcessorDefinition<?> output) {
+    public void addOutput(ProcessorDefinition output) {
         initialized = false;
         super.addOutput(output);
     }
@@ -247,11 +234,11 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     protected void checkInitialized() {
         if (!initialized) {
             initialized = true;
-            outputsWithoutCatches = new ArrayList<ProcessorDefinition<?>>();
+            outputsWithoutCatches = new ArrayList<ProcessorDefinition>();
             catchClauses = new ArrayList<CatchDefinition>();
             finallyClause = null;
 
-            for (ProcessorDefinition<?> output : outputs) {
+            for (ProcessorDefinition output : outputs) {
                 if (output instanceof CatchDefinition) {
                     catchClauses.add((CatchDefinition)output);
                 } else if (output instanceof FinallyDefinition) {

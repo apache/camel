@@ -59,7 +59,7 @@ public class IBatisBatchConsumerIsolationLevelTest extends IBatisTestSupport {
         account2.setLastName("Hale");
         account2.setEmailAddress("TryGuessingSkipper@gmail.com");
 
-        List<Object> accounts = new ArrayList<Object>();
+        List<Account> accounts = new ArrayList<Account>();
         accounts.add(account1);
         accounts.add(account2);
 

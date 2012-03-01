@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+
 public class DebugSpringCamelContextTest extends DebugSpringTest {
 
     @Override

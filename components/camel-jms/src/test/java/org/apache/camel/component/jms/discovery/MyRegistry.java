@@ -30,15 +30,15 @@ import org.slf4j.LoggerFactory;
 public class MyRegistry {
     private static final transient Logger LOG = LoggerFactory.getLogger(MyRegistry.class);
 
-    private Map<String, Map<String, Object>> services = new HashMap<String, Map<String, Object>>();
+    private Map<String, Map> services = new HashMap<String, Map>();
 
-    public void onEvent(Map<String, Object> heartbeat) {
+    public void onEvent(Map heartbeat) {
         String key = (String) heartbeat.get("name");
         LOG.debug(">>> event for: " + key + " details: " + heartbeat);
         services.put(key, heartbeat);
     }
 
-    public Map<String, Map<String, Object>> getServices() {
+    public Map<String, Map> getServices() {
         return services;
     }
 }

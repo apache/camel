@@ -95,8 +95,7 @@ public class RouteboxDirectConsumer extends RouteboxServiceSupport implements Ro
         return 0;
     }
 
-    @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown() {
         // noop
     }
     

@@ -32,7 +32,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyFileFilter<Object>());
+        jndi.bind("myFilter", new MyFileFilter());
         return jndi;
     }
 
@@ -76,8 +76,8 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter<T> implements GenericFileFilter<T> {
-        public boolean accept(GenericFile<T> pathname) {
+    public class MyFileFilter implements GenericFileFilter {
+        public boolean accept(GenericFile pathname) {
             // we dont accept any files starting with skip in the name
             return !pathname.getFileName().startsWith("skip");
         }

@@ -43,6 +43,7 @@ public class JmsToHawtDBAggregateTest extends CamelSpringTestSupport {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testJmsToHawtDBAggregateTest() throws Exception {
         // number of rounds can be adjusted
         int count = 30;
@@ -54,7 +55,7 @@ public class JmsToHawtDBAggregateTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:result").expectsNoDuplicates(header("counter"));
 
         for (int i = 0; i < count; i++) {
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map map = new HashMap();
             map.put("counter", i);
             map.put("group", "foo");
 

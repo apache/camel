@@ -28,7 +28,7 @@ public class Mina2InOutCloseSessionWhenCompleteTest extends BaseMina2Test {
 
     @Test
     public void testCloseSessionWhenComplete() throws Exception {
-        Object out = template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&textline=true", getPort()), "Chad");
+        Object out = template.requestBody("mina2:tcp://localhost:{{port}}?sync=true&textline=true", "Chad");
         assertEquals("Bye Chad", out);
     }
 
@@ -37,7 +37,7 @@ public class Mina2InOutCloseSessionWhenCompleteTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina2:tcp://localhost:%1$s?sync=true&textline=true", getPort())).process(new Processor() {
+                from("mina2:tcp://localhost:{{port}}?sync=true&textline=true").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);

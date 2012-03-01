@@ -90,8 +90,6 @@ public class TryProcessorOnWhenTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

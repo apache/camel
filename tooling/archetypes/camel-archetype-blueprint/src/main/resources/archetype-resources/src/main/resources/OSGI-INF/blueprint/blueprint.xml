@@ -34,7 +34,6 @@
           <method ref="helloBean" method="hello"/>
       </setBody>
       <log message="The message contains ${body}"/>
-      <to uri="mock:result"/>
     </route>
   </camelContext>
 

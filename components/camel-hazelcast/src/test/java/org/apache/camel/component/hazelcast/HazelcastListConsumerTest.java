@@ -32,11 +32,12 @@ public class HazelcastListConsumerTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
         HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
         list = hazelcastInstance.getList("mm");
         list.clear();
     }
+
 
     @Test
     public void add() throws InterruptedException {

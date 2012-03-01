@@ -137,7 +137,6 @@ public interface Exchange {
     String HTTP_SERVLET_RESPONSE   = "CamelHttpServletResponse";
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
-    String INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = "CamelInterceptSendToEndpointWhenMatched";
 
     String LANGUAGE_SCRIPT          = "CamelLanguageScript";
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
