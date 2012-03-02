@@ -20,27 +20,23 @@ import java.util.Map;
 
 import org.apache.camel.component.vm.VmComponent;
 
-/** 
- * Allows you to easily stub out a middleware transport by prefixing the URI with "stub:" which is 
+/**
+ * Allows you to easily stub out a middleware transport by prefixing the URI with "stub:" which is
  * handy for testing out routes, or isolating bits of middleware.
- *
  */
 public class StubComponent extends VmComponent {
 
-	public StubComponent() {
-	}
+    public StubComponent() {
+    }
 
-	@Override
-	protected void validateURI(String uri, String path,
-			Map<String, Object> parameters) {
+    @Override
+    protected void validateURI(String uri, String path, Map<String, Object> parameters) {
         // Don't validate so we can stub any URI
-	}
+    }
 
-	@Override
-	protected void validateParameters(String uri,
-			Map<String, Object> parameters, String optionPrefix) {
+    @Override
+    protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
         // Don't validate so we can stub any URI
-	}
-
+    }
 
 }
