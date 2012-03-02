@@ -157,6 +157,10 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         }
 
         @Override
+        public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+        }
+
+        @Override
         public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId, String threadPoolProfileId) {
         }
 

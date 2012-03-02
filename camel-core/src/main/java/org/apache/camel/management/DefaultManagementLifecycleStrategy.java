@@ -556,6 +556,21 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         }
     }
 
+    public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+        if (!initialized) {
+            return;
+        }
+
+        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, routeContext, errorHandler, errorHandlerBuilder);
+        if (me != null) {
+            try {
+                unmanageObject(me);
+            } catch (Exception e) {
+                LOG.warn("Could not unregister error handler: " + me + " as ErrorHandler MBean.", e);
+            }
+        }
+    }
+
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                                 String sourceId, String routeId, String threadPoolProfileId) {
 

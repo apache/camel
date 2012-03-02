@@ -66,6 +66,9 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
     }
 
+    public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    }
+
     public void onRoutesRemove(Collection<Route> routes) {
     }
 

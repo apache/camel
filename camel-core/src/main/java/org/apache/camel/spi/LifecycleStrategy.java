@@ -128,6 +128,15 @@ public interface LifecycleStrategy {
     void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
+     * Notification on removing error handler.
+     *
+     * @param routeContext        the removed route context
+     * @param errorHandler        the error handler
+     * @param errorHandlerBuilder the error handler builder
+     */
+    void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+
+    /**
      * Notification on adding a thread pool.
      *
      * @param camelContext        the camel context
