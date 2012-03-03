@@ -77,6 +77,15 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         return answer != null ? answer.get() : 0;
     }
 
+    public void removeEndpoint(Endpoint endpoint) {
+        // remove endpoint if there is no current inflight
+        String key = endpoint.getEndpointKey();
+        AtomicInteger existing = endpointCount.get(key);
+        if (existing != null && existing.get() <= 0) {
+            endpointCount.remove(key);
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
     }
