@@ -62,8 +62,7 @@ public class SedaRouteTest extends TestSupport {
         producer.process(exchange);
 
         // now lets sleep for a while
-        boolean received = latch.await(5, TimeUnit.SECONDS);
-        assertTrue("Did not receive the message!", received);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         context.stop();
     }
@@ -97,8 +96,7 @@ public class SedaRouteTest extends TestSupport {
         producer.process(exchange);
 
         // now lets sleep for a while
-        boolean received = latch.await(5, TimeUnit.SECONDS);
-        assertTrue("Did not receive the message!", received);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         context.stop();
     }

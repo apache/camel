@@ -41,7 +41,7 @@ public class SedaWaitForTaskNewerOnCompletionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
         // B should be first because we do not wait
         assertEquals("BCA", done);
     }

@@ -361,7 +361,7 @@ public class XPathTest extends ContextTestSupport {
         }
 
         // give time to convert concurrently
-        latch.await(20, TimeUnit.SECONDS);
+        assertTrue(latch.await(20, TimeUnit.SECONDS));
 
         assertEquals(size, result.size());
         Iterator<Document> it = result.iterator();

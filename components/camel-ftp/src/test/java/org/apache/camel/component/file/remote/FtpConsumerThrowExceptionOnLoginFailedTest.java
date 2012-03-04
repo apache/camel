@@ -51,7 +51,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
     public void testBadLogin() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
 
