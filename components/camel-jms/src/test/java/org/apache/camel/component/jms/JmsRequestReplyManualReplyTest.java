@@ -75,7 +75,7 @@ public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
             }
         });
 
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
         String reply = consumer.receiveBody(tempName, 5000, String.class);
         assertEquals("Bye World", reply);
     }

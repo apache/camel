@@ -54,7 +54,7 @@ public class StopCamelFromRouteTest extends TestCase {
         template.sendBody("direct:start", "Hello Camel");
 
         // wait for the latch (use 1 minute as fail safe, due unit test)
-        latch.await(1, TimeUnit.MINUTES);
+        assertTrue(latch.await(1, TimeUnit.MINUTES));
 
         // stop camel
         context.stop();
