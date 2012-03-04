@@ -97,7 +97,8 @@ public class JpaTest extends Assert {
         });
         consumer.start();
 
-        assertTrue(latch.await(50, TimeUnit.SECONDS));
+        boolean received = latch.await(50, TimeUnit.SECONDS);
+        assertTrue("Did not receive the message!", received);
 
         assertNotNull(receivedExchange);
         SendEmail result = receivedExchange.getIn().getBody(SendEmail.class);

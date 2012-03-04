@@ -90,7 +90,8 @@ public class XmppRouteTest extends TestCase {
 
     protected Object assertReceivedValidExchange() throws Exception {
         // lets wait on the message being received
-        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not receive the message!", received);
 
         assertNotNull(receivedExchange);
         XmppMessage receivedMessage = (XmppMessage)receivedExchange.getIn();

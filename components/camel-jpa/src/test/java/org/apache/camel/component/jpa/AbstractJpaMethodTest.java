@@ -140,8 +140,9 @@ public abstract class AbstractJpaMethodTest extends Assert {
         });
         consumer.start();
         
-        assertTrue(latch.await(50, TimeUnit.SECONDS));
+        boolean received = latch.await(50, TimeUnit.SECONDS);
         
+        assertTrue(received);
         assertNotNull(receivedExchange);
         Customer receivedCustomer = receivedExchange.getIn().getBody(Customer.class);
         assertEquals(customer.getName(), receivedCustomer.getName());

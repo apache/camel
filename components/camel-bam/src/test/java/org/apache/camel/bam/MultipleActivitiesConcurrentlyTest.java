@@ -48,12 +48,12 @@ public class MultipleActivitiesConcurrentlyTest extends MultipleProcessesTest {
         thread.start();
 
         // use a timeout to avoid test hang if something happens
-        assertTrue(startLatch.await(30, TimeUnit.SECONDS));
+        startLatch.await(30, TimeUnit.SECONDS);
 
         sendAMessages();
 
         // use a timeout to avoid test hang if something happens
-        assertTrue(endLatch.await(30, TimeUnit.SECONDS));
+        endLatch.await(30, TimeUnit.SECONDS);
 
         overdueEndpoint.assertIsSatisfied();
     }

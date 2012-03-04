@@ -60,7 +60,7 @@ public class JmsConcurrentConsumersTest extends CamelTestSupport {
         long start = System.currentTimeMillis();
 
         // wait for test completion, timeout after 30 sec to let other unit test run to not wait forever
-        assertTrue(latch.await(30000L, TimeUnit.MILLISECONDS));
+        latch.await(30000L, TimeUnit.MILLISECONDS);
         assertEquals("Latch should be zero", 0, latch.getCount());
 
         long delta = System.currentTimeMillis() - start;

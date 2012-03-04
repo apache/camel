@@ -70,7 +70,8 @@ public class MinaTcpWithInOutTest extends BaseMinaTest {
         producer.process(exchange);
 
         // now lets sleep for a while
-        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not receive the message!", received);
         assertNotNull(receivedExchange.getIn());
         assertEquals("!olleH", receivedExchange.getIn().getBody());
 
@@ -113,7 +114,8 @@ public class MinaTcpWithInOutTest extends BaseMinaTest {
         producer.process(exchange);
 
         // now lets sleep for a while
-        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not receive the message!", received);
         assertNotNull(receivedExchange.getIn());
         assertEquals("!olleH", receivedExchange.getIn().getBody());
 

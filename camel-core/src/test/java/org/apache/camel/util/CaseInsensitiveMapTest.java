@@ -466,7 +466,7 @@ public class CaseInsensitiveMapTest extends TestCase {
             });
         }
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        latch.await(10, TimeUnit.SECONDS);
 
         assertEquals(1003, map.size());
         assertEquals(true, map.containsKey("counter0"));

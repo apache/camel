@@ -51,7 +51,7 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        latch.await(10, TimeUnit.SECONDS);
         context.stop();
 
         // it should wait as there were 2 inflight exchanges and 8 pending messages left
