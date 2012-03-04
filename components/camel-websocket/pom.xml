@@ -43,6 +43,13 @@
         </camel.osgi.import.pkg>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>cubeindia</id>
+            <url>http://m2.cubeia.com/nexus/content/repositories/thirdparty/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- Camel -->
         <dependency>
@@ -76,6 +83,7 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- we should find a different test kit that is in central repo -->
         <dependency>
             <groupId>de.roderick</groupId>
             <artifactId>weberknecht</artifactId>
@@ -90,10 +98,4 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>cubeindia</id>
-            <url>http://m2.cubeia.com/nexus/content/repositories/thirdparty/</url>
-        </repository>
-    </repositories>
 </project>
