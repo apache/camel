@@ -31,8 +31,8 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/directoryfilter/?recursive=true&filter=#myFilter";
-    private static final List<String> names = new ArrayList<String>();
+    private final String fileUrl = "file://target/directoryfilter/?recursive=true&filter=#myFilter";
+    private final List<String> names = new ArrayList<String>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
