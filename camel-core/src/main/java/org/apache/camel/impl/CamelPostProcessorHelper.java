@@ -32,6 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.Service;
+import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.processor.UnitOfWorkProcessor;
@@ -124,8 +125,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * message exchange is received
      */
     protected Processor createConsumerProcessor(final Object pojo, final Method method, final Endpoint endpoint) {
-        BeanProcessor answer = new BeanProcessor(pojo, getCamelContext());
-        answer.setMethodObject(method);
+        BeanInfo info = new BeanInfo(getCamelContext(), method);
+        BeanProcessor answer = new BeanProcessor(pojo, info);
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
         return new UnitOfWorkProcessor(answer);
     }

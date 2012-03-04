@@ -93,12 +93,28 @@ public class BeanInfo {
         this(camelContext, type, createParameterMappingStrategy(camelContext));
     }
 
+    public BeanInfo(CamelContext camelContext, Method explicitMethod) {
+        this(camelContext, explicitMethod.getDeclaringClass(), explicitMethod, createParameterMappingStrategy(camelContext));
+    }
+
     public BeanInfo(CamelContext camelContext, Class<?> type, ParameterMappingStrategy strategy) {
+        this(camelContext, type, null, strategy);
+    }
+
+    public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy) {
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
 
-        introspect(getType());
+        if (explicitMethod != null) {
+            // must be a valid method
+            if (!isValidMethod(type, explicitMethod)) {
+                throw new IllegalArgumentException("The method " + explicitMethod + " is not valid (for example the method must be public)");
+            }
+            introspect(getType(), explicitMethod);
+        } else {
+            introspect(getType());
+        }
 
         // if there are only 1 method with 1 operation then select it as a default/fallback method
         MethodInfo method = null;
@@ -139,18 +155,29 @@ public class BeanInfo {
         return answer;
     }
 
-    public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange) {
-        MethodInfo methodInfo = introspect(type, method);
-        if (methodInfo != null) {
-            return methodInfo.createMethodInvocation(pojo, exchange);
-        }
-        return null;
+    public MethodInvocation createInvocation(Object pojo, Exchange exchange)
+        throws AmbiguousMethodCallException, MethodNotFoundException {
+        return createInvocation(pojo, exchange, null);
     }
 
     @SuppressWarnings("unchecked")
-    public MethodInvocation createInvocation(Object pojo, Exchange exchange)
+    private MethodInvocation createInvocation(Object pojo, Exchange exchange, Method explicitMethod)
         throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
+        
+        // find the explicit method to invoke
+        if (explicitMethod != null) {
+            Iterator<List<MethodInfo>> it = operations.values().iterator();
+            while (it.hasNext()) {
+                List<MethodInfo> infos = it.next();
+                for (MethodInfo info : infos) {
+                    if (explicitMethod.equals(info.getMethod())) {
+                        return info.createMethodInvocation(pojo, exchange);
+                    }
+                }
+            }
+            throw new MethodNotFoundException(exchange, pojo, explicitMethod.getName());
+        }
 
         String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (methodName != null) {
@@ -213,7 +240,7 @@ public class BeanInfo {
      *
      * @param clazz the class
      */
-    protected void introspect(Class<?> clazz) {
+    private void introspect(Class<?> clazz) {
         // get the target clazz as it could potentially have been enhanced by CGLIB etc.
         clazz = getTargetClass(clazz);
         ObjectHelper.notNull(clazz, "clazz", this);
@@ -253,7 +280,7 @@ public class BeanInfo {
      * @param method the method
      * @return the method info, is newer <tt>null</tt>
      */
-    protected MethodInfo introspect(Class<?> clazz, Method method) {
+    private MethodInfo introspect(Class<?> clazz, Method method) {
         LOG.trace("Introspecting class: {}, method: {}", clazz, method);
         String opName = method.getName();
 
@@ -265,7 +292,6 @@ public class BeanInfo {
         MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
         if (existingMethodInfo != null) {
             LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: {}", existingMethodInfo);
-
             return existingMethodInfo;
         }
 

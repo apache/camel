@@ -29,6 +29,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
@@ -72,6 +73,21 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public void testConsumePrivate() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyPrivateConsumeBean my = new MyPrivateConsumeBean();
+        Method method = my.getClass().getDeclaredMethod("consumeSomethingPrivate", String.class);
+        try {
+            helper.consumerInjection(method, my, "foo");
+            fail("Should have thrown exception");
+        } catch (RuntimeCamelException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertTrue(iae.getMessage().startsWith("The method private void"));
+            assertTrue(iae.getMessage().endsWith("(for example the method must be public)"));
+        }
     }
 
     public void testConsumeSynchronization() throws Exception {
@@ -454,6 +470,15 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             producer.send(exchange);
         }
 
+    }
+
+    public class MyPrivateConsumeBean {
+
+        @Consume(uri = "seda:foo")
+        private void consumeSomethingPrivate(String body) {
+            assertEquals("Hello World", body);
+            template.sendBody("mock:result", body);
+        }
     }
 
 }
