@@ -80,12 +80,27 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Mock all endpoints matching the given pattern.
      *
-     * @param pattern the pattern.
+     * @param pattern the pattern(s).
      * @throws Exception can be thrown if error occurred
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
      */
-    public void mockEndpoints(String pattern) throws Exception {
-        getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+    public void mockEndpoints(String... pattern) throws Exception {
+        for (String s : pattern) {
+            getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(s));
+        }
+    }
+
+    /**
+     * Mock all endpoints matching the given pattern, and <b>skips</b> sending to the original endpoint (detour messages).
+     *
+     * @param pattern the pattern(s).
+     * @throws Exception can be thrown if error occurred
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     */
+    public void mockEndpointsAndSkip(String... pattern) throws Exception {
+        for (String s : pattern) {
+            getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(s, true));
+        }
     }
 
     /**
