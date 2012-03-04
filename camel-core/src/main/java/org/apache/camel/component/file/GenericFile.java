@@ -44,6 +44,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
     private T file;
     private GenericFileBinding<T> binding;
     private boolean absolute;
+    private boolean directory;
 
     public char getFileSeparator() {
         return File.separatorChar;
@@ -65,6 +66,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
         }
         result.setEndpointPath(source.getEndpointPath());
         result.setAbsolute(source.isAbsolute());
+        result.setDirectory(source.isDirectory());
         result.setAbsoluteFilePath(source.getAbsoluteFilePath());
         result.setRelativeFilePath(source.getRelativeFilePath());
         result.setFileName(source.getFileName());
@@ -331,6 +333,14 @@ public class GenericFile<T> implements WrappedFile<T>  {
 
     public void setFileNameOnly(String fileNameOnly) {
         this.fileNameOnly = fileNameOnly;
+    }
+
+    public boolean isDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(boolean directory) {
+        this.directory = directory;
     }
 
     /**

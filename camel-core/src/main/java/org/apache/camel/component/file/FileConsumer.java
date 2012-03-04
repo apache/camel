@@ -125,6 +125,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
         answer.setFileLength(file.length());
+        answer.setDirectory(file.isDirectory());
         // must use FileUtil.isAbsolute to have consistent check for whether the file is
         // absolute or not. As windows do not consider \ paths as absolute where as all
         // other OS platforms will consider \ as absolute. The logic in Camel mandates

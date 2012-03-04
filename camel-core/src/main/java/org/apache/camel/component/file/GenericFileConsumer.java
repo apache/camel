@@ -391,11 +391,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return false;
         }
 
-        // directories so far is always regarded as matched (matching on the name is only for files)
-        if (isDirectory) {
-            return true;
-        }
-
         if (endpoint.getFilter() != null) {
             if (!endpoint.getFilter().accept(file)) {
                 return false;
@@ -406,6 +401,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             if (!endpoint.getAntFilter().accept(file)) {
                 return false;
             }
+        }
+
+        // directories are regarded as matched if filter accepted them
+        if (isDirectory) {
+            return true;
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getExclude())) {

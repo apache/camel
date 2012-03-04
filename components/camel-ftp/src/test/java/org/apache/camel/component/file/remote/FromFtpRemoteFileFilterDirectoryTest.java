@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.component.file.remote;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Unit test for  the file filter option
+ * Unit test to verify FTP filter option.
  */
-public class FileConsumerFileFilterTest extends ContextTestSupport {
+public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?filter=#myFilter";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/filefilter?password=admin&recursive=true&filter=#myFilter";
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -37,55 +41,53 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
-        deleteDirectory("target/filefilter");
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
+        prepareFtpServer();
     }
+    
+    @Test
+    public void testFtpFilter() throws Exception {
+        if (isPlatform("aix")) {
+            // skip testing on AIX as it have an issue with this test with the file filter
+            return;
+        }
 
-    public void testFilterFiles() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
-            Exchange.FILE_NAME, "skipme.txt");
-
-        mock.setResultWaitTime(2000);
-        mock.assertIsSatisfied();
-    }
-
-    public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
-
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
-            Exchange.FILE_NAME, "skipme.txt");
-
-        template.sendBodyAndHeader("file:target/filefilter/", "Hello World",
-            Exchange.FILE_NAME, "hello.txt");
-
+        
         mock.assertIsSatisfied();
+    }
+
+    private void prepareFtpServer() throws Exception {
+        // prepares the FTP Server by creating files on the server that we want to unit
+        // test that we can pool        
+        sendFile(getFtpUrl(), "This is a file to be filtered", "skipDir/skipme.txt");
+        sendFile(getFtpUrl(), "This is a file to be filtered", "skipDir2/skipme.txt");
+        sendFile(getFtpUrl(), "Hello World", "okDir/hello.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(getFtpUrl()).convertBodyTo(String.class).to("mock:result");
             }
         };
     }
 
     // START SNIPPET: e1
     public class MyFileFilter<T> implements GenericFileFilter<T> {
+
         public boolean accept(GenericFile<T> file) {
-            // we want all directories
-            if (file.isDirectory()) {
-                return true;
+            // we dont accept any files within directory starting with skip in the name
+            if (file.isDirectory() && file.getFileName().startsWith("skip")) {
+                return false;
             }
-            // we dont accept any files starting with skip in the name
-            return !file.getFileName().startsWith("skip");
+
+            return true;
         }
     }
     // END SNIPPET: e1
-
 }

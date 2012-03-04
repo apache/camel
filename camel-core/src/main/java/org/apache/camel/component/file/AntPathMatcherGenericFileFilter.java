@@ -36,6 +36,11 @@ public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> 
     }
 
     public boolean accept(GenericFile<T> file) {
+        // directories should always be accepted by ANT path matcher
+        if (file.isDirectory()) {
+            return true;
+        }
+
         String path = file.getRelativeFilePath();
         return filter.acceptPathName(path);
     }

@@ -142,6 +142,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
         answer.setFileLength(file.getSize());
+        answer.setDirectory(file.isDirectory());
         if (file.getTimestamp() != null) {
             answer.setLastModified(file.getTimestamp().getTimeInMillis());
         }

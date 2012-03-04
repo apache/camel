@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,34 +27,24 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * Unit test for  the file filter option
+ * Unit test for the file filter option using directories
  */
-public class FileConsumerFileFilterTest extends ContextTestSupport {
+public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?filter=#myFilter";
+    private String fileUrl = "file://target/directoryfilter/?recursive=true&filter=#myFilter";
+    private static final List<String> names = new ArrayList<String>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyFileFilter<Object>());
+        jndi.bind("myFilter", new MyDirectoryFilter<Object>());
         return jndi;
     }
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/filefilter");
+        deleteDirectory("target/directoryfilter");
         super.setUp();
-    }
-
-    public void testFilterFiles() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
-            Exchange.FILE_NAME, "skipme.txt");
-
-        mock.setResultWaitTime(2000);
-        mock.assertIsSatisfied();
     }
 
     public void testFilterFilesWithARegularFile() throws Exception {
@@ -58,13 +52,25 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
-            Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader("file:target/directoryfilter/skipDir/", "This is a file to be filtered",
+                Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/filefilter/", "Hello World",
-            Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/directoryfilter/skipDir2/", "This is a file to be filtered",
+                Exchange.FILE_NAME, "skipme.txt");
+
+        template.sendBodyAndHeader("file:target/directoryfilter/okDir/", "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
+
+        // check names
+        assertEquals(4, names.size());
+        Collections.sort(names);
+        assertEquals("okDir", names.get(0));
+        // windows or unix paths
+        assertTrue(names.get(0), names.get(1).equals("okDir/hello.txt") || names.get(1).equals("okDir\\hello.txt"));
+        assertEquals("skipDir", names.get(2));
+        assertEquals("skipDir2", names.get(3));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -76,15 +82,20 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter<T> implements GenericFileFilter<T> {
+    public class MyDirectoryFilter<T> implements GenericFileFilter<T> {
+
         public boolean accept(GenericFile<T> file) {
-            // we want all directories
-            if (file.isDirectory()) {
-                return true;
+            // remember the name due unit testing (should not be needed in regular use-cases)
+            names.add(file.getFileName());
+            
+            // we dont accept any files within directory starting with skip in the name
+            if (file.isDirectory() && file.getFileName().startsWith("skip")) {
+                return false;
             }
-            // we dont accept any files starting with skip in the name
-            return !file.getFileName().startsWith("skip");
+
+            return true;
         }
+
     }
     // END SNIPPET: e1
 
