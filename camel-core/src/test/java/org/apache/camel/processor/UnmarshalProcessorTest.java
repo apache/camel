@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -32,7 +33,7 @@ public class UnmarshalProcessorTest extends TestSupport {
 
     public void testDataFormatReturnsSameExchange() throws Exception {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
-        UnmarshalProcessor processor = new UnmarshalProcessor(new MyDataFormat(exchange));
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(exchange));
 
         processor.process(exchange);
 
@@ -43,7 +44,7 @@ public class UnmarshalProcessorTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = createExchangeWithBody(context, "body");
         Exchange exchange2 = createExchangeWithBody(context, "body2");
-        UnmarshalProcessor processor = new UnmarshalProcessor(new MyDataFormat(exchange2));
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(exchange2));
 
         try {
             processor.process(exchange);
@@ -57,19 +58,20 @@ public class UnmarshalProcessorTest extends TestSupport {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
         Message out = new DefaultMessage();
         out.setBody(new Object());
-        UnmarshalProcessor processor = new UnmarshalProcessor(new MyDataFormat(out));
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(out));
 
         processor.process(exchange);
-        assertEquals(out, exchange.getOut());
+        assertSame("UnmarshalProcessor did not make use of the returned OUT message", out, exchange.getOut());
+        assertSame("UnmarshalProcessor did change the body bound to the OUT message", out.getBody(), exchange.getOut().getBody());
     }
 
     public void testDataFormatReturnsBody() throws Exception {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
         Object unmarshalled = new Object();
-        UnmarshalProcessor processor = new UnmarshalProcessor(new MyDataFormat(unmarshalled));
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(unmarshalled));
 
         processor.process(exchange);
-        assertEquals(unmarshalled, exchange.getOut().getBody());
+        assertSame("UnmarshalProcessor did not make use of the returned object being returned while unmarshalling", unmarshalled, exchange.getOut().getBody());
     }
 
     private static class MyDataFormat implements DataFormat {
@@ -98,4 +100,5 @@ public class UnmarshalProcessorTest extends TestSupport {
             return object;
         }
     }
+
 }
