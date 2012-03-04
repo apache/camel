@@ -139,30 +139,26 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         }
 
         MethodInvocation invocation;
-        if (methodObject != null) {
-            invocation = beanInfo.createInvocation(methodObject, bean, exchange);
-        } else {
-            // set explicit method name to invoke as a header, which is how BeanInfo can detect it
-            if (explicitMethodName != null) {
-                in.setHeader(Exchange.BEAN_METHOD_NAME, explicitMethodName);
-            }
-            try {
-                invocation = beanInfo.createInvocation(bean, exchange);
-            } catch (Throwable e) {
-                exchange.setException(e);
-                callback.done(true);
-                return true;
-            }
+        // set explicit method name to invoke as a header, which is how BeanInfo can detect it
+        if (explicitMethodName != null) {
+            in.setHeader(Exchange.BEAN_METHOD_NAME, explicitMethodName);
+        }
+        try {
+            invocation = beanInfo.createInvocation(bean, exchange);
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        } finally {
+            // must remove headers as they were provisional
+            in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+            in.removeHeader(Exchange.BEAN_METHOD_NAME);
         }
         if (invocation == null) {
             throw new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean);
         }
 
-        // remove headers as they should not be propagated
-        in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
-        in.removeHeader(Exchange.BEAN_METHOD_NAME);
-
-        Object value = null;
+        Object value;
         try {
             AtomicBoolean sync = new AtomicBoolean(true);
             value = invocation.proceed(callback, sync);
@@ -214,14 +210,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
     // Properties
     // -----------------------------------------------------------------------
-
-    public Method getMethodObject() {
-        return methodObject;
-    }
-
-    public void setMethodObject(Method methodObject) {
-        this.methodObject = methodObject;
-    }
 
     public String getMethod() {
         return method;
