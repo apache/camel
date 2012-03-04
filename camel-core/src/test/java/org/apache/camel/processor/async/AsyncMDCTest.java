@@ -16,6 +16,12 @@
  */
 package org.apache.camel.processor.async;
 
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_BREADCRUMB_ID;
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_CORRELATION_ID;
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_EXCHANGE_ID;
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -66,8 +72,10 @@ public class AsyncMDCTest extends ContextTestSupport {
                 from("direct:a").routeId("route-a")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals("route-a", MDC.get(MDC_ROUTE_ID));
+                                assertEquals(exchange.getExchangeId(), MDC.get(MDC_EXCHANGE_ID));
+                                assertEquals(exchange.getContext().getName(), MDC.get(MDC_CAMEL_CONTEXT_ID));
+                                assertEquals(exchange.getIn().getHeader(Exchange.BREADCRUMB_ID), MDC.get(MDC_BREADCRUMB_ID));
                             }
                         })
                         .to("log:before")
@@ -78,8 +86,8 @@ public class AsyncMDCTest extends ContextTestSupport {
                 from("direct:b").routeId("route-b")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-b", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals("route-b", MDC.get(MDC_ROUTE_ID));
+                                assertEquals(exchange.getExchangeId(), MDC.get(MDC_EXCHANGE_ID));
                             }
                         })
                         .to("log:bar").to("mock:result");
