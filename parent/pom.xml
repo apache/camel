@@ -100,7 +100,7 @@
     <jackson-version>1.9.2</jackson-version>
     <jackrabbit-version>2.2.4</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
-    <jasypt-version>1.8</jasypt-version>
+    <jasypt-version>1.9.0</jasypt-version>
     <java-apns-version>0.1.6</java-apns-version>
     <javassist-bundle-version>3.12.1.GA_2</javassist-bundle-version>
     <javax-mail-version>1.4.4</javax-mail-version>
