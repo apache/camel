@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 
 /**
@@ -48,7 +49,8 @@ public class Mina2Configuration implements Cloneable {
     private boolean disconnect;
     private boolean disconnectOnNoReply = true;
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
-
+    private IoHandlerAdapter ioHandler;
+    
     /**
      * Returns a copy of this configuration
      */
@@ -226,4 +228,13 @@ public class Mina2Configuration implements Cloneable {
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
     }
+
+    public IoHandlerAdapter getIoHandler() {
+        return ioHandler;
+    }
+
+    public void setIoHandler(IoHandlerAdapter ioHandler) {
+        this.ioHandler = ioHandler;
+    }
+    
 }

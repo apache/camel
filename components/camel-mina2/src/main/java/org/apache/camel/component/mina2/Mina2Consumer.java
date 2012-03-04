@@ -291,36 +291,35 @@ public class Mina2Consumer extends DefaultConsumer {
         public void sessionCreated(IoSession session) throws Exception {
             log.debug("-----------SESSION CREATED");
             exchange = getEndpoint().createExchange(session);
-            exchange.getIn().setHeader(Mina2Constants.MINA2_SESSION_CREATED, Boolean.TRUE);
+            exchange.setProperty(Mina2Constants.MINA2_SESSION_CREATED, Boolean.TRUE);
             getProcessor().process(exchange);
         }
 
         @Override
         public void sessionOpened(IoSession session) throws Exception {
             log.debug("-----------SESSION OPENED");
-            exchange.getIn().setHeader(Mina2Constants.MINA2_SESSION_OPENED, Boolean.TRUE);
-            exchange.getIn().removeHeader(Mina2Constants.MINA2_SESSION_CREATED);
+            exchange.setProperty(Mina2Constants.MINA2_SESSION_OPENED, Boolean.TRUE);
+            exchange.removeProperty(Mina2Constants.MINA2_SESSION_CREATED);
             getProcessor().process(exchange);
         }
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
             log.debug("-----------SESSION CLOSED");
-            exchange.getIn().setHeader(Mina2Constants.MINA2_SESSION_CLOSED, Boolean.TRUE);
-            exchange.getIn().removeHeader(Mina2Constants.MINA2_SESSION_OPENED);
+            exchange.setProperty(Mina2Constants.MINA2_SESSION_CLOSED, Boolean.TRUE);
+            exchange.removeProperty(Mina2Constants.MINA2_SESSION_OPENED);
             getProcessor().process(exchange);
         }
 
         @Override
         public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
             log.debug("-----------SESSION IDLE");
-            exchange.getIn().setHeader(Mina2Constants.MINA2_SESSION_IDLE, Boolean.TRUE);
+            exchange.setProperty(Mina2Constants.MINA2_SESSION_IDLE, Boolean.TRUE);
             getProcessor().process(exchange);
         }
 
         @Override
         public void messageSent(IoSession session, Object message) throws Exception {
-            log.debug("-----------MESSAGE SENT");
         }
 
         @Override
