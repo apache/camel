@@ -58,9 +58,9 @@ public class MDCTest extends ContextTestSupport {
                 from("direct:a").routeId("route-a")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
-                                assertEquals(exchange.getIn().getMessageId(), MDC.get("messageId"));
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
                             }
                         })
                         .to("log:foo").to("direct:b");
@@ -68,9 +68,9 @@ public class MDCTest extends ContextTestSupport {
                 from("direct:b").routeId("route-b")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-b", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
-                                assertEquals(exchange.getIn().getMessageId(), MDC.get("messageId"));
+                                assertEquals("route-b", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
                             }
                         })
                         .to("log:bar").to("mock:result");

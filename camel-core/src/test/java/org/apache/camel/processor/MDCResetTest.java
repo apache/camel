@@ -61,8 +61,8 @@ public class MDCResetTest extends ContextTestSupport {
                 from("direct:a").routeId("route-a")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                             }
                         })
                         .to("log:foo").to("direct:b")
@@ -76,8 +76,8 @@ public class MDCResetTest extends ContextTestSupport {
                         })
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                             }
                         })
                         .to("log:result").to("mock:result");
@@ -85,8 +85,8 @@ public class MDCResetTest extends ContextTestSupport {
                 from("direct:b").routeId("route-b")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-b", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals("route-b", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
 
                                 exchange.getOut().setBody("Good Afternoon World");
                             }
