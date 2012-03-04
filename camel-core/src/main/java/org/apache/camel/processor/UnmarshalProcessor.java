@@ -23,6 +23,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
@@ -50,13 +51,28 @@ public class UnmarshalProcessor extends ServiceSupport implements Processor, Tra
 
         InputStream stream = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         try {
-            // lets setup the out message before we invoke the dataFormat
-            // so that it can mutate it if necessary
+            // lets setup the out message before we invoke the dataFormat so that it can mutate it if necessary
             Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());
 
             Object result = dataFormat.unmarshal(exchange, stream);
-            out.setBody(result);
+            if (result instanceof Exchange) {
+                if (result != exchange) {
+                    // it's not allowed to return another exchange other than the one provided to dataFormat
+                    throw new RuntimeCamelException("The returned exchange " + result + " is not the same as " + exchange + " provided to the DataFormat");
+                }
+            } else if (result instanceof Message) {
+                Message message = (Message) result;
+
+                // message body should be already set properly by the dataFormat
+                ObjectHelper.notNull(message.getBody(), "body", message);
+
+                // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
+                exchange.setOut((Message) result);
+            } else {
+                ObjectHelper.notNull(result, "result");
+                out.setBody(result);
+            }
         } catch (Exception e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
