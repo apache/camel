@@ -16,45 +16,70 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import de.roderick.weberknecht.WebSocketConnection;
-import de.roderick.weberknecht.WebSocketEventHandler;
-import de.roderick.weberknecht.WebSocketMessage;
+import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.websocket.WebSocket;
+import com.ning.http.client.websocket.WebSocketTextListener;
+import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
+    private static List<String> received = new ArrayList<String>();
+    private static CountDownLatch latch = new CountDownLatch(10);
+
     @Test
     public void testWSHttpCall() throws Exception {
-        WebSocketConnection webSocketConnection = new WebSocketConnection(new URI("ws://127.0.0.1:9292/test"));
+        AsyncHttpClient c = new AsyncHttpClient();
 
-        // Register Event Handlers
-        webSocketConnection.setEventHandler(new WebSocketEventHandler() {
-            public void onOpen() {
-                log.info("--open");
-            }
+        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/test").execute(
+            new WebSocketUpgradeHandler.Builder()
+                .addWebSocketListener(new WebSocketTextListener() {
+                    @Override
+                    public void onMessage(String message) {
+                        received.add(message);
+                        log.info("received --> " + message);
+                        latch.countDown();
+                    }
 
-            public void onMessage(WebSocketMessage message) {
-                log.info("--received message: " + message.getText());
-            }
+                    @Override
+                    public void onFragment(String fragment, boolean last) {
+                    }
 
-            public void onClose() {
-                log.info("--close");
-            }
-        });
+                    @Override
+                    public void onOpen(WebSocket websocket) {
+                    }
 
-        // Establish WebSocket Connection
-        webSocketConnection.connect();
-        log.info(">>> Connection established.");
+                    @Override
+                    public void onClose(WebSocket websocket) {
+                    }
 
-        // Send Data
-        webSocketConnection.send("Hello from WS Client");
+                    @Override
+                    public void onError(Throwable t) {
+                        t.printStackTrace();
+                    }
+                }).build()).get();
 
-        // Close WebSocket Connection
-        webSocketConnection.close();
+        getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
+
+        websocket.sendTextMessage("Hello from WS client");
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(10, received.size());
+        for (int i = 0; i < 10; i++) {
+            assertEquals(">> Welcome on board!", received.get(i));
+        }
+
+        websocket.close();
+        c.close();
     }
 
     @Override
@@ -62,10 +87,11 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("websocket://test")
-                    .log(">>> Message received from WebSocket Client : ${body}")
-                    .loop(10)
-                        .setBody().constant(">> Welcome on board!")
-                        .to("websocket://test");
+                        .log(">>> Message received from WebSocket Client : ${body}")
+                        .to("mock:client")
+                        .loop(10)
+                            .setBody().constant(">> Welcome on board!")
+                            .to("websocket://test");
             }
         };
     }

@@ -43,14 +43,6 @@
         </camel.osgi.import.pkg>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>fusesource.m2</id>
-            <name>Fusesource Dependency Repository</name>
-            <url>http://repo.fusesource.com/maven2</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <!-- Camel -->
         <dependency>
@@ -85,9 +77,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>de.roderick</groupId>
-            <artifactId>weberknecht</artifactId>
-            <version>0.1.1</version>
+            <groupId>com.ning</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>${ahc-version}</version>
             <scope>test</scope>
         </dependency>
         <!-- logging -->
