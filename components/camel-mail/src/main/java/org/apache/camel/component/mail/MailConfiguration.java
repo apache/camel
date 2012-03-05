@@ -181,6 +181,8 @@ public class MailConfiguration implements Cloneable {
                 throw new RuntimeCamelException("Error initializing SSLContext.", e);
             }
             properties.put("mail." + protocol + ".socketFactory", sslContext.getSocketFactory());
+            properties.put("mail." + protocol + ".socketFactory.fallback", "false");
+            properties.put("mail." + protocol + ".socketFactory.port", "" + port);
         }
         if (dummyTrustManager && isSecureProtocol()) {
             // set the custom SSL properties
