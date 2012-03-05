@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +42,7 @@ public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
         // assertions of the response
         assertNotNull(out);
         assertNotNull(out.getOut());
-        List<HashMap<String, Object>> data = out.getOut().getBody(List.class);
+        List<Map<String, Object>> data = out.getOut().getBody(List.class);
         assertNotNull("out body could not be converted to a List - was: "
             + out.getOut().getBody(), data);
         assertEquals(3, data.size());
