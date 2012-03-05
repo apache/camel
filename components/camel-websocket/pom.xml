@@ -45,8 +45,9 @@
 
     <repositories>
         <repository>
-            <id>cubeindia</id>
-            <url>http://m2.cubeia.com/nexus/content/repositories/thirdparty/</url>
+            <id>fusesource.m2</id>
+            <name>Fusesource Dependency Repository</name>
+            <url>http://repo.fusesource.com/maven2</url>
         </repository>
     </repositories>
 
@@ -83,7 +84,6 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- we should find a different test kit that is in central repo -->
         <dependency>
             <groupId>de.roderick</groupId>
             <artifactId>weberknecht</artifactId>
