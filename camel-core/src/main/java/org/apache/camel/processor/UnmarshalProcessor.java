@@ -62,15 +62,9 @@ public class UnmarshalProcessor extends ServiceSupport implements Processor, Tra
                     throw new RuntimeCamelException("The returned exchange " + result + " is not the same as " + exchange + " provided to the DataFormat");
                 }
             } else if (result instanceof Message) {
-                Message message = (Message) result;
-
-                // message body should be already set properly by the dataFormat
-                ObjectHelper.notNull(message.getBody(), "body", message);
-
                 // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
                 exchange.setOut((Message) result);
             } else {
-                ObjectHelper.notNull(result, "result");
                 out.setBody(result);
             }
         } catch (Exception e) {

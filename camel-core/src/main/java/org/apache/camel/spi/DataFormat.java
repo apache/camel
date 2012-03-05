@@ -56,7 +56,7 @@ public interface DataFormat {
      * @param exchange    the current exchange
      * @param stream      the input stream with the object to be unmarshalled
      * @return            the unmarshalled object
-     * @throws Exception can be thrown, for example when the body of the OUT message becomes <tt>null</tt>
+     * @throws Exception can be thrown
      */
     Object unmarshal(Exchange exchange, InputStream stream) throws Exception;
 }
