@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.websocket;
 
-public class WebsocketConfiguration {
+import java.io.Serializable;
+
+public class WebsocketConfiguration implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String globalStore;
 

@@ -74,7 +74,7 @@ public class WebsocketEndpointTest {
         inOrder.verify(component, times(1)).addServlet(synchronizationCaptor.capture(), consumerCaptor.capture(), eq(REMAINING));
         inOrder.verifyNoMoreInteractions();
 
-        assertEquals(NodeSynchronizationImpl.class, synchronizationCaptor.getValue().getClass());
+        assertEquals(DefaultNodeSynchronization.class, synchronizationCaptor.getValue().getClass());
 
         assertEquals(consumer, consumerCaptor.getValue());
     }
@@ -92,7 +92,7 @@ public class WebsocketEndpointTest {
         inOrder.verify(component, times(1)).addServlet(synchronizationCaptor.capture(), (WebsocketConsumer) isNull(), eq(REMAINING));
         inOrder.verifyNoMoreInteractions();
 
-        assertEquals(NodeSynchronizationImpl.class, synchronizationCaptor.getValue().getClass());
+        assertEquals(DefaultNodeSynchronization.class, synchronizationCaptor.getValue().getClass());
     }
 
     /**

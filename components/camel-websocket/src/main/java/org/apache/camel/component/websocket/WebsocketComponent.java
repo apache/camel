@@ -38,18 +38,13 @@ public class WebsocketComponent extends DefaultComponent {
 
     private ServletContextHandler context;
     private Server server;
-
-    /** Host name for server. */
     private String host = WebsocketConstants.DEFAULT_HOST;
-
-    /** Port for server. */
     private int port = WebsocketConstants.DEFAULT_PORT;
-
-    /** Server static content location. */
     private String staticResources;
 
     /**
-     * Map for storing endpoints. Endpoint is identified by remaining part from endpoint URI. Eg. <tt>ws://foo?bar=123</tt> and <tt>ws://foo</tt> are referring to the same endpoint.
+     * Map for storing endpoints. Endpoint is identified by remaining part from endpoint URI.
+     * Eg. <tt>ws://foo?bar=123</tt> and <tt>ws://foo</tt> are referring to the same endpoint.
      */
     private Map<String, WebsocketEndpoint> endpoints = new HashMap<String, WebsocketEndpoint>();
 
@@ -73,26 +68,14 @@ public class WebsocketComponent extends DefaultComponent {
         return endpoint;
     }
 
-    /**
-     * @param host
-     *            the host to set
-     */
     public void setHost(String host) {
         this.host = host;
     }
 
-    /**
-     * @param port
-     *            the port to set
-     */
     public void setPort(int port) {
         this.port = port;
     }
 
-    /**
-     * @param staticResources
-     *            the staticResources to set
-     */
     public void setStaticResources(String staticResources) {
         this.staticResources = staticResources;
     }
@@ -128,7 +111,6 @@ public class WebsocketComponent extends DefaultComponent {
     }
 
     public WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String remaining) {
-
         String pathSpec = createPathSpec(remaining);
         WebsocketComponentServlet servlet = servlets.get(pathSpec);
         if (servlet == null) {
@@ -149,16 +131,12 @@ public class WebsocketComponent extends DefaultComponent {
     }
 
     WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
-
         WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync);
         servlets.put(pathSpec, servlet);
         handler.addServlet(new ServletHolder(servlet), pathSpec);
         return servlet;
     }
 
-    /**
-     * @see org.apache.camel.impl.DefaultComponent#doStart()
-     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -168,9 +146,6 @@ public class WebsocketComponent extends DefaultComponent {
         server.start();
     }
 
-    /**
-     * @see org.apache.camel.impl.DefaultComponent#doStop()
-     */
     @Override
     public void doStop() throws Exception {
         if (server != null) {

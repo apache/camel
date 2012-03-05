@@ -46,35 +46,24 @@ public class WebsocketConsumerTest {
 
     @Mock
     private Endpoint endpoint;
-
     @Mock
     private ExceptionHandler exceptionHandler;
-
     @Mock
     private Processor processor;
-
     @Mock
     private Exchange exchange;
-
     @Mock
     private Message outMessage;
 
     private Exception exception = new Exception("BAD NEWS EVERYONE!");
-
     private WebsocketConsumer websocketConsumer;
 
-    /**
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception {
         websocketConsumer = new WebsocketConsumer(endpoint, processor);
         websocketConsumer.setExceptionHandler(exceptionHandler);
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketConsumer#sendExchange(String, String)} .
-     */
     @Test
     public void testSendExchange() throws Exception {
         when(endpoint.createExchange()).thenReturn(exchange);
@@ -89,12 +78,10 @@ public class WebsocketConsumerTest {
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(outMessage, times(1)).setBody(MESSAGE);
         inOrder.verify(processor, times(1)).process(exchange);
+        inOrder.verify(exchange, times(1)).getException();
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketConsumer#sendExchange(String, String)} .
-     */
     @Test
     public void testSendExchangeWithException() throws Exception {
         when(endpoint.createExchange()).thenReturn(exchange);
@@ -116,9 +103,6 @@ public class WebsocketConsumerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketConsumer#sendExchange(String, String)} .
-     */
     @Test
     public void testSendExchangeWithExchangeExceptionIsNull() throws Exception {
         when(endpoint.createExchange()).thenReturn(exchange);
@@ -138,4 +122,5 @@ public class WebsocketConsumerTest {
         inOrder.verify(exchange, times(1)).getException();
         inOrder.verifyNoMoreInteractions();
     }
+
 }

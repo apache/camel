@@ -46,26 +46,18 @@ public class WebsocketComponentServletTest {
 
     @Mock
     private WebsocketConsumer consumer;
-
     @Mock
     private NodeSynchronization sync;
-
     @Mock
     private HttpServletRequest request;
 
     private WebsocketComponentServlet websocketComponentServlet;
 
-    /**
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception {
         websocketComponentServlet = new WebsocketComponentServlet(sync);
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketComponentServlet#getConsumer()} .
-     */
     @Test
     public void testGetConsumer() {
         assertNull(websocketComponentServlet.getConsumer());
@@ -73,17 +65,11 @@ public class WebsocketComponentServletTest {
         assertEquals(consumer, websocketComponentServlet.getConsumer());
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketComponentServlet#setConsumer(org.apache.camel.component.websocket.WebsocketConsumer)} .
-     */
     @Test
     public void testSetConsumer() {
         testGetConsumer();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketComponentServlet#doWebSocketConnect(javax.servlet.http.HttpServletRequest, String)} .
-     */
     @Test
     public void testDoWebSocketConnect() {
         websocketComponentServlet.setConsumer(consumer);
@@ -98,9 +84,6 @@ public class WebsocketComponentServletTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketComponentServlet#doWebSocketConnect(javax.servlet.http.HttpServletRequest, String)} .
-     */
     @Test
     public void testDoWebSocketConnectConsumerIsNull() {
         WebSocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
@@ -112,4 +95,5 @@ public class WebsocketComponentServletTest {
         InOrder inOrder = inOrder(consumer, sync, request);
         inOrder.verifyNoMoreInteractions();
     }
+
 }

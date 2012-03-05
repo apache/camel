@@ -26,5 +26,4 @@ public final class WebsocketConstants {
     private WebsocketConstants() {
     };
 
-
 }

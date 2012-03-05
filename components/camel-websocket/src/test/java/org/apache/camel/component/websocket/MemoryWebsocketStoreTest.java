@@ -44,21 +44,15 @@ public class MemoryWebsocketStoreTest {
 
     @Mock
     private WebsocketConsumer consumer;
-
     @Mock
     private NodeSynchronization sync;
-
     @Mock
     private DefaultWebsocket websocket1 = new DefaultWebsocket(sync, consumer);;
-
     @Mock
     private DefaultWebsocket websocket2 = new DefaultWebsocket(sync, consumer);;
 
     private MemoryWebsocketStore store;
 
-    /**
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception {
         store = new MemoryWebsocketStore();
@@ -66,9 +60,6 @@ public class MemoryWebsocketStoreTest {
         when(websocket2.getConnectionKey()).thenReturn(KEY_2);
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#add(String, org.apache.camel.component.websocket.DefaultWebsocket)} .
-     */
     @Test
     public void testAdd() {
         assertNotNull(websocket1.getConnectionKey());
@@ -80,17 +71,11 @@ public class MemoryWebsocketStoreTest {
         assertEquals(websocket2, store.get(KEY_2));
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#add(org.apache.camel.component.websocket.DefaultWebsocket)} .
-     */
     @Test(expected = NullPointerException.class)
     public void testAddNullValue() {
         store.add(null);
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#remove(org.apache.camel.component.websocket.DefaultWebsocket)} .
-     */
     @Test
     public void testRemoveDefaultWebsocket() {
         // first call of websocket1.getConnectionKey()
@@ -105,9 +90,6 @@ public class MemoryWebsocketStoreTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#remove(org.apache.camel.component.websocket.DefaultWebsocket)} .
-     */
     @Test
     public void testRemoveDefaultWebsocketKeyNotSet() {
         // first call of websocket1.getConnectionKey()
@@ -130,9 +112,6 @@ public class MemoryWebsocketStoreTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#remove(org.apache.camel.component.websocket.DefaultWebsocket)} .
-     */
     @Test
     public void testRemoveNotExisting() {
         websocket1.setConnectionKey(KEY_1);
@@ -148,9 +127,6 @@ public class MemoryWebsocketStoreTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#remove(String)} .
-     */
     @Test
     public void testRemoveString() {
         websocket1.setConnectionKey(KEY_1);
@@ -160,9 +136,6 @@ public class MemoryWebsocketStoreTest {
         assertNull(store.get(KEY_1));
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#remove(String)} .
-     */
     @Test
     public void testRemoveStringNotExisting() {
         websocket1.setConnectionKey(KEY_1);
@@ -174,9 +147,6 @@ public class MemoryWebsocketStoreTest {
         assertNull(store.get(KEY_2));
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#get(String)} .
-     */
     @Test
     public void testGetString() {
         websocket1.setConnectionKey(KEY_1);
@@ -189,9 +159,6 @@ public class MemoryWebsocketStoreTest {
         assertEquals(websocket2, store.get(KEY_2));
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.MemoryWebsocketStore#getAll()} .
-     */
     @Test
     public void testGetAll() {
         Collection<DefaultWebsocket> sockets = store.getAll();
@@ -213,4 +180,5 @@ public class MemoryWebsocketStoreTest {
         assertTrue(sockets.contains(websocket1));
         assertTrue(sockets.contains(websocket2));
     }
+
 }
