@@ -18,6 +18,7 @@ package org.apache.camel.component.http;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -45,7 +46,7 @@ public class CamelServlet extends HttpServlet {
      */
     private String servletName;
 
-    private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
+    private ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
    
     @Override
     public void init(ServletConfig config) throws ServletException {

@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -33,7 +34,7 @@ import org.apache.camel.processor.DelegateProcessor;
  */
 public class BuilderWithScopesTest extends TestSupport {
 
-    final ArrayList<String> order = new ArrayList<String>();
+    final List<String> order = new ArrayList<String>();
     final DelegateProcessor interceptor1 = new DelegateProcessor() {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -82,11 +83,11 @@ public class BuilderWithScopesTest extends TestSupport {
         }
     };
 
-    protected void runTest(RouteBuilder builder, ArrayList<String> expected) throws Exception {
+    protected void runTest(RouteBuilder builder, List<String> expected) throws Exception {
         runTest(builder, expected, null);
     }
 
-    protected void runTest(RouteBuilder builder, ArrayList<String> expected, String header) throws Exception {
+    protected void runTest(RouteBuilder builder, List<String> expected, String header) throws Exception {
 
         order.clear();
         CamelContext container = new DefaultCamelContext();
@@ -110,7 +111,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithFilterEnd() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("TO");
 
         runTest(new RouteBuilder() {
@@ -124,7 +125,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithFilterNoEnd() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
 
         runTest(new RouteBuilder() {
             public void configure() {
@@ -149,7 +150,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithChoice1() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("INVOKED");
         expected.add("TO");
 
@@ -157,7 +158,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithChoice2() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("INVOKED2");
         expected.add("TO");
 
@@ -165,14 +166,14 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithChoice3() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("TO");
 
         runTest(createChoiceBuilder(), expected, "banana");
     }
 
     public void testRouteWithChoiceNoEnd() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("INVOKED");
 
         runTest(new RouteBuilder() {
@@ -198,7 +199,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithChoiceOtherwise1() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("INVOKED");
         expected.add("TO");
 
@@ -206,7 +207,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithChoiceOtherwise2() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("INVOKED2");
         expected.add("TO");
 
@@ -214,14 +215,14 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithChoiceOtherwise3() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("INVOKED3");
         expected.add("TO");
         runTest(createChoiceWithOtherwiseBuilder(), expected, "banana");
     }
 
     public void testRouteWithChoiceOtherwiseNoEnd() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("INVOKED");
 
         runTest(new RouteBuilder() {
@@ -251,7 +252,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchNoEndNoException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("TO");
 
@@ -259,7 +260,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchNoEndWithCaughtException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED");
         expected.add("INVOKED3");
@@ -268,7 +269,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchNoEndWithUncaughtException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
 
         runTest(createTryCatchNoEnd(), expected);
@@ -284,7 +285,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchEndNoException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("TO");
         expected.add("INVOKED3");
@@ -293,7 +294,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchEndWithCaughtException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED");
         expected.add("INVOKED3");
@@ -302,7 +303,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchEndWithUncaughtException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
 
         runTest(createTryCatchEnd(), expected);
@@ -319,7 +320,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchFinallyNoEndNoException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("TO");
         expected.add("INVOKED2");
@@ -329,7 +330,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchFinallyNoEndWithCaughtException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED");
         expected.add("INVOKED2");
@@ -339,7 +340,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchFinallyNoEndWithUncaughtException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
@@ -358,7 +359,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchFinallyEndNoException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("TO");
         expected.add("INVOKED2");
@@ -368,7 +369,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchFinallyEndWithCaughtException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED");
         expected.add("INVOKED2");
@@ -378,7 +379,7 @@ public class BuilderWithScopesTest extends TestSupport {
     }
 
     public void testRouteWithTryCatchFinallyEndWithUncaughtException() throws Exception {
-        ArrayList<String> expected = new ArrayList<String>();
+        List<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED2");
 

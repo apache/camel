@@ -21,7 +21,7 @@ import java.util.List;
 
 public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     private List<Integer> distributionRatioList = new ArrayList<Integer>();
-    private ArrayList<DistributionRatio> runtimeRatios = new ArrayList<DistributionRatio>();
+    private List<DistributionRatio> runtimeRatios = new ArrayList<DistributionRatio>();
     
     public WeightedLoadBalancer(List<Integer> distributionRatios) {
         deepCloneDistributionRatios(distributionRatios);
@@ -77,7 +77,7 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
         this.distributionRatioList = distributionRatioList;
     }
 
-    public ArrayList<DistributionRatio> getRuntimeRatios() {
+    public List<DistributionRatio> getRuntimeRatios() {
         return runtimeRatios;
     }
 

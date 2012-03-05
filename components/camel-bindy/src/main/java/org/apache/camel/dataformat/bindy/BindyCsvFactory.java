@@ -451,7 +451,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // Will be used during generation of CSV
                 isOneToMany = true;
 
-                ArrayList<?> list = (ArrayList<?>)field.get(obj);
+                List<?> list = (List<?>)field.get(obj);
                 if (list != null) {
 
                     Iterator<?> it = list.iterator();

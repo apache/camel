@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -49,10 +50,10 @@ public class JdbcRouteTest extends AbstractJdbcTestSupport {
         // assertions of the response
         assertNotNull(out);
         assertNotNull(out.getOut());
-        ArrayList<HashMap<String, Object>> data = out.getOut().getBody(ArrayList.class);
+        List<HashMap<String, Object>> data = out.getOut().getBody(List.class);
         assertNotNull(data);
         assertEquals(3, data.size());
-        HashMap<String, Object> row = data.get(0);
+        Map<String, Object> row = data.get(0);
         assertEquals("cust1", row.get("ID"));
         assertEquals("jstrachan", row.get("NAME"));
         row = data.get(1);

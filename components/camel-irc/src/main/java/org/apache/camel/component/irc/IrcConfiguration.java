@@ -405,7 +405,7 @@ public class IrcConfiguration implements Cloneable {
             
             // Remove unneeded '#' channel prefixes per convention
             // and replace ',' separators and merge channel and key using convention "channel!key"
-            ArrayList<String> cl = new ArrayList<String>();
+            List<String> cl = new ArrayList<String>();
             String channels = (String)parameters.get("channels");
             String keys =  (String)parameters.get("keys");
             keys = keys == null ? keys : keys + " ";    // if @keys ends with a ',' it will miss the last empty key after split(",")

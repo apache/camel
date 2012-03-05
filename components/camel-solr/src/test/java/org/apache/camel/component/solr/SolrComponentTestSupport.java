@@ -17,6 +17,8 @@
 package org.apache.camel.component.solr;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -38,7 +40,7 @@ public class SolrComponentTestSupport extends CamelTestSupport {
     protected static CommonsHttpSolrServer solrServer;
 
     protected void solrInsertTestEntry() {
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         headers.put("SolrField.id", TEST_ID);
         template.sendBodyAndHeaders("direct:start", null, headers);

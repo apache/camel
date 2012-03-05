@@ -18,6 +18,7 @@ package org.apache.camel.component.mongodb;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
@@ -98,7 +99,7 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         int numToSkip = 0;
         final int limit = 100;
         for (int i = 0; i < 10; i++) {
-            HashMap<String, Object> headers = new HashMap<String, Object>();
+            Map<String, Object> headers = new HashMap<String, Object>();
             headers.put(MongoDbConstants.NUM_TO_SKIP, numToSkip);
             headers.put(MongoDbConstants.LIMIT, 100);
             Object result = template.requestBodyAndHeaders("direct:findAll", (Object) null, headers);

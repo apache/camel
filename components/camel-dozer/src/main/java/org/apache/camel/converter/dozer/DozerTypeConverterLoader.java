@@ -171,7 +171,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         mapper.addMapping(beanMappingBuilder);
         MappingFileData mappingFileData = beanMappingBuilder.build();
         TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
-        ArrayList<ClassMap> classMaps = new ArrayList<ClassMap>();
+        List<ClassMap> classMaps = new ArrayList<ClassMap>();
         classMaps.addAll(mappingFileData.getClassMaps());
         registerClassMaps(registry, mapper, classMaps);
     }

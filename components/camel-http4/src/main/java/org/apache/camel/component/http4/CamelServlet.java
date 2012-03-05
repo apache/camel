@@ -18,6 +18,7 @@ package org.apache.camel.component.http4;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +37,7 @@ public class CamelServlet extends HttpServlet {
 
     private static final long serialVersionUID = -7061982839117697829L;
 
-    private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
+    private ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
    
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

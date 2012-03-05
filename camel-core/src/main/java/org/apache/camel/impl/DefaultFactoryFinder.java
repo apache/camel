@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ClassResolver;
@@ -37,7 +38,7 @@ import org.apache.camel.util.IOHelper;
  */
 public class DefaultFactoryFinder implements FactoryFinder {
 
-    protected final ConcurrentHashMap<String, Class<?>> classMap = new ConcurrentHashMap<String, Class<?>>();
+    protected final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<String, Class<?>>();
     private final ClassResolver classResolver;
     private final String path;
 

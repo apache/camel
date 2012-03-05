@@ -1696,7 +1696,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private void shutdownServices(Collection<?> services, boolean reverse) {
         Collection<Object> list = CastUtils.cast(services);
         if (reverse) {
-            ArrayList<Object> reverseList = new ArrayList<Object>(services);
+            List<Object> reverseList = new ArrayList<Object>(services);
             Collections.reverse(reverseList);
             list = reverseList;
         }

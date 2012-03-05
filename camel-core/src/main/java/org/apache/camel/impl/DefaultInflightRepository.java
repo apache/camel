@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
@@ -36,7 +37,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
     private final AtomicInteger totalCount = new AtomicInteger();
     // use endpoint key as key so endpoints with lenient properties is registered using the same key (eg dynamic http endpoints)
-    private final ConcurrentHashMap<String, AtomicInteger> endpointCount = new ConcurrentHashMap<String, AtomicInteger>();
+    private final ConcurrentMap<String, AtomicInteger> endpointCount = new ConcurrentHashMap<String, AtomicInteger>();
 
     public void add(Exchange exchange) {
         int count = totalCount.incrementAndGet();

@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail.security;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.SSLHandshakeException;
 
@@ -68,7 +69,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:in");
         resultEndpoint.expectedBodiesReceived("Test Email Body\r\n");
 
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("To", email);
         headers.put("From", email);
         headers.put("Reply-to", email);
@@ -93,7 +94,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         
         context.start();
 
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("To", email);
         headers.put("From", email);
         headers.put("Reply-to", email);

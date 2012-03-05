@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -89,7 +90,7 @@ public class MailBinding {
             replyTo = endpoint.getConfiguration().getReplyTo();
         }
         if (replyTo != null) {
-            ArrayList<InternetAddress> replyToAddresses = new ArrayList<InternetAddress>();
+            List<InternetAddress> replyToAddresses = new ArrayList<InternetAddress>();
             for (String reply : splitRecipients(replyTo)) {
                 replyToAddresses.add(asEncodedInternetAddress(reply.trim(), determineCharSet(endpoint.getConfiguration(), exchange)));
             }
@@ -567,7 +568,7 @@ public class MailBinding {
 
     private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange,
                                                      String type, String recipient) throws MessagingException, IOException {
-        ArrayList<InternetAddress> recipientsAddresses = new ArrayList<InternetAddress>();
+        List<InternetAddress> recipientsAddresses = new ArrayList<InternetAddress>();
         for (String line : splitRecipients(recipient)) {
             recipientsAddresses.add(asEncodedInternetAddress(line.trim(), determineCharSet(configuration, exchange)));
         }

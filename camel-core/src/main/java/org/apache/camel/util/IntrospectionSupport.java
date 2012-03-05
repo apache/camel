@@ -25,7 +25,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -272,7 +271,7 @@ public final class IntrospectionSupport {
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
         ObjectHelper.notNull(properties, "properties");
 
-        HashMap<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
+        Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
 
         for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
             Map.Entry<String, Object> entry = it.next();

@@ -80,7 +80,7 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
 
         Exchange exchange = resultEndpoint.getExchanges().get(0);
         List<?> results = exchange.getIn().getBody(List.class);
-        ArrayList<Item> expected = itemsExpected();
+        List<Item> expected = itemsExpected();
         assertNotNull(results);
         assertNotNull(expected);
         assertEquals(expected.size(), results.size());
@@ -98,8 +98,8 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
         assertNotNull(results);
     }
 
-    private ArrayList<Item> itemsExpected() {
-        ArrayList<Item> products = new ArrayList<Item>();
+    private List<Item> itemsExpected() {
+        List<Item> products = new ArrayList<Item>();
         for (int i = 1; i < 10; i++) {
             products.add(new Item("Item-" + i, 1500L * i));
         }

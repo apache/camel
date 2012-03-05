@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
@@ -34,8 +35,8 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     public void testInsertMap() throws InterruptedException {
         assertEquals(0, testCollection.count());
         
-        HashMap<String, Object> m1 = new HashMap<String, Object>();
-        HashMap<String, String> m1Nested = new HashMap<String, String>();
+        Map<String, Object> m1 = new HashMap<String, Object>();
+        Map<String, String> m1Nested = new HashMap<String, String>();
 
         m1Nested.put("nested1", "nestedValue1");
         m1Nested.put("nested2", "nestedValue2");

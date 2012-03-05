@@ -18,6 +18,7 @@ package org.apache.camel.itest.osgi.mail;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -54,7 +55,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("reply-to", "route-test-reply@localhost");
         template.sendBodyAndHeaders("smtp://route-test-james@localhost", "hello world!", headers);
 

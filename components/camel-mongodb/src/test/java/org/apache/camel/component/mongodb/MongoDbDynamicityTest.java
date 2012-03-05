@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -44,7 +45,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
         String body = "{\"_id\": \"testInsertDynamicityDisabled\", \"a\" : \"1\"}";
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         Object result = template.requestBodyAndHeaders("direct:noDynamicity", body, headers);
@@ -71,7 +72,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBOnly\", \"a\" : \"1\"}";
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
         
@@ -96,7 +97,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnly\", \"a\" : \"1\"}";
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
         
@@ -120,7 +121,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : \"1\"}";
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
