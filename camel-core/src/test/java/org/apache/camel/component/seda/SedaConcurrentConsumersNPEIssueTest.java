@@ -17,6 +17,7 @@
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -33,14 +34,33 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // now start the first route, which should cause a failure due multiple consumers is not allowed
-        mock.reset();
-        mock.expectedMessageCount(0);
+        try {
+            context.startRoute("first");
+            fail("Should have thrown exception");
+        } catch (FailedToStartRouteException e) {
+            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
+                    + " Endpoint[seda://foo?concurrentConsumers=5]", e.getMessage());
+        }
+    }
 
-        context.startRoute("first");
-        template.sendBody("seda:foo", "Bye World");
+    public void testStartThird() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBody("seda:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
+
+        // this should be okay
+        context.startRoute("third");
+
+        try {
+            context.startRoute("first");
+            fail("Should have thrown exception");
+        } catch (FailedToStartRouteException e) {
+            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
+                    + " Endpoint[seda://foo?concurrentConsumers=5]", e.getMessage());
+        }
     }
 
     @Override
@@ -51,6 +71,8 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
                 from("seda:foo?concurrentConsumers=5").routeId("first").noAutoStartup().to("mock:result");
 
                 from("seda:foo?concurrentConsumers=5").routeId("second").to("mock:result");
+                
+                from("direct:foo").routeId("third").noAutoStartup().to("mock:result");
             }
         };
     }

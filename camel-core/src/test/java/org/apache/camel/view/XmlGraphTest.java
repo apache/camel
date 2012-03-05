@@ -20,6 +20,7 @@ package org.apache.camel.view;
  * @version 
  */
 public class XmlGraphTest extends DotViewTest {
+
     @Override
     public void testGenerateFiles() throws Exception {
         XmlGraphGenerator generator = new XmlGraphGenerator(outputDirectory);

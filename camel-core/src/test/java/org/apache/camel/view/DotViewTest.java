@@ -23,7 +23,6 @@ import org.apache.camel.component.bean.MyFooBean;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
-
 /**
  * @version 
  */
@@ -74,7 +73,7 @@ public class DotViewTest extends ContextTestSupport {
 
     static class AnotherPipelineRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:pipeline.in").pipeline("seda:pipeline.out1", "seda:pipeline.out2", "seda:pipeline.out3");
+            from("seda:pipeline.in2").pipeline("seda:pipeline.out1", "seda:pipeline.out2", "seda:pipeline.out3");
         }
     }
 
@@ -86,19 +85,19 @@ public class DotViewTest extends ContextTestSupport {
 
     static class FromToBeanRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:foo").beanRef("myBean", "hello");
+            from("seda:foo2").beanRef("myBean", "hello");
         }
     }
 
     static class RoutingSlipRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:foo").routingSlip(header("splipHeader"));
+            from("seda:foo3").routingSlip(header("splipHeader"));
         }
     }
 
     static class AggreagateRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:foo")
+            from("seda:foo4")
                 .aggregate(constant("messageId"), new UseLatestAggregationStrategy()).completionTimeout(1000L).
                     to("seda:aggregated");
         }
@@ -106,7 +105,7 @@ public class DotViewTest extends ContextTestSupport {
 
     static class ResequenceRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:foo").resequence(constant("seqNum")).to("seda:bar");
+            from("seda:foo5").resequence(constant("seqNum")).to("seda:bar");
         }
     }
 

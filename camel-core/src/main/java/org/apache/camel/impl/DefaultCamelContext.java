@@ -1963,10 +1963,29 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             for (Consumer consumer : routeService.getInputs().values()) {
                 Endpoint endpoint = consumer.getEndpoint();
 
-                // check multiple consumer violation
+                // check multiple consumer violation, with the other routes to be started
                 if (!doCheckMultipleConsumerSupportClash(endpoint, routeInputs)) {
                     throw new FailedToStartRouteException(routeService.getId(),
                         "Multiple consumers for the same endpoint is not allowed: " + endpoint);
+                }
+                
+                // check for multiple consumer violations with existing routes which
+                // have already been started, or is currently starting
+                List<Endpoint> existingEndpoints = new ArrayList<Endpoint>();
+                for (Route existingRoute : getRoutes()) {
+                    if (route.getId().equals(existingRoute.getId())) {
+                        // skip ourselves
+                        continue;
+                    }
+                    Endpoint existing = existingRoute.getEndpoint();
+                    ServiceStatus status = getRouteStatus(existingRoute.getId());
+                    if (status != null && status.isStarted() || status.isStarting()) {
+                        existingEndpoints.add(existing);
+                    }
+                }
+                if (!doCheckMultipleConsumerSupportClash(endpoint, existingEndpoints)) {
+                    throw new FailedToStartRouteException(routeService.getId(),
+                            "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                 }
 
                 // start the consumer on the route
