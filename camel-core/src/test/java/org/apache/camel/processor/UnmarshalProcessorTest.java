@@ -37,7 +37,7 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         processor.process(exchange);
 
-        // as the process method call above acts as noop there's nothing to assert on
+        assertEquals("UnmarshalProcessor did not copy OUT from IN message", "body", exchange.getOut().getBody());
     }
 
     public void testDataFormatReturnsAnotherExchange() throws Exception {
