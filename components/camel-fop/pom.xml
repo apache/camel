@@ -32,6 +32,10 @@
     <name>Camel :: FOP</name>
     <description>Camel FOP support</description>
 
+    <properties>
+        <camel.osgi.export.pkg>org.apache.camel.component.fop.*</camel.osgi.export.pkg>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
