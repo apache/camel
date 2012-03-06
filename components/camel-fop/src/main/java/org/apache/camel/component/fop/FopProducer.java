@@ -1,0 +1,106 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.fop;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.Map;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.pdf.PDFEncryptionParams;
+
+/**
+ * The Fop producer.
+ */
+public class FopProducer extends DefaultProducer {
+    private final FopFactory fopFactory;
+    private final String remaining;
+
+    public FopProducer(FopEndpoint endpoint, FopFactory fopFactory, String remaining) {
+        super(endpoint);
+        this.fopFactory = fopFactory;
+        this.remaining = remaining;
+    }
+
+    public void process(Exchange exchange) throws Exception {
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        Map<String, Object> headers = exchange.getIn().getHeaders();
+        setRenderParameters(userAgent, headers);
+        setEncryptionParameters(userAgent, headers);
+
+        String outputFormat = getOutputFormat(exchange);
+        Source src = exchange.getIn().getBody(StreamSource.class);
+
+        OutputStream out = transform(userAgent, outputFormat, src);
+        exchange.getOut().setBody(out);
+    }
+
+    private String getOutputFormat(Exchange exchange) {
+        String outputFormat = exchange.getIn()
+                .getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, this.remaining, String.class);
+        if (outputFormat == null) {
+            throw new RuntimeExchangeException("Missing output format", exchange);
+        }
+
+        return outputFormat;
+    }
+
+    private OutputStream transform(FOUserAgent userAgent, String outputFormat, Source src)
+        throws FOPException, TransformerException {
+        OutputStream out = new ByteArrayOutputStream();
+        Fop fop = fopFactory.newFop(outputFormat, userAgent, out);
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer();
+
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(src, res);
+        return out;
+    }
+
+    private void setEncryptionParameters(FOUserAgent userAgent, Map<String, Object> headers)
+        throws Exception {
+        Map<String, Object> encryptionParameters = IntrospectionSupport
+                .extractProperties(headers, FopConstants.CAMEL_FOP_ENCRYPT);
+        if (!encryptionParameters.isEmpty()) {
+            PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
+            IntrospectionSupport.setProperties(encryptionParams, encryptionParameters);
+            userAgent.getRendererOptions().put("encryption-params", encryptionParams);
+        }
+    }
+
+    private void setRenderParameters(FOUserAgent userAgent, Map<String, Object> headers) throws Exception {
+        Map<String, Object> parameters = IntrospectionSupport
+                .extractProperties(headers, FopConstants.CAMEL_FOP_RENDER);
+        if (!parameters.isEmpty()) {
+            IntrospectionSupport.setProperties(userAgent, parameters);
+        }
+    }
+}

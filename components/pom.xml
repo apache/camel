@@ -76,6 +76,7 @@
     <module>camel-eventadmin</module>
     <module>camel-exec</module>
     <module>camel-flatpack</module>
+    <module>camel-fop</module>
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
     <module>camel-gae</module>

@@ -62,6 +62,7 @@
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-flatpack</include>
+        <include>org.apache.camel:camel-fop</include>
         <include>org.apache.camel:camel-freemarker</include>
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-gae</include>
