@@ -336,9 +336,11 @@ public class MethodInfo {
         return Modifier.isStatic(method.getModifiers());
     }
 
-    protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws IllegalAccessException, InvocationTargetException {
+    protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws InvocationTargetException {
         try {
             return mth.invoke(pojo, arguments);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeExchangeException("IllegalAccessException occurred invoking method: " + mth + " using arguments: " + Arrays.asList(arguments), exchange, e);
         } catch (IllegalArgumentException e) {
             throw new RuntimeExchangeException("IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + Arrays.asList(arguments), exchange, e);
         }
