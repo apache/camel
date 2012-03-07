@@ -16,8 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
@@ -37,7 +37,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
     private final AtomicInteger totalCount = new AtomicInteger();
     // use endpoint key as key so endpoints with lenient properties is registered using the same key (eg dynamic http endpoints)
-    private final ConcurrentMap<String, AtomicInteger> endpointCount = new ConcurrentHashMap<String, AtomicInteger>();
+    private final Map<String, AtomicInteger> endpointCount = new HashMap<String, AtomicInteger>();
 
     public void add(Exchange exchange) {
         int count = totalCount.incrementAndGet();
@@ -48,9 +48,14 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         String key = exchange.getFromEndpoint().getEndpointKey();
-        AtomicInteger existing = endpointCount.putIfAbsent(key, new AtomicInteger(1));
-        if (existing != null) {
-            existing.addAndGet(1);
+        // need to be synchronized as we can concurrently add/remove
+        synchronized (endpointCount) {
+            AtomicInteger existing = endpointCount.get(key);
+            if (existing != null) {
+                existing.incrementAndGet();
+            } else {
+                endpointCount.put(key, new AtomicInteger(1));
+            }
         }
     }
 
@@ -63,10 +68,22 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         String key = exchange.getFromEndpoint().getEndpointKey();
-        AtomicInteger existing = endpointCount.get(key);
-        if (existing != null) {
-            existing.addAndGet(-1);
+        // need to be synchronized as we can concurrently add/remove
+        synchronized (endpointCount) {
+            AtomicInteger existing = endpointCount.get(key);
+            if (existing != null) {
+                if (existing.decrementAndGet() <= 0) {
+                    endpointCount.remove(key);
+                }
+            }
         }
+    }
+
+    /**
+     * Internal only - Used for testing purpose.
+     */
+    int endpointSize() {
+        return endpointCount.size();
     }
 
     public int size() {
@@ -90,6 +107,8 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         } else {
             LOG.debug("Shutting down with no inflight exchanges.");
         }
-        endpointCount.clear();
+        synchronized (endpointCount) {
+            endpointCount.clear();
+        }
     }
 }
