@@ -60,13 +60,4 @@ public interface InflightRepository extends Service {
      */
     int size(Endpoint endpoint);
 
-    /**
-     * Remove a endpoint from this registry.
-     * <p/>
-     * This is used to cleanup resources that are no longer needed.
-     *
-     * @param endpoint the endpoint to remove
-     */
-    void removeEndpoint(Endpoint endpoint);
-
 }
