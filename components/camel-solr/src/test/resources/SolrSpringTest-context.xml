@@ -7,6 +7,18 @@
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route id="DirectXMLRoute">
+            <from uri="direct:direct-xml-start" />
+            <setHeader headerName="SolrOperation">
+                <constant>INSERT</constant>
+            </setHeader>
+            <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
+            <setHeader headerName="SolrOperation">
+                <constant>COMMIT</constant>
+            </setHeader>
+            <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
+        </route>
+
         <route id="XMLRoute">
             <from uri="direct:xml-start" />
             <split>
