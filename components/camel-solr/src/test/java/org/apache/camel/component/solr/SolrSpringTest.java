@@ -26,7 +26,9 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -45,12 +47,35 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
     private static JettySolrRunner solrRunner;
     private static CommonsHttpSolrServer solrServer;
 
+    @Produce(uri = "direct:direct-xml-start")
+    protected ProducerTemplate directXmlRoute;
+
     @Produce(uri = "direct:xml-start")
     protected ProducerTemplate xmlRoute;
+
+    @Produce(uri = "direct:xml-start-streaming")
+    protected ProducerTemplate xmlRouteStreaming;
 
     @Produce(uri = "direct:pdf-start")
     protected ProducerTemplate pdfRoute;
 
+    @Produce(uri = "direct:pdf-start-streaming")
+    protected ProducerTemplate pdfRouteStreaming;
+
+
+    @DirtiesContext
+    @Test
+    public void endToEndIndexDirectXML() throws Exception {
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("id", "MA147LL/A", 1.0f);
+        String docAsXml = ClientUtils.toXML(doc);
+        directXmlRoute.sendBody(docAsXml);
+
+        QueryResponse response = executeSolrQuery("id:MA147LL/A");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+    }
+    
     @DirtiesContext
     @Test
     public void endToEndIndexXMLDocuments() throws Exception {
@@ -70,10 +95,46 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
         assertEquals(Arrays.asList("Web", "Technology", "Computers"), doc.getFieldValue("cat"));
     }
 
+
+    @DirtiesContext
+    @Test
+    public void endToEndIndexXMLDocumentsStreaming() throws Exception {
+        xmlRouteStreaming.sendBody(new File("src/test/resources/data/books.xml"));
+
+        // Check things were indexed.
+        QueryResponse response = executeSolrQuery("*:*");
+
+        assertEquals(0, response.getStatus());
+        assertEquals(4, response.getResults().getNumFound());
+
+        // Check fields were indexed correctly.
+        response = executeSolrQuery("title:Learning XML");
+
+        SolrDocument doc = response.getResults().get(0);
+        assertEquals("Learning XML", doc.getFieldValue("id"));
+        assertEquals(Arrays.asList("Web", "Technology", "Computers"), doc.getFieldValue("cat"));
+    }
+
     @DirtiesContext
     @Test
     public void endToEndIndexPDFDocument() throws Exception {
         pdfRoute.sendBody(new File("src/test/resources/data/tutorial.pdf"));
+
+        QueryResponse response = executeSolrQuery("*:*");
+
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+
+        SolrDocument doc = response.getResults().get(0);
+        assertEquals("Solr", doc.getFieldValue("subject"));
+        assertEquals("tutorial.pdf", doc.getFieldValue("id"));
+        assertEquals(Arrays.asList("application/pdf"), doc.getFieldValue("content_type"));
+    }
+
+    @DirtiesContext
+    @Test
+    public void endToEndIndexPDFDocumentStreaming() throws Exception {
+        pdfRouteStreaming.sendBody(new File("src/test/resources/data/tutorial.pdf"));
 
         QueryResponse response = executeSolrQuery("*:*");
 
