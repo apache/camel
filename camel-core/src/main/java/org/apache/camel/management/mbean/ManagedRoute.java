@@ -85,11 +85,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public Integer getInflightExchanges() {
-        if (route.getEndpoint() != null) {
-            return context.getInflightRepository().size(route.getEndpoint());
-        } else {
-            return null;
-        }
+        return context.getInflightRepository().size(route.getId());
     }
 
     public String getCamelId() {

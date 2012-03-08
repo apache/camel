@@ -42,7 +42,11 @@ public class ManagedConsumer extends ManagedService implements ManagedConsumerMB
     }
 
     public Integer getInflightExchanges() {
-        return getContext().getInflightRepository().size(consumer.getEndpoint());
+        if (getRouteId() != null) {
+            return getContext().getInflightRepository().size(getRouteId());
+        } else {
+            return null;
+        }
     }
 
 }

@@ -35,6 +35,7 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.RouteInflightRepositoryProcessor;
 import org.apache.camel.processor.RoutePolicyProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.InterceptStrategy;
@@ -168,14 +169,17 @@ public class DefaultRouteContext implements RouteContext {
                 target = unitOfWorkProcessor;
             }
 
+            // wrap in route inflight processor to track number of inflight exchanges for the route
+            RouteInflightRepositoryProcessor inflight = new RouteInflightRepositoryProcessor(camelContext.getInflightRepository(), target);
+
             // and wrap it by a instrumentation processor that is to be used for performance stats
             // for this particular route
-            InstrumentationProcessor wrapper = new InstrumentationProcessor();
-            wrapper.setType("route");
-            wrapper.setProcessor(target);
+            InstrumentationProcessor instrument = new InstrumentationProcessor();
+            instrument.setType("route");
+            instrument.setProcessor(inflight);
 
             // and create the route that wraps the UoW
-            Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), wrapper);
+            Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), instrument);
             // create the route id
             String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
@@ -188,6 +192,8 @@ public class DefaultRouteContext implements RouteContext {
             if (routePolicyProcessor != null) {
                 routePolicyProcessor.setRoute(edcr);
             }
+            // after the route is created then set the route on the inflight processor so we get hold of it
+            inflight.setRoute(edcr);
 
             // invoke init on route policy
             if (routePolicyList != null && !routePolicyList.isEmpty()) {

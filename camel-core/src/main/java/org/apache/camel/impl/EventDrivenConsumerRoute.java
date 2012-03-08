@@ -75,9 +75,15 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
     @SuppressWarnings("unchecked")
     public Navigate<Processor> navigate() {
         Processor answer = getProcessor();
+
+        // we do not want to navigate the instrument and inflight processors
+        // which is the first 2 delegate async processors, so skip them
         // skip the instrumentation processor if this route was wrapped by one
         if (answer instanceof DelegateAsyncProcessor) {
             answer = ((DelegateAsyncProcessor) answer).getProcessor();
+            if (answer instanceof DelegateAsyncProcessor) {
+                answer = ((DelegateAsyncProcessor) answer).getProcessor();
+            }
         }
 
         if (answer instanceof Navigate) {

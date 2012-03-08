@@ -28,18 +28,34 @@ import org.apache.camel.Service;
 public interface InflightRepository extends Service {
 
     /**
-     * Adds the exchange to the inflight registry
+     * Adds the exchange to the inflight registry to the total counter
      *
      * @param exchange  the exchange
      */
     void add(Exchange exchange);
 
     /**
-     * Removes the exchange from the inflight registry
+     * Removes the exchange from the inflight registry to the total counter
      *
      * @param exchange  the exchange
      */
     void remove(Exchange exchange);
+
+    /**
+     * Adds the exchange to the inflight registry associated to the given route
+     *
+     * @param exchange  the exchange
+     * @param routeId the id of the route
+     */
+    void add(Exchange exchange, String routeId);
+
+    /**
+     * Removes the exchange from the inflight registry removing association to the given route
+     *
+     * @param exchange  the exchange
+     * @param routeId the id of the route
+     */
+    void remove(Exchange exchange, String routeId);
 
     /**
      * Current size of inflight exchanges.
@@ -51,13 +67,29 @@ public interface InflightRepository extends Service {
     int size();
 
     /**
-     * Current size of inflight exchanges which are from the given endpoint.
+     * Will always return 0 due method is deprecated.
+     * @deprecated will be removed in a future Camel release.
+     */
+    @Deprecated
+    int size(Endpoint endpoint);
+
+    /**
+     * Removes the route from the in flight registry.
+     * <p/>
+     * Is used for cleaning up resources to avoid leaking.
+     *
+     * @param routeId the id of the route
+     */
+    void removeRoute(String routeId);
+
+    /**
+    * Current size of inflight exchanges which are from the given route.
      * <p/>
      * Will return 0 if there are no inflight exchanges.
      *
-     * @param endpoint the endpoint where the {@link Exchange} are from.
+     * @param routeId the id of the route
      * @return number of exchanges currently in flight.
      */
-    int size(Endpoint endpoint);
+    int size(String routeId);
 
 }
