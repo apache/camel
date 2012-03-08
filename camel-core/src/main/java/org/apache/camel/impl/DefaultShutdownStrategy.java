@@ -504,17 +504,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             while (!done) {
                 int size = 0;
                 for (RouteStartupOrder order : routes) {
+                    int inflight = context.getInflightRepository().size(order.getRoute().getId());
                     for (Consumer consumer : order.getInputs()) {
-                        int inflight = context.getInflightRepository().size(consumer.getEndpoint());
                         // include any additional pending exchanges on some consumers which may have internal
                         // memory queues such as seda
                         if (consumer instanceof ShutdownAware) {
                             inflight += ((ShutdownAware) consumer).getPendingExchangesSize();
                         }
-                        if (inflight > 0) {
-                            size += inflight;
-                            LOG.trace("{} inflight and pending exchanges for consumer: {}", inflight, consumer);
-                        }
+                    }
+                    if (inflight > 0) {
+                        size += inflight;
+                        LOG.trace("{} inflight and pending exchanges for route: {}", inflight, order.getRoute().getId());
                     }
                 }
                 if (size > 0) {

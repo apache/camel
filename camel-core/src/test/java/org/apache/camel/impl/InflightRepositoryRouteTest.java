@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InflightRepositoryRouteTest extends ContextTestSupport {
 
-
     public void testInflight() throws Exception {
         context.setInflightRepository(new MyInflightRepo());
 
@@ -34,8 +33,7 @@ public class InflightRepositoryRouteTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertEquals(0, context.getInflightRepository().size());
-        assertEquals(0, context.getInflightRepository().size(context.getEndpoint("direct:start")));
-        assertEquals(0, context.getInflightRepository().size(context.getEndpoint("mock:result")));
+        assertEquals(0, context.getInflightRepository().size("foo"));
     }
 
     @Override
@@ -43,7 +41,7 @@ public class InflightRepositoryRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:result");
+                from("direct:start").routeId("foo").to("mock:result");
             }
         };
     }
@@ -53,18 +51,13 @@ public class InflightRepositoryRouteTest extends ContextTestSupport {
         @Override
         public void add(Exchange exchange) {
             super.add(exchange);
-
             assertEquals(1, context.getInflightRepository().size());
-
-            assertEquals(1, size(context.getEndpoint("direct:start")));
-
-            // but 0 from this endpoint
-            assertEquals(0, size(context.getEndpoint("mock:result")));
         }
 
         @Override
-        public void remove(Exchange exchange) {
-            super.remove(exchange);
+        public void add(Exchange exchange, String routeId) {
+            super.add(exchange, routeId);
+            assertEquals(1, context.getInflightRepository().size("foo"));
         }
     }
 }
