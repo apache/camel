@@ -105,10 +105,10 @@ public class DefaultInflightRepositoryConcurrentTest extends ContextTestSupport 
     }
 
     private static class TypicalConsumer implements Runnable {
-        Endpoint[] endpoints;
-        InflightRepository repo;
-        AtomicInteger locker;
-        Random rand = new Random(System.nanoTime());
+        private final Endpoint[] endpoints;
+        private final InflightRepository repo;
+        private final AtomicInteger locker;
+        private final Random rand = new Random(System.nanoTime());
 
         TypicalConsumer(Endpoint[] endpoints, InflightRepository repo, AtomicInteger locker) {
             this.endpoints = endpoints;
