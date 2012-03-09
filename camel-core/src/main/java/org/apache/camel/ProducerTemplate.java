@@ -47,7 +47,11 @@ import org.apache.camel.spi.Synchronization;
  *   <li>Either <tt>IN</tt> or <tt>OUT</tt> body according to the message exchange pattern. If the pattern is
  *   Out capable then the <tt>OUT</tt> body is returned, otherwise <tt>IN</tt>.
  * </ul>
- * <br/><br/>
+ * <p/>
+ * <br/>
+ * Before using the template it must be started.
+ * And when you are done using the template, make sure to {@link #stop()} the template.
+ * <br/>
  * <p/><b>Important note on usage:</b> See this
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
  * before using.

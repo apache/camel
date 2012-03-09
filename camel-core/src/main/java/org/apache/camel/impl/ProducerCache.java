@@ -394,15 +394,16 @@ public class ProducerCache extends ServiceSupport {
         return answer;
     }
 
-    protected void doStop() throws Exception {
-        ServiceHelper.stopServices(pool);
-        ServiceHelper.stopServices(producers.values());
-        producers.clear();
-    }
-
     protected void doStart() throws Exception {
         ServiceHelper.startServices(producers.values());
         ServiceHelper.startServices(pool);
+    }
+
+    protected void doStop() throws Exception {
+        // when stopping we intend to shutdown
+        ServiceHelper.stopAndShutdownService(pool);
+        ServiceHelper.stopAndShutdownServices(producers.values());
+        producers.clear();
     }
 
     /**
