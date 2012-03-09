@@ -29,7 +29,7 @@ public class WeightedRoundRobinLoadBalancer extends WeightedLoadBalancer {
     }
     
     @Override
-    protected Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
+    protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
         if (isRuntimeRatiosZeroed())  {
             resetRuntimeRatios();
             counter = 0;
