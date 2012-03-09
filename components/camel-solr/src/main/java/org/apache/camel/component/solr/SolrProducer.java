@@ -74,12 +74,6 @@ public class SolrProducer extends DefaultProducer {
 
         Object body = exchange.getIn().getBody();
 
-        boolean hasSolrHeaders = false;
-        Map<String, Object> headers = exchange.getIn().getHeaders();
-        if (headers != null && headers.containsKey(SolrConstants.FIELD + "id")) {
-            hasSolrHeaders = true;
-        }
-
         if (body instanceof File) {
 
             ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getRequestHandler());
@@ -109,43 +103,54 @@ public class SolrProducer extends DefaultProducer {
                 updateRequest.process(solrServer);
             }
 
-        } else if (hasSolrHeaders) {
+        } else {
 
-            UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
-
-            SolrInputDocument doc = new SolrInputDocument();
+            boolean hasSolrHeaders = false;
+            Map<String, Object> headers = exchange.getIn().getHeaders();
             for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
                 if (entry.getKey().startsWith(SolrConstants.FIELD)) {
-                    String fieldName = entry.getKey().substring(SolrConstants.FIELD.length());
-                    doc.setField(fieldName, entry.getValue());
+                    hasSolrHeaders = true;
+                    break;
                 }
             }
-            updateRequest.add(doc);
 
-            if (isStreaming) {
-                updateRequest.process(streamingSolrServer);
+            if (hasSolrHeaders) {
+
+                UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
+
+                SolrInputDocument doc = new SolrInputDocument();
+                for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+                    if (entry.getKey().startsWith(SolrConstants.FIELD)) {
+                        String fieldName = entry.getKey().substring(SolrConstants.FIELD.length());
+                        doc.setField(fieldName, entry.getValue());
+                    }
+                }
+                updateRequest.add(doc);
+
+                if (isStreaming) {
+                    updateRequest.process(streamingSolrServer);
+                } else {
+                    updateRequest.process(solrServer);
+                }
+
+            } else if (body instanceof String) {
+
+                String bodyAsString = (String) body;
+
+                if (!bodyAsString.startsWith("<add")) {
+                    bodyAsString = "<add>" + bodyAsString + "</add>";
+                }
+
+                DirectXmlRequest xmlRequest = new DirectXmlRequest(getRequestHandler(), bodyAsString);
+
+                if (isStreaming) {
+                    streamingSolrServer.request(xmlRequest);
+                } else {
+                    solrServer.request(xmlRequest);
+                }
             } else {
-                updateRequest.process(solrServer);
+                throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "unable to find data in Exchange to update Solr");
             }
-
-        } else if (body instanceof String) {
-
-            String bodyAsString = (String) body;
-
-            if (!bodyAsString.startsWith("<add")) {
-                bodyAsString = "<add>" + bodyAsString + "</add>";
-            }
-
-            DirectXmlRequest xmlRequest = new DirectXmlRequest(getRequestHandler(), bodyAsString);
-
-            if (isStreaming) {
-                streamingSolrServer.request(xmlRequest);
-            } else {
-                solrServer.request(xmlRequest);
-            }
-
-        } else {
-            throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "unable to find data in Exchange to update Solr");
         }
     }
 
