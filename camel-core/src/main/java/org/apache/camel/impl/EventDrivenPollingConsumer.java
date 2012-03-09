@@ -152,4 +152,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     protected void doStop() throws Exception {
         ServiceHelper.stopService(consumer);
     }
+
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(consumer);
+    }
 }
