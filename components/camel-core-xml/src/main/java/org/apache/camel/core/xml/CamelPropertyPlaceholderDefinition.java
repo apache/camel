@@ -36,6 +36,9 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String location;
 
     @XmlAttribute
+    private Boolean cache;
+
+    @XmlAttribute
     private Boolean ignoreMissingLocation;
 
     @XmlAttribute
@@ -65,6 +68,14 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Boolean isCache() {
+        return cache;
+    }
+
+    public void setCache(Boolean cache) {
+        this.cache = cache;
     }
 
     public String getPropertiesResolverRef() {
