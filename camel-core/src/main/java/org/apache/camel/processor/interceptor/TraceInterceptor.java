@@ -241,7 +241,8 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     protected void traceIntercept(InterceptDefinition intercept, TracedRouteNodes traced, Exchange exchange) throws Exception {
         // use the counter to get the index of the intercepted processor to be traced
         Processor last = intercept.getInterceptedProcessor(traced.getAndIncrementCounter(intercept));
-        if (last != null) {
+        // skip doing any double tracing of interceptors, so the last must not be a TraceInterceptor instance
+        if (last != null && !(last instanceof TraceInterceptor)) {
             traced.addTraced(new DefaultRouteNode(node, last));
 
             boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);

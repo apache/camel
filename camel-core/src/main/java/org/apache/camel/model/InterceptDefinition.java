@@ -77,8 +77,8 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
             public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
                                                          Processor target, Processor nextTarget) throws Exception {
-                // prefer next target over target as next target is the real target
-                interceptedTarget = nextTarget != null ? nextTarget : target;
+                // store the target we are intercepting
+                this.interceptedTarget = target;
 
                 // remember the target that was intercepted
                 intercepted.add(interceptedTarget);
