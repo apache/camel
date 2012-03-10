@@ -467,6 +467,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-juel/${project.version}</bundle>
   </feature>
+  <feature name='camel-jt400' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>wrap:mvn:net.sf.jt400/jt400-full/${jt400-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jt400/${project.version}</bundle>
+  </feature>
   <feature name='camel-kestrel' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spymemcached/${spymemcached-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
