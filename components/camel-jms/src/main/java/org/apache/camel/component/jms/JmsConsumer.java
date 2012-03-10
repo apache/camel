@@ -34,8 +34,8 @@ import org.springframework.jms.support.JmsUtils;
  * @see SimpleJmsMessageListenerContainer
  */
 public class JmsConsumer extends DefaultConsumer implements SuspendableService {
-    private AbstractMessageListenerContainer listenerContainer;
-    private EndpointMessageListener messageListener;
+    private volatile AbstractMessageListenerContainer listenerContainer;
+    private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
 
     public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
@@ -81,7 +81,9 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
      * Can be used to start this consumer later if it was configured to not auto startup.
      */
     public void startListenerContainer() {
+        log.trace("Starting listener container {} on destination {}", listenerContainer, getDestinationName());
         listenerContainer.start();
+        log.debug("Started listener container {} on destination {}", listenerContainer, getDestinationName());
     }
 
     /**
@@ -96,7 +98,6 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
             log.debug("Testing JMS Connection on startup for destination: {}", getDestinationName());
             Connection con = listenerContainer.getConnectionFactory().createConnection();
             JmsUtils.closeConnection(con);
-
             log.debug("Successfully tested JMS Connection on startup for destination: {}", getDestinationName());
         } catch (Exception e) {
             String msg = "Cannot get JMS Connection on startup for destination " + getDestinationName();
@@ -112,7 +113,32 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         if (listenerContainer == null) {
             createMessageListenerContainer();
         }
+        
+        if (getEndpoint().getConfiguration().isAsyncStartListener()) {
+            getEndpoint().getAsyncStartExecutorService().submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        prepareAndStartListenerContainer();
+                    } catch (Throwable e) {
+                        log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                    }
+                }
 
+                @Override
+                public String toString() {
+                    return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                }
+            });
+        } else {
+            prepareAndStartListenerContainer();
+        }
+
+        // mark as initialized for the first time
+        initialized = true;
+    }
+    
+    protected void prepareAndStartListenerContainer() {
         listenerContainer.afterPropertiesSet();
 
         // only start listener if auto start is enabled or we are explicit invoking start later
@@ -123,9 +149,6 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
             }
             startListenerContainer();
         }
-
-        // mark as initialized for the first time
-        initialized = true;
     }
 
     @Override

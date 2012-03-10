@@ -122,6 +122,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean transferExchange;
     private boolean transferException;
     private boolean testConnectionOnStartup;
+    private boolean asyncStartListener;
     // if the message is a JmsMessage and mapJmsMessage=false, force the 
     // producer to send the javax.jms.Message body to the next JMS destination    
     private boolean forceSendOriginalMessage;
@@ -1177,6 +1178,14 @@ public class JmsConfiguration implements Cloneable {
 
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public boolean isAsyncStartListener() {
+        return asyncStartListener;
+    }
+
+    public void setAsyncStartListener(boolean asyncStartListener) {
+        this.asyncStartListener = asyncStartListener;
     }
 
     public boolean isTestConnectionOnStartup() {

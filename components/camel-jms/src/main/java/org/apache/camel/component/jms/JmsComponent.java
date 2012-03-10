@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Session;
@@ -53,6 +54,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     private ApplicationContext applicationContext;
     private QueueBrowseStrategy queueBrowseStrategy;
     private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
+    private ExecutorService asyncStartExecutorService;
 
     public JmsComponent() {
     }
@@ -318,6 +320,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setTestConnectionOnStartup(testConnectionOnStartup);
     }
 
+    public void setAsyncStartListener(boolean asyncStartListener) {
+        getConfiguration().setAsyncStartListener(asyncStartListener);
+    }
+
     public void setForceSendOriginalMessage(boolean forceSendOriginalMessage) {
         getConfiguration().setForceSendOriginalMessage(forceSendOriginalMessage);
     }
@@ -393,8 +399,21 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     // -------------------------------------------------------------------------
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
+    protected void doShutdown() throws Exception {
+        if (asyncStartExecutorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(asyncStartExecutorService);
+            asyncStartExecutorService = null;
+        }
+        super.doShutdown();
+    }
+
+    protected synchronized ExecutorService getAsyncStartExecutorService() {
+        if (asyncStartExecutorService == null) {
+            // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
+            // for each task, and the thread pool will shrink when no more tasks running
+            asyncStartExecutorService = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartListener");
+        }
+        return asyncStartExecutorService;
     }
 
     @Override
@@ -423,7 +442,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
         // lets make sure we copy the configuration as each endpoint can
         // customize its own version
-        JmsConfiguration newConfiguration = getConfiguration().copy();        
+        JmsConfiguration newConfiguration = getConfiguration().copy();
         JmsEndpoint endpoint;
         if (pubSubDomain) {
             if (tempDestination) {
@@ -473,12 +492,12 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             endpoint.setJmsKeyFormatStrategy(resolveAndRemoveReferenceParameter(
                     parameters, KEY_FORMAT_STRATEGY_PARAM, JmsKeyFormatStrategy.class));
         }
-        
+
         setProperties(endpoint.getConfiguration(), parameters);
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
         return endpoint;
-    }   
+    }
 
     /**
      * A strategy method allowing the URI destination to be translated into the
