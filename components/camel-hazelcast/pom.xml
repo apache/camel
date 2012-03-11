@@ -93,6 +93,12 @@
                     <excludes>
                         <exclude>**/XXXTest.*</exclude>
                     </excludes>
+                    <systemProperties>
+                        <property>
+                            <name>hazelcast.logging.type</name>
+                            <value>slf4j</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
 
