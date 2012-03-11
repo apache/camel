@@ -380,9 +380,6 @@ public class Mina2Consumer extends DefaultConsumer {
             if (response != null) {
                 LOG.debug("Writing body: {}", response);
                 Mina2Helper.writeBody(session, response, exchange);
-            } else {
-                LOG.debug("Writing no response");
-                disconnect = Boolean.TRUE;
             }
 
             // should session be closed after complete?

@@ -33,7 +33,6 @@ public class Mina2Configuration implements Cloneable {
     private String protocol;
     private String host;
     private int port;
-    private boolean sync = true;
     private boolean textline;
     private Mina2TextLineDelimiter textlineDelimiter;
     private ProtocolCodecFactory codec;
@@ -47,7 +46,6 @@ public class Mina2Configuration implements Cloneable {
     private List<IoFilter> filters;
     private boolean allowDefaultCodec = true;
     private boolean disconnect;
-    private boolean disconnectOnNoReply = true;
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     private IoHandlerAdapter ioHandler;
     
@@ -95,14 +93,6 @@ public class Mina2Configuration implements Cloneable {
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    public boolean isSync() {
-        return sync;
-    }
-
-    public void setSync(boolean sync) {
-        this.sync = sync;
     }
 
     public boolean isTextline() {
@@ -211,14 +201,6 @@ public class Mina2Configuration implements Cloneable {
 
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
-    }
-
-    public boolean isDisconnectOnNoReply() {
-        return disconnectOnNoReply;
-    }
-
-    public void setDisconnectOnNoReply(boolean disconnectOnNoReply) {
-        this.disconnectOnNoReply = disconnectOnNoReply;
     }
 
     public LoggingLevel getNoReplyLogLevel() {
