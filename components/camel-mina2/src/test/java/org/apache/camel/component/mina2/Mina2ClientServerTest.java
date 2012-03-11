@@ -139,7 +139,7 @@ public class Mina2ClientServerTest extends BaseMina2Test {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
-            log.debug("MyIoHandler Session closed");
+            log.debug("CloseIoHandler Session closed");
         }
 
         @Override
@@ -176,5 +176,11 @@ public class Mina2ClientServerTest extends BaseMina2Test {
             cause = null;
             countDown();
         }
+        
+        @Override
+        public void sessionClosed(IoSession session) throws Exception {
+            log.debug("NoCloseIoHandler Session closed");
+        }
+
     }
 }

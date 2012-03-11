@@ -36,7 +36,7 @@ public class Mina2ConsumerTest extends BaseMina2Test {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("mina2:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
+        template.sendBody("mina2:tcp://localhost:" + port1 + "?textline=true", "Hello World");
 
         assertMockEndpointsSatisfied();
         // END SNIPPET: e2
