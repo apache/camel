@@ -22,7 +22,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.spring.CamelRedeliveryPolicyFactoryBean;
 import org.apache.camel.spring.ErrorHandlerType;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
  * The DefinitionParser to deal with the ErrorHandler
  */
 public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
-    protected BeanDefinitionParser redeliveryPolicyParser = new RedeliveryPolicyDefinitionParser(RedeliveryPolicy.class);
+    protected BeanDefinitionParser redeliveryPolicyParser = new RedeliveryPolicyDefinitionParser(CamelRedeliveryPolicyFactoryBean.class);
     
     public ErrorHandlerDefinitionParser() {
         // need to override the default

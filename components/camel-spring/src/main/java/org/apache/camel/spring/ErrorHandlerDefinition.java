@@ -60,6 +60,6 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private String executorServiceRef;
     @XmlElement
-    private RedeliveryPolicyDefinition redeliveryPolicy;
+    private CamelRedeliveryPolicyFactoryBean redeliveryPolicy;
 
 }
