@@ -32,9 +32,7 @@ import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.processor.RedeliveryPolicy;
-import org.apache.camel.util.CamelContextHelper;
 import org.osgi.service.blueprint.container.BlueprintContainer;
-import org.osgi.service.blueprint.container.NoSuchComponentException;
 
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,9 +76,7 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
                 handler.setRedeliveryPolicy(redeliveryPolicy.createRedeliveryPolicy(getCamelContext(), null));
             }
             if (redeliveryPolicyRef != null) {
-                // lookup redelivery
-                RedeliveryPolicy policy = CamelContextHelper.mandatoryLookup(getCamelContext(), redeliveryPolicyRef, RedeliveryPolicy.class);
-                handler.setRedeliveryPolicy(policy);
+                handler.setRedeliveryPolicy(lookup(redeliveryPolicyRef, RedeliveryPolicy.class));
             }
             if (onRedeliveryRef != null) {
                 handler.setOnRedelivery(lookup(onRedeliveryRef, Processor.class));
@@ -120,11 +116,7 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     }
 
     protected <T> T lookup(String name, Class<T> type) {
-        try {
-            return type.cast(blueprintContainer.getComponentInstance(name));
-        } catch (NoSuchComponentException e) {
-            return null;
-        }
+        return type.cast(blueprintContainer.getComponentInstance(name));
     }
 
 }
