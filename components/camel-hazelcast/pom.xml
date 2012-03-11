@@ -74,12 +74,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-					<systemProperties>
-						<property>
-							<name>hazelcast.logging.type</name>
-							<value>slf4j</value>
-						</property>
-					</systemProperties>
+                    <systemProperties>
+                        <property>
+                            <name>hazelcast.logging.type</name>
+                            <value>slf4j</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>
