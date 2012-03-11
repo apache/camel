@@ -203,9 +203,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setInitMethod("init");
         ctx.setDestroyMethod("destroy");
 
-        // Register objects
-        registerBeans(context, contextId, ccfb.getEndpoints());
+        // Register factory beans
         registerBeans(context, contextId, ccfb.getThreadPools());
+        registerBeans(context, contextId, ccfb.getEndpoints());
+        registerBeans(context, contextId, ccfb.getRedeliveryPolicies());
         registerBeans(context, contextId, ccfb.getBeans());
 
         // Register processors
