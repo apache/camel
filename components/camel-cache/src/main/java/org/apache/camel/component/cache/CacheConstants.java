@@ -20,15 +20,22 @@ package org.apache.camel.component.cache;
  * Constants used in this module
  */
 public interface CacheConstants {
+    String CACHE_HEADER_PREFIX = "CamelCache";
+    String CACHE_OPERATION = CACHE_HEADER_PREFIX + "Operation";
+    String CACHE_KEY = CACHE_HEADER_PREFIX + "Key";
+    String CACHE_ELEMENT_WAS_FOUND = CACHE_HEADER_PREFIX + "ElementWasFound";
 
-    String CACHE_OPERATION = "CamelCacheOperation";
-    String CACHE_KEY = "CamelCacheKey";
-    String CACHE_ELEMENT_WAS_FOUND = "CamelCacheElementWasFound";
+    String CACHE_OPERATION_URL_ADD = "Add";
+    String CACHE_OPERATION_URL_UPDATE = "Update";
+    String CACHE_OPERATION_URL_DELETE = "Delete";
+    String CACHE_OPERATION_URL_DELETEALL = "DeleteAll";
+    String CACHE_OPERATION_URL_GET = "Get";
+    String CACHE_OPERATION_URL_CHECK = "Check";
 
-    String CACHE_OPERATION_ADD = "CamelCacheAdd";
-    String CACHE_OPERATION_UPDATE = "CamelCacheUpdate";
-    String CACHE_OPERATION_DELETE = "CamelCacheDelete";
-    String CACHE_OPERATION_DELETEALL = "CamelCacheDeleteAll";
-    String CACHE_OPERATION_GET = "CamelCacheGet";
-    String CACHE_OPERATION_CHECK = "CamelCacheCheck";
+    String CACHE_OPERATION_ADD = CACHE_HEADER_PREFIX + CACHE_OPERATION_URL_ADD;
+    String CACHE_OPERATION_UPDATE = CACHE_HEADER_PREFIX + CACHE_OPERATION_URL_UPDATE;
+    String CACHE_OPERATION_DELETE = CACHE_HEADER_PREFIX + CACHE_OPERATION_URL_DELETE;
+    String CACHE_OPERATION_DELETEALL = CACHE_HEADER_PREFIX + CACHE_OPERATION_URL_DELETEALL;
+    String CACHE_OPERATION_GET = CACHE_HEADER_PREFIX + CACHE_OPERATION_URL_GET;
+    String CACHE_OPERATION_CHECK = CACHE_HEADER_PREFIX + CACHE_OPERATION_URL_CHECK;
 }
