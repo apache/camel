@@ -34,34 +34,34 @@
 
     <!-- some of the bundles is located at: http://repo1.maven.org/maven2/org/apache/servicemix/bundles/ -->
     <properties>
-      <ant-bundle-version>1.7.0_5</ant-bundle-version>
-      <antlr-bundle-version>2.7.7_2</antlr-bundle-version>
-      <aopalliance-bundle-version>1.0_5</aopalliance-bundle-version>
-      <asm2-bundle-version>2.2.3_4</asm2-bundle-version>
+      <ant-bundle-version>1.7.0_6</ant-bundle-version>
+      <antlr-bundle-version>2.7.7_5</antlr-bundle-version>
+      <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
+      <asm2-bundle-version>2.2.3_5</asm2-bundle-version>
       <aws-java-sdk-bundle-version>1.3.0_1</aws-java-sdk-bundle-version>
       <bcel-bundle-version>5.2_4</bcel-bundle-version>
-      <bcpg-jdk16-bundle-version>1.46_1</bcpg-jdk16-bundle-version>
-      <cglib-version>2.1_3_6</cglib-version>
-      <cometd-java-server-bundle-version>2.3.1_1</cometd-java-server-bundle-version>
-      <commons-beanutils-bundle-version>1.7.0_3</commons-beanutils-bundle-version>
-      <commons-csv-version>1.0-r706899_3</commons-csv-version>
+      <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
+      <cglib-version>2.1_3_7</cglib-version>
+      <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
+      <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
+      <commons-csv-version>1.0-r706900_3</commons-csv-version>
       <commons-configuration-version>1.6</commons-configuration-version>
       <commons-daemon-version>1.0.5</commons-daemon-version>
       <commons-digester-version>2.1</commons-digester-version>
-      <commons-httpclient-bundle-version>3.1_6</commons-httpclient-bundle-version>
-      <commons-io-bundle-version>1.3.2_3</commons-io-bundle-version>
+      <commons-httpclient-bundle-version>3.1_7</commons-httpclient-bundle-version>
+      <commons-io-bundle-version>1.4_3</commons-io-bundle-version>
       <commons-jxpath-version>1.3</commons-jxpath-version>
       <commons-math-version>2.2</commons-math-version>
-      <commons-dbcp-bundle-version>1.4_1</commons-dbcp-bundle-version>
-      <dom4j-bundle-version>1.6.1_4</dom4j-bundle-version>
+      <commons-dbcp-bundle-version>1.4_2</commons-dbcp-bundle-version>
+      <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
-      <fastinfoset-version>1.2.7_3</fastinfoset-version>
+      <fastinfoset-version>1.2.7_4</fastinfoset-version>
       <features.file>features.xml</features.file>
       <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
       <felix-configadmin-version>1.2.4</felix-configadmin-version>
       <felix-framework-version>2.0.5</felix-framework-version>
       <fop-bundle-version>1.0_2</fop-bundle-version>
-      <freemarker-bundle-version>2.3.18_1</freemarker-bundle-version>
+      <freemarker-bundle-version>2.3.18_2</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
@@ -69,71 +69,68 @@
       <guice-bundle-version>2.0_2</guice-bundle-version>
       <hadoop-bundle-version>0.20.203.0_1</hadoop-bundle-version>
       <hapi-bundle-version>0.5.1_5</hapi-bundle-version>
-      <hibernate-validator-bundle-version>4.1.0.Final_2</hibernate-validator-bundle-version>
-      <ibatis-bundle-version>2.3.4.726_2</ibatis-bundle-version>
-      <irclib-bundle-version>1.10_4</irclib-bundle-version>
+      <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
+      <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
+      <irclib-bundle-version>1.10_5</irclib-bundle-version>
       <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
-      <java-apns-bundle-version>0.1.6_2</java-apns-bundle-version>
-      <jaxb-bundle-version>2.2.1.1_1</jaxb-bundle-version>
+      <java-apns-bundle-version>0.1.6_3</java-apns-bundle-version>
+      <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
       <jasypt-bundle-version>1.9.0_1</jasypt-bundle-version>
-      <jetty6-bundle-version>6.1.26_3</jetty6-bundle-version>
+      <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
       <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
       <javax.el-bundle-version>2.1.0</javax.el-bundle-version>
       <jdom-bundle-version>1.1_4</jdom-bundle-version>
-      <jettison-bundle-version>1.3</jettison-bundle-version>
-      <jing-bundle-version>20030619_4</jing-bundle-version>
-      <jodatime-bundle-version>1.5.2_2</jodatime-bundle-version>
+      <jing-bundle-version>20030619_5</jing-bundle-version>
+      <jodatime-bundle-version>1.5.2_5</jodatime-bundle-version>
       <josql-bundle-version>1.5_5</josql-bundle-version>
-      <jsch-bundle-version>0.1.44_2</jsch-bundle-version>
-      <jsendnsca-bundle-version>1.3.1_1</jsendnsca-bundle-version>
+      <jsch-bundle-version>0.1.45_1</jsch-bundle-version>
+      <jsendnsca-bundle-version>1.3.1_3</jsendnsca-bundle-version>
       <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
       <juel-bundle-version>2.1.2_2</juel-bundle-version>
-      <junit-bundle-version>4.7_1</junit-bundle-version>
-      <jsmpp-bundle-version>2.1.0_3</jsmpp-bundle-version>
-      <kxml2-bundle-version>2.3.0_1</kxml2-bundle-version>
-      <lucene-bundle-version>3.0.3_1</lucene-bundle-version>
-      <mvel-bundle-version>2.0.18_2</mvel-bundle-version>
-      <mina-bundle-version>1.1.7_5</mina-bundle-version>
-      <neethi-bundle-version>3.0.0</neethi-bundle-version>
-      <oro-bundle-version>2.0.8_5</oro-bundle-version>
-      <openjpa-bundle-version>1.2.1_2</openjpa-bundle-version>
-      <opensaml-version>2.4.1_1</opensaml-version>
+      <junit-bundle-version>4.10_1</junit-bundle-version>
+      <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
+      <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
+      <lucene-bundle-version>3.5.0_1</lucene-bundle-version>
+      <mvel-bundle-version>2.0.18_3</mvel-bundle-version>
+      <mina-bundle-version>1.1.7_6</mina-bundle-version>
+      <neethi-bundle-version>3.0.1</neethi-bundle-version>
+      <oro-bundle-version>2.0.8_6</oro-bundle-version>
+      <opensaml-version>2.5.1_2</opensaml-version>
       <oscache-bundle-version>2.4_5</oscache-bundle-version>
-      <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
-      <quartz-bundle-version>1.8.5_1</quartz-bundle-version>
-      <qpid-bundle-version>0.12_1</qpid-bundle-version>
-      <quickfix-bundle-version>1.5.1_1</quickfix-bundle-version>
-      <regexp-bundle-version>1.3_2</regexp-bundle-version>
-      <rhino-bundle-version>1.7R2_2</rhino-bundle-version>
-      <rome-bundle-version>1.0_2</rome-bundle-version>
+      <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
+      <quartz-bundle-version>1.8.5_2</quartz-bundle-version>
+      <qpid-bundle-version>0.12_2</qpid-bundle-version>
+      <quickfix-bundle-version>1.5.1_2</quickfix-bundle-version>
+      <regexp-bundle-version>1.3_3</regexp-bundle-version>
+      <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
+      <rome-bundle-version>1.0_3</rome-bundle-version>
       <saxon-bundle-version>9.3.0.11_1</saxon-bundle-version>
-      <scala-bundle-version>2.9.1_1</scala-bundle-version>
+      <scala-bundle-version>2.9.1_2</scala-bundle-version>
       <scriptengines-version>1.1</scriptengines-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_4</serp-bundle-version>
-      <smack-bundle-version>3.2.0_1</smack-bundle-version>
-      <solrj-bundle-version>3.5.0_1</solrj-bundle-version>
+      <smack-bundle-version>3.2.1_1</smack-bundle-version>
+      <solrj-bundle-version>3.5.0_2</solrj-bundle-version>
       <spring-osgi-version>1.2.1</spring-osgi-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version>
       <stringtemplate-bundle-version>3.2_5</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
       <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
-      <velocity-bundle-version>1.7_3</velocity-bundle-version>
-      <xalan-bundle-version>2.7.1_4</xalan-bundle-version>
+      <velocity-bundle-version>1.7_4</velocity-bundle-version>
+      <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_5</xerces-bundle-version>
       <xmlbeans-bundle-version>2.5.0_2</xmlbeans-bundle-version>
       <xmlschema-version>2.0</xmlschema-version>
-      <xmlsec-bundle-version>1.4.5_1</xmlsec-bundle-version>
-      <xmlresolver-bundle-version>1.2_4</xmlresolver-bundle-version>
-      <xpp3-bundle-version>1.1.4c_5</xpp3-bundle-version>
-      <xstream-bundle-version>1.4.1_1</xstream-bundle-version>
+      <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
+      <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
+      <xstream-bundle-version>1.4.2_2</xstream-bundle-version>
       <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
       <woodstox-core-bundle-version>${woodstox-version}</woodstox-core-bundle-version>
       <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
       <saaj-impl-version>1.3.2_2</saaj-impl-version>
-      <wsdl4j-bundle-version>1.6.2_5</wsdl4j-bundle-version>
-      <wss4j-version>1.6.1</wss4j-version>
+      <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
+      <wss4j-version>1.6.5</wss4j-version>
     </properties>
     
     <!-- The validate plugin will export these provided dependencies bundles' export packages first -->  
