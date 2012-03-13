@@ -130,12 +130,13 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         }
 
         // executor service is mandatory for on completion
-        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this, true);
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this, true);
 
         // should be false by default
         boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;
         OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor,
-                executorService, isOnCompleteOnly(), isOnFailureOnly(), when, original);
+                threadPool, shutdownThreadPool, isOnCompleteOnly(), isOnFailureOnly(), when, original);
         return answer;
     }
 

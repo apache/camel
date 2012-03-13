@@ -75,7 +75,7 @@ public class ThrottlerTest extends ContextTestSupport {
     }
 
     public void testTimeSlotCalculus() throws Exception {
-        Throttler throttler = new Throttler(null, constant(3), 1000, null);
+        Throttler throttler = new Throttler(context, null, constant(3), 1000, null, false);
         // calculate will assign a new slot
         throttler.calculateDelay(new DefaultExchange(context));
         TimeSlot slot = throttler.nextSlot();

@@ -58,6 +58,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private Processor onPrepare;
     private boolean shareUnitOfWork;
     private ExecutorService executorService;
+    private boolean shutdownExecutorService;
     private ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
 
@@ -118,8 +119,8 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
-                                                                isParallelProcessing(), getExecutorService(), isStreaming(),
-                                                                isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork()) {
+                isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
+                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork()) {
             @Override
             protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
@@ -215,6 +216,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public boolean isShutdownExecutorService() {
+        return shutdownExecutorService;
+    }
+
+    public void setShutdownExecutorService(boolean shutdownExecutorService) {
+        this.shutdownExecutorService = shutdownExecutorService;
     }
 
     public AggregationStrategy getAggregationStrategy() {

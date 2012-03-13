@@ -58,15 +58,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     private final Expression expression;
 
     public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
-        this(camelContext, expression, destination, aggregationStrategy, false, null, false, false, 0, null, false);
+        this(camelContext, expression, destination, aggregationStrategy, false, null, false, false, false, 0, null, false);
     }
 
     public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
-                    boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout,
-                    Processor onPrepare, boolean useSubUnitOfWork) {
+                    boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
+                    boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean useSubUnitOfWork) {
         super(camelContext, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
-                streaming, stopOnException, timeout, onPrepare, useSubUnitOfWork);
-
+                shutdownExecutorService, streaming, stopOnException, timeout, onPrepare, useSubUnitOfWork);
         this.expression = expression;
         notNull(expression, "expression");
         notNull(destination, "destination");

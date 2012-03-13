@@ -159,26 +159,41 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this, isParallelProcessing());
-        if (executorService == null && !isParallelProcessing()) {
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this, isParallelProcessing());
+        if (threadPool == null && !isParallelProcessing()) {
             // executor service is mandatory for the Aggregator
             // we do not run in parallel mode, but use a synchronous executor, so we run in current thread
-            executorService = new SynchronousExecutorService();
+            threadPool = new SynchronousExecutorService();
+            shutdownThreadPool = true;
         }
-       
-        if (timeoutCheckerExecutorServiceRef != null && timeoutCheckerExecutorService == null) {
-            timeoutCheckerExecutorService = getConfiguredScheduledExecutorService(routeContext);
-        }
-        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy, executorService);
+
+        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor,
+                correlation, strategy, threadPool, shutdownThreadPool);
 
         AggregationRepository repository = createAggregationRepository(routeContext);
         if (repository != null) {
             answer.setAggregationRepository(repository);
         }
-        
-        if (getTimeoutCheckerExecutorService() != null) {
-            answer.setTimeoutCheckerExecutorService(timeoutCheckerExecutorService);
+
+        // this EIP supports using a shared timeout checker thread pool or fallback to create a new thread pool
+        boolean shutdownTimeoutThreadPool = false;
+        ScheduledExecutorService timeoutThreadPool = timeoutCheckerExecutorService;
+        if (timeoutThreadPool == null && timeoutCheckerExecutorServiceRef != null) {
+            // lookup existing thread pool
+            timeoutThreadPool = routeContext.getCamelContext().getRegistry().lookup(timeoutCheckerExecutorServiceRef, ScheduledExecutorService.class);
+            if (timeoutThreadPool == null) {
+                // then create a thread pool assuming the ref is a thread pool profile id
+                timeoutThreadPool = routeContext.getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,
+                        AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER, timeoutCheckerExecutorServiceRef);
+                if (timeoutThreadPool == null) {
+                    throw new IllegalArgumentException("ExecutorServiceRef " + timeoutCheckerExecutorServiceRef + " not found in registry or as a thread pool profile.");
+                }
+                shutdownTimeoutThreadPool = true;
+            }
         }
+        answer.setTimeoutCheckerExecutorService(timeoutThreadPool);
+        answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
 
         // set other options
         answer.setParallelProcessing(isParallelProcessing());
@@ -222,28 +237,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             answer.setForceCompletionOnStop(getForceCompletionOnStop());
         }
 
-        return answer;
-    }
-
-    private ScheduledExecutorService getConfiguredScheduledExecutorService(RouteContext routeContext) {
-        // TODO: maybe rather than this one-off method to support an executorService & scheduledExecutorService for the aggregator,
-        // create ScheduledExecutorServiceAwareDefinition and the change other definitions that currently use ScheduledExecutorServices to
-        // use that one instead of the more generic ExecutorServiceAwareDefinition
-        ScheduledExecutorService answer = routeContext.getCamelContext().getRegistry().lookup(timeoutCheckerExecutorServiceRef, ScheduledExecutorService.class);
-        if (answer == null) {
-            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-            // then create a thread pool assuming the ref is a thread pool profile id                
-            ThreadPoolProfile profile = manager.getThreadPoolProfile(timeoutCheckerExecutorServiceRef);
-            if (profile != null) {
-                // okay we need to grab the pool size from the ref
-                Integer poolSize = profile.getPoolSize();
-                if (poolSize == null) {
-                    // fallback and use the default pool size, if none was set on the profile
-                    poolSize = manager.getDefaultThreadPoolProfile().getPoolSize();
-                }
-                answer = manager.newScheduledThreadPool(this, "Aggregator", poolSize);
-            }
-        }
         return answer;
     }
 

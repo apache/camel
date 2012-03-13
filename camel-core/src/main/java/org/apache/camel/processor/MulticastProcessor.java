@@ -147,6 +147,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final boolean streaming;
     private final boolean stopOnException;
     private final ExecutorService executorService;
+    private final boolean shutdownExecutorService;
     private ExecutorService aggregateExecutorService;
     private final long timeout;
     private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<PreparedErrorHandler, Processor>();
@@ -157,18 +158,18 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(camelContext, processors, aggregationStrategy, false, null, false, false, 0, null, false);
+        this(camelContext, processors, aggregationStrategy, false, null, false, false, false, 0, null, false);
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
-                              boolean parallelProcessing, ExecutorService executorService, boolean streaming,
-                              boolean stopOnException, long timeout, Processor onPrepare,
-                              boolean shareUnitOfWork) {
+                              boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
+                              boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.executorService = executorService;
+        this.shutdownExecutorService = shutdownExecutorService;
         this.streaming = streaming;
         this.stopOnException = stopOnException;
         // must enable parallel if executor service is provided
@@ -953,6 +954,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         ServiceHelper.stopAndShutdownServices(processors, errorHandlers);
         // only clear error handlers when shutting down
         errorHandlers.clear();
+
+        if (shutdownExecutorService && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
     }
 
     protected static void setToEndpoint(Exchange exchange, Processor processor) {

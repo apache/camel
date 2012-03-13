@@ -83,9 +83,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         Endpoint endpoint = resolveEndpoint(routeContext);
 
         // executor service is mandatory for wire tap
-        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", this, true);
-
-        WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", this, true);
+        WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), threadPool, shutdownThreadPool);
 
         answer.setCopy(isCopy());
         if (newExchangeProcessorRef != null) {

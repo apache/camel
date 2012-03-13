@@ -87,7 +87,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final AggregationStrategy aggregationStrategy;
     private final Expression correlationExpression;
     private final ExecutorService executorService;
-    private ScheduledExecutorService timeoutCheckerExecutorService;    
+    private final boolean shutdownExecutorService;
+    private ScheduledExecutorService timeoutCheckerExecutorService;
+    private boolean shutdownTimeoutCheckerExecutorService;
     private ScheduledExecutorService recoverService;
     // store correlation key -> exchange id in timeout map
     private TimeoutMap<String, String> timeoutMap;
@@ -125,7 +127,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     public AggregateProcessor(CamelContext camelContext, Processor processor,
                               Expression correlationExpression, AggregationStrategy aggregationStrategy,
-                              ExecutorService executorService) {
+                              ExecutorService executorService, boolean shutdownExecutorService) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(correlationExpression, "correlationExpression");
@@ -136,6 +138,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
         this.executorService = executorService;
+        this.shutdownExecutorService = shutdownExecutorService;
     }
 
     @Override
@@ -583,7 +586,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     public ScheduledExecutorService getTimeoutCheckerExecutorService() {
         return timeoutCheckerExecutorService;
     }
-    
+
+    public boolean isShutdownTimeoutCheckerExecutorService() {
+        return shutdownTimeoutCheckerExecutorService;
+    }
+
+    public void setShutdownTimeoutCheckerExecutorService(boolean shutdownTimeoutCheckerExecutorService) {
+        this.shutdownTimeoutCheckerExecutorService = shutdownTimeoutCheckerExecutorService;
+    }
+
     /**
      * On completion task which keeps the booking of the in progress up to date
      */
@@ -858,6 +869,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             LOG.info("Using CompletionInterval to run every " + getCompletionInterval() + " millis.");
             if (getTimeoutCheckerExecutorService() == null) {
                 setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
+                shutdownTimeoutCheckerExecutorService = true;
             }
             // trigger completion based on interval
             getTimeoutCheckerExecutorService().scheduleAtFixedRate(new AggregationIntervalTask(), getCompletionInterval(), getCompletionInterval(), TimeUnit.MILLISECONDS);
@@ -868,6 +880,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             LOG.info("Using CompletionTimeout to trigger after " + getCompletionTimeout() + " millis of inactivity.");
             if (getTimeoutCheckerExecutorService() == null) {
                 setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
+                shutdownTimeoutCheckerExecutorService = true;
             }
             // check for timed out aggregated messages once every second
             timeoutMap = new AggregationTimeoutMap(getTimeoutCheckerExecutorService(), 1000L);
@@ -936,6 +949,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         // cleanup when shutting down
         inProgressCompleteExchanges.clear();
+
+        if (shutdownExecutorService) {
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
+        }
+        if (shutdownTimeoutCheckerExecutorService) {
+            camelContext.getExecutorServiceManager().shutdownNow(timeoutCheckerExecutorService);
+            timeoutCheckerExecutorService = null;
+        }
 
         super.doShutdown();
     }

@@ -40,6 +40,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class WireTapProcessor extends SendProcessor {
     private final ExecutorService executorService;
+    private volatile boolean shutdownExecutorService;
 
     // expression or processor used for populating a new exchange to send
     // as opposed to traditional wiretap that sends a copy of the original exchange
@@ -48,16 +49,18 @@ public class WireTapProcessor extends SendProcessor {
     private boolean copy;
     private Processor onPrepare;
 
-    public WireTapProcessor(Endpoint destination, ExecutorService executorService) {
+    public WireTapProcessor(Endpoint destination, ExecutorService executorService, boolean shutdownExecutorService) {
         super(destination);
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
+        this.shutdownExecutorService = shutdownExecutorService;
     }
 
-    public WireTapProcessor(Endpoint destination, ExchangePattern pattern, ExecutorService executorService) {
+    public WireTapProcessor(Endpoint destination, ExchangePattern pattern, ExecutorService executorService, boolean shutdownExecutorService) {
         super(destination, pattern);
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
+        this.shutdownExecutorService = shutdownExecutorService;
     }
 
     @Override
@@ -173,6 +176,13 @@ public class WireTapProcessor extends SendProcessor {
 
     private Exchange configureNewExchange(Exchange exchange) {
         return new DefaultExchange(exchange.getFromEndpoint(), ExchangePattern.InOnly);
+    }
+
+    protected void doShutdown() throws Exception {
+        if (shutdownExecutorService) {
+            getDestination().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
+        super.doShutdown();
     }
 
     public List<Processor> getNewExchangeProcessors() {

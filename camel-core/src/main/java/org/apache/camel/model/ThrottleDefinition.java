@@ -83,13 +83,14 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
-        ScheduledExecutorService scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, isAsyncDelayed());
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isAsyncDelayed());
+        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, isAsyncDelayed());
 
         // should be default 1000 millis
         long period = getTimePeriodMillis() != null ? getTimePeriodMillis() : 1000L;
         Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression(routeContext);
 
-        Throttler answer = new Throttler(childProcessor, maxRequestsExpression, period, scheduled);
+        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool);
 
         if (getAsyncDelayed() != null) {
             answer.setAsyncDelayed(getAsyncDelayed());

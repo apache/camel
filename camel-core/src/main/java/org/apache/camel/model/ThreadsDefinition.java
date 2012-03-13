@@ -80,9 +80,10 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         // the threads name
         String name = getThreadName() != null ? getThreadName() : "Threads";
         // prefer any explicit configured executor service
-        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, name, this, false);
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, name, this, false);
         // if no explicit then create from the options
-        if (executorService == null) {
+        if (threadPool == null) {
             ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
             // create the thread pool using a builder
             ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name)
@@ -92,10 +93,11 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
                     .maxQueueSize(getMaxQueueSize())
                     .rejectedPolicy(getRejectedPolicy())
                     .build();
-            executorService = manager.newThreadPool(this, name, profile);
+            threadPool = manager.newThreadPool(this, name, profile);
+            shutdownThreadPool = true;
         }
 
-        ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), executorService);
+        ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), threadPool, shutdownThreadPool);
         if (getCallerRunsWhenRejected() == null) {
             // should be true by default
             thread.setCallerRunsWhenRejected(true);

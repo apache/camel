@@ -128,9 +128,10 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy,
-                                  boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout,
-                                  Processor onPrepare, boolean shareUnitOfWork) {
-        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, streaming, stopOnException, timeout, onPrepare, shareUnitOfWork);
+                                  boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
+                                  boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork) {
+        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
+                streaming, stopOnException, timeout, onPrepare, shareUnitOfWork);
         this.producerCache = producerCache;
         this.iter = iter;
     }

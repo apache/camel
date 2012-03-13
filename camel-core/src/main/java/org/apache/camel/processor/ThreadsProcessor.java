@@ -53,7 +53,9 @@ import org.slf4j.LoggerFactory;
 public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThreadsProcessor.class);
+    private final CamelContext camelContext;
     private final ExecutorService executorService;
+    private volatile boolean shutdownExecutorService;
     private final AtomicBoolean shutdown = new AtomicBoolean(true);
     private boolean callerRunsWhenRejected = true;
     private ThreadPoolRejectedPolicy rejectedPolicy;
@@ -101,10 +103,12 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
         }
     }
 
-    public ThreadsProcessor(CamelContext camelContext, ExecutorService executorService) {
+    public ThreadsProcessor(CamelContext camelContext, ExecutorService executorService, boolean shutdownExecutorService) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(executorService, "executorService");
+        this.camelContext = camelContext;
         this.executorService = executorService;
+        this.shutdownExecutorService = shutdownExecutorService;
     }
 
     public void process(final Exchange exchange) throws Exception {
@@ -164,4 +168,12 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
     protected void doStop() throws Exception {
         shutdown.set(true);
     }
+
+    protected void doShutdown() throws Exception {
+        if (shutdownExecutorService) {
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
+        }
+        super.doShutdown();
+    }
+
 }

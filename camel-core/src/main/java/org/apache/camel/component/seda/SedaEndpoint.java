@@ -133,7 +133,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             }
             // create multicast processor
             multicastStarted = false;
-            consumerMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null, true, multicastExecutor, false, false, 0, null, false);
+            consumerMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null, true, multicastExecutor, false, false, false, 0, null, false);
         } else {
             // not needed
             consumerMulticastProcessor = null;
@@ -336,6 +336,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         // notify component we are shutting down this endpoint
         if (getComponent() != null) {
             getComponent().onShutdownEndpoint(this);
+        }
+        // shutdown thread pool if it was in use
+        if (multicastExecutor != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(multicastExecutor);
+            multicastExecutor = null;
         }
         super.doShutdown();
     }

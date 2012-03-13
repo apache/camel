@@ -78,9 +78,10 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         Processor childProcessor = this.createChildProcessor(routeContext, false);
         Expression delay = createAbsoluteTimeDelayExpression(routeContext);
 
-        ScheduledExecutorService scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this, isAsyncDelayed());
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isAsyncDelayed());
+        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this, isAsyncDelayed());
 
-        Delayer answer = new Delayer(childProcessor, delay, scheduled);
+        Delayer answer = new Delayer(routeContext.getCamelContext(), childProcessor, delay, threadPool, shutdownThreadPool);
         if (getAsyncDelayed() != null) {
             answer.setAsyncDelayed(getAsyncDelayed());
         }

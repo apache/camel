@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -36,8 +37,9 @@ public class Delayer extends DelayProcessorSupport implements Traceable {
     private Expression delay;
     private long delayValue;
 
-    public Delayer(Processor processor, Expression delay, ScheduledExecutorService executorService) {
-        super(processor, executorService);
+    public Delayer(CamelContext camelContext, Processor processor, Expression delay,
+                   ScheduledExecutorService executorService, boolean shutdownExecutorService) {
+        super(camelContext, processor, executorService, shutdownExecutorService);
         this.delay = delay;
     }
 
