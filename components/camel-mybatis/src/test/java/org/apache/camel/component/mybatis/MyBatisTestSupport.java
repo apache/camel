@@ -46,25 +46,46 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
 
         // lets create the database...
         Connection connection = createConnection();
-        Statement statement = connection.createStatement();
-        statement.execute(createStatement());
-        connection.commit();
-        connection.close();
+        Statement statement = null;
+        
+        try {
+            statement = connection.createStatement();
+            statement.execute(createStatement());
+            connection.commit();
+        } catch (SQLException sqle) {
+            connection.rollback();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    // noop
+                }
+            }
+            
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    // noop
+                }
+            }
+        }
 
         if (createTestData()) {
-            Account account = new Account();
-            account.setId(123);
-            account.setFirstName("James");
-            account.setLastName("Strachan");
-            account.setEmailAddress("TryGuessing@gmail.com");
-            template.sendBody("mybatis:insertAccount?statementType=Insert", account);
+            Account account1 = new Account();
+            account1.setId(123);
+            account1.setFirstName("James");
+            account1.setLastName("Strachan");
+            account1.setEmailAddress("TryGuessing@gmail.com");
 
-            account = new Account();
-            account.setId(456);
-            account.setFirstName("Claus");
-            account.setLastName("Ibsen");
-            account.setEmailAddress("Noname@gmail.com");
-            template.sendBody("mybatis:insertAccount?statementType=Insert", account);
+            Account account2 = new Account();
+            account2.setId(456);
+            account2.setFirstName("Claus");
+            account2.setLastName("Ibsen");
+            account2.setEmailAddress("Noname@gmail.com");
+            
+            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[]{account1, account2});
         }
     }
 

@@ -146,7 +146,7 @@ public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsu
             pendingExchanges = total - index - 1;
 
             // process the current exchange
-            LOG.debug("Processing exchange: {}", exchange);
+            LOG.debug("Processing exchange: {} with properties: {}", exchange, exchange.getProperties());
             getProcessor().process(exchange);
 
             try {
