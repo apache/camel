@@ -26,9 +26,6 @@ import org.apache.derby.jdbc.EmbeddedDriver;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- * @version 
- */
 public abstract class MyBatisTestSupport extends CamelTestSupport {
 
     protected boolean createTestData() {

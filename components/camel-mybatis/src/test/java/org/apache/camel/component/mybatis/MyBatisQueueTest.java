@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MyBatisQueueTest extends MyBatisTestSupport {
     
     protected boolean createTestData() {
@@ -41,21 +38,20 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMinimumMessageCount(2);
 
-        Account account = new Account();
-        account.setId(1);
-        account.setFirstName("Bob");
-        account.setLastName("Denver");
-        account.setEmailAddress("TryGuessingGilligan@gmail.com");
+        Account account1 = new Account();
+        account1.setId(1);
+        account1.setFirstName("Bob");
+        account1.setLastName("Denver");
+        account1.setEmailAddress("TryGuessingGilligan@gmail.com");
 
-        template.sendBody("direct:start", account);
 
-        account = new Account();
-        account.setId(2);
-        account.setFirstName("Alan");
-        account.setLastName("Hale");
-        account.setEmailAddress("TryGuessingSkipper@gmail.com");
+        Account account2 = new Account();
+        account2.setId(2);
+        account2.setFirstName("Alan");
+        account2.setLastName("Hale");
+        account2.setEmailAddress("TryGuessingSkipper@gmail.com");
 
-        template.sendBody("direct:start", account);
+        template.sendBody("direct:start", new Account[]{account1, account2});
 
         assertMockEndpointsSatisfied();
 
