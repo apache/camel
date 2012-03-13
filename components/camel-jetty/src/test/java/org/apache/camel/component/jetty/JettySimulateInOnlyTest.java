@@ -49,7 +49,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
                     .transform(constant("OK"));
 
                 from("direct:continue")
-                        .delay(1000)
+                        .delay(1500)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 route += "B";
