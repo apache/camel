@@ -38,8 +38,6 @@
             <dataSource type="POOLED">
                 <property name="driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
                 <property name="url" value="jdbc:derby:memory:mybatis;create=true"/>
-                <property name="username" value="sa"/>
-                <property name="password" value=""/>
             </dataSource>
         </environment>
     </environments>
