@@ -153,6 +153,7 @@
     <scala-plugin-version>2.15.2</scala-plugin-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
     <shiro-version>1.2.0</shiro-version>
+    <slf4j-api-version>1.6.1</slf4j-api-version>
     <slf4j-version>1.6.4</slf4j-version>
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
@@ -1041,7 +1042,7 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>${slf4j-version}</version>
+        <version>${slf4j-api-version}</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
