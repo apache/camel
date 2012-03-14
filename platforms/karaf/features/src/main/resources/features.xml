@@ -63,9 +63,9 @@
   <feature name='camel-cxf' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
     <feature>jetty</feature>
-    <feature version='[2.4,2.6)'>cxf</feature>
+    <feature version='[2.4,2.7)'>cxf</feature>
     <!-- Added cxf-specs feature to workaround the karaf feature validate issue -->
-    <feature version='[2.4,2.6)'>cxf-specs</feature>
+    <feature version='[2.4,2.7)'>cxf-specs</feature>
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
@@ -419,7 +419,7 @@
     <bundle dependency='true'>mvn:org.jibx/jibx-run/${jibx-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.joda-time/${jodatime-bundle-version}</bundle>
+    <bundle dependency="true">mvn:joda-time/joda-time/${jodatime-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
   </feature>
@@ -782,7 +782,7 @@
     <bundle dependency='true'>mvn:org.codehaus.jettison/jettison/${jettison-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.joda-time/${jodatime-bundle-version}</bundle>
+    <bundle dependency="true">mvn:joda-time/joda-time/${jodatime-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.kxml2/${kxml2-bundle-version}</bundle>
