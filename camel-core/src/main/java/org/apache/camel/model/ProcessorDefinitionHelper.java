@@ -304,6 +304,7 @@ public final class ProcessorDefinitionHelper {
             if (answer == null) {
                 throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry or as a thread pool profile.");
             }
+            return answer;
         } else if (useDefault) {
             return manager.newDefaultThreadPool(definition, name);
         }
