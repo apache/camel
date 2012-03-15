@@ -19,29 +19,18 @@ package org.apache.camel.component.printer;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 public class PrinterComponent extends DefaultComponent {
-    PrinterConfiguration config;
-    
-    public PrinterComponent() {
-        config = new PrinterConfiguration();
-    }
-
-    public PrinterComponent(CamelContext context) {
-        super(context);
-        config = new PrinterConfiguration();
-    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        PrinterConfiguration config = new PrinterConfiguration();
         config.parseURI(new URI(uri));
-        
+
         PrinterEndpoint printerEndpoint = new PrinterEndpoint(uri, this, config);
         setProperties(printerEndpoint.getConfig(), parameters);
         return new PrinterEndpoint(uri, this, config);
     }
-
 }

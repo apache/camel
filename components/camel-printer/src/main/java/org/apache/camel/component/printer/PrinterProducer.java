@@ -45,13 +45,14 @@ public class PrinterProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
-        print(is);
+        String jobName = exchange.getIn().getHeader(PrinterEndpoint.JOB_NAME, "Camel: lpr", String.class);
+        print(is, jobName);
     }
     
-    private void print(InputStream body) throws PrintException { 
+    private void print(InputStream body, String jobName) throws PrintException { 
         if (printerOperations.getPrintService().isDocFlavorSupported(printerOperations.getFlavor())) {
             PrintDocument printDoc = new PrintDocument(body, printerOperations.getFlavor());        
-            printerOperations.print(printDoc, config.getCopies(), config.isSendToPrinter(), config.getMimeType()); 
+            printerOperations.print(printDoc, config.getCopies(), config.isSendToPrinter(), config.getMimeType(), jobName); 
         }
     }
 

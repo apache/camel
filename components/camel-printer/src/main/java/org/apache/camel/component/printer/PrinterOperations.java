@@ -19,6 +19,7 @@ package org.apache.camel.component.printer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.UUID;
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -29,6 +30,7 @@ import javax.print.PrintServiceLookup;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.JobName;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.Sides;
 
@@ -56,13 +58,12 @@ public class PrinterOperations implements PrinterOperationsInterface {
     }
 
     public PrinterOperations(PrintService printService, DocFlavor flavor, PrintRequestAttributeSet printRequestAttributeSet) throws PrintException {
-        this();
         this.setPrintService(printService);
         this.setFlavor(flavor);
         this.setPrintRequestAttributeSet(printRequestAttributeSet);
     }
 
-    public void print(Doc doc, int copies, boolean sendToPrinter, String mimeType) throws PrintException {
+    public void print(Doc doc, int copies, boolean sendToPrinter, String mimeType, String jobName) throws PrintException {
         LOG.trace("Print Service: " + this.printService.getName());
         LOG.trace("About to print " + copies + " copy(s)");
         
@@ -95,15 +96,17 @@ public class PrinterOperations implements PrinterOperationsInterface {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Issuing Job {} to Printer: {}", i, this.printService.getName());
                 }
-                print(doc);
+                print(doc, jobName);
             }
         }
     }
         
-    public void print(Doc doc) throws PrintException {
+    public void print(Doc doc, String jobName) throws PrintException {
         // we need create a new job for each print 
         DocPrintJob job = getPrintService().createPrintJob();
-        job.print(doc, printRequestAttributeSet);
+        PrintRequestAttributeSet attrs = new HashPrintRequestAttributeSet(printRequestAttributeSet);
+        attrs.add(new JobName(jobName, Locale.getDefault()));
+        job.print(doc, attrs);
     }
 
     public PrintService getPrintService() {
