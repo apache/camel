@@ -19,8 +19,10 @@ package org.apache.camel.component.mail;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -50,16 +52,21 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(files);
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
+        final CountDownLatch latch = new CountDownLatch(files);
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     template.sendBodyAndHeader("direct:start", "Message " + index, "To", "someone@localhost");
+                    latch.countDown();
                     return null;
                 }
             });
         }
+
+        // wait first for all the exchanges above to be thoroughly sent asynchronously
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
 
