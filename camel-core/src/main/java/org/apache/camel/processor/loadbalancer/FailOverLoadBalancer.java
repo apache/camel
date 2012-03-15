@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.Traceable;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -86,6 +87,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
      * @return <tt>true</tt> to failover
      */
     protected boolean shouldFailOver(Exchange exchange) {
+        if (exchange == null) {
+            return false;
+        }
+
         boolean answer = false;
 
         if (exchange.getException() != null) {
@@ -108,12 +113,15 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         return answer;
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final List<Processor> processors = getProcessors();
 
         final AtomicInteger index = new AtomicInteger();
         final AtomicInteger attempts = new AtomicInteger();
         boolean first = true;
+        // use a copy of the original exchange before failover to avoid populating side effects
+        // directly into the original exchange
+        Exchange copy = null;
 
         // get the next processor
         if (isRoundRobin()) {
@@ -124,7 +132,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         }
         log.trace("Failover starting with endpoint index {}", index);
 
-        while (first || shouldFailOver(exchange)) {
+        while (first || shouldFailOver(copy)) {
             if (!first) {
                 attempts.incrementAndGet();
                 // are we exhausted by attempts?
@@ -153,12 +161,12 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 }
             }
 
-            // try again but prepare exchange before we failover
-            prepareExchangeForFailover(exchange);
+            // try again but copy original exchange before we failover
+            copy = prepareExchangeForFailover(exchange);
             Processor processor = processors.get(index.get());
 
             // process the exchange
-            boolean sync = processExchange(processor, exchange, attempts, index, callback, processors);
+            boolean sync = processExchange(processor, exchange, copy, attempts, index, callback, processors);
 
             // continue as long its being processed synchronously
             if (!sync) {
@@ -171,8 +179,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         }
 
+        // and copy the current result to original so it will contain this result of this eip
+        if (copy != null) {
+            ExchangeHelper.copyResults(exchange, copy);
+        }
         log.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-
         callback.done(true);
         return true;
     }
@@ -181,35 +192,23 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
      * Prepares the exchange for failover
      *
      * @param exchange the exchange
+     * @return a copy of the exchange to use for failover
      */
-    protected void prepareExchangeForFailover(Exchange exchange) {
-        if (exchange.getException() != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Failover due {} for exchangeId: {}", exchange.getException().getMessage(), exchange.getExchangeId());
-            }
-
-            // clear exception so we can try failover
-            exchange.setException(null);
-        }
-
-        exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, null);
-        exchange.setProperty(Exchange.FAILURE_HANDLED, null);
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, null);
-        exchange.getIn().removeHeader(Exchange.REDELIVERED);
-        exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
-        exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+    protected Exchange prepareExchangeForFailover(Exchange exchange) {
+        // use a copy of the exchange to avoid side effects on the original exchange
+        return ExchangeHelper.createCopy(exchange, true);
     }
 
-    private boolean processExchange(Processor processor, Exchange exchange,
+    private boolean processExchange(Processor processor, Exchange exchange, Exchange copy,
                                     AtomicInteger attempts, AtomicInteger index,
                                     AsyncCallback callback, List<Processor> processors) {
         if (processor == null) {
-            throw new IllegalStateException("No processors could be chosen to process " + exchange);
+            throw new IllegalStateException("No processors could be chosen to process " + copy);
         }
-        log.debug("Processing failover at attempt {} for {}", attempts, exchange);
+        log.debug("Processing failover at attempt {} for {}", attempts, copy);
 
         AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
-        return AsyncProcessorHelper.process(albp, exchange, new FailOverAsyncCallback(exchange, attempts, index, callback, processors));
+        return AsyncProcessorHelper.process(albp, copy, new FailOverAsyncCallback(exchange, copy, attempts, index, callback, processors));
     }
 
     /**
@@ -219,13 +218,15 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     private final class FailOverAsyncCallback implements AsyncCallback {
 
         private final Exchange exchange;
+        private Exchange copy;
         private final AtomicInteger attempts;
         private final AtomicInteger index;
         private final AsyncCallback callback;
         private final List<Processor> processors;
 
-        private FailOverAsyncCallback(Exchange exchange, AtomicInteger attempts, AtomicInteger index, AsyncCallback callback, List<Processor> processors) {
+        private FailOverAsyncCallback(Exchange exchange, Exchange copy, AtomicInteger attempts, AtomicInteger index, AsyncCallback callback, List<Processor> processors) {
             this.exchange = exchange;
+            this.copy = copy;
             this.attempts = attempts;
             this.index = index;
             this.callback = callback;
@@ -238,7 +239,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 return;
             }
 
-            while (shouldFailOver(exchange)) {
+            while (shouldFailOver(copy)) {
                 attempts.incrementAndGet();
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
@@ -263,11 +264,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 }
 
                 // try again but prepare exchange before we failover
-                prepareExchangeForFailover(exchange);
+                copy = prepareExchangeForFailover(exchange);
                 Processor processor = processors.get(index.get());
 
                 // try to failover using the next processor
-                doneSync = processExchange(processor, exchange, attempts, index, callback, processors);
+                doneSync = processExchange(processor, exchange, copy, attempts, index, callback, processors);
                 if (!doneSync) {
                     log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                     // the remainder of the failover will be completed async
@@ -276,8 +277,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 }
             }
 
+            // and copy the current result to original so it will contain this result of this eip
+            if (copy != null) {
+                ExchangeHelper.copyResults(exchange, copy);
+            }
             log.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-
             // signal callback we are done
             callback.done(false);
         };
