@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.junit.Assume;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

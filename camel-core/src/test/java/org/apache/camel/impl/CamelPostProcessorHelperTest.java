@@ -475,6 +475,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     public class MyPrivateConsumeBean {
 
         @Consume(uri = "seda:foo")
+        @SuppressWarnings("unused")
         private void consumeSomethingPrivate(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);

@@ -24,7 +24,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
 
 /**

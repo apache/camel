@@ -39,9 +39,7 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
