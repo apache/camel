@@ -27,7 +27,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.NIOFSDirectory;
+import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,16 +143,18 @@ public class LuceneIndexer {
     }
 
     private void openIndexWriter() throws IOException {
+        IndexWriterConfig indexWriterConfig;
         if (!indexCreated) {
-            indexWriter = new IndexWriter(niofsDirectory, getAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
+            indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, getAnalyzer()).setOpenMode(OpenMode.CREATE);            
+            indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
             indexCreated = true;
             return;
         }
-        indexWriter = new IndexWriter(niofsDirectory, getAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
+        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, getAnalyzer()).setOpenMode(OpenMode.APPEND);            
+        indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
     }
 
     private void closeIndexWriter() throws IOException {
-        indexWriter.optimize();
         indexWriter.commit();
         indexWriter.close();
     }
