@@ -321,13 +321,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-msv</artifactId>
-      <!--Avoid the WARNING message -->
-      <exclusions>
-         <exclusion>
-           <groupId>org.iso_relax.verifier.jaxp.validation</groupId>
-           <artifactId>isorelax-jaxp-bridge</artifactId> 
-         </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
