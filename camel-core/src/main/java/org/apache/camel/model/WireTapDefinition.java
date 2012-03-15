@@ -32,6 +32,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -80,13 +82,19 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Endpoint endpoint = resolveEndpoint(routeContext);
-
         // executor service is mandatory for wire tap
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", this, true);
-        WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), threadPool, shutdownThreadPool);
 
+        // create the producer to send to the wire tapped endpoint
+        Endpoint endpoint = resolveEndpoint(routeContext);
+        Producer producer = endpoint.createProducer();
+        // create error handler we need to use for processing the wire tapped
+        Processor target = wrapInErrorHandler(routeContext, producer);
+        // and wrap in UoW, which is needed for error handler as well
+        target = new UnitOfWorkProcessor(routeContext, target);
+
+        WireTapProcessor answer = new WireTapProcessor(endpoint, target, getPattern(), threadPool, shutdownThreadPool);
         answer.setCopy(isCopy());
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.lookup(newExchangeProcessorRef, Processor.class);

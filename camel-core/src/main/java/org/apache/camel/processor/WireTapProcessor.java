@@ -22,23 +22,32 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.ProducerCallback;
+import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
  *
  * @version 
  */
-public class WireTapProcessor extends SendProcessor {
+public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+    private final static transient Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
+    private final Endpoint destination;
+    private final Processor processor;
+    private final ExchangePattern exchangePattern;
     private final ExecutorService executorService;
     private volatile boolean shutdownExecutorService;
 
@@ -49,15 +58,11 @@ public class WireTapProcessor extends SendProcessor {
     private boolean copy;
     private Processor onPrepare;
 
-    public WireTapProcessor(Endpoint destination, ExecutorService executorService, boolean shutdownExecutorService) {
-        super(destination);
-        ObjectHelper.notNull(executorService, "executorService");
-        this.executorService = executorService;
-        this.shutdownExecutorService = shutdownExecutorService;
-    }
-
-    public WireTapProcessor(Endpoint destination, ExchangePattern pattern, ExecutorService executorService, boolean shutdownExecutorService) {
-        super(destination, pattern);
+    public WireTapProcessor(Endpoint destination, Processor processor, ExchangePattern exchangePattern,
+                            ExecutorService executorService, boolean shutdownExecutorService) {
+        this.destination = destination;
+        this.processor = processor;
+        this.exchangePattern = exchangePattern;
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
@@ -74,25 +79,7 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (!isStarted()) {
-            throw new IllegalStateException("WireTapProcessor has not been started: " + this);
-        }
-
-        // must configure the wire tap beforehand
-        final Exchange wireTapExchange = configureExchange(exchange, pattern);
-
-        // send the exchange to the destination using an executor service
-        executorService.submit(new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                return producerCache.doInProducer(destination, wireTapExchange, pattern, new ProducerCallback<Exchange>() {
-                    public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                        log.debug(">>>> (wiretap) {} {}", destination, exchange);
-                        producer.process(exchange);
-                        return exchange;
-                    }
-                });
-            };
-        });
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
@@ -101,18 +88,18 @@ public class WireTapProcessor extends SendProcessor {
         }
 
         // must configure the wire tap beforehand
-        final Exchange wireTapExchange = configureExchange(exchange, pattern);
+        final Exchange wireTapExchange = configureExchange(exchange, exchangePattern);
 
         // send the exchange to the destination using an executor service
         executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                return producerCache.doInProducer(destination, wireTapExchange, pattern, new ProducerCallback<Exchange>() {
-                    public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                        log.debug(">>>> (wiretap) {} {}", destination, exchange);
-                        producer.process(exchange);
-                        return exchange;
-                    }
-                });
+                try {
+                    LOG.debug(">>>> (wiretap) {} {}", destination, wireTapExchange);
+                    processor.process(wireTapExchange);
+                } catch (Throwable e) {
+                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + destination + ". This exception will be ignored.", e);
+                }
+                return wireTapExchange;
             };
         });
 
@@ -122,7 +109,6 @@ public class WireTapProcessor extends SendProcessor {
     }
 
 
-    @Override
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
         Exchange answer;
         if (copy) {
@@ -178,13 +164,6 @@ public class WireTapProcessor extends SendProcessor {
         return new DefaultExchange(exchange.getFromEndpoint(), ExchangePattern.InOnly);
     }
 
-    protected void doShutdown() throws Exception {
-        if (shutdownExecutorService) {
-            getDestination().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
-        }
-        super.doShutdown();
-    }
-
     public List<Processor> getNewExchangeProcessors() {
         return newExchangeProcessors;
     }
@@ -224,4 +203,21 @@ public class WireTapProcessor extends SendProcessor {
         this.onPrepare = onPrepare;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(processor);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(processor);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(processor);
+        if (shutdownExecutorService) {
+            destination.getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
+    }
 }
