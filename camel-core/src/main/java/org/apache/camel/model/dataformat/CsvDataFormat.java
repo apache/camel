@@ -33,15 +33,25 @@ import org.apache.camel.spi.DataFormat;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
     @XmlAttribute
+    private Boolean autogenColumns;
+    @XmlAttribute
     private String delimiter;
 
     public CsvDataFormat() {
         super("csv");
     }
-    
+
     public CsvDataFormat(String delimiter) {
         this();
         setDelimiter(delimiter);
+    }
+
+    public boolean isAutogenColumns() {
+        return autogenColumns;
+    }
+
+    public void setAutogenColumns(boolean autogenColumns) {
+        this.autogenColumns = autogenColumns;
     }
 
     public String getDelimiter() {
@@ -51,15 +61,20 @@ public class CsvDataFormat extends DataFormatDefinition {
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
-    
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
+        if (autogenColumns != null) {
+            setProperty(dataFormat, "autogenColumns", autogenColumns);
+        }
+
         if (delimiter != null) {
             if (delimiter.length() > 1) {
                 throw new IllegalArgumentException("Delimiter must have a length of one!");
             }
             setProperty(dataFormat, "delimiter", delimiter);
-        } else { // the default delimiter is ','
+        } else {
+            // the default delimiter is ','
             setProperty(dataFormat, "delimiter", ",");
         }
     }
