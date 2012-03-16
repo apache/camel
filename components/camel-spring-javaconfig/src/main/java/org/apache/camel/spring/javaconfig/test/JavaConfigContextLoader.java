@@ -52,8 +52,6 @@ import org.springframework.test.context.ContextLoader;
  * future revisions, possibly with a customized version of the ContextConfiguration annotation
  * that accepts an array of class literals to load.
  *
- * @author Jim Moore
- * @author Chris Beams
  * @see org.springframework.test.context.ContextConfiguration
  */
 public class JavaConfigContextLoader implements ContextLoader {

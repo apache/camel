@@ -58,8 +58,6 @@ import org.apache.http.protocol.ResponseServer;
 
 /**
  * Copy of org.apache.http.localserver.LocalTestServer to use a specific port.
- * 
- * @author muellerc
  */
 public class HttpTestServer {
     
