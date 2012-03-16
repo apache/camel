@@ -71,13 +71,7 @@ public class ManagedCamelContext implements TimerListener, ManagedCamelContextMB
     }
 
     public String getState() {
-        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        ServiceStatus status = context.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
+        return context.getStatus().name();
     }
 
     public String getUptime() {
