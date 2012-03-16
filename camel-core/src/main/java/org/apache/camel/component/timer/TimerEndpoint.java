@@ -175,4 +175,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public String getEndpointUri() {
         return super.getEndpointUri();
     }
+
+    @ManagedAttribute(description = "Endpoint State")
+    public String getState() {
+        return getStatus().name();
+    }
 }
