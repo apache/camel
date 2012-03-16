@@ -455,6 +455,12 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     protected Scheduler createScheduler() throws SchedulerException {
         Scheduler scheduler = getFactory().getScheduler();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using SchedulerFactory {} to get/create Scheduler {}({})",
+                    new Object[]{getFactory(), scheduler, ObjectHelper.getIdentityHashCode(scheduler)});
+        }
+
         // register current camel context to scheduler so we can look it up when jobs is being triggered
         scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getName(), getCamelContext());
         return scheduler;
