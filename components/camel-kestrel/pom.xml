@@ -38,10 +38,10 @@
     <!-- TODO: we should use SMX bundle JAR -->
     <repositories>
         <repository>
-            <id>spy</id>
-            <name>Spy Repository</name>
+            <id>couchbase.repo</id>
+            <name>Couchbase Repository</name>
             <layout>default</layout>
-            <url>http://bleu.west.spy.net/~dustin/m2repo/</url>
+            <url>http://files.couchbase.com/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -57,7 +57,7 @@
 
         <dependency>
             <groupId>spy</groupId>
-            <artifactId>memcached</artifactId>
+            <artifactId>spymemcached</artifactId>
             <version>${spymemcached-version}</version>
         </dependency>
 
