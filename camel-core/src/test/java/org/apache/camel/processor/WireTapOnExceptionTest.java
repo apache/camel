@@ -55,7 +55,7 @@ public class WireTapOnExceptionTest extends ContextTestSupport {
         };
     }
 
-    public static class MyProducerFailEndpoint extends DefaultEndpoint {
+    public static final class MyProducerFailEndpoint extends DefaultEndpoint {
 
         private MyProducerFailEndpoint(String endpointUri, CamelContext camelContext) {
             super(endpointUri, camelContext);
