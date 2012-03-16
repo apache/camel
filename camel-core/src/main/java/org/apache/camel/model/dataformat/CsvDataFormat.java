@@ -46,11 +46,11 @@ public class CsvDataFormat extends DataFormatDefinition {
         setDelimiter(delimiter);
     }
 
-    public boolean isAutogenColumns() {
+    public Boolean isAutogenColumns() {
         return autogenColumns;
     }
 
-    public void setAutogenColumns(boolean autogenColumns) {
+    public void setAutogenColumns(Boolean autogenColumns) {
         this.autogenColumns = autogenColumns;
     }
 
