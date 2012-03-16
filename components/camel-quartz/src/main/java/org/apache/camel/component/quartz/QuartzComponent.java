@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -224,14 +223,23 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             getScheduler().scheduleJob(job, trigger);
         } else if (hasTriggerChanged(existingTrigger, trigger)) {
             LOG.debug("Trigger: {}/{} already exists and will be updated by Quartz.", trigger.getGroup(), trigger.getName());
+            // fast forward start time to now, as we do not want any misfire to kick in
+            trigger.setStartTime(new Date());
+            // replace job, and relate trigger to previous job name, which is needed to reschedule job
             scheduler.addJob(job, true);
-            trigger.setJobName(job.getName());
+            trigger.setJobName(existingTrigger.getJobName());
             scheduler.rescheduleJob(trigger.getName(), trigger.getGroup(), trigger);
         } else {
-            LOG.debug("Trigger: {}/{} already exists and will be resumed automatically by Quartz.", trigger.getGroup(), trigger.getName());
             if (!isClustered()) {
-                trigger.setStartTime(Calendar.getInstance().getTime());
+                LOG.debug("Trigger: {}/{} already exists and will be resumed by Quartz.", trigger.getGroup(), trigger.getName());
+                // fast forward start time to now, as we do not want any misfire to kick in
+                trigger.setStartTime(new Date());
+                // replace job, and relate trigger to previous job name, which is needed to reschedule job
+                scheduler.addJob(job, true);
+                trigger.setJobName(existingTrigger.getJobName());
                 scheduler.rescheduleJob(trigger.getName(), trigger.getGroup(), trigger);
+            } else {
+                LOG.debug("Trigger: {}/{} already exists and is already scheduled by clustered JobStore.", trigger.getGroup(), trigger.getName());
             }
         }
     }
