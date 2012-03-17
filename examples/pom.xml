@@ -65,6 +65,7 @@
     <module>camel-example-spring-security</module>
     <module>camel-example-ssh</module>
     <module>camel-example-tracer</module>
+    <module>camel-example-twitter-websocket</module>
   </modules>
  
   <properties>
