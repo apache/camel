@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a CSV (Comma Separated Values) {@link org.apache.camel.spi.DataFormat}
@@ -36,6 +39,10 @@ public class CsvDataFormat extends DataFormatDefinition {
     private Boolean autogenColumns;
     @XmlAttribute
     private String delimiter;
+    @XmlAttribute
+    private String configRef;
+    @XmlAttribute
+    private String strategyRef;
 
     public CsvDataFormat() {
         super("csv");
@@ -60,6 +67,38 @@ public class CsvDataFormat extends DataFormatDefinition {
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
+    }
+
+    public String getConfigRef() {
+        return configRef;
+    }
+
+    public void setConfigRef(String configRef) {
+        this.configRef = configRef;
+    }
+
+    public String getStrategyRef() {
+        return strategyRef;
+    }
+
+    public void setStrategyRef(String strategyRef) {
+        this.strategyRef = strategyRef;
+    }
+
+    @Override
+    protected DataFormat createDataFormat(RouteContext routeContext) {
+        DataFormat csvFormat = super.createDataFormat(routeContext);
+
+        if (ObjectHelper.isNotEmpty(configRef)) {
+            Object config = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), configRef);
+            setProperty(csvFormat, "config", config);
+        }
+        if (ObjectHelper.isNotEmpty(strategyRef)) {
+            Object strategy = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), strategyRef);
+            setProperty(csvFormat, "strategy", strategy);
+        }
+
+        return csvFormat;
     }
 
     @Override

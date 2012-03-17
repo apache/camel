@@ -25,8 +25,7 @@
     <route>
       <from uri="direct:start" />
       <marshal>
-        <!-- per default the autogenColumns flag is 'true' -->
-        <csv autogenColumns="false" delimiter="|" />
+        <csv autogenColumns="false" delimiter="|" configRef="csvConfig1" />
       </marshal>
       <convertBodyTo type="java.lang.String" />
       <to uri="mock:result" />
@@ -35,11 +34,42 @@
     <route>
       <from uri="direct:start2" />
       <marshal>
-        <csv autogenColumns="true" delimiter="|" />
+        <!-- make use of a strategy other than the default one which is 'org.apache.commons.csv.CSVStrategy.DEFAULT_STRATEGY' -->
+        <csv autogenColumns="false" delimiter="|" configRef="csvConfig2" strategyRef="excelStrategy" />
       </marshal>
       <convertBodyTo type="java.lang.String" />
       <to uri="mock:result2" />
     </route>
 
   </camelContext>
+
+  <bean id="csvConfig1" class="org.apache.commons.csv.writer.CSVConfig">
+    <property name="fields">
+      <list>
+        <!-- here we're only interested in 'item' but not in 'orderId' or 'amount' -->
+        <bean class="org.apache.commons.csv.writer.CSVField">
+          <property name="name" value="item" />
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="csvConfig2" class="org.apache.commons.csv.writer.CSVConfig">
+    <property name="fields">
+      <list>
+        <!-- here we're interested in both 'orderId' and 'amount' but not in 'item' -->
+        <bean class="org.apache.commons.csv.writer.CSVField">
+          <property name="name" value="orderId" />
+        </bean>
+        <bean class="org.apache.commons.csv.writer.CSVField">
+          <property name="name" value="amount" />
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="excelStrategy" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.commons.csv.CSVStrategy.EXCEL_STRATEGY" />
+  </bean>
+
 </beans>

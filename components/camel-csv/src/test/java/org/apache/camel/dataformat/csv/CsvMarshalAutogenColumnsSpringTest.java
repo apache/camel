@@ -30,8 +30,8 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Spring based integration test for the <code>CsvDataFormat</code>
- * @version
+ * Spring based integration test for the <code>CsvDataFormat</code> demonstrating the usage of
+ * the <tt>autogenColumns</tt>, <tt>configRef</tt> and <tt>strategyRef</tt> options.
  */
 public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
 
@@ -42,23 +42,33 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
     private MockEndpoint result2;
 
     @Test
-    public void testWithAutogenColumnsAttributeSet() throws Exception {
+    public void retrieveColumnsWithAutogenColumnsFalseAndItemColumnsSet() throws Exception {
         result.expectedMessageCount(1);
-        result2.expectedMessageCount(1);
 
         template.sendBody("direct:start", createBody());
-        template.sendBody("direct:start2", createBody());
 
-        assertMockEndpointsSatisfied();
+        result.assertIsSatisfied();
 
         String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertEquals("The flag autogenColumns set to false didn't take effect", "\n\n", body);
+        String[] lines = body.split("\n");
+        assertEquals(2, lines.length);
+        assertEquals("Camel in Action", lines[0]);
+        assertEquals("ActiveMQ in Action", lines[1]);
+    }
 
-        String body2 = result2.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        String[] lines2 = body2.split("\n");
-        assertEquals(2, lines2.length);
-        assertEquals("123|Camel in Action|1", lines2[0]);
-        assertEquals("124|ActiveMQ in Action|2", lines2[1]);
+    @Test
+    public void retrieveColumnsWithAutogenColumnsFalseAndOrderIdAmountColumnsSet() throws Exception {
+        result2.expectedMessageCount(1);
+
+        template.sendBody("direct:start2", createBody());
+
+        result2.assertIsSatisfied();
+
+        String body = result2.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        String[] lines = body.split("\n");
+        assertEquals(2, lines.length);
+        assertEquals("123|1", lines[0]);
+        assertEquals("124|2", lines[1]);
     }
 
     private static List<Map<String, Object>> createBody() {
