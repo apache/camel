@@ -128,7 +128,7 @@
     <mockito-version>1.9.0</mockito-version>
     <mongo-java-driver-version>2.7.3</mongo-java-driver-version>
     <mvel-version>2.0.18</mvel-version>
-    <mybatis-version>3.0.6</mybatis-version>
+    <mybatis-version>3.1.0</mybatis-version>
     <!-- transitive dependency from avro -->
     <netty-bundle-version>3.2.7.Final_1</netty-bundle-version>
     <netty-version>3.3.1.Final</netty-version>

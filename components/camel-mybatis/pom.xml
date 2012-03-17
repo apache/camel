@@ -32,6 +32,9 @@
   <description>Camel MyBatis support</description>
 
   <properties>
+	<camel.osgi.import.before.defaults>
+	  org.apache.ibatis.*;version="[3,4)"
+	</camel.osgi.import.before.defaults>
 	<camel.osgi.export.pkg>org.apache.camel.component.mybatis.*</camel.osgi.export.pkg>
   </properties>
 
