@@ -155,15 +155,13 @@
     <feature version='${project.version}'>camel-jms</feature>
     <bundle>mvn:org.apache.camel/camel-amqp/${project.version}</bundle>
   </feature>
-  <!-- TODO: apns bundle does not work - SMX4-857
-       apn has the depenency of mina 2.0, we need to provide that bundle in servicemix
   <feature name='camel-apns' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.java-apns/${java-apns-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-apns/${project.version}</bundle>
-  </feature--> 
+  </feature> 
   <feature name='camel-atom' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
