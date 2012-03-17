@@ -46,7 +46,6 @@ public class NodeSynchronizationImplTest {
     private NodeSynchronization sync;
 
     private MemoryWebsocketStore store1;
-    private MemoryWebsocketStore store2;
 
     /**
      * @throws Exception
@@ -55,7 +54,6 @@ public class NodeSynchronizationImplTest {
     public void setUp() throws Exception {
 
         store1 = new MemoryWebsocketStore();
-        store2 = new MemoryWebsocketStore();
 
         websocket1 = new DefaultWebsocket(sync, consumer);
         websocket1.setConnectionKey(KEY_1);
@@ -72,15 +70,13 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testAddSocketMemoryAndGlobal() {
-        sync = new DefaultNodeSynchronization(store1, store2);
+        sync = new DefaultNodeSynchronization(store1);
 
         sync.addSocket(websocket1);
         assertEquals(websocket1, store1.get(KEY_1));
-        assertEquals(store1.get(KEY_1), store2.get(KEY_1));
 
         sync.addSocket(websocket2);
         assertEquals(websocket2, store1.get(KEY_2));
-        assertEquals(store1.get(KEY_2), store2.get(KEY_2));
     }
 
     /**
@@ -89,17 +85,6 @@ public class NodeSynchronizationImplTest {
     @Test
     public void testAddSocketMemoryOnly() {
         sync = new DefaultNodeSynchronization(store1);
-
-        sync.addSocket(websocket1);
-        assertEquals(websocket1, store1.get(KEY_1));
-    }
-
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.NodeSynchronization#addSocket(org.apache.camel.component.websocket.DefaultWebsocket)} .
-     */
-    @Test
-    public void testAddSocketMemoryAndNullGlobal() {
-        sync = new DefaultNodeSynchronization(store1, null);
 
         sync.addSocket(websocket1);
         assertEquals(websocket1, store1.get(KEY_1));
@@ -118,28 +103,23 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testRemoveDefaultWebsocket() {
-        sync = new DefaultNodeSynchronization(store1, store2);
+        sync = new DefaultNodeSynchronization(store1);
 
         // first call of websocket1.getConnectionKey()
         sync.addSocket(websocket1);
         assertEquals(websocket1, store1.get(KEY_1));
-        assertEquals(store1.get(KEY_1), store2.get(KEY_1));
 
         sync.addSocket(websocket2);
         assertEquals(websocket2, store1.get(KEY_2));
-        assertEquals(store1.get(KEY_2), store2.get(KEY_2));
 
         // second call of websocket1.getConnectionKey()
         sync.removeSocket(websocket1);
         assertNull(store1.get(KEY_1));
-        assertNull(store2.get(KEY_1));
 
         assertNotNull(store1.get(KEY_2));
-        assertNotNull(store2.get(KEY_2));
 
         sync.removeSocket(websocket2);
         assertNull(store1.get(KEY_2));
-        assertNull(store2.get(KEY_2));
     }
 
     /**
@@ -188,28 +168,23 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testRemoveString() {
-        sync = new DefaultNodeSynchronization(store1, store2);
+        sync = new DefaultNodeSynchronization(store1);
 
         // first call of websocket1.getConnectionKey()
         sync.addSocket(websocket1);
         assertEquals(websocket1, store1.get(KEY_1));
-        assertEquals(store1.get(KEY_1), store2.get(KEY_1));
 
         sync.addSocket(websocket2);
         assertEquals(websocket2, store1.get(KEY_2));
-        assertEquals(store1.get(KEY_2), store2.get(KEY_2));
 
         // second call of websocket1.getConnectionKey()
         sync.removeSocket(KEY_1);
         assertNull(store1.get(KEY_1));
-        assertNull(store2.get(KEY_1));
 
         assertNotNull(store1.get(KEY_2));
-        assertNotNull(store2.get(KEY_2));
 
         sync.removeSocket(KEY_2);
         assertNull(store1.get(KEY_2));
-        assertNull(store2.get(KEY_2));
     }
 
     /**

@@ -48,4 +48,13 @@ public class MemoryWebsocketStore extends ConcurrentHashMap<String, DefaultWebso
         return super.values();
     }
 
+    @Override
+    public void start() throws Exception {
+        // noop
+    }
+
+    @Override
+    public void stop() throws Exception {
+        clear();
+    }
 }

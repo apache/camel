@@ -26,11 +26,10 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable {
 
-    private static final long serialVersionUID = -575701599776801400L;
     private static final Logger LOG = LoggerFactory.getLogger(DefaultWebsocket.class);
-    private transient Connection connection;
-    private transient WebsocketConsumer consumer;
-    private transient NodeSynchronization sync;
+    private final WebsocketConsumer consumer;
+    private final NodeSynchronization sync;
+    private Connection connection;
     private String connectionKey;
 
     public DefaultWebsocket(NodeSynchronization sync, WebsocketConsumer consumer) {
@@ -40,11 +39,13 @@ public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable 
 
     @Override
     public void onClose(int closeCode, String message) {
+        LOG.trace("onClose {} {}", closeCode, message);
         sync.removeSocket(this);
     }
 
     @Override
     public void onOpen(Connection connection) {
+        LOG.trace("onOpen {}", connection);
         this.connection = connection;
         this.connectionKey = UUID.randomUUID().toString();
         sync.addSocket(this);
@@ -54,7 +55,7 @@ public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable 
     public void onMessage(String message) {
         LOG.debug("onMessage: {}", message);
         if (this.consumer != null) {
-            this.consumer.sendExchange(this.connectionKey, message);
+            this.consumer.sendMessage(this.connectionKey, message);
         } else {
             LOG.debug("No consumer to handle message received: {}", message);
         }
@@ -74,10 +75,6 @@ public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable 
 
     public void setConnectionKey(String connectionKey) {
         this.connectionKey = connectionKey;
-    }
-
-    public void setConsumer(WebsocketConsumer consumer) {
-        this.consumer = consumer;
     }
 
 }

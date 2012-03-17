@@ -41,7 +41,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 /**
  *
@@ -133,20 +132,6 @@ public class WebsocketComponentTest {
     }
 
     @Test
-    public void testSetServletConsumer() throws Exception {
-        when(servlet.getConsumer()).thenReturn(null, null, consumer);
-        InOrder inOrder = inOrder(servlet, consumer, sync);
-        component.setServletConsumer(servlet, null); // null && null
-        inOrder.verify(servlet, times(0)).setConsumer(null);
-        component.setServletConsumer(servlet, consumer); // null && not null
-        inOrder.verify(servlet, times(1)).setConsumer(consumer);
-        component.setServletConsumer(servlet, null); // not null && null
-        inOrder.verify(servlet, times(0)).setConsumer(consumer);
-        component.setServletConsumer(servlet, consumer); // not null && not null
-        inOrder.verify(servlet, times(0)).setConsumer(consumer);
-    }
-
-    @Test
     public void testCreateServlet() throws Exception {
         component.createServlet(sync, PATH_SPEC_ONE, servlets, handler);
         InOrder inOrder = inOrder(servlet, consumer, sync, servlets, handler);
@@ -156,12 +141,6 @@ public class WebsocketComponentTest {
         inOrder.verify(handler, times(1)).addServlet(holderCaptor.capture(), eq(PATH_SPEC_ONE));
         inOrder.verifyNoMoreInteractions();
         assertEquals(servletCaptor.getValue(), holderCaptor.getValue().getServlet());
-    }
-
-    @Test
-    public void testCreatePathSpec() {
-        assertEquals(PATH_SPEC_ONE, component.createPathSpec(PATH_ONE));
-        assertEquals(PATH_SPEC_TWO, component.createPathSpec(PATH_TWO));
     }
 
     @Test

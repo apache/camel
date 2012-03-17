@@ -18,7 +18,9 @@ package org.apache.camel.component.websocket;
 
 import java.util.Collection;
 
-public interface WebsocketStore {
+import org.apache.camel.Service;
+
+public interface WebsocketStore extends Service {
 
     void add(DefaultWebsocket ws);
 
