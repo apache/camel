@@ -89,7 +89,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             int outputLength = -1;
             if (input) {
                 String value = (String) param;
-                inputData = new AS400Text(value.length()).toBytes(value);
+                inputData = new AS400Text(getISeriesEndpoint().getOutputFieldLength(i)).toBytes(value);
             }
             if (output) {
                 outputLength = getISeriesEndpoint().getOutputFieldLength(i);

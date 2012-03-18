@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -41,8 +42,9 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     private long timePeriodMillis = 1000;
     private volatile TimeSlot slot;
 
-    public Throttler(Processor processor, Expression maxRequestsPerPeriodExpression, long timePeriodMillis, ScheduledExecutorService executorService) {
-        super(processor, executorService);
+    public Throttler(CamelContext camelContext, Processor processor, Expression maxRequestsPerPeriodExpression, long timePeriodMillis,
+                     ScheduledExecutorService executorService, boolean shutdownExecutorService) {
+        super(camelContext, processor, executorService, shutdownExecutorService);
 
         ObjectHelper.notNull(maxRequestsPerPeriodExpression, "maxRequestsPerPeriodExpression");
         this.maxRequestsPerPeriodExpression = maxRequestsPerPeriodExpression;

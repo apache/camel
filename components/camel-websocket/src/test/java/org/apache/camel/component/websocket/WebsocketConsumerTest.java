@@ -69,7 +69,7 @@ public class WebsocketConsumerTest {
         when(endpoint.createExchange()).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(outMessage);
 
-        websocketConsumer.sendExchange(CONNECTION_KEY, MESSAGE);
+        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE);
 
         InOrder inOrder = inOrder(endpoint, exceptionHandler, processor, exchange, outMessage);
         inOrder.verify(endpoint, times(1)).createExchange();
@@ -89,7 +89,7 @@ public class WebsocketConsumerTest {
         doThrow(exception).when(processor).process(exchange);
         when(exchange.getException()).thenReturn(exception);
 
-        websocketConsumer.sendExchange(CONNECTION_KEY, MESSAGE);
+        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE);
 
         InOrder inOrder = inOrder(endpoint, exceptionHandler, processor, exchange, outMessage);
         inOrder.verify(endpoint, times(1)).createExchange();
@@ -110,7 +110,7 @@ public class WebsocketConsumerTest {
         doThrow(exception).when(processor).process(exchange);
         when(exchange.getException()).thenReturn(null);
 
-        websocketConsumer.sendExchange(CONNECTION_KEY, MESSAGE);
+        websocketConsumer.sendMessage(CONNECTION_KEY, MESSAGE);
 
         InOrder inOrder = inOrder(endpoint, exceptionHandler, processor, exchange, outMessage);
         inOrder.verify(endpoint, times(1)).createExchange();

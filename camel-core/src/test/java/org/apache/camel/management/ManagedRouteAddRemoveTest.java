@@ -49,11 +49,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
 
-        // number of producer caches
+        // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
         
         log.info("Adding 2nd route");
 
@@ -71,9 +71,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         template.sendBody("direct:bar", "Hello World");
         bar.assertIsSatisfied();
 
-        // there should be one more producer cache
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(2, names.size());
+        assertEquals(7, names.size());
 
         log.info("Removing 2nd route");
 
@@ -82,10 +82,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // the producer cache should have been removed
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Shutting down...");
     }
@@ -97,11 +96,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
 
-        // number of producer caches
+        // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
         
         log.info("Adding 2nd route");
 
@@ -119,9 +118,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         template.sendBodyAndHeader("direct:bar", "Hello World", "bar", "mock:bar");
         bar.assertIsSatisfied();
 
-        // there should be one more producer cache
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(2, names.size());
+        assertEquals(7, names.size());
 
         log.info("Removing 2nd route");
 
@@ -130,10 +129,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // the producer cache should have been removed
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Shutting down...");
     }
@@ -145,11 +143,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
 
-        // number of producer caches
+        // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Adding 2nd route");
 
@@ -167,9 +165,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         template.sendBodyAndHeader("direct:bar", "Hello World", "bar", "mock:bar");
         bar.assertIsSatisfied();
 
-        // there should be one more producer cache
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(2, names.size());
+        assertEquals(7, names.size());
 
         log.info("Removing 2nd route");
 
@@ -178,10 +176,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // the producer cache should have been removed
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Shutting down...");
     }
@@ -193,11 +190,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
 
-        // number of producer caches
+        // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Adding 2nd route");
 
@@ -225,9 +222,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should be two more producer cache
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(3, names.size());
+        assertEquals(7, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -237,10 +234,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // the producer cache should have been removed
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Shutting down...");
     }
@@ -252,11 +248,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
 
-        // number of producer caches
+        // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Adding 2nd route");
 
@@ -285,9 +281,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should be two more producer cache
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(3, names.size());
+        assertEquals(7, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -297,10 +293,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // only the producer cache from the 2nd route should have been removed (the on exception becomes context scoped)
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(2, names.size());
+        assertEquals(7, names.size());
 
         log.info("Shutting down...");
     }
@@ -312,11 +307,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
 
-        // number of producer caches
+        // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Adding 2nd route");
 
@@ -343,9 +338,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should be two more producer cache
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(3, names.size());
+        assertEquals(7, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -355,10 +350,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // the producer cache should have been removed
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Shutting down...");
     }
@@ -370,11 +364,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
 
-        // number of producer caches
+        // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(1, names.size());
+        assertEquals(7, names.size());
 
         log.info("Adding 2nd route");
 
@@ -402,9 +396,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should be two more producer cache
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(3, names.size());
+        assertEquals(7, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -414,10 +408,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // only the producer cache from the 2nd route should have been removed (the on completion is context scoped)
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(2, names.size());
+        assertEquals(7, names.size());
 
         log.info("Shutting down...");
     }

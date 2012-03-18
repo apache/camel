@@ -144,10 +144,12 @@ public class XmlConverterTest extends ContextTestSupport {
 
         assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
+    
     public void testToDomSourceByStAXSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        StAXSource source = conv.toStAXSource("<foo>bar</foo>", null);
+        // because of https://bugs.openjdk.java.net/show_bug.cgi?id=100228, we have to set the XML version explicitly
+        StAXSource source = conv.toStAXSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>", null);
         DOMSource out = conv.toDOMSource(source);
         assertNotSame(source, out);
 

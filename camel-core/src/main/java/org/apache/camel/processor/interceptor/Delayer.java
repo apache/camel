@@ -28,7 +28,7 @@ import org.apache.camel.spi.InterceptStrategy;
  */
 public class Delayer implements InterceptStrategy {
 
-    private boolean enabled = true;
+    private volatile boolean enabled = true;
     private final long delay;
 
     public Delayer(long delay) {
@@ -53,7 +53,7 @@ public class Delayer implements InterceptStrategy {
 
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
                                                  Processor target, Processor nextTarget) throws Exception {
-        return new DelayInterceptor(definition, target, this);
+        return new DelayInterceptor(context, definition, target, this);
     }
 
     public boolean isEnabled() {

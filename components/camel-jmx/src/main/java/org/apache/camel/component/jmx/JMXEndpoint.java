@@ -39,8 +39,6 @@ import org.apache.camel.util.ObjectHelper;
  * <code>jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi?options</code>
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
- *
- * @author markford
  */
 public class JMXEndpoint extends DefaultEndpoint {
 

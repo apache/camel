@@ -18,13 +18,7 @@ package org.apache.camel.component.websocket;
 
 public class DefaultNodeSynchronization implements NodeSynchronization {
 
-    private WebsocketStore memoryStore;
-    private WebsocketStore globalStore;
-
-    public DefaultNodeSynchronization(WebsocketStore memoryStore, WebsocketStore globalStore) {
-        this.memoryStore = memoryStore;
-        this.globalStore = globalStore;
-    }
+    private final WebsocketStore memoryStore;
 
     public DefaultNodeSynchronization(WebsocketStore memoryStore) {
         this.memoryStore = memoryStore;
@@ -33,25 +27,16 @@ public class DefaultNodeSynchronization implements NodeSynchronization {
     @Override
     public void addSocket(DefaultWebsocket socket) {
         memoryStore.add(socket);
-        if (globalStore != null) {
-            globalStore.add(socket);
-        }
     }
 
     @Override
     public void removeSocket(String id) {
         memoryStore.remove(id);
-        if (globalStore != null) {
-            globalStore.remove(id);
-        }
     }
 
     @Override
     public void removeSocket(DefaultWebsocket socket) {
         memoryStore.remove(socket);
-        if (globalStore != null) {
-            globalStore.remove(socket);
-        }
     }
 
 }

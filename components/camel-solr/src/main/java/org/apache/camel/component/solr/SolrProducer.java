@@ -106,7 +106,6 @@ public class SolrProducer extends DefaultProducer {
         } else {
 
             boolean hasSolrHeaders = false;
-            Map<String, Object> headers = exchange.getIn().getHeaders();
             for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
                 if (entry.getKey().startsWith(SolrConstants.FIELD)) {
                     hasSolrHeaders = true;

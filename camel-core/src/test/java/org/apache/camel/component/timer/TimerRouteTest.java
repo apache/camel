@@ -46,7 +46,9 @@ public class TimerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=500").to("bean:myBean", "mock:result");
+                from("timer://foo?fixedRate=true&delay=0&period=500")
+                    .log("Fired timer")
+                    .to("bean:myBean", "mock:result");
             }
         };
     }

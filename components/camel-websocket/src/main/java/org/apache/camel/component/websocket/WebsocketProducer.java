@@ -26,11 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 
 public class WebsocketProducer extends DefaultProducer {
-    private WebsocketStore store;
-
-    public WebsocketProducer(Endpoint endpoint) {
-        super(endpoint);
-    }
+    private final WebsocketStore store;
 
     public WebsocketProducer(Endpoint endpoint, WebsocketStore store) {
         super(endpoint);

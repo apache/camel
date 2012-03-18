@@ -24,7 +24,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
- * @author chad.beaulac
  */
 public class Mina2SpringMultipleUDPTest extends CamelSpringTestSupport {
 

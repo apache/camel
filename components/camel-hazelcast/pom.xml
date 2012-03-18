@@ -32,7 +32,10 @@
     <description>Camel HazelCast based work queue implementation</description>
 
     <properties>
-        <camel.osgi.export.pkg>
+      <camel.osgi.import.before.defaults>
+             com.hazelcast.*;version="[1.9,3)"
+      </camel.osgi.import.before.defaults>
+      <camel.osgi.export.pkg>
             org.apache.camel.component.hazelcast.*;${camel.osgi.version},
             org.apache.camel.processor.idempotent.hazelcast.*
 	      </camel.osgi.export.pkg>

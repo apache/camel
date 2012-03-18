@@ -61,8 +61,7 @@ public class AvroMarshalAndUnmarshallTest extends CamelTestSupport {
 
 
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
-        Value input = Value.newBuilder().build();
-        input.setValue("test body");
+        Value input = Value.newBuilder().setValue("test body").build();
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);

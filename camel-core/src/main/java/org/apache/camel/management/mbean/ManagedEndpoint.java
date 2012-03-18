@@ -60,10 +60,6 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (endpoint instanceof StatefulService) {
             ServiceStatus status = ((StatefulService) endpoint).getStatus();
-            // if no status exists then its stopped
-            if (status == null) {
-                status = ServiceStatus.Stopped;
-            }
             return status.name();
         }
 

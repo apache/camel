@@ -24,9 +24,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- * @version 
- */
 public abstract class MyBatisTestSupport extends CamelTestSupport {
 
     protected boolean createTestData() {
@@ -51,19 +48,19 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
         connection.close();
 
         if (createTestData()) {
-            Account account = new Account();
-            account.setId(123);
-            account.setFirstName("James");
-            account.setLastName("Strachan");
-            account.setEmailAddress("TryGuessing@gmail.com");
-            template.sendBody("mybatis:insertAccount?statementType=Insert", account);
+            Account account1 = new Account();
+            account1.setId(123);
+            account1.setFirstName("James");
+            account1.setLastName("Strachan");
+            account1.setEmailAddress("TryGuessing@gmail.com");
 
-            account = new Account();
-            account.setId(456);
-            account.setFirstName("Claus");
-            account.setLastName("Ibsen");
-            account.setEmailAddress("Noname@gmail.com");
-            template.sendBody("mybatis:insertAccount?statementType=Insert", account);
+            Account account2 = new Account();
+            account2.setId(456);
+            account2.setFirstName("Claus");
+            account2.setLastName("Ibsen");
+            account2.setEmailAddress("Noname@gmail.com");
+            
+            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[]{account1, account2});
         }
     }
 

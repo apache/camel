@@ -43,8 +43,6 @@ import org.apache.camel.component.jmx.jaxb.ObjectNamesType;
 
 /**
  * Converts the Notification into an XML stream.
- *
- * @author markford
  */
 public class NotificationXmlFormatter {
 

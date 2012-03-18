@@ -27,8 +27,6 @@ import org.jsmpp.bean.MessageRequest;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with SMPP
- * 
- * @author muellerc
  */
 public class SmppMessage extends DefaultMessage {
 

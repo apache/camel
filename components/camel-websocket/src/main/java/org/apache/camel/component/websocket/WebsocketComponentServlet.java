@@ -16,21 +16,15 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
 
 public class WebsocketComponentServlet extends WebSocketServlet {
 
-    private static final long serialVersionUID = 207837507742337364L;
-
+    private final NodeSynchronization sync;
     private WebsocketConsumer consumer;
-    private NodeSynchronization sync;
 
     public WebsocketComponentServlet(NodeSynchronization sync) {
         this.sync = sync;
@@ -47,12 +41,6 @@ public class WebsocketComponentServlet extends WebSocketServlet {
     @Override
     public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
         return new DefaultWebsocket(sync, consumer);
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO: why do we grab the default servlet?
-        getServletContext().getNamedDispatcher("default").forward(request, response);
     }
 
 }

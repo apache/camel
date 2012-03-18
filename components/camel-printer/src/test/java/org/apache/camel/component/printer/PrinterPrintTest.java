@@ -18,18 +18,38 @@ package org.apache.camel.component.printer;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Map;
 
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.PrintRequestAttributeSet;
+
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 public class PrinterPrintTest extends CamelTestSupport {
+
+    @Before
+    public void setup() {
+        setupJavaPrint();
+    }
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -173,5 +193,95 @@ public class PrinterPrintTest extends CamelTestSupport {
             }
         });
         context.start();
+    }
+    
+    @Test
+    public void moreThanOneLprEndpoint() throws Exception {
+
+        if (isAwtHeadless()) {
+            return;
+        }
+        
+        int numberOfPrintservicesBefore = PrintServiceLookup.lookupPrintServices(null, null).length;
+
+        // setup javax.print 
+        PrintService ps1 = mock(PrintService.class);
+        when(ps1.getName()).thenReturn("printer1");
+        when(ps1.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
+        PrintService ps2 = mock(PrintService.class);
+        when(ps2.getName()).thenReturn("printer2");
+        boolean res1 = PrintServiceLookup.registerService(ps1);
+        assertTrue("PrintService #1 should be registered.", res1);
+        boolean res2 = PrintServiceLookup.registerService(ps2);
+        assertTrue("PrintService #2 should be registered.", res2);
+        PrintService[] pss = PrintServiceLookup.lookupPrintServices(null, null);
+        assertEquals("lookup should report two PrintServices.", numberOfPrintservicesBefore + 2, pss.length);
+
+        DocPrintJob job1 = mock(DocPrintJob.class);
+        when(ps1.createPrintJob()).thenReturn(job1);
+        
+        context.addRoutes(new RouteBuilder() {
+
+            public void configure() {
+                from("direct:start1").to("lpr://localhost/printer1?sendToPrinter=true");
+                from("direct:start2").to("lpr://localhost/printer2?sendToPrinter=false");
+            }
+        });
+        context.start();
+
+        // Are there two different PrintConfigurations?
+        Map<String, Endpoint> epm = context().getEndpointMap();
+        assertEquals("Four endpoints", 4, epm.size());
+        Endpoint lp1 = null;
+        Endpoint lp2 = null;
+        for (Map.Entry<String, Endpoint> ep : epm.entrySet()) {
+            if (ep.getKey().contains("printer1")) {
+                lp1 = ep.getValue();
+            }
+            if (ep.getKey().contains("printer2")) {
+                lp2 = ep.getValue();
+            }
+        }
+        assertNotNull(lp1);
+        assertNotNull(lp2);
+        assertEquals("printer1", ((PrinterEndpoint)lp1).getConfig().getPrintername());
+        assertEquals("printer2", ((PrinterEndpoint)lp2).getConfig().getPrintername());
+
+        template.sendBody("direct:start1", "Hello Printer 1");
+
+        context.stop();
+
+        verify(job1, times(1)).print(any(Doc.class), any(PrintRequestAttributeSet.class));
+    }
+    
+    @Test
+    public void setJobName() throws Exception {
+        if (isAwtHeadless()) {
+            return;
+        }
+
+        getMockEndpoint("mock:output").setExpectedMessageCount(1);
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start").to("lpr://localhost/default").to("mock:output");
+            }
+        });
+        context.start();
+        template.sendBodyAndHeader("direct:start", "Hello Printer", PrinterEndpoint.JOB_NAME, "Test-Job-Name");
+        context.stop();
+        assertMockEndpointsSatisfied();
+    }
+    
+    protected void setupJavaPrint() {
+        // "install" another default printer
+        PrintService psDefault = mock(PrintService.class);
+        when(psDefault.getName()).thenReturn("DefaultPrinter");
+        when(psDefault.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
+        PrintServiceLookup psLookup = mock(PrintServiceLookup.class);
+        when(psLookup.getPrintServices()).thenReturn(new PrintService[]{psDefault});
+        when(psLookup.getDefaultPrintService()).thenReturn(psDefault);
+        DocPrintJob docPrintJob = mock(DocPrintJob.class);
+        when(psDefault.createPrintJob()).thenReturn(docPrintJob);
+        PrintServiceLookup.registerServiceProvider(psLookup);
     }
 }

@@ -30,7 +30,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
  * @version 
- * @author cmueller
  */
 public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 

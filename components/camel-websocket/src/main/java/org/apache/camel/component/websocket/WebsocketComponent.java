@@ -60,28 +60,35 @@ public class WebsocketComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         WebsocketEndpoint endpoint = endpoints.get(remaining);
         if (endpoint == null) {
-            WebsocketConfiguration websocketConfiguration = new WebsocketConfiguration();
-            setProperties(websocketConfiguration, parameters);
-            endpoint = new WebsocketEndpoint(uri, this, remaining, websocketConfiguration);
+            endpoint = new WebsocketEndpoint(uri, this, remaining);
+            setProperties(endpoint, parameters);
             endpoints.put(remaining, endpoint);
         }
         return endpoint;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
+    public String getStaticResources() {
+        return staticResources;
     }
 
     public void setStaticResources(String staticResources) {
         this.staticResources = staticResources;
     }
 
-    ServletContextHandler createContext() {
-        return new ServletContextHandler(ServletContextHandler.SESSIONS);
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     protected Server createServer(ServletContextHandler context, String host, int port, String home) {
@@ -116,18 +123,10 @@ public class WebsocketComponent extends DefaultComponent {
         if (servlet == null) {
             servlet = createServlet(sync, pathSpec, servlets, context);
         }
-        setServletConsumer(servlet, consumer);
-        return servlet;
-    }
-
-    String createPathSpec(String remaining) {
-        return String.format("/%s/*", remaining);
-    }
-
-    void setServletConsumer(WebsocketComponentServlet servlet, WebsocketConsumer consumer) {
         if (servlet.getConsumer() == null && consumer != null) {
             servlet.setConsumer(consumer);
         }
+        return servlet;
     }
 
     WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
@@ -137,10 +136,18 @@ public class WebsocketComponent extends DefaultComponent {
         return servlet;
     }
 
+    ServletContextHandler createContext() {
+        return new ServletContextHandler(ServletContextHandler.SESSIONS);
+    }
+
+    private static String createPathSpec(String remaining) {
+        return String.format("/%s/*", remaining);
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("Starting server {}:{}; static resources: {}", new Object[] {host, port, staticResources});
+        LOG.info("Starting server {}:{}; static resources: {}", new Object[]{host, port, staticResources});
         context = createContext();
         server = createServer(context, host, port, staticResources);
         server.start();
@@ -149,8 +156,11 @@ public class WebsocketComponent extends DefaultComponent {
     @Override
     public void doStop() throws Exception {
         if (server != null) {
+            LOG.info("Stopping server {}:{}", host, port);
             server.stop();
+            server = null;
         }
+        endpoints.clear();
     }
 
 }

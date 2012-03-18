@@ -61,8 +61,6 @@ public class SimpleBuilderTest extends TestSupport {
         assertEquals(null, SimpleBuilder.simple("${header.cool}").resultType(int.class).evaluate(exchange, Object.class));
 
         // should be convertable to integers
-        assertEquals(9, SimpleBuilder.simple("9", int.class).evaluate(exchange, Object.class));
-        assertEquals(9, SimpleBuilder.simple("09", int.class).evaluate(exchange, Object.class));
-        assertEquals(9, SimpleBuilder.simple("0009", int.class).evaluate(exchange, Object.class));
+        assertEquals(11, SimpleBuilder.simple("11", int.class).evaluate(exchange, Object.class));
     }
 }

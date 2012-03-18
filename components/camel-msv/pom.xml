@@ -35,6 +35,27 @@
     <camel.osgi.export.pkg>org.apache.camel.component.validator.msv.*</camel.osgi.export.pkg>
   </properties>
 
+  <!--
+    The POM of org.iso_relax.verifier.jaxp.validation:isorelax-jaxp-bridge:jar:1.0
+    on the central repo is not 4.0.0 complaint so that we should pick the one SMX
+    Repo already provides, as otherwise building under Maven 3.0.4 would fail!
+    So delete any old .m2 cache entries of yours for this artifact beforehand if
+    you make use of Maven 3.0.4+
+  -->
+  <repositories>
+    <repository>
+      <id>apache.smx.repo</id>
+      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo/</url>
+      <name>Apache ServiceMix Repo</name>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>

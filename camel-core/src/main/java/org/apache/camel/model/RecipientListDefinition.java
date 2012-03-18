@@ -128,8 +128,10 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
             answer.setTimeout(getTimeout());
         }
 
-        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "RecipientList", this, isParallelProcessing());
-        answer.setExecutorService(executorService);
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "RecipientList", this, isParallelProcessing());
+        answer.setExecutorService(threadPool);
+        answer.setShutdownExecutorService(shutdownThreadPool);
         long timeout = getTimeout() != null ? getTimeout() : 0;
         if (timeout > 0 && !isParallelProcessing()) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");

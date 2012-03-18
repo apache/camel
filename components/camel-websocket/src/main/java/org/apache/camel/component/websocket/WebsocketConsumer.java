@@ -28,7 +28,7 @@ public class WebsocketConsumer extends DefaultConsumer {
         super(endpoint, processor);
     }
 
-    public void sendExchange(final String connectionKey, final String message) {
+    public void sendMessage(final String connectionKey, final String message) {
         final Exchange exchange = getEndpoint().createExchange();
 
         // set header and body
@@ -39,8 +39,7 @@ public class WebsocketConsumer extends DefaultConsumer {
         getAsyncProcessor().process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (exchange.getException() != null) {
-                    getExceptionHandler().handleException(String.format("Error processing exchange for websocket consumer on message '%s'.", message),
-                            exchange, exchange.getException());
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                 }
             }
         });

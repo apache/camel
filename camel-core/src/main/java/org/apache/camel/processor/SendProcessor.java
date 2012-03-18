@@ -66,6 +66,10 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
 
     public void setDestination(Endpoint destination) {
         this.destination = destination;
+        // destination changed so purge the cache
+        if (producerCache != null) {
+            producerCache.purge();
+        }
     }
 
     public String getTraceLabel() {
@@ -143,9 +147,9 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext);
-            // add it as a service so we can manage it
-            camelContext.addService(producerCache);
+            // use a single producer cache as we need to only hold reference for one destination
+            producerCache = new ProducerCache(this, camelContext, 1);
+            // do not add as service as we do not want to manage the producer cache
         }
         ServiceHelper.startService(producerCache);
 
@@ -169,8 +173,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     }
 
     protected void doShutdown() throws Exception {
-        // remove producer cache from service
-        camelContext.removeService(producerCache);
         ServiceHelper.stopAndShutdownService(producerCache);
     }
 }

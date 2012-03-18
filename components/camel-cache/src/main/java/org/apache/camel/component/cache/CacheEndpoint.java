@@ -39,6 +39,9 @@ public class CacheEndpoint extends DefaultEndpoint {
     private CacheConfiguration config;
     private CacheManagerFactory cacheManagerFactory;
 
+    private String operation;
+    private String key;
+
     public CacheEndpoint() {
     }
 
@@ -145,5 +148,21 @@ public class CacheEndpoint extends DefaultEndpoint {
     public void stop() {
         CacheManager cacheManager = getCacheManagerFactory().getInstance();
         cacheManager.removeCache(config.getCacheName());
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

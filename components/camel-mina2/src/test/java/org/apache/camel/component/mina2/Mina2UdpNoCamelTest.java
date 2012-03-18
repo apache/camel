@@ -45,7 +45,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  *
- * @author chadbeaulac
  */
 public class Mina2UdpNoCamelTest {
 

@@ -18,12 +18,12 @@ package org.apache.camel.component.cache;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultProducer;
@@ -35,7 +35,7 @@ public class CacheProducer extends DefaultProducer {
     private CacheConfiguration config;
     private Ehcache cache;
 
-    public CacheProducer(Endpoint endpoint, CacheConfiguration config) throws Exception {
+    public CacheProducer(CacheEndpoint endpoint, CacheConfiguration config) throws Exception {
         super(endpoint);
         this.config = config;
     }
@@ -55,18 +55,22 @@ public class CacheProducer extends DefaultProducer {
 
         cache = getEndpoint().initializeCache();
 
-        String key = exchange.getIn().getHeader(CacheConstants.CACHE_KEY, String.class);
-        String operation = exchange.getIn().getHeader(CacheConstants.CACHE_OPERATION, String.class);
+        Map<String, Object> headers = exchange.getIn().getHeaders();
+        String key = (headers.containsKey(CacheConstants.CACHE_KEY)) ? (String) headers
+                .get(CacheConstants.CACHE_KEY) : getEndpoint().getKey();
+
+        String operation = (headers.containsKey(CacheConstants.CACHE_OPERATION)) ? (String) headers
+                .get(CacheConstants.CACHE_OPERATION) : getEndpoint().getOperation();
 
         if (operation == null) {
             throw new CacheException(CacheConstants.CACHE_OPERATION + " header not specified in message");
         }
-        if ((key == null) && (!operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETEALL))) {
+        if ((key == null) && (!checkIsEqual(operation, CacheConstants.CACHE_OPERATION_DELETEALL))) {
             throw new CacheException(CacheConstants.CACHE_KEY + " is not specified in message header or endpoint URL.");
         }
 
         performCacheOperation(exchange, operation, key);
-        
+
         //cleanup the cache headers
         exchange.getIn().removeHeader(CacheConstants.CACHE_KEY);
         exchange.getIn().removeHeader(CacheConstants.CACHE_OPERATION);
@@ -75,21 +79,21 @@ public class CacheProducer extends DefaultProducer {
     private void performCacheOperation(Exchange exchange, String operation, String key) throws Exception {
         Object element;
 
-        if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_ADD)) {
+        if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_ADD)) {
             LOG.debug("Adding an element with key {} into the Cache", key);
             element = createElementFromBody(exchange, CacheConstants.CACHE_OPERATION_ADD);
             cache.put(new Element(key, element));
-        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_UPDATE)) {
+        } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_UPDATE)) {
             LOG.debug("Updating an element with key {} into the Cache", key);
             element = createElementFromBody(exchange, CacheConstants.CACHE_OPERATION_UPDATE);
             cache.put(new Element(key, element));
-        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETEALL)) {
+        } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_DELETEALL)) {
             LOG.debug("Deleting All elements from the Cache");
             cache.removeAll();
-        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETE)) {
+        } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_DELETE)) {
             LOG.debug("Deleting an element with key {} into the Cache", key);
             cache.remove(key);
-        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_GET)) {
+        } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_GET)) {
             LOG.debug("Quering an element with key {} from the Cache", key);
             if (cache.isKeyInCache(key) && cache.get(key) != null) {
                 exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
@@ -97,7 +101,7 @@ public class CacheProducer extends DefaultProducer {
             } else {
                 exchange.getIn().removeHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND);
             }
-        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_CHECK)) {
+        } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_CHECK)) {
             LOG.debug("Querying an element with key {} from the Cache", key);
             if (cache.isKeyInCache(key)) {
                 exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
@@ -108,6 +112,12 @@ public class CacheProducer extends DefaultProducer {
             throw new CacheException(CacheConstants.CACHE_OPERATION + " " + operation + " is not supported.");
         }
     }
+
+    private boolean checkIsEqual(String operation, String constant) {
+        return operation.equalsIgnoreCase(constant)
+                || operation.equalsIgnoreCase(CacheConstants.CACHE_HEADER_PREFIX + constant);
+    }
+
 
     private Object createElementFromBody(Exchange exchange, String cacheOperation) throws NoTypeConversionAvailableException {
         Object element;

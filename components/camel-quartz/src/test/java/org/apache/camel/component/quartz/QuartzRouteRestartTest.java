@@ -45,7 +45,7 @@ public class QuartzRouteRestartTest extends CamelTestSupport {
         
         // start route, and we got messages again
         mock.reset();
-        mock.expectedMessageCount(1);
+        mock.expectedMinimumMessageCount(1);
 
         context().startRoute("trigger");
 

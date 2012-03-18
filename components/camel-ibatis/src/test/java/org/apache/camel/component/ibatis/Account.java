@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.ibatis;
 
-/**
- * @version 
- */
 public class Account {
     private int id;
     private String firstName;

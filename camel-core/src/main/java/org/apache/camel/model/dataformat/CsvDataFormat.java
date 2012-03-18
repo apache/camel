@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a CSV (Comma Separated Values) {@link org.apache.camel.spi.DataFormat}
@@ -33,15 +36,29 @@ import org.apache.camel.spi.DataFormat;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
     @XmlAttribute
+    private Boolean autogenColumns;
+    @XmlAttribute
     private String delimiter;
+    @XmlAttribute
+    private String configRef;
+    @XmlAttribute
+    private String strategyRef;
 
     public CsvDataFormat() {
         super("csv");
     }
-    
+
     public CsvDataFormat(String delimiter) {
         this();
         setDelimiter(delimiter);
+    }
+
+    public Boolean isAutogenColumns() {
+        return autogenColumns;
+    }
+
+    public void setAutogenColumns(Boolean autogenColumns) {
+        this.autogenColumns = autogenColumns;
     }
 
     public String getDelimiter() {
@@ -51,15 +68,52 @@ public class CsvDataFormat extends DataFormatDefinition {
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
-    
+
+    public String getConfigRef() {
+        return configRef;
+    }
+
+    public void setConfigRef(String configRef) {
+        this.configRef = configRef;
+    }
+
+    public String getStrategyRef() {
+        return strategyRef;
+    }
+
+    public void setStrategyRef(String strategyRef) {
+        this.strategyRef = strategyRef;
+    }
+
+    @Override
+    protected DataFormat createDataFormat(RouteContext routeContext) {
+        DataFormat csvFormat = super.createDataFormat(routeContext);
+
+        if (ObjectHelper.isNotEmpty(configRef)) {
+            Object config = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), configRef);
+            setProperty(csvFormat, "config", config);
+        }
+        if (ObjectHelper.isNotEmpty(strategyRef)) {
+            Object strategy = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), strategyRef);
+            setProperty(csvFormat, "strategy", strategy);
+        }
+
+        return csvFormat;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
+        if (autogenColumns != null) {
+            setProperty(dataFormat, "autogenColumns", autogenColumns);
+        }
+
         if (delimiter != null) {
             if (delimiter.length() > 1) {
                 throw new IllegalArgumentException("Delimiter must have a length of one!");
             }
             setProperty(dataFormat, "delimiter", delimiter);
-        } else { // the default delimiter is ','
+        } else {
+            // the default delimiter is ','
             setProperty(dataFormat, "delimiter", ",");
         }
     }

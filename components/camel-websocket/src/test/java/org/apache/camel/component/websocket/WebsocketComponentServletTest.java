@@ -80,7 +80,7 @@ public class WebsocketComponentServletTest {
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
-        inOrder.verify(consumer, times(1)).sendExchange(CONNECTION_KEY, MESSAGE);
+        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE);
         inOrder.verifyNoMoreInteractions();
     }
 

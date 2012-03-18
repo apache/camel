@@ -34,15 +34,22 @@ import org.apache.camel.util.ResourceHelper;
 public class DefaultLSResourceResolver implements LSResourceResolver {
 
     private final CamelContext camelContext;
+    private final String resourceUri;
     private final String resourcePath;
 
     public DefaultLSResourceResolver(CamelContext camelContext, String resourceUri) {
         this.camelContext = camelContext;
+        this.resourceUri = resourceUri;
         this.resourcePath = FileUtil.onlyPath(resourceUri);
     }
 
     @Override
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
+        // systemId should be mandatory
+        if (systemId == null) {
+            throw new IllegalArgumentException(String.format("Resource: %s refers an invalid resource without SystemId."
+                    + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s", resourceUri, type, namespaceURI, publicId, systemId, baseURI));
+        }
         return new DefaultLSInput(publicId, systemId, baseURI);
     }
     
@@ -57,7 +64,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             this.publicId = publicId;
             this.systemId = systemId;
             this.baseURI = baseURI;
-
+            
             if (resourcePath != null) {
                 uri = resourcePath + "/" + systemId;
             } else {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast.listener;
 
+import com.hazelcast.core.ItemEvent;
 import com.hazelcast.core.ItemListener;
 
 import org.apache.camel.component.hazelcast.HazelcastConstants;
@@ -30,12 +31,27 @@ public class CamelItemListener extends CamelListener implements ItemListener<Obj
         super(consumer, cacheName);
     }
 
+    /**
+     * @deprecated is using the Hazelcast 1.x API
+     */
+    @Deprecated
     public void itemAdded(Object item) {
         this.sendExchange(HazelcastConstants.ADDED, null, item);
     }
 
+    /**
+     * @deprecated is using the Hazelcast 1.x API
+     */
+    @Deprecated
     public void itemRemoved(Object item) {
         this.sendExchange(HazelcastConstants.REMOVED, null, item);
     }
 
+    public void itemAdded(ItemEvent<Object> itemEvent) {
+        itemAdded(itemEvent.getItem());
+    }
+
+    public void itemRemoved(ItemEvent<Object> itemEvent) {
+        itemRemoved(itemEvent.getItem());
+    }
 }
