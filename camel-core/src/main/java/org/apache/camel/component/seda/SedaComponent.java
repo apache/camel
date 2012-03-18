@@ -35,7 +35,7 @@ public class SedaComponent extends DefaultComponent {
     protected final int maxConcurrentConsumers = 500;
     protected int queueSize;
     protected int defaultConcurrentConsumers = 1;
-    private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
+    private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
     
     public void setQueueSize(int size) {
         queueSize = size;
@@ -56,8 +56,11 @@ public class SedaComponent extends DefaultComponent {
     public synchronized BlockingQueue<Exchange> createQueue(String uri, Map<String, Object> parameters) {
         String key = getQueueKey(uri);
 
-        if (queues.containsKey(key)) {
-            return queues.get(key);
+        QueueReference ref = getQueues().get(key);
+        if (ref != null) {
+            // add the reference before returning queue
+            ref.addReference();
+            return ref.getQueue();
         }
 
         // create queue
@@ -73,8 +76,16 @@ public class SedaComponent extends DefaultComponent {
             }
         }
 
-        queues.put(key, queue);
+        // create and add a new reference queue
+        ref = new QueueReference(queue);
+        ref.addReference();
+        getQueues().put(key, ref);
+
         return queue;
+    }
+
+    public Map<String, QueueReference> getQueues() {
+        return queues;
     }
 
     @Override
@@ -90,7 +101,7 @@ public class SedaComponent extends DefaultComponent {
         return answer;
     }
 
-    protected String getQueueKey(String uri) {
+    public String getQueueKey(String uri) {
         if (uri.contains("?")) {
             // strip parameters
             uri = uri.substring(0, uri.indexOf('?'));
@@ -100,7 +111,63 @@ public class SedaComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        queues.clear();
+        getQueues().clear();
         super.doStop();
+    }
+
+    /**
+     * On shutting down the endpoint
+     * 
+     * @param endpoint the endpoint
+     */
+    void onShutdownEndpoint(SedaEndpoint endpoint) {
+        // we need to remove the endpoint from the reference counter
+        String key = getQueueKey(endpoint.getEndpointUri());
+        QueueReference ref = getQueues().get(key);
+        if (ref != null) {
+            ref.removeReference();
+            if (ref.getCount() <= 0) {
+                // reference no longer needed so remove from queues
+                getQueues().remove(key);
+            }
+        }
+    }
+
+    /**
+     * Holder for queue references.
+     * <p/>
+     * This is used to keep track of the usages of the queues, so we know when a queue is no longer
+     * in use, and can safely be discarded.
+     */
+    public static final class QueueReference {
+        
+        private final BlockingQueue<Exchange> queue;
+        private volatile int count;
+
+        private QueueReference(BlockingQueue<Exchange> queue) {
+            this.queue = queue;
+        }
+        
+        void addReference() {
+            count++;
+        }
+        
+        void removeReference() {
+            count--;
+        }
+
+        /**
+         * Gets the reference counter
+         */
+        public int getCount() {
+            return count;
+        }
+
+        /**
+         * Gets the queue
+         */
+        public BlockingQueue<Exchange> getQueue() {
+            return queue;
+        }
     }
 }

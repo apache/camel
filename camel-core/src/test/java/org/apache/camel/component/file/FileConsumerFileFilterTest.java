@@ -77,9 +77,13 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     public class MyFileFilter<T> implements GenericFileFilter<T> {
-        public boolean accept(GenericFile<T> pathname) {
+        public boolean accept(GenericFile<T> file) {
+            // we want all directories
+            if (file.isDirectory()) {
+                return true;
+            }
             // we dont accept any files starting with skip in the name
-            return !pathname.getFileName().startsWith("skip");
+            return !file.getFileName().startsWith("skip");
         }
     }
     // END SNIPPET: e1

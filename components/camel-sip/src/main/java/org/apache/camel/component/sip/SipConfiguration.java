@@ -19,6 +19,7 @@ package org.apache.camel.component.sip;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -51,7 +52,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("unchecked")
 public class SipConfiguration {    
     private static final transient Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
     private static final String IMPLEMENTATION = "gov.nist";
@@ -93,7 +93,7 @@ public class SipConfiguration {
     
     private FromHeader fromHeader;
     private ToHeader toHeader;
-    private ArrayList<ViaHeader> viaHeaders;
+    private List<ViaHeader> viaHeaders;
     private ContentTypeHeader contentTypeHeader;
     private CallIdHeader callIdHeader;
     private MaxForwardsHeader maxForwardsHeader;
@@ -229,6 +229,7 @@ public class SipConfiguration {
         ObjectHelper.notNull(eventId, "Event Id");        
     }    
 
+    @SuppressWarnings("unchecked")
     private void createFactoriesAndHeaders(Map<String, Object> parameters, SipComponent component) throws Exception {
         headerFactory = sipFactory.createHeaderFactory();
         addressFactory = sipFactory.createAddressFactory();
@@ -244,7 +245,7 @@ public class SipConfiguration {
                 createToHeader();
             }
         }
-        viaHeaders = component.resolveAndRemoveReferenceParameter(parameters, "viaHeaders", ArrayList.class, null);
+        viaHeaders = component.resolveAndRemoveReferenceParameter(parameters, "viaHeaders", List.class, null);
         if (viaHeaders == null) {        
             createViaHeaders();
         }
@@ -618,11 +619,11 @@ public class SipConfiguration {
         this.toHeader = toHeader;
     }
 
-    public ArrayList<ViaHeader> getViaHeaders() {
+    public List<ViaHeader> getViaHeaders() {
         return viaHeaders;
     }
 
-    public void setViaHeaders(ArrayList<ViaHeader> viaHeaders) {
+    public void setViaHeaders(List<ViaHeader> viaHeaders) {
         this.viaHeaders = viaHeaders;
     }
 

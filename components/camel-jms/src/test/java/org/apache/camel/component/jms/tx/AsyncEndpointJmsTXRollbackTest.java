@@ -35,12 +35,6 @@ public class AsyncEndpointJmsTXRollbackTest extends CamelSpringTestSupport {
     private static String afterThreadName;
 
     @Override
-    protected int getExpectedRouteCount() {
-        // no routes in Spring XML so return 0
-        return 0;
-    }
-
-    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JmsTransacted-context.xml");
     }   

@@ -139,12 +139,28 @@ public class ObjectHelperTest extends TestCase {
         assertSame("Should return the same iterator", iterator, ObjectHelper.createIterator(iterator));
     }
 
+    public void testCreateIteratorAllowEmpty() {
+        String s = "a,b,,c";
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ",", true));
+        assertEquals("a", it.next());
+        assertEquals("b", it.next());
+        assertEquals("", it.next());
+        assertEquals("c", it.next());
+    }
+
     public void testCreateIteratorWithStringAndCommaSeparator() {
         String s = "a,b,c";
         Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
+    }
+
+    public void testCreateIteratorWithStringAndCommaSeparatorEmptyString() {
+        String s = "";
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ",", true));
+        assertEquals("", it.next());
+        assertFalse(it.hasNext());
     }
 
     public void testCreateIteratorWithStringAndSemiColonSeparator() {
@@ -329,6 +345,20 @@ public class ObjectHelperTest extends TestCase {
         MyDummyObject dummyB = new MyDummyObject("Camel");
         String code3 = ObjectHelper.getIdentityHashCode(dummyB);
         assertNotSame(code, code3);
+    }
+    
+    public void testIsNaN() throws Exception {
+        assertTrue(ObjectHelper.isNaN(Float.NaN));
+        assertTrue(ObjectHelper.isNaN(Double.NaN));
+
+        assertFalse(ObjectHelper.isNaN(null));
+        assertFalse(ObjectHelper.isNaN(""));
+        assertFalse(ObjectHelper.isNaN("1.0"));
+        assertFalse(ObjectHelper.isNaN(1));
+        assertFalse(ObjectHelper.isNaN(1.5f));
+        assertFalse(ObjectHelper.isNaN(1.5d));
+        assertFalse(ObjectHelper.isNaN(false));
+        assertFalse(ObjectHelper.isNaN(true));
     }
 
 }

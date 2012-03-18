@@ -41,7 +41,7 @@
         <repository>
             <id>fusesource.m2</id>
             <name>Fusesource Dependency Repository</name>
-            <url>http://repo.fusesource.com/maven2-all</url>
+            <url>http://repo.fusesource.com/maven2</url>
         </repository>
     </repositories>
 

@@ -19,6 +19,7 @@ package org.apache.camel.spring.javaconfig.test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,8 +97,8 @@ public class JavaConfigContextLoader implements ContextLoader {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-        ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
-        ArrayList<String> basePackages = new ArrayList<String>();
+        List<Class<?>> configClasses = new ArrayList<Class<?>>();
+        List<String> basePackages = new ArrayList<String>();
         for (String location : locations) {
             // if the location refers to a class, use it. Otherwise assume it's a base package name
             try {

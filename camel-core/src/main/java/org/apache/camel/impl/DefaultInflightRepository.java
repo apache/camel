@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
@@ -35,36 +36,27 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
     private final AtomicInteger totalCount = new AtomicInteger();
-    // use endpoint key as key so endpoints with lenient properties is registered using the same key (eg dynamic http endpoints)
-    private final ConcurrentHashMap<String, AtomicInteger> endpointCount = new ConcurrentHashMap<String, AtomicInteger>();
+    private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<String, AtomicInteger>();
 
     public void add(Exchange exchange) {
-        int count = totalCount.incrementAndGet();
-        LOG.trace("Total {} inflight exchanges. Last added: {}", count, exchange.getExchangeId());
-
-        if (exchange.getFromEndpoint() == null) {
-            return;
-        }
-
-        String key = exchange.getFromEndpoint().getEndpointKey();
-        AtomicInteger existing = endpointCount.putIfAbsent(key, new AtomicInteger(1));
-        if (existing != null) {
-            existing.addAndGet(1);
-        }
+        totalCount.incrementAndGet();
     }
 
     public void remove(Exchange exchange) {
-        int count = totalCount.decrementAndGet();
-        LOG.trace("Total {} inflight exchanges. Last removed: {}", count, exchange.getExchangeId());
+        totalCount.decrementAndGet();
+    }
 
-        if (exchange.getFromEndpoint() == null) {
-            return;
-        }
-
-        String key = exchange.getFromEndpoint().getEndpointKey();
-        AtomicInteger existing = endpointCount.get(key);
+    public void add(Exchange exchange, String routeId) {
+        AtomicInteger existing = routeCount.putIfAbsent(routeId, new AtomicInteger(1));
         if (existing != null) {
-            existing.addAndGet(-1);
+            existing.incrementAndGet();
+        }
+    }
+
+    public void remove(Exchange exchange, String routeId) {
+        AtomicInteger existing = routeCount.get(routeId);
+        if (existing != null) {
+            existing.decrementAndGet();
         }
     }
 
@@ -72,9 +64,20 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         return totalCount.get();
     }
 
+    @Deprecated
     public int size(Endpoint endpoint) {
-        AtomicInteger answer = endpointCount.get(endpoint.getEndpointKey());
-        return answer != null ? answer.get() : 0;
+        return 0;
+    }
+
+    @Override
+    public void removeRoute(String routeId) {
+        routeCount.remove(routeId);
+    }
+
+    @Override
+    public int size(String routeId) {
+        AtomicInteger existing = routeCount.get(routeId);
+        return existing != null ? existing.get() : 0; 
     }
 
     @Override
@@ -89,6 +92,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         } else {
             LOG.debug("Shutting down with no inflight exchanges.");
         }
-        endpointCount.clear();
+        routeCount.clear();
     }
 }

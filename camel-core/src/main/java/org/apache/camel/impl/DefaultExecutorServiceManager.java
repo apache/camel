@@ -245,26 +245,49 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     public void shutdown(ExecutorService executorService) {
         ObjectHelper.notNull(executorService, "executorService");
 
-        if (executorService.isShutdown()) {
-            return;
+        if (!executorService.isShutdown()) {
+            LOG.debug("Shutdown ExecutorService: {}", executorService);
+            executorService.shutdown();
+            LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
         }
 
-        LOG.debug("Shutdown ExecutorService: {}", executorService);
-        executorService.shutdown();
-        LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
+        if (executorService instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
+            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
+                lifecycle.onThreadPoolRemove(camelContext, threadPool);
+            }
+        }
+
+        // remove reference as its shutdown
+        executorServices.remove(executorService);
     }
 
     @Override
     public List<Runnable> shutdownNow(ExecutorService executorService) {
+        return doShutdownNow(executorService, true);
+    }
+
+    private List<Runnable> doShutdownNow(ExecutorService executorService, boolean remove) {
         ObjectHelper.notNull(executorService, "executorService");
 
-        if (executorService.isShutdown()) {
-            return null;
+        List<Runnable> answer = null;
+        if (!executorService.isShutdown()) {
+            LOG.debug("ShutdownNow ExecutorService: {}", executorService);
+            answer = executorService.shutdownNow();
+            LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
         }
 
-        LOG.debug("ShutdownNow ExecutorService: {}", executorService);
-        List<Runnable> answer = executorService.shutdownNow();
-        LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
+        if (executorService instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
+            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
+                lifecycle.onThreadPoolRemove(camelContext, threadPool);
+            }
+        }
+
+        // remove reference as its shutdown
+        if (remove) {
+            executorServices.remove(executorService);
+        }
 
         return answer;
     }
@@ -293,11 +316,12 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     protected void doShutdown() throws Exception {
-        // shutdown all executor services
+        // shutdown all executor services by looping
         for (ExecutorService executorService : executorServices) {
             // only log if something goes wrong as we want to shutdown them all
             try {
-                shutdownNow(executorService);
+                // must not remove during looping, as we clear the list afterwards
+                doShutdownNow(executorService, false);
             } catch (Throwable e) {
                 LOG.warn("Error occurred during shutdown of ExecutorService: "
                         + executorService + ". This exception will be ignored.", e);

@@ -20,6 +20,7 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <propertyPlaceholder cache="true" ignoreMissingLocation="true" location="classpath:org/apache/camel/component/properties/cheese.properties"/>    
         <route>
             <from uri="timer:test"/>
             <to uri="log:test"/>
@@ -27,4 +28,3 @@
     </camelContext>
 
 </blueprint>
-

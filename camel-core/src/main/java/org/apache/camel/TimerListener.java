@@ -29,5 +29,5 @@ public interface TimerListener {
      * Notification invoked.
      */
     void onTimer();
-    
+
 }

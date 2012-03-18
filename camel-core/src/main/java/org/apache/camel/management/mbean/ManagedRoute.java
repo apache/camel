@@ -90,11 +90,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public Integer getInflightExchanges() {
-        if (route.getEndpoint() != null) {
-            return context.getInflightRepository().size(route.getEndpoint());
-        } else {
-            return null;
-        }
+        return context.getInflightRepository().size(route.getId());
     }
 
     public String getCamelId() {
@@ -251,4 +247,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return this == o || (o != null && getClass() == o.getClass() && route.equals(((ManagedRoute)o).route));
+    }
+
+    @Override
+    public int hashCode() {
+        return route.hashCode();
+    }
 }

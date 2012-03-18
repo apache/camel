@@ -26,7 +26,9 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -45,6 +47,9 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
     private static JettySolrRunner solrRunner;
     private static CommonsHttpSolrServer solrServer;
 
+    @Produce(uri = "direct:direct-xml-start")
+    protected ProducerTemplate directXmlRoute;
+
     @Produce(uri = "direct:xml-start")
     protected ProducerTemplate xmlRoute;
 
@@ -57,6 +62,20 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
     @Produce(uri = "direct:pdf-start-streaming")
     protected ProducerTemplate pdfRouteStreaming;
 
+
+    @DirtiesContext
+    @Test
+    public void endToEndIndexDirectXML() throws Exception {
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("id", "MA147LL/A", 1.0f);
+        String docAsXml = ClientUtils.toXML(doc);
+        directXmlRoute.sendBody(docAsXml);
+
+        QueryResponse response = executeSolrQuery("id:MA147LL/A");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+    }
+    
     @DirtiesContext
     @Test
     public void endToEndIndexXMLDocuments() throws Exception {

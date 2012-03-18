@@ -71,7 +71,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         // ensure pojosr stores bundles in an unique target directory
         System.setProperty("org.osgi.framework.storage", "target/bundles/" + System.currentTimeMillis());
-        List<BundleDescriptor> bundles = new ClasspathScanner().scanForBundles("(Bundle-SymbolicName=*)");
+        List<BundleDescriptor> bundles = getBundleDescriptors();
         TinyBundle bundle = createTestBundle();
         bundles.add(getBundleDescriptor("target/test-bundle/test-bundle.jar", bundle));
         Map<String, List<BundleDescriptor>> config = new HashMap<String, List<BundleDescriptor>>();
@@ -100,6 +100,17 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
               .set("Bundle-SymbolicName", "test-bundle")
               .set("Bundle-Version", "0.0.0");
         return bundle;
+    }
+
+    /**
+     * Gets list of bundle descriptors. Modify this method if you wish to change
+     * default behavior.
+     * 
+     * @return List pointers to OSGi bundles.
+     * @throws Exception If looking up the bundles fails.
+     */
+    protected List<BundleDescriptor> getBundleDescriptors() throws Exception {
+        return new ClasspathScanner().scanForBundles("(Bundle-SymbolicName=*)");
     }
 
     /**

@@ -18,11 +18,11 @@ package org.apache.camel.component.hazelcast;
 
 import java.util.List;
 
-import com.hazelcast.core.Hazelcast;
-
 import com.hazelcast.core.HazelcastInstance;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
 public class HazelcastListProducerTest extends CamelTestSupport {
@@ -31,7 +31,7 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
         HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
         list = hazelcastInstance.getList("bar");
         list.clear();
@@ -39,14 +39,12 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
     @Test
     public void addValue() throws InterruptedException {
-
         template.sendBody("direct:add", "bar");
         assertTrue(list.contains("bar"));
     }
 
     @Test
     public void removeValue() throws InterruptedException {
-
         list.add("foo1");
         list.add("foo2");
         list.add("foo3");
@@ -62,8 +60,6 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
     @Test
     public void getValueWithIdx() {
-        // unsupported operation --> supported since 1.9.3
-
         list.add("foo1");
         list.add("foo2");
 
@@ -77,8 +73,6 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
     @Test
     public void setValueWithIdx() {
-        // unsupported operation --> supported since 1.9.3
-
         list.add("foo1");
         list.add("foo2");
 
@@ -93,36 +87,30 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
     @Test
     public void removeValueWithIdx() {
-        // unsupported operation --> supported since 1.9.3
-
         list.add("foo1");
         list.add("foo2");
 
         assertEquals(2, list.size());
 
+        // do not specify the value to delete, but the index
         template.sendBodyAndHeader("direct:removevalue", null, HazelcastConstants.OBJECT_POS, 1);
 
         assertEquals(1, list.size());
-
+        assertEquals("foo1", list.get(0));
     }
 
-    // @Test(expected = CamelExecutionException.class)
-    public void removeNullValue() {
-        // unsupported operation
-
-        /*
-         * TODO: is this case a norm ? should this case handled in a different way ?
-         */
-
-        List<String> list = Hazelcast.getList("bar");
-        list.clear();
-
+    @Test
+    public void removeValueWithoutIdx() {
         list.add("foo1");
+        list.add("foo2");
 
-        // do not specify the value to delete (null)
-        template.sendBody("direct:removevalue", null);
-        assertEquals(0, list.size());
+        assertEquals(2, list.size());
 
+        // do not specify the index to delete, but the value
+        template.sendBody("direct:removevalue", "foo1");
+
+        assertEquals(1, list.size());
+        assertEquals("foo2", list.get(0));
     }
 
     @Override

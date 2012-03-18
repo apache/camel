@@ -75,6 +75,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
+                exchange.getIn().setHeader("requestObject", new DefaultCxfBinding());
                 exchange.getProperties().put(TEST_KEY, TEST_VALUE);
             }
         });

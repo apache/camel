@@ -22,7 +22,11 @@ import org.apache.camel.spi.Language;
 
 /**
  * A useful base class for testing the language plugins in Camel
+ * 
+ * @deprecated Support for JUnit 3.x is slated for removal in Camel 3.x. You are encouraged to move to
+ *             JUnit 4.x based tests.  See {@link org.apache.camel.test.junit4.LanguageTestSupport}.
  */
+@Deprecated
 public abstract class LanguageTestSupport extends ExchangeTestSupport {
 
     protected abstract String getLanguageName();

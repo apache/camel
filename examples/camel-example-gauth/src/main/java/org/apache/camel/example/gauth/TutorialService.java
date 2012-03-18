@@ -59,7 +59,7 @@ public class TutorialService {
         URL feedUrl = new URL("http://www.google.com/calendar/feeds/default/");
         CalendarFeed resultFeed = calendarService.getFeed(feedUrl, CalendarFeed.class);
 
-        ArrayList<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<String>();
         for (int i = 0; i < resultFeed.getEntries().size(); i++) {
             CalendarEntry entry = resultFeed.getEntries().get(i);
             result.add(entry.getTitle().getPlainText());

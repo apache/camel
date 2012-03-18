@@ -29,6 +29,7 @@ import org.junit.Test;
  * 
  * @version 
  */
+@SuppressWarnings("deprecation")
 // START SNIPPET: example
 public class FilterTest extends CamelTestSupport {
 

@@ -18,13 +18,25 @@ package org.apache.camel.component.websocket;
 
 public interface NodeSynchronization {
 
-    /** adds the Websocket to both (always if present) stores */
+    /**
+     * Adds the web socket to both (always if present) stores.
+     *
+     * @param socket the web socket
+     */
     void addSocket(DefaultWebsocket socket);
 
-    /** deletes the Websocket from both stores */
+    /**
+     * Removes the Websocket from both stores
+     *
+     * @param id id of the web socket
+     */
     void removeSocket(String id);
 
-    /** deletes the Websocket from both stores */
+    /**
+     * Removes the Websocket from both stores
+     *
+     * @param socket web socket to remove
+     */
     void removeSocket(DefaultWebsocket socket);
 
 }

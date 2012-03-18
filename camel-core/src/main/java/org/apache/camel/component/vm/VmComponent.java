@@ -19,10 +19,8 @@ package org.apache.camel.component.vm;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.seda.SedaComponent;
 
 /**
@@ -34,32 +32,12 @@ import org.apache.camel.component.seda.SedaComponent;
  * @version 
  */
 public class VmComponent extends SedaComponent {
-    protected static final Map<String, BlockingQueue<Exchange>> QUEUES = new HashMap<String, BlockingQueue<Exchange>>();
+    protected static final Map<String, QueueReference> QUEUES = new HashMap<String, QueueReference>();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     @Override
-    public synchronized BlockingQueue<Exchange> createQueue(String uri, Map<String, Object> parameters) {
-        String key = getQueueKey(uri);
-
-        if (QUEUES.containsKey(key)) {
-            return QUEUES.get(key);
-        }
-
-        // create queue
-        BlockingQueue<Exchange> queue;
-        Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
-        if (size != null && size > 0) {
-            queue = new LinkedBlockingQueue<Exchange>(size);
-        } else {
-            if (getQueueSize() > 0) {
-                queue = new LinkedBlockingQueue<Exchange>(getQueueSize());
-            } else {
-                queue = new LinkedBlockingQueue<Exchange>();
-            }
-        }
-
-        QUEUES.put(key, queue);
-        return queue;
+    public Map<String, QueueReference> getQueues() {
+        return QUEUES;
     }
 
     @Override
@@ -70,14 +48,9 @@ public class VmComponent extends SedaComponent {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
-        if (START_COUNTER.decrementAndGet() == 0) {
-            synchronized (QUEUES) {
-                for (BlockingQueue<Exchange> q : QUEUES.values()) {
-                    q.clear();
-                }
-                QUEUES.clear();
-            }
+        if (START_COUNTER.decrementAndGet() <= 0) {
+            // clear queues when no more vm components in use
+            getQueues().clear();
         }
     }
 }

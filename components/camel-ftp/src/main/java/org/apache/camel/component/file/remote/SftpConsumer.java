@@ -143,6 +143,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         answer.setFileLength(file.getAttrs().getSize());
         answer.setLastModified(file.getAttrs().getMTime() * 1000L);
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
+        answer.setDirectory(file.getAttrs().isDir());
 
         // absolute or relative path
         boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);

@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Route;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
@@ -135,23 +134,6 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         T value = applicationContext.getBean(name, type);
         assertNotNull("No spring bean found for name <" + name + ">", value);
         return value;
-    }
-
-    @Override
-    protected void assertValidContext(CamelContext context) {
-        super.assertValidContext(context);
-
-        List<Route> routes = context.getRoutes();
-        int routeCount = getExpectedRouteCount();
-        if (routeCount > 0) {
-            assertNotNull("Should have some routes defined", routes);
-            assertTrue("Should have at least one route", routes.size() >= routeCount);
-        }
-        log.debug("Camel Routes: " + routes);
-    }
-
-    protected int getExpectedRouteCount() {
-        return 1;
     }
 
     @SuppressWarnings("deprecation")

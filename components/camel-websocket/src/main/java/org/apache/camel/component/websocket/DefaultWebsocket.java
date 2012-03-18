@@ -21,15 +21,17 @@ import java.util.UUID;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable {
 
     private static final long serialVersionUID = -575701599776801400L;
-    private Connection connection;
-    private String connectionKey;
-    private NodeSynchronization sync;
-
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultWebsocket.class);
+    private transient Connection connection;
     private transient WebsocketConsumer consumer;
+    private transient NodeSynchronization sync;
+    private String connectionKey;
 
     public DefaultWebsocket(NodeSynchronization sync, WebsocketConsumer consumer) {
         this.sync = sync;
@@ -44,21 +46,20 @@ public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable 
     @Override
     public void onOpen(Connection connection) {
         this.connection = connection;
-
         this.connectionKey = UUID.randomUUID().toString();
         sync.addSocket(this);
     }
 
     @Override
     public void onMessage(String message) {
+        LOG.debug("onMessage: {}", message);
         if (this.consumer != null) {
             this.consumer.sendExchange(this.connectionKey, message);
+        } else {
+            LOG.debug("No consumer to handle message received: {}", message);
         }
-        // consumer is not set, this is produce only websocket
-        // TODO - 06.06.2011, LK - deliver exchange to dead letter channel
     }
 
-    // getters and setters
     public Connection getConnection() {
         return connection;
     }

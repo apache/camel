@@ -100,8 +100,7 @@ public class JpaWithNamedQueryTest extends Assert {
         });
         consumer.start();
 
-        boolean received = latch.await(50, TimeUnit.SECONDS);
-        assertTrue("Did not receive the message!", received);
+        assertTrue(latch.await(50, TimeUnit.SECONDS));
 
         assertReceivedResult(receivedExchange);
 

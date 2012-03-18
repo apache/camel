@@ -51,7 +51,7 @@ public class StopRouteFromRouteTest extends TestCase {
         template.sendBody("direct:start", "Hello Camel");
 
         // just wait a bit for the thread to stop the route
-        Thread.sleep(1000);
+        Thread.sleep(1500);
 
         // the route should now be stopped
         assertTrue("Route myRoute should be stopped", context.getRouteStatus("myRoute").isStopped());

@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 
 /**
  * Represents a
@@ -48,6 +49,9 @@ public interface DataFormat {
      * <b>Notice:</b> The result is set as body on the exchange OUT message.
      * It is possible to mutate the OUT message provided in the given exchange parameter.
      * For instance adding headers to the OUT message will be preserved.
+     * <p/>
+     * It's also legal to return the <b>same</b> passed <tt>exchange</tt> as is but also a
+     * {@link Message} object as well which will be used as the OUT message of <tt>exchange</tt>.
      *
      * @param exchange    the current exchange
      * @param stream      the input stream with the object to be unmarshalled

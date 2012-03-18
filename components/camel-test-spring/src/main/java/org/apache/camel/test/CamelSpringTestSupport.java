@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.CastUtils;
@@ -31,8 +30,11 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
- * @version 
+ * @deprecated Support for JUnit 3.x is slated for removal in Camel 3.x. You are encouraged to move to
+ *             JUnit 4.x based tests.  See {@link org.apache.camel.test.junit4.CamelSpringTestSupport} or
+ *             {@link org.apache.camel.test.junit4.CamelSpringJUnit4ClassRunner}.
  */
+@Deprecated
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected AbstractApplicationContext applicationContext;
     protected abstract AbstractApplicationContext createApplicationContext();
@@ -128,23 +130,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
         return applicationContext.getBean(name, type);
-    }
-
-    @Override
-    protected void assertValidContext(CamelContext context) {
-        super.assertValidContext(context);
-
-        List<Route> routes = context.getRoutes();
-        int routeCount = getExpectedRouteCount();
-        if (routeCount > 0) {
-            assertNotNull("Should have some routes defined", routes);
-            assertTrue("Should have at least one route", routes.size() >= routeCount);
-        }
-        log.debug("Camel Routes: " + routes);
-    }
-
-    protected int getExpectedRouteCount() {
-        return 1;
     }
 
     @Override

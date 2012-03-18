@@ -174,6 +174,10 @@ public interface ExecutorServiceManager extends ShutdownableService {
 
     /**
      * Creates a new single-threaded thread pool. This is often used for background threads.
+     * <p/>
+     * Notice that there will always be a single thread in the pool. If you want the pool to be
+     * able to shrink to no threads, then use the <tt>newThreadPool</tt> method, and use
+     * 0 in core pool size, and 1 in max pool size.
      *
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name

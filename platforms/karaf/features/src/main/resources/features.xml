@@ -276,6 +276,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.flatpack/${flatpack-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-flatpack/${project.version}</bundle>
   </feature>
+  <feature name='camel-fop' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fop/${fop-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-fop/${project.version}</bundle>
+  </feature>
   <feature name='camel-freemarker' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.freemarker/${freemarker-bundle-version}</bundle>
@@ -441,6 +446,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.serp/${serp-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
     <bundle>mvn:org.apache.openjpa/openjpa/${openjpa-version}</bundle>	
     <feature version='[3,4)'>spring-orm</feature>
     <feature version='${project.version}'>camel-core</feature>
@@ -460,6 +466,11 @@
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-juel/${project.version}</bundle>
+  </feature>
+  <feature name='camel-jt400' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>wrap:mvn:net.sf.jt400/jt400-full/${jt400-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jt400/${project.version}</bundle>
   </feature>
   <feature name='camel-kestrel' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spymemcached/${spymemcached-bundle-version}</bundle>
@@ -484,6 +495,12 @@
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${project.version}</bundle>
+  </feature>
+  <feature name='camel-mongodb' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mongodb/${project.version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-jackson</feature>
   </feature>
   <feature name='camel-msv' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
@@ -623,6 +640,7 @@
   <feature name='camel-smpp' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsmpp/${jsmpp-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-smpp/${project.version}</bundle>
   </feature>
   <feature name='camel-snmp' version='${project.version}' resolver='(obr)' start-level='50'>

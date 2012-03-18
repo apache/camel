@@ -53,47 +53,33 @@ public class WebsocketProducerTest {
 
     @Mock
     private Endpoint endpoint;
-
     @Mock
     private WebsocketStore store;
-
     @Mock
     private Connection connection;
-
     @Mock
     private DefaultWebsocket defaultWebsocket1;
-
     @Mock
     private DefaultWebsocket defaultWebsocket2;
-
     @Mock
     private Exchange exchange;
-
     @Mock
     private Message inMessage;
 
     private IOException exception = new IOException("BAD NEWS EVERYONE!");
-
     private WebsocketProducer websocketProducer;
-
     private Collection<DefaultWebsocket> sockets;
 
-    /**
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception {
         websocketProducer = new WebsocketProducer(endpoint, store);
         sockets = Arrays.asList(defaultWebsocket1, defaultWebsocket2);
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#process(org.apache.camel.Exchange)} .
-     */
     @Test
     public void testProcessSingleMessage() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getBody(String.class)).thenReturn(MESSAGE);
+        when(inMessage.getMandatoryBody(String.class)).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL)).thenReturn(null);
         when(inMessage.getHeader(WebsocketConstants.CONNECTION_KEY, String.class)).thenReturn(SESSION_KEY);
         when(store.get(SESSION_KEY)).thenReturn(defaultWebsocket1);
@@ -104,7 +90,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
         inOrder.verify(store, times(1)).get(SESSION_KEY);
@@ -115,13 +101,10 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#process(org.apache.camel.Exchange)} .
-     */
     @Test
     public void testProcessSingleMessageWithException() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getBody(String.class)).thenReturn(MESSAGE);
+        when(inMessage.getMandatoryBody(String.class)).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL)).thenReturn(false);
         when(inMessage.getHeader(WebsocketConstants.CONNECTION_KEY, String.class)).thenReturn(SESSION_KEY);
         when(store.get(SESSION_KEY)).thenReturn(defaultWebsocket1);
@@ -138,7 +121,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
         inOrder.verify(store, times(1)).get(SESSION_KEY);
@@ -149,13 +132,10 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#process(org.apache.camel.Exchange)} .
-     */
     @Test
     public void testProcessMultipleMessages() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getBody(String.class)).thenReturn(MESSAGE);
+        when(inMessage.getMandatoryBody(String.class)).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL)).thenReturn(true);
         when(store.getAll()).thenReturn(sockets);
         when(defaultWebsocket1.getConnection()).thenReturn(connection);
@@ -166,7 +146,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL);
         inOrder.verify(store, times(1)).getAll();
         inOrder.verify(defaultWebsocket1, times(1)).getConnection();
@@ -180,13 +160,10 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#process(org.apache.camel.Exchange)} .
-     */
     @Test
     public void testProcessMultipleMessagesWithExcpetion() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
-        when(inMessage.getBody(String.class)).thenReturn(MESSAGE);
+        when(inMessage.getMandatoryBody(String.class)).thenReturn(MESSAGE);
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL)).thenReturn(true);
         when(store.getAll()).thenReturn(sockets);
         when(defaultWebsocket1.getConnection()).thenReturn(connection);
@@ -203,7 +180,7 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL);
         inOrder.verify(store, times(1)).getAll();
         inOrder.verify(defaultWebsocket1, times(1)).getConnection();
@@ -217,9 +194,6 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#process(org.apache.camel.Exchange)} .
-     */
     @Test
     public void testProcessSingleMessageNoConnectionKey() throws Exception {
         when(exchange.getIn()).thenReturn(inMessage);
@@ -238,15 +212,12 @@ public class WebsocketProducerTest {
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(inMessage, times(1)).getBody(String.class);
+        inOrder.verify(inMessage, times(1)).getMandatoryBody(String.class);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.SEND_TO_ALL);
         inOrder.verify(inMessage, times(1)).getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#sendMessage(org.apache.camel.component.websocket.DefaultWebsocket, String)} .
-     */
     @Test
     public void testSendMessage() throws Exception {
         when(defaultWebsocket1.getConnection()).thenReturn(connection);
@@ -262,21 +233,14 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#sendMessage(org.apache.camel.component.websocket.DefaultWebsocket, String)} .
-     */
     @Test
     public void testSendMessageWebsocketIsNull() throws Exception {
-
         websocketProducer.sendMessage(null, MESSAGE);
 
         InOrder inOrder = inOrder(endpoint, store, connection, defaultWebsocket1, defaultWebsocket2, exchange, inMessage);
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#sendMessage(org.apache.camel.component.websocket.DefaultWebsocket, String)} .
-     */
     @Test
     public void testSendMessageConnetionIsClosed() throws Exception {
         when(defaultWebsocket1.getConnection()).thenReturn(connection);
@@ -290,9 +254,6 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#sendMessage(org.apache.camel.component.websocket.DefaultWebsocket, String)} .
-     */
     @Test
     public void testSendMessageWithException() throws Exception {
         when(defaultWebsocket1.getConnection()).thenReturn(connection);
@@ -314,9 +275,6 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#isSendToAllSet(Message)} .
-     */
     @Test
     public void testIsSendToAllSet() {
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL)).thenReturn(true, false);
@@ -327,9 +285,6 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#isSendToAllSet(Message)} .
-     */
     @Test
     public void testIsSendToAllSetHeaderNull() {
         when(inMessage.getHeader(WebsocketConstants.SEND_TO_ALL)).thenReturn(null);
@@ -339,9 +294,6 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#sendToAll(WebsocketStore, String)} .
-     */
     @Test
     public void testSendToAll() throws Exception {
         when(store.getAll()).thenReturn(sockets);
@@ -349,7 +301,7 @@ public class WebsocketProducerTest {
         when(defaultWebsocket2.getConnection()).thenReturn(connection);
         when(connection.isOpen()).thenReturn(true);
 
-        websocketProducer.sendToAll(store, MESSAGE);
+        websocketProducer.sendToAll(store, MESSAGE, exchange);
 
         InOrder inOrder = inOrder(store, connection, defaultWebsocket1, defaultWebsocket2);
         inOrder.verify(store, times(1)).getAll();
@@ -364,9 +316,6 @@ public class WebsocketProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.WebsocketProducer#sendToAll(WebsocketStore, String)} .
-     */
     @Test
     public void testSendToAllWithExcpetion() throws Exception {
         when(store.getAll()).thenReturn(sockets);
@@ -376,7 +325,7 @@ public class WebsocketProducerTest {
         when(connection.isOpen()).thenReturn(true);
 
         try {
-            websocketProducer.sendToAll(store, MESSAGE);
+            websocketProducer.sendToAll(store, MESSAGE, exchange);
             fail("Exception expected");
         } catch (Exception e) {
             assertEquals(exception, e.getCause());

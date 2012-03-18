@@ -216,7 +216,8 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(consumers.values());
+        // when stopping we intend to shutdown
+        ServiceHelper.stopAndShutdownServices(consumers.values());
         consumers.clear();
     }
 

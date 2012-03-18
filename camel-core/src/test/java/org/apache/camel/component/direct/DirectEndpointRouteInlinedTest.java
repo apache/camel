@@ -17,6 +17,7 @@
 package org.apache.camel.component.direct;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -54,8 +55,8 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
                 }
             });
             fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Cannot add a 2nd consumer to the same endpoint. Endpoint Endpoint[direct://start] only allows one consumer.", e.getMessage());
+        } catch (FailedToStartRouteException e) {
+            assertEquals("Failed to start route route2 because of Multiple consumers for the same endpoint is not allowed: Endpoint[direct://start]", e.getMessage());
         }
     }
 

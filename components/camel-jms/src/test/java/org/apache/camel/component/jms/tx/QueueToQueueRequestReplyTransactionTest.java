@@ -36,10 +36,6 @@ import org.junit.Test;
  */
 public class QueueToQueueRequestReplyTransactionTest extends AbstractTransactionTest {
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     @Test
     public void testRollbackUsingXmlQueueToQueueRequestReplyUsingDynamicMessageSelector() throws Exception {
         final ConditionalExceptionProcessor cp = new ConditionalExceptionProcessor(5);

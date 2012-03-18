@@ -59,6 +59,10 @@ public class SmppConfiguration implements Cloneable {
     private long initialReconnectDelay = 5000;
     private long reconnectDelay = 5000;
     private boolean lazySessionCreation;
+    private String httpProxyHost;
+    private Integer httpProxyPort = Integer.valueOf(3128);
+    private String httpProxyUsername;
+    private String httpProxyPassword;
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -289,6 +293,38 @@ public class SmppConfiguration implements Cloneable {
     public void setLazySessionCreation(boolean lazySessionCreation) {
         this.lazySessionCreation = lazySessionCreation;
     }
+    
+    public String getHttpProxyHost() {
+        return httpProxyHost;
+    }
+    
+    public void setHttpProxyHost(String httpProxyHost) {
+        this.httpProxyHost = httpProxyHost;
+    }
+    
+    public Integer getHttpProxyPort() {
+        return httpProxyPort;
+    }
+    
+    public void setHttpProxyPort(Integer httpProxyPort) {
+        this.httpProxyPort = httpProxyPort;
+    }
+    
+    public String getHttpProxyUsername() {
+        return httpProxyUsername;
+    }
+    
+    public void setHttpProxyUsername(String httpProxyUsername) {
+        this.httpProxyUsername = httpProxyUsername;
+    }
+    
+    public String getHttpProxyPassword() {
+        return httpProxyPassword;
+    }
+    
+    public void setHttpProxyPassword(String httpProxyPassword) {
+        this.httpProxyPassword = httpProxyPassword;
+    }
 
     @Override
     public String toString() {
@@ -318,6 +354,10 @@ public class SmppConfiguration implements Cloneable {
             + ", initialReconnectDelay=" + initialReconnectDelay
             + ", reconnectDelay=" + reconnectDelay
             + ", lazySessionCreation=" + lazySessionCreation
+            + ", httpProxyHost=" + httpProxyHost
+            + ", httpProxyPort=" + httpProxyPort
+            + ", httpProxyUsername=" + httpProxyUsername
+            + ", httpProxyPassword=" + httpProxyPassword
             + "]";
     }
 }

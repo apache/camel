@@ -134,6 +134,8 @@ public abstract class MessageSupport implements Message {
 
         setMessageId(that.getMessageId());
         setBody(that.getBody());
+        setFault(that.isFault());
+
         if (hasHeaders()) {
             getHeaders().clear();
         }

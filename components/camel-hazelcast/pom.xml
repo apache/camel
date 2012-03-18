@@ -70,19 +70,18 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
                     <forkMode>pertest</forkMode>
-                    <excludes>
-                        <exclude>**/XXXTest.*</exclude>
-                    </excludes>
+                    <systemProperties>
+                        <property>
+                            <name>hazelcast.logging.type</name>
+                            <value>slf4j</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 

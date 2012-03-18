@@ -77,6 +77,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private ShutdownRunningTask shutdownRunningTask;
     private String errorHandlerRef;
     private ErrorHandlerFactory errorHandlerBuilder;
+    // keep state whether the error handler is context scoped or not
+    // (will by default be context scoped of no explicit error handler configured)
+    private boolean contextScopedErrorHandler = true;
 
     public RouteDefinition() {
     }
@@ -437,6 +440,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition errorHandler(ErrorHandlerFactory errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
+        // we are now using a route scoped error handler
+        contextScopedErrorHandler = false;
         return this;
     }
 
@@ -714,7 +719,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
-    
     @XmlTransient
     public ErrorHandlerFactory getErrorHandlerBuilder() {
         if (errorHandlerBuilder == null) {
@@ -730,6 +734,21 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    @SuppressWarnings("deprecation")
+    public boolean isContextScopedErrorHandler(CamelContext context) {
+        if (!contextScopedErrorHandler) {
+            return false;
+        }
+        // if error handler ref is configured it may refer to a context scoped, so we need to check this first
+        // the XML DSL will configure error handlers using refs, so we need this additional test
+        if (errorHandlerRef != null) {
+            ErrorHandlerFactory routeScoped = getErrorHandlerBuilder();
+            ErrorHandlerFactory contextScoped = context.getErrorHandlerBuilder();
+            return routeScoped != null && contextScoped != null && routeScoped == contextScoped;
+        }
+
+        return contextScopedErrorHandler;
+    }
 
     // Implementation methods
     // -------------------------------------------------------------------------

@@ -26,11 +26,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CamelContextLazyLoadTypeConvertersTest extends SpringTestSupport {
 
     @Override
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
-    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/CamelContextLazyLoadTypeConvertersTest.xml");
     }

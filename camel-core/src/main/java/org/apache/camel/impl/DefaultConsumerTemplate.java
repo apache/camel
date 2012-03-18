@@ -264,7 +264,8 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(consumerCache);
+        // we should shutdown the services as this is our intention, to not re-use the services anymore
+        ServiceHelper.stopAndShutdownService(consumerCache);
         consumerCache = null;
     }
 

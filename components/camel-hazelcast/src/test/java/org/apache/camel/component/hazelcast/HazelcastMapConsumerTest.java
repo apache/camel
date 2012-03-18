@@ -33,7 +33,7 @@ public class HazelcastMapConsumerTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
         HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
         map = hazelcastInstance.getMap("foo");
         map.clear();

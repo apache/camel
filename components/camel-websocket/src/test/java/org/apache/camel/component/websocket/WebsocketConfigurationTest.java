@@ -32,12 +32,10 @@ public class WebsocketConfigurationTest {
 
     @Mock
     private WebsocketComponent component;
-
     @Mock
     private CamelContext camelContext;
 
     private WebsocketEndpoint websocketEndpoint;
-
     private WebsocketConfiguration wsConfig = new WebsocketConfiguration();
 
     @Before
@@ -48,19 +46,15 @@ public class WebsocketConfigurationTest {
 
     @Test
     public void testParameters() throws Exception {
-
         assertNull(wsConfig.getGlobalStore());
-
         wsConfig.setGlobalStore(PARAMETERS);
 
         assertNotNull(wsConfig.getGlobalStore());
-
         websocketEndpoint = new WebsocketEndpoint(URI, component, REMAINING, wsConfig);
 
         assertNotNull(websocketEndpoint);
         assertNotNull(REMAINING);
         assertNotNull(wsConfig.getGlobalStore());
-
     }
 
 }

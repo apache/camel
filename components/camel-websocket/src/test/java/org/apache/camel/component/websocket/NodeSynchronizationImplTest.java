@@ -72,7 +72,7 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testAddSocketMemoryAndGlobal() {
-        sync = new NodeSynchronizationImpl(store1, store2);
+        sync = new DefaultNodeSynchronization(store1, store2);
 
         sync.addSocket(websocket1);
         assertEquals(websocket1, store1.get(KEY_1));
@@ -88,7 +88,7 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testAddSocketMemoryOnly() {
-        sync = new NodeSynchronizationImpl(store1);
+        sync = new DefaultNodeSynchronization(store1);
 
         sync.addSocket(websocket1);
         assertEquals(websocket1, store1.get(KEY_1));
@@ -99,7 +99,7 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testAddSocketMemoryAndNullGlobal() {
-        sync = new NodeSynchronizationImpl(store1, null);
+        sync = new DefaultNodeSynchronization(store1, null);
 
         sync.addSocket(websocket1);
         assertEquals(websocket1, store1.get(KEY_1));
@@ -118,7 +118,7 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testRemoveDefaultWebsocket() {
-        sync = new NodeSynchronizationImpl(store1, store2);
+        sync = new DefaultNodeSynchronization(store1, store2);
 
         // first call of websocket1.getConnectionKey()
         sync.addSocket(websocket1);
@@ -147,7 +147,7 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testRemoveDefaultWebsocketKeyNotSet() {
-        sync = new NodeSynchronizationImpl(store1);
+        sync = new DefaultNodeSynchronization(store1);
 
         // first call of websocket1.getConnectionKey()
         sync.addSocket(websocket1);
@@ -170,7 +170,7 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testRemoveNotExisting() {
-        sync = new NodeSynchronizationImpl(store1);
+        sync = new DefaultNodeSynchronization(store1);
 
         // first call of websocket1.getConnectionKey()
         sync.addSocket(websocket1);
@@ -188,7 +188,7 @@ public class NodeSynchronizationImplTest {
      */
     @Test
     public void testRemoveString() {
-        sync = new NodeSynchronizationImpl(store1, store2);
+        sync = new DefaultNodeSynchronization(store1, store2);
 
         // first call of websocket1.getConnectionKey()
         sync.addSocket(websocket1);
@@ -218,7 +218,7 @@ public class NodeSynchronizationImplTest {
     @Test
     public void testRemoveStringNotExisting() {
 
-        sync = new NodeSynchronizationImpl(store1);
+        sync = new DefaultNodeSynchronization(store1);
 
         // first call of websocket1.getConnectionKey()
         sync.addSocket(websocket1);

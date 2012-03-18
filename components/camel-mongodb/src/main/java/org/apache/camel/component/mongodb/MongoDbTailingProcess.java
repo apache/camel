@@ -150,10 +150,7 @@ public class MongoDbTailingProcess implements Runnable {
                     }
                     consumer.getProcessor().process(exchange);
                 } catch (Exception e) {
-                    LOG.warn("Exception ocurred while processing exchange with ID " + exchange.getExchangeId(), e);
-                    if (exchange.getException() != e) {
-                        exchange.setException(e);
-                    }
+                    // do nothing
                 }
                 tailTracking.setLastVal(dbObj);
             }

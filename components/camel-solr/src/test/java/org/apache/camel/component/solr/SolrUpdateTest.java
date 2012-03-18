@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
@@ -37,6 +38,34 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         solrEndpoint = getMandatoryEndpoint(SOLR_ROUTE_URI, SolrEndpoint.class);
+    }
+
+    @Test
+    public void testInsertSolrInputDocumentAsXMLWithoutAddRoot() throws Exception {
+
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("id", "MA147LL/A", 1.0f);
+        String docAsXml = ClientUtils.toXML(doc);
+        template.sendBodyAndHeader("direct:start", docAsXml, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        solrCommit();
+
+        QueryResponse response = executeSolrQuery("id:MA147LL/A");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+    }
+
+    @Test
+    public void testInsertSolrInputDocumentAsXMLWithAddRoot() throws Exception {
+
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("id", "MA147LL/A", 1.0f);
+        String docAsXml = "<add>" + ClientUtils.toXML(doc) + "</add>";
+        template.sendBodyAndHeader("direct:start", docAsXml, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        solrCommit();
+
+        QueryResponse response = executeSolrQuery("id:MA147LL/A");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
     }
 
     @Test

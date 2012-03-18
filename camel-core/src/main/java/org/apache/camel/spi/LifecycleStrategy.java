@@ -128,6 +128,15 @@ public interface LifecycleStrategy {
     void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
+     * Notification on removing error handler.
+     *
+     * @param routeContext        the removed route context
+     * @param errorHandler        the error handler
+     * @param errorHandlerBuilder the error handler builder
+     */
+    void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+
+    /**
      * Notification on adding a thread pool.
      *
      * @param camelContext        the camel context
@@ -139,5 +148,13 @@ public interface LifecycleStrategy {
      */
     void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                          String sourceId, String routeId, String threadPoolProfileId);
+
+    /**
+     * Notification on removing a thread pool.
+     *
+     * @param camelContext the camel context
+     * @param threadPool   the thread pool
+     */
+    void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool);
 
 }

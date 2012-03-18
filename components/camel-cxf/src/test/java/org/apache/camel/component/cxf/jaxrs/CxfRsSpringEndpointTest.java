@@ -51,11 +51,6 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
     }
     
     @Override
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
-    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml")); 
     }

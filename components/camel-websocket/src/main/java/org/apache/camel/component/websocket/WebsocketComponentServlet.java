@@ -36,30 +36,23 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         this.sync = sync;
     }
 
-    /**
-     * @return the consumer
-     */
     public WebsocketConsumer getConsumer() {
         return consumer;
     }
 
-    /**
-     * @param consumer
-     *            the consumer to set
-     */
     public void setConsumer(WebsocketConsumer consumer) {
         this.consumer = consumer;
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        getServletContext().getNamedDispatcher("default").forward(request, response);
+    public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
+        return new DefaultWebsocket(sync, consumer);
     }
 
     @Override
-    public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
-        return new DefaultWebsocket(sync, consumer);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO: why do we grab the default servlet?
+        getServletContext().getNamedDispatcher("default").forward(request, response);
     }
 
 }

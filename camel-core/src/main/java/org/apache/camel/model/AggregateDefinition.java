@@ -159,16 +159,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this);
-        if (executorService == null) {
+        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this, isParallelProcessing());
+        if (executorService == null && !isParallelProcessing()) {
             // executor service is mandatory for the Aggregator
-            ExecutorServiceManager executorServiceManager = routeContext.getCamelContext().getExecutorServiceManager();
-            if (isParallelProcessing()) {
-                executorService = executorServiceManager.newDefaultThreadPool(this, "Aggregator");
-            } else {
-                // we do not run in parallel mode, but use a synchronous executor, so we run in current thread
-                executorService = new SynchronousExecutorService();
-            }
+            // we do not run in parallel mode, but use a synchronous executor, so we run in current thread
+            executorService = new SynchronousExecutorService();
         }
        
         if (timeoutCheckerExecutorServiceRef != null && timeoutCheckerExecutorService == null) {

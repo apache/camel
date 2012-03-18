@@ -66,6 +66,9 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
     }
 
+    public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    }
+
     public void onRoutesRemove(Collection<Route> routes) {
     }
 
@@ -74,5 +77,8 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
 
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                                 String sourceId, String routeId, String threadPoolProfileId) {
+    }
+
+    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
     }
 }

@@ -396,6 +396,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             PropertiesComponent pc = new PropertiesComponent();
             pc.setLocation(def.getLocation());
 
+            if (def.isCache() != null) {
+                pc.setCache(def.isCache());
+            }
+
             if (def.isIgnoreMissingLocation() != null) {
                 pc.setIgnoreMissingLocation(def.isIgnoreMissingLocation());
             }

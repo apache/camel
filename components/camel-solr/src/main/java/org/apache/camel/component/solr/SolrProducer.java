@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
+import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 
 /**
@@ -73,6 +75,7 @@ public class SolrProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
 
         if (body instanceof File) {
+
             ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getRequestHandler());
             updateRequest.addFile((File) body);
 
@@ -89,13 +92,32 @@ public class SolrProducer extends DefaultProducer {
                 updateRequest.process(solrServer);
             }
 
-        } else {
+        } else if (body instanceof SolrInputDocument) {
 
             UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
+            updateRequest.add((SolrInputDocument) body);
 
-            if (body instanceof SolrInputDocument) {
-                updateRequest.add((SolrInputDocument) body);
+            if (isStreaming) {
+                updateRequest.process(streamingSolrServer);
             } else {
+                updateRequest.process(solrServer);
+            }
+
+        } else {
+
+            boolean hasSolrHeaders = false;
+            Map<String, Object> headers = exchange.getIn().getHeaders();
+            for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+                if (entry.getKey().startsWith(SolrConstants.FIELD)) {
+                    hasSolrHeaders = true;
+                    break;
+                }
+            }
+
+            if (hasSolrHeaders) {
+
+                UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
+
                 SolrInputDocument doc = new SolrInputDocument();
                 for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
                     if (entry.getKey().startsWith(SolrConstants.FIELD)) {
@@ -104,12 +126,30 @@ public class SolrProducer extends DefaultProducer {
                     }
                 }
                 updateRequest.add(doc);
-            }
 
-            if (isStreaming) {
-                updateRequest.process(streamingSolrServer);
+                if (isStreaming) {
+                    updateRequest.process(streamingSolrServer);
+                } else {
+                    updateRequest.process(solrServer);
+                }
+
+            } else if (body instanceof String) {
+
+                String bodyAsString = (String) body;
+
+                if (!bodyAsString.startsWith("<add")) {
+                    bodyAsString = "<add>" + bodyAsString + "</add>";
+                }
+
+                DirectXmlRequest xmlRequest = new DirectXmlRequest(getRequestHandler(), bodyAsString);
+
+                if (isStreaming) {
+                    streamingSolrServer.request(xmlRequest);
+                } else {
+                    solrServer.request(xmlRequest);
+                }
             } else {
-                updateRequest.process(solrServer);
+                throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "unable to find data in Exchange to update Solr");
             }
         }
     }

@@ -21,8 +21,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.BaseDataQueue;
 import com.ibm.as400.access.DataQueue;
-
+import com.ibm.as400.access.KeyedDataQueue;
 import org.apache.camel.CamelException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
@@ -34,6 +35,16 @@ import org.slf4j.LoggerFactory;
  * AS/400 Data queue endpoint
  */
 public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
+
+    public static final String KEY = "KEY";
+    public static final String SENDER_INFORMATION = "SENDER_INFORMATION";
+
+    /**
+     * SearchTypes for reading from Keyed Data Queues
+     */
+    public enum SearchType {
+        EQ, NE, LT, LE, GT, GE;
+    }
 
     /**
      * Enumeration of supported data formats
@@ -49,13 +60,16 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
          */
         binary;
     }
-    
+
     private static final transient Logger LOG = LoggerFactory.getLogger(Jt400DataQueueEndpoint.class);
 
     private final AS400 system;
     private final String objectPath;
-    private DataQueue dataqueue;
+    private BaseDataQueue dataQueue;
     private Format format = Format.text;
+    private boolean keyed;
+    private String searchKey;
+    private SearchType searchType = SearchType.EQ;
 
     /**
      * Creates a new AS/400 data queue endpoint
@@ -74,7 +88,7 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
         try {
             system.setGuiAvailable(false);
         } catch (PropertyVetoException e) {
-            LOG.warn("Failed do disable AS/400 prompting in the environment running Camel.", e);
+            LOG.warn("Failed to disable AS/400 prompting in the environment running Camel. This exception will be ignored.", e);
         }
     }
 
@@ -90,6 +104,30 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
         return format;
     }
 
+    public void setKeyed(boolean keyed) {
+        this.keyed = keyed;
+    }
+
+    public boolean isKeyed() {
+        return keyed;
+    }
+
+    public void setSearchKey(String searchKey) {
+        this.searchKey = searchKey;
+    }
+
+    public String getSearchKey() {
+        return searchKey;
+    }
+
+    public void setSearchType(SearchType searchType) {
+        this.searchType = searchType;
+    }
+
+    public SearchType getSearchType() {
+        return searchType;
+    }
+
     public void setGuiAvailable(boolean guiAvailable) throws PropertyVetoException {
         this.system.setGuiAvailable(guiAvailable);
     }
@@ -99,6 +137,7 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
         return new Jt400DataQueueConsumer(this);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new Jt400DataQueueProducer(this);
     }
@@ -107,11 +146,11 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
         return system;
     }
 
-    protected DataQueue getDataQueue() {
-        if (dataqueue == null) {
-            dataqueue = new DataQueue(system, objectPath);
+    protected BaseDataQueue getDataQueue() {
+        if (dataQueue == null) {
+            dataQueue = keyed ? new KeyedDataQueue(system, objectPath) : new DataQueue(system, objectPath);
         }
-        return dataqueue;
+        return dataQueue;
     }
 
     public boolean isSingleton() {

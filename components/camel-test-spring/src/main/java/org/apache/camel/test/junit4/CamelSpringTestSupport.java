@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
@@ -174,24 +173,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             fail("Spring bean <" + name + "> is not an instanceof " + type.getName() + " but is of type " + ObjectHelper.className(value));
             return null;
         }
-    }
-
-    @Override
-    protected void assertValidContext(CamelContext context) {
-        super.assertValidContext(context);
-        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
-            List<Route> routes = context.getRoutes();
-            int routeCount = getExpectedRouteCount();
-            if (routeCount > 0) {
-                assertNotNull("Should have some routes defined", routes);
-                assertTrue("Should have at least one route", routes.size() >= routeCount);
-            }
-            log.debug("Camel Routes: " + routes);
-        }
-    }
-
-    protected int getExpectedRouteCount() {
-        return 1;
     }
 
     @Override

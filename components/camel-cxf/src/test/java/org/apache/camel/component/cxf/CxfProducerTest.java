@@ -33,6 +33,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.converter.CxfPayloadConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
@@ -68,7 +69,8 @@ public class CxfProducerTest extends Assert {
         return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/test";
     }
     protected String getWrongServerAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort3() + "/" + getClass().getSimpleName() + "/test";
+        // Avoiding the test error on camel-cxf module
+        return "http://localhost:" + AvailablePortFinder.getNextAvailable() + "/" + getClass().getSimpleName() + "/test";
     }
     
     @Before
@@ -120,6 +122,10 @@ public class CxfProducerTest extends Assert {
         // check the other camel header copying
         String fileName = out.getHeader(Exchange.FILE_NAME, String.class);
         assertEquals("Should get the file name from out message header", "testFile", fileName);
+        
+        // check if the header object is turned into String
+        Object requestObject = out.getHeader("requestObject");
+        assertTrue("We should get the right requestObject.", requestObject instanceof DefaultCxfBinding);
     }
 
     @Test
@@ -182,6 +188,7 @@ public class CxfProducerTest extends Assert {
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
+                exchange.getIn().setHeader("requestObject", new DefaultCxfBinding());
             }
         });
         return exchange;

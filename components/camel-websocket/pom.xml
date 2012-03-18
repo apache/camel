@@ -77,9 +77,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>de.roderick</groupId>
-            <artifactId>weberknecht</artifactId>
-            <version>0.1.1</version>
+            <groupId>com.ning</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>${ahc-version}</version>
             <scope>test</scope>
         </dependency>
         <!-- logging -->
@@ -90,10 +90,4 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>cubeindia</id>
-            <url>http://m2.cubeia.com/nexus/content/repositories/thirdparty/</url>
-        </repository>
-    </repositories>
 </project>

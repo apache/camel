@@ -42,8 +42,6 @@ public class HazelcastMultimapProducerTest extends CamelTestSupport {
         Hazelcast.shutdownAll();
     }
 
-
-
     @Test
     public void testPut() throws InterruptedException {
         template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
@@ -70,12 +68,11 @@ public class HazelcastMultimapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testGet() {
         map.put("4711", "my-foo");
 
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
-        Collection<Object> body = consumer.receiveBody("seda:out", 5000, Collection.class);
+        Collection<?> body = consumer.receiveBody("seda:out", 5000, Collection.class);
 
         assertTrue(body.contains("my-foo"));
     }

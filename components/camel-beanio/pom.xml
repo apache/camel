@@ -38,7 +38,6 @@
     <camel.osgi.export.pkg>
       org.apache.camel.dataformat.beanio.*;
     </camel.osgi.export.pkg>
-    <beanio-version>1.2.2</beanio-version>
   </properties>
 
   <dependencies>

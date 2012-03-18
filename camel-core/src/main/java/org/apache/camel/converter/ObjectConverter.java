@@ -96,11 +96,11 @@ public final class ObjectConverter {
 
     @Converter
     public static char toChar(String value) {
-        // must be 1 length string
+        // must be string with the length of 1
         if (value == null || value.length() != 1) {
             throw new IllegalArgumentException("String must have exactly a length of 1: " + value);
         }
-        return value.toCharArray()[0];
+        return value.charAt(0);
     }
 
     @Converter
@@ -135,9 +135,6 @@ public final class ObjectConverter {
         if (value instanceof Short) {
             return (Short) value;
         } else if (value instanceof Number) {
-            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
-                return null;
-            }
             Number number = (Number) value;
             return number.shortValue();
         } else if (value instanceof String) {
@@ -155,9 +152,6 @@ public final class ObjectConverter {
         if (value instanceof Integer) {
             return (Integer) value;
         } else if (value instanceof Number) {
-            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
-                return null;
-            }
             Number number = (Number) value;
             return number.intValue();
         } else if (value instanceof String) {
@@ -175,9 +169,6 @@ public final class ObjectConverter {
         if (value instanceof Long) {
             return (Long) value;
         } else if (value instanceof Number) {
-            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
-                return null;
-            }
             Number number = (Number) value;
             return number.longValue();
         } else if (value instanceof String) {
@@ -195,8 +186,8 @@ public final class ObjectConverter {
         if (value instanceof Float) {
             return (Float) value;
         } else if (value instanceof Number) {
-            if (value.equals(Double.NaN)) {
-                return null;
+            if (ObjectHelper.isNaN(value)) {
+                return Float.NaN;
             }
             Number number = (Number) value;
             return number.floatValue();
@@ -215,8 +206,8 @@ public final class ObjectConverter {
         if (value instanceof Double) {
             return (Double) value;
         } else if (value instanceof Number) {
-            if (value.equals(Float.NaN)) {
-                return null;
+            if (ObjectHelper.isNaN(value)) {
+                return Double.NaN;
             }
             Number number = (Number) value;
             return number.doubleValue();
@@ -276,7 +267,7 @@ public final class ObjectConverter {
 
     @Converter
     public static Boolean toBoolean(String value) {
-        return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;
+        return Boolean.parseBoolean(value);
     }
 
 }

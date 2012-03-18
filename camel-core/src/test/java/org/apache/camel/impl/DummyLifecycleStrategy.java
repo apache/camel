@@ -86,9 +86,17 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
         events.add("onErrorHandlerAdd");
     }
 
+    public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+        events.add("onErrorHandlerRemove");
+    }
+
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                                 String sourceId, String routeId, String threadPoolProfileId) {
         events.add("onThreadPoolAdd");
+    }
+
+    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+        events.add("onThreadPoolRemove");
     }
 
     public List<String> getEvents() {

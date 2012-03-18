@@ -142,6 +142,18 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
+     * Override to enable auto mocking endpoints based on the pattern, and <b>skip</b> sending
+     * to original endpoint.
+     * <p/>
+     * Return <tt>*</tt> to mock all endpoints.
+     *
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     */
+    public String isMockEndpointsAndSkip() {
+        return null;
+    }
+
+    /**
      * Override to enable debugger
      * <p/>
      * Is default <tt>false</tt>
@@ -258,6 +270,10 @@ public abstract class CamelTestSupport extends TestSupport {
         String pattern = isMockEndpoints();
         if (pattern != null) {
             context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+        }
+        pattern = isMockEndpointsAndSkip();
+        if (pattern != null) {
+            context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
 
         postProcessTest();

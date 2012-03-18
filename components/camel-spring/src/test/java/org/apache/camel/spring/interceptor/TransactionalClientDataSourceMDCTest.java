@@ -36,9 +36,9 @@ public class TransactionalClientDataSourceMDCTest extends TransactionalClientDat
                     .transacted()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
-                                assertNotNull(MDC.get("transactionKey"));
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertNotNull(MDC.get("camel.transactionKey"));
                             }
                         })
                     .to("log:foo")
@@ -51,9 +51,9 @@ public class TransactionalClientDataSourceMDCTest extends TransactionalClientDat
                     .transacted()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-b", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
-                                assertNotNull(MDC.get("transactionKey"));
+                                assertEquals("route-b", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertNotNull(MDC.get("camel.transactionKey"));
                             }
                         })
                     .to("log:foo2")

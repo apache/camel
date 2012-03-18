@@ -51,7 +51,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         }
 
         // this.sync = new NodeSynchronizationImpl(this.memoryStore, null);
-        this.sync = new NodeSynchronizationImpl(this.memoryStore, this.globalStore);
+        this.sync = new DefaultNodeSynchronization(this.memoryStore, this.globalStore);
     }
 
     public WebsocketStore getMemoryStore() {

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -109,7 +109,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
     @SuppressWarnings("unchecked")
     private CamelContext startRouteWithPolicy(String policyBeanName) throws Exception {
         CamelContext context = new DefaultCamelContext();
-        ArrayList<RouteDefinition> routes = (ArrayList<RouteDefinition>)applicationContext.getBean("testRouteContext");
+        List<RouteDefinition> routes = (List<RouteDefinition>)applicationContext.getBean("testRouteContext");
         RoutePolicy policy = applicationContext.getBean(policyBeanName, RoutePolicy.class);
         assertTrue(getTestType() == TestType.SIMPLE 
             ? policy instanceof SimpleScheduledRoutePolicy 

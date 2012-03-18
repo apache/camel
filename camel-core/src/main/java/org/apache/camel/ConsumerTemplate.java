@@ -38,9 +38,13 @@ package org.apache.camel;
  * <li>The <tt>in.body</tt></li>
  * </ul>
  * <p/>
- * <b>Important note on usage:</b> See this
+ * <br/>
+ * Before using the template it must be started.
+ * And when you are done using the template, make sure to {@link #stop()} the template.
+ * <br/>
+ * <p/><b>Important note on usage:</b> See this
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
- * before using, it applies to ConsumerTemplate as well.
+ * before using, it applies to this {@link ConsumerTemplate} as well.
  *
  * @version 
  */

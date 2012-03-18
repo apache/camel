@@ -23,8 +23,8 @@
 
     <!-- configure Simple to use custom prefix/suffix tokens -->
     <bean id="simple" class="org.apache.camel.language.simple.SimpleLanguage">
-      <constructor-arg name="functionStartToken" value="["/>
-      <constructor-arg name="functionEndToken" value="]"/>
+      <property name="functionStartToken" value="["/>
+      <property name="functionEndToken" value="]"/>
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">

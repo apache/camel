@@ -61,18 +61,14 @@ public class MongoDbProducer extends DefaultProducer {
                     operation = MongoDbOperation.valueOf(exchange.getIn().getHeader(MongoDbConstants.OPERATION_HEADER, String.class));
                 }
             } catch (Exception e) {
-                LOG.error("Operation not supported: {}", header);
-                exchange.setException(new CamelMongoDbException("Operation specified on header is not supported. Value: " + header, e));
-                return;
+                throw new CamelMongoDbException("Operation specified on header is not supported. Value: " + header, e);
             }
         }
         
         try {
             invokeOperation(operation, exchange);
         } catch (Exception e) {
-            CamelMongoDbException partEx = MongoDbComponent.wrapInCamelMongoDbException(e);
-            LOG.error("Breaking MongoDB operation due to exception", partEx);
-            exchange.setException(partEx);
+            throw MongoDbComponent.wrapInCamelMongoDbException(e);
         }
         
     }
@@ -126,9 +122,7 @@ public class MongoDbProducer extends DefaultProducer {
             break;
 
         default:
-            LOG.error("Unexpected operation found: {}", operation);
-            exchange.setException(new CamelMongoDbException("Operation not supported. Value: " + operation));
-            break;
+            throw new CamelMongoDbException("Operation not supported. Value: " + operation);
         }
     }
 

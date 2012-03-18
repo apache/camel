@@ -229,7 +229,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
     protected String[] createArguments() {
 
-        ArrayList<String> args = new ArrayList<String>(5);
+        List<String> args = new ArrayList<String>(5);
         if (isDotEnabled()) {
             args.add("-outdir");
             args.add(getOutputDirectory());

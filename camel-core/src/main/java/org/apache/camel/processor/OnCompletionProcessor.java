@@ -64,6 +64,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         this.useOriginalBody = useOriginalBody;
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
     }
@@ -72,7 +73,12 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     protected void doStop() throws Exception {
         ServiceHelper.stopService(processor);
     }
-    
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(processor);
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }

@@ -267,7 +267,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertMockEndpointsSatisfied();
@@ -293,7 +293,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertEquals(7, ORDER.get());
@@ -365,7 +365,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertMockEndpointsSatisfied();
@@ -387,7 +387,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertEquals(7, ORDER.get());
@@ -456,7 +456,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertMockEndpointsSatisfied();
@@ -483,7 +483,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertEquals(7, ORDER.get());
@@ -509,7 +509,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertEquals(7, ORDER.get());
@@ -533,7 +533,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertEquals(7, ORDER.get());
@@ -558,7 +558,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         });
 
         ORDER.addAndGet(1);
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
         ORDER.addAndGet(4);
 
         assertEquals(7, ORDER.get());

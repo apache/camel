@@ -35,7 +35,7 @@ public class HazelcastMapProducerTest extends CamelTestSupport implements Serial
 
     @Override
     protected void doPostSetup() throws Exception {
-        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
         HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
         map = hazelcastInstance.getMap("foo");
         map.clear();
@@ -125,7 +125,7 @@ public class HazelcastMapProducerTest extends CamelTestSupport implements Serial
 
     public class Dummy implements Serializable {
 
-        private static final long serialVersionUID = 3688457704655925278L;
+        private static final long serialVersionUID = 1L;
 
         private String foo;
         private int bar;

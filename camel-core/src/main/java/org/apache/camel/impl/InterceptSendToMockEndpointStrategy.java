@@ -39,6 +39,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToMockEndpointStrategy.class);
     private final String pattern;
+    private boolean skip;
 
     /**
      * Mock all endpoints.
@@ -54,7 +55,19 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
      * @see EndpointHelper#matchEndpoint(String, String)
      */
     public InterceptSendToMockEndpointStrategy(String pattern) {
+        this(pattern, false);
+    }
+
+    /**
+     * Mock endpoints based on the given pattern.
+     *
+     * @param pattern the pattern.
+     * @param skip <tt>true</tt> to skip sending after the detour to the original endpoint
+     * @see EndpointHelper#matchEndpoint(String, String)
+     */
+    public InterceptSendToMockEndpointStrategy(String pattern, boolean skip) {
         this.pattern = pattern;
+        this.skip = skip;
     }
 
     public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
@@ -69,7 +82,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
             // only proxy if the uri is matched decorate endpoint with our proxy
             // should be false by default
-            InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, false);
+            InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
 
             // create mock endpoint which we will use as interceptor
             // replace :// from scheme to make it easy to lookup the mock endpoint without having double :// in uri

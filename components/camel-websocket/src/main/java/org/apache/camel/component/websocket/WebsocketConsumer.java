@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.websocket;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,21 +28,22 @@ public class WebsocketConsumer extends DefaultConsumer {
         super(endpoint, processor);
     }
 
-    public void sendExchange(String connectionKey, String message) {
-        Exchange exchange = this.getEndpoint().createExchange();
+    public void sendExchange(final String connectionKey, final String message) {
+        final Exchange exchange = getEndpoint().createExchange();
 
         // set header and body
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
         exchange.getIn().setBody(message);
 
-        // send exchange
-        try {
-            this.getProcessor().process(exchange);
-        } catch (Exception e) {
-            if (exchange.getException() != null) {
-                this.getExceptionHandler().handleException(String.format("Error processing exchange for websocket consumer on message '%s'.", message), exchange, exchange.getException());
+        // send exchange using the async routing engine
+        getAsyncProcessor().process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException(String.format("Error processing exchange for websocket consumer on message '%s'.", message),
+                            exchange, exchange.getException());
+                }
             }
-        }
+        });
     }
 
 }

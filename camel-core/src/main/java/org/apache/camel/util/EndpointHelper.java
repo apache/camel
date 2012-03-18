@@ -338,7 +338,7 @@ public final class EndpointHelper {
                 return Arrays.asList(elementType.cast(bean));
             }
         } else { // more than one list element
-            ArrayList<T> result = new ArrayList<T>(elements.size());
+            List<T> result = new ArrayList<T>(elements.size());
             for (String element : elements) {
                 result.add(resolveReferenceParameter(context, element.trim(), elementType));
             }

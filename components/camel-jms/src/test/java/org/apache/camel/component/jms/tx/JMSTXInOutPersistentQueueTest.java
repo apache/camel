@@ -36,12 +36,6 @@ public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JmsTransacted-context.xml");
     }
 
-    @Override
-    protected int getExpectedRouteCount() {
-        // no routes in Spring XML
-        return 0;
-    }
-
     @Test
     public void testJMSTXInOutPersistentQueueWithClientRedelivery() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("World", "World", "World");

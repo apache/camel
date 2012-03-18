@@ -38,10 +38,6 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
             "/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     @Override
     protected void setUp() throws Exception {
         this.disableJMX();

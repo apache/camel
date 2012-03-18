@@ -138,15 +138,13 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
      *
      * @param errorHandlerBuilder  the error handler to be used by default for all child routes
-     * @return the current builder with the error handler configured
      */
-    public RouteBuilder errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+    public void errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         if (!getRouteCollection().getRoutes().isEmpty()) {
             throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
         setErrorHandlerBuilder(errorHandlerBuilder);
-        return this;
     }
 
     /**

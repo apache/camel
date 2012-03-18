@@ -31,10 +31,6 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JmsToJmsTransactedTest.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     @Test
     public void testJmsToJmsTestOK() throws Exception {
         context.addRoutes(new RouteBuilder() {

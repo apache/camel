@@ -125,7 +125,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this(UnsafeUriCharactersEncoder.encode(endpointUri), destinationName, true);
     }
 
-
     /**
      * Returns a new JMS endpoint for the given JMS destination using the configuration from the given JMS component
      */
@@ -307,6 +306,12 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     // Properties
     // -------------------------------------------------------------------------
+
+    @Override
+    public JmsComponent getComponent() {
+        return (JmsComponent) super.getComponent();
+    }
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new JmsHeaderFilterStrategy();
@@ -463,6 +468,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
         return replyManagerExecutorService;
     }
+    
+    protected ExecutorService getAsyncStartExecutorService() {
+        if (getComponent() == null) {
+            throw new IllegalStateException("AsyncStartListener requires JmsComponent to be configured on this endpoint: " + this);
+        }
+        // use shared thread pool from component
+        return getComponent().getAsyncStartExecutorService();
+    }
 
     /**
      * State whether this endpoint is running (eg started)
@@ -490,6 +503,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 ServiceHelper.stopService(replyManager);
             }
             replyToReplyManager.clear();
+        }
+
+        if (replyManagerExecutorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(replyManagerExecutorService);
+            replyManagerExecutorService = null;
         }
     }
 
@@ -1060,6 +1078,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public boolean isAsyncConsumer() {
         return configuration.isAsyncConsumer();
+    }
+
+    @ManagedAttribute
+    public void setAsyncStartListener(boolean asyncStartListener) {
+        configuration.setAsyncStartListener(asyncStartListener);
+    }
+
+    @ManagedAttribute
+    public boolean isAsyncStartListener() {
+        return configuration.isAsyncStartListener();
     }
 
     @ManagedAttribute

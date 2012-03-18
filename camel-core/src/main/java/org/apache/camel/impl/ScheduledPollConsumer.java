@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService, PollingConsumerPollingStrategy {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
-    private final ScheduledExecutorService executor;
+    private ScheduledExecutorService executor;
+    private boolean shutdownExecutor;
     private ScheduledFuture<?> future;
 
     // if adding more options then align with ScheduledPollEndpoint#configureScheduledPollConsumerProperties
@@ -56,15 +57,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
-        // we only need one thread in the pool to schedule this task
-        this.executor = endpoint.getCamelContext().getExecutorServiceManager()
-                            .newScheduledThreadPool(this, endpoint.getEndpointUri(), 1);
-        ObjectHelper.notNull(executor, "executor");
     }
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService executor) {
         super(endpoint, processor);
+        // we have been given an existing thread pool, so we should not manage its lifecycle
+        // so we should keep shutdownExecutor as false
         this.executor = executor;
         ObjectHelper.notNull(executor, "executor");
     }
@@ -298,6 +296,16 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // if no existing executor provided, then create a new thread pool ourselves
+        if (executor == null) {
+            // we only need one thread in the pool to schedule this task
+            this.executor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newScheduledThreadPool(this, getEndpoint().getEndpointUri(), 1);
+            // and we should shutdown the thread pool when no longer needed
+            this.shutdownExecutor = true;
+        }
+
         ObjectHelper.notNull(executor, "executor", this);
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
 
@@ -329,6 +337,16 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             future.cancel(false);
         }
         super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (shutdownExecutor && executor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            executor = null;
+            future = null;
+        }
+        super.doShutdown();
     }
 
     @Override

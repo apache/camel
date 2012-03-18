@@ -38,12 +38,6 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     }
 
     @Override
-    protected int getExpectedRouteCount() {
-        // have to return 0 because we enable advice with
-        return 0;
-    }
-
-    @Override
     public boolean isUseAdviceWith() {
         return true;
     }

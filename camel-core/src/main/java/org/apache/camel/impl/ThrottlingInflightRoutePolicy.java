@@ -107,7 +107,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         // this works the best when this logic is executed when the exchange is done
         Consumer consumer = route.getConsumer();
 
-        int size = getSize(consumer, exchange);
+        int size = getSize(route, exchange);
         boolean stop = maxInflightExchanges > 0 && size > maxInflightExchanges;
         if (log.isTraceEnabled()) {
             log.trace("{} > 0 && {} > {} evaluated as {}", new Object[]{maxInflightExchanges, size, maxInflightExchanges, stop});
@@ -125,7 +125,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
         // reload size in case a race condition with too many at once being invoked
         // so we need to ensure that we read the most current size and start the consumer if we are already to low
-        size = getSize(consumer, exchange);
+        size = getSize(route, exchange);
         boolean start = size <= resumeInflightExchanges;
         if (log.isTraceEnabled()) {
             log.trace("{} <= {} evaluated as {}", new Object[]{size, resumeInflightExchanges, start});
@@ -229,12 +229,11 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         return new CamelLogger(LoggerFactory.getLogger(ThrottlingInflightRoutePolicy.class), getLoggingLevel());
     }
 
-    private int getSize(Consumer consumer, Exchange exchange) {
+    private int getSize(Route route, Exchange exchange) {
         if (scope == ThrottlingScope.Context) {
             return exchange.getContext().getInflightRepository().size();
         } else {
-            Endpoint endpoint = consumer.getEndpoint();
-            return exchange.getContext().getInflightRepository().size(endpoint);
+            return exchange.getContext().getInflightRepository().size(route.getId());
         }
     }
 

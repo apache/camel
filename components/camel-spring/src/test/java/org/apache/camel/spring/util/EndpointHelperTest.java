@@ -28,11 +28,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class EndpointHelperTest extends SpringTestSupport {
 
     @Override
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
-    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/util/EndpointHelperTest.xml");
     }

@@ -23,34 +23,49 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 public class WeightedRandomLoadBalancer extends WeightedLoadBalancer {
-    private int randomCounter;
+    private final Random rnd = new Random();
+    private final int distributionRatioSum;
+    private int runtimeRatioSum;
     
     public WeightedRandomLoadBalancer(List<Integer> distributionRatioList) {
         super(distributionRatioList);
+        int sum = 0;
+        for (Integer distributionRatio : distributionRatioList) {
+            sum += distributionRatio;
+        }
+        distributionRatioSum = sum;
+        runtimeRatioSum = distributionRatioSum;
     }
     
     @Override
-    protected Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
-        boolean found = false;
-        while (!found) {
-            if (getRuntimeRatios().isEmpty())  {
-                loadRuntimeRatios(getDistributionRatioList());
-            }
-            
-            randomCounter = 0;
-            if (getRuntimeRatios().size() > 0) {
-                randomCounter = new Random().nextInt(getRuntimeRatios().size());
-            } 
-                
-            if (getRuntimeRatios().get(randomCounter).getRuntimeWeight() > 0) {
-                getRuntimeRatios().get(randomCounter).setRuntimeWeight((getRuntimeRatios().get(randomCounter).getRuntimeWeight()) - 1);
-                found = true;
-            } else {
-                getRuntimeRatios().remove(randomCounter);
-            }
-        }
-
-        return processors.get(getRuntimeRatios().get(randomCounter).getProcessorPosition());
+    protected Processor chooseProcessor(List<Processor> processors, Exchange exchange) {        
+        int selectedProcessorIndex = selectProcessIndex();
+        return processors.get(selectedProcessorIndex);
     }
     
+    public int selectProcessIndex() {
+        if (runtimeRatioSum == 0) { // every processor is exhausted, reload for a new distribution round
+            for (DistributionRatio distributionRatio : getRuntimeRatios()) {
+                int weight = distributionRatio.getDistributionWeight();
+                distributionRatio.setRuntimeWeight(weight);
+            }
+            runtimeRatioSum = distributionRatioSum;
+        }
+
+        DistributionRatio selected = null;
+        int randomWeight = rnd.nextInt(runtimeRatioSum);
+        int choiceWeight = 0;
+        for (DistributionRatio distributionRatio : getRuntimeRatios()) {
+            choiceWeight += distributionRatio.getRuntimeWeight();
+            if (randomWeight < choiceWeight) {
+                selected = distributionRatio;
+                break;
+            }
+        }
+        
+        selected.setRuntimeWeight(selected.getRuntimeWeight() - 1);
+        runtimeRatioSum--;
+
+        return selected.getProcessorPosition();
+    }
 }

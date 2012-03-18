@@ -33,7 +33,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.WireTapProcessor;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -83,9 +82,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);
 
-        String ref = this.executorServiceRef != null ? this.executorServiceRef : "WireTap";
-        ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-        executorService = manager.newDefaultThreadPool(this, ref);
+        // executor service is mandatory for wire tap
+        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", this, true);
+
         WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);
 
         answer.setCopy(isCopy());

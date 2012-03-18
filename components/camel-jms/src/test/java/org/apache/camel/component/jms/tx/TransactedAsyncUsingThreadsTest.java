@@ -38,10 +38,6 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
                 "/org/apache/camel/component/jms/tx/TransactedAsyncUsingThreadsTest.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     @Before
     public void init() {
         counter = 0;

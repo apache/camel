@@ -42,28 +42,19 @@ public class DefaultWebsocketTest {
 
     @Mock
     private Connection connection;
-
     @Mock
     private WebsocketConsumer consumer;
-
     @Mock
     private NodeSynchronization sync;
 
     private DefaultWebsocket defaultWebsocket;
 
-    /**
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception {
-        // sync = new NodeSynchronizationImpl(new MemoryWebsocketStore());
         defaultWebsocket = new DefaultWebsocket(sync, consumer);
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.DefaultWebsocket#onClose(int, String)} .
-     */
     @Test
     public void testOnClose() {
         defaultWebsocket.onClose(CLOSE_CODE, MESSAGE);
@@ -72,9 +63,6 @@ public class DefaultWebsocketTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.DefaultWebsocket#onOpen(org.eclipse.jetty.websocket.WebSocket.Connection)} .
-     */
     @Test
     public void testOnOpen() {
         defaultWebsocket.onOpen(connection);
@@ -89,9 +77,6 @@ public class DefaultWebsocketTest {
         assertEquals(connection, defaultWebsocket.getConnection());
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.DefaultWebsocket#onMessage(String)} .
-     */
     @Test
     public void testOnMessage() {
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
@@ -101,9 +86,6 @@ public class DefaultWebsocketTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.DefaultWebsocket#onMessage(String)} .
-     */
     @Test
     public void testOnMessageWithNullConsumer() {
         defaultWebsocket = new DefaultWebsocket(sync, null);
@@ -114,9 +96,6 @@ public class DefaultWebsocketTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.DefaultWebsocket#getConnection()} .
-     */
     @Test
     public void testGetConnection() {
         assertNull(defaultWebsocket.getConnection());
@@ -128,17 +107,11 @@ public class DefaultWebsocketTest {
         assertEquals(connection, defaultWebsocket.getConnection());
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.DefaultWebsocket#setConnection(org.eclipse.jetty.websocket.WebSocket.Connection)} .
-     */
     @Test
     public void testSetConnection() {
         testGetConnection();
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.DefaultWebsocket#getConnectionKey()} .
-     */
     @Test
     public void testGetConnectionKey() {
         defaultWebsocket.setConnectionKey(null);
@@ -151,11 +124,9 @@ public class DefaultWebsocketTest {
         assertNull(defaultWebsocket.getConnectionKey());
     }
 
-    /**
-     * Test method for {@link org.apache.camel.component.websocket.DefaultWebsocket#setConnectionKey(String)} .
-     */
     @Test
     public void testSetConnectionKey() {
         testGetConnectionKey();
     }
+
 }

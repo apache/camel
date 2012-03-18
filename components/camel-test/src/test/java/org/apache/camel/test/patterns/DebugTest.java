@@ -25,6 +25,7 @@ import org.apache.camel.test.CamelTestSupport;
 /**
  * @version 
  */
+@SuppressWarnings("deprecation")
 public class DebugTest extends CamelTestSupport {
 
     // START SNIPPET: e1

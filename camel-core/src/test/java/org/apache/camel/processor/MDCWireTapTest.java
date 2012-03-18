@@ -47,8 +47,8 @@ public class MDCWireTapTest extends ContextTestSupport {
                 from("direct:a").routeId("route-a")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            assertEquals("route-a", MDC.get("routeId"));
-                            assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                            assertEquals("route-a", MDC.get("camel.routeId"));
+                            assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                         }
                     })
                     .to("log:before-wiretap")
@@ -56,8 +56,8 @@ public class MDCWireTapTest extends ContextTestSupport {
                     .delay(2000)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-a", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                             }
                         })
                     .to("log:a-done")
@@ -66,8 +66,8 @@ public class MDCWireTapTest extends ContextTestSupport {
                 from("direct:b").routeId("route-b")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("route-b", MDC.get("routeId"));
-                                assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals("route-b", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                             }
                         })
                     .to("log:b-done").to("mock:b");

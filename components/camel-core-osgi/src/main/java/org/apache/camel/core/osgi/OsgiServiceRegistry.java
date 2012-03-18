@@ -130,8 +130,16 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
         // noop
     }
 
+    public void onErrorHandlerRemove(RouteContext routeContext, Processor processor, ErrorHandlerFactory errorHandlerBuilder) {
+        // noop
+    }
+
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor,
                                 String id, String sourceId, String routeId, String threadPoolProfileId) {
+        // noop
+    }
+
+    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor) {
         // noop
     }
 }

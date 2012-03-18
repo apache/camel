@@ -26,11 +26,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class EchoSpringRemotingPojoTest extends SpringTestSupport {
 
-    @Override
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/echo-pojo.xml");
     }

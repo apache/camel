@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -70,5 +71,7 @@ public class BlueprintJaxbTest {
         assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().get(0).getInputs().size());
         assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0).getOutputs());
         assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().get(0).getOutputs().size());
+        assertTrue(((CamelContextFactoryBean) object).getCamelPropertyPlaceholder().isCache());
+        assertTrue(((CamelContextFactoryBean) object).getCamelPropertyPlaceholder().isIgnoreMissingLocation());
     }
 }

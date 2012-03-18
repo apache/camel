@@ -71,6 +71,8 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
     public void testPropertiesSettingOnCxfClient() throws Exception {
         CxfEndpoint clientEndpoint = ctx.getBean("clientEndpoint", CxfEndpoint.class);
         CxfProducer producer = (CxfProducer) clientEndpoint.createProducer();
+        // need to start the producer to get the client
+        producer.start();
         Client client = producer.getClient();
         HTTPConduit conduit = (HTTPConduit)client.getConduit();
         assertEquals("Got the wrong user name", "test", conduit.getAuthorization().getUserName());

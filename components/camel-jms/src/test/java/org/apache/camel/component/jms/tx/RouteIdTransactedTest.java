@@ -31,10 +31,6 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
             "/org/apache/camel/component/jms/tx/RouteIdTransactedTest.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     @Test
     public void testRouteId() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);

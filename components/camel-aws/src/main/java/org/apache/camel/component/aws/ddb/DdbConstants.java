@@ -20,49 +20,40 @@ package org.apache.camel.component.aws.ddb;
  * Constants used in Camel AWS DynamoDB component
  */
 public interface DdbConstants {
-
-    String ATTRIBUTES = "CamelAwsSdbAttributes";
+    String ATTRIBUTES = "CamelAwsDdbAttributes";
+    String ATTRIBUTE_NAMES = "CamelAwsDdbAttributeNames";
     String BATCH_ITEMS = "CamelAwsDdbBatchItems";
     String BATCH_RESPONSE = "CamelAwsDdbBatchResponse";
-    String KEY = "CamelAwsDdbKey";
-    String RETURN_VALUES = "CamelAwsDdbReturnValues";
-    String TABLE_NAME = "CamelAwsDdbTableName";
-    String UPDATE_CONDITION = "CamelAwsDdbUpdateCondition";
-    String UNPROCESSED_KEYS = "CamelAwsDdbUnprocessedKeys";
-
-
-
-
-
-    String ATTRIBUTE_NAMES = "CamelAwsSdbAttributeNames";
-    String PROVISIONED_THROUGHPUT = "CamelAwsDdbProvisionedThroughput";
-    String CREATION_DATE = "CamelAwsDdbCreationDate";
-
-
-    String CONSISTENT_READ = "CamelAwsSdbConsistentRead";
-    String ITEMS = "CamelAwsSdbItems";
-    String ITEM_NAME = "CamelAwsSdbItemName";
-    String MESSAGE_ID = "CamelAwsSdbMessageId";
-    String NEXT_TOKEN = "CamelAwsSdbNextToken";
-    String OPERATION = "CamelAwsDdbOperation";
-    String READ_CAPACITY = "CamelAwsDdbReadCapacity";
-    String WRITE_CAPACITY = "CamelAwsDdbWriteCapacity";
-    String TABLE_STATUS = "CamelAwsDdbTableStatus";
-    String TABLE_CREATION_DATE = "CamelAwsDdbTableCreationDate";
-    String ITEM_COUNT = "CamelAwsDdbTableItemCount";
-    String KEY_SCHEMA = "CamelAwsDdbKeySchema";
-    String TABLE_SIZE = "CamelAwsDdbTableSize";
-    String ITEM = "CamelAwsDdbItem";
-    String UPDATE_VALUES = "CamelAwsDdbUpdateValues";
-    String SCAN_FILTER = "CamelAwsDdbScanFilter";
-    String LAST_EVALUATED_KEY = "CamelAwsDdbLastEvaluatedKey";
+    String CONSISTENT_READ = "CamelAwsDdbConsistentRead";
     String CONSUMED_CAPACITY = "CamelAwsDdbConsumedCapacity";
     String COUNT = "CamelAwsDdbCount";
+    String CREATION_DATE = "CamelAwsDdbCreationDate";
+    String EXACT_COUNT = "CamelAwsDdbExactCount";
+    String HASH_KEY_VALUE = "CamelAwsDdbHashKeyValue";
+    String ITEM = "CamelAwsDdbItem";
+    String ITEMS = "CamelAwsDdbItems";
+    String ITEM_COUNT = "CamelAwsDdbTableItemCount";
+    String ITEM_NAME = "CamelAwsDdbItemName";
+    String MESSAGE_ID = "CamelAwsDdbMessageId";
+    String NEXT_TOKEN = "CamelAwsDdbNextToken";
+    String KEY = "CamelAwsDdbKey";
+    String KEY_SCHEMA = "CamelAwsDdbKeySchema";
+    String LAST_EVALUATED_KEY = "CamelAwsDdbLastEvaluatedKey";
+    String LIMIT = "CamelAwsDdbLimit";
+    String OPERATION = "CamelAwsDdbOperation";
+    String PROVISIONED_THROUGHPUT = "CamelAwsDdbProvisionedThroughput";
+    String READ_CAPACITY = "CamelAwsDdbReadCapacity";
+    String RETURN_VALUES = "CamelAwsDdbReturnValues";
     String SCANNED_COUNT = "CamelAwsDdbScannedCount";
     String SCAN_INDEX_FORWARD = "CamelAwsDdbScanIndexForward";
     String SCAN_RANGE_KEY_CONDITION = "CamelAwsDdbScanRangeKeyCondition";
-    String LIMIT = "CamelAwsDdbLimit";
-    String HASH_KEY_VALUE = "CamelAwsDdbHashKeyValue";
-    String EXACT_COUNT = "CamelAwsDdbExactCount";
+    String SCAN_FILTER = "CamelAwsDdbScanFilter";
     String START_KEY = "CamelAwsDdbStartKey";
+    String TABLE_NAME = "CamelAwsDdbTableName";
+    String TABLE_SIZE = "CamelAwsDdbTableSize";
+    String TABLE_STATUS = "CamelAwsDdbTableStatus";
+    String UPDATE_CONDITION = "CamelAwsDdbUpdateCondition";
+    String UPDATE_VALUES = "CamelAwsDdbUpdateValues";
+    String UNPROCESSED_KEYS = "CamelAwsDdbUnprocessedKeys";
+    String WRITE_CAPACITY = "CamelAwsDdbWriteCapacity";
 }

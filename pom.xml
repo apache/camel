@@ -50,7 +50,7 @@
     <jaxb-api-version>2.1</jaxb-api-version>
 
     <maven-bundle-version>2.3.4</maven-bundle-version>
-    <openjpa-version>2.1.1</openjpa-version>
+    <openjpa-version>2.2.0</openjpa-version>
   </properties>
 
   <mailingLists>

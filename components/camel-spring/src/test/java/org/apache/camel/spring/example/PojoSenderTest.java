@@ -64,9 +64,6 @@ public class PojoSenderTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoSender.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
 }
 
 

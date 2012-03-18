@@ -36,7 +36,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -130,9 +129,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
             when = onWhen.getExpression().createPredicate(routeContext);
         }
 
-        String ref = this.executorServiceRef != null ? this.executorServiceRef : "OnCompletion";
-        ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-        executorService = manager.newDefaultThreadPool(this, ref);
+        // executor service is mandatory for on completion
+        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this, true);
 
         // should be false by default
         boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;

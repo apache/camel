@@ -56,6 +56,10 @@ public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
         // done file should be deleted now
         File file = new File("target/done/done").getAbsoluteFile();
         assertFalse("Done file should be deleted: " + file, file.exists());
+
+        // as well the original file should be moved to backup
+        file = new File("target/done/.camel/hello.txt").getAbsoluteFile();
+        assertTrue("Original file should be moved: " + file, file.exists());
     }
 
     @Override

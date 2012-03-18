@@ -90,7 +90,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
             }
         });
 
-        latch.await(10, TimeUnit.SECONDS);
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertNotNull("Should have failed", cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -42,11 +42,11 @@ public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
         // assertions of the response
         assertNotNull(out);
         assertNotNull(out.getOut());
-        ArrayList<HashMap<String, Object>> data = out.getOut().getBody(ArrayList.class);
-        assertNotNull("out body could not be converted to an ArrayList - was: "
+        List<Map<String, Object>> data = out.getOut().getBody(List.class);
+        assertNotNull("out body could not be converted to a List - was: "
             + out.getOut().getBody(), data);
         assertEquals(3, data.size());
-        HashMap<String, Object> row = data.get(0);
+        Map<String, Object> row = data.get(0);
         assertEquals("cust1", row.get("IDENTIFIER"));
         assertEquals("jstrachan", row.get("NAME"));
         row = data.get(1);
