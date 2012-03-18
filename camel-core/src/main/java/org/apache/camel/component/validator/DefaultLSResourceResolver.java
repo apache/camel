@@ -45,7 +45,12 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
 
     @Override
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
-        return new DefaultLSInput(baseURI, namespaceURI, publicId, systemId, type);
+        // systemId should be mandatory
+        if (systemId == null) {
+            throw new IllegalArgumentException(String.format("Resource: %s refers an invalid resource without SystemId."
+                    + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s", resourceUri, type, namespaceURI, publicId, systemId, baseURI));
+        }
+        return new DefaultLSInput(type, namespaceURI, publicId, systemId, baseURI);
     }
     
     private final class DefaultLSInput implements LSInput {
@@ -63,7 +68,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             this.publicId = publicId;
             this.systemId = systemId;
             this.type = type;
-
+            
             if (resourcePath != null) {
                 uri = resourcePath + "/" + systemId;
             } else {
