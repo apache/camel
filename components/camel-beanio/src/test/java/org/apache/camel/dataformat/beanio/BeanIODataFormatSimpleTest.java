@@ -29,9 +29,12 @@ import org.junit.Test;
 
 public class BeanIODataFormatSimpleTest extends CamelTestSupport {
 
-    private static final String FIXED_DATA = "Joe,Smith,Developer,75000,10012009" + LS
+    // START SNIPPET: e2
+    private static final String FIXED_DATA =
+            "Joe,Smith,Developer,75000,10012009" + LS
             + "Jane,Doe,Architect,80000,01152008" + LS
             + "Jon,Anderson,Manager,85000,03182007" + LS;
+    // END SNIPPET: e2
 
     @Test
     public void testMarshal() throws Exception {
@@ -62,15 +65,25 @@ public class BeanIODataFormatSimpleTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: e1
+                // setup beanio data format using the mapping file, loaded from the classpath
                 DataFormat format = new BeanIODataFormat(
                         "org/apache/camel/dataformat/beanio/mappings.xml",
                         "employeeFile");
 
-                from("direct:unmarshal").unmarshal(format)
-                        .split(simple("body")).to("mock:beanio-unmarshal");
+                // a route which uses the bean io data format to format a CSV data
+                // to java objects
+                from("direct:unmarshal")
+                    .unmarshal(format)
+                    // and then split the message body so we get a message for each row
+                    .split(body())
+                        .to("mock:beanio-unmarshal");
 
-                from("direct:marshal").marshal(format)
-                        .to("mock:beanio-marshal");
+                // convert list of java objects back to flat format
+                from("direct:marshal")
+                    .marshal(format)
+                    .to("mock:beanio-marshal");
+                // END SNIPPET: e1
             }
         };
     }
