@@ -223,8 +223,6 @@ public class RecipientListProcessor extends MulticastProcessor {
         super.doStart();
         if (producerCache == null) {
             producerCache = new ProducerCache(this, getCamelContext());
-            // add it as a service so we can manage it
-            getCamelContext().addService(producerCache);
         }
         ServiceHelper.startService(producerCache);
     }
@@ -235,8 +233,6 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     protected void doShutdown() throws Exception {
-        // remove producer cache from service
-        getCamelContext().removeService(producerCache);
         ServiceHelper.stopAndShutdownService(producerCache);
         super.doShutdown();
     }

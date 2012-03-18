@@ -162,8 +162,6 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     protected void doStart() throws Exception {
         if (producerCache == null) {
             producerCache = new ProducerCache(this, camelContext);
-            // add it as a service so we can manage it
-            camelContext.addService(producerCache);
         }
         ServiceHelper.startService(producerCache);
     }
@@ -173,8 +171,6 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     }
 
     protected void doShutdown() throws Exception {
-        // remove producer cache from service
-        camelContext.removeService(producerCache);
         ServiceHelper.stopAndShutdownService(producerCache);
     }
 
