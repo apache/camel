@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -24,14 +23,13 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("People need to edit etc/jre.properties in Karaf/SMX to export: sun.net.spi.nameservice")
-public class CamelDnsTest extends AbstractFeatureTest {
+public class CamelTestTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelDnsTest.class);
+    public static final String COMPONENT = "test";
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        // noop
     }
 
     @Configuration
