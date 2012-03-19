@@ -181,8 +181,9 @@ public class CxfRsProducer extends DefaultProducer {
         // set response
         if (exchange.getPattern().isOutCapable()) {
             LOG.trace("Response body = {}", response);
+            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
-            exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+            exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
         }
     }
@@ -230,8 +231,9 @@ public class CxfRsProducer extends DefaultProducer {
         
         if (exchange.getPattern().isOutCapable()) {
             LOG.trace("Response body = {}", response);
+            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
-            exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+            exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
         }
     }
