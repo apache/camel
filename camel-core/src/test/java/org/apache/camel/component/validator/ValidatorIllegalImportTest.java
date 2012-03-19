@@ -57,7 +57,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:test")
-                    .to("validator:org/apache/camel/component/validator/BroadCastMonitorFixed.xsd")
+                    .to("validator:org/apache/camel/component/validator/BroadcastMonitorFixed.xsd")
                     .to("mock:result");
             }
         });
@@ -73,7 +73,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:test")
-                    .to("validator:org/apache/camel/component/validator/BroadCastMonitor.xsd")
+                    .to("validator:org/apache/camel/component/validator/BroadcastMonitor.xsd")
                     .to("mock:result");
             }
         });
@@ -83,7 +83,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertTrue(iae.getMessage().startsWith("Resource: org/apache/camel/component/validator/BroadCastMonitor.xsd refers an invalid resource without SystemId."));
+            assertTrue(iae.getMessage().startsWith("Resource: org/apache/camel/component/validator/BroadcastMonitor.xsd refers an invalid resource without SystemId."));
         }
     }
 
