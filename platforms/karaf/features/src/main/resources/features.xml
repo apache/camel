@@ -247,8 +247,8 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-csv/${project.version}</bundle>
   </feature>
-  <!-- camel-dns requires SUN JVM, and to export sun.net.spi.nameservice java platform package in the etc/jre.properties file -->
   <feature name='camel-dns' version='${project.version}' resolver='(obr)' start-level='50'>
+	<details>The camel-dns feature can only run on a SUN JVM. You need to ddd the package sun.net.spi.nameservice to the java platform packages in the etc/jre.properties file.</details>
     <bundle dependency='true'>mvn:dnsjava/dnsjava/${dnsjava-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
