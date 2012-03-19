@@ -21,7 +21,7 @@ import org.apache.camel.main.Main;
 /**
  * A main to start this example.
  */
-public class CamelTwitterWebSocketMain {
+public final class CamelTwitterWebSocketMain {
 
     // Twitter now requires the use of OAuth for all client application authentication.
     // In order to use camel-twitter with your account, you'll need to create a new application
@@ -31,6 +31,10 @@ public class CamelTwitterWebSocketMain {
     private static String consumerSecret = "INSERT HERE";
     private static String accessToken = "INSERT HERE";
     private static String accessTokenSecret = "INSERT HERE";
+
+    private CamelTwitterWebSocketMain() {
+        // utility class
+    }
 
     public static void main(String[] args) throws Exception {
         if (consumerKey.equals("INSERT HERE")) {
