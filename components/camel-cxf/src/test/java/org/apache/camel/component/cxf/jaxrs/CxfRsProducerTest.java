@@ -80,6 +80,8 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                 inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
                 // using the proxy client API
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
+                // set a customer header
+                inMessage.setHeader("key", "value");
                 // set the parameters , if you just have one parameter 
                 // camel will put this object into an Object[] itself
                 inMessage.setBody("123");
@@ -93,6 +95,8 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        System.out.println(exchange.getOut().getHeaders());
+        assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
         // END SNIPPET: ProxyExample     
     }
     
@@ -138,6 +142,8 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                 inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");                
                 // Specify the response class , cxfrs will use InputStream as the response object type 
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
+                // set a customer header
+                inMessage.setHeader("key", "value");
                 // since we use the Get method, so we don't need to set the message body
                 inMessage.setBody(null);                
             }
@@ -150,6 +156,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
         // END SNIPPET: HttpExample 
     }
     
