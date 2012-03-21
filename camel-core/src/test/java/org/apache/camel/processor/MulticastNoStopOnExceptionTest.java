@@ -47,7 +47,7 @@ public class MulticastNoStopOnExceptionTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:start", "Kaboom");
-            fail("Should thrown an exception");
+            fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Forced", e.getCause().getMessage());
