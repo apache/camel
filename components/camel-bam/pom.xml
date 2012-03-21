@@ -93,42 +93,6 @@
 	</build>
 
 	<profiles>
-
-		<!--  Hibernate HSQL profile -->
-		<profile>
-			<id>hibernate-hsqldb</id>
-			<build>
-				<testResources>
-					<testResource>
-						<directory>${basedir}/src/test/profiles/hibernate</directory>
-					</testResource>
-				</testResources>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-entitymanager</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.hsqldb</groupId>
-					<artifactId>hsqldb</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.apache.geronimo.specs</groupId>
-					<artifactId>geronimo-jta_1.1_spec</artifactId>
-					<version>${geronimo-jta-spec-version}</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-
 		<!--  Hibernate Derby profile -->
 		<profile>
 			<id>hibernate-derby</id>
@@ -167,43 +131,7 @@
 			</dependencies>
 		</profile>
 
-		<!--  Mysql profile -->
-		<profile>
-			<id>mysql</id>
-			<build>
-				<testResources>
-					<testResource>
-						<directory>${basedir}/src/test/profiles/mysql</directory>
-					</testResource>
-				</testResources>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-entitymanager</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>mysql</groupId>
-					<artifactId>mysql-connector-java</artifactId>
-					<version>5.1.6</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.apache.geronimo.specs</groupId>
-					<artifactId>geronimo-jta_1.1_spec</artifactId>
-					<version>${geronimo-spec-version}</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-
-		<!-- EclipseLink - HSQLDB -->
+		<!-- EclipseLink HSQLDB profile -->
 		<!-- TODO fix the issue of CAMEL-2277 -->
 		<profile>
 			<id>eclipselink</id>
@@ -235,7 +163,7 @@
 			</repositories>
 		</profile>
 
-		<!--  OpenJPA profile -->
+		<!--  OpenJPA HSQLDB profile -->
 		<!-- TODO fix the issue of CAMEL-2277 -->
 		<profile>
 			<id>openjpa</id>
