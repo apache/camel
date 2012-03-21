@@ -719,6 +719,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+
+            // and remove traces of rollback only and uow exhausted markers
+            exchange.removeProperty(Exchange.ROLLBACK_ONLY);
+            exchange.removeProperty(Exchange.UNIT_OF_WORK_EXHAUSTED);
+
             handled = true;
         } else {
             // must decrement the redelivery counter as we didn't process the redelivery but is
