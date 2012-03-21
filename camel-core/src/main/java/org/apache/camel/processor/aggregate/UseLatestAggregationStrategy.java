@@ -61,6 +61,7 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         // propagate exception from old exchange if there isn't already an exception
         if (newExchange.getException() == null) {
             newExchange.setException(oldExchange.getException());
+            newExchange.setProperty(Exchange.FAILURE_ENDPOINT, oldExchange.getProperty(Exchange.FAILURE_ENDPOINT));
         }
     }
 
