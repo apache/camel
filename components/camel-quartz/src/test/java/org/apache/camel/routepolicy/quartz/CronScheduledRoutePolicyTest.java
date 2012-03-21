@@ -185,6 +185,44 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
     } 
     
     @Test
+    public void testScheduledStopRoutePolicyWithExtraPolicy() throws Exception {
+        boolean consumerStopped = false;
+
+        final MyRoutePolicy myPolicy = new MyRoutePolicy();
+
+        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                policy.setRouteStopTime("*/3 * * * * ?");
+                policy.setRouteStopGracePeriod(0);
+                policy.setTimeUnit(TimeUnit.MILLISECONDS);
+
+                from("direct:start")
+                    .routeId("test")
+                    .routePolicy(policy, myPolicy)
+                    .to("mock:unreachable");
+            }
+        });
+        context.start();
+        
+        Thread.sleep(4000);
+
+        assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
+        
+        try {
+            template.sendBody("direct:start", "Ready or not, Here, I come");
+        } catch (CamelExecutionException e) {
+            consumerStopped = true;
+        }    
+        assertTrue(consumerStopped);
+        context.getComponent("quartz", QuartzComponent.class).stop();
+
+        assertTrue("Should have called onStart", myPolicy.isStart());
+        assertTrue("Should have called onStop", myPolicy.isStop());
+    }
+    
+    @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
         boolean consumerSuspended = false;
   
