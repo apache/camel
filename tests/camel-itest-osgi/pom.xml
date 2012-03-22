@@ -387,6 +387,7 @@
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
                   <exclude>**/FtpConsumeTest.*</exclude>
+                  <exclude>**/BeanIODataFormatSimpleTest.*</exclude> <!-- CAMEL-5111 -->
               </excludes>
               <systemPropertyVariables>
                   <karafVersion>${karaf-version}</karafVersion>

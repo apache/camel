@@ -53,7 +53,7 @@ public class CacheReplicationTest extends OSGiIntegrationSpringTestSupport {
         template.sendBody("direct:addRoute", "Am I replicated?");
 
         // give some time to make replication
-        Thread.sleep(200);
+        Thread.sleep(300);
 
         template.sendBody("direct:getRoute1", "Will I get replicated cache");
         template.sendBody("direct:getRoute2", "Will I get replicated cache");
