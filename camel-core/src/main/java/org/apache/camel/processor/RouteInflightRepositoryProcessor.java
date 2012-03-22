@@ -30,7 +30,6 @@ import org.apache.camel.spi.RouteContext;
 public class RouteInflightRepositoryProcessor extends DelegateAsyncProcessor {
     
     private final InflightRepository inflightRepository;
-    private Route route;
     private String id;
 
     public RouteInflightRepositoryProcessor(InflightRepository inflightRepository, Processor processor) {
@@ -39,7 +38,6 @@ public class RouteInflightRepositoryProcessor extends DelegateAsyncProcessor {
     }
 
     public void setRoute(Route route) {
-        this.route = route;
         this.id = route.getId();
     }
 
@@ -63,5 +61,4 @@ public class RouteInflightRepositoryProcessor extends DelegateAsyncProcessor {
     public String toString() {
         return super.toString();
     }
-
 }
