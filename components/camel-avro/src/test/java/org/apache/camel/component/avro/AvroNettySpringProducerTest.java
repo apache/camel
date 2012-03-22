@@ -19,10 +19,6 @@ package org.apache.camel.component.avro;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-
-import org.junit.After;
-import org.junit.Before;
-
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,7 +27,6 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
     private AbstractApplicationContext applicationContext;
 
     @Override
-    @Before
     public void setUp() throws Exception {
         initializeServer();
         applicationContext = createApplicationContext();
@@ -39,7 +34,6 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
     }
 
     @Override
-    @After
     public void tearDown() throws Exception {
         super.tearDown();
         if (applicationContext != null) {

@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class AvroTestSupport extends CamelTestSupport {
 
