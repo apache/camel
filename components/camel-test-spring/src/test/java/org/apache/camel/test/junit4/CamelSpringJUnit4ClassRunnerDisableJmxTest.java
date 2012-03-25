@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.management;
+package org.apache.camel.test.junit4;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.management.ManagedRouteRemoveRouteScopedErrorHandlerTest;
+import org.apache.camel.management.ManagedManagementStrategy;
+import org.apache.camel.test.spring.DisableJmx;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-/**
- * @version 
- */
-public class SpringManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagedRouteRemoveRouteScopedErrorHandlerTest {
+@DisableJmx(false)
+public class CamelSpringJUnit4ClassRunnerDisableJmxTest 
+        extends CamelSpringJUnit4ClassRunnerPlainTest {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteScopedErrorHandlerTest.xml");
+    @Test
+    @Override
+    public void testJmx() throws Exception {
+        assertEquals(ManagedManagementStrategy.class, camelContext.getManagementStrategy().getClass());
     }
-
 }

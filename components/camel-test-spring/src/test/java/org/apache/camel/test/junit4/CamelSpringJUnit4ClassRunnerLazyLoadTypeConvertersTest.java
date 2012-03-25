@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.management;
+package org.apache.camel.test.junit4;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.management.ManagedRouteRemoveRouteScopedErrorHandlerTest;
+import org.apache.camel.test.spring.LazyLoadTypeConverters;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.junit.Test;
+import static org.junit.Assert.assertFalse;
 
-/**
- * @version 
- */
-public class SpringManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagedRouteRemoveRouteScopedErrorHandlerTest {
+@SuppressWarnings("deprecation")
+@LazyLoadTypeConverters(false)
+public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersTest 
+        extends CamelSpringJUnit4ClassRunnerPlainTest {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteScopedErrorHandlerTest.xml");
+    @Test
+    @Override
+    public void testLazyLoadTypeConverters() {
+        assertFalse(camelContext.isLazyLoadTypeConverters());
+        assertFalse(camelContext2.isLazyLoadTypeConverters());
     }
-
 }

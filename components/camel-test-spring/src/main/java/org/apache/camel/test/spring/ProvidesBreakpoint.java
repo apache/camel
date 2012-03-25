@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.management;
+package org.apache.camel.test.spring;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.management.ManagedRouteRemoveRouteScopedErrorHandlerTest;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.spi.Breakpoint;
 
 /**
- * @version 
+ * Indicates that the annotated method returns a {@link Breakpoint} for use in the test.  Useful for intercepting
+ * traffic to all endpoints or simply for setting a break point in an IDE for debugging.  The method must
+ * be {@code public}, {@code static}, take no arguments, and return {@link Breakpoint}.
  */
-public class SpringManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagedRouteRemoveRouteScopedErrorHandlerTest {
-
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteScopedErrorHandlerTest.xml");
-    }
-
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface ProvidesBreakpoint {
 }

@@ -14,20 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.management;
+package org.apache.camel.testng;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.management.ManagedRouteRemoveRouteScopedErrorHandlerTest;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.MockEndpoints;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.testng.annotations.Test;
 
-/**
- * @version 
- */
-public class SpringManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagedRouteRemoveRouteScopedErrorHandlerTest {
+@MockEndpoints("log:*")
+public class AbstractCamelTestNGSpringContextTestsMockEndpointsTest
+        extends AbstractCamelTestNGSpringContextTestsPlainTest {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteScopedErrorHandlerTest.xml");
+    @EndpointInject(uri = "mock:log:org.apache.camel.test.junit4.spring", context = "camelContext2")
+    protected MockEndpoint mockLog;
+    
+    @Test
+    @Override
+    public void testPositive() throws Exception {
+        mockLog.expectedBodiesReceived("Hello David");
+        
+        super.testPositive();
+        
+        mockLog.assertIsSatisfied();
     }
-
 }

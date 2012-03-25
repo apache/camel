@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.management;
+package org.apache.camel.test.junit4;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.management.ManagedRouteRemoveRouteScopedErrorHandlerTest;
+import org.apache.camel.test.spring.ExcludeRoutes;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.Assert.assertNull;
 
-/**
- * @version 
- */
-public class SpringManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagedRouteRemoveRouteScopedErrorHandlerTest {
+@ExcludeRoutes(TestRouteBuilder.class)
+public class CamelSpringJUnit4ClassRunnerExcludeRoutesTest
+        extends CamelSpringJUnit4ClassRunnerPlainTest {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteScopedErrorHandlerTest.xml");
+    @Override
+    public void testExcludedRoute() {
+        assertNull(camelContext.getRoute("excludedRoute"));
     }
-
 }

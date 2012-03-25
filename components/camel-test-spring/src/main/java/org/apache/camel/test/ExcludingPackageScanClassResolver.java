@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.management;
+package org.apache.camel.test;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.management.ManagedRouteRemoveRouteScopedErrorHandlerTest;
+import java.util.Collections;
+import java.util.Set;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
+import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 
-/**
- * @version 
- */
-public class SpringManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagedRouteRemoveRouteScopedErrorHandlerTest {
+public class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteScopedErrorHandlerTest.xml");
+    public void setExcludedClasses(Set<Class<?>> excludedClasses) {
+        Set<Class<?>> parents = excludedClasses == null ? Collections.<Class<?>>emptySet() : excludedClasses;
+        addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(parents)));
     }
 
 }

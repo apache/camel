@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.management;
+package org.apache.camel.testng;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.management.ManagedRouteRemoveRouteScopedErrorHandlerTest;
+import java.util.concurrent.TimeUnit;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.test.spring.ShutdownTimeout;
 
-/**
- * @version 
- */
-public class SpringManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagedRouteRemoveRouteScopedErrorHandlerTest {
+import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteScopedErrorHandlerTest.xml");
+@ShutdownTimeout(value = 11, timeUnit = TimeUnit.MILLISECONDS)
+public class AbstractCamelTestNGSpringContextTestsShutdownTimeoutTest
+        extends AbstractCamelTestNGSpringContextTestsPlainTest {
+
+    @Test
+    @Override
+    public void testShutdownTimeout() throws Exception {
+        assertEquals(11, camelContext.getShutdownStrategy().getTimeout());
+        assertEquals(TimeUnit.MILLISECONDS, camelContext.getShutdownStrategy().getTimeUnit());
     }
-
 }
