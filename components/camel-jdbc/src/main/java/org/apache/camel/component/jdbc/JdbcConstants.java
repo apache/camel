@@ -25,6 +25,32 @@ public final class JdbcConstants {
 
     public static final String JDBC_ROW_COUNT = "CamelJdbcRowCount";
 
+    /**
+     * Boolean input header.
+     * Set its value to true to retrieve generated keys, default is false
+     */
+    public static final String JDBC_RETRIEVE_GENERATED_KEYS = "CamelRetrieveGeneratedKeys";
+
+    /**
+     * <tt>String[]</tt> or <tt>int[]</tt> input header - optional
+     * Set it to specify the expected generated columns, see:
+     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/sql/Statement.html#execute(java.lang.String, int[])">
+     *     java.sql.Statement.execute(java.lang.String, int[])</a>
+     * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/sql/Statement.html#execute(java.lang.String, java.lang.String[])">
+     *     java.sql.Statement.execute(java.lang.String, java.lang.String[])</a>
+     */
+    public static final String JDBC_GENERATED_COLUMNS = "CamelGeneratedColumns";
+
+    /**
+     * int output header giving the number of rows of generated keys
+     */
+    public static final String JDBC_GENERATED_KEYS_ROW_COUNT = "CamelGeneratedKeysRowCount";
+
+    /**
+     * <tt>List<Map<String, Object>></tt> output header containing the generated keys retrieved
+     */
+    public static final String JDBC_GENERATED_KEYS_DATA = "CamelGeneratedKeysRows";
+
     private JdbcConstants() {
         // Utility class
     }
