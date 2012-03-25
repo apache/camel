@@ -27,32 +27,25 @@ public final class CamelTwitterWebSocketMain {
     // In order to use camel-twitter with your account, you'll need to create a new application
     // within Twitter at https://dev.twitter.com/apps/new and grant the application access to your account.
     // Finally, generate your access token and secret.
-    private static String consumerKey = "INSERT HERE";
-    private static String consumerSecret = "INSERT HERE";
-    private static String accessToken = "INSERT HERE";
-    private static String accessTokenSecret = "INSERT HERE";
+
+    // This uses the Twitter 'cameltweet' account for testing purposes.
+    // do NOT use this twitter account in your applications!
+    private static String consumerKey = "NMqaca1bzXsOcZhP2XlwA";
+    private static String consumerSecret = "VxNQiRLwwKVD0K9mmfxlTTbVdgRpriORypnUbHhxeQw";
+    private static String accessToken = "26693234-W0YjxL9cMJrC0VZZ4xdgFMymxIQ10LeL1K8YlbBY";
+    private static String accessTokenSecret = "BZD51BgzbOdFstWZYsqB5p5dbuuDV12vrOdatzhY4E";
 
     private CamelTwitterWebSocketMain() {
-        // utility class
+        // to pass checkstyle we have a private constructor
     }
 
     public static void main(String[] args) throws Exception {
-        if (consumerKey.equals("INSERT HERE")) {
-            System.out.println("\n\n\n\n");
-            System.err.println("============================================================================");
-            System.err.println("Error you need to configure twitter application authentication before using.");
-            System.err.println("See more details in this source code.");
-            System.err.println("============================================================================");
-            System.out.println("\n\n\n\n");
-            System.exit(0);
-        } else {
-            System.out.println("\n\n\n\n");
-            System.out.println("===============================================");
-            System.out.println("Open your web browser on http://localhost:9090");
-            System.out.println("Press ctrl+c to stop this example");
-            System.out.println("===============================================");
-            System.out.println("\n\n\n\n");
-        }
+        System.out.println("\n\n\n\n");
+        System.out.println("===============================================");
+        System.out.println("Open your web browser on http://localhost:9090");
+        System.out.println("Press ctrl+c to stop this example");
+        System.out.println("===============================================");
+        System.out.println("\n\n\n\n");
 
         // create a new Camel Main so we can easily start Camel
         Main main = new Main();
@@ -71,6 +64,9 @@ public final class CamelTwitterWebSocketMain {
         // poll for gaga, every 2nd second
         route.setSearchTerm("gaga");
         route.setDelay(2);
+
+        // web socket on port 9090
+        route.setPort(9090);
 
         // add our routes to Camel
         main.addRouteBuilder(route);

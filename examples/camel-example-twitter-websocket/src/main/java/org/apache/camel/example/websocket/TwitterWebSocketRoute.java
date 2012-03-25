@@ -17,6 +17,7 @@
 package org.apache.camel.example.websocket;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.twitter.TwitterComponent;
 import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.camel.component.websocket.WebsocketConstants;
 
@@ -26,9 +27,9 @@ import org.apache.camel.component.websocket.WebsocketConstants;
  */
 public class TwitterWebSocketRoute extends RouteBuilder {
 
+    private int port = 9090;
     private String searchTerm;
     private int delay = 2;
-    
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
@@ -82,17 +83,30 @@ public class TwitterWebSocketRoute extends RouteBuilder {
         this.searchTerm = searchTerm;
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     @Override
     public void configure() throws Exception {
         // setup Camel web-socket component on port 9090
         WebsocketComponent wc = getContext().getComponent("websocket", WebsocketComponent.class);
-        wc.setPort(9090);
+        wc.setPort(port);
         wc.setStaticResources("src/main/resources");
 
+        // setup Twitter component
+        TwitterComponent tc = getContext().getComponent("twitter", TwitterComponent.class);
+        tc.setAccessToken(accessToken);
+        tc.setAccessTokenSecret(accessTokenSecret);
+        tc.setConsumerKey(consumerKey);
+        tc.setConsumerSecret(consumerSecret);
+
         // poll twitter search for new tweets, and push tweets to all web socket subscribers on camel-tweet
-        fromF("twitter://search?type=polling&delay=%s&keywords=%s"
-                + "&consumerKey=%s&consumerSecret=%s&accessToken=%s&accessTokenSecret=%s",
-                delay, searchTerm, consumerKey, consumerSecret, accessToken, accessTokenSecret)
+        fromF("twitter://search?type=polling&delay=%s&keywords=%s", delay, searchTerm)
             .setHeader(WebsocketConstants.SEND_TO_ALL).constant(true)
             .to("websocket:camel-tweet");
     }
