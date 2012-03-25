@@ -253,6 +253,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     protected void propagateResponseHeadersToCamel(Message outMessage, Exchange camelExchange) {
+        // copy the camel in message header to the out message
+        camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
         CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage,
                                             camelExchange.getOut().getHeaders(), camelExchange);
     }
