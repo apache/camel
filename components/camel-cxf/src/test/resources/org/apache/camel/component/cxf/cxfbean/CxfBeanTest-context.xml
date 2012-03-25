@@ -69,6 +69,7 @@
 		<route>
 			<from uri="jetty:http://localhost:9000?matchOnUriPrefix=true" />
 			<to uri="cxfbean:customerServiceBean" />
+			<to uri="mock:endpointA" />
 		</route>
 		<!-- END SNIPPET: routeDefinition -->	
 		<route>
