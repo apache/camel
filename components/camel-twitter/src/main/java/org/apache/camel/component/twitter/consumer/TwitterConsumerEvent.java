@@ -43,6 +43,14 @@ public class TwitterConsumerEvent extends DirectConsumer implements TwitterConsu
     }
 
     @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (twitter4jConsumer instanceof StreamingConsumer) {
+            ((StreamingConsumer)twitter4jConsumer).unregisterTweetListener(this);
+        }
+    }
+
+    @Override
     public void onStatus(Status status) {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setBody(status);

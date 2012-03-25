@@ -20,17 +20,19 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.apache.camel.CamelExchangeException;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 
 public class WebsocketProducer extends DefaultProducer {
     private final WebsocketStore store;
+    private final Boolean sendToAll;
 
-    public WebsocketProducer(Endpoint endpoint, WebsocketStore store) {
+    public WebsocketProducer(WebsocketEndpoint endpoint, WebsocketStore store) {
         super(endpoint);
         this.store = store;
+        this.sendToAll = endpoint.getSendToAll();
+        System.out.println("Configured with " + sendToAll);
     }
 
     @Override
@@ -45,6 +47,7 @@ public class WebsocketProducer extends DefaultProducer {
             String connectionKey = in.getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
             if (connectionKey != null) {
                 DefaultWebsocket websocket = store.get(connectionKey);
+                log.debug("Sending to connection key {} -> {}", connectionKey, message);
                 sendMessage(websocket, message);
             } else {
                 throw new IllegalArgumentException("Failed to send message to single connection; connetion key not set.");
@@ -53,12 +56,13 @@ public class WebsocketProducer extends DefaultProducer {
     }
 
     boolean isSendToAllSet(Message in) {
-        // header may be null; have to be careful here
-        Object value = in.getHeader(WebsocketConstants.SEND_TO_ALL);
-        return value == null ? false : (Boolean) value;
+        // header may be null; have to be careful here (and fallback to use sendToAll option configured from endpoint)
+        Boolean value = in.getHeader(WebsocketConstants.SEND_TO_ALL, sendToAll, Boolean.class);
+        return value == null ? false : value;
     }
 
     void sendToAll(WebsocketStore store, String message, Exchange exchange) throws Exception {
+        log.debug("Sending to all {}", message);
         Collection<DefaultWebsocket> websockets = store.getAll();
         Exception exception = null;
         for (DefaultWebsocket websocket : websockets) {
@@ -78,6 +82,7 @@ public class WebsocketProducer extends DefaultProducer {
     void sendMessage(DefaultWebsocket websocket, String message) throws IOException {
         // in case there is web socket and socket connection is open - send message
         if (websocket != null && websocket.getConnection().isOpen()) {
+            log.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
             websocket.getConnection().sendMessage(message);
         }
     }

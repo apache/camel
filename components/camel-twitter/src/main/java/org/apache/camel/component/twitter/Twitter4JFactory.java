@@ -110,8 +110,7 @@ public final class Twitter4JFactory {
                     case USER:
                         if (te.getProperties().getUser() == null
                             || te.getProperties().getUser().trim().isEmpty()) {
-                            throw new IllegalArgumentException(
-                                                               "Fetch type set to USER TIMELINE but no user was set.");
+                            throw new IllegalArgumentException("Fetch type set to USER TIMELINE but no user was set.");
                         } else {
                             return new UserConsumer(te);
                         }
@@ -176,9 +175,8 @@ public final class Twitter4JFactory {
             
         }
 
-        LOG.warn("A producer type was not provided (or an incorrect pairing was used). Defaulting to a MOCK!");
-        throw new IllegalArgumentException("Cannot create any producer with uri " + uri 
-                                           + "A producer type was not provided (or an incorrect pairing was used).");
+        throw new IllegalArgumentException("Cannot create any producer with uri " + uri
+                                           + ". A producer type was not provided (or an incorrect pairing was used).");
     }
 
     private static String[] splitUri(String uri) {

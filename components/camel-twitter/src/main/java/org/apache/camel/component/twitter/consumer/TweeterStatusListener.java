@@ -19,5 +19,6 @@ package org.apache.camel.component.twitter.consumer;
 import twitter4j.Status;
 
 public interface TweeterStatusListener {
+
     void onStatus(Status status);
 }

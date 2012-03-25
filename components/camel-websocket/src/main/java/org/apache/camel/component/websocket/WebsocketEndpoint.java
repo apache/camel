@@ -27,6 +27,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private NodeSynchronization sync;
     private String remaining;
     private WebsocketStore memoryStore;
+    private Boolean sendToAll;
 
     public WebsocketEndpoint(String uri, WebsocketComponent component, String remaining) {
         super(uri, component);
@@ -57,6 +58,14 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    public Boolean getSendToAll() {
+        return sendToAll;
+    }
+
+    public void setSendToAll(Boolean sendToAll) {
+        this.sendToAll = sendToAll;
     }
 
     @Override

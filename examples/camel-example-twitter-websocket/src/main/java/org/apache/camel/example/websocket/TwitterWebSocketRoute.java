@@ -19,7 +19,6 @@ package org.apache.camel.example.websocket;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.twitter.TwitterComponent;
 import org.apache.camel.component.websocket.WebsocketComponent;
-import org.apache.camel.component.websocket.WebsocketConstants;
 
 /**
  * A Camel route that updates from twitter all tweets using having the search term.
@@ -105,9 +104,9 @@ public class TwitterWebSocketRoute extends RouteBuilder {
         tc.setConsumerKey(consumerKey);
         tc.setConsumerSecret(consumerSecret);
 
-        // poll twitter search for new tweets, and push tweets to all web socket subscribers on camel-tweet
+        // poll twitter search for new tweets
         fromF("twitter://search?type=polling&delay=%s&keywords=%s", delay, searchTerm)
-            .setHeader(WebsocketConstants.SEND_TO_ALL).constant(true)
-            .to("websocket:camel-tweet");
+            // and push tweets to all web socket subscribers on camel-tweet
+            .to("websocket:camel-tweet?sendToAll=true");
     }
 }

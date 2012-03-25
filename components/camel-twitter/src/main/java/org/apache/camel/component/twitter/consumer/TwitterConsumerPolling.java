@@ -40,7 +40,7 @@ public class TwitterConsumerPolling extends ScheduledPollConsumer implements Twi
         this.twitter4jConsumer = twitter4jConsumer;
 
         int delay = endpoint.getProperties().getDelay();
-        setInitialDelay(0);
+        setInitialDelay(1);
         setDelay(delay);
         setTimeUnit(TimeUnit.SECONDS);
     }
