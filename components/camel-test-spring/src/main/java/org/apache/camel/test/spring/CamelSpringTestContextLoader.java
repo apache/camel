@@ -43,6 +43,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.test.context.support.GenericXmlContextLoader;
@@ -52,11 +53,14 @@ import org.springframework.util.StringUtils;
  * Replacement for the default {@link GenericXmlContextLoader} that provides hooks for
  * processing some class level Camel related test annotations.
  */
-public class CamelSpringTestContextLoader extends
-    AbstractContextLoader {
+public class CamelSpringTestContextLoader extends AbstractContextLoader {
     
-    private static final Logger LOG = LoggerFactory
-            .getLogger(CamelSpringTestContextLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelSpringTestContextLoader.class);
+    
+    @Override
+    public ApplicationContext loadContext(MergedContextConfiguration configuration) throws Exception {
+        return loadContext(configuration.getLocations());
+    }
     
     /**
      *  Modeled after the Spring implementation in {@link AbstractGenericContextLoader},
