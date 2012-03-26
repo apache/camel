@@ -24,8 +24,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 
 /**
- * Model level interface for a camel context
- *
+ * Model level interface for the {@link CamelContext}
  */
 public interface ModelCamelContext extends CamelContext {
 
@@ -48,8 +47,8 @@ public interface ModelCamelContext extends CamelContext {
      * Loads a collection of route definitions from the given {@link java.io.InputStream}.
      *
      * @param is input stream with the route(s) definition to add
-     * @throws Exception if the route definitions could not be loaded for whatever reason
      * @return the route definitions
+     * @throws Exception if the route definitions could not be loaded for whatever reason
      */
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
@@ -92,7 +91,9 @@ public interface ModelCamelContext extends CamelContext {
      *
      * @param route the route to start
      * @throws Exception is thrown if the route could not be started for whatever reason
+     * @deprecated favor using {@link CamelContext#startRoute(String)}
      */
+    @Deprecated
     void startRoute(RouteDefinition route) throws Exception;
     
     /**
@@ -100,7 +101,9 @@ public interface ModelCamelContext extends CamelContext {
      *
      * @param route the route to stop
      * @throws Exception is thrown if the route could not be stopped for whatever reason
+     * @deprecated favor using {@link CamelContext#stopRoute(String)}
      */
+    @Deprecated
     void stopRoute(RouteDefinition route) throws Exception;
 
     /**
@@ -117,4 +120,12 @@ public interface ModelCamelContext extends CamelContext {
      */
     Map<String, DataFormatDefinition> getDataFormats();
 
+    /**
+     * Resolve a data format definition given its name
+     *
+     * @param name the data format definition name or a reference to it in the {@link org.apache.camel.spi.Registry}
+     * @return the resolved data format definition, or <tt>null</tt> if not found
+     */
+    DataFormatDefinition resolveDataFormatDefinition(String name);
+    
 }

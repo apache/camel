@@ -329,6 +329,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Returns a list of the current route definitions
      *
      * @return list of the current route definitions
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getRouteDefinitions()}
      */
     @Deprecated
     List<RouteDefinition> getRouteDefinitions();
@@ -338,6 +339,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param id id of the route
      * @return the route definition or <tt>null</tt> if not found
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getRouteDefinition(String)}
      */
     @Deprecated
     RouteDefinition getRouteDefinition(String id);
@@ -376,6 +378,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param is input stream with the route(s) definition to add
      * @throws Exception if the route definitions could not be loaded for whatever reason
      * @return the route definitions
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#loadRoutesDefinition(java.io.InputStream)}
      */
     @Deprecated
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
@@ -385,6 +388,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeDefinitions the route(s) definition to add
      * @throws Exception if the route definitions could not be created for whatever reason
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#addRouteDefinitions(java.util.Collection)}
      */
     @Deprecated
     void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
@@ -394,6 +398,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeDefinition the route definition to add
      * @throws Exception if the route definition could not be created for whatever reason
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#addRouteDefinition(org.apache.camel.model.RouteDefinition)}
      */
     @Deprecated
     void addRouteDefinition(RouteDefinition routeDefinition) throws Exception;
@@ -404,6 +409,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeDefinitions route(s) definitions to remove
      * @throws Exception if the route definitions could not be removed for whatever reason
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#removeRouteDefinitions(java.util.Collection)}
      */
     @Deprecated
     void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
@@ -414,6 +420,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeDefinition route definition to remove
      * @throws Exception if the route definition could not be removed for whatever reason
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#removeRouteDefinition(org.apache.camel.model.RouteDefinition)}
      */
     @Deprecated
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
@@ -423,6 +430,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param route the route to start
      * @throws Exception is thrown if the route could not be started for whatever reason
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#startRoute(org.apache.camel.model.RouteDefinition)}
      */
     @Deprecated
     void startRoute(RouteDefinition route) throws Exception;
@@ -440,6 +448,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param route the route to stop
      * @throws Exception is thrown if the route could not be stopped for whatever reason
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#stopRoute(org.apache.camel.model.RouteDefinition)}
      */
     @Deprecated
     void stopRoute(RouteDefinition route) throws Exception;
@@ -739,7 +748,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets the default error handler builder which is inherited by the routes
-     * @deprecated The return type will be switched to ErrorHandlerFactory in Camel 3.0
+     * @deprecated The return type will be switched to {@link ErrorHandlerFactory} in Camel 3.0
      *
      * @return the builder
      */
@@ -757,6 +766,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets the data formats that can be referenced in the routes.
      *
      * @param dataFormats the data formats
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#setDataFormats(java.util.Map)}
      */
     @Deprecated
     void setDataFormats(Map<String, DataFormatDefinition> dataFormats);
@@ -765,6 +775,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the data formats that can be referenced in the routes.
      *
      * @return the data formats available
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getDataFormats()}
      */
     @Deprecated
     Map<String, DataFormatDefinition> getDataFormats();
@@ -782,6 +793,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param name the data format definition name or a reference to it in the {@link Registry}
      * @return the resolved data format definition, or <tt>null</tt> if not found
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#resolveDataFormatDefinition(String)}
      */
     @Deprecated
     DataFormatDefinition resolveDataFormatDefinition(String name);
