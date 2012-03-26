@@ -46,17 +46,20 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long consumeDelay;
     private long preloadSize;
     private long initialDelay = 1000;
-    private Processor reporter;
 
     @Deprecated
     public DataSetEndpoint() {
         this.log = LoggerFactory.getLogger(DataSetEndpoint.class);
+        // optimize as we dont need to copy the exchange
+        copyOnExchange = false;
     }
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);
         this.dataSet = dataSet;
         this.log = LoggerFactory.getLogger(endpointUri);
+        // optimize as we dont need to copy the exchange
+        copyOnExchange = false;
     }
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
@@ -160,13 +163,6 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.produceDelay = produceDelay;
     }
 
-    /**
-     * Sets a custom progress reporter
-     */
-    public void setReporter(Processor reporter) {
-        this.reporter = reporter;
-    }
-
     public long getInitialDelay() {
         return initialDelay;
     }
@@ -191,10 +187,6 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         }
 
         assertMessageExpected(index, expected, copy);
-
-        if (reporter != null) {
-            reporter.process(copy);
-        }
 
         if (consumeDelay > 0) {
             Thread.sleep(consumeDelay);

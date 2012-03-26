@@ -79,6 +79,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
+    protected volatile Processor reporter;
+    protected boolean copyOnExchange = true;
     private volatile int expectedCount;
     private volatile int counter;
     private volatile Processor defaultProcessor;
@@ -98,7 +100,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private volatile Map<String, Object> actualHeaderValues;
     private volatile Map<String, Object> expectedPropertyValues;
     private volatile Map<String, Object> actualPropertyValues;
-    private volatile Processor reporter;
     private volatile int retainFirst;
     private volatile int retainLast;
 
@@ -1040,7 +1041,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * You can configure both {@link #setRetainFirst(int)} and {@link #setRetainLast(int)} methods,
      * to limit both the first and last received.
      * 
-     * @param retainFirst  to limit and only keep the first n'th received {@link Exchange}s
+     * @param retainFirst  to limit and only keep the first n'th received {@link Exchange}s, use
+     *                     <tt>0</tt> to not retain any messages, or <tt>-1</tt> to retain all.
      * @see #setRetainLast(int)
      */
     public void setRetainFirst(int retainFirst) {
@@ -1067,7 +1069,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * You can configure both {@link #setRetainFirst(int)} and {@link #setRetainLast(int)} methods,
      * to limit both the first and last received.
      *
-     * @param retainLast  to limit and only keep the last n'th received {@link Exchange}s
+     * @param retainLast  to limit and only keep the last n'th received {@link Exchange}s, use
+     *                     <tt>0</tt> to not retain any messages, or <tt>-1</tt> to retain all.
      * @see #setRetainFirst(int)
      */
     public void setRetainLast(int retainLast) {
@@ -1096,8 +1099,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         actualHeaderValues = null;
         expectedPropertyValues = null;
         actualPropertyValues = null;
-        retainFirst = 0;
-        retainLast = 0;
+        retainFirst = -1;
+        retainLast = -1;
     }
 
     protected synchronized void onExchange(Exchange exchange) {
@@ -1105,8 +1108,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             if (reporter != null) {
                 reporter.process(exchange);
             }
-            // copy the exchange so the mock stores the copy and not the actual exchange
-            Exchange copy = ExchangeHelper.createCopy(exchange, true);
+            Exchange copy = exchange;
+            if (copyOnExchange) {
+                // copy the exchange so the mock stores the copy and not the actual exchange
+                copy = ExchangeHelper.createCopy(exchange, true);
+            }
             performAssertions(exchange, copy);
         } catch (Throwable e) {
             // must catch java.lang.Throwable as AssertionException extends java.lang.Error
@@ -1197,10 +1203,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * @param copy  a copy of the received exchange
      */
     protected void addReceivedExchange(Exchange copy) {
-        if (retainFirst <= 0 && retainLast <= 0) {
+        if (retainFirst == 0 && retainLast == 0) {
+            // do not retain any messages at all
+        } else if (retainFirst < 0 && retainLast < 0) {
             // no limitation so keep them all
             receivedExchanges.add(copy);
         } else {
+            // okay there is some sort of limitations, so figure out what to retain
             if (retainFirst > 0 && counter <= retainFirst) {
                 // store a copy as its within the retain first limitation
                 receivedExchanges.add(copy);
