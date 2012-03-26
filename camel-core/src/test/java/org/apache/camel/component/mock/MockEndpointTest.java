@@ -824,6 +824,149 @@ public class MockEndpointTest extends ContextTestSupport {
         // counter should not be changed this time
         assertEquals(1, counter.get());
     }
+    
+    public void testRetainFirst() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setRetainFirst(5);
+        mock.expectedMessageCount(10);
+        
+        sendMessages(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(10, mock.getReceivedCounter());
+        assertEquals(5, mock.getExchanges().size());
+        assertEquals(5, mock.getReceivedExchanges().size());
+
+        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+    }
+
+    public void testRetainLast() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setRetainLast(5);
+        mock.expectedMessageCount(10);
+
+        sendMessages(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(10, mock.getReceivedCounter());
+        assertEquals(5, mock.getExchanges().size());
+        assertEquals(5, mock.getReceivedExchanges().size());
+
+        assertEquals("<message>5</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals("<message>6</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals("<message>7</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals("<message>8</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals("<message>9</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+    }
+
+    public void testRetainFirstAndLast() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setRetainFirst(5);
+        mock.setRetainLast(5);
+        mock.expectedMessageCount(20);
+
+        sendMessages(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(20, mock.getReceivedCounter());
+        assertEquals(10, mock.getExchanges().size());
+        assertEquals(10, mock.getReceivedExchanges().size());
+
+        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+
+        assertEquals("<message>15</message>", mock.getReceivedExchanges().get(5).getIn().getBody());
+        assertEquals("<message>16</message>", mock.getReceivedExchanges().get(6).getIn().getBody());
+        assertEquals("<message>17</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
+        assertEquals("<message>18</message>", mock.getReceivedExchanges().get(8).getIn().getBody());
+        assertEquals("<message>19</message>", mock.getReceivedExchanges().get(9).getIn().getBody());
+    }
+
+    public void testRetainFirstAndLastOverlap() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setRetainFirst(5);
+        mock.setRetainLast(5);
+        mock.expectedMessageCount(8);
+
+        sendMessages(0, 1, 2, 3, 4, 5, 6, 7);
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(8, mock.getReceivedCounter());
+        assertEquals(8, mock.getExchanges().size());
+        assertEquals(8, mock.getReceivedExchanges().size());
+
+        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals("<message>5</message>", mock.getReceivedExchanges().get(5).getIn().getBody());
+        assertEquals("<message>6</message>", mock.getReceivedExchanges().get(6).getIn().getBody());
+        assertEquals("<message>7</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
+    }
+
+    public void testRetainFirstAndLastNoGap() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setRetainFirst(5);
+        mock.setRetainLast(5);
+        mock.expectedMessageCount(10);
+
+        sendMessages(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(10, mock.getReceivedCounter());
+        assertEquals(10, mock.getExchanges().size());
+        assertEquals(10, mock.getReceivedExchanges().size());
+
+        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals("<message>5</message>", mock.getReceivedExchanges().get(5).getIn().getBody());
+        assertEquals("<message>6</message>", mock.getReceivedExchanges().get(6).getIn().getBody());
+        assertEquals("<message>7</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
+        assertEquals("<message>8</message>", mock.getReceivedExchanges().get(8).getIn().getBody());
+        assertEquals("<message>9</message>", mock.getReceivedExchanges().get(9).getIn().getBody());
+    }
+
+    public void testRetainFirstAndLastSingleGap() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setRetainFirst(5);
+        mock.setRetainLast(5);
+        mock.expectedMessageCount(11);
+
+        sendMessages(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(11, mock.getReceivedCounter());
+        assertEquals(10, mock.getExchanges().size());
+        assertEquals(10, mock.getReceivedExchanges().size());
+
+        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals("<message>6</message>", mock.getReceivedExchanges().get(5).getIn().getBody());
+        assertEquals("<message>7</message>", mock.getReceivedExchanges().get(6).getIn().getBody());
+        assertEquals("<message>8</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
+        assertEquals("<message>9</message>", mock.getReceivedExchanges().get(8).getIn().getBody());
+        assertEquals("<message>10</message>", mock.getReceivedExchanges().get(9).getIn().getBody());
+    }
 
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
