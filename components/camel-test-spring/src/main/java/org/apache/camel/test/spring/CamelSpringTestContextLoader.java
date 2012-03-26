@@ -57,9 +57,37 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringTestContextLoader.class);
     
+    /**
+     *  Modeled after the Spring implementation in {@link AbstractGenericContextLoader},
+     *  this method creates and refreshes the application context while providing for
+     *  processing of additional Camel specific post-refresh actions.  We do not provide the
+     *  pre-post hooks for customization seen in {@link AbstractGenericContextLoader} because
+     *  they probably are unnecessary for 90+% of users.
+     *  <p/>
+     *  For some functionality, we cannot use {@link TestExecutionListener} because we need
+     *  to both produce the desired outcome during application context loading, and also cleanup
+     *  after ourselves even if the test class never executes.  Thus the listeners, which
+     *  only run if the application context is successfully initialized are insufficient to
+     *  provide the behavior described above.
+     */
     @Override
-    public ApplicationContext loadContext(MergedContextConfiguration configuration) throws Exception {
-        return loadContext(configuration.getLocations());
+    public ApplicationContext loadContext(MergedContextConfiguration mergedConfig) throws Exception {
+        
+        Class<?> testClass = getTestClass();
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Loading ApplicationContext for merged context configuration [%s].",
+                mergedConfig));
+        }
+        
+        try {            
+            GenericApplicationContext context = createContext(testClass);
+            context.getEnvironment().setActiveProfiles(mergedConfig.getActiveProfiles());
+            loadBeanDefinitions(context, mergedConfig);
+            return loadContext(context, testClass);
+        } finally {
+            cleanup(testClass);
+        }
     }
     
     /**
@@ -80,47 +108,17 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         
         Class<?> testClass = getTestClass();
         
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Loading ApplicationContext for locations ["
+                    + StringUtils.arrayToCommaDelimitedString(locations) + "].");
+        }
+        
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Loading ApplicationContext for locations ["
-                        + StringUtils.arrayToCommaDelimitedString(locations) + "].");
-            }
-            
             GenericApplicationContext context = createContext(testClass);
-            (new XmlBeanDefinitionReader(context)).loadBeanDefinitions(locations);
-            AnnotationConfigUtils.registerAnnotationConfigProcessors(context);
-            
-            // Pre CamelContext(s) instantiation setup
-            handleDisableJmx(context, testClass);
-
-            // Temporarily disable CamelContext start while the contexts are instantiated.
-            SpringCamelContext.setNoStart(true);
-            context.refresh();
-            context.registerShutdownHook();
-            // Turn CamelContext startup back on since the context's have now been instantiated.
-            SpringCamelContext.setNoStart(false);
-            
-            // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
-            handleProvidesBreakpoint(context, testClass);
-            handleShutdownTimeout(context, testClass);
-            handleMockEndpoints(context, testClass);
-            handleLazyLoadTypeConverters(context, testClass);
-            
-            // CamelContext(s) startup
-            handleCamelContextStartup(context, testClass);
-            
-            return context;
+            loadBeanDefinitions(context, locations);
+            return loadContext(context, testClass);
         } finally {
-            SpringCamelContext.setNoStart(false);
-            
-            if (testClass.isAnnotationPresent(DisableJmx.class)) {
-                if (CamelSpringTestHelper.getOriginalJmxDisabled() == null) {
-                    System.clearProperty(JmxSystemPropertyKeys.DISABLED);
-                } else {
-                    System.setProperty(JmxSystemPropertyKeys.DISABLED,
-                        CamelSpringTestHelper.getOriginalJmxDisabled());
-                }
-            }
+            cleanup(testClass);
         }
     }
 
@@ -130,6 +128,70 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     @Override
     public String getResourceSuffix() {
         return "-context.xml";
+    }
+    
+    /**
+     * Performs the bulk of the Spring application context loading/customization.
+     *
+     * @param context the partially configured context.  The context should have the bean definitions loaded, but nothing else.
+     * @param testClass the test class being executed
+     *
+     * @return the initialized (refreshed) Spring application context
+     *
+     * @throws Exception if there is an error during initialization/customization
+     */
+    protected ApplicationContext loadContext(GenericApplicationContext context, Class<?> testClass)
+        throws Exception {
+            
+        AnnotationConfigUtils.registerAnnotationConfigProcessors(context);
+        
+        // Pre CamelContext(s) instantiation setup
+        handleDisableJmx(context, testClass);
+
+        // Temporarily disable CamelContext start while the contexts are instantiated.
+        SpringCamelContext.setNoStart(true);
+        context.refresh();
+        context.registerShutdownHook();
+        // Turn CamelContext startup back on since the context's have now been instantiated.
+        SpringCamelContext.setNoStart(false);
+        
+        // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
+        handleProvidesBreakpoint(context, testClass);
+        handleShutdownTimeout(context, testClass);
+        handleMockEndpoints(context, testClass);
+        handleLazyLoadTypeConverters(context, testClass);
+        
+        // CamelContext(s) startup
+        handleCamelContextStartup(context, testClass);
+        
+        return context;
+    }
+    
+    /**
+     * Cleanup/restore global state to defaults / pre-test values after the test setup
+     * is complete. 
+     * 
+     * @param testClass the test class being executed
+     */
+    protected void cleanup(Class<?> testClass) {
+        SpringCamelContext.setNoStart(false);
+        
+        if (testClass.isAnnotationPresent(DisableJmx.class)) {
+            if (CamelSpringTestHelper.getOriginalJmxDisabled() == null) {
+                System.clearProperty(JmxSystemPropertyKeys.DISABLED);
+            } else {
+                System.setProperty(JmxSystemPropertyKeys.DISABLED,
+                    CamelSpringTestHelper.getOriginalJmxDisabled());
+            }
+        }
+    }
+    
+    protected void loadBeanDefinitions(GenericApplicationContext context, MergedContextConfiguration mergedConfig) {
+        (new XmlBeanDefinitionReader(context)).loadBeanDefinitions(mergedConfig.getLocations());
+    }
+    
+    protected void loadBeanDefinitions(GenericApplicationContext context, String... locations) {
+        (new XmlBeanDefinitionReader(context)).loadBeanDefinitions(locations);
     }
     
     /**
