@@ -81,7 +81,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     public void testMessageHeadersAfterCxfBeanEndpoint() throws Exception {
         MockEndpoint endpoint = (MockEndpoint)camelContext.getEndpoint("mock:endpointA");
         endpoint.reset();
-        invokeRsService("http://localhost:" + PORT1 + "/customerservice/customers/123",
+        invokeRsService("http://localhost:9000/customerservice/customers/123",
             "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
         endpoint.expectedMessageCount(1);
         endpoint.expectedHeaderReceived("key", "customer");
