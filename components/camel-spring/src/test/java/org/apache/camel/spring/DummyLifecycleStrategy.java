@@ -16,69 +16,13 @@
  */
 package org.apache.camel.spring;
 
-import java.util.Collection;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.Service;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.LifecycleStrategySupport;
 
 /**
  * Dummy LifecycleStrategy for LifecycleStrategy injection test.
  *
  * @version 
  */
-public class DummyLifecycleStrategy implements LifecycleStrategy {
+public class DummyLifecycleStrategy extends LifecycleStrategySupport {
 
-    public void onContextStart(CamelContext camelContext) {
-    }
-
-    public void onContextStop(CamelContext camelContext) {
-    }
-
-    public void onComponentAdd(String s, Component component) {
-    }
-
-    public void onComponentRemove(String s, Component component) {
-    }
-
-    public void onEndpointAdd(Endpoint endpoint) {
-    }
-
-    public void onEndpointRemove(Endpoint endpoint) {
-    }
-
-    public void onServiceAdd(CamelContext camelContext, Service service, Route route) {
-    }
-
-    public void onServiceRemove(CamelContext camelContext, Service service, Route route) {
-    }
-
-    public void onRouteContextCreate(RouteContext routeContext) {
-    }
-
-    public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-    }
-
-    public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-    }
-
-    public void onRoutesRemove(Collection<Route> routes) {
-    }
-
-    public void onRoutesAdd(Collection<Route> routes) {
-    }
-
-    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-                                String sourceId, String routeId, String threadPoolProfileId) {
-    }
-
-    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
-    }
 }

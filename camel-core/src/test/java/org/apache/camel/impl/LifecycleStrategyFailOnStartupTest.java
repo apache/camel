@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
+import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
@@ -46,7 +47,7 @@ public class LifecycleStrategyFailOnStartupTest extends TestSupport {
     private static class MyLifecycleStrategy extends DummyLifecycleStrategy {
 
         @Override
-        public void onContextStart(CamelContext context) {
+        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
             throw new IllegalArgumentException("Forced");
         }
     }

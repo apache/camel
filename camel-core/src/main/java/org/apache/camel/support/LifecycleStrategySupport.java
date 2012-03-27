@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.support;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
@@ -29,78 +27,87 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.LifecycleStrategySupport;
 
 /**
- * @version 
+ * A useful base class for {@link LifecycleStrategy} implementations.
  */
-public class DummyLifecycleStrategy extends LifecycleStrategySupport {
+public abstract class LifecycleStrategySupport implements LifecycleStrategy {
 
-    private List<String> events = new ArrayList<String>();
-
+    @Override
     public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-        events.add("onContextStart");
+        // noop
     }
 
+    @Override
     public void onContextStop(CamelContext context) {
-        events.add("onContextStop");
+        // noop
     }
 
+    @Override
     public void onComponentAdd(String name, Component component) {
-        events.add("onComponentAdd");
+        // noop
     }
 
+    @Override
     public void onComponentRemove(String name, Component component) {
-        events.add("onComponentRemove");
+        // noop
     }
 
+    @Override
     public void onEndpointAdd(Endpoint endpoint) {
-        events.add("onEndpointAdd");
+        // noop
     }
 
+    @Override
     public void onEndpointRemove(Endpoint endpoint) {
-        events.add("onEndpointRemove");
+        // noop
     }
 
+    @Override
     public void onServiceAdd(CamelContext context, Service service, Route route) {
-        events.add("onServiceAdd");
+        // noop
     }
 
+    @Override
     public void onServiceRemove(CamelContext context, Service service, Route route) {
-        events.add("onServiceRemove");
+        // noop
     }
 
+    @Override
     public void onRoutesAdd(Collection<Route> routes) {
-        events.add("onRoutesAdd");
+        // noop
     }
 
+    @Override
     public void onRoutesRemove(Collection<Route> routes) {
-        events.add("onRoutesRemove");
+        // noop
     }
 
+    @Override
     public void onRouteContextCreate(RouteContext routeContext) {
-        events.add("onRouteContextCreate");
+        // noop
     }
 
+    @Override
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        events.add("onErrorHandlerAdd");
+        // noop
     }
 
+    @Override
     public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        events.add("onErrorHandlerRemove");
+        // noop
     }
 
+    @Override
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                                 String sourceId, String routeId, String threadPoolProfileId) {
-        events.add("onThreadPoolAdd");
+        // noop
     }
 
+    @Override
     public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
-        events.add("onThreadPoolRemove");
-    }
-
-    public List<String> getEvents() {
-        return events;
+        // noop
     }
 }
