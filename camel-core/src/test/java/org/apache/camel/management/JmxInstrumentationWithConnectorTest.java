@@ -16,7 +16,11 @@
  */
 package org.apache.camel.management;
 
-import java.util.Random;
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
+import java.util.NoSuchElementException;
+
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -50,14 +54,14 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     protected void setUp() throws Exception {
         sleepForConnection = 3000;
 
-        int port = 30000 + new Random().nextInt(10000);
+        int port = getNextAvailable(9500);
         log.info("Using port " + port);
         url = "service:jmx:rmi:///jndi/rmi://localhost:" + port + "/jmxrmi/camel";
 
         // need to explicit set it to false to use non-platform mbs
         System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "false");
         System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
-        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "" + port);
+        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, String.valueOf(port));
         super.setUp();
     }
 
@@ -83,5 +87,36 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
             mbsc = clientConnector.getMBeanServerConnection();
         }
         return mbsc;
+    }
+    
+    private synchronized int getNextAvailable(int fromPort) {
+        ServerSocket ss = null;
+        DatagramSocket ds = null;
+        
+        for (int port = fromPort; port <= 49151; port++) {
+            try {
+                ss = new ServerSocket(port);
+                ss.setReuseAddress(true);
+                ds = new DatagramSocket(port);
+                ds.setReuseAddress(true);
+                return port;
+            } catch (IOException e) {
+                // Do nothing
+            } finally {
+                if (ds != null) {
+                    ds.close();
+                }
+
+                if (ss != null) {
+                    try {
+                        ss.close();
+                    } catch (IOException e) {
+                        /* should not be thrown */
+                    }
+                }
+            }
+        }
+
+        throw new NoSuchElementException("Could not find an available port above " + fromPort);
     }
 }
