@@ -77,6 +77,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <systemProperties>
             <property>
               <name>derby.stream.error.file</name>

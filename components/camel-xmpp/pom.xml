@@ -75,6 +75,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <systemProperties>
             <property>
               <name>xmpp.enable</name>

@@ -381,6 +381,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
               <forkMode>pertest</forkMode>
+              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
               <includes>
                   <include>**/*Test.*</include>
               </includes>
@@ -463,10 +464,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
+                        <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                         <!--
                             when the local repo location has been specified, we need to pass
                             on this information to PAX mvn url
                         -->
+                        
                         <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
                         <includes>
                             <include>**/*Test.*</include>

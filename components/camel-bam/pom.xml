@@ -87,6 +87,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>always</forkMode>
+					<forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
 				</configuration>
 			</plugin>
 		</plugins>

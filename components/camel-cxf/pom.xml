@@ -226,6 +226,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <forkMode>once</forkMode>
+          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <reportFormat>brief</reportFormat>
           <useFile>false</useFile>
           <runOrder>alphabetical</runOrder>
