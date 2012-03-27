@@ -21,26 +21,19 @@ import java.util.Map;
 import org.apache.camel.component.cdi.util.BeanProvider;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * CdiBeanRegistry used by Camel to perform lookup into the
- * Cdi BeanManager. The BeanManager must be passed as argument
- * to the CdiRegistry constructor.
+ * CdiBeanRegistry used by Camel to perform lookup into the CDI {@link javax.enterprise.inject.spi.BeanManager}.
  */
 public class CdiBeanRegistry implements Registry {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final static Logger LOG = LoggerFactory.getLogger(CdiBeanRegistry.class);
 
-    /**
-     * @see org.apache.camel.spi.Registry#lookup(java.lang.String)
-     */
     @Override
     public Object lookup(final String name) {
         ObjectHelper.notEmpty(name, "name");
-        log.trace("Looking up bean using name = [{}] in CDI registry ...", name);
+        LOG.trace("Looking up bean {}", name);
 
         return BeanProvider.getContextualReference(name, true);
     }
@@ -49,12 +42,15 @@ public class CdiBeanRegistry implements Registry {
     public <T> T lookup(final String name, final Class<T> type) {
         ObjectHelper.notEmpty(name, "name");
         ObjectHelper.notNull(type, "type");
-        return type.cast(lookup(name));
+
+        LOG.trace("Looking up bean {} of type {}", name, type);
+        return BeanProvider.getContextualReference(name, true, type);
     }
 
     @Override
     public <T> Map<String, T> lookupByType(final Class<T> type) {
         ObjectHelper.notNull(type, "type");
+        LOG.trace("Looking up beans of type {}", type);
         return BeanProvider.getContextualNamesReferences(type, true, true);
     }
 

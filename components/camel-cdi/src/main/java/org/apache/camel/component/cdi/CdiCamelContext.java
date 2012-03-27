@@ -19,8 +19,7 @@ package org.apache.camel.component.cdi;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * CDI Camel Context class
- * Register the CDI BeanManager to lookup CDI Beans
+ * CDI {@link org.apache.camel.CamelContext} class.
  */
 public class CdiCamelContext extends DefaultCamelContext {
 
