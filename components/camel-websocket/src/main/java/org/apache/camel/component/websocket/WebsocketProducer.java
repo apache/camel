@@ -32,7 +32,6 @@ public class WebsocketProducer extends DefaultProducer {
         super(endpoint);
         this.store = store;
         this.sendToAll = endpoint.getSendToAll();
-        System.out.println("Configured with " + sendToAll);
     }
 
     @Override

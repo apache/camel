@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.SessionManager;
 import org.eclipse.jetty.server.session.HashSessionManager;
@@ -71,6 +72,19 @@ public class WebsocketComponent extends DefaultComponent {
         return staticResources;
     }
 
+    /**
+     * Set a resource path for static resources (such as .html files etc).
+     * <p/>
+     * The resources can be loaded from classpath, if you prefix with <tt>classpath:</tt>,
+     * otherwise the resources is loaded from file system or from JAR files.
+     * <p/>
+     * For example to load from root classpath use <tt>classpath:.</tt>, or
+     * <tt>classpath:WEB-INF/static</tt>
+     * <p/>
+     * If not configured (eg <tt>null</tt>) then no static resource is in use.
+     *
+     * @param staticResources the base path
+     */
     public void setStaticResources(String staticResources) {
         this.staticResources = staticResources;
     }
@@ -102,7 +116,14 @@ public class WebsocketComponent extends DefaultComponent {
         context.setSessionHandler(sh);
 
         if (home != null) {
-            context.setResourceBase(home);
+            if (home.startsWith("classpath:")) {
+                home = ObjectHelper.after(home, "classpath:");
+                LOG.debug("Using base resource from classpath: {}", home);
+                context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), home));
+            } else {
+                LOG.debug("Using base resource: {}", home);
+                context.setResourceBase(home);
+            }
             DefaultServlet defaultServlet = new DefaultServlet();
             ServletHolder holder = new ServletHolder(defaultServlet);
 

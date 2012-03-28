@@ -92,10 +92,11 @@ public class TwitterWebSocketRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        // setup Camel web-socket component on port 9090
+        // setup Camel web-socket component on the port we have defined
         WebsocketComponent wc = getContext().getComponent("websocket", WebsocketComponent.class);
         wc.setPort(port);
-        wc.setStaticResources("src/main/resources");
+        // we can serve static resources from the classpath: or file: system
+        wc.setStaticResources("classpath:.");
 
         // setup Twitter component
         TwitterComponent tc = getContext().getComponent("twitter", TwitterComponent.class);
