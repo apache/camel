@@ -51,7 +51,6 @@ public class WebsocketComponentTest {
     private static final String PATH_ONE = "foo";
     private static final String PATH_TWO = "bar";
     private static final String PATH_SPEC_ONE = "/" + PATH_ONE + "/*";
-    private static final String PATH_SPEC_TWO = "/" + PATH_TWO + "/*";
 
     @Mock
     private WebsocketConsumer consumer;

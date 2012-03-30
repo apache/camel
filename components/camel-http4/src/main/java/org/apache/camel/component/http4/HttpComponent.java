@@ -247,6 +247,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return port;
     }
     
+    @SuppressWarnings("deprecation")
     protected void registerPort(boolean secure, X509HostnameVerifier x509HostnameVerifier, int port, SSLContextParameters sslContextParams) throws Exception {
         SchemeRegistry registry = clientConnectionManager.getSchemeRegistry();
         if (secure) {

@@ -88,7 +88,7 @@ public class FopProducer extends DefaultProducer {
     private void setEncryptionParameters(FOUserAgent userAgent, Map<String, Object> headers)
         throws Exception {
         Map<String, Object> encryptionParameters = IntrospectionSupport
-                .extractProperties(headers, FopConstants.CAMEL_FOP_ENCRYPT);
+            .extractProperties(headers, FopConstants.CAMEL_FOP_ENCRYPT);
         if (!encryptionParameters.isEmpty()) {
             PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
             IntrospectionSupport.setProperties(encryptionParams, encryptionParameters);

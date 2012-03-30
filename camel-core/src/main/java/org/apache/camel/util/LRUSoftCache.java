@@ -50,6 +50,7 @@ import java.util.Set;
  * @see LRUCache
  */
 public class LRUSoftCache<K, V> extends LRUCache<K, V> {
+    private static final long serialVersionUID = 1L;
 
     public LRUSoftCache(int maximumCacheSize) {
         super(maximumCacheSize);

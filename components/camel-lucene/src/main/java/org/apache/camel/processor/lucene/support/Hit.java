@@ -19,6 +19,8 @@ package org.apache.camel.processor.lucene.support;
 import java.io.Serializable;
 
 public class Hit implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int hitLocation;
     private float score;
     private String data;

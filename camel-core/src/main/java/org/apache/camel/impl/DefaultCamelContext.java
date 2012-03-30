@@ -133,6 +133,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@SuppressWarnings("deprecation")
 public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, SuspendableService {
     private final transient Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
@@ -2078,7 +2079,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     /**
      * Lazily create a default implementation
      */
-    @SuppressWarnings("deprecation")
     protected TypeConverter createTypeConverter() {
         BaseTypeConverterRegistry answer;
         if (isLazyLoadTypeConverters()) {

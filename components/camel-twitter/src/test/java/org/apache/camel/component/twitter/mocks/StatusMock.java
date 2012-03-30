@@ -29,6 +29,7 @@ import twitter4j.URLEntity;
 import twitter4j.User;
 import twitter4j.UserMentionEntity;
 
+@SuppressWarnings("deprecation")
 public class StatusMock implements Status {
 
     private static final long serialVersionUID = 1L;
@@ -129,7 +130,6 @@ public class StatusMock implements Status {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public Annotations getAnnotations() {
         return null;
     }

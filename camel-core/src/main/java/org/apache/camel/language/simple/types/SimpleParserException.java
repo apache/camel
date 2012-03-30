@@ -23,7 +23,7 @@ import org.apache.camel.RuntimeCamelException;
  * in the input.
  */
 public class SimpleParserException extends RuntimeCamelException {
-
+    private static final long serialVersionUID = 1L;
     private final int index;
 
     public SimpleParserException(String message, int index) {

@@ -21,16 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 
 public class JdbcGeneratedKeysTest extends JdbcRouteTest {
-
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint mock;
 
     @Test
     @SuppressWarnings("unchecked")
@@ -141,7 +136,7 @@ public class JdbcGeneratedKeysTest extends JdbcRouteTest {
         exchange.getIn().setHeader(JdbcConstants.JDBC_GENERATED_COLUMNS, new Object[]{});
 
         // now we send the exchange to the endpoint, and receives the response from Camel
-        Exchange out = template.send(endpoint, exchange);
+        template.send(endpoint, exchange);
 
         assertTrue(exchange.isFailed());
     }

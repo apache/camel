@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
  * @version 
  */
 public class ClosedCorrelationKeyException extends CamelExchangeException {
+    private static final long serialVersionUID = 1L;
     private final String correlationKey;
 
     public ClosedCorrelationKeyException(String correlationKey, Exchange exchange) {

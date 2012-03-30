@@ -22,6 +22,7 @@ import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
 
 public class WebsocketComponentServlet extends WebSocketServlet {
+    private static final long serialVersionUID = 1L;
 
     private final NodeSynchronization sync;
     private WebsocketConsumer consumer;
