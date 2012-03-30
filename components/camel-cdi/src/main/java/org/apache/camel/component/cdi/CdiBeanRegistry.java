@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * CdiBeanRegistry used by Camel to perform lookup into the CDI {@link javax.enterprise.inject.spi.BeanManager}.
  */
 public class CdiBeanRegistry implements Registry {
-    private final static Logger LOG = LoggerFactory.getLogger(CdiBeanRegistry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CdiBeanRegistry.class);
 
     @Override
     public Object lookup(final String name) {

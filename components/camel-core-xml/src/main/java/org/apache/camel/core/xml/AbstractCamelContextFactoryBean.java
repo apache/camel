@@ -147,46 +147,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // and enable lazy loading of type converters if applicable
         initLazyLoadTypeConverteres();
 
-        ClassResolver classResolver = getBeanForType(ClassResolver.class);
-        if (classResolver != null) {
-            LOG.info("Using custom ClassResolver: " + classResolver);
-            getContext().setClassResolver(classResolver);
-        }
-        FactoryFinderResolver factoryFinderResolver = getBeanForType(FactoryFinderResolver.class);
-        if (factoryFinderResolver != null) {
-            LOG.info("Using custom FactoryFinderResolver: " + factoryFinderResolver);
-            getContext().setFactoryFinderResolver(factoryFinderResolver);
-        }
-        ExecutorServiceManager executorServiceStrategy = getBeanForType(ExecutorServiceManager.class);
-        if (executorServiceStrategy != null) {
-            LOG.info("Using custom ExecutorServiceStrategy: " + executorServiceStrategy);
-            getContext().setExecutorServiceManager(executorServiceStrategy);
-        }
-        ThreadPoolFactory threadPoolFactory = getBeanForType(ThreadPoolFactory.class);
-        if (threadPoolFactory != null) {
-            LOG.info("Using custom ThreadPoolFactory: " + threadPoolFactory);
-            getContext().getExecutorServiceManager().setThreadPoolFactory(threadPoolFactory);
-        }
-        ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
-        if (processorFactory != null) {
-            LOG.info("Using custom ProcessorFactory: " + processorFactory);
-            getContext().setProcessorFactory(processorFactory);
-        }
-        Debugger debugger = getBeanForType(Debugger.class);
-        if (debugger != null) {
-            LOG.info("Using custom Debugger: " + debugger);
-            getContext().setDebugger(debugger);
-        }
-        UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);
-        if (uuidGenerator != null) {
-            LOG.info("Using custom UuidGenerator: " + uuidGenerator);
-            getContext().setUuidGenerator(uuidGenerator);
-        }
-        NodeIdFactory nodeIdFactory = getBeanForType(NodeIdFactory.class);
-        if (nodeIdFactory != null) {
-            LOG.info("Using custom NodeIdFactory: " + nodeIdFactory);
-            getContext().setNodeIdFactory(nodeIdFactory);
-        }
+        setupCustomServices();
 
         // set the custom registry if defined
         initCustomRegistry(getContext());
@@ -761,4 +722,46 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         return packages.toArray(new String[packages.size()]);
     }
 
+    private void setupCustomServices() {
+        ClassResolver classResolver = getBeanForType(ClassResolver.class);
+        if (classResolver != null) {
+            LOG.info("Using custom ClassResolver: " + classResolver);
+            getContext().setClassResolver(classResolver);
+        }
+        FactoryFinderResolver factoryFinderResolver = getBeanForType(FactoryFinderResolver.class);
+        if (factoryFinderResolver != null) {
+            LOG.info("Using custom FactoryFinderResolver: " + factoryFinderResolver);
+            getContext().setFactoryFinderResolver(factoryFinderResolver);
+        }
+        ExecutorServiceManager executorServiceStrategy = getBeanForType(ExecutorServiceManager.class);
+        if (executorServiceStrategy != null) {
+            LOG.info("Using custom ExecutorServiceStrategy: " + executorServiceStrategy);
+            getContext().setExecutorServiceManager(executorServiceStrategy);
+        }
+        ThreadPoolFactory threadPoolFactory = getBeanForType(ThreadPoolFactory.class);
+        if (threadPoolFactory != null) {
+            LOG.info("Using custom ThreadPoolFactory: " + threadPoolFactory);
+            getContext().getExecutorServiceManager().setThreadPoolFactory(threadPoolFactory);
+        }
+        ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
+        if (processorFactory != null) {
+            LOG.info("Using custom ProcessorFactory: " + processorFactory);
+            getContext().setProcessorFactory(processorFactory);
+        }
+        Debugger debugger = getBeanForType(Debugger.class);
+        if (debugger != null) {
+            LOG.info("Using custom Debugger: " + debugger);
+            getContext().setDebugger(debugger);
+        }
+        UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);
+        if (uuidGenerator != null) {
+            LOG.info("Using custom UuidGenerator: " + uuidGenerator);
+            getContext().setUuidGenerator(uuidGenerator);
+        }
+        NodeIdFactory nodeIdFactory = getBeanForType(NodeIdFactory.class);
+        if (nodeIdFactory != null) {
+            LOG.info("Using custom NodeIdFactory: " + nodeIdFactory);
+            getContext().setNodeIdFactory(nodeIdFactory);
+        }
+    }
 }
