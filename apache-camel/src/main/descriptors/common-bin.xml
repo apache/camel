@@ -90,6 +90,7 @@
         <include>org.apache.camel:camel-jmx</include>
         <include>org.apache.camel:camel-josql</include>
         <include>org.apache.camel:camel-jpa</include>
+        <include>org.apache.camel:camel-jsch</include>
         <include>org.apache.camel:camel-jt400</include>
         <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-jxpath</include>
