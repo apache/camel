@@ -41,7 +41,8 @@ public class ZipDataFormat implements DataFormat {
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, graph);
+        // ask for a mandatoy type converter to avoid a possible NPE beforehand as we do copy from the InputStream
+        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
 
         DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
         try {

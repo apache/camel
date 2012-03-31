@@ -23,9 +23,11 @@ import java.util.zip.Inflater;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.DataFormat;
 
 /**
  * Unit test of the zip data format.
@@ -48,6 +50,17 @@ public class ZipDataFormatTest extends ContextTestSupport {
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+
+    public void testMarshalMandatoryConversionFailed() throws Exception {
+        DataFormat dataFormat = new ZipDataFormat();
+
+        try {
+            dataFormat.marshal(new DefaultExchange(new DefaultCamelContext()), new Object(), new ByteArrayOutputStream());
+            fail("Should have thrown an exception");
+        } catch (NoTypeConversionAvailableException e) {
+            // expected
+        }
     }
 
     private void sendText() throws Exception {
