@@ -142,7 +142,7 @@
                     <childDelegation>false</childDelegation>
                     <useFile>true</useFile>
                     <forkMode>pertest</forkMode>
-                    <forkedProcessTimeoutInSeconds>1200</forkedProcessTimeoutInSeconds>
+                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
                 </configuration>
             </plugin>
 
