@@ -428,6 +428,12 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.headers.foo}", "abc");
     }
 
+    public void testHeadersWithBracket() throws Exception {
+        assertExpression("headers[foo]", "abc");
+        assertExpression("${headers[foo]}", "abc");
+        assertExpression("${in.headers[foo]}", "abc");
+    }
+
     public void testIsInstanceOfEmptyBody() throws Exception {
         // set an empty body
         exchange.getIn().setBody(null);
