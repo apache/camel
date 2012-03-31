@@ -97,6 +97,7 @@
         <include>org.apache.camel:camel-kestrel</include>
         <include>org.apache.camel:camel-krati</include>
         <include>org.apache.camel:camel-ldap</include>
+        <include>org.apache.camel:camel-leveldb</include>
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>

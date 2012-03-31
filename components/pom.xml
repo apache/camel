@@ -107,6 +107,7 @@
     <module>camel-kestrel</module>
     <module>camel-krati</module>
     <module>camel-ldap</module>
+    <module>camel-leveldb</module>
     <module>camel-lucene</module>
     <module>camel-mail</module>
     <module>camel-mina</module>
