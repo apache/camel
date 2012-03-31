@@ -486,7 +486,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expects(new Runnable() {
             public void run() {
                 for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                    Exchange exchange = getReceivedExchanges().get(i);
+                    Exchange exchange = getReceivedExchange(i);
                     for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
                         String key = entry.getKey();
                         Object expectedValue = entry.getValue();
@@ -526,7 +526,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expects(new Runnable() {
             public void run() {
                 for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                    Exchange exchange = getReceivedExchanges().get(i);
+                    Exchange exchange = getReceivedExchange(i);
                     for (Map.Entry<String, Object> entry : expectedPropertyValues.entrySet()) {
                         String key = entry.getKey();
                         Object expectedValue = entry.getValue();
@@ -560,7 +560,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expects(new Runnable() {
             public void run() {
                 for (int i = 0; i < expectedBodyValues.size(); i++) {
-                    Exchange exchange = getReceivedExchanges().get(i);
+                    Exchange exchange = getReceivedExchange(i);
                     assertTrue("No exchange received for counter: " + i, exchange != null);
 
                     Object expectedBody = expectedBodyValues.get(i);
@@ -627,7 +627,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expectedMessageCount(1);
         final AssertionClause clause = new AssertionClause(this) {
             public void run() {
-                Exchange exchange = getReceivedExchanges().get(0);
+                Exchange exchange = getReceivedExchange(0);
                 assertTrue("No exchange received for counter: " + 0, exchange != null);
 
                 Object actualBody = exchange.getIn().getBody();
@@ -654,7 +654,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             public void run() {
                 Set<Object> actualBodyValuesSet = new HashSet<Object>(actualBodyValues);
                 for (int i = 0; i < expectedBodyValues.size(); i++) {
-                    Exchange exchange = getReceivedExchanges().get(i);
+                    Exchange exchange = getReceivedExchange(i);
                     assertTrue("No exchange received for counter: " + i, exchange != null);
 
                     Object expectedBody = expectedBodyValues.get(i);
@@ -918,7 +918,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     public Exchange assertExchangeReceived(int index) {
         int count = getReceivedCounter();
         assertTrue("Not enough messages received. Was: " + count, count > index);
-        return getReceivedExchanges().get(index);
+        return getReceivedExchange(index);
     }
 
     // Properties
@@ -1034,7 +1034,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * but there is only the first 10 {@link Exchange}s in the {@link #getExchanges()} and
      * {@link #getReceivedExchanges()} methods.
      * <p/>
-     * When using this method, then some of the other expecation methods is not supported,
+     * When using this method, then some of the other expectation methods is not supported,
      * for example the {@link #expectedBodiesReceived(Object...)} sets a expectation on the first
      * number of bodies received.
      * <p/>
@@ -1062,7 +1062,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * but there is only the last 20 {@link Exchange}s in the {@link #getExchanges()} and
      * {@link #getReceivedExchanges()} methods.
      * <p/>
-     * When using this method, then some of the other expecation methods is not supported,
+     * When using this method, then some of the other expectation methods is not supported,
      * for example the {@link #expectedBodiesReceived(Object...)} sets a expectation on the first
      * number of bodies received.
      * <p/>
@@ -1301,4 +1301,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     public boolean isLenientProperties() {
         return true;
     }
+
+    private Exchange getReceivedExchange(int index) {
+        if (index <= receivedExchanges.size() - 1) {
+            return receivedExchanges.get(index);
+        } else {
+            return null;
+        }
+    }
+
 }
