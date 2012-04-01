@@ -59,10 +59,10 @@ public class GsonDataFormat implements DataFormat {
      * unmarshal type and {@link ExclusionStrategy}
      *
      * @param unmarshalType the custom unmarshal type
-     * @param exclusionStrategy the custom ExclusionStrategy
+     * @param exclusionStrategies one or more custom ExclusionStrategy implementations
      */
-    public GsonDataFormat(Class<?> unmarshalType, ExclusionStrategy exclusionStrategy) {
-        this(createGsonWithExclusionStrategy(exclusionStrategy), unmarshalType);
+    public GsonDataFormat(Class<?> unmarshalType, ExclusionStrategy... exclusionStrategies) {
+        this(createGsonWithExclusionStrategy(exclusionStrategies), unmarshalType);
     }
 
     /**
@@ -76,12 +76,8 @@ public class GsonDataFormat implements DataFormat {
         this.unmarshalType = unmarshalType;
     }
 
-    private static Gson createGsonWithExclusionStrategy(ExclusionStrategy exclusionStrategy) {
-        if (exclusionStrategy != null) {
-            return new GsonBuilder().setExclusionStrategies(exclusionStrategy).create();
-        } else {
-            return new Gson();
-        }
+    private static Gson createGsonWithExclusionStrategy(ExclusionStrategy... exclusionStrategies) {
+        return exclusionStrategies != null ? new GsonBuilder().setExclusionStrategies(exclusionStrategies).create() : new Gson();
     }
 
     @Override
