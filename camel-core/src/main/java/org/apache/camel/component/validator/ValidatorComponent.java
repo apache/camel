@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <a href="http://camel.apache.org/validator.html">Validator Component</a>
+ * The <a href="http://camel.apache.org/validation.html">Validator Component</a>
  * for validating XML against some schema
  */
 public class ValidatorComponent extends DefaultComponent {
