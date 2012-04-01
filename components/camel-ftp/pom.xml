@@ -122,7 +122,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+          <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
           <systemPropertyVariables>
             <ftp.enable>${ftp.enable}</ftp.enable>
             <ftp.server>${ftp.url}</ftp.server>
