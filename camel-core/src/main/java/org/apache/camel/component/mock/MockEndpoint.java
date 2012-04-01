@@ -1176,11 +1176,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             }
             LOG.debug(msg);
         }
-        ++counter;
 
         // record timestamp when exchange was received
         copy.setProperty(Exchange.RECEIVED_TIMESTAMP, new Date());
+
+        // add a copy of the received exchange
         addReceivedExchange(copy);
+        // and then increment counter after adding received exchange
+        ++counter;
 
         Processor processor = processors.get(getReceivedCounter()) != null
                 ? processors.get(getReceivedCounter()) : defaultProcessor;
@@ -1210,7 +1213,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             receivedExchanges.add(copy);
         } else {
             // okay there is some sort of limitations, so figure out what to retain
-            if (retainFirst > 0 && counter <= retainFirst) {
+            if (retainFirst > 0 && counter < retainFirst) {
                 // store a copy as its within the retain first limitation
                 receivedExchanges.add(copy);
             } else if (retainLast > 0) {
