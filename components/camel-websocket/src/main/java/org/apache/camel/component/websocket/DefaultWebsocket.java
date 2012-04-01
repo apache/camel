@@ -25,8 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultWebsocket implements WebSocket, OnTextMessage, Serializable {
-
+    private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(DefaultWebsocket.class);
+
     private final WebsocketConsumer consumer;
     private final NodeSynchronization sync;
     private Connection connection;

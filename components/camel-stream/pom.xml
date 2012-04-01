@@ -69,6 +69,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
 			          <excludes>
 			            <!-- TODO FIXME ASAP -->
 				        <!-- need to fix this issue when we rewrite the stream cache-->

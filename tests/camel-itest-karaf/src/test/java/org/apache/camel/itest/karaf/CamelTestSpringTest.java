@@ -14,9 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.itest.karaf;
 
-/**
- * mainly copied from deltaspike to avoid to bring to whole
- * package when only 2 classes are useful.
- */
-package org.apache.camel.component.cdi.util;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+
+@RunWith(JUnit4TestRunner.class)
+@Ignore("Requires Spring 3.1")
+public class CamelTestSpringTest extends AbstractFeatureTest {
+
+    public static final String COMPONENT = "test-spring";
+
+    @Test
+    public void test() throws Exception {
+        // noop
+    }
+
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
+    }
+
+}

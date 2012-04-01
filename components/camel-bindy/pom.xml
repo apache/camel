@@ -78,6 +78,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <childDelegation>false</childDelegation>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                     <useFile>true</useFile>
                     <forkMode>once</forkMode>
                     <excludes>

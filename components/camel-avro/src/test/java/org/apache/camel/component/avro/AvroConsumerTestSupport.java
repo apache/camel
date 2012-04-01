@@ -18,20 +18,17 @@
 package org.apache.camel.component.avro;
 
 import java.io.IOException;
-import junit.framework.Assert;
 
+import junit.framework.Assert;
 import org.apache.avro.Protocol;
 import org.apache.avro.ipc.Requestor;
 import org.apache.avro.ipc.Transceiver;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AvroConsumerTestSupport extends AvroTestSupport {
@@ -42,13 +39,8 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
 
     protected abstract void initializeTranceiver() throws IOException;
 
-    @Before
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    protected void tearDown() throws Exception {
+    @Override
+    public void tearDown() throws Exception {
         super.tearDown();
         if (transceiver != null) {
             transceiver.close();

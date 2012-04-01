@@ -22,6 +22,7 @@ package org.apache.camel.spring.spi;
  * @version 
  */
 public class TransactionRollbackException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
     public TransactionRollbackException() {
     }

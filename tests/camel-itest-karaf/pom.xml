@@ -185,16 +185,12 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                             <!--
                                 when the local repo location has been specified, we need to pass
                                 on this information to PAX mvn url
                             -->
                             <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
                             <excludes>
                                 <!-- TODO: temporary disable unit test to let TC not hang -->
                                 <exclude>**/*Test.*</exclude>

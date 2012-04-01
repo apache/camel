@@ -17,21 +17,14 @@
 package org.apache.camel.impl;
 
 import java.util.Collection;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.LifecycleStrategySupport;
 
 /**
  *
@@ -101,7 +94,7 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         };
     }
 
-    private class MyStrategy implements LifecycleStrategy {
+    private class MyStrategy extends LifecycleStrategySupport {
 
         private AtomicInteger contextStartCounter = new AtomicInteger();
         private AtomicInteger removeCounter = new AtomicInteger();
@@ -112,60 +105,8 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         }
 
         @Override
-        public void onContextStop(CamelContext context) {
-        }
-
-        @Override
-        public void onComponentAdd(String name, Component component) {
-        }
-
-        @Override
-        public void onComponentRemove(String name, Component component) {
-        }
-
-        @Override
-        public void onEndpointAdd(Endpoint endpoint) {
-        }
-
-        @Override
-        public void onEndpointRemove(Endpoint endpoint) {
-        }
-
-        @Override
-        public void onServiceAdd(CamelContext context, Service service, Route route) {
-        }
-
-        @Override
-        public void onServiceRemove(CamelContext context, Service service, Route route) {
-        }
-
-        @Override
-        public void onRoutesAdd(Collection<Route> routes) {
-        }
-
-        @Override
         public void onRoutesRemove(Collection<Route> routes) {
             removeCounter.incrementAndGet();
-        }
-
-        @Override
-        public void onRouteContextCreate(RouteContext routeContext) {
-        }
-
-        @Override
-        public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        }
-
-        @Override
-        public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        }
-
-        @Override
-        public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId, String threadPoolProfileId) {
-        }
-
-        @Override
-        public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
         }
 
         public int getContextStartCounter() {

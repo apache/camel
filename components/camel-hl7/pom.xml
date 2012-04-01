@@ -104,6 +104,7 @@
                     <childDelegation>false</childDelegation>
                     <useFile>true</useFile>
                     <forkMode>once</forkMode>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                     <includes>
                         <include>**/*Test.*</include>
                     </includes>

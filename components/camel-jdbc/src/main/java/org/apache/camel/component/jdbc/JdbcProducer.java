@@ -70,8 +70,6 @@ public class JdbcProducer extends DefaultProducer {
     private void processingSqlBySettingAutoCommit(Exchange exchange) throws Exception {
         String sql = exchange.getIn().getBody(String.class);
         Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
         Boolean autoCommit = null;
         try {
             conn = dataSource.getConnection();
@@ -80,21 +78,8 @@ public class JdbcProducer extends DefaultProducer {
                 conn.setAutoCommit(false);
             }
 
-            stmt = conn.createStatement();
+            createAndExecuteSqlStatement(exchange, sql, conn);
 
-            if (parameters != null && !parameters.isEmpty()) {
-                IntrospectionSupport.setProperties(stmt, parameters);
-            }
-
-            LOG.debug("Executing JDBC statement: {}", sql);
-
-            if (stmt.execute(sql)) {
-                rs = stmt.getResultSet();
-                setResultSet(exchange, rs);
-            } else {
-                int updateCount = stmt.getUpdateCount();
-                exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
-            }
             conn.commit();
         } catch (Exception e) {
             try {
@@ -102,12 +87,10 @@ public class JdbcProducer extends DefaultProducer {
                     conn.rollback();
                 }
             } catch (SQLException sqle) {
-                LOG.warn("Error on jdbc component rollback: " + sqle, sqle);
+                LOG.warn("Error occurred during jdbc rollback. This exception will be ignored.", sqle);
             }
             throw e;
         } finally {
-            closeQuietly(rs);
-            closeQuietly(stmt);
             resetAutoCommit(conn, autoCommit);
             closeQuietly(conn);
         }
@@ -116,11 +99,18 @@ public class JdbcProducer extends DefaultProducer {
     private void processingSqlWithoutSettingAutoCommit(Exchange exchange) throws Exception {
         String sql = exchange.getIn().getBody(String.class);
         Connection conn = null;
+        try {
+            conn = dataSource.getConnection();
+            createAndExecuteSqlStatement(exchange, sql, conn);
+        } finally {
+            closeQuietly(conn);
+        }
+    }
+
+    private void createAndExecuteSqlStatement(Exchange exchange, String sql, Connection conn) throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            conn = dataSource.getConnection();
-
             stmt = conn.createStatement();
 
             if (parameters != null && !parameters.isEmpty()) {
@@ -129,17 +119,41 @@ public class JdbcProducer extends DefaultProducer {
 
             LOG.debug("Executing JDBC statement: {}", sql);
 
-            if (stmt.execute(sql)) {
+            Boolean shouldRetrieveGeneratedKeys =
+                    exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+
+            boolean stmtExecutionResult;
+            if (shouldRetrieveGeneratedKeys) {
+                Object expectedGeneratedColumns = exchange.getIn().getHeader(JdbcConstants.JDBC_GENERATED_COLUMNS);
+                if (expectedGeneratedColumns == null) {
+                    stmtExecutionResult = stmt.execute(sql, Statement.RETURN_GENERATED_KEYS);
+                } else if (expectedGeneratedColumns instanceof String[]) {
+                    stmtExecutionResult = stmt.execute(sql, (String[]) expectedGeneratedColumns);
+                } else if (expectedGeneratedColumns instanceof int[]) {
+                    stmtExecutionResult = stmt.execute(sql, (int[]) expectedGeneratedColumns);
+                } else {
+                    throw new IllegalArgumentException(
+                            "Header specifying expected returning columns isn't an instance of String[] or int[] but "
+                            + expectedGeneratedColumns.getClass());
+                }
+            } else {
+                stmtExecutionResult = stmt.execute(sql);
+            }
+
+            if (stmtExecutionResult) {
                 rs = stmt.getResultSet();
                 setResultSet(exchange, rs);
             } else {
                 int updateCount = stmt.getUpdateCount();
                 exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
+
+            if (shouldRetrieveGeneratedKeys) {
+                setGeneratedKeys(exchange, stmt.getGeneratedKeys());
+            }
         } finally {
             closeQuietly(rs);
             closeQuietly(stmt);
-            closeQuietly(conn);
         }
     }
 
@@ -152,7 +166,7 @@ public class JdbcProducer extends DefaultProducer {
             }
         }
     }
-    
+
     private void closeQuietly(Statement stmt) {
         if (stmt != null) {
             try {
@@ -162,7 +176,7 @@ public class JdbcProducer extends DefaultProducer {
             }
         }
     }
-    
+
     private void resetAutoCommit(Connection con, Boolean autoCommit) {
         if (con != null && autoCommit != null) {
             try {
@@ -172,7 +186,7 @@ public class JdbcProducer extends DefaultProducer {
             }
         }
     }
-    
+
     private void closeQuietly(Connection con) {
         if (con != null) {
             try {
@@ -183,10 +197,41 @@ public class JdbcProducer extends DefaultProducer {
         }
     }
 
+
+    /**
+     * Sets the generated if any to the Exchange in headers :
+     * - {@link JdbcConstants#JDBC_GENERATED_KEYS_ROW_COUNT} : the row count of generated keys
+     * - {@link JdbcConstants#JDBC_GENERATED_KEYS_DATA} : the generated keys data
+     *
+     * @param exchange The exchange where to store the generated keys
+     * @param generatedKeys The result set containing the generated keys
+     */
+    protected void setGeneratedKeys(Exchange exchange, ResultSet generatedKeys) throws SQLException {
+        if (generatedKeys != null) {
+            List<Map<String, Object>> data = extractResultSetData(generatedKeys);
+
+            exchange.getOut().setHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT, data.size());
+            exchange.getOut().setHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, data);
+        }
+    }
+
     /**
      * Sets the result from the ResultSet to the Exchange as its OUT body.
      */
     protected void setResultSet(Exchange exchange, ResultSet rs) throws SQLException {
+        List<Map<String, Object>> data = extractResultSetData(rs);
+
+        exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, data.size());
+        exchange.getOut().setBody(data);
+    }
+
+    /**
+     * Extract the result from the ResultSet
+     *
+     * @param rs rs produced by the SQL request
+     * @return All the resulting rows containing each field of the ResultSet
+     */
+    protected List<Map<String, Object>> extractResultSetData(ResultSet rs) throws SQLException {
         ResultSetMetaData meta = rs.getMetaData();
 
         // should we use jdbc4 or jdbc3 semantics
@@ -218,8 +263,7 @@ public class JdbcProducer extends DefaultProducer {
             data.add(row);
             rowNumber++;
         }
-        exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, rowNumber);
-        exchange.getOut().setBody(data);
+        return data;
     }
 
 }

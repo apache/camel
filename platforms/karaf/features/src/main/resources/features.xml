@@ -52,10 +52,19 @@
      <bundle>mvn:org.apache.camel/camel-blueprint/${project.version}</bundle>
   </feature>
   <feature name='camel-test' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-spring</feature>
+    <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
   </feature>
+<!-- requires Spring 3.1
+  <feature name='camel-test-spring' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-spring</feature>
+    <bundle dependency='true'>mvn:org.springframework/spring-test/${spring-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-test-spring/${project.version}</bundle>
+  </feature>
+-->
   <feature name='camel-context' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-context/${project.version}</bundle>
@@ -240,12 +249,13 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-csv/${project.version}</bundle>
   </feature>
-  <!-- dnsjava dependens on the sun.net.spi.nameservice and junit.framework, we need to find a way to support it -->
-  <!--feature name='camel-dns' version='${project.version}' resolver='(obr)' start-level='50'>
+  <feature name='camel-dns' version='${project.version}' resolver='(obr)' start-level='50'>
+	<details>The camel-dns feature can only run on a SUN JVM. You need to ddd the package sun.net.spi.nameservice to the java platform packages in the etc/jre.properties file.</details>
     <bundle dependency='true'>mvn:dnsjava/dnsjava/${dnsjava-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-dns/${project.version}</bundle>
-  </feature-->
+  </feature>
   <feature name='camel-dozer' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature>war</feature>
@@ -290,6 +300,10 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/${jsch-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ftp/${project.version}</bundle>
+  </feature>
+  <feature name='camel-jsch' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-ftp</feature>
+    <bundle>mvn:org.apache.camel/camel-jsch/${project.version}</bundle>
   </feature>
   <feature name='camel-guice' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guice/${guice-bundle-version}</bundle>
@@ -484,6 +498,12 @@
   <feature name='camel-ldap' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-ldap/${project.version}</bundle>
+  </feature>
+  <feature name='camel-leveldb' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.fusesource.leveldbjni/leveldbjni-all/${leveldbjni-version}</bundle>
+    <bundle dependency='true'>mvn:org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-leveldb/${project.version}</bundle>
   </feature>
   <feature name='camel-lucene' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -752,7 +772,7 @@
   <feature name="camel-websocket" version='${project.version}' resolver='(obr)' start-level='50'>
      <feature>jetty</feature>
      <!-- TODO: remove the dependency to jetty-websocket if KARAF-1153 is resolved and released -->
-     <bundle start-level="30">mvn:org.eclipse.jetty/jetty-websocket/7.5.4.v20111024</bundle>
+     <bundle start-level="30">mvn:org.eclipse.jetty/jetty-websocket/${jetty-version}</bundle>
      <feature version='${project.version}'>camel-core</feature>
      <bundle>mvn:org.apache.camel/camel-websocket/${project.version}</bundle>
   </feature>

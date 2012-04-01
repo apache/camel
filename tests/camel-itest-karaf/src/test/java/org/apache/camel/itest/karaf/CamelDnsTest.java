@@ -24,7 +24,7 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("The camel-dns feature does not work")
+@Ignore("People need to edit etc/jre.properties in Karaf/SMX to export: sun.net.spi.nameservice")
 public class CamelDnsTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelDnsTest.class);

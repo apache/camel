@@ -41,7 +41,6 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
     private volatile boolean clear;
     private TweeterStatusListener tweeterStatusListener;
 
-
     public StreamingConsumer(TwitterEndpoint te) {
         this.te = te;
         twitterStream = te.getProperties().getTwitterStreamInstance();
@@ -77,17 +76,25 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
 
     @Override
     public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
+        // noop
     }
 
     @Override
     public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
+        // noop
     }
 
     @Override
     public void onScrubGeo(long userId, long upToStatusId) {
+        // noop
     }
 
     public void registerTweetListener(TweeterStatusListener tweeterStatusListener) {
         this.tweeterStatusListener = tweeterStatusListener;
     }
+
+    public void unregisterTweetListener(TweeterStatusListener tweeterStatusListener) {
+        this.tweeterStatusListener = null;
+    }
+
 }

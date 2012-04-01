@@ -75,6 +75,7 @@
 		<route>
 			<from ref="ep1" />
 			<to uri="cxfbean:customerServiceBean" />
+			<to uri="mock:endpointA" />
 		</route>
 		<!-- END SNIPPET: routeDefinition -->	
 		<route>

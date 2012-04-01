@@ -22,6 +22,7 @@ import java.io.Serializable;
  * @version 
  */
 public class HttpConfiguration implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private AuthMethod authMethod;
     private String authUsername;

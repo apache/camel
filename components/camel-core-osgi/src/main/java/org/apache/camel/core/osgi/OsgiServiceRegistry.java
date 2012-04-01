@@ -16,33 +16,25 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.Service;
-import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 /**
  * The OsgiServiceRegistry support to get the service object from the bundle context
  */
-public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
+public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry {
     private final BundleContext bundleContext;
     private final Map<String, Object> serviceCacheMap = new ConcurrentHashMap<String, Object>();
-    private final ConcurrentLinkedQueue<ServiceReference> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference>();
+    private final Queue<ServiceReference> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference>();
     
     public OsgiServiceRegistry(BundleContext bc) {
         bundleContext = bc;
@@ -75,18 +67,7 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
         return Collections.<String, T>emptyMap();
     }
 
-    public void onComponentAdd(String name, Component component) {
-        // noop
-    }
-
-    public void onComponentRemove(String name, Component component) {
-        // noop
-    }
-
-    public void onContextStart(CamelContext context) {
-        // noop
-    }
-
+    @Override
     public void onContextStop(CamelContext context) {
         // Unget the OSGi service
         ServiceReference sr = serviceReferenceQueue.poll();
@@ -95,51 +76,8 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
             sr = serviceReferenceQueue.poll();
         }
         // Clean up the OSGi Service Cache
+        serviceReferenceQueue.clear();
         serviceCacheMap.clear();
     }
 
-    public void onEndpointAdd(Endpoint endpoint) {
-        // noop
-    }
-
-    public void onEndpointRemove(Endpoint endpoint) {
-        // noop
-    }
-
-    public void onRouteContextCreate(RouteContext routeContext) {
-        // noop
-    }
-
-    public void onRoutesAdd(Collection<Route> routes) {
-        // noop
-    }
-
-    public void onRoutesRemove(Collection<Route> routes) {
-        // noop
-    }
-
-    public void onServiceAdd(CamelContext context, Service service, Route route) {
-        // noop
-    }
-
-    public void onServiceRemove(CamelContext context, Service service, Route route) {
-        // noop
-    }
-
-    public void onErrorHandlerAdd(RouteContext routeContext, Processor processor, ErrorHandlerFactory errorHandlerBuilder) {
-        // noop
-    }
-
-    public void onErrorHandlerRemove(RouteContext routeContext, Processor processor, ErrorHandlerFactory errorHandlerBuilder) {
-        // noop
-    }
-
-    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor,
-                                String id, String sourceId, String routeId, String threadPoolProfileId) {
-        // noop
-    }
-
-    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor) {
-        // noop
-    }
 }

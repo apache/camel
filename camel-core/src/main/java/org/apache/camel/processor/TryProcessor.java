@@ -286,7 +286,9 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
             }
             // store the last to endpoint as the failure endpoint
-            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
+                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            }
 
             boolean sync = super.processNext(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
@@ -295,8 +297,10 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                         return;
                     }
 
-                    // set exception back on exchange
-                    if (e != null) {
+                    if (e == null) {
+                        exchange.removeProperty(Exchange.FAILURE_ENDPOINT);
+                    } else {
+                        // set exception back on exchange
                         exchange.setException(e);
                         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
                     }
@@ -309,8 +313,10 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
             });
 
             if (sync) {
-                // set exception back on exchange
-                if (e != null) {
+                if (e == null) {
+                    exchange.removeProperty(Exchange.FAILURE_ENDPOINT);
+                } else {
+                    // set exception back on exchange
                     exchange.setException(e);
                     exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
                 }
@@ -349,7 +355,9 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
             }
 
             // store the last to endpoint as the failure endpoint
-            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
+                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            }
             // give the rest of the pipeline another chance
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
             exchange.setException(null);

@@ -76,6 +76,7 @@
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <forkMode>once</forkMode>
+          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <includes>
              <!-- Here we only run test of  -->
              <include>**/*UriConfigurationTest.java</include>
@@ -96,6 +97,7 @@
                 <childDelegation>false</childDelegation>
                 <useFile>true</useFile>
                 <forkMode>once</forkMode>
+                <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                 <includes>
                   <include>**/*Test.java</include>
                 </includes>

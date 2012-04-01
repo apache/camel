@@ -17,8 +17,8 @@
 package org.apache.camel.example.websocket;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.twitter.TwitterComponent;
 import org.apache.camel.component.websocket.WebsocketComponent;
-import org.apache.camel.component.websocket.WebsocketConstants;
 
 /**
  * A Camel route that updates from twitter all tweets using having the search term.
@@ -26,9 +26,9 @@ import org.apache.camel.component.websocket.WebsocketConstants;
  */
 public class TwitterWebSocketRoute extends RouteBuilder {
 
+    private int port = 9090;
     private String searchTerm;
     private int delay = 2;
-    
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
@@ -82,18 +82,32 @@ public class TwitterWebSocketRoute extends RouteBuilder {
         this.searchTerm = searchTerm;
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     @Override
     public void configure() throws Exception {
-        // setup Camel web-socket component on port 9090
+        // setup Camel web-socket component on the port we have defined
         WebsocketComponent wc = getContext().getComponent("websocket", WebsocketComponent.class);
-        wc.setPort(9090);
-        wc.setStaticResources("src/main/resources");
+        wc.setPort(port);
+        // we can serve static resources from the classpath: or file: system
+        wc.setStaticResources("classpath:.");
 
-        // poll twitter search for new tweets, and push tweets to all web socket subscribers on camel-tweet
-        fromF("twitter://search?type=polling&delay=%s&keywords=%s"
-                + "&consumerKey=%s&consumerSecret=%s&accessToken=%s&accessTokenSecret=%s",
-                delay, searchTerm, consumerKey, consumerSecret, accessToken, accessTokenSecret)
-            .setHeader(WebsocketConstants.SEND_TO_ALL).constant(true)
-            .to("websocket:camel-tweet");
+        // setup Twitter component
+        TwitterComponent tc = getContext().getComponent("twitter", TwitterComponent.class);
+        tc.setAccessToken(accessToken);
+        tc.setAccessTokenSecret(accessTokenSecret);
+        tc.setConsumerKey(consumerKey);
+        tc.setConsumerSecret(consumerSecret);
+
+        // poll twitter search for new tweets
+        fromF("twitter://search?type=polling&delay=%s&keywords=%s", delay, searchTerm)
+            // and push tweets to all web socket subscribers on camel-tweet
+            .to("websocket:camel-tweet?sendToAll=true");
     }
 }

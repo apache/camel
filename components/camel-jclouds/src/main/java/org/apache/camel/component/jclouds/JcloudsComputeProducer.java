@@ -114,6 +114,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @param exchange
      * @throws CamelException
      */
+    @SuppressWarnings("deprecation")
     protected void runScriptOnNode(Exchange exchange) throws CamelException {
         String script = exchange.getIn().getBody(String.class);
         String nodeId = getNodeId(exchange);

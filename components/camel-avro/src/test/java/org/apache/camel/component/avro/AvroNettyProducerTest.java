@@ -21,18 +21,14 @@ import java.net.InetSocketAddress;
 
 import org.apache.avro.ipc.NettyServer;
 import org.apache.avro.ipc.specific.SpecificResponder;
-
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.builder.RouteBuilder;
-
-import org.junit.After;
 
 public class AvroNettyProducerTest extends AvroProducerTestSupport {
 
     static int avroPort = setupFreePort("avroport");
 
-    @After
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    public RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

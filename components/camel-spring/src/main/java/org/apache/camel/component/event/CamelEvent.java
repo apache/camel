@@ -25,6 +25,8 @@ import org.springframework.context.ApplicationEvent;
  * @version 
  */
 public class CamelEvent extends ApplicationEvent {
+    private static final long serialVersionUID = 1L;
+
     private final Exchange exchange;
 
     public CamelEvent(EventEndpoint source, Exchange exchange) {

@@ -31,8 +31,6 @@ import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.component.mock.MockEndpoint;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AvroProducerTestSupport extends AvroTestSupport {
@@ -42,14 +40,14 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
 
     protected abstract void initializeServer() throws IOException;
 
-    @Before
-    protected void setUp() throws Exception {
+    @Override
+    public void setUp() throws Exception {
         initializeServer();
         super.setUp();
     }
 
-    @After
-    protected void tearDown() throws Exception {
+    @Override
+    public void tearDown() throws Exception {
         super.tearDown();
         if (server != null) {
             server.close();

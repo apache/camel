@@ -23,21 +23,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.store.Item;
-import org.apache.camel.component.cdi.CdiBeanRegistry;
+import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.webbeans.cditest.CdiTestContainer;
 import org.apache.webbeans.cditest.CdiTestContainerLoader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 public class CdiContainerBeanManagerTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(CdiContainerBeanManagerTest.class);
 
     private MockEndpoint resultEndpoint;
     private ProducerTemplate template;
@@ -52,23 +47,24 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
         cdiContainer = CdiTestContainerLoader.getCdiContainer();
         cdiContainer.bootContainer();
 
-        LOG.info(">> Container started and bean manager instantiated !");
+        log.info(">> Container started and bean manager instantiated !");
 
         // Camel
-        context = new DefaultCamelContext(new CdiBeanRegistry());
+        context = new CdiCamelContext();
         context.addRoutes(createRouteBuilder());
         context.setTracing(true);
         context.start();
+
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         template = context.createProducerTemplate();
 
-        LOG.info(">> Camel started !");
+        log.info(">> Camel started !");
     }
 
     @After
     public void shutDown() throws Exception {
-        cdiContainer.shutdownContainer();
         context.stop();
+        cdiContainer.shutdownContainer();
     }
 
     @Test
@@ -111,7 +107,6 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 from("direct:inject")
                     .beanRef("shoppingBean", "listAllProducts")
                     .to("mock:result");

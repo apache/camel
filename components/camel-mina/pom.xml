@@ -88,6 +88,7 @@
                     <childDelegation>false</childDelegation>
                     <useFile>true</useFile>
                     <forkMode>pertest</forkMode>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hits implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private int numberOfHits;
     private List<Hit> hit;
@@ -44,5 +45,4 @@ public class Hits implements Serializable {
     public String toString() {
         return "Hits[numberOfHits=" + numberOfHits + "]";
     }
-
 }

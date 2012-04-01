@@ -29,7 +29,6 @@ import javax.enterprise.inject.spi.Extension;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-
 /**
  * <p>This class provides access to the {@link BeanManager}
  * by registering the current {@link BeanManager} in an extension and
