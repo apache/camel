@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.locks.ReentrantLock;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -65,6 +66,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private QName partNamespace;
     private String partClass;
     private Class<Object> partialClass;
+
+    private Unmarshaller unmarshaller;
+    private ReentrantLock lock = new ReentrantLock();
 
     public JaxbDataFormat() {
     }
@@ -129,26 +133,29 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         try {
-            // must create a new instance of unmarshaller as its not thread safe
             Object answer;
-            Unmarshaller unmarshaller = getContext().createUnmarshaller();
 
-            if (partialClass != null) {
-                // partial unmarshalling
-                Source source;
-                if (needFiltering(exchange)) {
-                    source = new StreamSource(createNonXmlFilterReader(exchange, stream));
+            lock.lock();
+            try {
+                if (partialClass != null) {
+                    // partial unmarshalling
+                    Source source;
+                    if (needFiltering(exchange)) {
+                        source = new StreamSource(createNonXmlFilterReader(exchange, stream));
+                    } else {
+                        source = new StreamSource(stream);
+                    }
+                    answer = unmarshaller.unmarshal(source, partialClass);
                 } else {
-                    source = new StreamSource(stream);
+                    if (needFiltering(exchange)) {
+                        NonXmlFilterReader reader = createNonXmlFilterReader(exchange, stream);
+                        answer = unmarshaller.unmarshal(reader);
+                    } else  {
+                        answer = unmarshaller.unmarshal(stream);
+                    }
                 }
-                answer = unmarshaller.unmarshal(source, partialClass);
-            } else {
-                if (needFiltering(exchange)) {
-                    NonXmlFilterReader reader = createNonXmlFilterReader(exchange, stream);
-                    answer = unmarshaller.unmarshal(reader);
-                } else  {
-                    answer = unmarshaller.unmarshal(stream);
-                }
+            }  finally {
+                lock.unlock();
             }
 
             if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
@@ -262,6 +269,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         if (partClass != null) {
             partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass, Object.class);
         }
+        unmarshaller = getContext().createUnmarshaller();
     }
 
     @Override
