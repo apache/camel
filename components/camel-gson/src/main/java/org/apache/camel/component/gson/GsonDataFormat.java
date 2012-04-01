@@ -25,7 +25,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Map;
 
+import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 
@@ -53,6 +55,17 @@ public class GsonDataFormat implements DataFormat {
     }
 
     /**
+     * Use the default Gson {@link Gson} and with a custom
+     * unmarshal type and {@link ExclusionStrategy}
+     *
+     * @param unmarshalType the custom unmarshal type
+     * @param exclusionStrategy the custom ExclusionStrategy
+     */
+    public GsonDataFormat(Class<?> unmarshalType, ExclusionStrategy exclusionStrategy) {
+        this(createGsonWithExclusionStrategy(exclusionStrategy), unmarshalType);
+    }
+
+    /**
      * Use a custom Gson mapper and and unmarshal type
      *
      * @param gson          the custom mapper
@@ -61,6 +74,14 @@ public class GsonDataFormat implements DataFormat {
     public GsonDataFormat(Gson gson, Class<?> unmarshalType) {
         this.gson = gson;
         this.unmarshalType = unmarshalType;
+    }
+
+    private static Gson createGsonWithExclusionStrategy(ExclusionStrategy exclusionStrategy) {
+        if (exclusionStrategy != null) {
+            return new GsonBuilder().setExclusionStrategies(exclusionStrategy).create();
+        } else {
+            return new Gson();
+        }
     }
 
     @Override

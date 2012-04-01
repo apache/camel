@@ -33,6 +33,7 @@ public class JacksonDataFormat implements DataFormat {
 
     private final ObjectMapper objectMapper;
     private Class<?> unmarshalType;
+    private Class<?> jsonView;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -52,18 +53,43 @@ public class JacksonDataFormat implements DataFormat {
     }
 
     /**
+     * Use the default Jackson {@link ObjectMapper} and with a custom
+     * unmarshal type and JSON view
+     *
+     * @param unmarshalType the custom unmarshal type
+     * @param jsonView marker class to specifiy properties to be included during marshalling.
+     *                 See also http://wiki.fasterxml.com/JacksonJsonViews
+     */
+    public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
+        this(new ObjectMapper(), unmarshalType, jsonView);
+    }
+
+    /**
      * Use a custom Jackson mapper and and unmarshal type
      *
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      */
     public JacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType) {
+        this(mapper, unmarshalType, null);
+    }
+
+    /**
+     * Use a custom Jackson mapper, unmarshal type and JSON view
+     *
+     * @param mapper        the custom mapper
+     * @param unmarshalType the custom unmarshal type
+     * @param jsonView marker class to specifiy properties to be included during marshalling.
+     *                 See also http://wiki.fasterxml.com/JacksonJsonViews
+     */
+    public JacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
+        this.jsonView = jsonView;
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        this.objectMapper.writeValue(stream, graph);
+        this.objectMapper.writerWithView(jsonView).writeValue(stream, graph);
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
@@ -79,6 +105,14 @@ public class JacksonDataFormat implements DataFormat {
 
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    public Class<?> getJsonView() {
+        return jsonView;
+    }
+
+    public void setJsonView(Class<?> jsonView) {
+        this.jsonView = jsonView;
     }
 
     public ObjectMapper getObjectMapper() {
