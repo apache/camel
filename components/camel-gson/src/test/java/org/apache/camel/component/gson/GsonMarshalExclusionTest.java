@@ -112,8 +112,8 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
 
                 //START SNIPPET: format
                 GsonDataFormat ageExclusionFormat = new GsonDataFormat(TestPojoExclusion.class, new AgeExclusionStrategy());
-                //END SNIPPET: format
                 from("direct:inPojoExcludeAge").marshal(ageExclusionFormat);
+                //END SNIPPET: format
                 from("direct:backPojoExcludeAge").unmarshal(ageExclusionFormat).to("mock:reversePojoExcludeAge");
             }
         };

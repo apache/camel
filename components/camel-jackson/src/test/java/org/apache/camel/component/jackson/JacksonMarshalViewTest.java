@@ -70,13 +70,11 @@ public class JacksonMarshalViewTest extends CamelTestSupport {
 
                 // START SNIPPET: format
                 JacksonDataFormat ageViewFormat = new JacksonDataFormat(TestPojoView.class, Views.Age.class);
-                // END SNIPPET: format
-
                 from("direct:inPojoAgeView").marshal(ageViewFormat);
+                // END SNIPPET: format
                 from("direct:backPojoAgeView").unmarshal(ageViewFormat).to("mock:reversePojoAgeView");
 
                 JacksonDataFormat weightViewFormat = new JacksonDataFormat(TestPojoView.class, Views.Weight.class);
-
                 from("direct:inPojoWeightView").marshal(weightViewFormat);
                 from("direct:backPojoWeightView").unmarshal(weightViewFormat).to("mock:reversePojoWeightView");
             }
