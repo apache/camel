@@ -74,6 +74,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
@@ -183,6 +184,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (uuidGenerator != null) {
             LOG.info("Using custom UuidGenerator: " + uuidGenerator);
             getContext().setUuidGenerator(uuidGenerator);
+        }
+        NodeIdFactory nodeIdFactory = getBeanForType(NodeIdFactory.class);
+        if (nodeIdFactory != null) {
+            LOG.info("Using custom NodeIdFactory: " + nodeIdFactory);
+            getContext().setNodeIdFactory(nodeIdFactory);
         }
 
         // set the custom registry if defined
