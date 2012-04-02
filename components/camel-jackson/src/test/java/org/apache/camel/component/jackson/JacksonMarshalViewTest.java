@@ -68,9 +68,9 @@ public class JacksonMarshalViewTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                //START SNIPPET: format
+                // START SNIPPET: format
                 JacksonDataFormat ageViewFormat = new JacksonDataFormat(TestPojoView.class, Views.Age.class);
-                //END SNIPPET: format
+                // END SNIPPET: format
 
                 from("direct:inPojoAgeView").marshal(ageViewFormat);
                 from("direct:backPojoAgeView").unmarshal(ageViewFormat).to("mock:reversePojoAgeView");
