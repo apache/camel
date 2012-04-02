@@ -74,10 +74,6 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (processor instanceof StatefulService) {
             ServiceStatus status = ((StatefulService) processor).getStatus();
-            // if no status exists then its stopped
-            if (status == null) {
-                status = ServiceStatus.Stopped;
-            }
             return status.name();
         }
 
