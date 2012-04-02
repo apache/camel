@@ -81,6 +81,7 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
         }
     }
 
+    //START SNIPPET: strategy
     /**
      * Strategy to exclude {@link ExcludeAge} annotated fields
      */
@@ -96,6 +97,7 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
             return false;
         }
     }
+    //END SNIPPET: strategy
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -108,7 +110,9 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
                 from("direct:inPojoExcludeWeight").marshal(weightExclusionFormat);
                 from("direct:backPojoExcludeWeight").unmarshal(weightExclusionFormat).to("mock:reversePojoExcludeWeight");
 
+                //START SNIPPET: format
                 GsonDataFormat ageExclusionFormat = new GsonDataFormat(TestPojoExclusion.class, new AgeExclusionStrategy());
+                //END SNIPPET: format
                 from("direct:inPojoExcludeAge").marshal(ageExclusionFormat);
                 from("direct:backPojoExcludeAge").unmarshal(ageExclusionFormat).to("mock:reversePojoExcludeAge");
             }

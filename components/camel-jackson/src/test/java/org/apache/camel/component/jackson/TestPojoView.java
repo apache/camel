@@ -20,11 +20,18 @@ import org.codehaus.jackson.map.annotate.JsonView;
 
 public class TestPojoView {
 
-    private int age = 30;
-    private int height = 190;
-    private int weight = 70;
+    //START SNIPPET: jsonview
 
     @JsonView(Views.Age.class)
+    private int age = 30;
+
+    private int height = 190;
+
+    @JsonView(Views.Weight.class)
+    private int weight = 70;
+
+    //END SNIPPET: jsonview
+
     public int getAge() {
         return age;
     }
@@ -41,7 +48,6 @@ public class TestPojoView {
         this.height = height;
     }
 
-    @JsonView(Views.Weight.class)
     public int getWeight() {
         return weight;
     }
