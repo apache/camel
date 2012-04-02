@@ -46,7 +46,7 @@ public class TimerComponent extends DefaultComponent {
             answer = timers.get(key);
             if (answer == null) {
                 // the timer name is also the thread name, so lets resolve a name to be used
-                String name = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName(endpoint.getTimerName());
+                String name = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName("timer://" + endpoint.getTimerName());
                 answer = new Timer(name, endpoint.isDaemon());
                 timers.put(key, answer);
             }
