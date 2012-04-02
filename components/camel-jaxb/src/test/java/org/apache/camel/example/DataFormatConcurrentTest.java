@@ -84,6 +84,60 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
     }
 
     @Test
+    public void testMarshallFallbackConcurrent() throws Exception {
+        int counter = 10000;
+        final PurchaseOrder order = new PurchaseOrder();
+        order.setName("Wine");
+        order.setAmount(123.45);
+        order.setPrice(2.22);
+        final CountDownLatch latch = new CountDownLatch(counter);
+        template.setDefaultEndpointUri("direct:marshalFallback");
+
+        ExecutorService pool = Executors.newFixedThreadPool(20);
+        //long start = System.currentTimeMillis();
+        for (int i = 0; i < counter; i++) {
+            pool.execute(new Runnable() {
+                public void run() {
+                    template.sendBody(order);
+                    latch.countDown();
+                }
+            });
+        }
+
+        // should finish on fast machines in less than 3 seconds
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        //long end = System.currentTimeMillis();
+        //System.out.println("took " + (end - start) + "ms");
+    }
+
+    @Test
+    public void testMarshallConcurrent() throws Exception {
+        int counter = 10000;
+        final PurchaseOrder order = new PurchaseOrder();
+        order.setName("Wine");
+        order.setAmount(123.45);
+        order.setPrice(2.22);
+        final CountDownLatch latch = new CountDownLatch(counter);
+        template.setDefaultEndpointUri("direct:marshal");
+
+        ExecutorService pool = Executors.newFixedThreadPool(20);
+        //long start = System.currentTimeMillis();
+        for (int i = 0; i < counter; i++) {
+            pool.execute(new Runnable() {
+                public void run() {
+                    template.sendBody(order);
+                    latch.countDown();
+                }
+            });
+        }
+
+        // should finish on fast machines in less than 3 seconds
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        //long end = System.currentTimeMillis();
+        //System.out.println("took " + (end - start) + "ms");
+    }
+
+    @Test
     public void testSendConcurrent() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(size);
@@ -128,8 +182,16 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
                         .unmarshal(jaxb)
                         .to("mock:result");
 
+                from("direct:marshal")
+                        .marshal(jaxb)
+                        .to("mock:result");
+
                 from("direct:unmarshalFallback")
                         .convertBodyTo(PurchaseOrder.class)
+                        .to("mock:result");
+
+                from("direct:marshalFallback")
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
