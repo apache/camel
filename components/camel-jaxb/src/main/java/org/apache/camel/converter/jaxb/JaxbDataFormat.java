@@ -145,13 +145,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
                     } else {
                         source = new StreamSource(stream);
                     }
-                    answer = unmarshaller.unmarshal(source, partialClass);
+                    answer = getUnmarshaller().unmarshal(source, partialClass);
                 } else {
                     if (needFiltering(exchange)) {
                         NonXmlFilterReader reader = createNonXmlFilterReader(exchange, stream);
-                        answer = unmarshaller.unmarshal(reader);
+                        answer = getUnmarshaller().unmarshal(reader);
                     } else  {
-                        answer = unmarshaller.unmarshal(stream);
+                        answer = getUnmarshaller().unmarshal(stream);
                     }
                 }
             }  finally {
@@ -256,6 +256,10 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public Unmarshaller getUnmarshaller() {
+        return unmarshaller;
     }
 
     @Override
