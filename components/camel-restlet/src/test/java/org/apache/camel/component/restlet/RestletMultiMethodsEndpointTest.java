@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.junit.Test;
 
 /**
@@ -39,6 +40,13 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
     }
 
     @Test
+    public void testPutMethod() throws Exception {
+        HttpResponse response = doExecute(new HttpPut("http://localhost:" + portNum + "/users/homer"));
+
+        assertHttpResponse(response, 200, "text/plain", "PUT");
+    }
+
+    @Test
     public void testGetMethod() throws Exception {
         HttpResponse response = doExecute(new HttpGet("http://localhost:" + portNum + "/users/homer"));
 
@@ -50,7 +58,7 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: routeDefinition
-                from("restlet:http://localhost:" + portNum + "/users/{username}?restletMethods=post,get")
+                from("restlet:http://localhost:" + portNum + "/users/{username}?restletMethods=post,get,put")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // echo the method
