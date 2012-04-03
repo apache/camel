@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.jsch;
 
-import com.jcraft.jsch.JSch;
-
 import java.net.URI;
 import java.util.Map;
+
+import com.jcraft.jsch.JSch;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
