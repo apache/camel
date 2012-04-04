@@ -16,13 +16,7 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
@@ -104,6 +98,11 @@ public class StaxConverter {
     @Converter
     public XMLStreamReader createXMLStreamReader(Source in) throws XMLStreamException {
         return getInputFactory().createXMLStreamReader(in);
+    }
+
+    @Converter
+    public XMLStreamReader createXMLStreamReader(String string) throws XMLStreamException {
+        return getInputFactory().createXMLStreamReader(new StringReader(string));
     }
     
     /**
