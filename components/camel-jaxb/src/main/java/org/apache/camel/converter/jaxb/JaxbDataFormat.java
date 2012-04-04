@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -38,6 +39,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -67,6 +69,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private String partClass;
     private Class<Object> partialClass;
 
+    private TypeConverter typeConverter;
     private Unmarshaller unmarshaller;
     private ReentrantLock lock = new ReentrantLock();
 
@@ -139,19 +142,21 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             try {
                 if (partialClass != null) {
                     // partial unmarshalling
-                    Source source;
                     if (needFiltering(exchange)) {
-                        source = new StreamSource(createNonXmlFilterReader(exchange, stream));
+                        Source source = new StreamSource(createNonXmlFilterReader(exchange, stream));
+                        answer = getUnmarshaller().unmarshal(source, partialClass);
                     } else {
-                        source = new StreamSource(stream);
+                        XMLStreamReader xmlReader = typeConverter.convertTo(XMLStreamReader.class, stream);
+                        answer = getUnmarshaller().unmarshal(xmlReader, partialClass);
                     }
-                    answer = getUnmarshaller().unmarshal(source, partialClass);
+
                 } else {
                     if (needFiltering(exchange)) {
                         NonXmlFilterReader reader = createNonXmlFilterReader(exchange, stream);
                         answer = getUnmarshaller().unmarshal(reader);
                     } else  {
-                        answer = getUnmarshaller().unmarshal(stream);
+                        XMLStreamReader xmlReader = typeConverter.convertTo(XMLStreamReader.class, stream);
+                        answer = getUnmarshaller().unmarshal(xmlReader);
                     }
                 }
             }  finally {
@@ -274,6 +279,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass, Object.class);
         }
         unmarshaller = getContext().createUnmarshaller();
+        typeConverter = camelContext.getTypeConverter();
     }
 
     @Override
