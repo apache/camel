@@ -28,16 +28,16 @@ import java.util.Map.Entry;
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using 
  * <a href="http://json-lib.sourceforge.net/">json-lib</a> to convert between XML
  * and JSON directly.
  */
-public class XmlJsonDataFormat implements DataFormat {
+public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
 
     private XMLSerializer serializer;
 
@@ -58,7 +58,8 @@ public class XmlJsonDataFormat implements DataFormat {
     public XmlJsonDataFormat() {
     }
 
-    public void initSerializer() {
+    @Override
+    protected void doStart() throws Exception {
         serializer = new XMLSerializer();
 
         if (forceTopLevelObject != null) {
@@ -120,23 +121,18 @@ public class XmlJsonDataFormat implements DataFormat {
         } else {
             serializer.setTypeHintsEnabled(false);
         }
+    }
 
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
     /**
      * Marshal from XML to JSON
-     * 
-     * @param exchange
-     * @param graph
-     * @param stream
-     * @throws Exception
      */
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        if (serializer == null) {
-            initSerializer();
-        }
-
         boolean streamTreatment = true;
         // try to process as an InputStream if it's not a String
         Object xml = graph instanceof String ? null : exchange.getContext().getTypeConverter().convertTo(InputStream.class, graph);
@@ -162,17 +158,9 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * Convert from JSON to XML
-     * 
-     * @param exchange
-     * @param stream
-     * @throws Exception
      */
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        if (serializer == null) {
-            initSerializer();
-        }
-
         Object inBody = exchange.getIn().getBody();
         JSON toConvert;
         // if the incoming object is already a JSON object, process as-is,
@@ -208,7 +196,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * Sets the encoding for the call to {@link XMLSerializer#write(JSON, String)}
-     * @param encoding
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
@@ -220,7 +207,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setForceTopLevelObject(boolean)}
-     * @param forceTopLevelObject
      */
     public void setForceTopLevelObject(Boolean forceTopLevelObject) {
         this.forceTopLevelObject = forceTopLevelObject;
@@ -232,7 +218,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setNamespaceLenient(boolean)}
-     * @param namespaceLenient
      */
     public void setNamespaceLenient(Boolean namespaceLenient) {
         this.namespaceLenient = namespaceLenient;
@@ -246,8 +231,7 @@ public class XmlJsonDataFormat implements DataFormat {
      * Sets associations between elements and namespace mappings. Will only be used when converting from JSON to XML.
      * For every association, the whenever a JSON element is found that matches {@link NamespacesPerElementMapping#element},
      * the namespaces declarations specified by {@link NamespacesPerElementMapping#namespaces} will be output.
-     * @see Uses {@link XMLSerializer#addNamespace(String, String, String)}
-     * @param namespaceMappings
+     * @see {@link XMLSerializer#addNamespace(String, String, String)}
      */
     public void setNamespaceMappings(List<NamespacesPerElementMapping> namespaceMappings) {
         this.namespaceMappings = namespaceMappings;
@@ -259,7 +243,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setRootName(String)}
-     * @param rootName
      */
     public void setRootName(String rootName) {
         this.rootName = rootName;
@@ -271,7 +254,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setSkipWhitespace(boolean)}
-     * @param skipWhitespace
      */
     public void setSkipWhitespace(Boolean skipWhitespace) {
         this.skipWhitespace = skipWhitespace;
@@ -283,7 +265,6 @@ public class XmlJsonDataFormat implements DataFormat {
     
     /**
      * See {@link XMLSerializer#setTrimSpaces(boolean)}
-     * @param trimSpaces
      */
     public void setTrimSpaces(Boolean trimSpaces) {
         this.trimSpaces = trimSpaces;
@@ -307,7 +288,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setSkipNamespaces(boolean)}
-     * @param skipNamespaces 
      */
     public void setSkipNamespaces(Boolean skipNamespaces) {
         this.skipNamespaces = skipNamespaces;
@@ -315,7 +295,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setElementName(String)}
-     * @param elementName 
      */
     public void setElementName(String elementName) {
         this.elementName = elementName;
@@ -327,7 +306,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setArrayName(String)}
-     * @param arrayName 
      */
     public void setArrayName(String arrayName) {
         this.arrayName = arrayName;
@@ -339,7 +317,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setExpandableProperties(String[])}
-     * @param expandableProperties 
      */
     public void setExpandableProperties(List<String> expandableProperties) {
         this.expandableProperties = expandableProperties;
@@ -351,7 +328,6 @@ public class XmlJsonDataFormat implements DataFormat {
 
     /**
      * See {@link XMLSerializer#setRemoveNamespacePrefixFromElements(boolean)}
-     * @param removeNamespacePrefixes 
      */
     public void setRemoveNamespacePrefixes(Boolean removeNamespacePrefixes) {
         this.removeNamespacePrefixes = removeNamespacePrefixes;
@@ -368,8 +344,6 @@ public class XmlJsonDataFormat implements DataFormat {
      * <root><element xmlns:ns1="http://mynamespace.org">value</element><element2>value2</element2></root>
      * For convenience, the {@link NamespacesPerElementMapping#NamespacesPerElementMapping(String, String)} constructor allows to specify
      * multiple prefix-namespaceURI pairs in just one String line, the format being: |ns1|http://mynamespace.org|ns2|http://mynamespace2.org|
-     * 
-     * @author Raul Kripalani
      *
      */
     public static class NamespacesPerElementMapping {
