@@ -17,20 +17,29 @@
 package org.apache.camel.converter.jaxp;
 
 import java.io.*;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLResolver;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A converter of StAX objects
@@ -39,37 +48,104 @@ import org.apache.camel.util.IOHelper;
  */
 @Converter
 public class StaxConverter {
+    private static final transient Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);
+
+    private static final BlockingQueue<XMLInputFactory> INPUT_FACTORY_POOL;
+    private static final BlockingQueue<XMLOutputFactory> OUTPUT_FACTORY_POOL;
+    static {
+        int i = 20;
+        try {
+            String s = AccessController.doPrivileged(new PrivilegedAction<String>() {
+                @Override
+                public String run() {
+                    return System.getProperty("org.apache.cxf.staxutils.pool-size", "-1");
+                }
+            });
+            i = Integer.parseInt(s);
+        } catch (Throwable t) {
+            //ignore 
+            i = 20;
+        }
+        if (i <= 0) {
+            i = 20;
+        }
+        INPUT_FACTORY_POOL = new LinkedBlockingQueue<XMLInputFactory>(i);
+        OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<XMLOutputFactory>(i);
+    }
+    
     private XMLInputFactory inputFactory;
     private XMLOutputFactory outputFactory;
 
     @Converter
     public XMLEventWriter createXMLEventWriter(OutputStream out, Exchange exchange) throws XMLStreamException {
-        return getOutputFactory().createXMLEventWriter(IOHelper.buffered(out), IOHelper.getCharsetName(exchange));
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            return factory.createXMLEventWriter(IOHelper.buffered(out), IOHelper.getCharsetName(exchange));
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
     }
     
     @Converter
     public XMLEventWriter createXMLEventWriter(Writer writer) throws XMLStreamException {
-        return getOutputFactory().createXMLEventWriter(IOHelper.buffered(writer));
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            return factory.createXMLEventWriter(IOHelper.buffered(writer));
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
     }
 
     @Converter
     public XMLEventWriter createXMLEventWriter(Result result) throws XMLStreamException {
-        return getOutputFactory().createXMLEventWriter(result);
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            if (result instanceof DOMResult && !isWoodstox(factory)) {
+                //FIXME - if not woodstox, this will likely not work well
+                //likely should copy CXF's W3CDOM stuff
+                LOG.info("DOMResult is known to have issues with {0}. We suggest using Woodstox",
+                         factory.getClass());
+            }
+            return factory.createXMLEventWriter(result);
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
     }
     
     @Converter
     public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream, Exchange exchange) throws XMLStreamException {
-        return getOutputFactory().createXMLStreamWriter(IOHelper.buffered(outputStream), IOHelper.getCharsetName(exchange));
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            return factory.createXMLStreamWriter(IOHelper.buffered(outputStream), IOHelper.getCharsetName(exchange));
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
     }
 
     @Converter
     public XMLStreamWriter createXMLStreamWriter(Writer writer) throws XMLStreamException {
-        return getOutputFactory().createXMLStreamWriter(IOHelper.buffered(writer));
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            return factory.createXMLStreamWriter(IOHelper.buffered(writer));
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
     }
 
     @Converter
     public XMLStreamWriter createXMLStreamWriter(Result result) throws XMLStreamException {
-        return getOutputFactory().createXMLStreamWriter(result);
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            if (result instanceof DOMResult && !isWoodstox(factory)) {
+                //FIXME - if not woodstox, this will likely not work well
+                //likely should copy CXF's W3CDOM stuff
+                LOG.info("DOMResult is known to have issues with {0}. We suggest using Woodstox",
+                         factory.getClass());
+            }
+            return factory.createXMLStreamWriter(result);
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
     }
     
     /**
@@ -77,32 +153,68 @@ public class StaxConverter {
      */
     @Deprecated
     public XMLStreamReader createXMLStreamReader(InputStream in) throws XMLStreamException {
-        return getInputFactory().createXMLStreamReader(IOHelper.buffered(in));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLStreamReader(IOHelper.buffered(in));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
     
     @Converter
     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
-        return getInputFactory().createXMLStreamReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLStreamReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLStreamReader createXMLStreamReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
-        return getInputFactory().createXMLStreamReader(IOHelper.buffered(new FileInputStream(file)), IOHelper.getCharsetName(exchange));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLStreamReader(IOHelper.buffered(new FileInputStream(file)), IOHelper.getCharsetName(exchange));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLStreamReader createXMLStreamReader(Reader reader) throws XMLStreamException {
-        return getInputFactory().createXMLStreamReader(IOHelper.buffered(reader));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLStreamReader(IOHelper.buffered(reader));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLStreamReader createXMLStreamReader(Source in) throws XMLStreamException {
-        return getInputFactory().createXMLStreamReader(in);
+        XMLInputFactory factory = getInputFactory();
+        try {
+            if (in instanceof DOMSource && !isWoodstox(factory)) {
+                //FIXME - if not woodstox, this will likely not work well
+                //likely should copy CXF's W3CDOM stuff
+                LOG.info("DOMSource is known to have issues with {0}. We suggest using Woodstox",
+                         factory.getClass());
+            }
+            return factory.createXMLStreamReader(in);
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLStreamReader createXMLStreamReader(String string) throws XMLStreamException {
-        return getInputFactory().createXMLStreamReader(new StringReader(string));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLStreamReader(new StringReader(string));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
     
     /**
@@ -110,56 +222,148 @@ public class StaxConverter {
      */
     @Deprecated
     public XMLEventReader createXMLEventReader(InputStream in) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(IOHelper.buffered(in));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLEventReader(IOHelper.buffered(in));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLEventReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLEventReader createXMLEventReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
-        return getInputFactory().createXMLEventReader(IOHelper.buffered(new FileInputStream(file)), IOHelper.getCharsetName(exchange));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLEventReader(IOHelper.buffered(new FileInputStream(file)), IOHelper.getCharsetName(exchange));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLEventReader createXMLEventReader(Reader reader) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(IOHelper.buffered(reader));
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLEventReader(IOHelper.buffered(reader));
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLEventReader createXMLEventReader(XMLStreamReader reader) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(reader);
+        XMLInputFactory factory = getInputFactory();
+        try {
+            return factory.createXMLEventReader(reader);
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
     @Converter
     public XMLEventReader createXMLEventReader(Source in) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(in);
+        XMLInputFactory factory = getInputFactory();
+        try {
+            if (in instanceof DOMSource && !isWoodstox(factory)) {
+                //FIXME - if not woodstox, this will likely not work well
+                LOG.info("DOMSource is known to have issues with {0}. We suggest using Woodstox",
+                         factory.getClass());
+            }
+            return factory.createXMLEventReader(in);
+        } finally {
+            returnXMLInputFactory(factory);
+        }
     }
 
+    
+    
+    private boolean isWoodstox(Object factory) {
+        return factory.getClass().getPackage().getName().startsWith("com.ctc.wstx");
+    }
+
+    private XMLInputFactory getXMLInputFactory() {
+        XMLInputFactory f = INPUT_FACTORY_POOL.poll();
+        if (f == null) {
+            f = createXMLInputFactory(true);
+        }
+        return f;
+    }
+    
+    private void returnXMLInputFactory(XMLInputFactory factory) {
+        if (factory != inputFactory) {
+            INPUT_FACTORY_POOL.offer(factory);
+        }
+    }
+    
+    private XMLOutputFactory getXMLOutputFactory() {
+        XMLOutputFactory f = OUTPUT_FACTORY_POOL.poll();
+        if (f == null) {
+            f = XMLOutputFactory.newInstance();
+        }
+        return f;
+    }
+    
+    private void returnXMLOutputFactory(XMLOutputFactory factory) {
+        if (factory != outputFactory) {
+            OUTPUT_FACTORY_POOL.offer(factory);
+        }
+    }
+    
+    public static XMLInputFactory createXMLInputFactory(boolean nsAware) {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        setProperty(factory, XMLInputFactory.IS_NAMESPACE_AWARE, nsAware);
+        setProperty(factory, XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+        setProperty(factory, XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.FALSE);
+        setProperty(factory, XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+        factory.setXMLResolver(new XMLResolver() {
+            public Object resolveEntity(String publicID, String systemID,
+                                        String baseURI, String namespace)
+                throws XMLStreamException {
+                throw new XMLStreamException("Reading external entities is disabled");
+            }
+        });
+        return factory;
+    }
+    
+    private static void setProperty(XMLInputFactory f, String p, Object o) {
+        try {
+            f.setProperty(p,  o);
+        } catch (Throwable t) {
+            //ignore
+        }
+    }
+    
     // Properties
     //-------------------------------------------------------------------------
-
     public XMLInputFactory getInputFactory() {
         if (inputFactory == null) {
-            inputFactory = XMLInputFactory.newInstance();
+            return getXMLInputFactory();
         }
         return inputFactory;
     }
-
-    public void setInputFactory(XMLInputFactory inputFactory) {
-        this.inputFactory = inputFactory;
-    }
-
     public XMLOutputFactory getOutputFactory() {
         if (outputFactory == null) {
-            outputFactory = XMLOutputFactory.newInstance();
+            return getXMLOutputFactory();
         }
         return outputFactory;
     }
-
+    
+    public void setInputFactory(XMLInputFactory inputFactory) {
+        this.inputFactory = inputFactory;
+    }
     public void setOutputFactory(XMLOutputFactory outputFactory) {
         this.outputFactory = outputFactory;
     }
+    
+
 }
