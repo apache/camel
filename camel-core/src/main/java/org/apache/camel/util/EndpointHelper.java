@@ -91,6 +91,8 @@ public final class EndpointHelper {
     /**
      * Matches the endpoint with the given pattern.
      * <p/>
+     * The endpoint will first resolve property placeholders using {@link CamelContext#resolvePropertyPlaceholders(String)}.
+     * <p/>
      * The match rules are applied in this order:
      * <ul>
      *   <li>exact match, returns true</li>
@@ -99,11 +101,20 @@ public final class EndpointHelper {
      *   <li>otherwise returns false</li>
      * </ul>
      *
+     * @param context the Camel context, if <tt>null</tt> then property placeholder resolution is skipped.
      * @param uri     the endpoint uri
      * @param pattern a pattern to match
      * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
-    public static boolean matchEndpoint(String uri, String pattern) {
+    public static boolean matchEndpoint(CamelContext context, String uri, String pattern) {
+        if (context != null) {
+            try {
+                uri = context.resolvePropertyPlaceholders(uri);
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
+            }
+        }
+
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
         try {
             uri = URISupport.normalizeUri(uri);
@@ -130,6 +141,17 @@ public final class EndpointHelper {
 
         // and fallback to test with the uri as is
         return matchPattern(uri, pattern);
+    }
+
+    /**
+     * Matches the endpoint with the given pattern.
+     * @see #matchEndpoint(org.apache.camel.CamelContext, String, String)
+     *
+     * @deprecated use {@link #matchEndpoint(org.apache.camel.CamelContext, String, String)} instead.
+     */
+    @Deprecated
+    public static boolean matchEndpoint(String uri, String pattern) {
+        return matchEndpoint(null, uri, pattern);
     }
 
     /**

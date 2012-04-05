@@ -272,7 +272,7 @@ public final class RouteDefinitionHelper {
                             // lookup the endpoint to get its url
                             uri = CamelContextHelper.getMandatoryEndpoint(context, "ref:" + input.getRef()).getEndpointUri();
                         }
-                        if (EndpointHelper.matchEndpoint(uri, intercept.getUri())) {
+                        if (EndpointHelper.matchEndpoint(context, uri, intercept.getUri())) {
                             match = true;
                             break;
                         }

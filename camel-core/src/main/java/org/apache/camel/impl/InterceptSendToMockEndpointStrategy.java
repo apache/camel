@@ -51,7 +51,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
      * Mock endpoints based on the given pattern.
      *
      * @param pattern the pattern.
-     * @see EndpointHelper#matchEndpoint(String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public InterceptSendToMockEndpointStrategy(String pattern) {
         this.pattern = pattern;
@@ -64,7 +64,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
         } else if (endpoint instanceof MockEndpoint) {
             // we should not intercept mock endpoints
             return endpoint;
-        } else if (uri == null || pattern == null || EndpointHelper.matchEndpoint(uri, pattern)) {
+        } else if (uri == null || pattern == null || EndpointHelper.matchEndpoint(endpoint.getCamelContext(), uri, pattern)) {
             // if pattern is null then it mean to match all
 
             // only proxy if the uri is matched decorate endpoint with our proxy
