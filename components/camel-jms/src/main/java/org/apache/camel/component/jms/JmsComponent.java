@@ -326,6 +326,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setRequestTimeout(requestTimeout);
     }
 
+    public void setRequestTimeoutCheckerInterval(long requestTimeoutCheckerInterval) {
+        getConfiguration().setRequestTimeoutCheckerInterval(requestTimeoutCheckerInterval);
+    }
+
     public void setTransferExchange(boolean transferExchange) {
         getConfiguration().setTransferExchange(transferExchange);
     }

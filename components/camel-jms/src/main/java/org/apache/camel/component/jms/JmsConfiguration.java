@@ -87,6 +87,7 @@ public class JmsConfiguration implements Cloneable {
     private long recoveryInterval = -1;
     private long receiveTimeout = -1;
     private long requestTimeout = 20000L;
+    private long requestTimeoutCheckerInterval = 1000L;
     private int idleTaskExecutionLimit = 1;
     private int idleConsumerLimit = 1;
     private int maxConcurrentConsumers;
@@ -1059,7 +1060,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Factory method which which allows derived classes to customize the lazy
-     * transcationManager creation
+     * transaction manager creation
      */
     protected PlatformTransactionManager createTransactionManager() {
         JmsTransactionManager answer = new JmsTransactionManager();
@@ -1108,6 +1109,17 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
+    }
+
+    public long getRequestTimeoutCheckerInterval() {
+        return requestTimeoutCheckerInterval;
+    }
+
+    /**
+     * Sets the interval in milliseconds how often the request timeout checker should run.
+     */
+    public void setRequestTimeoutCheckerInterval(long requestTimeoutCheckerInterval) {
+        this.requestTimeoutCheckerInterval = requestTimeoutCheckerInterval;
     }
 
     public String getReplyTo() {
