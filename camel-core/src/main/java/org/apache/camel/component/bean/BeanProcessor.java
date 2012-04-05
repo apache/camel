@@ -89,17 +89,19 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         }
 
         // do we have a custom adapter for this POJO to a Processor
-        // should not be invoked if an explicit method has been set
-        Processor processor = getProcessor();
-        if (explicitMethodName == null && processor != null) {
-            LOG.trace("Using a custom adapter as bean invocation: {}", processor);
-            try {
-                processor.process(exchange);
-            } catch (Throwable e) {
-                exchange.setException(e);
+        // but only do this if allowed
+        if (allowProcessor(explicitMethodName, beanInfo)) {
+            Processor processor = getProcessor();
+            if (processor != null) {
+                LOG.trace("Using a custom adapter as bean invocation: {}", processor);
+                try {
+                    processor.process(exchange);
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                }
+                callback.done(true);
+                return true;
             }
-            callback.done(true);
-            return true;
         }
 
         Message in = exchange.getIn();
@@ -252,5 +254,24 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
     protected void doStop() throws Exception {
         ServiceHelper.stopService(getProcessor());
+    }
+
+    private boolean allowProcessor(String explicitMethodName, BeanInfo info) {
+        if (explicitMethodName != null) {
+            // don't allow if explicit method name is given, as we then must invoke this method
+            return false;
+        }
+
+        // don't allow if any of the methods has a @Handler annotation
+        // as the @Handler annotation takes precedence and is supposed to trigger invocation
+        // of the given method
+        for (MethodInfo method : info.getMethods()) {
+            if (method.hasHandlerAnnotation()) {
+                return false;
+            }
+        }
+
+        // fallback and allow using the processor
+        return true;
     }
 }
