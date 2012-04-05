@@ -21,6 +21,8 @@ import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
 
+import org.apache.camel.model.dataformat.XmlJsonDataFormat;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
@@ -498,6 +500,20 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(new XMLBeansDataFormat());
     }
 
+    /**
+     * Uses the xmljson dataformat, based on json-lib
+     */
+    public T xmljson() {
+        return dataFormat(new XmlJsonDataFormat());
+    }
+    
+    /**
+     * Uses the xmljson dataformat, based on json-lib, initializing custom options with a Map
+     */
+    public T xmljson(Map<String, String> options) {
+        return dataFormat(new XmlJsonDataFormat(options));
+    }
+    
     /**
      * Uses the ZIP deflater data format
      */
