@@ -132,7 +132,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
         }
 
-        Unmarshaller unmarshaller = getOrCreateUnmarshaller(type);
+        Unmarshaller unmarshaller = getUnmarshaller(type);
 
         if (parentTypeConverter != null) {
             if (!needFiltering(exchange)) {
@@ -189,7 +189,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
             }
             if (needFiltering(exchange)) {
-                XMLStreamWriter writer = exchange.getContext().getTypeConverter().convertTo(XMLStreamWriter.class, buffer);
+                XMLStreamWriter writer = parentTypeConverter.convertTo(XMLStreamWriter.class, buffer);
                 FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
                 marshaller.marshal(value, filteringWriter);
             } else {
@@ -247,7 +247,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return context;
     }
 
-    protected synchronized <T> Unmarshaller getOrCreateUnmarshaller(Class<T> type) throws JAXBException {
+    protected synchronized <T> Unmarshaller getUnmarshaller(Class<T> type) throws JAXBException {
         JAXBContext context = createContext(type);
         return context.createUnmarshaller();
     }
