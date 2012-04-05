@@ -82,7 +82,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      *
      * @param pattern the pattern(s).
      * @throws Exception can be thrown if error occurred
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public void mockEndpoints(String... pattern) throws Exception {
         for (String s : pattern) {
@@ -95,7 +95,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      *
      * @param pattern the pattern(s).
      * @throws Exception can be thrown if error occurred
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public void mockEndpointsAndSkip(String... pattern) throws Exception {
         for (String s : pattern) {
