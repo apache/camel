@@ -23,9 +23,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class TimerRestartTest extends ContextTestSupport {
+public class TimerSuspendCamelContextTest extends ContextTestSupport {
 
-    public void testTimerRestart() throws Exception {
+    public void testTimerSuspendResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
@@ -34,15 +34,15 @@ public class TimerRestartTest extends ContextTestSupport {
         mock.reset();
         mock.expectedMessageCount(0);
 
-        context.stop();
+        context.suspend();
         Thread.sleep(2000);
 
+        assertMockEndpointsSatisfied();
+
         mock.reset();
-
-        context.start();
-
         mock.expectedMinimumMessageCount(1);
 
+        context.resume();
         assertMockEndpointsSatisfied();
     }
 
