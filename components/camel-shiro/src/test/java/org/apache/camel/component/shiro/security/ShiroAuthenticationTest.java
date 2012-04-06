@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.shiro.security;
 
-import javax.naming.AuthenticationException;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -77,18 +76,13 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         
         return new RouteBuilder() {
             public void configure() {
-                onException(UnknownAccountException.class).
+                onException(UnknownAccountException.class, IncorrectCredentialsException.class,
+                        LockedAccountException.class, AuthenticationException.class).
                     to("mock:authenticationException");
-                onException(IncorrectCredentialsException.class).
-                    to("mock:authenticationException");
-                onException(LockedAccountException.class).
-                    to("mock:authenticationException");
-                onException(AuthenticationException.class).
-                    to("mock:authenticationException");
-                
+
                 from("direct:secureEndpoint").
-                    to("log:incoming payload").
                     policy(securityPolicy).
+                    to("log:incoming payload").
                     to("mock:success");
             }
         };
@@ -97,8 +91,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
     
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
 
-        public TestShiroSecurityTokenInjector(
-                ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
+        public TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
             super(shiroSecurityToken, bytes);
         }
         
