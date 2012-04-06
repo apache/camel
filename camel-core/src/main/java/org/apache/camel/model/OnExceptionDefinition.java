@@ -352,19 +352,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Sets the retry while expression.
-     * <p/>
-     * Will continue retrying until expression evaluates to <tt>false</tt>.
-     *
-     * @param retryWhile expression that determines when to stop retrying
-     * @return the builder
-     */
-    public OnExceptionDefinition retryWhile(Expression retryWhile) {
-        setRetryWhilePolicy(ExpressionToPredicateAdapter.toPredicate(retryWhile));
-        return this;
-    }
-
-    /**
      * Sets the initial redelivery delay
      *
      * @param delay the initial redelivery delay

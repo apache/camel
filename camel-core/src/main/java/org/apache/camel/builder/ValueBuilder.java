@@ -30,7 +30,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  * 
  * @version 
  */
-public class ValueBuilder implements Expression {
+public class ValueBuilder implements Expression, Predicate {
     private Expression expression;
     private boolean not;
 
@@ -38,8 +38,14 @@ public class ValueBuilder implements Expression {
         this.expression = expression;
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         return expression.evaluate(exchange, type);
+    }
+
+    @Override
+    public boolean matches(Exchange exchange) {
+        return PredicateBuilder.toPredicate(getExpression()).matches(exchange);
     }
 
     public Expression getExpression() {
