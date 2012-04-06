@@ -53,7 +53,7 @@
       <commons-io-bundle-version>1.4_3</commons-io-bundle-version>
       <commons-jxpath-version>1.3</commons-jxpath-version>
       <commons-math-version>2.2</commons-math-version>
-      <commons-dbcp-bundle-version>1.4_2</commons-dbcp-bundle-version>
+      <commons-dbcp-bundle-version>1.4_3</commons-dbcp-bundle-version>
       <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
       <ezmorph-bundle-version>1.0.6_1-SNAPSHOT</ezmorph-bundle-version>
@@ -63,7 +63,7 @@
       <felix-configadmin-version>1.2.4</felix-configadmin-version>
       <felix-framework-version>2.0.5</felix-framework-version>
       <fop-bundle-version>1.0_2</fop-bundle-version>
-      <freemarker-bundle-version>2.3.18_2</freemarker-bundle-version>
+      <freemarker-bundle-version>2.3.19_1</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
@@ -85,7 +85,7 @@
       <jing-bundle-version>20030619_5</jing-bundle-version>
       <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
       <josql-bundle-version>1.5_5</josql-bundle-version>
-      <jsch-bundle-version>0.1.45_1</jsch-bundle-version>
+      <jsch-bundle-version>0.1.46_1</jsch-bundle-version>
       <jsendnsca-bundle-version>1.3.1_3</jsendnsca-bundle-version>
       <jsonlib-bundle-version>2.4_1-SNAPSHOT</jsonlib-bundle-version>
       <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
@@ -101,14 +101,14 @@
       <opensaml-version>2.5.1_2</opensaml-version>
       <oscache-bundle-version>2.4_5</oscache-bundle-version>
       <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
-      <quartz-bundle-version>1.8.5_2</quartz-bundle-version>
+      <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
       <qpid-bundle-version>0.12_2</qpid-bundle-version>
       <quickfix-bundle-version>1.5.1_2</quickfix-bundle-version>
       <regexp-bundle-version>1.3_3</regexp-bundle-version>
       <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
       <rome-bundle-version>1.0_3</rome-bundle-version>
       <saxon-bundle-version>9.3.0.11_1</saxon-bundle-version>
-      <scala-bundle-version>2.9.1_2</scala-bundle-version>
+      <scala-bundle-version>2.9.1_3</scala-bundle-version>
       <scriptengines-version>1.1</scriptengines-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_4</serp-bundle-version>
