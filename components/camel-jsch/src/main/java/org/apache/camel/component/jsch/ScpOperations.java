@@ -17,6 +17,8 @@
 package org.apache.camel.component.jsch;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -103,7 +105,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
 
             try {
-                write(channel, file, ExchangeHelper.getMandatoryInBody(exchange, InputStream.class));
+                write(channel, file, ExchangeHelper.getMandatoryInBody(exchange, InputStream.class), cfg);
             } catch (InvalidPayloadException e) {
                 throw new GenericFileOperationFailedException("Failed extract message body as InputStream", e);
             } catch (IOException e) {
@@ -220,60 +222,115 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         return session;
     }
     
-    private void write(ChannelExec c, String name, InputStream data) throws IOException {
+    private void write(ChannelExec c, String name, InputStream data, ScpConfiguration cfg) throws IOException {
         OutputStream os = c.getOutputStream();
         InputStream is = c.getInputStream();
 
-        writeFile(name, data, os, is);
+        writeFile(name, data, os, is, cfg);
 
         os.close();
         is.close();
     }
 
-    private void writeFile(String filename, InputStream data, OutputStream os, InputStream is) throws IOException {
+    private void writeFile(String filename, InputStream data, OutputStream os, InputStream is, ScpConfiguration cfg) throws IOException {
+        final int lineFeed = '\n';
+        String bytes;
         int pos = filename.indexOf('/');
         if (pos >= 0) {
             // write to child directory
             String dir = filename.substring(0, pos);
-            os.write(("D0775 0 " + dir + "\n").getBytes());
+            bytes = "D0775 0 " + dir;
+            LOG.trace("[scp:sink] {}", bytes);
+            os.write(bytes.getBytes());
+            os.write(lineFeed);
             os.flush();
-            is.read();
+            readAck(is, false);
 
-            writeFile(filename.substring(pos + 1), data, os, is);
+            writeFile(filename.substring(pos + 1), data, os, is, cfg);
 
-            os.write("E\n".getBytes());
+            bytes = "E";
+            LOG.trace("[scp:sink] {}", bytes);
+            os.write(bytes.getBytes());
+            os.write(lineFeed);
             os.flush();
-            is.read();
+            readAck(is, false);
         } else {
             int count = 0;
             int read = 0;
             int size = endpoint.getBufferSize();
-            byte[] bytes = new byte[size];
+            byte[] reply = new byte[size];
 
             // figure out the stream size as we need to pass it in the header
             BufferedInputStream buffer = new BufferedInputStream(data, size);
             buffer.mark(Integer.MAX_VALUE);
-            while ((read = buffer.read(bytes)) != -1) {
+            while ((read = buffer.read(reply)) != -1) {
                 count += read;
             }
 
             // send the header
-            os.write(("C0775 " + count + " " + filename + "\n").getBytes());
+            bytes = "C0" + cfg.getChmod() + " " + count + " " + filename;
+            LOG.trace("[scp:sink] {}", bytes);
+            os.write(bytes.getBytes());
+            os.write(lineFeed);
             os.flush();
-            is.read();
+            readAck(is, false);
 
             // now send the stream
             buffer.reset();
-            while ((read = buffer.read(bytes)) != -1) {
-                os.write(bytes, 0, read);
+            while ((read = buffer.read(reply)) != -1) {
+                os.write(reply, 0, read);
             }
-            os.flush();
-            is.read();
+            writeAck(os);
+            readAck(is, false);
         }
+    }
+
+    private void writeAck(OutputStream os) throws IOException {
         os.write(0);
         os.flush();
     }
+
+    private int readAck(InputStream is, boolean failOnEof) throws IOException {
+        String message;
+        int answer = is.read();
+        switch (answer) {
+        case -1:
+            if (failOnEof) {
+                message = "[scp] Unexpected end of stream";
+                LOG.info(message);
+                throw new EOFException(message);
+            }
+            break;
+        case 1:
+            message = "[scp] WARN " + readLine(is);
+            LOG.info(message);
+            break;
+        case 2:
+            message = "[scp] NACK " + readLine(is);
+            LOG.info(message);
+            throw new IOException(message);
+        default:
+        // case 0:
+            break;
+        }
+        return answer;
+    }
     
+    private String readLine(InputStream is) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        int c = 0;
+        do {
+            c = is.read();
+            if (c == '\n') {
+                return bytes.toString();
+            }
+            bytes.write(c);
+        } while (c != -1);
+        String message = "[scp] Unexpected end of stream";
+        LOG.info(message);
+        throw new IOException(message);
+    }
+
     private static String getRemoteTarget(ScpConfiguration config) {
         // use current dir (".") if target directory not specified in uri
         return config.getDirectory().isEmpty() ? "." : config.getDirectory();

@@ -66,4 +66,18 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Farewell World", context.getTypeConverter().convertTo(String.class, file));
     }
+
+    @Test
+    public void testScpProduceChmod() throws Exception {
+        Assume.assumeTrue(this.isSetupComplete());
+
+        String uri = getScpUri() + "?username=admin&password=admin&chmod=640&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Bonjour Monde", Exchange.FILE_NAME, "monde.txt");
+
+        File file = new File(getScpPath() + "/monde.txt").getAbsoluteFile();
+        assertTrue("File should exist: " + file, file.exists());
+        // Mina sshd we use for testing ignores file perms;
+        // assertFalse("File should not have execute rights: " + file, file.canExecute());
+        assertEquals("Bonjour Monde", context.getTypeConverter().convertTo(String.class, file));
+    }
 }
