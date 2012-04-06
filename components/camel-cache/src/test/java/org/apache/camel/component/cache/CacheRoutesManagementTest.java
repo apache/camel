@@ -45,7 +45,7 @@ public class CacheRoutesManagementTest extends CamelTestSupport {
     @Produce(uri = "direct:route2")
     protected ProducerTemplate producerTemplate2;
 
-    private TestingCacheManagerFactory cmfRef = new TestingCacheManagerFactory("ehcache_test.xml");
+    private TestingCacheManagerFactory cmfRef = new TestingCacheManagerFactory();
 
     private Processor templateProcessor = new Processor() {
         public void process(Exchange exchange) throws Exception {
@@ -112,20 +112,15 @@ public class CacheRoutesManagementTest extends CamelTestSupport {
     }
 
     public class TestingCacheManagerFactory extends CacheManagerFactory {
-        private String xmlName;
 
         //Only for testing purpose, normally not needed
         private CacheManager cacheManager;
-
-        public TestingCacheManagerFactory(String xmlName) {
-            this.xmlName = xmlName;
-        }
 
         @Override
         protected synchronized CacheManager createCacheManagerInstance() {
             //Singleton- only for testing purpose, normally not needed
             if (cacheManager == null) {
-                cacheManager = CacheManager.create(getClass().getResourceAsStream(xmlName));
+                cacheManager = CacheManager.create();
             }
 
             return cacheManager;
