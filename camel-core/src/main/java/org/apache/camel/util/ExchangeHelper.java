@@ -94,10 +94,10 @@ public final class ExchangeHelper {
         throw new NoSuchPropertyException(exchange, propertyName, type);
     }
 
-    public static <T> T getMandatoryHeader(Exchange exchange, String propertyName, Class<T> type) throws NoSuchHeaderException {
-        T answer = exchange.getIn().getHeader(propertyName, type);
+    public static <T> T getMandatoryHeader(Exchange exchange, String headerName, Class<T> type) throws NoSuchHeaderException {
+        T answer = exchange.getIn().getHeader(headerName, type);
         if (answer == null) {
-            throw new NoSuchHeaderException(exchange, propertyName, type);
+            throw new NoSuchHeaderException(exchange, headerName, type);
         }
         return answer;
     }
