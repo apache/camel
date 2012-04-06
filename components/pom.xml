@@ -153,6 +153,7 @@
     <module>camel-velocity</module>
     <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
+    <module>camel-xmljson</module>
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
