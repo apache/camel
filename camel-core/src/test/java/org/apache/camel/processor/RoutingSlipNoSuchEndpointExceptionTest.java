@@ -44,7 +44,7 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
                     .onException(Exception.class)
                         .to("mock:error")
                     .end()
-                    .routingSlip(bean(Router.class));
+                    .routingSlip(method(Router.class));
             }
         });
         context.start();
@@ -69,7 +69,7 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
 
                 from("direct:child")
                     .errorHandler(noErrorHandler())
-                    .routingSlip(bean(Router.class));
+                    .routingSlip(method(Router.class));
             }
         });
         context.start();

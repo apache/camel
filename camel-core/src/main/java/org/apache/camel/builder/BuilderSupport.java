@@ -157,20 +157,22 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
      * <p/>
      * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
      *
      * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
      * @return the builder
+     * @deprecated use {@link #method(Object)} instead
      */
+    @Deprecated
     public ValueBuilder bean(Object beanOrBeanRef) {
         return bean(beanOrBeanRef, null);
     }
     
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
      * <p/>
      * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
@@ -178,7 +180,9 @@ public abstract class BuilderSupport {
      * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
      * @param method   name of method to invoke
      * @return the builder
+     * @deprecated use {@link #method(Object, String)} instead
      */
+    @Deprecated
     public ValueBuilder bean(Object beanOrBeanRef, String method) {
         MethodCallExpression expression;
         if (beanOrBeanRef instanceof String) {
@@ -190,26 +194,88 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
      *
      * @param beanType the Class of the bean which we want to invoke
      * @return the builder
+     * @deprecated use {@link #method(Class)} instead
      */
+    @Deprecated
     public ValueBuilder bean(Class<?> beanType) {
         MethodCallExpression expression = new MethodCallExpression(beanType);
         return new ValueBuilder(expression);
     }
     
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
+     * value builder
+     *
+     * @param beanType the Class of the bean which we want to invoke
+     * @param method   name of method to invoke
+     * @return the builder
+     * @deprecated use {@link #method(Class, String)} instead
+     */
+    @Deprecated
+    public ValueBuilder bean(Class<?> beanType, String method) {
+        MethodCallExpression expression = new MethodCallExpression(beanType, method);
+        return new ValueBuilder(expression);
+    }
+
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
+     * value builder
+     * <p/>
+     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     *
+     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @return the builder
+     */
+    public ValueBuilder method(Object beanOrBeanRef) {
+        return method(beanOrBeanRef, null);
+    }
+
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
+     * value builder
+     * <p/>
+     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     *
+     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param method   name of method to invoke
+     * @return the builder
+     */
+    public ValueBuilder method(Object beanOrBeanRef, String method) {
+        MethodCallExpression expression;
+        if (beanOrBeanRef instanceof String) {
+            expression = new MethodCallExpression((String) beanOrBeanRef, method);
+        } else {
+            expression = new MethodCallExpression(beanOrBeanRef, method);
+        }
+        return new ValueBuilder(expression);
+    }
+
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
+     * value builder
+     *
+     * @param beanType the Class of the bean which we want to invoke
+     * @return the builder
+     */
+    public ValueBuilder method(Class<?> beanType) {
+        MethodCallExpression expression = new MethodCallExpression(beanType);
+        return new ValueBuilder(expression);
+    }
+
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
      *
      * @param beanType the Class of the bean which we want to invoke
      * @param method   name of method to invoke
      * @return the builder
      */
-    public ValueBuilder bean(Class<?> beanType, String method) {
+    public ValueBuilder method(Class<?> beanType, String method) {
         MethodCallExpression expression = new MethodCallExpression(beanType, method);
         return new ValueBuilder(expression);
     }

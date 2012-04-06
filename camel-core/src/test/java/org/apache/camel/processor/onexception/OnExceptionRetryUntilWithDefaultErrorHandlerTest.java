@@ -47,7 +47,7 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
                 errorHandler(defaultErrorHandler().maximumRedeliveries(1).logStackTrace(false));
 
                 onException(MyFunctionalException.class)
-                        .retryWhile(bean("myRetryHandler"))
+                        .retryWhile(method("myRetryHandler"))
                         .handled(true)
                         .transform().constant("Sorry").stop();
 

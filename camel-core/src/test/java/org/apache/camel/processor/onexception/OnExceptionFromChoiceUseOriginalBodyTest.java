@@ -104,7 +104,7 @@ public class OnExceptionFromChoiceUseOriginalBodyTest extends ContextTestSupport
 
                 from("direct:route")
                     .choice()
-                        .when(bean("myServiceBean").isEqualTo("James")).to("mock:when")
+                        .when(method("myServiceBean").isEqualTo("James")).to("mock:when")
                     .otherwise()
                         .to("mock:otherwise");
             }

@@ -63,8 +63,8 @@ public class RecipientListBeanTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").recipientList(bean("myBean", "foo")).to("mock:result");
-                from("direct:params").recipientList(bean("myBean", "bar(${header.one}, ${header.two})"), ",").to("mock:result");
+                from("direct:start").recipientList(method("myBean", "foo")).to("mock:result");
+                from("direct:params").recipientList(method("myBean", "bar(${header.one}, ${header.two})"), ",").to("mock:result");
 
                 from("direct:a").transform(constant("Hello a"));
                 from("direct:b").transform(constant("Hello b"));

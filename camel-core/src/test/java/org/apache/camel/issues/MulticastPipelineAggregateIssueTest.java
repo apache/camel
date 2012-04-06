@@ -50,14 +50,14 @@ public class MulticastPipelineAggregateIssueTest extends ContextTestSupport {
                 .to("mock:a");
 
                 from("direct:b").multicast(new SumAggregateBean())
-                    .pipeline().transform(bean(IncreaseOne.class)).bean(new IncreaseTwo()).end()
-                    .pipeline().transform(bean(IncreaseOne.class)).bean(new IncreaseTwo()).end()
+                    .pipeline().transform(method(IncreaseOne.class)).bean(new IncreaseTwo()).end()
+                    .pipeline().transform(method(IncreaseOne.class)).bean(new IncreaseTwo()).end()
                 .end()
                 .to("mock:b");
 
                 from("direct:c").multicast(new SumAggregateBean())
-                    .pipeline().transform(bean(IncreaseOne.class)).transform(bean(new IncreaseTwo())).end()
-                    .pipeline().transform(bean(IncreaseOne.class)).transform(bean(new IncreaseTwo())).end()
+                    .pipeline().transform(method(IncreaseOne.class)).transform(method(new IncreaseTwo())).end()
+                    .pipeline().transform(method(IncreaseOne.class)).transform(method(new IncreaseTwo())).end()
                 .end()
                 .to("mock:c");
             }

@@ -257,7 +257,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .onException(Exception.class).retryWhile(bean("myRetryBean")).end()
+                    .onException(Exception.class).retryWhile(method("myRetryBean")).end()
                     .recipientList(header("recipientListHeader"))
                     .to("mock:result");
 

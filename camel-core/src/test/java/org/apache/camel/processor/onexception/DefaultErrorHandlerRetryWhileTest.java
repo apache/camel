@@ -47,7 +47,7 @@ public class DefaultErrorHandlerRetryWhileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(defaultErrorHandler().retryWhile(bean("myRetryHandler")));
+                errorHandler(defaultErrorHandler().retryWhile(method("myRetryHandler")));
 
                 from("direct:start").process(new MyProcessor());
             }

@@ -44,7 +44,7 @@ public class RecipientListThrowExceptionSubRouteTest extends ContextTestSupport 
                     .onException(Exception.class)
                         .to("mock:error")
                     .end()
-                    .recipientList(bean(Router.class));
+                    .recipientList(method(Router.class));
             }
         });
         context.start();
@@ -69,7 +69,7 @@ public class RecipientListThrowExceptionSubRouteTest extends ContextTestSupport 
 
                 from("direct:child")
                     .errorHandler(noErrorHandler())
-                    .recipientList(bean(Router.class));
+                    .recipientList(method(Router.class));
             }
         });
         context.start();

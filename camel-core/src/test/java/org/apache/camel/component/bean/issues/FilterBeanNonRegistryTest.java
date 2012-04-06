@@ -31,7 +31,7 @@ public class FilterBeanNonRegistryTest extends ContextTestSupport {
                 MyBean myBean = new MyBean();
 
                 from("direct:start")
-                    .filter().expression(bean(myBean, "isGoldCustomer"))
+                    .filter().method(myBean, "isGoldCustomer")
                     .to("mock:result");
             }
         });

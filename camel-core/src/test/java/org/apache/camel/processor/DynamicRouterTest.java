@@ -58,7 +58,7 @@ public class DynamicRouterTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // use a bean as the dynamic router
-                    .dynamicRouter(bean(DynamicRouterTest.class, "slip"));
+                    .dynamicRouter(method(DynamicRouterTest.class, "slip"));
                 // END SNIPPET: e1
 
                 from("direct:foo").transform(constant("Bye World")).to("mock:foo");

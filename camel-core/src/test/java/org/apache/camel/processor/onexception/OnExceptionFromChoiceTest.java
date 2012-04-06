@@ -97,7 +97,7 @@ public class OnExceptionFromChoiceTest extends ContextTestSupport {
 
                 from("direct:start")
                     .choice()
-                        .when(bean("myServiceBean").isEqualTo("James")).to("mock:when")
+                        .when(method("myServiceBean").isEqualTo("James")).to("mock:when")
                     .otherwise()
                         .to("mock:otherwise");
             }
