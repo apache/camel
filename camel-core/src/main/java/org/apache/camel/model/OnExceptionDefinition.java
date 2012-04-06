@@ -359,7 +359,10 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      *
      * @param retryWhile expression that determines when to stop retrying
      * @return the builder
+     * @deprecated use {@link #retryWhile(org.apache.camel.Predicate)} instead.
+     *             This method is removed in Camel 2.10 onwards.
      */
+    @Deprecated
     public OnExceptionDefinition retryWhile(Expression retryWhile) {
         setRetryWhilePolicy(ExpressionToPredicateAdapter.toPredicate(retryWhile));
         return this;
