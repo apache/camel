@@ -38,48 +38,48 @@ import org.apache.camel.spi.DataFormat;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlJsonDataFormat extends DataFormatDefinition {
     
-	public static final String TYPE_HINTS = "typeHints";
-	public static final String REMOVE_NAMESPACE_PREFIXES = "removeNamespacePrefixes";
-	public static final String SKIP_NAMESPACES = "skipNamespaces";
-	public static final String TRIM_SPACES = "trimSpaces";
-	public static final String SKIP_WHITESPACE = "skipWhitespace";
-	public static final String EXPANDABLE_PROPERTIES = "expandableProperties";
-	public static final String ARRAY_NAME = "arrayName";
-	public static final String ELEMENT_NAME = "elementName";
-	public static final String ROOT_NAME = "rootName";
-	public static final String NAMESPACE_LENIENT = "namespaceLenient";
-	public static final String FORCE_TOP_LEVEL_OBJECT = "forceTopLevelObject";
-	public static final String ENCODING = "encoding";
+    public static final String TYPE_HINTS = "typeHints";
+    public static final String REMOVE_NAMESPACE_PREFIXES = "removeNamespacePrefixes";
+    public static final String SKIP_NAMESPACES = "skipNamespaces";
+    public static final String TRIM_SPACES = "trimSpaces";
+    public static final String SKIP_WHITESPACE = "skipWhitespace";
+    public static final String EXPANDABLE_PROPERTIES = "expandableProperties";
+    public static final String ARRAY_NAME = "arrayName";
+    public static final String ELEMENT_NAME = "elementName";
+    public static final String ROOT_NAME = "rootName";
+    public static final String NAMESPACE_LENIENT = "namespaceLenient";
+    public static final String FORCE_TOP_LEVEL_OBJECT = "forceTopLevelObject";
+    public static final String ENCODING = "encoding";
     
     @XmlAttribute
-	private String encoding;
-	@XmlAttribute
-	private String elementName;
-	@XmlAttribute
-	private String arrayName;
-	@XmlAttribute
-	private Boolean forceTopLevelObject;
-	@XmlAttribute
-	private Boolean namespaceLenient;
-	@XmlAttribute
-	private String rootName;
-	@XmlAttribute
-	private Boolean skipWhitespace;
-	@XmlAttribute
-	private Boolean trimSpaces;
-	@XmlAttribute
-	private Boolean skipNamespaces;
-	@XmlAttribute
-	private Boolean removeNamespacePrefixes;
-	@XmlAttribute @XmlList
-	private List<String> expandableProperties;
-	@XmlAttribute
-	private String typeHints;
-	
+    private String encoding;
+    @XmlAttribute
+    private String elementName;
+    @XmlAttribute
+    private String arrayName;
+    @XmlAttribute
+    private Boolean forceTopLevelObject;
+    @XmlAttribute
+    private Boolean namespaceLenient;
+    @XmlAttribute
+    private String rootName;
+    @XmlAttribute
+    private Boolean skipWhitespace;
+    @XmlAttribute
+    private Boolean trimSpaces;
+    @XmlAttribute
+    private Boolean skipNamespaces;
+    @XmlAttribute
+    private Boolean removeNamespacePrefixes;
+    @XmlAttribute @XmlList
+    private List<String> expandableProperties;
+    @XmlAttribute
+    private String typeHints;
+
     public XmlJsonDataFormat() {
         super("xmljson");
     }
-	
+
     public XmlJsonDataFormat(Map<String, String> options) {
         super("xmljson");
         if (options.containsKey(ENCODING)) {
@@ -122,59 +122,59 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
-    	if (encoding != null) {
-    		setProperty(dataFormat, ENCODING, encoding);
-		}
-    	
-    	if (forceTopLevelObject != null) {
-    		setProperty(dataFormat, FORCE_TOP_LEVEL_OBJECT, forceTopLevelObject);
-		}
-    	
-    	if (namespaceLenient != null) {
-    		setProperty(dataFormat, NAMESPACE_LENIENT, namespaceLenient);
-		}
-    	
-    	if (rootName != null) {
-    		setProperty(dataFormat, ROOT_NAME, rootName);
-		}
-    	
-    	if (elementName != null) {
-    		setProperty(dataFormat, ELEMENT_NAME, elementName);
-		}
-    	
-    	if (arrayName != null) {
-    		setProperty(dataFormat, ARRAY_NAME, arrayName);
-		}
-    	
-		if (expandableProperties != null && expandableProperties.size() != 0) {
-			setProperty(dataFormat, EXPANDABLE_PROPERTIES, expandableProperties);
-		}
-    	
-    	if (skipWhitespace != null) {
-    		setProperty(dataFormat, SKIP_WHITESPACE, skipWhitespace);
-		}
-    	
-    	if (trimSpaces != null) {
-    		setProperty(dataFormat, TRIM_SPACES, trimSpaces);
-		}
-    	
-		if (skipNamespaces != null) {
-			setProperty(dataFormat, SKIP_NAMESPACES, skipNamespaces);
-		}
-    	
-    	if (removeNamespacePrefixes != null) {
-    		setProperty(dataFormat, REMOVE_NAMESPACE_PREFIXES, removeNamespacePrefixes);
-		}
-    	
-    	// will end up calling the setTypeHints(String s) which does the parsing from the Enum String key to the Enum value
-		if (typeHints != null) {
-    		setProperty(typeHints, TYPE_HINTS, typeHints);
-		}
-    	
-		// TODO: xmljson: element-namespace mapping is not implemented in the XML DSL
-		// depending on adoption rate of this data format, we'll make this data format NamespaceAware so that it gets
-		// the prefix-namespaceURI mappings from the context, and with a new attribute called "namespacedElements",
-		// we'll associate named elements with prefixes following a format "element1:prefix1,element2:prefix2,..."
+        if (encoding != null) {
+            setProperty(dataFormat, ENCODING, encoding);
+        }
+
+        if (forceTopLevelObject != null) {
+            setProperty(dataFormat, FORCE_TOP_LEVEL_OBJECT, forceTopLevelObject);
+        }
+
+        if (namespaceLenient != null) {
+            setProperty(dataFormat, NAMESPACE_LENIENT, namespaceLenient);
+        }
+
+        if (rootName != null) {
+            setProperty(dataFormat, ROOT_NAME, rootName);
+        }
+        
+        if (elementName != null) {
+            setProperty(dataFormat, ELEMENT_NAME, elementName);
+        }
+
+        if (arrayName != null) {
+            setProperty(dataFormat, ARRAY_NAME, arrayName);
+        }
+
+        if (expandableProperties != null && expandableProperties.size() != 0) {
+            setProperty(dataFormat, EXPANDABLE_PROPERTIES, expandableProperties);
+        }
+
+        if (skipWhitespace != null) {
+            setProperty(dataFormat, SKIP_WHITESPACE, skipWhitespace);
+        }
+
+        if (trimSpaces != null) {
+            setProperty(dataFormat, TRIM_SPACES, trimSpaces);
+        }
+
+        if (skipNamespaces != null) {
+            setProperty(dataFormat, SKIP_NAMESPACES, skipNamespaces);
+        }
+
+        if (removeNamespacePrefixes != null) {
+            setProperty(dataFormat, REMOVE_NAMESPACE_PREFIXES, removeNamespacePrefixes);
+        }
+
+        // will end up calling the setTypeHints(String s) which does the parsing from the Enum String key to the Enum value
+        if (typeHints != null) {
+            setProperty(typeHints, TYPE_HINTS, typeHints);
+        }
+
+        //TODO: xmljson: element-namespace mapping is not implemented in the XML DSL
+        // depending on adoption rate of this data format, we'll make this data format NamespaceAware so that it gets
+        // the prefix-namespaceURI mappings from the context, and with a new attribute called "namespacedElements",
+        // we'll associate named elements with prefixes following a format "element1:prefix1,element2:prefix2,..."
     }
 
     public String getEncoding() {

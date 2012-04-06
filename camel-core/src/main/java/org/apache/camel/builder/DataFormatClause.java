@@ -21,7 +21,6 @@ import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
 
-import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -48,6 +47,7 @@ import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
+import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
