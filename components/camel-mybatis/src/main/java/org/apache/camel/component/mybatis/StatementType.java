@@ -19,9 +19,9 @@ package org.apache.camel.component.mybatis;
 /**
  * Statement types to instruct which MyBatis operation to use.
  *
- * @version 
+ * @version
  */
 public enum StatementType {
 
-    SelectOne, SelectList, Insert, Update, Delete
+    SelectOne, SelectList, Insert, InsertList, Update, Delete
 }
