@@ -16,17 +16,17 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.impl.DefaultInjector;
 import org.apache.camel.spi.Injector;
-import org.apache.camel.util.ReflectionInjector;
 
 /**
  * @version 
  */
-public class InjectorDefaultsToReflectionTest extends ContextTestSupport {
+public class InjectorDefaultsTest extends ContextTestSupport {
 
-    public void testInjectorIsReflectionByDefault() throws Exception {
+    public void testInjectorIsDefaultByDefault() throws Exception {
         Injector injector = context.getInjector();
-        assertIsInstanceOf(ReflectionInjector.class, injector);
+        assertIsInstanceOf(DefaultInjector.class, injector);
     }
 
     public void testNewInstance() throws Exception {
