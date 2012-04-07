@@ -367,7 +367,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
         // use the default bean post processor from camel-core
         DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
-        processor.postProcessBeforeInitialization(this, "this");
+        processor.postProcessBeforeInitialization(this, getClass().getName());
     }
 
     protected void stopCamelContext() throws Exception {
