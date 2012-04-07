@@ -186,12 +186,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
         X509HostnameVerifier x509HostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
         if (x509HostnameVerifier == null) {
-            x509HostnameVerifier = this.x509HostnameVerifier;
+            x509HostnameVerifier = getX509HostnameVerifier();
         }
         
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         if (sslContextParameters == null) {
-            sslContextParameters = this.sslContextParameters;
+            sslContextParameters = getSslContextParameters();
         }
         
         boolean secure = HttpHelper.isSecureConnection(uri);
@@ -233,6 +233,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (httpClientConfigurer != null) {
             endpoint.setHttpClientConfigurer(httpClientConfigurer);
         }
+        endpoint.setHttpContext(getHttpContext());
         if (httpContext != null) {
             endpoint.setHttpContext(httpContext);
         }
@@ -354,13 +355,29 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
     }
-    
+
+    public HttpContext getHttpContext() {
+        return httpContext;
+    }
+
+    public void setHttpContext(HttpContext httpContext) {
+        this.httpContext = httpContext;
+    }
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public X509HostnameVerifier getX509HostnameVerifier() {
+        return x509HostnameVerifier;
+    }
+
+    public void setX509HostnameVerifier(X509HostnameVerifier x509HostnameVerifier) {
+        this.x509HostnameVerifier = x509HostnameVerifier;
     }
 
     public int getMaxTotalConnections() {
