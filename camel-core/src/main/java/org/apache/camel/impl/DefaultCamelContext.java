@@ -120,7 +120,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -2098,8 +2097,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             return (Injector) finder.newInstance("Injector");
         } catch (NoFactoryAvailableException e) {
-            // lets use the default
-            return new ReflectionInjector();
+            // lets use the default injector
+            return new DefaultInjector(this);
         }
     }
 
