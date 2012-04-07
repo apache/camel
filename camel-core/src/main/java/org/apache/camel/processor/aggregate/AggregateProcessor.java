@@ -375,6 +375,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             closedCorrelationKeys.put(key, key);
         }
 
+        if (fromTimeout) {
+            // invoke timeout if its timeout aware aggregation strategy,
+            // to allow any custom processing before discarding the exchange
+            if (aggregationStrategy instanceof TimeoutAwareAggregationStrategy) {
+                long timeout = getCompletionTimeout() > 0 ? getCompletionTimeout() : -1;
+                ((TimeoutAwareAggregationStrategy) aggregationStrategy).timeout(exchange, -1, -1, timeout);
+            }
+        }
+
         if (fromTimeout && isDiscardOnCompletionTimeout()) {
             // discard due timeout
             LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: ()", key, exchange);

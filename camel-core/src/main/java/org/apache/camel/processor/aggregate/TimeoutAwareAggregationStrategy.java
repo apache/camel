@@ -32,9 +32,9 @@ public interface TimeoutAwareAggregationStrategy extends AggregationStrategy {
      *
      * @param oldExchange  the current aggregated exchange, or the original {@link Exchange} if no aggregation
      *                     has been done before the timeout occurred
-     * @param index        the index
-     * @param total        the total
-     * @param timeout      the timeout value in millis
+     * @param index        the index, may be <tt>-1</tt> if not possible to determine the index
+     * @param total        the total, may be <tt>-1</tt> if not possible to determine the total
+     * @param timeout      the timeout value in millis, may be <tt>-1</tt> if not possible to determine the timeout
      */
     void timeout(Exchange oldExchange, int index, int total, long timeout);
 }
