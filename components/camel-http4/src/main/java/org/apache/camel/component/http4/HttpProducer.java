@@ -56,6 +56,7 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,12 +67,14 @@ import org.slf4j.LoggerFactory;
 public class HttpProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
     private HttpClient httpClient;
+    private HttpContext httpContext;
     private boolean throwException;
     private boolean transferException;
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
         this.httpClient = endpoint.getHttpClient();
+        this.httpContext = endpoint.getHttpContext();
         this.throwException = endpoint.isThrowExceptionOnFailure();
         this.transferException = endpoint.isTransferException();
     }
@@ -234,7 +237,11 @@ public class HttpProducer extends DefaultProducer {
      * @throws IOException can be thrown
      */
     protected HttpResponse executeMethod(HttpUriRequest httpRequest) throws IOException {
-        return httpClient.execute(httpRequest);
+        if (httpContext != null) {
+            return httpClient.execute(httpRequest, httpContext);
+        } else {
+            return httpClient.execute(httpRequest);
+        }
     }
 
     /**
