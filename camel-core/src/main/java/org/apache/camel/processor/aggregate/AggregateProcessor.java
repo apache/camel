@@ -240,7 +240,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         // prepare the exchanges for aggregation and aggregate it
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
-        answer = onAggregation(oldExchange, exchange);
+        // must catch any exception from aggregation
+        try {
+            answer = onAggregation(oldExchange, exchange);
+        } catch (Throwable e) {
+            throw new CamelExchangeException("Error occurred during aggregation", exchange, e);
+        }
         if (answer == null) {
             throw new CamelExchangeException("AggregationStrategy " + aggregationStrategy + " returned null which is not allowed", exchange);
         }
