@@ -46,12 +46,14 @@ public class NettyConsumer extends DefaultConsumer {
     private ServerBootstrap serverBootstrap;
     private ConnectionlessBootstrap connectionlessServerBootstrap;
     private Channel channel;
+    private ExecutorService bossExecutor;
+    private ExecutorService workerExecutor;
 
     public NettyConsumer(NettyEndpoint nettyEndpoint, Processor processor, NettyConfiguration configuration) {
         super(nettyEndpoint, processor);
         this.context = this.getEndpoint().getCamelContext();
         this.configuration = configuration;
-        this.allChannels = new DefaultChannelGroup("NettyProducer-" + nettyEndpoint.getEndpointUri());
+        this.allChannels = new DefaultChannelGroup("NettyConsumer-" + nettyEndpoint.getEndpointUri());
     }
 
     @Override
@@ -78,12 +80,21 @@ public class NettyConsumer extends DefaultConsumer {
         LOG.debug("Netty consumer unbinding from: {}", configuration.getAddress());
 
         // close all channels
+        LOG.trace("Closing {} channels", allChannels.size());
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
-        // and then release other resources
+        // close server external resources
         if (channelFactory != null) {
             channelFactory.releaseExternalResources();
+        }
+
+        // and then shutdown the thread pools
+        if (bossExecutor != null) {
+            context.getExecutorServiceManager().shutdownNow(bossExecutor);
+        }
+        if (workerExecutor != null) {
+            context.getExecutorServiceManager().shutdownNow(workerExecutor);
         }
 
         super.doStop();
@@ -144,12 +155,10 @@ public class NettyConsumer extends DefaultConsumer {
     }
 
     private void initializeTCPServerSocketCommunicationLayer() throws Exception {
-        ExecutorService bossExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPBoss",
-                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
-        ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPWorker",
-                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
+        bossExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
+        workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
 
-        if (configuration.getWorkerCount() == 0) {
+        if (configuration.getWorkerCount() <= 0) {
             channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
         } else {
             channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor,
@@ -164,6 +173,7 @@ public class NettyConsumer extends DefaultConsumer {
         }
         serverBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         serverBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
+        serverBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
 
@@ -173,10 +183,12 @@ public class NettyConsumer extends DefaultConsumer {
     }
 
     private void initializeUDPServerSocketCommunicationLayer() throws Exception {
-        ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyUDPWorker",
-                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
-
-        datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
+        workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
+        if (configuration.getWorkerCount() <= 0) {
+            datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
+        } else {
+            datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor, configuration.getWorkerCount());
+        }
         connectionlessServerBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
         if (configuration.getServerPipelineFactory() != null) {
             configuration.getServerPipelineFactory().setConsumer(this);
@@ -186,6 +198,7 @@ public class NettyConsumer extends DefaultConsumer {
         }
         connectionlessServerBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         connectionlessServerBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
+        connectionlessServerBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
         connectionlessServerBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
         connectionlessServerBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
         connectionlessServerBootstrap.setOption("child.broadcast", configuration.isBroadcast());

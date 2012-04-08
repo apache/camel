@@ -42,7 +42,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     private final Exchange exchange;
     private final AsyncCallback callback;
     private boolean messageReceived;
-    private boolean exceptionHandled;
+    private volatile boolean exceptionHandled;
 
     public ClientChannelHandler(NettyProducer producer, Exchange exchange, AsyncCallback callback) {
         this.producer = producer;

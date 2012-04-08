@@ -55,6 +55,8 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     private ChannelFactory channelFactory;
     private DatagramChannelFactory datagramChannelFactory;
     private CamelLogger noReplyLogger;
+    private ExecutorService bossExecutor;
+    private ExecutorService workerExecutor;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
@@ -103,6 +105,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     protected void doStop() throws Exception {
         LOG.debug("Stopping producer at address: {}", configuration.getAddress());
         // close all channels
+        LOG.trace("Closing {} channels", ALL_CHANNELS.size());
         ChannelGroupFuture future = ALL_CHANNELS.close();
         future.awaitUninterruptibly();
 
@@ -110,6 +113,15 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         if (channelFactory != null) {
             channelFactory.releaseExternalResources();
         }
+
+        // and then shutdown the thread pools
+        if (bossExecutor != null) {
+            context.getExecutorServiceManager().shutdownNow(bossExecutor);
+        }
+        if (workerExecutor != null) {
+            context.getExecutorServiceManager().shutdownNow(workerExecutor);
+        }
+
         super.doStop();
     }
 
@@ -208,18 +220,15 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
     protected void setupTCPCommunication() throws Exception {
         if (channelFactory == null) {
-            ExecutorService bossExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPBoss",
-                    configuration.getCorePoolSize(), configuration.getMaxPoolSize());
-            ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPWorker",
-                    configuration.getCorePoolSize(), configuration.getMaxPoolSize());
+            bossExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
+            workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
             channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
         }
     }
 
     protected void setupUDPCommunication() throws Exception {
         if (datagramChannelFactory == null) {
-            ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyUDPWorker",
-                    configuration.getCorePoolSize(), configuration.getMaxPoolSize());
+            workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
             datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
         }
     }
@@ -243,16 +252,17 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
         if (isTcp()) {
             ClientBootstrap clientBootstrap = new ClientBootstrap(channelFactory);
-            clientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
-            clientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
-            clientBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-            clientBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
+            clientBootstrap.setOption("keepAlive", configuration.isKeepAlive());
+            clientBootstrap.setOption("tcpNoDelay", configuration.isTcpNoDelay());
+            clientBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
+            clientBootstrap.setOption("connectTimeoutMillis", configuration.getConnectTimeout());
 
             // set the pipeline on the bootstrap
             clientBootstrap.setPipeline(clientPipeline);
             answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             return answer;
         } else {
+            // TODO: Is this correct for a UDP client
             ConnectionlessBootstrap connectionlessClientBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
             connectionlessClientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
             connectionlessClientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
