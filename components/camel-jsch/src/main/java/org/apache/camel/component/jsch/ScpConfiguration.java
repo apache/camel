@@ -33,7 +33,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     private String strictHostKeyChecking = "no";
     private int serverAliveInterval;
     private int serverAliveCountMax = 1;
-    private String chmod;
+    private String chmod = DEFAULT_MOD;
     // comma separated list of ciphers. 
     // null means default jsch list will be used
     private String ciphers;

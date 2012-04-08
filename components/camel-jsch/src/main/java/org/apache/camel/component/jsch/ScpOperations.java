@@ -31,7 +31,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -39,6 +38,7 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,10 +226,11 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         OutputStream os = c.getOutputStream();
         InputStream is = c.getInputStream();
 
-        writeFile(name, data, os, is, cfg);
-
-        os.close();
-        is.close();
+        try {
+            writeFile(name, data, os, is, cfg);
+        } finally {
+            IOHelper.close(is, os);
+        }
     }
 
     private void writeFile(String filename, InputStream data, OutputStream os, InputStream is, ScpConfiguration cfg) throws IOException {
@@ -256,32 +257,36 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             readAck(is, false);
         } else {
             int count = 0;
-            int read = 0;
+            int read;
             int size = endpoint.getBufferSize();
             byte[] reply = new byte[size];
 
             // figure out the stream size as we need to pass it in the header
             BufferedInputStream buffer = new BufferedInputStream(data, size);
-            buffer.mark(Integer.MAX_VALUE);
-            while ((read = buffer.read(reply)) != -1) {
-                count += read;
-            }
+            try {
+                buffer.mark(Integer.MAX_VALUE);
+                while ((read = buffer.read(reply)) != -1) {
+                    count += read;
+                }
 
-            // send the header
-            bytes = "C0" + cfg.getChmod() + " " + count + " " + filename;
-            LOG.trace("[scp:sink] {}", bytes);
-            os.write(bytes.getBytes());
-            os.write(lineFeed);
-            os.flush();
-            readAck(is, false);
+                // send the header
+                bytes = "C0" + cfg.getChmod() + " " + count + " " + filename;
+                LOG.trace("[scp:sink] {}", bytes);
+                os.write(bytes.getBytes());
+                os.write(lineFeed);
+                os.flush();
+                readAck(is, false);
 
-            // now send the stream
-            buffer.reset();
-            while ((read = buffer.read(reply)) != -1) {
-                os.write(reply, 0, read);
+                // now send the stream
+                buffer.reset();
+                while ((read = buffer.read(reply)) != -1) {
+                    os.write(reply, 0, read);
+                }
+                writeAck(os);
+                readAck(is, false);
+            } finally {
+                IOHelper.close(buffer);
             }
-            writeAck(os);
-            readAck(is, false);
         }
     }
 
@@ -297,17 +302,15 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         case -1:
             if (failOnEof) {
                 message = "[scp] Unexpected end of stream";
-                LOG.info(message);
                 throw new EOFException(message);
             }
             break;
         case 1:
             message = "[scp] WARN " + readLine(is);
-            LOG.info(message);
+            LOG.warn(message);
             break;
         case 2:
             message = "[scp] NACK " + readLine(is);
-            LOG.info(message);
             throw new IOException(message);
         default:
         // case 0:
@@ -318,16 +321,20 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     
     private String readLine(InputStream is) throws IOException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        int c = 0;
-        do {
-            c = is.read();
-            if (c == '\n') {
-                return bytes.toString();
-            }
-            bytes.write(c);
-        } while (c != -1);
+        try {
+            int c;
+            do {
+                c = is.read();
+                if (c == '\n') {
+                    return bytes.toString();
+                }
+                bytes.write(c);
+            } while (c != -1);
+        } finally {
+            IOHelper.close(bytes);
+        }
+
         String message = "[scp] Unexpected end of stream";
-        LOG.info(message);
         throw new IOException(message);
     }
 
@@ -367,7 +374,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         
         @Override
         public String getPassphrase() {
-            LOG.info("Private Key authentication not supported");
+            LOG.warn("Private Key authentication not supported");
             return null;
         }
         @Override
