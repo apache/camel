@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -37,6 +36,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
+import org.jboss.netty.channel.ChannelLocal;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
@@ -57,6 +57,9 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     private CamelLogger noReplyLogger;
     private ExecutorService bossExecutor;
     private ExecutorService workerExecutor;
+    private final ChannelLocal<NettyCamelState> state = new ChannelLocal<NettyCamelState>();
+    private ChannelFuture channelFuture;
+    private Channel channel;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
@@ -157,11 +160,16 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
         }
 
-        ChannelFuture channelFuture;
-        final Channel channel;
         try {
-            channelFuture = openConnection(exchange, callback);
-            channel = openChannel(channelFuture);
+            // allow to reuse channel, on this producer, to avoid creating a new connection
+            // for each message being sent
+            if (channelFuture == null || channel == null || !channel.isOpen()) {
+                channelFuture = openConnection();
+                channel = openChannel(channelFuture);
+            }
+            // setup state now we have the channel we can do this because
+            // this producer is not thread safe, but pooled using ServicePoolAware
+            state.set(channel, new NettyCamelState(callback, exchange));
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -218,6 +226,21 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         return false;
     }
 
+    /**
+     * To get the {@link NettyCamelState} from this producer.
+     */
+    public NettyCamelState getState(Channel channel) {
+        return state.get(channel);
+    }
+
+    /**
+     * To remove the {@link NettyCamelState} stored on this producer,
+     * when no longer needed
+     */
+    public void removeState(Channel channel) {
+        state.remove(channel);
+    }
+
     protected void setupTCPCommunication() throws Exception {
         if (channelFactory == null) {
             bossExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
@@ -233,19 +256,17 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         }
     }
 
-    private ChannelFuture openConnection(Exchange exchange, AsyncCallback callback) throws Exception {
+    private ChannelFuture openConnection() throws Exception {
         ChannelFuture answer;
         ChannelPipeline clientPipeline;
 
         if (configuration.getClientPipelineFactory() != null) {
             // initialize user defined client pipeline factory
             configuration.getClientPipelineFactory().setProducer(this);
-            configuration.getClientPipelineFactory().setExchange(exchange);
-            configuration.getClientPipelineFactory().setCallback(callback);
             clientPipeline = configuration.getClientPipelineFactory().getPipeline();
         } else {
             // initialize client pipeline factory
-            ClientPipelineFactory clientPipelineFactory = new DefaultClientPipelineFactory(this, exchange, callback);
+            ClientPipelineFactory clientPipelineFactory = new DefaultClientPipelineFactory(this);
             // must get the pipeline from the factory when opening a new connection
             clientPipeline = clientPipelineFactory.getPipeline();
         }
@@ -295,13 +316,10 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     }
 
     private void openAndCloseConnection() throws Exception {
-        ChannelFuture future = openConnection(new DefaultExchange(context), new AsyncCallback() {
-            public void done(boolean doneSync) {
-                // noop
-            }
-        });
+        ChannelFuture future = openConnection();
         Channel channel = openChannel(future);
         NettyHelper.close(channel);
+        ALL_CHANNELS.remove(channel);
     }
 
     public NettyConfiguration getConfiguration() {

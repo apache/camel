@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.component.netty.NettyCamelState;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
@@ -39,15 +40,11 @@ import org.slf4j.LoggerFactory;
 public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     private static final transient Logger LOG = LoggerFactory.getLogger(ClientChannelHandler.class);
     private final NettyProducer producer;
-    private final Exchange exchange;
-    private final AsyncCallback callback;
     private boolean messageReceived;
     private volatile boolean exceptionHandled;
 
-    public ClientChannelHandler(NettyProducer producer, Exchange exchange, AsyncCallback callback) {
+    public ClientChannelHandler(NettyProducer producer) {
         this.producer = producer;
-        this.exchange = exchange;
-        this.callback = callback;
     }
 
     @Override
@@ -73,19 +70,32 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Closing channel as an exception was thrown from Netty", cause);
         }
-        // set the cause on the exchange
-        exchange.setException(cause);
 
-        // close channel in case an exception was thrown
-        NettyHelper.close(exceptionEvent.getChannel());
+        Exchange exchange = getExchange(ctx);
+        AsyncCallback callback = getAsyncCallback(ctx);
 
-        // signal callback
-        callback.done(false);
+        // the state may not be set
+        if (exchange != null && callback != null) {
+            // set the cause on the exchange
+            exchange.setException(cause);
+
+            // close channel in case an exception was thrown
+            NettyHelper.close(exceptionEvent.getChannel());
+
+            // signal callback
+            callback.done(false);
+        }
     }
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
         LOG.trace("Channel closed: {}", ctx.getChannel());
+
+        Exchange exchange = getExchange(ctx);
+        AsyncCallback callback = getAsyncCallback(ctx);
+
+        // remove state
+        producer.removeState(ctx.getChannel());
 
         if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
             // session was closed but no message received. This could be because the remote server had an internal error
@@ -102,6 +112,9 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         messageReceived = true;
+
+        Exchange exchange = getExchange(ctx);
+        AsyncCallback callback = getAsyncCallback(ctx);
 
         Object body = messageEvent.getMessage();
         LOG.debug("Message received: {}", body);
@@ -148,6 +161,16 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             // signal callback
             callback.done(false);
         }
+    }
+
+    private Exchange getExchange(ChannelHandlerContext ctx) {
+        NettyCamelState state = producer.getState(ctx.getChannel());
+        return state != null ? state.getExchange() : null;
+    }
+
+    private AsyncCallback getAsyncCallback(ChannelHandlerContext ctx) {
+        NettyCamelState state = producer.getState(ctx.getChannel());
+        return state != null ? state.getCallback() : null;
     }
 
 }

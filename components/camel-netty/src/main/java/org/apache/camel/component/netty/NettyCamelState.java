@@ -16,30 +16,27 @@
  */
 package org.apache.camel.component.netty;
 
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.Channels;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 
-public abstract class ClientPipelineFactory implements ChannelPipelineFactory {
-    protected NettyProducer producer;
+/**
+ *
+ */
+public final class NettyCamelState {
 
-    public ClientPipelineFactory() {
+    private final Exchange exchange;
+    private final AsyncCallback callback;
+
+    public NettyCamelState(AsyncCallback callback, Exchange exchange) {
+        this.callback = callback;
+        this.exchange = exchange;
     }
 
-    public ClientPipelineFactory(NettyProducer producer) {
-        this.producer = producer;
-    }
-    
-    public ChannelPipeline getPipeline() throws Exception {
-        ChannelPipeline channelPipeline = Channels.pipeline();
-        return channelPipeline;
+    public AsyncCallback getCallback() {
+        return callback;
     }
 
-    public NettyProducer getProducer() {
-        return producer;
-    }
-
-    public void setProducer(NettyProducer producer) {
-        this.producer = producer;
+    public Exchange getExchange() {
+        return exchange;
     }
 }

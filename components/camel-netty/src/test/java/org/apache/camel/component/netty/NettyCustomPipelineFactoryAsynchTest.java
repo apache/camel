@@ -97,10 +97,9 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
             channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));            
-            channelPipeline.addLast("handler", new ClientChannelHandler(producer, exchange, callback));
+            channelPipeline.addLast("handler", new ClientChannelHandler(producer));
 
             return channelPipeline;
-
         }
         
         public boolean isfactoryInvoked() {
