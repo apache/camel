@@ -33,15 +33,12 @@ import org.slf4j.LoggerFactory;
 public class DefaultClientPipelineFactory extends ClientPipelineFactory {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultClientPipelineFactory.class);
 
-    public DefaultClientPipelineFactory(NettyProducer producer) {
-        super(producer);
-    }
-
-    public ChannelPipeline getPipeline() throws Exception {
+    @Override
+    public ChannelPipeline getPipeline(NettyProducer producer) throws Exception {
         // create a new pipeline
         ChannelPipeline channelPipeline = Channels.pipeline();
 
-        SslHandler sslHandler = configureClientSSLOnDemand();
+        SslHandler sslHandler = configureClientSSLOnDemand(producer);
         if (sslHandler != null) {
             LOG.debug("Client SSL handler configured and added to the ChannelPipeline");
             channelPipeline.addLast("ssl", sslHandler);
@@ -63,7 +60,7 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory {
         return channelPipeline;
     }
 
-    private SslHandler configureClientSSLOnDemand() throws Exception {
+    private SslHandler configureClientSSLOnDemand(NettyProducer producer) throws Exception {
         if (!producer.getConfiguration().isSsl()) {
             return null;
         }

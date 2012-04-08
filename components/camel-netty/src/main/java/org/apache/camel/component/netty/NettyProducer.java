@@ -54,6 +54,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     private NettyConfiguration configuration;
     private ChannelFactory channelFactory;
     private DatagramChannelFactory datagramChannelFactory;
+    private ClientPipelineFactory pipelineFactory;
     private CamelLogger noReplyLogger;
     private ExecutorService bossExecutor;
     private ExecutorService workerExecutor;
@@ -91,6 +92,12 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // setup pipeline factory
+        pipelineFactory = configuration.getClientPipelineFactory();
+        if (pipelineFactory == null) {
+            pipelineFactory = new DefaultClientPipelineFactory();
+        }
 
         if (isTcp()) {
             setupTCPCommunication();
@@ -260,16 +267,8 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         ChannelFuture answer;
         ChannelPipeline clientPipeline;
 
-        if (configuration.getClientPipelineFactory() != null) {
-            // initialize user defined client pipeline factory
-            configuration.getClientPipelineFactory().setProducer(this);
-            clientPipeline = configuration.getClientPipelineFactory().getPipeline();
-        } else {
-            // initialize client pipeline factory
-            ClientPipelineFactory clientPipelineFactory = new DefaultClientPipelineFactory(this);
-            // must get the pipeline from the factory when opening a new connection
-            clientPipeline = clientPipelineFactory.getPipeline();
-        }
+        // must get the pipeline from the factory when opening a new connection
+        clientPipeline = pipelineFactory.getPipeline(this);
 
         if (isTcp()) {
             ClientBootstrap clientBootstrap = new ClientBootstrap(channelFactory);
@@ -283,7 +282,6 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             return answer;
         } else {
-            // TODO: Is this correct for a UDP client
             ConnectionlessBootstrap connectionlessClientBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
             connectionlessClientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
             connectionlessClientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
@@ -295,7 +293,9 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
             // set the pipeline on the bootstrap
             connectionlessClientBootstrap.setPipeline(clientPipeline);
-            connectionlessClientBootstrap.bind(new InetSocketAddress(0));
+            // bind and store channel so we can close it when stopping
+            Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
+            ALL_CHANNELS.add(channel);
             answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             return answer;
         }
