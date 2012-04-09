@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -242,22 +243,29 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private BundleDescriptor getBundleDescriptor(String path, TinyBundle bundle) throws Exception {
         File file = new File(path);
         FileOutputStream fos = new FileOutputStream(file, true);
-        IOHelper.copy(bundle.build(), fos);
-        IOHelper.close(fos);
-
-        FileInputStream fis = new FileInputStream(file);
-        JarInputStream jis = new JarInputStream(fis);
-        Map<String, String> headers = new HashMap<String, String>();
-        for (Map.Entry<Object, Object> entry : jis.getManifest().getMainAttributes().entrySet()) {
-            headers.put(entry.getKey().toString(), entry.getValue().toString());
+        try {
+            IOHelper.copy(bundle.build(), fos);
+        } finally {
+            IOHelper.close(fos);
         }
 
-        IOHelper.close(fis, jis);
+        FileInputStream fis = null;
+        JarInputStream jis = null;
+        try {
+            fis = new FileInputStream(file);
+            jis = new JarInputStream(fis);
+            Map<String, String> headers = new HashMap<String, String>();
+            for (Map.Entry<Object, Object> entry : jis.getManifest().getMainAttributes().entrySet()) {
+                headers.put(entry.getKey().toString(), entry.getValue().toString());
+            }
 
-        return new BundleDescriptor(
-                getClass().getClassLoader(),
-                new URL("jar:" + file.toURI().toString() + "!/"),
-                headers);
+            return new BundleDescriptor(
+                    getClass().getClassLoader(),
+                    new URL("jar:" + file.toURI().toString() + "!/"),
+                    headers);
+        } finally {
+            IOHelper.close(fis, jis);
+        }
     }
 
 }
