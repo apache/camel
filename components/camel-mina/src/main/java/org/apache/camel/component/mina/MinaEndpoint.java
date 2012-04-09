@@ -17,6 +17,9 @@
 package org.apache.camel.component.mina;
 
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -54,6 +57,7 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private IoAcceptorConfig acceptorConfig;
     private IoConnectorConfig connectorConfig;
     private MinaConfiguration configuration;
+    private final List<ExecutorService> executors = new ArrayList<ExecutorService>();
 
     public MinaEndpoint() {
     }
@@ -100,6 +104,23 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     public boolean isMultipleConsumersSupported() {
         // only datagram should allow multiple consumers
         return configuration.isDatagramProtocol();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // shutdown thread pools
+        for (ExecutorService executor : executors) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+        }
+        executors.clear();
+        super.doShutdown();
+    }
+
+    /**
+     * Add thread pool which are in-use, we need to un-register when shutting down.
+     */
+    protected void addThreadPool(ExecutorService executorService) {
+        executors.add(executorService);
     }
 
     // Properties

@@ -22,6 +22,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -164,10 +165,12 @@ public class MinaComponent extends DefaultComponent {
         List<IoFilter> filters = configuration.getFilters();
         final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
 
-        IoAcceptor acceptor = new SocketAcceptor(processorCount,
-                getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaSocketAcceptor"));
-        IoConnector connector = new SocketConnector(processorCount,
-                getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaSocketConnector"));
+        ExecutorService acceptorPool = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "MinaSocketAcceptor");
+        ExecutorService connectorPool = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "MinaSocketConnector");
+        ExecutorService workerPool = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "MinaThreadPool");
+
+        IoAcceptor acceptor = new SocketAcceptor(processorCount, acceptorPool);
+        IoConnector connector = new SocketConnector(processorCount, connectorPool);
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
 
         // connector config
@@ -175,8 +178,7 @@ public class MinaComponent extends DefaultComponent {
         // must use manual thread model according to Mina documentation
         connectorConfig.setThreadModel(ThreadModel.MANUAL);
         configureCodecFactory("MinaProducer", connectorConfig, configuration);
-        connectorConfig.getFilterChain().addLast("threadPool",
-                new ExecutorFilter(getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaThreadPool")));
+        connectorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -192,8 +194,7 @@ public class MinaComponent extends DefaultComponent {
         configureCodecFactory("MinaConsumer", acceptorConfig, configuration);
         acceptorConfig.setReuseAddress(true);
         acceptorConfig.setDisconnectOnUnbind(true);
-        acceptorConfig.getFilterChain().addLast("threadPool",
-                new ExecutorFilter(getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaThreadPool")));
+        acceptorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -206,6 +207,11 @@ public class MinaComponent extends DefaultComponent {
         endpoint.setConnector(connector);
         endpoint.setConnectorConfig(connectorConfig);
         endpoint.setConfiguration(configuration);
+
+        // enlist threads pools in use on endpoint
+        endpoint.addThreadPool(acceptorPool);
+        endpoint.addThreadPool(connectorPool);
+        endpoint.addThreadPool(workerPool);
 
         // set sync or async mode after endpoint is created
         if (sync) {
@@ -258,8 +264,12 @@ public class MinaComponent extends DefaultComponent {
         boolean sync = configuration.isSync();
         List<IoFilter> filters = configuration.getFilters();
 
-        IoAcceptor acceptor = new DatagramAcceptor(getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaDatagramAcceptor"));
-        IoConnector connector = new DatagramConnector(getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaDatagramConnector"));
+        ExecutorService acceptorPool = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "MinaDatagramAcceptor");
+        ExecutorService connectorPool = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "MinaDatagramConnector");
+        ExecutorService workerPool = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "MinaThreadPool");
+
+        IoAcceptor acceptor = new DatagramAcceptor(acceptorPool);
+        IoConnector connector = new DatagramConnector(connectorPool);
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
 
         if (transferExchange) {
@@ -270,8 +280,7 @@ public class MinaComponent extends DefaultComponent {
         // must use manual thread model according to Mina documentation
         connectorConfig.setThreadModel(ThreadModel.MANUAL);
         configureDataGramCodecFactory("MinaProducer", connectorConfig, configuration);
-        connectorConfig.getFilterChain().addLast("threadPool",
-                new ExecutorFilter(getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaThreadPool")));
+        connectorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -285,8 +294,7 @@ public class MinaComponent extends DefaultComponent {
         configureDataGramCodecFactory("MinaConsumer", acceptorConfig, configuration);
         acceptorConfig.setDisconnectOnUnbind(true);
         // reuse address is default true for datagram
-        acceptorConfig.getFilterChain().addLast("threadPool",
-                new ExecutorFilter(getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaThreadPool")));
+        acceptorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -299,6 +307,12 @@ public class MinaComponent extends DefaultComponent {
         endpoint.setConnector(connector);
         endpoint.setConnectorConfig(connectorConfig);
         endpoint.setConfiguration(configuration);
+
+        // enlist threads pools in use on endpoint
+        endpoint.addThreadPool(acceptorPool);
+        endpoint.addThreadPool(connectorPool);
+        endpoint.addThreadPool(workerPool);
+
         // set sync or async mode after endpoint is created
         if (sync) {
             endpoint.setExchangePattern(ExchangePattern.InOut);
