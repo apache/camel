@@ -252,14 +252,22 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         if (channelFactory == null) {
             bossExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
             workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
-            channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
+            if (configuration.getWorkerCount() <= 0) {
+                channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
+            } else {
+                channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor, configuration.getWorkerCount());
+            }
         }
     }
 
     protected void setupUDPCommunication() throws Exception {
         if (datagramChannelFactory == null) {
             workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
-            datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
+            if (configuration.getWorkerCount() <= 0) {
+                datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
+            } else {
+                datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor, configuration.getWorkerCount());
+            }
         }
     }
 
