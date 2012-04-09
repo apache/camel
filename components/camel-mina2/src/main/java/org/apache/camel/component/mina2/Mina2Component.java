@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.core.filterchain.IoFilter;
@@ -75,13 +76,25 @@ public class Mina2Component extends DefaultComponent {
         String protocol = config.getProtocol();
         // if mistyped uri then protocol can be null
 
+        Mina2Endpoint endpoint = null;
         if (protocol != null) {
             if (protocol.equals("tcp") || config.isDatagramProtocol() || protocol.equals("vm")) {
-                return new Mina2Endpoint(uri, this, config);
+                endpoint = new Mina2Endpoint(uri, this, config);
             }
         }
-        // protocol not resolved so error
-        throw new IllegalArgumentException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
+        if (endpoint == null) {
+            // protocol not resolved so error
+            throw new IllegalArgumentException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
+        }
+
+        // set sync or async mode after endpoint is created
+        if (config.isSync()) {
+            endpoint.setExchangePattern(ExchangePattern.InOut);
+        } else {
+            endpoint.setExchangePattern(ExchangePattern.InOnly);
+        }
+
+        return endpoint;
     }
 
     // Properties

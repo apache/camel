@@ -51,6 +51,7 @@ public class Mina2Configuration implements Cloneable {
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     private SSLContextParameters sslContextParameters;
     private boolean autoStartTls = true;
+    private int maximumPoolSize = 16; // 16 is the default mina setting
 
     /**
      * Returns a copy of this configuration
@@ -244,5 +245,13 @@ public class Mina2Configuration implements Cloneable {
 
     public void setAutoStartTls(boolean autoStartTls) {
         this.autoStartTls = autoStartTls;
+    }
+
+    public int getMaximumPoolSize() {
+        return maximumPoolSize;
+    }
+
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
     }
 }

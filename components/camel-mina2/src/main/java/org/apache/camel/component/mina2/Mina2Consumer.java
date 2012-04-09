@@ -20,6 +20,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
@@ -39,6 +40,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.executor.UnorderedThreadPoolExecutor;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
@@ -60,6 +62,7 @@ public class Mina2Consumer extends DefaultConsumer {
     private SocketAddress address;
     private IoAcceptor acceptor;
     private Mina2Configuration configuration;
+    private ExecutorService workerPool;
 
     public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
@@ -72,11 +75,11 @@ public class Mina2Consumer extends DefaultConsumer {
 
         String protocol = configuration.getProtocol();
         if (protocol.equals("tcp")) {
-            createSocketEndpoint(protocol, configuration);
+            setupSocketProtocol(protocol, configuration);
         } else if (configuration.isDatagramProtocol()) {
-            createDatagramEndpoint(protocol, configuration);
+            setupDatagramProtocol(protocol, configuration);
         } else if (protocol.equals("vm")) {
-            createVmEndpoint(protocol, configuration);
+            setupVmProtocol(protocol, configuration);
         }
     }
 
@@ -96,9 +99,18 @@ public class Mina2Consumer extends DefaultConsumer {
         super.doStop();
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        if (workerPool != null) {
+            workerPool.shutdown();
+        }
+        super.doShutdown();
+    }
+
+
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void createVmEndpoint(String uri, Mina2Configuration configuration) {
+    protected void setupVmProtocol(String uri, Mina2Configuration configuration) {
 
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
@@ -118,22 +130,24 @@ public class Mina2Consumer extends DefaultConsumer {
         }
     }
 
-    protected void createSocketEndpoint(String uri, Mina2Configuration configuration) throws Exception {
+    protected void setupSocketProtocol(String uri, Mina2Configuration configuration) throws Exception {
         LOG.debug("createSocketEndpoint");
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
         address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
 
-        acceptor = new NioSocketAcceptor(
-            new NioProcessor(this.getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaSocketAcceptor")));
+        final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
+        acceptor = new NioSocketAcceptor(processorCount);
 
         // acceptor connectorConfig
         configureCodecFactory("Mina2Consumer", acceptor, configuration);
         ((NioSocketAcceptor) acceptor).setReuseAddress(true);
         acceptor.setCloseOnDeactivation(true);
-        acceptor.getFilterChain().addLast("threadPool",
-                                          new ExecutorFilter(this.getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaThreadPool")));
+
+        // using the unordered thread pool is fine as we dont need ordered invocation in our response handler
+        workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -179,19 +193,17 @@ public class Mina2Consumer extends DefaultConsumer {
 
     }
 
-    protected void createDatagramEndpoint(String uri, Mina2Configuration configuration) {
+    protected void setupDatagramProtocol(String uri, Mina2Configuration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
         address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        acceptor = new NioDatagramAcceptor(this.getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaDatagramAcceptor"));
+        acceptor = new NioDatagramAcceptor();
 
         // acceptor connectorConfig
         configureDataGramCodecFactory("MinaConsumer", acceptor, configuration);
         acceptor.setCloseOnDeactivation(true);
         // reuse address is default true for datagram
-        //acceptor.getFilterChain().addLast("threadPool",
-        //                                  new ExecutorFilter(this.getEndpoint().getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaThreadPool")));
         if (minaLogger) {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
