@@ -48,6 +48,11 @@
             <version>${leveldbjni-version}</version>
         </dependency>
         <dependency>
+            <groupId>org.fusesource.leveldbjni</groupId>
+            <artifactId>leveldbjni</artifactId>
+            <version>${leveldbjni-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.fusesource.hawtbuf</groupId>
             <artifactId>hawtbuf</artifactId>
             <version>${hawtbuf-version}</version>
@@ -83,4 +88,18 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
 </project>
