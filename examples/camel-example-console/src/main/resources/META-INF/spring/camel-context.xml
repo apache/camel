@@ -22,6 +22,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+  <!-- START SNIPPET: e1 -->
+  <!-- camelContext is the Camel runtime, where we can host Camel routes -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <!-- read input from the console using the stream component -->
@@ -35,5 +37,6 @@
       <to uri="stream:out"/>
     </route>
   </camelContext>
+  <!-- END SNIPPET: e1 -->
 
 </beans>
