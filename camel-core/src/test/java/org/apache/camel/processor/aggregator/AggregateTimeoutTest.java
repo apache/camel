@@ -30,7 +30,7 @@ import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
  */
 public class AggregateTimeoutTest extends ContextTestSupport {
 
-    private static final AtomicInteger invoked = new AtomicInteger();
+    private static final AtomicInteger INVOKED = new AtomicInteger();
 
     public void testAggregateTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
@@ -45,7 +45,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // should invoke the timeout method
-        assertEquals(1, invoked.get());
+        assertEquals(1, INVOKED.get());
 
         // now send 3 which does not timeout
         mock.reset();
@@ -59,7 +59,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         mock.await(1500, TimeUnit.MILLISECONDS);
 
         // should not invoke the timeout method
-        assertEquals(1, invoked.get());
+        assertEquals(1, INVOKED.get());
     }
 
     @Override
@@ -81,7 +81,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
     private static class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
-            invoked.incrementAndGet();
+            INVOKED.incrementAndGet();
 
             assertEquals(2000, timeout);
             assertEquals(-1, total);

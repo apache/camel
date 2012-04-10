@@ -21,7 +21,10 @@ import org.apache.camel.spring.Main;
 /**
  * A main class to run the example from your editor.
  */
-public class CamelConsoleMain {
+public final class CamelConsoleMain {
+
+    private CamelConsoleMain() {
+    }
 
     public static void main(String[] args) throws Exception {
         // Main makes it easier to run a Spring application
