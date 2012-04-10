@@ -162,7 +162,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         endpointInfo.setAddress("camel://direct:EndpointA");
         final CamelDestination destination = setupCamelDestination(endpointInfo, true);
 
-        // set up MessageObserver for handlering the conduit message
+        // set up MessageObserver for handling the conduit message
         MessageObserver observer = new MessageObserver() {
             public void onMessage(Message m) {
                 try {
@@ -186,11 +186,11 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         error.expectedMessageCount(0);
         //this call will active the camelDestination
         destination.setMessageObserver(observer);
-        // set is oneway false for get response from destination
+        // set is one way false for get response from destination
         // need to use another thread to send the request message
         sendoutMessage(conduit, outMessage, false, "HelloWorld");
         // wait for the message to be got from the destination,
-        // create the thread to handler the Destination incomming message
+        // create the thread to handler the Destination incoming message
 
         verifyReceivedMessage(inMessage, "HelloWorld Response");
         error.assertIsSatisfied();
@@ -211,7 +211,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         final CamelDestination destination = setupCamelDestination(endpointInfo, true);
         destination.setCheckException(true);
 
-        // set up MessageObserver for handlering the conduit message
+        // set up MessageObserver for handling the conduit message
         MessageObserver observer = new MessageObserver() {
             public void onMessage(Message m) {
                 try {
@@ -238,11 +238,11 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         
         //this call will active the camelDestination
         destination.setMessageObserver(observer);
-        // set is oneway false for get response from destination
+        // set is one way false for get response from destination
         // need to use another thread to send the request message
         sendoutMessage(conduit, outMessage, false, "HelloWorld");
         // wait for the message to be got from the destination,
-        // create the thread to handler the Destination incomming message
+        // create the thread to handler the Destination incoming message
 
         verifyReceivedMessage(inMessage, "HelloWorld Fault");
         error.assertIsSatisfied();
@@ -261,7 +261,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         EasyMock.replay(dest);
         ConsumerProcessor consumerProcessor = dest.new ConsumerProcessor();
         
-        // Send our dummy exchange and check that the exception that occured on incoming is set
+        // Send our dummy exchange and check that the exception that occurred on incoming is set
         DefaultExchange exchange = new DefaultExchange(camelContext);
         consumerProcessor.process(exchange);
         Exception exc = exchange.getException();
