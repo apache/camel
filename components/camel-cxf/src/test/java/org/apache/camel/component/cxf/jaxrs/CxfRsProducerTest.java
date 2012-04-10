@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.AvailablePortFinder;
@@ -164,9 +165,36 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetConstumerWithCxfRsEndpoint() {
+    public void testGetCustomerExceptionWithCxfRsEndpoint() {
         Exchange exchange 
             = template.send("cxfrs://http://localhost:" + getPort1() + "?httpClientAPI=true", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    exchange.setPattern(ExchangePattern.InOut);
+                    Message message = exchange.getIn();
+                    // set the Http method
+                    message.setHeader(Exchange.HTTP_METHOD, "PUT");
+                    // set the relative path
+                    message.setHeader(Exchange.HTTP_PATH, "/customerservice/customers");
+                    // we just setup the customer with a wrong id
+                    Customer customer = new Customer();
+                    customer.setId(222);
+                    customer.setName("user");
+                    message.setBody(customer);                
+                }
+            });
+ 
+        // we should get the exception here 
+        assertNotNull("Expect the exception here", exchange.getException());
+        CxfOperationException exception = (CxfOperationException)exchange.getException();
+        
+        assertEquals("Get a wrong response body", "Cannot find the customer!", exception.getResponseBody());
+        
+    }
+    
+    @Test
+    public void testGetCustumerWithCxfRsEndpoint() {
+        Exchange exchange 
+            = template.send("cxfrs://http://localhost:" + getPort1() + "/?httpClientAPI=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message inMessage = exchange.getIn();
