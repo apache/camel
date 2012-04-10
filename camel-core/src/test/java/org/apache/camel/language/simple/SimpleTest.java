@@ -1041,6 +1041,18 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.dangerous}", "false");
     }
 
+    public void testBodyOgnlOnString() throws Exception {
+        exchange.getIn().setBody("Camel");
+
+        assertExpression("${body.substring(2)}", "mel");
+        assertExpression("${body.substring(2, 4)}", "me");
+        assertExpression("${body.length()}", 5);
+        assertExpression("${body.toUpperCase()}", "CAMEL");
+        assertExpression("${body.toUpperCase()}", "CAMEL");
+        assertExpression("${body.toUpperCase().substring(2)}", "MEL");
+        assertExpression("${body.toLowerCase().length()}", 5);
+    }
+
     public void testClassSimpleName() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         exchange.getIn().setBody(tiger);

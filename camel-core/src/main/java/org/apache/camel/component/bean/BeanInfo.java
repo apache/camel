@@ -71,6 +71,7 @@ public class BeanInfo {
     // shared state with details of operations introspected from the bean, created during the constructor
     private Map<String, List<MethodInfo>> operations = new HashMap<String, List<MethodInfo>>();
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
+    private List<MethodInfo> operationsWithNoBody = new ArrayList<MethodInfo>();
     private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
     private List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<MethodInfo>();
     private Map<Method, MethodInfo> methodMap = new HashMap<Method, MethodInfo>();
@@ -130,6 +131,7 @@ public class BeanInfo {
         // to keep this code thread safe
         operations = Collections.unmodifiableMap(operations);
         operationsWithBody = Collections.unmodifiableList(operationsWithBody);
+        operationsWithNoBody = Collections.unmodifiableList(operationsWithNoBody);
         operationsWithCustomAnnotation = Collections.unmodifiableList(operationsWithCustomAnnotation);
         operationsWithHandlerAnnotation = Collections.unmodifiableList(operationsWithHandlerAnnotation);
         methodMap = Collections.unmodifiableMap(methodMap);
@@ -312,6 +314,8 @@ public class BeanInfo {
             operationsWithCustomAnnotation.add(methodInfo);
         } else if (methodInfo.hasBodyParameter()) {
             operationsWithBody.add(methodInfo);
+        } else {
+            operationsWithNoBody.add(methodInfo);
         }
 
         if (methodInfo.hasHandlerAnnotation()) {
@@ -443,6 +447,7 @@ public class BeanInfo {
         // must use defensive copy, to avoid altering the shared lists
         // and we want to remove unwanted operations from these local lists
         final List<MethodInfo> localOperationsWithBody = new ArrayList<MethodInfo>(operationsWithBody);
+        final List<MethodInfo> localOperationsWithNoBody = new ArrayList<MethodInfo>(operationsWithNoBody);
         final List<MethodInfo> localOperationsWithCustomAnnotation = new ArrayList<MethodInfo>(operationsWithCustomAnnotation);
         final List<MethodInfo> localOperationsWithHandlerAnnotation = new ArrayList<MethodInfo>(operationsWithHandlerAnnotation);
 
@@ -451,11 +456,13 @@ public class BeanInfo {
             removeNonMatchingMethods(localOperationsWithHandlerAnnotation, name);
             removeNonMatchingMethods(localOperationsWithCustomAnnotation, name);
             removeNonMatchingMethods(localOperationsWithBody, name);
+            removeNonMatchingMethods(localOperationsWithNoBody, name);
         } else {
             // remove all getter/setter as we do not want to consider these methods
             removeAllSetterOrGetterMethods(localOperationsWithHandlerAnnotation);
             removeAllSetterOrGetterMethods(localOperationsWithCustomAnnotation);
             removeAllSetterOrGetterMethods(localOperationsWithBody);
+            removeAllSetterOrGetterMethods(localOperationsWithNoBody);
         }
 
         if (localOperationsWithHandlerAnnotation.size() > 1) {
@@ -469,6 +476,13 @@ public class BeanInfo {
         } else if (localOperationsWithCustomAnnotation.size() == 1) {
             // if there is one method with an annotation then use that one
             return localOperationsWithCustomAnnotation.get(0);
+        }
+
+        // named method and with no parameters
+        boolean noParameters = name != null && name.endsWith("()");
+        if (noParameters && localOperationsWithNoBody.size() == 1) {
+            // if there was a method name configured and it has no parameters, then use the method with no body (eg no parameters)
+            return localOperationsWithNoBody.get(0);
         } else if (localOperationsWithBody.size() == 1) {
             // if there is one method with body then use that one
             return localOperationsWithBody.get(0);
