@@ -121,8 +121,11 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result);
             }
         } finally {
-            session.commit();
-            session.close();
+            try {
+                session.commit();
+            } finally {
+                session.close();                
+            }
         }
     }
 
@@ -147,8 +150,11 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result);
             }
         } finally {
-            session.commit();
-            session.close();
+            try {
+                session.commit();
+            } finally {
+                session.close();                
+            }
         }
     }
 
@@ -173,8 +179,11 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result);
             }
         } finally {
-            session.commit();
-            session.close();
+            try {
+                session.commit();
+            } finally {
+                session.close();                
+            }
         }
     }
 
