@@ -28,7 +28,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,126 +49,107 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class JaxbDataFormatTest {
-    private JaxbDataFormat jaxbDataFormat;
-    @Mock
-    private Exchange exchangeMock;
-    @Mock
-    private Marshaller marshallerMock;
-    @Mock
-    private JaxbDataFormat jaxbDataFormatMock;
-    @Mock
-    private JAXBContext jaxbContextMock;
-    @Mock
-    private Unmarshaller unmarshallerMock;
 
+    private JaxbDataFormat jaxbDataFormat;
+    private Marshaller marshallerMock;
+    private JaxbDataFormat jaxbDataFormatMock;
+    private Unmarshaller unmarshallerMock;
+    private CamelContext camelContext;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        camelContext = new DefaultCamelContext();
+
         jaxbDataFormat = new JaxbDataFormat();
+        jaxbDataFormat.setCamelContext(camelContext);
+        jaxbDataFormat.doStart();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testNeedFilteringDisabledFiltering() {
-        // tests combinations of data format option and exchange property
-        when(exchangeMock.getProperty(anyString(), anyObject(), any(Class.class)))
-                .thenReturn(false);
+        jaxbDataFormat.setFilterNonXmlChars(false);
+        Exchange exchange = new DefaultExchange(camelContext);
 
-        jaxbDataFormat.needFiltering(exchangeMock);
-        verify(exchangeMock).getProperty(Exchange.FILTER_NON_XML_CHARS, false, Boolean.class);
+        assertFalse(jaxbDataFormat.needFiltering(exchange));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testNeedFilteringEnabledFiltering() {
-        when(exchangeMock.getProperty(anyString(), anyObject(), any(Class.class))).thenReturn(true);
         jaxbDataFormat.setFilterNonXmlChars(true);
-        jaxbDataFormat.needFiltering(exchangeMock);
-        verify(exchangeMock).getProperty(Exchange.FILTER_NON_XML_CHARS, true, Boolean.class);
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        assertTrue(jaxbDataFormat.needFiltering(exchange));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testNeedFilteringTruePropagates() {
-        // tests combinations of data format option and exchange property
-        when(exchangeMock.getProperty(anyString(), anyObject(), any(Class.class)))
-                .thenReturn(true);
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(Exchange.FILTER_NON_XML_CHARS, Boolean.TRUE);
 
-        assertTrue("Expecting filtering here", jaxbDataFormat.needFiltering(exchangeMock));
+        assertTrue(jaxbDataFormat.needFiltering(exchange));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testNeedFilteringFalsePropagates() {
-        // tests combinations of data format option and exchange property
-        when(exchangeMock.getProperty(anyString(), anyObject(), any(Class.class)))
-                .thenReturn(false);
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(Exchange.FILTER_NON_XML_CHARS, Boolean.FALSE);
 
-        assertFalse("Not expecting filtering here", jaxbDataFormat.needFiltering(exchangeMock));
+        assertFalse(jaxbDataFormat.needFiltering(exchange));
     }
 
     @Test
     public void testMarshalFilteringDisabled() throws IOException, XMLStreamException, JAXBException {
-        doCallRealMethod().when(jaxbDataFormatMock).marshal(any(Exchange.class), anyObject(),
-                any(OutputStream.class), any(Marshaller.class));
-        when(jaxbDataFormatMock.needFiltering(exchangeMock)).thenReturn(false);
+        jaxbDataFormat.setFilterNonXmlChars(false);
+
+        jaxbDataFormatMock = spy(jaxbDataFormat);
+        marshallerMock = mock(Marshaller.class);
 
         Object graph = new Object();
         OutputStream stream = new ByteArrayOutputStream();
+        jaxbDataFormatMock.marshal(new DefaultExchange(camelContext), graph, stream, marshallerMock);
 
-        jaxbDataFormatMock.marshal(exchangeMock, graph, stream, marshallerMock);
         verify(marshallerMock).marshal(same(graph), same(stream));
     }
 
     @Test
     public void testMarshalFilteringEnabled() throws XMLStreamException, JAXBException {
-        doCallRealMethod().when(jaxbDataFormatMock).marshal(any(Exchange.class), anyObject(),
-                any(OutputStream.class), any(Marshaller.class));
-        when(jaxbDataFormatMock.needFiltering(exchangeMock)).thenReturn(true);
+        jaxbDataFormat.setFilterNonXmlChars(true);
+
+        jaxbDataFormatMock = spy(jaxbDataFormat);
+        marshallerMock = mock(Marshaller.class);
 
         Object graph = new Object();
-        OutputStream stream = new ByteArrayOutputStream();
+        jaxbDataFormatMock.marshal(new DefaultExchange(camelContext), graph, new ByteArrayOutputStream(), marshallerMock);
 
-        jaxbDataFormatMock.marshal(exchangeMock, graph, stream, marshallerMock);
         verify(marshallerMock).marshal(same(graph), isA(FilteringXmlStreamWriter.class));
-
     }
 
     @Test
     public void testUnmarshalFilteringDisabled() throws IOException, JAXBException {
-        doCallRealMethod().when(jaxbDataFormatMock).unmarshal(any(Exchange.class), 
-                any(InputStream.class));
+        jaxbDataFormat.setFilterNonXmlChars(false);
 
-        when(jaxbDataFormatMock.getContext()).thenReturn(jaxbContextMock);
-        when(jaxbContextMock.createUnmarshaller()).thenReturn(unmarshallerMock);
+        jaxbDataFormatMock = spy(jaxbDataFormat);
+        unmarshallerMock = mock(Unmarshaller.class);
+        doReturn(unmarshallerMock).when(jaxbDataFormatMock).getUnmarshaller();
 
-        when(jaxbDataFormatMock.needFiltering(exchangeMock)).thenReturn(false);
+        jaxbDataFormatMock.unmarshal(new DefaultExchange(camelContext), new ByteArrayInputStream(new byte[] {}));
 
-        InputStream stream = new ByteArrayInputStream(new byte[] {});
-
-        jaxbDataFormatMock.unmarshal(exchangeMock, stream);
         verify(unmarshallerMock).unmarshal((InputStream) argThat(not(instanceOf(NonXmlFilterReader.class))));
     }
 
     @Test
     public void testUnmarshalFilteringEnabled() throws IOException, JAXBException {
-        doCallRealMethod().when(jaxbDataFormatMock).unmarshal(any(Exchange.class), 
-                any(InputStream.class));
+        jaxbDataFormat.setFilterNonXmlChars(true);
 
-        when(jaxbDataFormatMock.getContext()).thenReturn(jaxbContextMock);
-        when(jaxbContextMock.createUnmarshaller()).thenReturn(unmarshallerMock);
+        jaxbDataFormatMock = spy(jaxbDataFormat);
+        unmarshallerMock = mock(Unmarshaller.class);
+        doReturn(unmarshallerMock).when(jaxbDataFormatMock).getUnmarshaller();
 
-        when(jaxbDataFormatMock.needFiltering(exchangeMock)).thenReturn(true);
+        jaxbDataFormatMock.unmarshal(new DefaultExchange(camelContext), new ByteArrayInputStream(new byte[] {}));
 
-        InputStream stream = new ByteArrayInputStream(new byte[] {});
-
-        jaxbDataFormatMock.unmarshal(exchangeMock, stream);
         verify(unmarshallerMock).unmarshal(any(NonXmlFilterReader.class));
     }
 
