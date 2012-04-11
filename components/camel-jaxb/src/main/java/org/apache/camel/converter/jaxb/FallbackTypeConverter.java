@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 
@@ -137,6 +138,14 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         Unmarshaller unmarshaller = getOrCreateUnmarshaller(type);
 
         if (parentTypeConverter != null) {
+            if (!needFiltering(exchange)) {
+                // we cannot filter the XMLStreamReader if necessary
+                XMLStreamReader xmlReader = parentTypeConverter.convertTo(XMLStreamReader.class, value);
+                if (xmlReader != null) {
+                    Object unmarshalled = unmarshal(unmarshaller, exchange, xmlReader);
+                    return type.cast(unmarshalled);
+                }
+            }
             InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
             if (inputStream != null) {
                 Object unmarshalled = unmarshal(unmarshaller, exchange, inputStream);
@@ -195,10 +204,13 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return answer;
     }
 
-    protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value) throws JAXBException, UnsupportedEncodingException {
+    protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value) throws JAXBException, UnsupportedEncodingException, XMLStreamException {
         unmarshallerLock.lock();
         try {
-            if (value instanceof InputStream) {
+            if (value instanceof XMLStreamReader) {
+                XMLStreamReader xmlReader = (XMLStreamReader) value;
+                return unmarshaller.unmarshal(xmlReader);
+            } else if (value instanceof InputStream) {
                 if (needFiltering(exchange)) {
                     return unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader((InputStream)value, IOHelper.getCharsetName(exchange))));
                 }

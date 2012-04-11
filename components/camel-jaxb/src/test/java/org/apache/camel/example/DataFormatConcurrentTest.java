@@ -67,7 +67,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         template.setDefaultEndpointUri("direct:unmarshalFallback");
 
         ExecutorService pool = Executors.newFixedThreadPool(20);
-        //long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         for (int i = 0; i < counter; i++) {
             pool.execute(new Runnable() {
                 public void run() {
@@ -79,8 +79,8 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
         // should finish on fast machines in less than 3 seconds
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        //long end = System.currentTimeMillis();
-        //System.out.println("took " + (end - start) + "ms");
+        long end = System.currentTimeMillis();
+        System.out.println("took " + (end - start) + "ms");
     }
 
     @Test
