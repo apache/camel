@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -140,7 +141,13 @@ public class PollEnricher extends ServiceSupport implements Processor {
 
             // prepare the exchanges for aggregation
             ExchangeHelper.prepareAggregation(exchange, resourceExchange);
-            Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+            // must catch any exception from aggregation
+            Exchange aggregatedExchange;
+            try {
+                aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+            } catch (Throwable e) {
+                throw new CamelExchangeException("Error occurred during aggregation", exchange, e);
+            }
             if (aggregatedExchange != null) {
                 // copy aggregation result onto original exchange (preserving pattern)
                 copyResultsPreservePattern(exchange, aggregatedExchange);

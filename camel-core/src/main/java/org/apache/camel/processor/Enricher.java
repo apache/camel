@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
@@ -160,7 +161,15 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
 
             // prepare the exchanges for aggregation
             ExchangeHelper.prepareAggregation(exchange, resourceExchange);
-            Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+            // must catch any exception from aggregation
+            Exchange aggregatedExchange;
+            try {
+                aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+            } catch (Throwable e) {
+                exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
+                callback.done(true);
+                return true;
+            }
             if (aggregatedExchange != null) {
                 // copy aggregation result onto original exchange (preserving pattern)
                 copyResultsPreservePattern(exchange, aggregatedExchange);

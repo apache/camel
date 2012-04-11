@@ -28,7 +28,9 @@ public interface TimeoutAwareAggregationStrategy extends AggregationStrategy {
     // TODO: In Camel 3.0 we should move this to org.apache.camel package
 
     /**
-     * A timeout occurred
+     * A timeout occurred.
+     * <p/>
+     * <b>Important: </b> This method must <b>not</b> throw any exceptions.
      *
      * @param oldExchange  the current aggregated exchange, or the original {@link Exchange} if no aggregation
      *                     has been done before the timeout occurred
