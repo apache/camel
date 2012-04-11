@@ -95,11 +95,18 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         }
 
         // calculate delay and wait
-        long delay = calculateDelay(exchange);
-        if (delay <= 0) {
-            // no delay then continue routing
-            log.trace("No delay for exchangeId: {}", exchange.getExchangeId());
-            return super.process(exchange, callback);
+        long delay;
+        try {
+            delay = calculateDelay(exchange);
+            if (delay <= 0) {
+                // no delay then continue routing
+                log.trace("No delay for exchangeId: {}", exchange.getExchangeId());
+                return super.process(exchange, callback);
+            }
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
         if (!isAsyncDelayed() || exchange.isTransacted()) {

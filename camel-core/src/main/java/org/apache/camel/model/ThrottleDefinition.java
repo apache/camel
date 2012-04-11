@@ -88,7 +88,12 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
         // should be default 1000 millis
         long period = getTimePeriodMillis() != null ? getTimePeriodMillis() : 1000L;
+
+        // max requests per period is mandatory
         Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression(routeContext);
+        if (maxRequestsExpression == null) {
+            throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
+        }
 
         Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool);
 

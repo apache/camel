@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.util.ObjectHelper;
 
@@ -37,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public class Throttler extends DelayProcessorSupport implements Traceable {
-    private long maximumRequestsPerPeriod;
+    private volatile long maximumRequestsPerPeriod;
     private Expression maxRequestsPerPeriodExpression;
     private long timePeriodMillis = 1000;
     private volatile TimeSlot slot;
@@ -101,7 +102,14 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     // -----------------------------------------------------------------------
 
     protected long calculateDelay(Exchange exchange) {
-        Long longValue = maxRequestsPerPeriodExpression.evaluate(exchange, Long.class);
+        // evaluate as Object first to see if we get any result at all
+        Object result = maxRequestsPerPeriodExpression.evaluate(exchange, Object.class);
+        if (result == null) {
+            throw new RuntimeExchangeException("The max requests per period expression was evaluated as null: " + maxRequestsPerPeriodExpression, exchange);
+        }
+
+        // then must convert value to long
+        Long longValue = exchange.getContext().getTypeConverter().convertTo(Long.class, result);
         if (longValue != null) {
             // log if we changed max period after initial setting
             if (maximumRequestsPerPeriod > 0 && longValue.longValue() != maximumRequestsPerPeriod) {
