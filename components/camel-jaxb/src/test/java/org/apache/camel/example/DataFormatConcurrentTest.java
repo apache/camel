@@ -16,8 +16,10 @@
  */
 package org.apache.camel.example;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,11 +29,35 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class DataFormatConcurrentTest extends CamelTestSupport {
 
     private int size = 2000;
+
+    @Test
+    public void testUnmarshallConcurrent() throws Exception {
+        int counter = 10000;
+        final String payload = "<purchaseOrder name='Wine' amount='123.45' price='2.22'/>";
+        final CountDownLatch latch = new CountDownLatch(counter);
+        template.setDefaultEndpointUri("direct:unmarshal");
+
+        ExecutorService pool = Executors.newFixedThreadPool(20);
+        //long start = System.currentTimeMillis();
+        for (int i = 0; i < counter; i++) {
+            pool.execute(new Runnable() {
+                public void run() {
+                    template.sendBody(payload);
+                    latch.countDown();
+                }
+            });
+        }
+
+        // should finish on fast machines in less than 3 seconds
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        //long end = System.currentTimeMillis();
+        //System.out.println("took " + (end - start) + "ms");
+    }
 
     @Test
     public void testSendConcurrent() throws Exception {
@@ -73,6 +99,10 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
                 // use seda that supports concurrent consumers for concurrency
                 from("seda:start?size=" + size + "&concurrentConsumers=5").marshal(jaxb).convertBodyTo(String.class).to("mock:result");
+
+                from("direct:unmarshal")
+                        .unmarshal(jaxb)
+                        .to("mock:result");
             }
         };
     }
