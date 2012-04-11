@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -137,7 +138,7 @@ public class JaxbDataFormatTest {
 
         jaxbDataFormatMock.unmarshal(new DefaultExchange(camelContext), new ByteArrayInputStream(new byte[] {}));
 
-        verify(unmarshallerMock).unmarshal((InputStream) argThat(not(instanceOf(NonXmlFilterReader.class))));
+        verify(unmarshallerMock).unmarshal((XMLStreamReader) argThat(instanceOf(XMLStreamReader.class)));
     }
 
     @Test
