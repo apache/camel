@@ -111,7 +111,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     @Override
     protected void preCreateProcessor() {
         Expression exp = expression;
-        if (expression.getExpressionValue() != null) {
+        if (expression != null && expression.getExpressionValue() != null) {
             exp = expression.getExpressionValue();
         }
 
