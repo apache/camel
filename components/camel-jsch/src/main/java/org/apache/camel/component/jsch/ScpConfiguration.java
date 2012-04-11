@@ -26,6 +26,7 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 public class ScpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
+    public static final String DEFAULT_MOD = "664";
     private String knownHostsFile;
     private String privateKeyFile;
     private String privateKeyFilePassphrase;
@@ -100,6 +101,17 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     public void setChmod(String chmod) {
+        if (chmod.length() == 3) {
+            for (byte c : chmod.getBytes()) {
+                if (c < '0' || c > '7') {
+                    chmod = DEFAULT_MOD;
+                    break;
+                }
+            }
+        } else {
+            chmod = DEFAULT_MOD;
+        }
+        // May be interesting to log the fallback to DEFAULT_MOD for invalid configuration
         this.chmod = chmod;
     }
 
