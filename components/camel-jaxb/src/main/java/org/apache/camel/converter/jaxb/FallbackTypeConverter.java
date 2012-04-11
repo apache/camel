@@ -247,7 +247,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return context;
     }
 
-    protected synchronized <T> Unmarshaller getUnmarshaller(Class<T> type) throws JAXBException {
+    protected <T> Unmarshaller getUnmarshaller(Class<T> type) throws JAXBException {
         JAXBContext context = createContext(type);
         return context.createUnmarshaller();
     }
