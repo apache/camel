@@ -31,6 +31,7 @@ import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -161,7 +162,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
             }
             
             private void applySecurityPolicy(Exchange exchange) throws Exception {
-                ByteSource encryptedToken = (ByteSource)exchange.getIn().getHeader("SHIRO_SECURITY_TOKEN");
+                ByteSource encryptedToken = ExchangeHelper.getMandatoryHeader(exchange, "SHIRO_SECURITY_TOKEN", ByteSource.class);
                 ByteSource decryptedToken = getCipherService().decrypt(encryptedToken.getBytes(), getPassPhrase());
                 
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decryptedToken.getBytes());
