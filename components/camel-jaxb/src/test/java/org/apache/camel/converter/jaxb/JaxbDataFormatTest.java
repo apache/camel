@@ -19,10 +19,8 @@ package org.apache.camel.converter.jaxb;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -35,18 +33,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.same;
@@ -133,8 +124,9 @@ public class JaxbDataFormatTest {
         jaxbDataFormat.setFilterNonXmlChars(false);
 
         jaxbDataFormatMock = spy(jaxbDataFormat);
+
         unmarshallerMock = mock(Unmarshaller.class);
-        doReturn(unmarshallerMock).when(jaxbDataFormatMock).getUnmarshaller();
+        doReturn(unmarshallerMock).when(jaxbDataFormatMock).createUnmarshaller();
 
         jaxbDataFormatMock.unmarshal(new DefaultExchange(camelContext), new ByteArrayInputStream(new byte[] {}));
 
@@ -144,14 +136,14 @@ public class JaxbDataFormatTest {
     @Test
     public void testUnmarshalFilteringEnabled() throws IOException, JAXBException {
         jaxbDataFormat.setFilterNonXmlChars(true);
-
         jaxbDataFormatMock = spy(jaxbDataFormat);
+        
         unmarshallerMock = mock(Unmarshaller.class);
-        doReturn(unmarshallerMock).when(jaxbDataFormatMock).getUnmarshaller();
+        doReturn(unmarshallerMock).when(jaxbDataFormatMock).createUnmarshaller();
 
         jaxbDataFormatMock.unmarshal(new DefaultExchange(camelContext), new ByteArrayInputStream(new byte[] {}));
 
-        verify(unmarshallerMock).unmarshal(any(NonXmlFilterReader.class));
+        verify(unmarshallerMock).unmarshal((XMLStreamReader) argThat(instanceOf(XMLStreamReader.class)));
     }
 
 }
