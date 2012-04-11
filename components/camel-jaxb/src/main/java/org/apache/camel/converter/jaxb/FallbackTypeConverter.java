@@ -58,6 +58,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     private static final transient Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
     private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
     private Map<Class<?>, Unmarshaller> unmarshallers = new HashMap<Class<?>, Unmarshaller>();
+    private XMLOutputFactory outputFactory;
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;
 
@@ -192,7 +193,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
             }
             if (needFiltering(exchange)) {
-                XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
+                XMLStreamWriter writer = getOutputFactory().createXMLStreamWriter(buffer);
                 FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
                 marshaller.marshal(value, filteringWriter);
             } else {
@@ -257,5 +258,12 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             unmarshallers.put(type, unmarshaller);
         }
         return unmarshaller;
+    }
+
+    public XMLOutputFactory getOutputFactory() {
+        if (outputFactory == null) {
+            outputFactory = XMLOutputFactory.newInstance();
+        }
+        return outputFactory;
     }
 }
