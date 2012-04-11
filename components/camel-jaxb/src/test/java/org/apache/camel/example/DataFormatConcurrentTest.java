@@ -21,7 +21,6 @@ import java.io.StringWriter;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -47,7 +46,6 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
     @Test
     public void testUnmarshalConcurrent() throws Exception {
-        template.setDefaultEndpointUri("direct:unmarshal");
         final CountDownLatch latch = new CountDownLatch(warmupCount + testCycleCount);
 
         context.addRoutes(new RouteBuilder() {
@@ -64,12 +62,11 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
             }
         });
 
-        unmarshal(latch);
+        unmarshal(latch, "direct:unmarshal");
     }
 
     @Test
     public void testUnmarshalFallbackConcurrent() throws Exception {
-        template.setDefaultEndpointUri("direct:unmarshalFallback");
         final CountDownLatch latch = new CountDownLatch(warmupCount + testCycleCount);
 
         context.addRoutes(new RouteBuilder() {
@@ -86,12 +83,11 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
             }
         });
 
-        unmarshal(latch);
+        unmarshal(latch, "direct:unmarshalFallback");
     }
 
     @Test
     public void testMarshallConcurrent() throws Exception {
-        template.setDefaultEndpointUri("direct:marshal");
         final CountDownLatch latch = new CountDownLatch(warmupCount + testCycleCount);
 
         context.addRoutes(new RouteBuilder() {
@@ -108,12 +104,11 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
             }
         });
 
-        marshal(latch);
+        marshal(latch, "direct:marshal");
     }
 
     @Test
     public void testMarshallFallbackConcurrent() throws Exception {
-        template.setDefaultEndpointUri("direct:marshalFallback");
         final CountDownLatch latch = new CountDownLatch(warmupCount + testCycleCount);
 
         context.addRoutes(new RouteBuilder() {
@@ -130,7 +125,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
             }
         });
 
-        marshal(latch);
+        marshal(latch, "direct:marshalFallback");
     }
 
     @Test
@@ -166,11 +161,11 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void unmarshal(final CountDownLatch latch) throws Exception {
+    public void unmarshal(final CountDownLatch latch, final String endpointUri) throws Exception {
         // warm up
         ByteArrayInputStream[] warmUpPayloads = createPayloads(warmupCount);
         for (ByteArrayInputStream payload : warmUpPayloads) {
-            template.sendBody(payload);
+            template.sendBody(endpointUri, payload);
         }
 
         final ByteArrayInputStream[] payloads = createPayloads(testCycleCount);
@@ -180,7 +175,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
             final int finalI = i;
             pool.execute(new Runnable() {
                 public void run() {
-                    template.sendBody(payloads[finalI]);
+                    template.sendBody(endpointUri, payloads[finalI]);
                 }
             });
         }
@@ -190,11 +185,11 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         //System.out.println("sending " + payloads.length + " messages to " + template.getDefaultEndpoint().getEndpointUri() + " took " + (end - start) + "ms");
     }
 
-    public void marshal(final CountDownLatch latch) throws Exception {
+    public void marshal(final CountDownLatch latch, final String endpointUri) throws Exception {
         // warm up
         Foo[] warmUpPayloads = createFoo(warmupCount);
         for (Foo payload : warmUpPayloads) {
-            template.sendBody(payload);
+            template.sendBody(endpointUri, payload);
         }
 
         final Foo[] payloads = createFoo(testCycleCount);
@@ -204,7 +199,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
             final int finalI = i;
             pool.execute(new Runnable() {
                 public void run() {
-                    template.sendBody(payloads[finalI]);
+                    template.sendBody(endpointUri, payloads[finalI]);
                 }
             });
         }
