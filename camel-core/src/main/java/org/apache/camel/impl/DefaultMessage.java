@@ -281,6 +281,9 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public boolean hasAttachments() {
+        // optimized to avoid calling createAttachments as that creates a new empty map
+        // that we 99% do not need (only camel-mail supports attachments), and we have
+        // then ensure camel-mail always creates attachments to remedy for this
         return this.attachments != null && this.attachments.size() > 0;
     }
 
