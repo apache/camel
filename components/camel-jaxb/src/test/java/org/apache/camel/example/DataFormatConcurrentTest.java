@@ -60,6 +60,30 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
     }
 
     @Test
+    public void testUnmarshallFallbackConcurrent() throws Exception {
+        int counter = 10000;
+        final String payload = "<purchaseOrder name='Wine' amount='123.45' price='2.22'/>";
+        final CountDownLatch latch = new CountDownLatch(counter);
+        template.setDefaultEndpointUri("direct:unmarshalFallback");
+
+        ExecutorService pool = Executors.newFixedThreadPool(20);
+        //long start = System.currentTimeMillis();
+        for (int i = 0; i < counter; i++) {
+            pool.execute(new Runnable() {
+                public void run() {
+                    template.sendBody(payload);
+                    latch.countDown();
+                }
+            });
+        }
+
+        // should finish on fast machines in less than 3 seconds
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        //long end = System.currentTimeMillis();
+        //System.out.println("took " + (end - start) + "ms");
+    }
+
+    @Test
     public void testSendConcurrent() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(size);
@@ -102,6 +126,10 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
                 from("direct:unmarshal")
                         .unmarshal(jaxb)
+                        .to("mock:result");
+
+                from("direct:unmarshalFallback")
+                        .convertBodyTo(PurchaseOrder.class)
                         .to("mock:result");
             }
         };
