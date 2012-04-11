@@ -257,6 +257,8 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, source.getName(), LOG);
+            // force updates to be written, and then close afterwards
+            IOHelper.force(out, target.getName(), LOG);
             IOHelper.close(out, target.getName(), LOG);
         }
     }
@@ -279,6 +281,8 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, target.getName(), LOG);
+            // force updates to be written, and then close afterwards
+            IOHelper.force(out, target.getName(), LOG);
             IOHelper.close(out, target.getName(), LOG);
         }
     }
