@@ -16,10 +16,14 @@
  */
 package org.apache.camel.example;
 
+import java.io.StringWriter;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,11 +38,29 @@ import org.junit.Test;
 public class DataFormatConcurrentTest extends CamelTestSupport {
 
     private int size = 2000;
+    
+    private int fooBarSize = 50;
+    
+    public String createPayload() throws Exception {
+        Foo foo = new Foo();
+        for (int x = 0; x < fooBarSize; x++) {
+            Bar bar = new Bar();
+            bar.setName("Name: " + x);
+            bar.setValue("value: " + x);
+            foo.getBarRefs().add(bar);
+        }
+        Marshaller m = JAXBContext.newInstance(Foo.class, Bar.class).createMarshaller();
+        StringWriter writer = new StringWriter();
+        m.marshal(foo, writer);
+        return writer.toString();
+    }
 
     @Test
     public void testUnmarshallConcurrent() throws Exception {
         int counter = 10000;
-        final String payload = "<purchaseOrder name='Wine' amount='123.45' price='2.22'/>";
+        //final String payload = "<purchaseOrder name='Wine' amount='123.45' price='2.22'/>";
+        final String payload = createPayload();
+        //System.out.println("Length: " + payload.length());
         final CountDownLatch latch = new CountDownLatch(counter);
         template.setDefaultEndpointUri("direct:unmarshal");
 
@@ -54,7 +76,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         }
 
         // should finish on fast machines in less than 3 seconds
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertTrue(latch.await(15, TimeUnit.SECONDS));
         //long end = System.currentTimeMillis();
         //System.out.println("took " + (end - start) + "ms");
     }
