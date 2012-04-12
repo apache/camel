@@ -32,7 +32,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
-        bundleContext = CamelBlueprintHelper.createBundleContext(getClass().getSimpleName(), getBlueprintDescriptor());
+        bundleContext = CamelBlueprintHelper.createBundleContext(getClass().getSimpleName(), getBlueprintDescriptor(), true);
         super.setUp();
     }
 

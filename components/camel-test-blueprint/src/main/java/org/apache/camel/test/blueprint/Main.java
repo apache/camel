@@ -17,6 +17,7 @@
 package org.apache.camel.test.blueprint;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 
@@ -31,10 +32,44 @@ import org.osgi.framework.BundleContext;
  */
 public class Main extends MainSupport {
 
+    protected static Main instance;
     private BundleContext bundleContext;
     private String descriptors = "OSGI-INF/blueprint/*.xml";
     private CamelContext camelContext;
     private String bundleName = "MyBundle";
+
+    public Main() {
+
+        addOption(new ParameterOption("ac", "applicationContext",
+                "Sets the classpath based OSGi Blueprint", "applicationContext") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setDescriptors(parameter);
+            }
+        });
+
+        addOption(new ParameterOption("fa", "fileApplicationContext",
+                "Sets the filesystem based OSGi Blueprint", "fileApplicationContext") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setDescriptors(parameter);
+            }
+        });
+
+    }
+
+    public static void main(String... args) throws Exception {
+        Main main = new Main();
+        main.enableHangupSupport();
+        main.run(args);
+    }
+
+    /**
+     * Returns the currently executing main
+     *
+     * @return the current running instance
+     */
+    public static Main getInstance() {
+        return instance;
+    }
 
     @Override
     protected void doStart() throws Exception {
@@ -75,7 +110,7 @@ public class Main extends MainSupport {
     }
 
     protected BundleContext createBundleContext(String name) throws Exception {
-        return CamelBlueprintHelper.createBundleContext(name, descriptors);
+        return CamelBlueprintHelper.createBundleContext(name, descriptors, false);
     }
 
     @Override

@@ -54,9 +54,9 @@ import org.codehaus.mojo.exec.ExecutableDependency;
 import org.codehaus.mojo.exec.Property;
 
 /**
- * Runs a CamelContext using any Spring XML configuration files found in
- * <code>META-INF/spring/*.xml</code> and <code>camel-*.xml</code> and
- * starting up the context.
+ * Runs a CamelContext using any Spring or Blueprint XML configuration files found in
+ * <code>META-INF/spring/*.xml</code>, and <code>OSGI-INF/blueprint/*.xml</code>,
+ * and <code>camel-*.xml</code> and starting up the context.
  *
  * @goal run
  * @requiresDependencyResolution runtime
@@ -64,7 +64,6 @@ import org.codehaus.mojo.exec.Property;
  */
 public class RunMojo extends AbstractExecMojo {
 
-    // TODO
     // this code is based on a copy-and-paste of maven-exec-plugin
     //
     // If we could avoid the mega-cut-n-paste it would really really help!
@@ -106,6 +105,13 @@ public class RunMojo extends AbstractExecMojo {
      * @parameter expression="false"
      */
     protected boolean useDot;
+
+    /**
+     * Whether to log the classpath when starting
+     *
+     * @parameter expression="false"
+     */
+    protected boolean logClasspath;
 
     /**
      * @component
@@ -618,7 +624,9 @@ public class RunMojo extends AbstractExecMojo {
         this.addRelevantPluginDependenciesToClasspath(classpathURLs);
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
 
-        getLog().info("Classpath = " + classpathURLs);
+        if (logClasspath) {
+            getLog().info("Classpath = " + classpathURLs);
+        }
         return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
     }
 

@@ -67,7 +67,7 @@ public final class CamelBlueprintHelper {
     private CamelBlueprintHelper() {
     }
 
-    public static BundleContext createBundleContext(String name, String descriptors) throws Exception {
+    public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle) throws Exception {
         deleteDirectory("target/bundles");
         createDirectory("target/bundles");
 
