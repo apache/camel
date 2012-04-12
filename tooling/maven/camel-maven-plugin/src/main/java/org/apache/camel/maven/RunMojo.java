@@ -114,6 +114,14 @@ public class RunMojo extends AbstractExecMojo {
     protected boolean logClasspath;
 
     /**
+     * Whether to use Blueprint when running, instead of Spring
+     *
+     * @parameter expression="${camel.blueprint}"
+     *            default-value="false"
+     */
+    protected boolean useBlueprint;
+
+    /**
      * @component
      */
     private ArtifactResolver artifactResolver;
@@ -171,8 +179,6 @@ public class RunMojo extends AbstractExecMojo {
      * The main class to execute.
      *
      * @parameter expression="${camel.mainClass}"
-     *            default-value="org.apache.camel.spring.Main"
-     * @required
      */
     private String mainClass;
 
@@ -344,6 +350,7 @@ public class RunMojo extends AbstractExecMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         boolean usingSpringJavaConfigureMain = false;
+        boolean usingBlueprintMain = useBlueprint;
         if (killAfter != -1) {
             getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
@@ -392,11 +399,22 @@ public class RunMojo extends AbstractExecMojo {
         
         if (usingSpringJavaConfigureMain) {
             mainClass = "org.apache.camel.spring.javaconfig.Main";
-            getLog().info("Using the org.apache.camel.spring.javaconfig.Main to initiate a CamelContext");
+            getLog().info("Using org.apache.camel.spring.javaconfig.Main to initiate a CamelContext");
+        } else if (usingBlueprintMain) {
+            mainClass = "org.apache.camel.test.blueprint.Main";
+            // must include plugin dependencies for blueprint
+            includePluginDependencies = true;
+            getLog().info("Using org.apache.camel.test.blueprint.Main to initiate a CamelContext");
+        } else if (mainClass != null) {
+            getLog().info("Using custom " + mainClass + " to initiate a CamelContext");
+        } else {
+            // use spring by default
+            getLog().info("Using org.apache.camel.spring.Main to initiate a CamelContext");
+            mainClass = "org.apache.camel.spring.Main";
         }
         
         if (getLog().isDebugEnabled()) {
-            StringBuffer msg = new StringBuffer("Invoking : ");
+            StringBuffer msg = new StringBuffer("Invoking: ");
             msg.append(mainClass);
             msg.append(".main(");
             for (int i = 0; i < arguments.length; i++) {
