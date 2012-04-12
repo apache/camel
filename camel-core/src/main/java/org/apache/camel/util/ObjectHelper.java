@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -857,6 +859,35 @@ public final class ObjectHelper {
         }
         if (url == null) {
             url = ObjectHelper.class.getClassLoader().getResource(name);
+        }
+
+        return url;
+    }
+
+    /**
+     * Attempts to load the given resources from the given package name using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param packageName the name of the package to load its resources
+     * @return the URLs for the resources or null if it could not be loaded
+     */
+    public static Enumeration<URL> loadResourcesAsURL(String packageName) {
+        Enumeration<URL> url = null;
+
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null) {
+            try {
+                url = contextClassLoader.getResources(packageName);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        if (url == null) {
+            try {
+                url = ObjectHelper.class.getClassLoader().getResources(packageName);
+            } catch (IOException e) {
+                // ignore
+            }
         }
 
         return url;
