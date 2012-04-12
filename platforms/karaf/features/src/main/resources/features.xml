@@ -273,7 +273,7 @@
   </feature>
   <feature name='camel-jsch' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/${jsch-bundle-version}</bundle>
+    <feature version='${project.version}'>camel-ftp</feature>
     <bundle>mvn:org.apache.camel/camel-jsch/${project.version}</bundle>
   </feature>
   <feature name='camel-guice' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -323,6 +323,7 @@
     <bundle dependency='true'>mvn:commons-net/commons-net/${commons-net-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty/${jetty6-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-core/${hadoop-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hdfs/${project.version}</bundle>
   </feature>
