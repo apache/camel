@@ -171,7 +171,8 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
                 try {
                     securityToken = (ShiroSecurityToken)objectInputStream.readObject();
                 } finally {
-                    IOHelper.close(objectInputStream, byteArrayInputStream);
+                    IOHelper.close(objectInputStream);
+                    IOHelper.close(byteArrayInputStream);
                 }
 
                 Subject currentUser = SecurityUtils.getSubject();

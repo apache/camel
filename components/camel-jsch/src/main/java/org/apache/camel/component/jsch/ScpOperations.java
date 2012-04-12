@@ -230,7 +230,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         try {
             writeFile(name, data, os, is, cfg);
         } finally {
-            IOHelper.close(is, os);
+            IOHelper.close(is);
+            IOHelper.close(os);
         }
     }
 
