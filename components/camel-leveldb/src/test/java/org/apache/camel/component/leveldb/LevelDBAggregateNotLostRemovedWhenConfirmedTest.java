@@ -55,7 +55,6 @@ public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSu
 
         // the exchange should NOT be in the completed repo as it was confirmed
         final LevelDBFile levelDBFile = repo.getLevelDBFile();
-        final LevelDBCamelCodec codec = new LevelDBCamelCodec();
         byte[] bf = levelDBFile.getDb().get(keyBuilder("repo1-completed", exchangeId));
 
         // assert the exchange was deleted

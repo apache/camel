@@ -124,7 +124,7 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
             from("activemq:broken")
                     .transacted()
                     .to("mock:checkpoint1")
-                    .setBody(bean("foo"))
+                    .setBody(method("foo"))
                     .to("mock:checkpoint2")
                     .throwException(new Exception("boo"))
                     .to("mock:end");

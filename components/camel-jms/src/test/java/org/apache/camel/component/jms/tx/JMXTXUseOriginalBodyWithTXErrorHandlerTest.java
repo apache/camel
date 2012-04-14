@@ -102,7 +102,7 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
             from("activemq:broken")
                     .transacted()
                     .to("mock:checkpoint1")
-                    .setBody(bean("foo"))
+                    .setBody(method("foo"))
                     .to("mock:checkpoint2")
                     .throwException(new Exception("boo"))
                     .to("mock:end");

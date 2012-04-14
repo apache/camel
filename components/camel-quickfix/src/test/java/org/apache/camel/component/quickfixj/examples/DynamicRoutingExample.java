@@ -64,7 +64,7 @@ public class DynamicRoutingExample {
                 // Dynamic router -- Uses FIX DeliverTo tags
                 from("quickfix:examples/gateway.cfg").
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived)).
-                    recipientList(bean(new FixMessageRouter("quickfix:examples/gateway.cfg")));
+                    recipientList(method(new FixMessageRouter("quickfix:examples/gateway.cfg")));
 
                 // Logger app messages as JSON
                 from("quickfix:examples/gateway.cfg").

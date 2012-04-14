@@ -75,6 +75,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase);
         
         return new RouteBuilder() {
+            @SuppressWarnings("unchecked")
             public void configure() {
                 onException(UnknownAccountException.class, IncorrectCredentialsException.class,
                         LockedAccountException.class, AuthenticationException.class).

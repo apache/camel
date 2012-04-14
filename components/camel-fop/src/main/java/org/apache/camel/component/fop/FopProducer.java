@@ -85,6 +85,7 @@ public class FopProducer extends DefaultProducer {
         return out;
     }
 
+    @SuppressWarnings("unchecked")
     private void setEncryptionParameters(FOUserAgent userAgent, Map<String, Object> headers)
         throws Exception {
         Map<String, Object> encryptionParameters = IntrospectionSupport

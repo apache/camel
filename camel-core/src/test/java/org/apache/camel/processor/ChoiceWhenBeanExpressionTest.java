@@ -66,7 +66,7 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
             public void configure() {                
                 from("direct:expression")
                     .choice()
-                        .when().expression(bean(MyBean.class, "isGradeA")).to("mock:gradeA")
+                        .when().expression(method(MyBean.class, "isGradeA")).to("mock:gradeA")
                         .otherwise().to("mock:otherGrade")
                     .end();
                 

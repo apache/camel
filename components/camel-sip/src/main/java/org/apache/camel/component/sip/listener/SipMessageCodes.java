@@ -20,9 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface SipMessageCodes {
-    Map<Integer, String> SIP_MESSAGE_CODES = 
-        new HashMap<Integer, String>() 
-        {
+    Map<Integer, String> SIP_MESSAGE_CODES = new HashMap<Integer, String>() {
+            private static final long serialVersionUID = 1L;
             {
                 put(100, "Trying");
                 put(180, "Ringing");

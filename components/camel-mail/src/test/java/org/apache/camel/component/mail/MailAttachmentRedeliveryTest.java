@@ -38,7 +38,7 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailAttachmentRedeliveryTest extends CamelTestSupport {
 
-    private final List names = new ArrayList();
+    private final List<String> names = new ArrayList<String>();
 
     @Test
     public void testSendAndReceiveMailWithAttachmentsRedelivery() throws Exception {
@@ -100,9 +100,8 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
                         .process(new Processor() {
                             private int counter;
                             @Override
-                            @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) throws Exception {
-                                Map map = exchange.getIn().getAttachments();
+                                Map<String, DataHandler> map = exchange.getIn().getAttachments();
                                 assertNotNull(map);
                                 assertEquals(1, map.size());
                                 names.add(map.keySet().iterator().next());
