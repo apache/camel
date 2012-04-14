@@ -263,7 +263,7 @@ public final class IOHelper {
      */
     public static void close(Closeable... closeables) {
         for (Closeable closeable : closeables) {
-            close(closeable, null, LOG);
+            close(closeable);
         }
     }
 
