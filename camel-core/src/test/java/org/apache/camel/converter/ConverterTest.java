@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultClassResolver;
@@ -240,7 +241,7 @@ public class ConverterTest extends TestCase {
         try {
             converter.mandatoryConvertTo(char.class, "ABC");
             fail("Should have thrown an exception");
-        } catch (NoTypeConversionAvailableException e) {
+        } catch (TypeConversionException e) {
             assertEquals("java.lang.IllegalArgumentException: String must have exactly a length of 1: ABC", e.getCause().getMessage());
         }
     }

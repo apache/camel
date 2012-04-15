@@ -284,7 +284,7 @@ public class BeanExpression implements Expression, Predicate {
             }
 
             // special for list is last keyword
-            Integer num = exchange.getContext().getTypeConverter().convertTo(Integer.class, key);
+            Integer num = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, key);
             boolean checkList = key.startsWith("last") || num != null;
 
             if (checkList) {
@@ -296,7 +296,7 @@ public class BeanExpression implements Expression, Predicate {
                         // maybe its an expression to subtract a number after last
                         String after = ObjectHelper.after(key, "-");
                         if (after != null) {
-                            Integer redux = exchange.getContext().getTypeConverter().convertTo(Integer.class, after.trim());
+                            Integer redux = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, after.trim());
                             if (redux != null) {
                                 num -= redux;
                             } else {

@@ -97,14 +97,14 @@ public final class ObjectHelper {
         }
 
         // convert left to right
-        Object value = converter.convertTo(rightValue.getClass(), leftValue);
+        Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
         answer = equal(value, rightValue);
         if (answer) {
             return true;
         }
 
         // convert right to left
-        value = converter.convertTo(leftValue.getClass(), rightValue);
+        value = converter.tryConvertTo(leftValue.getClass(), rightValue);
         answer = equal(leftValue, value);
         return answer;
     }
@@ -127,15 +127,15 @@ public final class ObjectHelper {
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
 
         // if both values is numeric then compare using numeric
-        Long leftNum = converter.convertTo(Long.class, leftValue);
-        Long rightNum = converter.convertTo(Long.class, rightValue);
+        Long leftNum = converter.tryConvertTo(Long.class, leftValue);
+        Long rightNum = converter.tryConvertTo(Long.class, rightValue);
         if (leftNum != null && rightNum != null) {
             return leftNum.compareTo(rightNum);
         }
 
         // also try with floating point numbers
-        Double leftDouble = converter.convertTo(Double.class, leftValue);
-        Double rightDouble = converter.convertTo(Double.class, rightValue);
+        Double leftDouble = converter.tryConvertTo(Double.class, leftValue);
+        Double rightDouble = converter.tryConvertTo(Double.class, rightValue);
         if (leftDouble != null && rightDouble != null) {
             return leftDouble.compareTo(rightDouble);
         }

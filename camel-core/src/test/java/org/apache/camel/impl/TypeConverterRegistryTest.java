@@ -90,6 +90,22 @@ public class TypeConverterRegistryTest extends TestCase {
         public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
             return convertTo(type, value);
         }
+
+        public <T> T tryConvertTo(Class<T> type, Object value) {
+            try {
+                return convertTo(type, null, value);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+            try {
+                return convertTo(type, exchange, value);
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
     // END SNIPPET: e2
 

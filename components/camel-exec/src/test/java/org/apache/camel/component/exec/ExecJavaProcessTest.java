@@ -160,7 +160,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         assertNotNull("the test executable must print in stderr", body.getStderr());
         // the converter must fall back to the stderr, because stdout is null
         String out = e.getIn().getBody(String.class);
-        assertNull("Should be null", out);
+        assertEquals("Should be empty", "", out);
     }
 
     @Test

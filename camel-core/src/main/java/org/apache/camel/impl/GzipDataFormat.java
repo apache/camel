@@ -24,7 +24,6 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 
 public class GzipDataFormat implements DataFormat {
@@ -41,7 +40,7 @@ public class GzipDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        InputStream is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
         GZIPInputStream unzipInput = new GZIPInputStream(is);
         
         // Create an expandable byte array to hold the inflated data

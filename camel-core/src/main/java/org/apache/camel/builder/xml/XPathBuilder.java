@@ -47,6 +47,7 @@ import org.xml.sax.InputSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.Service;
@@ -161,12 +162,13 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         Exchange dummy = new DefaultExchange(context);
         dummy.getIn().setBody(body);
 
-        boolean answer = matches(dummy);
-
-        // remove the dummy from the thread local after usage
-        variableResolver.remove();
-        exchange.remove();
-        return answer;
+        try {
+            return matches(dummy);
+        } finally {
+            // remove the dummy from the thread local after usage
+            variableResolver.remove();
+            exchange.remove();
+        }
     }
 
     /**
@@ -184,12 +186,13 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         Exchange dummy = new DefaultExchange(context);
         dummy.getIn().setBody(body);
 
-        T answer = evaluate(dummy, type);
-
-        // remove the dummy from the thread local after usage
-        variableResolver.remove();
-        exchange.remove();
-        return answer;
+        try {
+            return evaluate(dummy, type);
+        } finally {
+            // remove the dummy from the thread local after usage
+            variableResolver.remove();
+            exchange.remove();
+        }
     }
 
     /**
@@ -207,12 +210,13 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         dummy.getIn().setBody(body);
 
         setResultQName(XPathConstants.STRING);
-        String answer = evaluate(dummy, String.class);
-
-        // remove the dummy from the thread local after usage
-        variableResolver.remove();
-        exchange.remove();
-        return answer;
+        try {
+            return evaluate(dummy, String.class);
+        } finally {
+            // remove the dummy from the thread local after usage
+            variableResolver.remove();
+            exchange.remove();
+        }
     }
 
     // Builder methods
@@ -938,36 +942,66 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * Strategy method to extract the document from the exchange.
      */
     protected Object getDocument(Exchange exchange, Object body) {
+        try {
+            return doGetDocument(exchange, body);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } finally {
+            // call the reset if the in message body is StreamCache
+            MessageHelper.resetStreamCache(exchange.getIn());
+        }
+    }
+
+    protected Object doGetDocument(Exchange exchange, Object body) throws Exception {
+        if (body == null) {
+            return null;
+        }
+
         Object answer = null;
 
         Class<?> type = getDocumentType();
+        Exception cause = null;
         if (type != null) {
             // try to get the body as the desired type
-            answer = exchange.getContext().getTypeConverter().convertTo(type, exchange, body);
-        }
-        // fallback to get the body as is
-        if (answer == null) {
-            answer = body;
-        }
-
-        // let's try coercing some common types into something JAXP can work with
-        if (answer instanceof WrappedFile) {
-            // special for files so we can work with them out of the box
-            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, answer);
-            answer = new InputSource(is);
-        } else if (answer instanceof BeanInvocation) {
-            // if its a null bean invocation then handle that
-            BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, answer);
-            if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
-                // its a null argument from the bean invocation so use null as answer
-                answer = null;
+            try {
+                answer = exchange.getContext().getTypeConverter().convertTo(type, exchange, body);
+            } catch (Exception e) {
+                // we want to store the caused exception, if we could not convert
+                cause = e;
             }
-        } else if (answer instanceof String) {
-            answer = new InputSource(new StringReader(answer.toString()));
         }
 
-        // call the reset if the in message body is StreamCache
-        MessageHelper.resetStreamCache(exchange.getIn());
+        // okay we can try to remedy the failed conversion by some special types
+        if (answer == null) {
+            // let's try coercing some common types into something JAXP work with the best for special types
+            if (body instanceof WrappedFile) {
+                // special for files so we can work with them out of the box
+                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
+                answer = new InputSource(is);
+            } else if (body instanceof BeanInvocation) {
+                // if its a null bean invocation then handle that specially
+                BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, body);
+                if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
+                    // its a null argument from the bean invocation so use null as answer
+                    answer = null;
+                }
+            } else if (body instanceof String) {
+                answer = new InputSource(new StringReader((String) body));
+            }
+        }
+
+        if (type == null && answer == null) {
+            // fallback to get the body as is
+            answer = body;
+        } else if (answer == null) {
+            // there was a type, and we could not convert to it, then fail
+            if (cause != null) {
+                throw cause;
+            } else {
+                throw new NoTypeConversionAvailableException(body, type);
+            }
+        }
+
         return answer;
     }
 

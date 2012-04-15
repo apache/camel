@@ -17,9 +17,11 @@
 package org.apache.camel.jaxb;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
@@ -27,7 +29,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
 
-public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestSupport {
+public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupport {
+
+    private final AtomicInteger failed = new AtomicInteger();
+    private final AtomicInteger failed2 = new AtomicInteger();
 
     @Test
     public void testJaxbModel() throws Exception {
@@ -38,6 +43,9 @@ public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestS
         template.sendBody("direct:a", foo);
 
         assertMockEndpointsSatisfied();
+
+        assertEquals(0, failed.get());
+        assertEquals(0, failed2.get());
     }
 
     @Test
@@ -49,6 +57,9 @@ public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestS
         template.sendBody("direct:a", camel);
 
         assertMockEndpointsSatisfied();
+
+        assertEquals(1, failed.get());
+        assertEquals(0, failed2.get());
     }
 
     @Test
@@ -60,6 +71,9 @@ public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestS
         template.sendBody("direct:a", bar);
 
         assertMockEndpointsSatisfied();
+
+        assertEquals(1, failed.get());
+        assertEquals(0, failed2.get());
     }
 
     @Override
@@ -69,23 +83,24 @@ public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestS
             @Override
             public void configure() throws Exception {
                 from("direct:a").process(new Processor() {
-
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        // should return null and not throw any exception if the conversion fails
-                        Foo foo = exchange.getIn().getBody(Foo.class);
-                        if (!(exchange.getIn().getBody() instanceof Foo)) {
-                            assertNull("Failed conversion didn't return null", foo);
+                        try {
+                            exchange.getIn().getBody(Foo.class);
+                        } catch (TypeConversionException e) {
+                            failed.incrementAndGet();
                         }
                     }
-
                 }).to("mock:a").process(new Processor() {
-
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        // should return null and not throw any exception if the conversion fails
-                        List<?> list = exchange.getIn().getBody(List.class);
-                        assertNull("Failed conversion didn't return null", list);
+                        try {
+                            exchange.getIn().getBody(List.class);
+                        } catch (TypeConversionException e) {
+                            // there is no type converters from the POJO -> List
+                            // so we should really not fail at all at this point
+                            failed2.incrementAndGet();
+                        }
                     }
 
                 }).to("mock:b");

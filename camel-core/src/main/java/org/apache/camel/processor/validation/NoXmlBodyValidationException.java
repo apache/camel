@@ -30,4 +30,8 @@ public class NoXmlBodyValidationException extends ValidationException {
     public NoXmlBodyValidationException(Exchange exchange) {
         super(exchange, "No XML body could be found on the input message");
     }
+
+    public NoXmlBodyValidationException(Exchange exchange, Throwable cause) {
+        super("No XML body could be found on the input message", exchange, cause);
+    }
 }

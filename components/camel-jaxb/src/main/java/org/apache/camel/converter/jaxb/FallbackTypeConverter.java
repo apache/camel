@@ -42,10 +42,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.TypeConverterAware;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +55,11 @@ import org.slf4j.LoggerFactory;
 /**
  * @version
  */
-public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
+public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
-    private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
+    private final Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
+    private final StaxConverter staxConverter = new StaxConverter();
     private TypeConverter parentTypeConverter;
-    private StaxConverter staxConverter = new StaxConverter();
     private boolean prettyPrint = true;
 
     public boolean isPrettyPrint() {
@@ -74,10 +76,6 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
 
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
-    }
-
-    private <T> boolean isNotStreamCacheType(Class<T> type) {
-        return !StreamCache.class.isAssignableFrom(type);
     }
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
@@ -97,8 +95,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                 }
             }
         } catch (Exception e) {
-            // do only warn about the failed conversion but don't rethrow it as unchecked
-            LOG.warn("Type conversion for '" + value + "' to the type '" + type.getCanonicalName() + "' failed", e);
+            throw new TypeConversionException(value, type, e);
         }
 
         // should return null if didn't even try to convert at all or for whatever reason the conversion is failed
@@ -115,6 +112,32 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             throw new NoTypeConversionAvailableException(value, type);
         }
         return answer;
+    }
+
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        try {
+            return convertTo(type, null, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        try {
+            return convertTo(type, exchange, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        contexts.clear();
     }
 
     protected <T> boolean isJaxbType(Class<T> type) {
@@ -137,23 +160,23 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         if (parentTypeConverter != null) {
             if (!needFiltering(exchange)) {
                 // we cannot filter the XMLStreamReader if necessary
-                XMLStreamReader xmlReader = parentTypeConverter.convertTo(XMLStreamReader.class, value);
+                XMLStreamReader xmlReader = parentTypeConverter.convertTo(XMLStreamReader.class, exchange, value);
                 if (xmlReader != null) {
                     Object unmarshalled = unmarshal(unmarshaller, exchange, xmlReader);
                     return type.cast(unmarshalled);
                 }
             }
-            InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
+            InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, exchange, value);
             if (inputStream != null) {
                 Object unmarshalled = unmarshal(unmarshaller, exchange, inputStream);
                 return type.cast(unmarshalled);
             }
-            Reader reader = parentTypeConverter.convertTo(Reader.class, value);
+            Reader reader = parentTypeConverter.convertTo(Reader.class, exchange, value);
             if (reader != null) {
                 Object unmarshalled = unmarshal(unmarshaller, exchange, reader);
                 return type.cast(unmarshalled);
             }
-            Source source = parentTypeConverter.convertTo(Source.class, value);
+            Source source = parentTypeConverter.convertTo(Source.class, exchange, value);
             if (source != null) {
                 Object unmarshalled = unmarshal(unmarshaller, exchange, source);
                 return type.cast(unmarshalled);
@@ -171,7 +194,8 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return null;
     }
 
-    protected <T> T marshall(Class<T> type, Exchange exchange, Object value) throws JAXBException, XMLStreamException, FactoryConfigurationError {
+    protected <T> T marshall(Class<T> type, Exchange exchange, Object value)
+        throws JAXBException, XMLStreamException, FactoryConfigurationError, TypeConversionException {
         LOG.trace("Marshal from value {} to type {}", value, type);
 
         T answer = null;
@@ -201,9 +225,10 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return answer;
     }
 
-    protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value) throws JAXBException, UnsupportedEncodingException, XMLStreamException {
+    protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value)
+        throws JAXBException, UnsupportedEncodingException, XMLStreamException {
         try {
-            XMLStreamReader xmlReader = null;
+            XMLStreamReader xmlReader;
             if (value instanceof XMLStreamReader) {
                 xmlReader = (XMLStreamReader) value;
             } else if (value instanceof InputStream) {
@@ -250,6 +275,10 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     protected <T> Unmarshaller getUnmarshaller(Class<T> type) throws JAXBException {
         JAXBContext context = createContext(type);
         return context.createUnmarshaller();
+    }
+
+    private static <T> boolean isNotStreamCacheType(Class<T> type) {
+        return !StreamCache.class.isAssignableFrom(type);
     }
 
 }
