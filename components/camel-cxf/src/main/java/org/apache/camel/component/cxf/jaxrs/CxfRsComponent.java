@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -26,6 +27,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 
 /**
@@ -71,6 +73,21 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
             // endpoint URI does not specify a bean
             answer = new CxfRsEndpoint(remaining, this);
         }
+
+        String resourceClass = getAndRemoveParameter(parameters, "resourceClass", String.class);
+        if (resourceClass != null) {
+            Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(resourceClass);
+            answer.addResourceClass(clazz);
+        }
+
+        String resourceClasses = getAndRemoveParameter(parameters, "resourceClasses", String.class);
+        Iterator it = ObjectHelper.createIterator(resourceClasses);
+        while (it.hasNext()) {
+            String name = (String) it.next();
+            Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(name);
+            answer.addResourceClass(clazz);
+        }
+
         setProperties(answer, parameters);
         Map<String, String> params = CastUtils.cast(parameters);
         answer.setParameters(params);

@@ -96,7 +96,6 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        System.out.println(exchange.getOut().getHeaders());
         assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
         // END SNIPPET: ProxyExample     
     }

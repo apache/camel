@@ -18,9 +18,7 @@ package org.apache.camel.component.cxf.converter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
@@ -31,7 +29,6 @@ import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.message.MessageContentsList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,21 +54,6 @@ public final class CxfConverter {
         } else {
             return new MessageContentsList();
         }
-    }
-    
-    @Converter
-    public static List<Class<?>> toClassesList(final String[] classNames) throws ClassNotFoundException {
-        List<Class<?>> answer = new ArrayList<Class<?>>();
-        for (String className : classNames) {
-            answer.add(ClassLoaderUtils.loadClass(className.trim(), CxfConverter.class));
-        }
-        return answer;
-    }
-    
-    @Converter
-    public static List<Class<?>> toClassList(String classeString) throws ClassNotFoundException {
-        String[] classNames = classeString.split(",|;");
-        return toClassesList(classNames);        
     }
     
     @Converter

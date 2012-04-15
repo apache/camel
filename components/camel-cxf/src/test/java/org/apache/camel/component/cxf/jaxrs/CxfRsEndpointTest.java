@@ -29,7 +29,7 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         String endpointUri = "cxfrs://http://localhost:" + CTX + ""
             + "?loggingFeatureEnabled=true&loggingSizeLimit=200"
             + "&resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService,"
-            + "java.lang.String;org.apache.camel.component.cxf.jaxrs.testbean.Order";
+            + "java.lang.String,org.apache.camel.component.cxf.jaxrs.testbean.Order";
             
         CxfRsComponent component = new CxfRsComponent(context);
         CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
@@ -67,7 +67,6 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         assertEquals("Get a wrong address ", endpointUri, endpoint.getEndpointUri());
         assertEquals("Get a wrong size of resouces classes", 1, endpoint.getResourceClasses().size());
         assertEquals("Get a wrong resources class", CustomerService.class, endpoint.getResourceClasses().get(0));
-        
     }
 
 }
