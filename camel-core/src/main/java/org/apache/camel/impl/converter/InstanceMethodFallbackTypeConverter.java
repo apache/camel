@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-public class InstanceMethodFallbackTypeConverter implements TypeConverter {
+public class InstanceMethodFallbackTypeConverter extends TypeConverterSupport {
     private final CachingInjector<?> injector;
     private final Method method;
     private final boolean useExchange;
@@ -48,11 +48,6 @@ public class InstanceMethodFallbackTypeConverter implements TypeConverter {
         return "InstanceMethodFallbackTypeConverter: " + method;
     }
 
-    @Override
-    public <T> T convertTo(Class<T> type, Object value) {
-        return convertTo(type, null, value);
-    }
-
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         Object instance = injector.newInstance();
@@ -62,34 +57,6 @@ public class InstanceMethodFallbackTypeConverter implements TypeConverter {
         return useExchange
             ? (T)ObjectHelper.invokeMethod(method, instance, type, exchange, value, registry) : (T)ObjectHelper
                 .invokeMethod(method, instance, type, value, registry);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-        return convertTo(type, null, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, exchange, value);
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, null, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, exchange, value);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
 }

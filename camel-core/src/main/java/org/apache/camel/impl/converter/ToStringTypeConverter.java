@@ -20,9 +20,9 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.bean.BeanInvocation;
+import org.apache.camel.support.TypeConverterSupport;
 
 /**
  * A simple converter that can convert any object to a String type by using the
@@ -30,11 +30,11 @@ import org.apache.camel.component.bean.BeanInvocation;
  *
  * @version 
  */
-public class ToStringTypeConverter implements TypeConverter {
+public class ToStringTypeConverter extends TypeConverterSupport {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T convertTo(Class<T> toType, Object value) {
+    public <T> T convertTo(Class<T> toType, Exchange exchange, Object value) {
         if (value != null) {
 
             // should not try to convert Message
@@ -64,36 +64,4 @@ public class ToStringTypeConverter implements TypeConverter {
         return null;
     }
 
-    @Override
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

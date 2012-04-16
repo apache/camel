@@ -17,42 +17,21 @@
 package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.support.TypeConverterSupport;
 
 /**
  * @version 
  */
-public class MyMessageToProcessorConverter implements TypeConverter {
+public class MyMessageToProcessorConverter extends TypeConverterSupport {
 
     @SuppressWarnings("unchecked")
-    public <T> T convertTo(Class<T> type, Object value) {
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return (T) new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Bye World");
             }
         };
-    }
-
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, value);
-    }
-
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
-        return convertTo(type, value);
-    }
-
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
-        return convertTo(type, value);
-    }
-
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        return convertTo(type, value);
-    }
-
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, value);
     }
 
 }
