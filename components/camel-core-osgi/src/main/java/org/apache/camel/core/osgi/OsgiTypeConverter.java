@@ -138,6 +138,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         return getDelegate().getInjector();
     }
 
+    public Statistics getStatistics() {
+        return getDelegate().getStatistics();
+    }
+
     public synchronized DefaultTypeConverter getDelegate() {
         if (delegate == null) {
             delegate = createRegistry();
