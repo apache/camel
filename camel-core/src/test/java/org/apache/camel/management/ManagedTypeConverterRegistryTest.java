@@ -54,10 +54,6 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         assertEquals(0, failed.intValue());
         Long miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
         assertEquals(0, miss.intValue());
-        Long attempt = (Long) mbeanServer.getAttribute(name, "AttemptCounter");
-        assertEquals(2, attempt.intValue());
-        Long hit = (Long) mbeanServer.getAttribute(name, "HitCounter");
-        assertEquals(2, hit.intValue());
 
         try {
             template.sendBody("direct:start", "foo");
@@ -79,10 +75,6 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         assertEquals(0, failed.intValue());
         miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
         assertEquals(0, miss.intValue());
-        attempt = (Long) mbeanServer.getAttribute(name, "AttemptCounter");
-        assertEquals(0, attempt.intValue());
-        hit = (Long) mbeanServer.getAttribute(name, "HitCounter");
-        assertEquals(0, hit.intValue());
     }
 
     @Override
