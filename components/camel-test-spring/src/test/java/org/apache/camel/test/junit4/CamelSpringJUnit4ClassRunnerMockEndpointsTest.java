@@ -17,24 +17,35 @@
 package org.apache.camel.test.junit4;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.MockEndpoints;
 import org.junit.Test;
 
-@MockEndpoints("log:*")
+import static org.junit.Assert.assertEquals;
+
+@MockEndpoints("mock:c*")
 public class CamelSpringJUnit4ClassRunnerMockEndpointsTest
         extends CamelSpringJUnit4ClassRunnerPlainTest {
 
-    @EndpointInject(uri = "mock:log:org.apache.camel.test.junit4.spring", context = "camelContext2")
-    protected MockEndpoint mockLog;
+    @EndpointInject(uri = "mock:mock:c", context = "camelContext2")
+    protected MockEndpoint mockMockC;
     
     @Test
     @Override
     public void testPositive() throws Exception {
-        mockLog.expectedBodiesReceived("Hello David");
         
-        super.testPositive();
+        assertEquals(ServiceStatus.Started, camelContext.getStatus());
+        assertEquals(ServiceStatus.Started, camelContext2.getStatus());
         
-        mockLog.assertIsSatisfied();
+        mockA.expectedBodiesReceived("David");
+        mockB.expectedBodiesReceived("Hello David");
+        mockC.expectedBodiesReceived("Hello David");
+        mockMockC.expectedBodiesReceived("Hello David");
+        
+        start.sendBody("David");
+        start2.sendBody("David");
+        
+        MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

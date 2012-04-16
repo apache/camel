@@ -14,34 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.testng;
+package org.apache.camel.test.junit4;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.MockEndpoints;
-
-import org.testng.annotations.Test;
+import org.apache.camel.test.spring.MockEndpointsAndSkip;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-@MockEndpoints("mock:c*")
-public class AbstractCamelTestNGSpringContextTestsMockEndpointsTest
-        extends AbstractCamelTestNGSpringContextTestsPlainTest {
+@MockEndpointsAndSkip("mock:c")
+public class CamelSpringJUnit4ClassRunnerMockEndpointsAndSkipTest
+        extends CamelSpringJUnit4ClassRunnerPlainTest {
 
     @EndpointInject(uri = "mock:mock:c", context = "camelContext2")
     protected MockEndpoint mockMockC;
     
+    @EndpointInject(uri = "mock:c", context = "camelContext2")
+    protected MockEndpoint mockC;
+    
     @Test
     @Override
     public void testPositive() throws Exception {
-        
         assertEquals(ServiceStatus.Started, camelContext.getStatus());
         assertEquals(ServiceStatus.Started, camelContext2.getStatus());
         
         mockA.expectedBodiesReceived("David");
         mockB.expectedBodiesReceived("Hello David");
-        mockC.expectedBodiesReceived("Hello David");
+        mockC.expectedMessageCount(0);
         mockMockC.expectedBodiesReceived("Hello David");
         
         start.sendBody("David");
