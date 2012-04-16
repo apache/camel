@@ -21,7 +21,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,7 +48,6 @@ public class CxfToJmsInOutTest extends AbstractJUnit4SpringContextTests {
     protected MockEndpoint outputEndpoint;
 
     @Test
-    @Ignore("TODO: CAMEL-5174")
     public void testCxfToJmsInOut() throws Exception {
         assertNotNull(template);
         assertNotNull(inputEndpoint);
