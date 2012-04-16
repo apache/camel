@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -41,7 +42,6 @@ import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +61,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
     protected final PropertyEditorTypeConverter propertyEditorTypeConverter = new PropertyEditorTypeConverter();
+    protected final Statistics statistics = new UtilizationStatistics();
+    protected final AtomicLong attemptCounter = new AtomicLong();
+    protected final AtomicLong missCounter = new AtomicLong();
+    protected final AtomicLong hitCounter = new AtomicLong();
+    protected final AtomicLong failedCounter = new AtomicLong();
 
     public BaseTypeConverterRegistry(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
         this.resolver = resolver;
@@ -102,8 +107,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
+            attemptCounter.incrementAndGet();
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
+            failedCounter.incrementAndGet();
             // if its a ExecutionException then we have rethrow it as its not due to failed conversion
             // this is special for FutureTypeConverter
             boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null
@@ -117,8 +124,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
         if (answer == Void.TYPE) {
             // Could not find suitable conversion
+            missCounter.incrementAndGet();
+            // Could not find suitable conversion
             return null;
         } else {
+            hitCounter.incrementAndGet();
             return (T) answer;
         }
     }
@@ -137,15 +147,20 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
+            attemptCounter.incrementAndGet();
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
+            failedCounter.incrementAndGet();
             // error occurred during type conversion
             throw new TypeConversionException(value, type, e);
         }
         if (answer == Void.TYPE || value == null) {
             // Could not find suitable conversion
+            missCounter.incrementAndGet();
+            // Could not find suitable conversion
             throw new NoTypeConversionAvailableException(value, type);
         } else {
+            hitCounter.incrementAndGet();
             return (T) answer;
         }
     }
@@ -452,15 +467,66 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     @Override
+    public Statistics getStatistics() {
+        return statistics;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         // noop
     }
 
     @Override
     protected void doStop() throws Exception {
+        // log utilization statistics when stopping, including mappings
+        String info = statistics.toString();
+        info += String.format(" mappings[total=%s, misses=%s]", typeMappings.size(), misses.size());
+        log.info(info);
+
         typeMappings.clear();
         misses.clear();
         propertyEditorTypeConverter.clear();
+        statistics.reset();
+    }
+
+    /**
+     * Represents utilization statistics
+     */
+    private final class UtilizationStatistics implements Statistics {
+
+        @Override
+        public long getAttemptCounter() {
+            return attemptCounter.get();
+        }
+
+        @Override
+        public long getHitCounter() {
+            return hitCounter.get();
+        }
+
+        @Override
+        public long getMissCounter() {
+            return missCounter.get();
+        }
+
+        @Override
+        public long getFailedCounter() {
+            return failedCounter.get();
+        }
+
+        @Override
+        public void reset() {
+            attemptCounter.set(0);
+            hitCounter.set(0);
+            missCounter.set(0);
+            failedCounter.set(0);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("TypeConverterRegistry utilization[attempts=%s, hits=%s, misses=%s, failures=%s]",
+                    getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
+        }
     }
 
     /**

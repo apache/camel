@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
 
 /**
@@ -23,7 +24,38 @@ import org.apache.camel.TypeConverter;
  *
  * @version 
  */
-public interface TypeConverterRegistry {
+public interface TypeConverterRegistry extends Service {
+
+    /**
+     * Utilization statistics of the this registry.
+     */
+    interface Statistics {
+
+        /**
+         * Number of attempts
+         */
+        long getAttemptCounter();
+
+        /**
+         * Number of successful conversions
+         */
+        long getHitCounter();
+
+        /**
+         * Number of attempts which cannot be converted as no suitable type converter exists
+         */
+        long getMissCounter();
+
+        /**
+         * Number of failed attempts during type conversion
+         */
+        long getFailedCounter();
+
+        /**
+         * Reset the counters
+         */
+        void reset();
+    }
 
     /**
      * Registers a new type converter
@@ -64,4 +96,12 @@ public interface TypeConverterRegistry {
      * @return the injector
      */
     Injector getInjector();
+
+    /**
+     * Gets the utilization statistics of this type converter registry
+     *
+     * @return the utilization statistics
+     */
+    Statistics getStatistics();
+
 }

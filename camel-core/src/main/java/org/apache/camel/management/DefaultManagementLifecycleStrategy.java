@@ -58,6 +58,7 @@ import org.apache.camel.management.mbean.ManagedProducerCache;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
+import org.apache.camel.management.mbean.ManagedTypeConverterRegistry;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
@@ -75,6 +76,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.TimerListenerManager;
@@ -418,6 +420,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedProducerCache(context, (ProducerCache) service);
         } else if (service instanceof EndpointRegistry) {
             answer = new ManagedEndpointRegistry(context, (EndpointRegistry) service);
+        } else if (service instanceof TypeConverterRegistry) {
+            answer = new ManagedTypeConverterRegistry(context, (TypeConverterRegistry) service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
