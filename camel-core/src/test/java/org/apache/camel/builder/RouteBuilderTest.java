@@ -66,7 +66,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").to("seda:b");
+                from("direct:a").to("direct:b");
             }
         };
         // END SNIPPET: e1
@@ -79,13 +79,13 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
-            assertEquals("Endpoint URI", "seda://b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
@@ -95,9 +95,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .filter(header("foo").isEqualTo("bar"))
-                        .to("seda:b");
+                        .to("direct:b");
             }
         };
         // END SNIPPET: e2
@@ -112,14 +112,14 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
-            assertEquals("Endpoint URI", "seda://b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
@@ -129,14 +129,14 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .choice()
                         .when(header("foo").isEqualTo("bar"))
-                            .to("seda:b")
+                            .to("direct:b")
                         .when(header("foo").isEqualTo("cheese"))
-                            .to("seda:c")
+                            .to("direct:c")
                         .otherwise()
-                            .to("seda:d");
+                            .to("direct:d");
             }
         };
         // END SNIPPET: e3
@@ -151,7 +151,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
@@ -161,12 +161,12 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("Should be two when clauses", 2, filters.size());
 
             FilterProcessor filter1 = filters.get(0);
-            assertSendTo(unwrapChannel(filter1.getProcessor()).getNextProcessor(), "seda://b");
+            assertSendTo(unwrapChannel(filter1.getProcessor()).getNextProcessor(), "direct://b");
 
             FilterProcessor filter2 = filters.get(1);
-            assertSendTo(unwrapChannel(filter2.getProcessor()).getNextProcessor(), "seda://c");
+            assertSendTo(unwrapChannel(filter2.getProcessor()).getNextProcessor(), "direct://c");
 
-            assertSendTo(unwrapChannel(choiceProcessor.getOtherwise()).getNextProcessor(), "seda://d");
+            assertSendTo(unwrapChannel(choiceProcessor.getOtherwise()).getNextProcessor(), "direct://d");
         }
     }
 
@@ -182,7 +182,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .process(myProcessor);
             }
         };
@@ -196,7 +196,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
         }
     }
 
@@ -206,7 +206,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .filter(header("foo").isEqualTo("bar"))
                         .process(myProcessor);
             }
@@ -223,7 +223,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
         }
     }
 
@@ -233,8 +233,8 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
-                    .multicast().to("seda:tap", "seda:b");
+                from("direct:a")
+                    .multicast().to("direct:tap", "direct:b");
             }
         };
         // END SNIPPET: e6
@@ -249,7 +249,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
@@ -258,8 +258,8 @@ public class RouteBuilderTest extends TestSupport {
             List<Processor> endpoints = new ArrayList<Processor>(multicastProcessor.getProcessors());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
 
-            assertSendToProcessor(unwrapChannel(endpoints.get(0)).getNextProcessor(), "seda://tap");
-            assertSendToProcessor(unwrapChannel(endpoints.get(1)).getNextProcessor(), "seda://b");
+            assertSendToProcessor(unwrapChannel(endpoints.get(0)).getNextProcessor(), "direct://tap");
+            assertSendToProcessor(unwrapChannel(endpoints.get(1)).getNextProcessor(), "direct://b");
         }
     }
 
@@ -273,10 +273,10 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .process(interceptor1)
                     .process(interceptor2)
-                    .to("seda:d");
+                    .to("direct:d");
             }
         };
         return getRouteList(builder);
@@ -291,7 +291,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
 
@@ -301,7 +301,7 @@ public class RouteBuilderTest extends TestSupport {
 
             List<Processor> processors = new ArrayList<Processor>(line.getProcessors());
             Processor sendTo = assertIsInstanceOf(SendProcessor.class, unwrapChannel(processors.get(2)).getNextProcessor());
-            assertSendTo(sendTo, "seda://d");
+            assertSendTo(sendTo, "direct://d");
         }
     }
 
@@ -311,9 +311,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .filter(header("foo").isEqualTo(123))
-                        .to("seda:b");
+                        .to("direct:b");
             }
         };
         // END SNIPPET: e7
@@ -324,7 +324,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
         }
     }
 
@@ -334,8 +334,8 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
-                    .multicast().to("seda:b", "seda:c", "seda:d");
+                from("direct:a")
+                    .multicast().to("direct:b", "direct:c", "direct:d");
             }
         };
         // END SNIPPET: multicast
@@ -348,7 +348,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .recipientList(header("foo"));
             }
         };
@@ -365,7 +365,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
@@ -390,9 +390,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .split(body(String.class).tokenize("\n"))
-                        .to("seda:b");
+                        .to("direct:b");
             }
         };
         // END SNIPPET: splitter
@@ -408,7 +408,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
@@ -422,10 +422,10 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .idempotentConsumer(header("myMessageId"),
                             MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                    .to("seda:b");
+                    .to("direct:b");
             }
         };
         // END SNIPPET: idempotent
@@ -441,7 +441,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
@@ -451,7 +451,7 @@ public class RouteBuilderTest extends TestSupport {
 
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
-            assertEquals("Endpoint URI", "seda://b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
@@ -461,7 +461,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a")
+                from("direct:a")
                     .threads(5, 10)
                     .to("mock:a")
                     .to("mock:b");
@@ -480,7 +480,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
@@ -552,9 +552,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:start").to("seda:in");
+                from("direct:start").to("direct:in");
 
-                from("seda:in").to("mock:result");
+                from("direct:in").to("mock:result");
             }
         };
 
