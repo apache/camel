@@ -17,24 +17,21 @@
 package org.apache.camel.component.spring.ws;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.security.GeneralSecurityException;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ReflectionHelper;
-import org.apache.camel.util.ReflectionHelper.FieldCallback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +42,12 @@ import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
+import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.WebServiceMessageSender;
+import org.springframework.ws.transport.http.AbstractHttpWebServiceMessageSender;
 import org.springframework.ws.transport.http.CommonsHttpMessageSender;
+import org.springframework.ws.transport.http.HttpUrlConnection;
 import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
-import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
 
 public class SpringWebserviceProducer extends DefaultProducer {
 
@@ -74,7 +73,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         URI wsAddressingAction = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, URI.class);
 
         // Populate the given (read) timeout if any
-        populateTimeout(getEndpoint().getConfiguration());
+        prepareMessageSenders(getEndpoint().getConfiguration());
 
         WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapAction, wsAddressingAction, getEndpoint().getConfiguration());
         Object body = null;
@@ -89,104 +88,103 @@ public class SpringWebserviceProducer extends DefaultProducer {
         }
     }
 
-    private static void populateTimeout(SpringWebserviceConfiguration configuration) throws Exception {
-        if (!(configuration.getTimeout() > -1)) {
+    private static void prepareMessageSenders(SpringWebserviceConfiguration configuration) throws Exception {
+        // Skip this whole thing if none of the relevant config options are set.
+        if (!(configuration.getTimeout() > -1) && configuration.getSslContextParameters() == null) {
             return;
         }
 
         WebServiceTemplate webServiceTemplate = configuration.getWebServiceTemplate();
 
-        // Can't use java.util.Arrays.asList() as it doesn't support the optional remove() operation which we need here
-        List<WebServiceMessageSender> webServiceMessageSenders = new ArrayList<WebServiceMessageSender>(webServiceTemplate.getMessageSenders().length);
-        Collections.addAll(webServiceMessageSenders, webServiceTemplate.getMessageSenders());
-        for (WebServiceMessageSender webServiceMessageSender : webServiceMessageSenders) {
-            if (webServiceMessageSender instanceof CommonsHttpMessageSender) {
-                setTimeOut((CommonsHttpMessageSender) webServiceMessageSender, configuration);
-            } else if (webServiceMessageSender instanceof HttpsUrlConnectionMessageSender) {
-                // Should check HttpsUrlConnectionMessageSender beforehand as it extends HttpUrlConnectionMessageSender
-                webServiceMessageSenders.remove(webServiceMessageSender);
-                webServiceMessageSenders.add(new CamelHttpsUrlConnectionMessageSender(configuration, (HttpsUrlConnectionMessageSender) webServiceMessageSender));
-            } else if (webServiceMessageSender instanceof HttpUrlConnectionMessageSender) {
-                webServiceMessageSenders.remove(webServiceMessageSender);
-                webServiceMessageSenders.add(new CamelHttpUrlConnectionMessageSender(configuration, (HttpUrlConnectionMessageSender) webServiceMessageSender));
+        WebServiceMessageSender[] messageSenders = webServiceTemplate.getMessageSenders();
+        
+        for (int i = 0; i < messageSenders.length; i++) {
+            WebServiceMessageSender messageSender = messageSenders[i];
+            if (messageSender instanceof CommonsHttpMessageSender) {
+                if (configuration.getSslContextParameters() != null) {
+                    LOG.warn("Not applying SSLContextParameters based configuration to CommonsHttpMessageSender.  "
+                             + "If you are using this MessageSender, which you are not by default, you will need "
+                             + "to configure SSL using the Commons HTTP 3.x Protocol registry.");
+                }
+                
+                if (configuration.getTimeout() > -1) {
+                    ((CommonsHttpMessageSender)messageSender).setReadTimeout(configuration.getTimeout());
+                }
+            } else if (messageSender.getClass().equals(HttpUrlConnectionMessageSender.class)) {
+                // Only if exact match denoting likely use of default configuration.  We don't want to get
+                // sub-classes that might have been otherwise injected.
+                messageSenders[i] = new AbstractHttpWebServiceMessageSenderDecorator((HttpUrlConnectionMessageSender)messageSender, configuration);
             } else {
                 // For example this will be the case during unit-testing with the net.javacrumbs.spring-ws-test API
-                LOG.warn("Ignoring the timeout option for {} as there's no provided API available to populate it!", webServiceMessageSender);
+                LOG.warn("Ignoring the timeout and SSLContextParameters options for {}.  You will need to configure "
+                        + "these options directly on your custom configured WebServiceMessageSender", messageSender);
             }
         }
-
-        webServiceTemplate.setMessageSenders(webServiceMessageSenders.toArray(new WebServiceMessageSender[webServiceMessageSenders.size()]));
     }
-
-    private static void setTimeOut(HttpURLConnection connection, SpringWebserviceConfiguration configuration) {
-        connection.setReadTimeout(configuration.getTimeout());
-    }
-
-    private static void setTimeOut(CommonsHttpMessageSender commonsHttpMessageSender, SpringWebserviceConfiguration configuration) {
-        commonsHttpMessageSender.setReadTimeout(configuration.getTimeout());
-    }
-
-    protected static class CamelHttpUrlConnectionMessageSender extends HttpUrlConnectionMessageSender {
-
+    
+    /**
+     * A decorator of {@link HttpUrlConnectionMessageSender} instances that can apply configuration options
+     * from the Camel component/endpoint configuration without replacing the actual implementation which may
+     * actually be an end-user implementation and not one of the built-in implementations.
+     */
+    protected static final class AbstractHttpWebServiceMessageSenderDecorator extends AbstractHttpWebServiceMessageSender {
+        
+        private final AbstractHttpWebServiceMessageSender delegate;
+        
         private final SpringWebserviceConfiguration configuration;
-
-        CamelHttpUrlConnectionMessageSender(SpringWebserviceConfiguration configuration, HttpUrlConnectionMessageSender webServiceMessageSender) {
+        
+        private SSLContext sslContext;
+        
+        public AbstractHttpWebServiceMessageSenderDecorator(AbstractHttpWebServiceMessageSender delegate, SpringWebserviceConfiguration configuration) {
+            this.delegate = delegate;
             this.configuration = configuration;
-
-            // Populate the single acceptGzipEncoding property
-            setAcceptGzipEncoding(webServiceMessageSender.isAcceptGzipEncoding());
         }
 
         @Override
-        protected void prepareConnection(HttpURLConnection connection) throws IOException {
-            super.prepareConnection(connection);
-
-            setTimeOut(connection, configuration);
-        }
-
-    }
-
-    protected static class CamelHttpsUrlConnectionMessageSender extends HttpsUrlConnectionMessageSender {
-
-        private final SpringWebserviceConfiguration configuration;
-
-        CamelHttpsUrlConnectionMessageSender(SpringWebserviceConfiguration configuration, final HttpsUrlConnectionMessageSender webServiceMessageSender) throws Exception {
-            this.configuration = configuration;
-
-            // Populate the single acceptGzipEncoding property beforehand as we have got a proper set/is API for it
-            setAcceptGzipEncoding(webServiceMessageSender.isAcceptGzipEncoding());
-
-            // Populate the fields not having getXXX available on HttpsUrlConnectionMessageSender
-            ReflectionHelper.doWithFields(HttpsUrlConnectionMessageSender.class, new FieldCallback() {
-
-                @Override
-                public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                    if (Modifier.isStatic(field.getModifiers())) {
-                        return;
-                    }
-
-                    String fieldName = field.getName();
-                    if ("logger".equals(fieldName) || "acceptGzipEncoding".equals(fieldName)) {
-                        // skip them
-                        return;
-                    }
-
-                    field.setAccessible(true);
-                    Object value = field.get(webServiceMessageSender);
-                    field.set(CamelHttpsUrlConnectionMessageSender.this, value);
-                    LOG.trace("Populated the field {} with the value {}", fieldName, value);
+        public WebServiceConnection createConnection(URI uri) throws IOException {
+            WebServiceConnection wsc = delegate.createConnection(uri);
+            if (wsc instanceof HttpUrlConnection) {
+                HttpURLConnection connection = ((HttpUrlConnection)wsc).getConnection();
+                
+                if (configuration.getTimeout() > -1) {
+                    connection.setReadTimeout(configuration.getTimeout());
                 }
-
-            });
+                
+                if (configuration.getSslContextParameters() != null && connection instanceof HttpsURLConnection) {
+                    try {
+                        synchronized (this) {
+                            if (sslContext == null) {
+                                sslContext = configuration.getSslContextParameters().createSSLContext();
+                            }
+                        }
+                    } catch (GeneralSecurityException e) {
+                        throw new RuntimeCamelException("Error creating SSLContext based on SSLContextParameters.", e);
+                    }
+                    
+                    ((HttpsURLConnection) connection).setSSLSocketFactory(sslContext.getSocketFactory());
+                }
+            } else {
+                throw new RuntimeCamelException("Unsupported delegate.  Delegate must return a org.springframework.ws.transport.http.HttpUrlConnection.  Found "
+                        + wsc.getClass());
+            }
+            
+            return wsc;
         }
 
         @Override
-        protected void prepareConnection(HttpURLConnection connection) throws IOException {
-            super.prepareConnection(connection);
-
-            setTimeOut(connection, configuration);
+        public boolean isAcceptGzipEncoding() {
+            return delegate.isAcceptGzipEncoding();
         }
 
+        @Override
+        public void setAcceptGzipEncoding(boolean acceptGzipEncoding) {
+            delegate.setAcceptGzipEncoding(acceptGzipEncoding);
+        }
+
+        @Override
+        public boolean supports(URI uri) {
+            return delegate.supports(uri);
+        }
     }
 
     protected static class DefaultWebserviceMessageCallback implements WebServiceMessageCallback {

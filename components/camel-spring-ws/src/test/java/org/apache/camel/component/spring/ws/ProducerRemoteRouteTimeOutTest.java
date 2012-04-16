@@ -16,33 +16,19 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.SocketTimeoutException;
-import java.security.SecureRandom;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.spring.ws.SpringWebserviceProducer.CamelHttpUrlConnectionMessageSender;
-import org.apache.camel.component.spring.ws.SpringWebserviceProducer.CamelHttpsUrlConnectionMessageSender;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
-import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -107,53 +93,4 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
 
         return hasThrowableInChain(throwable.getCause(), clazz);
     }
-
-    @Test
-    public void verifyTheFieldPopulationFromHttpUrlConnectionMessageSenderToCamelHttpUrlConnectionMessageSender() throws Exception {
-        HttpUrlConnectionMessageSender fromMessageSender = new HttpUrlConnectionMessageSender();
-        fromMessageSender.setAcceptGzipEncoding(false);
-
-        CamelHttpUrlConnectionMessageSender toMessageSender = new CamelHttpUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromMessageSender);
-        assertFalse("acceptGzipEncoding property didn't get populated properly!", toMessageSender.isAcceptGzipEncoding());
-
-        fromMessageSender.setAcceptGzipEncoding(true);
-        toMessageSender = new CamelHttpUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromMessageSender);
-        assertTrue("acceptGzipEncoding property didn't get populated properly!", toMessageSender.isAcceptGzipEncoding());
-    }
-
-    @Test
-    public void verifyTheFieldPopulationFromHttpsUrlConnectionMessageSenderToCamelHttpsUrlConnectionMessageSender() throws Exception {
-        HttpsUrlConnectionMessageSender fromMessageSender = new HttpsUrlConnectionMessageSender();
-        fromMessageSender.setAcceptGzipEncoding(false);
-        fromMessageSender.setHostnameVerifier(new HostnameVerifier() {
-
-            @Override
-            public boolean verify(String s, SSLSession sslsession) {
-                return false;
-            }
-
-        });
-        fromMessageSender.setKeyManagers(new KeyManager[] {new KeyManager() {
-        }});
-        fromMessageSender.setSecureRandom(new SecureRandom());
-        fromMessageSender.setSslProtocol("sslProtocol");
-        fromMessageSender.setSslProvider("sslProvider");
-        fromMessageSender.setTrustManagers(new TrustManager[] {new TrustManager() {
-        }});
-
-        CamelHttpsUrlConnectionMessageSender toMessageSender = new CamelHttpsUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromMessageSender);
-
-        assertFalse("acceptGzipEncoding field didn't get populated properly!", toMessageSender.isAcceptGzipEncoding());
-        for (Field field : fromMessageSender.getClass().getDeclaredFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-
-            field.setAccessible(true);
-            String fieldName = field.getName();
-
-            assertSame("The field '" + fieldName + "' didn't get populated properly!", field.get(fromMessageSender), field.get(toMessageSender));
-        }
-    }
-
 }
