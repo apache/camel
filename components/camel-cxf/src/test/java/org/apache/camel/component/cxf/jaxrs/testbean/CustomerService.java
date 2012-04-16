@@ -81,7 +81,7 @@ public class CustomerService {
             customers.put(customer.getId(), customer);
             r = Response.ok().build();
         } else {
-            r = Response.status(406).entity("Cannot find the customer").build();
+            r = Response.status(406).entity("Cannot find the customer!").build();
         }
 
         return r;
