@@ -41,6 +41,7 @@ import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,8 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final ConcurrentMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
-    protected final ConcurrentMap<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
+    // for misses use a soft reference cache map, as the classes may be un-deployed at runtime
+    protected final LRUSoftCache<TypeMapping, TypeMapping> misses = new LRUSoftCache<TypeMapping, TypeMapping>(1000);
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     protected final List<FallbackTypeConverter> fallbackConverters = new ArrayList<FallbackTypeConverter>();
     protected final PackageScanClassResolver resolver;
@@ -178,14 +180,18 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
+            attemptCounter.incrementAndGet();
             answer = doConvertTo(type, exchange, value, true);
         } catch (Exception e) {
+            failedCounter.incrementAndGet();
             return null;
         }
         if (answer == Void.TYPE) {
+            missCounter.incrementAndGet();
             // Could not find suitable conversion
             return null;
         } else {
+            hitCounter.incrementAndGet();
             return (T) answer;
         }
     }
@@ -533,10 +539,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
      * Represents a mapping from one type (which can be null) to another
      */
     protected static class TypeMapping {
-        Class<?> toType;
-        Class<?> fromType;
+        private final Class<?> toType;
+        private final Class<?> fromType;
 
-        public TypeMapping(Class<?> toType, Class<?> fromType) {
+        TypeMapping(Class<?> toType, Class<?> fromType) {
             this.toType = toType;
             this.fromType = fromType;
         }
@@ -582,8 +588,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
      * Represents a fallback type converter
      */
     protected static class FallbackTypeConverter {
-        private boolean canPromote;
-        private TypeConverter fallbackTypeConverter;
+        private final boolean canPromote;
+        private final TypeConverter fallbackTypeConverter;
 
         FallbackTypeConverter(TypeConverter fallbackTypeConverter, boolean canPromote) {
             this.canPromote = canPromote;
