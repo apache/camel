@@ -274,21 +274,24 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
       
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
-            List<?> list = exchange.getIn().getBody(List.class);
-            if (list != null) {
-                params = list.toArray();
+            Object body = exchange.getIn().getBody();
+            if (body instanceof Object[]) {
+                params = (Object[])body;
+            } else if (body instanceof List) {
+                // Now we just check if the request is List
+                params = ((List<?>)body).toArray();
             } else {
                 // maybe we can iterate the body and that way create a list for the parameters
                 // then end users do not need to trouble with List
                 Iterator it = exchange.getIn().getBody(Iterator.class);
                 if (it != null && it.hasNext()) {
-                    list = exchange.getContext().getTypeConverter().convertTo(List.class, it);
+                    List<?> list = exchange.getContext().getTypeConverter().convertTo(List.class, it);
                     if (list != null) {
                         params = list.toArray();
                     }
                 }
                 if (params == null) {
-                    // no we could not then use the body as single parameter
+                    // now we just use the body as single parameter
                     params = new Object[1];
                     params[0] = exchange.getIn().getBody();
                 }
