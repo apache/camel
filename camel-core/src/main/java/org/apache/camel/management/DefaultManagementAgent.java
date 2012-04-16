@@ -242,7 +242,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     public void unregister(ObjectName name) throws JMException {
         if (server.isRegistered(name)) {
             server.unregisterMBean(name);
-            LOG.debug("Unregistered MBean with objectname: {}", name);
+            LOG.debug("Unregistered MBean with ObjectName: {}", name);
         }
         mbeansRegistered.remove(name);
     }
@@ -305,25 +305,25 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         boolean exists = server.isRegistered(name);
         if (exists) {
             if (forceRegistration) {
-                LOG.info("ForceRegistration enabled, unregistering existing MBean");
+                LOG.info("ForceRegistration enabled, unregistering existing MBean with ObjectName: {}", name);
                 server.unregisterMBean(name);
             } else {
                 // okay ignore we do not want to force it and it could be a shared instance
-                LOG.debug("MBean already registered with objectname: {}", name);
+                LOG.debug("MBean already registered with ObjectName: {}", name);
             }
         }
 
         // register bean if by force or not exists
         ObjectInstance instance = null;
         if (forceRegistration || !exists) {
-            LOG.trace("Registering MBean with objectname: {}", name);
+            LOG.trace("Registering MBean with ObjectName: {}", name);
             instance = server.registerMBean(obj, name);
         }
 
+        // need to use the name returned from the server as some JEE servers may modify the name
         if (instance != null) {
             ObjectName registeredName = instance.getObjectName();
-            LOG.debug("Registered MBean with objectname: {}", registeredName);
-
+            LOG.debug("Registered MBean with ObjectName: {}", registeredName);
             mbeansRegistered.add(registeredName);
         }
     }
@@ -389,7 +389,6 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     protected void createJmxConnector(String host) throws IOException {
         ObjectHelper.notEmpty(serviceUrlPath, "serviceUrlPath");
         ObjectHelper.notNull(registryPort, "registryPort");
-
 
         try {
             LocateRegistry.createRegistry(registryPort);
