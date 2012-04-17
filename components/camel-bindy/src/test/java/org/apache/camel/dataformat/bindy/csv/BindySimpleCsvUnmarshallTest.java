@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -24,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.format.FormatException;
+import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
@@ -31,7 +35,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
 public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
@@ -98,6 +105,32 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
         TestSupport.assertIsInstanceOf(FormatException.class, cause.getCause());
         assertEquals("Date provided does not fit the pattern defined, position: 11, line: 1", cause.getMessage());
 
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    @DirtiesContext
+    public void testUnMarshallMessageWithMissingFields() throws Exception {
+       
+        // We suppress the firstName field of the first record
+        expected = "01,,,Cartier,ISIN,BE12345678,SELL,,1500,EUR\r\n" + "02,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n"
+            + "03,A2,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009\r\n" + "04,A3,Michel,Dupond,,,BUY,,2500,USD,08-01-2009\r\n"
+            + "05,A4,Annie,Dutronc,ISIN,BE12345678,,,1500,EUR,08-01-2009\r\n" + "06,A5,Andr" + "\uc3a9" + ",Rieux,ISIN,XD12345678,SELL,Share,,USD,08-01-2009\r\n"
+            + "07,A6,Myl" + "\uc3a8" + "ne,Farmer,ISIN,BE12345678,BUY,1500,,,08-01-2009\r\n" + "08,A7,Eva,Longoria,ISIN,XD12345678,SELL,Share,2500,USD,\r\n"
+            + ",,,D,,BE12345678,SELL,,,,08-01-2009\r\n" + ",,,D,ISIN,BE12345678,,,,,08-01-2009\r\n" + ",,,D,ISIN,LU123456789,,,,,\r\n"
+            + "10,A8,Pauline,M,ISIN,XD12345678,SELL,Share,2500,USD,08-01-2009\r\n" + "10,A9,Pauline,M,ISIN,XD12345678,BUY,Share,2500.45";
+
+        template.sendBody(expected);
+
+        List<Map<String, Order>> orders = (List<Map<String, Order>>) result.getExchanges().get(0).getIn().getBody();
+        
+        result.expectedMessageCount(1);
+        result.assertIsSatisfied();
+
+        assertNotNull(orders);
+        // As the @DataField defines a default value for the firstName, the
+        // value might not be empty
+        assertFalse(orders.get(0).get(Order.class.getName()).getFirstName().isEmpty());
     }
     
     public static class ContextConfig extends RouteBuilder {
