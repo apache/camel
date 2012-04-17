@@ -37,6 +37,7 @@ public class Main extends MainSupport {
     private String descriptors = "OSGI-INF/blueprint/*.xml";
     private CamelContext camelContext;
     private String bundleName = "MyBundle";
+    private boolean includeSelfAsBundle;
 
     public Main() {
 
@@ -110,7 +111,7 @@ public class Main extends MainSupport {
     }
 
     protected BundleContext createBundleContext(String name) throws Exception {
-        return CamelBlueprintHelper.createBundleContext(name, descriptors, false);
+        return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle());
     }
 
     @Override
@@ -141,5 +142,13 @@ public class Main extends MainSupport {
 
     public void setBundleName(String bundleName) {
         this.bundleName = bundleName;
+    }
+
+    public boolean isIncludeSelfAsBundle() {
+        return includeSelfAsBundle;
+    }
+
+    public void setIncludeSelfAsBundle(boolean includeSelfAsBundle) {
+        this.includeSelfAsBundle = includeSelfAsBundle;
     }
 }

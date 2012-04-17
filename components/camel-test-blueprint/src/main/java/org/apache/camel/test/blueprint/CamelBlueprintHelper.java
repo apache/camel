@@ -78,16 +78,22 @@ public final class CamelBlueprintHelper {
 
         // ensure pojosr stores bundles in an unique target directory
         System.setProperty("org.osgi.framework.storage", "target/bundles/" + System.currentTimeMillis());
+
+        // get the bundles
         List<BundleDescriptor> bundles = getBundleDescriptors();
-        TinyBundle bundle = createTestBundle(name, descriptors);
 
-        // add ourself as a bundle
-        String jarName = name.toLowerCase();
-        bundles.add(getBundleDescriptor("target/bundles/" + jarName + ".jar", bundle));
+        if (includeTestBundle) {
+            // add ourselves as a bundle
+            TinyBundle bundle = createTestBundle(name, descriptors);
+            String jarName = name.toLowerCase();
+            bundles.add(getBundleDescriptor("target/bundles/" + jarName + ".jar", bundle));
+        }
 
+        // setup pojosr to use our bundles
         Map<String, List<BundleDescriptor>> config = new HashMap<String, List<BundleDescriptor>>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
 
+        // create pojorsr osgi service registry
         PojoServiceRegistry reg = new PojoServiceRegistryFactoryImpl().newPojoServiceRegistry(config);
         return reg.getBundleContext();
     }

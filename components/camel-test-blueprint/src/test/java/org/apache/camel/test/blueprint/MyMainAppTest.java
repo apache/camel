@@ -36,6 +36,8 @@ public class MyMainAppTest {
     public void run() throws Exception {
         Main main = new Main();
         main.setBundleName("MyMainBundle");
+        // as we run this test without packing ourselves as bundle, then include ourselves
+        main.setIncludeSelfAsBundle(true);
         // we support *.xml to find any blueprint xml files
         main.setDescriptors("org/apache/camel/test/blueprint/xpath/*.xml");
         main.enableHangupSupport();

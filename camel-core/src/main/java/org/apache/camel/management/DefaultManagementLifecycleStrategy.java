@@ -792,13 +792,18 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         LOG.trace("Checking whether to register {} from route: {}", service, route);
 
+        ManagementAgent agent = getManagementStrategy().getManagementAgent();
+        if (agent == null) {
+            // do not register if no agent
+            return false;
+        }
+
         // always register if we are starting CamelContext
         if (getCamelContext().getStatus().isStarting()) {
             return true;
         }
 
         // register if always is enabled
-        ManagementAgent agent = getManagementStrategy().getManagementAgent();
         if (agent.getRegisterAlways()) {
             return true;
         }
