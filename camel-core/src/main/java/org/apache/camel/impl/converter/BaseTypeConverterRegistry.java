@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -58,7 +59,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     // for misses use a soft reference cache map, as the classes may be un-deployed at runtime
     protected final LRUSoftCache<TypeMapping, TypeMapping> misses = new LRUSoftCache<TypeMapping, TypeMapping>(1000);
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
-    protected final List<FallbackTypeConverter> fallbackConverters = new ArrayList<FallbackTypeConverter>();
+    protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<FallbackTypeConverter>();
     protected final PackageScanClassResolver resolver;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
