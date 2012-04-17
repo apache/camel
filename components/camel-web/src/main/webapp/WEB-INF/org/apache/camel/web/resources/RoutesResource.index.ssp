@@ -26,9 +26,10 @@
     <th>Route</th>
     <th colspan="2">Status</th>
     <th>Remove</th>
-    <th>Exchanges (Completed/Failed/Inflight)</th>
-    <th>Processing Time (Min/Max/Mean)</th>
-    <th>Message Time (First/Last)</th>
+    <th>Exchanges<br/>(Completed / Failed / Inflight)</th>
+    <th>Processing Time<br/>(Min / Max / Mean)</th>
+    <th>Message Time<br/>(First / Last)</th>
+    <th>Load Average<br/>(1 min / 5 min / 15 min)</th>
   </tr>
 <ul>
   #for(i <- it.getRoutes)
@@ -67,6 +68,9 @@
     </td>
     <td>
       ${i.getStatistic("FirstExchangeCompletedTimestamp")} / ${i.getStatistic("LastExchangeCompletedTimestamp")}
+    </td>
+    <td>
+      ${i.getStatistic("Load01")} / ${i.getStatistic("Load05")} / ${i.getStatistic("Load15")}
     </td>
   </tr>
   #end
