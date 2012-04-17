@@ -30,11 +30,11 @@
     <!-- START SNIPPET: example -->
     <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="seda:a"/>
+            <from uri="direct:a"/>
             <multicast>
-                <to uri="seda:b"/>
-                <to uri="seda:c"/>
-                <to uri="seda:d"/>
+                <to uri="direct:b"/>
+                <to uri="direct:c"/>
+                <to uri="direct:d"/>
             </multicast>
         </route>
     </camelContext>

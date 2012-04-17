@@ -32,7 +32,7 @@
 
     <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="seda:a"/>
+            <from uri="direct:a"/>
             <process ref="myProcessor"/>
         </route>
     </camelContext>
