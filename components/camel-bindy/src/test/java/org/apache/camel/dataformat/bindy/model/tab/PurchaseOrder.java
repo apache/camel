@@ -20,7 +20,7 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 /**
- * @version 
+ * @version
  */
 @CsvRecord(separator = "\t", crlf = "UNIX")
 public class PurchaseOrder {
@@ -33,6 +33,15 @@ public class PurchaseOrder {
 
     @DataField(pos = 3)
     private int amount;
+
+    @DataField(pos = 4, required = false)
+    private String orderText;
+
+    @DataField(pos = 5, required = false)
+    private String salesRef;
+
+    @DataField(pos = 6, required = false)
+    private String customerRef;
 
     public int getId() {
         return id;
@@ -56,5 +65,29 @@ public class PurchaseOrder {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public String getOrderText() {
+        return orderText;
+    }
+
+    public void setOrderText(String text) {
+        this.orderText = text;
+    }
+
+    public String getSalesRef() {
+        return salesRef;
+    }
+
+    public void setSalesRef(String salesRef) {
+        this.salesRef = salesRef;
+    }
+
+    public String getCustomerRef() {
+        return customerRef;
+    }
+
+    public void setCustomerRef(String customerRef) {
+        this.customerRef = customerRef;
     }
 }
