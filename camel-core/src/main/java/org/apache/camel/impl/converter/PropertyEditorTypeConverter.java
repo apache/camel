@@ -68,6 +68,7 @@ public class PropertyEditorTypeConverter implements TypeConverter {
             Class<?> key = type;
             PropertyEditor editor = lookupEditor(key);
             if (editor != null) {
+                // we are essentially not thread safe as we use 2 calls to convert
                 editor.setAsText(value.toString());
                 return ObjectHelper.cast(type, editor.getValue());
             }
@@ -75,6 +76,7 @@ public class PropertyEditorTypeConverter implements TypeConverter {
             Class<?> key = value.getClass();
             PropertyEditor editor = lookupEditor(key);
             if (editor != null) {
+                // we are essentially not thread safe as we use 2 calls to convert
                 editor.setValue(value);
                 return ObjectHelper.cast(type, editor.getAsText());
             }
