@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,9 +38,12 @@ import de.kalpatec.pojosr.framework.launch.BundleDescriptor;
 import de.kalpatec.pojosr.framework.launch.ClasspathScanner;
 import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
 import de.kalpatec.pojosr.framework.launch.PojoServiceRegistryFactory;
+import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundles;
 import org.osgi.framework.BundleContext;
@@ -63,6 +67,7 @@ public final class CamelBlueprintHelper {
 
     public static final long DEFAULT_TIMEOUT = 30000;
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelBlueprintHelper.class);
+    private static final ClassResolver RESOLVER = new DefaultClassResolver();
 
     private CamelBlueprintHelper() {
     }
@@ -173,7 +178,7 @@ public final class CamelBlueprintHelper {
         return references  == null ? new ArrayList<ServiceReference<?>>(0) : Arrays.asList(references);
     }
 
-    private static TinyBundle createTestBundle(String name, String descriptors) throws FileNotFoundException {
+    private static TinyBundle createTestBundle(String name, String descriptors) throws FileNotFoundException, MalformedURLException {
         TinyBundle bundle = TinyBundles.newBundle();
         for (URL url : getBlueprintDescriptors(descriptors)) {
             LOG.info("Using Blueprint XML file: " + url.getFile());
@@ -203,7 +208,7 @@ public final class CamelBlueprintHelper {
      * @return the bundle descriptors.
      * @throws FileNotFoundException is thrown if a bundle descriptor cannot be found
      */
-    private static Collection<URL> getBlueprintDescriptors(String descriptors) throws FileNotFoundException {
+    private static Collection<URL> getBlueprintDescriptors(String descriptors) throws FileNotFoundException, MalformedURLException {
         List<URL> answer = new ArrayList<URL>();
         String descriptor = descriptors;
         if (descriptor != null) {
@@ -211,6 +216,8 @@ public final class CamelBlueprintHelper {
             Iterator<Object> it = ObjectHelper.createIterator(descriptor);
             while (it.hasNext()) {
                 String s = (String) it.next();
+                LOG.trace("Resource descriptor: {}", s);
+
                 // remove leading / to be able to load resource from the classpath
                 s = FileUtil.stripLeadingSeparator(s);
 
@@ -228,6 +235,7 @@ public final class CamelBlueprintHelper {
                                 for (File file : files) {
                                     if (file.isFile() && file.exists() && file.getName().endsWith(".xml")) {
                                         String name = packageName + file.getName();
+                                        LOG.debug("Resolving resource: {}", name);
                                         URL xmlUrl = ObjectHelper.loadResourceAsURL(name);
                                         if (xmlUrl != null) {
                                             answer.add(xmlUrl);
@@ -238,9 +246,10 @@ public final class CamelBlueprintHelper {
                         }
                     }
                 } else {
-                    URL url = ObjectHelper.loadResourceAsURL(s);
+                    LOG.debug("Resolving resource: {}", s);
+                    URL url = ResourceHelper.resolveMandatoryResourceAsUrl(RESOLVER, s);
                     if (url == null) {
-                        throw new FileNotFoundException("Resource " + s + " not found in classpath");
+                        throw new FileNotFoundException("Resource " + s + " not found");
                     }
                     answer.add(url);
                 }
