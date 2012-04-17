@@ -19,7 +19,7 @@ package org.apache.camel.web.util;
 import org.apache.camel.CamelContext;
 
 /**
- * @version 
+ *
  */
 public interface RouteStatistics {
 

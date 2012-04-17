@@ -26,8 +26,6 @@ import com.sun.jersey.api.json.JSONJAXBContext;
 /**
  * A resolver of the JAXB context OSGI primed for the Camel XML languages
  * which supports JSON as well as XML encoding
- *
- * @version 
  */
 @Provider
 public final class JAXBContextResolverOSGI implements ContextResolver<JAXBContext> {

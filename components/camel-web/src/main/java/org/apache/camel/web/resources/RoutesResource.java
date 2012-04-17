@@ -55,8 +55,6 @@ import org.slf4j.LoggerFactory;
  * The active routes in Camel which are used to implement one or more <a
  * href="http://camel.apache.org/enterprise-integration-patterns.html"
  * >Enterprise Integration Patterns</a>
- *
- * @version 
  */
 public class RoutesResource extends CamelChildResourceSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(RoutesResource.class);

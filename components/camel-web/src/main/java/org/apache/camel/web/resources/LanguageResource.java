@@ -17,7 +17,7 @@
 package org.apache.camel.web.resources;
 
 /**
- * @version 
+ *
  */
 public class LanguageResource extends CamelChildResourceSupport {
     private String id;

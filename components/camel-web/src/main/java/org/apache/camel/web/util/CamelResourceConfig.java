@@ -24,7 +24,7 @@ import com.sun.jersey.api.core.PackagesResourceConfig;
 import org.apache.camel.web.resources.Constants;
 
 /**
- * @version 
+ *
  */
 public class CamelResourceConfig extends PackagesResourceConfig {
 

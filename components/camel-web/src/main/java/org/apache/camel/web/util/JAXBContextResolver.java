@@ -24,8 +24,6 @@ import javax.xml.bind.JAXBException;
 /**
  * A resolver of the JAXB context primed for the Camel XML languages
  * which supports JSON as well as XML encoding
- *
- * @version 
  */
 @Provider
 public  class JAXBContextResolver implements ContextResolver<JAXBContext> {

@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for any sub resource of the root {@link org.apache.camel.web.resources.CamelContextResource}
- *
- * @version 
  */
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class CamelChildResourceSupport {

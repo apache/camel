@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 /**
  * The active endpoints in Camel
  *
- * @version 
  */
 public class EndpointsResource extends CamelChildResourceSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(EndpointsResource.class);
