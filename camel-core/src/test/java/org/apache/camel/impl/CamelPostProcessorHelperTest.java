@@ -287,7 +287,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (ResolveEndpointFailedException e) {
-            assertEquals("Failed to resolve endpoint: xxx://foo due to: No component found with scheme: xxx", e.getMessage());
+            assertEquals("Failed to resolve endpoint: xxx:foo due to: No component found with scheme: xxx", e.getMessage());
         }
     }
 
