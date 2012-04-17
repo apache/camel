@@ -426,13 +426,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             throw new ResolveEndpointFailedException(uri, e);
         }
 
-        // endpoint key will normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
-        // and also validate the uri, if the uri is invalid an ResolveEndpointFailedException is thrown from the getEndpointKey
-        EndpointKey key = getEndpointKey(uri);
-        log.trace("Getting endpoint with normalized uri: {}", key);
+        // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
+        uri = normalizeEndpointUri(uri);
+
+        log.trace("Getting endpoint with normalized uri: {}", uri);
 
         Endpoint answer;
         String scheme = null;
+        EndpointKey key = getEndpointKey(uri);
         answer = endpoints.get(key);
         if (answer == null) {
             try {
