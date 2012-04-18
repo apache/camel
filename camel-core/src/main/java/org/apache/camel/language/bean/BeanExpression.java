@@ -162,6 +162,14 @@ public class BeanExpression implements Expression, Predicate {
                 processor.process(resultExchange);
                 result = resultExchange.getOut().getBody();
 
+                // propagate properties and headers from result
+                if (resultExchange.hasProperties()) {
+                    exchange.getProperties().putAll(resultExchange.getProperties());
+                }
+                if (resultExchange.getOut().hasHeaders()) {
+                    exchange.getIn().getHeaders().putAll(resultExchange.getOut().getHeaders());
+                }
+
                 // propagate exceptions
                 if (resultExchange.getException() != null) {
                     exchange.setException(resultExchange.getException());
