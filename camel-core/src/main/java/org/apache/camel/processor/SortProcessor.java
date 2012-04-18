@@ -24,11 +24,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * A processor that sorts the expression using a comparator
  */
-public class SortProcessor<T> implements Processor {
+public class SortProcessor<T> extends ServiceSupport implements Processor {
 
     private final Expression expression;
     private final Comparator<? super T> comparator;
@@ -56,6 +57,16 @@ public class SortProcessor<T> implements Processor {
 
     public String toString() {
         return "Sort[" + expression + "]";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }
 

@@ -20,13 +20,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.Traceable;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * Processor for marking an {@link org.apache.camel.Exchange} to rollback.
  *
  * @version 
  */
-public class RollbackProcessor implements Processor, Traceable {
+public class RollbackProcessor extends ServiceSupport implements Processor, Traceable {
 
     private boolean markRollbackOnly;
     private boolean markRollbackOnlyLast;
@@ -89,5 +90,15 @@ public class RollbackProcessor implements Processor, Traceable {
 
     public void setMarkRollbackOnlyLast(boolean markRollbackOnlyLast) {
         this.markRollbackOnlyLast = markRollbackOnlyLast;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

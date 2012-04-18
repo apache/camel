@@ -18,13 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * Stops continue processing the route and marks it as complete.
  *
  * @version 
  */
-public class StopProcessor implements Processor {
+public class StopProcessor extends ServiceSupport implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         // mark the exchange to stop continue routing
@@ -34,5 +35,15 @@ public class StopProcessor implements Processor {
     @Override
     public String toString() {
         return "Stop";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

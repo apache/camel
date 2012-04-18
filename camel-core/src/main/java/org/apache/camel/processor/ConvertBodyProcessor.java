@@ -19,27 +19,31 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which converts the payload of the input message to be of the given type
  * <p/>
- * If the convertions fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
+ * If the conversion fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
  *
  * @version 
  */
-public class ConvertBodyProcessor implements Processor {
+public class ConvertBodyProcessor extends ServiceSupport implements Processor {
     private final Class<?> type;
     private final String charset;
 
     public ConvertBodyProcessor(Class<?> type) {
+        ObjectHelper.notNull(type, "type", this);
         this.type = type;
         this.charset = null;
     }
 
     public ConvertBodyProcessor(Class<?> type, String charset) {
+        ObjectHelper.notNull(type, "type", this);
         this.type = type;
-        this.charset = charset;
+        this.charset = IOHelper.normalizeCharset(charset);
     }
 
     @Override
@@ -50,7 +54,7 @@ public class ConvertBodyProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
+            exchange.setProperty(Exchange.CHARSET_NAME, charset);
         }
 
         // only convert if the is a body
@@ -69,5 +73,15 @@ public class ConvertBodyProcessor implements Processor {
 
     public Class<?> getType() {
         return type;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

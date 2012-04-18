@@ -20,22 +20,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A processor which validates the content of the inbound message body
- * against a predicate.
+ * A processor which validates the content of the inbound message body against a {@link Predicate}.
  * 
  * @version 
  */
-public class PredicateValidatingProcessor implements Processor, Traceable {
+public class PredicateValidatingProcessor extends ServiceSupport implements Processor, Traceable {
     
     private static final Logger LOG = LoggerFactory.getLogger(PredicateValidatingProcessor.class);
 
     private final Predicate predicate;
     
     public PredicateValidatingProcessor(Predicate predicate) {
+        ObjectHelper.notNull(predicate, "predicate", this);
         this.predicate = predicate;
     }
 
@@ -62,5 +64,15 @@ public class PredicateValidatingProcessor implements Processor, Traceable {
 
     public String getTraceLabel() {
         return "validate[" + predicate + "]";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

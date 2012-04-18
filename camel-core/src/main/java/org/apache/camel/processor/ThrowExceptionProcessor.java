@@ -19,14 +19,17 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * The processor which implements the ThrowException DSL
+ * The processor which sets an {@link Exception} on the {@link Exchange}
  */
-public class ThrowExceptionProcessor implements Processor, Traceable {
+public class ThrowExceptionProcessor extends ServiceSupport implements Processor, Traceable {
     private final Exception exception;
 
     public ThrowExceptionProcessor(Exception exception) {
+        ObjectHelper.notNull(exception, "exception", this);
         this.exception = exception;
     }
 
@@ -43,5 +46,15 @@ public class ThrowExceptionProcessor implements Processor, Traceable {
 
     public String toString() {
         return "ThrowException";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }
