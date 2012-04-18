@@ -18,6 +18,8 @@ package org.apache.camel.component.hazelcast;
 
 import java.util.Map;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
@@ -110,7 +112,10 @@ public class HazelcastComponent extends DefaultComponent {
         super.doStart();
         if (hazelcastInstance == null) {
             createOwnInstance = true;
-            hazelcastInstance = Hazelcast.newHazelcastInstance(null);
+            Config config = new XmlConfigBuilder().build();
+            // Disable the version check
+            config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
+            hazelcastInstance = Hazelcast.newHazelcastInstance(config);
         }
     }
 
