@@ -16,9 +16,16 @@
  */
 package org.apache.camel.karaf.commands;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
@@ -52,6 +59,18 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tVersion: " + camelContext.getVersion()));
         System.out.println(StringEscapeUtils.unescapeJava("\tStatus: " + camelContext.getStatus()));
         System.out.println(StringEscapeUtils.unescapeJava("\tUptime: " + camelContext.getUptime()));
+        
+        MBeanServer mBeanServer = camelContext.getManagementStrategy().getManagementAgent().getMBeanServer();
+        Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=context,name=\"" + name + "\",*"), null);
+        Iterator<ObjectName> iterator = set.iterator();
+        if (iterator.hasNext()) {
+            ObjectName contextMBean = iterator.next();
+            String load01 = (String) mBeanServer.getAttribute(contextMBean, "Load01");
+            String load05 = (String) mBeanServer.getAttribute(contextMBean, "Load05");
+            String load15 = (String) mBeanServer.getAttribute(contextMBean, "Load15");
+            System.out.println(StringEscapeUtils.unescapeJava("\tLoad Avg: " + load01 + ", " + load05 + ", " + load15));
+        }
+        
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mAdvanced\u001B[0m"));
         System.out.println(StringEscapeUtils.unescapeJava("\tAuto Startup: " + camelContext.isAutoStartup()));
@@ -83,6 +102,7 @@ public class ContextInfo extends OsgiCommandSupport {
         for (String language : camelContext.getLanguageNames()) {
             System.out.println(StringEscapeUtils.unescapeJava("\t" + language));
         }
+        
         return null;
     }
 
