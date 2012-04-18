@@ -22,9 +22,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import javax.management.JMException;
 import javax.management.MBeanServer;
@@ -60,7 +60,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private CamelContext camelContext;
     private ExecutorService executorService;
     private MBeanServer server;
-    private final Set<ObjectName> mbeansRegistered = new HashSet<ObjectName>();
+    // need a name -> actual name mapping as some servers changes the names (suc as WebSphere)
+    private final Map<ObjectName, ObjectName> mbeansRegistered = new HashMap<ObjectName, ObjectName>();
     private JMXConnectorServer cs;
 
     private Integer registryPort;
@@ -240,15 +241,17 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     public void unregister(ObjectName name) throws JMException {
-        if (server.isRegistered(name)) {
-            server.unregisterMBean(name);
+        if (isRegistered(name)) {
+            server.unregisterMBean(mbeansRegistered.get(name));
             LOG.debug("Unregistered MBean with ObjectName: {}", name);
         }
         mbeansRegistered.remove(name);
     }
 
     public boolean isRegistered(ObjectName name) {
-        return server.isRegistered(name);
+        return (mbeansRegistered.containsKey(name) 
+                && server.isRegistered(mbeansRegistered.get(name))) 
+                || server.isRegistered(name);
     }
 
     protected void doStart() throws Exception {
@@ -280,11 +283,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
 
         // Using the array to hold the busMBeans to avoid the CurrentModificationException
-        ObjectName[] mBeans = mbeansRegistered.toArray(new ObjectName[mbeansRegistered.size()]);
+        ObjectName[] mBeans = mbeansRegistered.keySet().toArray(new ObjectName[mbeansRegistered.size()]);
         int caught = 0;
         for (ObjectName name : mBeans) {
             try {
-                mbeansRegistered.remove(name);
                 unregister(name);
             } catch (Exception e) {
                 LOG.info("Exception unregistering MBean with name " + name, e);
@@ -302,7 +304,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         throws JMException {
 
         // have we already registered the bean, there can be shared instances in the camel routes
-        boolean exists = server.isRegistered(name);
+        boolean exists = isRegistered(name);
         if (exists) {
             if (forceRegistration) {
                 LOG.info("ForceRegistration enabled, unregistering existing MBean with ObjectName: {}", name);
@@ -324,7 +326,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (instance != null) {
             ObjectName registeredName = instance.getObjectName();
             LOG.debug("Registered MBean with ObjectName: {}", registeredName);
-            mbeansRegistered.add(registeredName);
+            mbeansRegistered.put(name, registeredName);
         }
     }
 
