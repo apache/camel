@@ -19,9 +19,14 @@ package org.apache.camel;
 /**
  * Is thrown if the payload from the exchange could not be retrieved because of being null, wrong class type etc.
  *
+ * @deprecated will be removed in Camel 3.0
  * @version 
  */
+@Deprecated
 public class InvalidPayloadException extends CamelExchangeException {
+
+    // TODO: We should remove this class in Camel 3.0, and just rely on the other exceptions for type conversion issues
+
     private static final long serialVersionUID = -1689157578733908632L;
     private final transient Class<?> type;
 

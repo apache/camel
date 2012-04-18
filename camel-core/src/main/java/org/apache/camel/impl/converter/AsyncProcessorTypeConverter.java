@@ -58,11 +58,27 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         return convertTo(type, exchange, value);
     }
-    
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        try {
+            return convertTo(type, exchange, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        try {
+            return convertTo(type, null, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /**
      * @deprecated use AnycProcessorConverter.convert instead
-     * @param value
-     * @return
      */
     @Deprecated
     public static AsyncProcessor convert(Processor value) {

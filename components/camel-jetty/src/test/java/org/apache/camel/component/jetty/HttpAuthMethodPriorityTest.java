@@ -85,8 +85,8 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
             template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (FailedToCreateProducerException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Unknown authMethod: foo in authMethodPriority: Basic,foo", cause.getMessage());
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
+            assertEquals("No enum const class org.apache.camel.component.http.AuthMethod.foo", cause.getMessage());
         }
     }
 

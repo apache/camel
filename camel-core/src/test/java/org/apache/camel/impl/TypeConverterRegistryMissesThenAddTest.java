@@ -76,6 +76,14 @@ public class TypeConverterRegistryMissesThenAddTest extends TestCase {
         public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
             return convertTo(type, value);
         }
+
+        public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+            return convertTo(type, value);
+        }
+
+        public <T> T tryConvertTo(Class<T> type, Object value) {
+            return convertTo(type, value);
+        }
     }
 
 }

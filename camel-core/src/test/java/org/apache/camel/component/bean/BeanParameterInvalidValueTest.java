@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExpressionEvaluationException;
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
@@ -37,7 +37,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
             template.sendBody("direct:a", "World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            NoTypeConversionAvailableException cause = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+            TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause());
             assertEquals(String.class, cause.getFromType());
             assertEquals(int.class, cause.getToType());
             assertEquals("A", cause.getValue());
@@ -53,7 +53,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
             template.sendBody("direct:b", "World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            NoTypeConversionAvailableException cause = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+            TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause());
             assertEquals(String.class, cause.getFromType());
             assertEquals(int.class, cause.getToType());
             assertEquals("true", cause.getValue());

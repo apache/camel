@@ -31,6 +31,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
@@ -102,20 +103,18 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            answer = doConvertTo(type, exchange, value);
+            answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
             // if its a ExecutionException then we have rethrow it as its not due to failed conversion
+            // this is special for FutureTypeConverter
             boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null
                     || ObjectHelper.getException(CamelExecutionException.class, e) != null;
             if (execution) {
                 throw ObjectHelper.wrapCamelExecutionException(exchange, e);
             }
 
-            // we cannot convert so return null
-            if (log.isDebugEnabled()) {
-                log.debug("{} Caused by: {}. Will ignore this and continue.", NoTypeConversionAvailableException.createMessage(value, type), e.getMessage());
-            }
-            return null;
+            // error occurred during type conversion
+            throw new TypeConversionException(value, type, e);
         }
         if (answer == Void.TYPE) {
             // Could not find suitable conversion
@@ -139,9 +138,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            answer = doConvertTo(type, exchange, value);
+            answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
-            throw new NoTypeConversionAvailableException(value, type, e);
+            // error occurred during type conversion
+            throw new TypeConversionException(value, type, e);
         }
         if (answer == Void.TYPE || value == null) {
             // Could not find suitable conversion
@@ -151,7 +151,32 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
-    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value) {
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        return tryConvertTo(type, null, value);
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        if (!isRunAllowed()) {
+            return null;
+        }
+
+        Object answer;
+        try {
+            answer = doConvertTo(type, exchange, value, true);
+        } catch (Exception e) {
+            return null;
+        }
+        if (answer == Void.TYPE) {
+            // Could not find suitable conversion
+            return null;
+        } else {
+            return (T) answer;
+        }
+    }
+
+    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value, final boolean tryConvert) {
         if (log.isTraceEnabled()) {
             log.trace("Converting {} -> {} with value: {}",
                     new Object[]{value == null ? "null" : value.getClass().getCanonicalName(), 
@@ -178,7 +203,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             return Void.TYPE;
         }
         
-        // special for NaN numbers, which we can only convert for flating numbers
+        // special for NaN numbers, which we can only convert for floating numbers
         if (ObjectHelper.isNaN(value)) {
             if (Float.class.isAssignableFrom(type)) {
                 return Float.NaN;
@@ -239,8 +264,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             }
         }
 
-        // Could not find suitable conversion, so remember it
-        misses.put(key, key);
+        if (!tryConvert) {
+            // Could not find suitable conversion, so remember it
+            // do not register misses for try conversions
+            misses.put(key, key);
+        }
 
         // Could not find suitable conversion, so return Void to indicate not found
         return Void.TYPE;

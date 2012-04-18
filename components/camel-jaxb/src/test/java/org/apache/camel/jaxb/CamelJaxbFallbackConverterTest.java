@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
@@ -55,11 +56,19 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
     public void testFallbackConverterUnmarshalWithNonJAXBComplaintValue() throws Exception {
         TypeConverter converter = context.getTypeConverter();
 
-        Foo foo = converter.convertTo(Foo.class, "Not every String is XML");
-        assertNull("Should not be able to convert non XML String", foo);
+        try {
+            converter.convertTo(Foo.class, "Not every String is XML");
+            fail("Should have thrown exception");
+        } catch (TypeConversionException e) {
+            // expected
+        }
 
-        Bar bar = converter.convertTo(Bar.class, "<bar></bar");
-        assertNull("Should not be able to convert misspelled XML String", bar);
+        try {
+            converter.convertTo(Bar.class, "<bar></bar");
+            fail("Should have thrown exception");
+        } catch (TypeConversionException e) {
+            // expected
+        }
     }
 
     @Test
@@ -77,8 +86,12 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
 
         byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
         InputStream is = new ByteArrayInputStream(buffers);
-        person = converter.convertTo(PersonType.class, exchange, is);
-        assertNull("Should not be able to convert as FILTER_NON_XML_CHARS property is not enabled", person);
+        try {
+            converter.convertTo(PersonType.class, exchange, is);
+            fail("Should have thrown exception");
+        } catch (TypeConversionException e) {
+            // expected
+        }
     }
 
     @Test

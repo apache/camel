@@ -79,7 +79,7 @@ public final class FutureTypeConverter implements TypeConverter {
                 body = ExchangeHelper.extractResultBody(result, result.getPattern());
             }
 
-            // no then try to lookup a type converter
+            // no then convert to the type
             return converter.convertTo(type, exchange, body);
         }
 
@@ -119,5 +119,23 @@ public final class FutureTypeConverter implements TypeConverter {
         }
 
         return answer;
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        try {
+            return convertTo(type, exchange, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        try {
+            return convertTo(type, null, value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

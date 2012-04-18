@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -48,7 +47,7 @@ public class UnmarshalProcessor extends ServiceSupport implements Processor, Tra
     public void process(Exchange exchange) throws Exception {
         ObjectHelper.notNull(dataFormat, "dataFormat");
 
-        InputStream stream = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+        InputStream stream = exchange.getIn().getMandatoryBody(InputStream.class);
         try {
             // lets setup the out message before we invoke the dataFormat
             // so that it can mutate it if necessary
