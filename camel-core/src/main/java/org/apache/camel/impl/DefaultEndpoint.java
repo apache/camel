@@ -19,21 +19,25 @@ package org.apache.camel.impl;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.EndpointConfiguration.UriFormat;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -61,6 +65,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     // used or not (if possible)
     private boolean synchronous;
     private final String id = EndpointHelper.createEndpointId();
+    private Map<String, Object> consumerProperties;
 
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the
@@ -272,7 +277,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     public void configureProperties(Map<String, Object> options) {
-        // do nothing by default
+        Map<String, Object> consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
+        if (consumerProperties != null) {
+            setConsumerProperties(consumerProperties);
+        }
     }
 
     /**
@@ -325,6 +333,45 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public boolean isLenientProperties() {
         // default should be false for most components
         return false;
+    }
+
+    public Map<String, Object> getConsumerProperties() {
+        return consumerProperties;
+    }
+
+    public void setConsumerProperties(Map<String, Object> consumerProperties) {
+        this.consumerProperties = consumerProperties;
+    }
+
+    protected void configureConsumer(Consumer consumer) throws Exception {
+        if (consumerProperties != null) {
+            // use a defensive copy of the consumer properties as the methods below will remove the used properties
+            // and in case we restart routes, we need access to the original consumer properties again
+            Map<String, Object> copy = new HashMap<String, Object>(consumerProperties);
+
+            // set reference properties first as they use # syntax that fools the regular properties setter
+            EndpointHelper.setReferenceProperties(getCamelContext(), consumer, copy);
+            EndpointHelper.setProperties(getCamelContext(), consumer, copy);
+
+            // special consumer.routeExceptionHandler option
+            Object bridge = copy.remove("bridgeErrorHandler");
+            if (bridge != null && "true".equals(bridge)) {
+                if (consumer instanceof DefaultConsumer) {
+                    DefaultConsumer defaultConsumer = (DefaultConsumer) consumer;
+                    defaultConsumer.setExceptionHandler(new BridgeExceptionHandlerToErrorHandler(defaultConsumer));
+                } else {
+                    throw new IllegalArgumentException("Option consumer.bridgeErrorHandler is only supported by endpoints," +
+                            "having the consumer extend the DefaultConsumer. The consumer is a " + consumer.getClass().getName() + " class.");
+                }
+            }
+
+            if (!this.isLenientProperties() && copy.size() > 0) {
+                throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + copy.size()
+                    + " parameters that couldn't be set on the endpoint consumer."
+                    + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                    + " Unknown consumer parameters=[" + copy + "]");
+            }
+        }
     }
 
     @Override
