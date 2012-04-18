@@ -360,8 +360,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                     DefaultConsumer defaultConsumer = (DefaultConsumer) consumer;
                     defaultConsumer.setExceptionHandler(new BridgeExceptionHandlerToErrorHandler(defaultConsumer));
                 } else {
-                    throw new IllegalArgumentException("Option consumer.bridgeErrorHandler is only supported by endpoints," +
-                            "having the consumer extend the DefaultConsumer. The consumer is a " + consumer.getClass().getName() + " class.");
+                    throw new IllegalArgumentException("Option consumer.bridgeErrorHandler is only supported by endpoints,"
+                            + " having their consumer extend DefaultConsumer. The consumer is a " + consumer.getClass().getName() + " class.");
                 }
             }
 
