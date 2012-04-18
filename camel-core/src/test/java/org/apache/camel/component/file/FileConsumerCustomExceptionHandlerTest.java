@@ -85,7 +85,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
             }
         };
     }
-    // END SNIPPET: e1
+    // END SNIPPET: e2
 
     // START SNIPPET: e1
     /**
