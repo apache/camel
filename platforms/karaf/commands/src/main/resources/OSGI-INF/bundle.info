@@ -1,0 +1,26 @@
+\u001B[1mSYNOPSIS\u001B[0m
+    ${project.name}
+
+    ${project.description}
+
+    Maven URL:
+        \u001B[33mmvn:${project.groupId}/${project.artifactId}/${project.version}\u001B[0m
+
+\u001B[1mDESCRIPTION\u001B[0m
+    This bundle provides the Karaf shell commands to manipulate and manage Camel Components.
+
+    The following commands are available:
+    \u001B[36mcamel:context-info\u001B[0m Display detailed information about a Camel context.
+    \u001B[36mcamel:context-list\u001B[0m Lists all Camel contexts.
+    \u001B[36mcamel:context-start\u001B[0m Start a Camel context.
+    \u001B[36mcamel:context-stop\u001B[0m Stops a Camel context.
+    \u001B[36mcamel:route-info\u001B[0m Display information about a Camel route.
+    \u001B[36mcamel:route-list\u001B[0m Lists the Camel routes.
+    \u001B[36mcamel:route-resume\u001B[0m Resume a Camel route.
+    \u001B[36mcamel:route-show\u001B[0m Display the Camel route definition in XML.
+    \u001B[36mcamel:route-start\u001B[0m Start a Camel route.
+    \u001B[36mcamel:route-stop\u001B[0m Stops a Camel route.
+    \u001B[36mcamel:route-suspend\u001B[0m Suspends a Camel route.
+
+\u001B[1mSEE ALSO\u001B[0m
+    \u001B[36mhttp://camel.apache.org/karaf.html\u001B[0m
