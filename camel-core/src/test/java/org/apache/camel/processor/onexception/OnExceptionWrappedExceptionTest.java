@@ -18,8 +18,9 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.TypeConverterSupport;
+
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
@@ -56,32 +57,13 @@ public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
     public static class LocalDateTime {
     }
 
-    private static class MyLocalDateTimeConverter implements TypeConverter {
+    private static class MyLocalDateTimeConverter extends TypeConverterSupport {
 
-        public <T> T convertTo(Class<T> type, Object value) {
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
             // simulate @Converter where we wrap thrown exception in RuntimeCamelException
             throw wrapRuntimeCamelException(new IllegalArgumentException("Bad Data"));
         }
 
-        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T tryConvertTo(Class<T> type, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
-        }
     }
 
 }

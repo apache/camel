@@ -18,7 +18,7 @@ package org.apache.camel.impl;
 
 import junit.framework.TestCase;
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.support.TypeConverterSupport;
 
 /**
  * @version 
@@ -52,38 +52,16 @@ public class TypeConverterRegistryMissesThenAddTest extends TestCase {
         }
     }
 
-    private static class MyOrderTypeConverter implements TypeConverter {
+    private static class MyOrderTypeConverter extends TypeConverterSupport {
 
         @SuppressWarnings("unchecked")
-        public <T> T convertTo(Class<T> type, Object value) {
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
             // converter from value to the MyOrder bean
             MyOrder order = new MyOrder();
             order.setId(Integer.parseInt(value.toString()));
             return (T) order;
         }
 
-        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-            // this method with the Exchange parameter will be preferred by Camel to invoke
-            // this allows you to fetch information from the exchange during conversions
-            // such as an encoding parameter or the likes
-            return convertTo(type, value);
-        }
-
-        public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T tryConvertTo(Class<T> type, Object value) {
-            return convertTo(type, value);
-        }
     }
 
 }

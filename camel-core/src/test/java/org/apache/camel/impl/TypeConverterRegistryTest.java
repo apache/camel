@@ -22,6 +22,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.support.TypeConverterSupport;
 
 /**
  * @version 
@@ -32,7 +33,7 @@ public class TypeConverterRegistryTest extends TestCase {
         DefaultCamelContext ctx = new DefaultCamelContext();
         assertNotNull(ctx.getTypeConverterRegistry());
 
-        // file to inputstream is a default converter in Camel 
+        // file to input stream is a default converter in Camel
         TypeConverter tc = ctx.getTypeConverterRegistry().lookup(InputStream.class, File.class);
         assertNotNull(tc);
     }
@@ -66,45 +67,14 @@ public class TypeConverterRegistryTest extends TestCase {
     }
 
     // START SNIPPET: e2
-    private static class MyOrderTypeConverter implements TypeConverter {
+    private static class MyOrderTypeConverter extends TypeConverterSupport {
 
         @SuppressWarnings("unchecked")
-        public <T> T convertTo(Class<T> type, Object value) {
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
             // converter from value to the MyOrder bean
             MyOrder order = new MyOrder();
             order.setId(Integer.parseInt(value.toString()));
             return (T) order;
-        }
-
-        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-            // this method with the Exchange parameter will be preferred by Camel to invoke
-            // this allows you to fetch information from the exchange during conversions
-            // such as an encoding parameter or the likes
-            return convertTo(type, value);
-        }
-
-        public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T tryConvertTo(Class<T> type, Object value) {
-            try {
-                return convertTo(type, null, value);
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-            try {
-                return convertTo(type, exchange, value);
-            } catch (Exception e) {
-                return null;
-            }
         }
     }
     // END SNIPPET: e2
