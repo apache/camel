@@ -62,7 +62,7 @@ public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     // use a bean as the dynamic router
-                    .dynamicRouter(method(DynamicRouterExchangePropertiesTest.class, "slip"));
+                    .dynamicRouter(bean(DynamicRouterExchangePropertiesTest.class, "slip"));
 
                 from("direct:foo").transform(constant("Bye World")).to("mock:foo");
             }
