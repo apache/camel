@@ -313,10 +313,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 return;
             }
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug(endpoint + " cannot begin processing file: " + file + " due to: " + e.getMessage(), e);
-            }
+            // remove file from the in progress list due to failure
             endpoint.getInProgressRepository().remove(absoluteFileName);
+
+            String msg = endpoint + " cannot begin processing file: " + file + " due to: " + e.getMessage();
+            handleException(msg, e);
             return;
         }
 
@@ -364,7 +365,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             // from in progress when it takes over and processes the file, which may happen
             // by another thread at a later time. So its only safe to remove it if there was an exception)
             endpoint.getInProgressRepository().remove(absoluteFileName);
-            handleException(e);
+
+            String msg = "Error processing file " + file + " due to " + e.getMessage();
+            handleException(msg, e);
         }
     }
 
@@ -389,6 +392,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             if (log.isDebugEnabled()) {
                 log.debug(endpoint + " error custom processing: " + file + " due to: " + e.getMessage() + ". This exception will be ignored.", e);
             }
+            handleException(e);
         } finally {
             // always remove file from the in progress list as its no longer in progress
             // use the original file name that was used to add it to the repository

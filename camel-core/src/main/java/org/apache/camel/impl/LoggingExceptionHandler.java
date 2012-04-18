@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * A default implementation of {@link ExceptionHandler} which uses a {@link org.apache.camel.processor.CamelLogger} to
  * log the exception.
  * <p/>
- * This implementation will by default log the exception with stack trace at ERROR level.
+ * This implementation will by default log the exception with stack trace at WARN level.
  *
  * @version 
  */
@@ -36,7 +36,7 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     private final CamelLogger logger;
 
     public LoggingExceptionHandler(Class<?> ownerType) {
-        this(new CamelLogger(LoggerFactory.getLogger(ownerType), LoggingLevel.ERROR));
+        this(new CamelLogger(LoggerFactory.getLogger(ownerType), LoggingLevel.WARN));
     }
 
     public LoggingExceptionHandler(Class<?> ownerType, LoggingLevel level) {
@@ -59,7 +59,7 @@ public class LoggingExceptionHandler implements ExceptionHandler {
         try {
             String msg = CamelExchangeException.createExceptionMessage(message, exchange, exception);
             if (isCausedByRollbackExchangeException(exception)) {
-                // do not log stacktrace for intended rollbacks
+                // do not log stack trace for intended rollbacks
                 logger.log(msg);
             } else {
                 if (exception != null) {
