@@ -56,6 +56,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
         return jndi;
     }
 
+    // START SNIPPET: e2
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -84,6 +85,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
             }
         };
     }
+    // END SNIPPET: e1
 
     // START SNIPPET: e1
     /**
@@ -126,7 +128,6 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
         }
     }
     // END SNIPPET: e1
-
 
     // used for simulating exception during acquiring a lock on the file
     private class MyReadLockStrategy implements GenericFileExclusiveReadLockStrategy {
