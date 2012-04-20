@@ -76,6 +76,9 @@ public class XsltUriResolver implements URIResolver {
 
             String name = ObjectHelper.after(href, ":");
             File file = new File(name);
+            if (!file.exists()) {
+                throw new TransformerException("Cannot find " + name + " in the file system");
+            }
             return new StreamSource(file);
         }
 
@@ -87,7 +90,7 @@ public class XsltUriResolver implements URIResolver {
             return resolve(path, base);
         } else {
             // default to use classpath: location
-            path = "classpath:" + path + File.separator + href;
+            path = "classpath:" + path + "/" + href;
             return resolve(path, base);
         }
     }
