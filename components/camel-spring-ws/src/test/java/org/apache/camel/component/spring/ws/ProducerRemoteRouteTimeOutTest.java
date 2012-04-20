@@ -32,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@Ignore("Run manually, makes connection to external webservice")
 @ContextConfiguration
 public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextTests {
 
@@ -40,9 +41,8 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
     @Produce
     private ProducerTemplate template;
 
-    @Ignore("Run manually, makes connection to external webservice")
     @Test
-    public void callStockQuoteWebserviceCommonsHttpWith3MillSecondsTimeout() throws Exception {
+    public void callStockQuoteWebserviceCosmmonsHttpWith3MillSecondsTimeout() throws Exception {
         try {
             template.requestBody("direct:stockQuoteWebserviceCommonsHttpWith3MillSecondsTimeout", xmlRequestForGoogleStockQuote);
             fail("Miss the expected exception in chain");
@@ -50,8 +50,7 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
             assertTrue(hasThrowableInChain(cee, SocketTimeoutException.class));
         }
     }
-
-    @Ignore("Run manually, makes connection to external webservice")
+    
     @Test
     public void callStockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);
@@ -61,8 +60,7 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
         String resultMessage = (String) result;
         assertTrue(resultMessage.contains("Google Inc."));
     }
-
-    @Ignore("Run manually, makes connection to external webservice")
+    
     @Test
     public void callStockQuoteWebserviceJDKWith3MillSecondsTimeout() throws Exception {
         try {
@@ -73,7 +71,6 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
         }
     }
 
-    @Ignore("Run manually, makes connection to external webservice")
     @Test
     public void callStockQuoteWebserviceJDKWith5000MillSecondsTimeout() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceJDKWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);

@@ -56,6 +56,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
     public SpringWebserviceProducer(Endpoint endpoint) {
         super(endpoint);
+        prepareMessageSenders(getEndpoint().getConfiguration());
     }
 
     @Override
@@ -72,9 +73,6 @@ public class SpringWebserviceProducer extends DefaultProducer {
         String soapAction = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, String.class);
         URI wsAddressingAction = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, URI.class);
 
-        // Populate the given (read) timeout if any
-        prepareMessageSenders(getEndpoint().getConfiguration());
-
         WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapAction, wsAddressingAction, getEndpoint().getConfiguration());
         Object body = null;
         if (endpointUri != null) {
@@ -88,7 +86,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         }
     }
 
-    private static void prepareMessageSenders(SpringWebserviceConfiguration configuration) throws Exception {
+    private static void prepareMessageSenders(SpringWebserviceConfiguration configuration) {
         // Skip this whole thing if none of the relevant config options are set.
         if (!(configuration.getTimeout() > -1) && configuration.getSslContextParameters() == null) {
             return;
@@ -108,7 +106,13 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 }
                 
                 if (configuration.getTimeout() > -1) {
-                    ((CommonsHttpMessageSender)messageSender).setReadTimeout(configuration.getTimeout());
+                    if (messageSender.getClass().equals(CommonsHttpMessageSender.class)) {
+                        ((CommonsHttpMessageSender)messageSender).setReadTimeout(configuration.getTimeout());
+                    } else {
+                        LOG.warn("Not applying timeout configuration to CommonsHttpMessageSender based implementation.  "
+                                + "You are using what appears to be a custom MessageSender, which you are not doing by default. "
+                                + "You will need configure timeout on your own.");
+                    }
                 }
             } else if (messageSender.getClass().equals(HttpUrlConnectionMessageSender.class)) {
                 // Only if exact match denoting likely use of default configuration.  We don't want to get
