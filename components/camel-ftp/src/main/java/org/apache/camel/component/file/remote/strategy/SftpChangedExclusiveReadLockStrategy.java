@@ -64,7 +64,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
                 List<ChannelSftp.LsEntry> files = operations.listFiles(file.getParent());
                 for (ChannelSftp.LsEntry f : files) {
                     if (f.getFilename().equals(file.getFileName())) {
-                        newLastModified = f.getAttrs().getATime();
+                        newLastModified = f.getAttrs().getMTime();
                         newLength = f.getAttrs().getSize();
                     }
                 }
