@@ -1066,6 +1066,18 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.class.simpleName}", "Animal");
     }
     
+    public void testExceptionClassSimpleName() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        exchange.getIn().setBody(tiger);
+
+        Exception cause = new IllegalArgumentException("Forced");
+        exchange.setException(cause);
+
+        assertExpression("${exception.getClass().getSimpleName()}", "IllegalArgumentException");
+        assertExpression("${exception.getClass.getSimpleName}", "IllegalArgumentException");
+        assertExpression("${exception.class.simpleName}", "IllegalArgumentException");
+    }
+
     public void testSlashBeforeHeader() throws Exception {
         assertExpression("foo/${header.foo}", "foo/abc");
         assertExpression("foo\\${header.foo}", "foo\\abc");
