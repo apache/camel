@@ -22,6 +22,11 @@
 		<name>dev</name>
 		<password>dev-pass</password>
 	</group>
+	
+	<!-- Disable the version check -->
+	<properties>
+	     <property name="hazelcast.version.check.enabled">false</property>
+	</properties>
 
 	<network>
 		<port auto-increment="true">5701</port>
