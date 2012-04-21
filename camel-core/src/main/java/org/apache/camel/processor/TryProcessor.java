@@ -382,6 +382,8 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                             exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                         }
                     }
+                    // always clear redelivery exhausted in a catch clause
+                    exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
                     // signal callback to continue routing async
                     ExchangeHelper.prepareOutToIn(exchange);
@@ -396,6 +398,8 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                         exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                     }
                 }
+                // always clear redelivery exhausted in a catch clause
+                exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
             }
 
             return sync;
