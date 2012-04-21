@@ -19,8 +19,8 @@ package org.apache.camel.impl.converter;
 import java.lang.reflect.Method;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-public class StaticMethodFallbackTypeConverter implements TypeConverter {
+public class StaticMethodFallbackTypeConverter extends TypeConverterSupport {
     private final Method method;
     private final boolean useExchange;
     private final TypeConverterRegistry registry;
@@ -45,42 +45,10 @@ public class StaticMethodFallbackTypeConverter implements TypeConverter {
         return "StaticMethodFallbackTypeConverter: " + method;
     }
 
-    @Override
-    public <T> T convertTo(Class<T> type, Object value) {
-        return convertTo(type, null, value);
-    }
-
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return useExchange ? (T)ObjectHelper.invokeMethod(method, null, type, exchange, value, registry)
             : (T)ObjectHelper.invokeMethod(method, null, type, value, registry);
     }
 
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-        return convertTo(type, null, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, exchange, value);
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, exchange, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, null, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

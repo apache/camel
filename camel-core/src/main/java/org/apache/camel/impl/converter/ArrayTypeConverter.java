@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.support.TypeConverterSupport;
 
 /**
  * A type converter which is used to convert to and from array types
@@ -32,10 +32,10 @@ import org.apache.camel.TypeConverter;
  *
  * @version 
  */
-public class ArrayTypeConverter implements TypeConverter {
+public class ArrayTypeConverter extends TypeConverterSupport {
 
     @SuppressWarnings("unchecked")
-    public <T> T convertTo(Class<T> type, Object value) {
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         if (type.isArray()) {
             if (value instanceof Collection) {
                 Collection<?> collection = (Collection<?>)value;
@@ -74,36 +74,4 @@ public class ArrayTypeConverter implements TypeConverter {
         return null;
     }
 
-    @Override
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

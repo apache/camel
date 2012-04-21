@@ -23,6 +23,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -31,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-public class InstanceMethodTypeConverter implements TypeConverter {
+public class InstanceMethodTypeConverter extends TypeConverterSupport {
     private final CachingInjector<?> injector;
     private final Method method;
     private final boolean useExchange;
@@ -47,11 +48,6 @@ public class InstanceMethodTypeConverter implements TypeConverter {
     @Override
     public String toString() {
         return "InstanceMethodTypeConverter: " + method;
-    }
-
-    @Override
-    public <T> T convertTo(Class<T> type, Object value) {
-        return convertTo(type, null, value);
     }
 
     @SuppressWarnings("unchecked")
@@ -72,31 +68,4 @@ public class InstanceMethodTypeConverter implements TypeConverter {
                 .invokeMethod(method, instance, value);
     }
 
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-        return convertTo(type, null, value);
-    }
-
-    @Override   
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, exchange, value);
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, exchange, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, null, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

@@ -20,11 +20,11 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @Converter
-public final class FutureTypeConverter implements TypeConverter {
+public final class FutureTypeConverter extends TypeConverterSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FutureTypeConverter.class);
 
@@ -42,6 +42,15 @@ public final class FutureTypeConverter implements TypeConverter {
 
     public FutureTypeConverter(TypeConverter converter) {
         this.converter = converter;
+    }
+
+    @Override
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        try {
+            return doConvertTo(type, exchange, value);
+        } catch (Exception e) {
+            throw new TypeConversionException(value, type, e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -86,56 +95,4 @@ public final class FutureTypeConverter implements TypeConverter {
         return null;
     }
 
-    @Override
-    public <T> T convertTo(Class<T> type, Object value) {
-        return convertTo(type, null, value);
-    }
-
-    @Override
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return doConvertTo(type, exchange, value);
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
-        return mandatoryConvertTo(type, null, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
-        T answer;
-        try {
-            answer = doConvertTo(type, exchange, value);
-        } catch (Exception e) {
-            throw new NoTypeConversionAvailableException(value, type, e);
-        }
-
-        if (answer == null) {
-            throw new NoTypeConversionAvailableException(value, type);
-        }
-
-        return answer;
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, exchange, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, null, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

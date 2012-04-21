@@ -19,9 +19,8 @@ package org.apache.camel.impl.converter;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
@@ -31,7 +30,7 @@ import org.apache.camel.processor.DelegateProcessor;
  *
  * @version 
  */
-public class AsyncProcessorTypeConverter implements TypeConverter {
+public class AsyncProcessorTypeConverter extends TypeConverterSupport {
 
     private static final class ProcessorToAsyncProcessorBridge extends DelegateProcessor implements AsyncProcessor {
 
@@ -67,7 +66,7 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
         }
     }
 
-    public <T> T convertTo(Class<T> type, Object value) {
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         if (value != null) {
             if (type.equals(AsyncProcessor.class)) {
                 if (value instanceof AsyncProcessor) {
@@ -80,39 +79,6 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
             }
         }
         return null;
-    }
-
-    @Override
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
-        return convertTo(type, exchange, value);
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, exchange, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, null, value);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public static AsyncProcessor convert(Processor value) {

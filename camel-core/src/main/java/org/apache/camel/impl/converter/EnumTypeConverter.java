@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -30,10 +30,10 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-public class EnumTypeConverter implements TypeConverter {
+public class EnumTypeConverter extends TypeConverterSupport {
 
     @SuppressWarnings("unchecked")
-    public <T> T convertTo(Class<T> type, Object value) {
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         if (type.isEnum() && value != null) {
             String text = value.toString();
             Method method;
@@ -47,40 +47,4 @@ public class EnumTypeConverter implements TypeConverter {
         return null;
     }
 
-    @Override
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        // ignore exchange
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-        // ignore exchange
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        // ignore exchange
-        return convertTo(type, value);
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            // ignore exchange
-            return convertTo(type, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }
