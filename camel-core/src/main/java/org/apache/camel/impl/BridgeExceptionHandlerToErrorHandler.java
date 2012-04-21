@@ -63,6 +63,8 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
         exchange.setException(exception);
         // and the message
         exchange.getIn().setBody(message);
+        // and mark as redelivery exhausted as we cannot do redeliveries
+        exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
 
         try {
             bridge.process(exchange);

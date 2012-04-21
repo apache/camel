@@ -37,7 +37,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class DefaultConsumerBridgeErrorHandlerTest extends ContextTestSupport {
 
-    private final CountDownLatch latch = new CountDownLatch(1);
+    protected final CountDownLatch latch = new CountDownLatch(1);
 
     public void testDefaultConsumerBridgeErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World");
