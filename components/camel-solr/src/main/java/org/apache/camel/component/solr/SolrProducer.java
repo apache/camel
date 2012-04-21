@@ -19,6 +19,7 @@ package org.apache.camel.component.solr;
 import java.io.File;
 import java.util.Map;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
@@ -73,6 +74,9 @@ public class SolrProducer extends DefaultProducer {
     private void insert(Exchange exchange, boolean isStreaming) throws Exception {
 
         Object body = exchange.getIn().getBody();
+        if (body instanceof WrappedFile) {
+            body = ((WrappedFile)body).getFile();
+        }
 
         if (body instanceof File) {
 
