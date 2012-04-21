@@ -693,6 +693,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+            exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+
+            // and remove traces of rollback only and uow exhausted markers
+            exchange.removeProperty(Exchange.ROLLBACK_ONLY);
+            exchange.removeProperty(Exchange.UNIT_OF_WORK_EXHAUSTED);
+
             handled = true;
         } else {
             // must decrement the redelivery counter as we didn't process the redelivery but is
@@ -874,6 +880,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * @return <tt>false</tt> to continue/redeliver, or <tt>true</tt> to exhaust.
      */
     private boolean isExhausted(Exchange exchange, RedeliveryData data) {
+        // if marked as rollback only then do not continue/redeliver
+        boolean exhausted = exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
+        if (exhausted) {
+            log.trace("This exchange is marked as redelivery exhausted: {}", exchange);
+            return true;
+        }
+
         // if marked as rollback only then do not continue/redeliver
         boolean rollbackOnly = exchange.getProperty(Exchange.ROLLBACK_ONLY, false, Boolean.class);
         if (rollbackOnly) {
