@@ -139,7 +139,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
-    private Set<Route> routes;
+    private final Set<Route> routes = new LinkedHashSet<Route>();
     private final List<Service> servicesToClose = new ArrayList<Service>();
     private final Set<StartupListener> startupListeners = new LinkedHashSet<StartupListener>();
     private TypeConverter typeConverter;
@@ -562,13 +562,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return routeStartupOrder;
     }
 
-    public synchronized List<Route> getRoutes() {
-        if (routes == null) {
-            routes = new LinkedHashSet<Route>();
-        }
-
-        // lets return a copy of the collection as objects are removed later
-        // when services are stopped
+    public List<Route> getRoutes() {
+        // lets return a copy of the collection as objects are removed later when services are stopped
         return new ArrayList<Route>(routes);
     }
 
@@ -587,19 +582,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     synchronized void removeRouteCollection(Collection<Route> routes) {
-        if (this.routes != null) {
-            this.routes.removeAll(routes);
-        }
+        this.routes.removeAll(routes);
     }
 
     synchronized void addRouteCollection(Collection<Route> routes) throws Exception {
-        if (this.routes == null) {
-            this.routes = new LinkedHashSet<Route>();
-        }
-
-        if (routes != null) {
-            this.routes.addAll(routes);
-        }
+        this.routes.addAll(routes);
     }
 
     public void addRoutes(RoutesBuilder builder) throws Exception {
