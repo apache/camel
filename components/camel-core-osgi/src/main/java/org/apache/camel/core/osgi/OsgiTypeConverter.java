@@ -110,6 +110,14 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         return getDelegate().mandatoryConvertTo(type, exchange, value);
     }
 
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return getDelegate().tryConvertTo(type, exchange, value);
+    }
+
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        return getDelegate().tryConvertTo(type, value);
+    }
+
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         getDelegate().addTypeConverter(toType, fromType, typeConverter);
     }

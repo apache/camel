@@ -23,7 +23,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.
@@ -96,6 +95,24 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
     @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         return convertTo(type, exchange, value);
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        try {
+            return convertTo(type, exchange, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        try {
+            return convertTo(type, null, value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static AsyncProcessor convert(Processor value) {

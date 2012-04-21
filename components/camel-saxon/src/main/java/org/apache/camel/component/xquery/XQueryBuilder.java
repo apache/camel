@@ -556,19 +556,19 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
         Source source = null;
         if (isAllowStAX()) {
-            source = exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, body);
+            source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
         }
         if (source == null) {
             // then try SAX
-            source = exchange.getContext().getTypeConverter().convertTo(SAXSource.class, exchange, body);
+            source = exchange.getContext().getTypeConverter().tryConvertTo(SAXSource.class, exchange, body);
         }
         if (source == null) {
             // then try stream
-            source = exchange.getContext().getTypeConverter().convertTo(StreamSource.class, exchange, body);
+            source = exchange.getContext().getTypeConverter().tryConvertTo(StreamSource.class, exchange, body);
         }
         if (source == null) {
             // and fallback to DOM
-            source = exchange.getContext().getTypeConverter().convertTo(DOMSource.class, exchange, body);
+            source = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, body);
         }
         return source;
     }

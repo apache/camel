@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ExchangeHelper;
 
 /**
  * Base class for DataSet
@@ -58,7 +57,7 @@ public abstract class DataSetSupport implements DataSet {
         Object actualBody = actual.getIn().getBody();
         if (expectedBody != null) {
             // let's coerce to the correct type
-            actualBody = ExchangeHelper.getMandatoryInBody(actual, expectedBody.getClass());
+            actualBody = actual.getIn().getMandatoryBody(expectedBody.getClass());
         }
         DataSetEndpoint.assertEquals("message body", expectedBody, actualBody, actual);
     }

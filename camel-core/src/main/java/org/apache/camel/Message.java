@@ -94,7 +94,8 @@ public interface Message {
      * @param name the name of the header
      * @param type the type of the header
      * @return the value of the given header or <tt>null</tt> if there is no header for
-     *         the given name or <tt>null</tt> if it cannot be converted to the given type
+     *         the given name
+     * @throws TypeConversionException is thrown if error during type conversion
      */
     <T> T getHeader(String name, Class<T> type);
 
@@ -192,7 +193,8 @@ public interface Message {
      * Returns the body as the specified type
      *
      * @param type the type that the body
-     * @return the body of the message as the specified type, or <tt>null</tt> if not possible to convert
+     * @return the body of the message as the specified type, or <tt>null</tt> if no body exists
+     * @throws TypeConversionException is thrown if error during type conversion
      */
     <T> T getBody(Class<T> type);
 

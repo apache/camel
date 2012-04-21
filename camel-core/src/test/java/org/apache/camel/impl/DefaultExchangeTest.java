@@ -22,6 +22,7 @@ import java.net.ConnectException;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -43,7 +44,12 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertNotNull(exchange.getIn().getBody());
 
         assertEquals("<hello id='m123'>world!</hello>", exchange.getIn().getBody());
-        assertEquals(null, exchange.getIn().getBody(Integer.class));
+        try {
+            assertEquals(null, exchange.getIn().getBody(Integer.class));
+            fail("Should have thrown a TypeConversionException");
+        } catch (TypeConversionException e) {
+            // expected
+        }
 
         assertEquals("<hello id='m123'>world!</hello>", exchange.getIn().getMandatoryBody());
         try {

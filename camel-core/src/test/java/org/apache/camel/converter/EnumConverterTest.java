@@ -19,7 +19,7 @@ package org.apache.camel.converter;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
@@ -42,7 +42,7 @@ public class EnumConverterTest extends ContextTestSupport {
         try {
             context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, "XXX");
             fail("Should have thrown an exception");
-        } catch (NoTypeConversionAvailableException e) {
+        } catch (TypeConversionException e) {
             // expected
         }
     }

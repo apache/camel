@@ -25,7 +25,6 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 
 public class ZipDataFormat implements DataFormat {
@@ -53,7 +52,7 @@ public class ZipDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        InputStream is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
         InflaterInputStream unzipInput = new InflaterInputStream(is);
         
         // Create an expandable byte array to hold the inflated data

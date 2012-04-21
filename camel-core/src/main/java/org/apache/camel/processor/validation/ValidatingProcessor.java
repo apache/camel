@@ -68,12 +68,16 @@ public class ValidatingProcessor implements Processor {
 
         Source source;
         Result result;
-        if (useDom) {
-            source = exchange.getIn().getBody(DOMSource.class);
-            result = new DOMResult();
-        } else {
-            source = exchange.getIn().getBody(SAXSource.class);
-            result = new SAXResult();
+        try {
+            if (useDom) {
+                source = exchange.getIn().getBody(DOMSource.class);
+                result = new DOMResult();
+            } else {
+                source = exchange.getIn().getBody(SAXSource.class);
+                result = new SAXResult();
+            }
+        } catch (Exception e) {
+            throw new NoXmlBodyValidationException(exchange, e);
         }
         if (source == null) {
             throw new NoXmlBodyValidationException(exchange);

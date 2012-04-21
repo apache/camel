@@ -61,7 +61,14 @@ public final class ExecResultConverter {
 
     @Converter
     public static String convertToString(ExecResult result, Exchange exchange) throws FileNotFoundException {
-        return convertTo(String.class, exchange, result);
+        // special for string, as we want an empty string if no output from stdin / stderr
+        InputStream is = toInputStream(result);
+        if (is != null) {
+            return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
+        } else {
+            // no stdin/stdout, so return an empty string
+            return "";
+        }
     }
 
     @Converter

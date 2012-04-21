@@ -24,7 +24,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.jndi.JndiContext;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
@@ -61,7 +60,7 @@ public class SimulatorTest extends ContextTestSupport {
 
         assertNotNull("Should receive a response!", response);
 
-        String text = ExchangeHelper.getMandatoryOutBody(response, String.class);
+        String text = response.getOut().getMandatoryBody(String.class);
         assertStringContains(text, containedText);
     }
 
