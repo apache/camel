@@ -17,16 +17,15 @@
 package org.apache.camel.dataformat.bindy.util;
 
 /**
- * The ConvertSeparator helps to return the char associated to the unicode
- * string
+ * To help return the char associated to the unicode string
  */
-public final class Converter {
+public final class ConverterUtils {
 
-    private Converter() {
+    private ConverterUtils() {
         // helper class
     }
 
-    public static char getCharDelimitor(String separator) {
+    public static char getCharDelimiter(String separator) {
         if (separator.equals("\\u0001")) {
             return '\u0001';
         } else if (separator.equals("\\t") || separator.equals("\\u0009")) {

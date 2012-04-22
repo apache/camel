@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
-import org.apache.camel.dataformat.bindy.util.Converter;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
@@ -60,7 +60,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         byte[] crlf;
 
         // Get CRLF
-        crlf = Converter.getByteReturn(factory.getCarriageReturn());
+        crlf = ConverterUtils.getByteReturn(factory.getCarriageReturn());
 
         for (Map<String, Object> model : models) {
             String result = factory.unbind(model);

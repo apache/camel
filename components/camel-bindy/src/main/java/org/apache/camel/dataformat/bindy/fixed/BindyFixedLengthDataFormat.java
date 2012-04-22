@@ -28,7 +28,7 @@ import java.util.Scanner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
-import org.apache.camel.dataformat.bindy.util.Converter;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
@@ -60,7 +60,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
-        byte[] bytesCRLF = Converter.getByteReturn(factory.getCarriageReturn());
+        byte[] bytesCRLF = ConverterUtils.getByteReturn(factory.getCarriageReturn());
 
         List<Map<String, Object>> models;
 

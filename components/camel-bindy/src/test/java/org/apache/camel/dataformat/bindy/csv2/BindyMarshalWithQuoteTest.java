@@ -18,7 +18,7 @@ package org.apache.camel.dataformat.bindy.csv2;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.util.Converter;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class BindyMarshalWithQuoteTest extends CamelTestSupport {
     @Test
     public void testBindyMarshalWithQuote() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("\"123\",\"Wednesday, November 9, 2011\",\"Central California\"" + Converter.getStringCarriageReturn("WINDOWS"));
+        mock.expectedBodiesReceived("\"123\",\"Wednesday, November 9, 2011\",\"Central California\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         WeatherModel model = new WeatherModel();
         model.setId(123);
