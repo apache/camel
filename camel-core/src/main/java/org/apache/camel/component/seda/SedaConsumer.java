@@ -60,10 +60,12 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     private AsyncProcessor processor;
     private ExecutorService executor;
     private ExceptionHandler exceptionHandler;
+    private final int pollTimeout;
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
+        this.pollTimeout = endpoint.getPollTimeout();
     }
 
     @Override
@@ -143,7 +145,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             if (getEndpoint().getCamelContext().getStatus().isStarting()) {
                 LOG.trace("CamelContext is starting so skip polling");
                 try {
-                    Thread.sleep(1000);
+                    // sleep at most 1 sec
+                    Thread.sleep(Math.min(pollTimeout, 1000));
                 } catch (InterruptedException e) {
                     LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                 }
@@ -154,7 +157,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             if (isSuspending() || isSuspended()) {
                 LOG.trace("Consumer is suspended so skip polling");
                 try {
-                    Thread.sleep(1000);
+                    // sleep at most 1 sec
+                    Thread.sleep(Math.min(pollTimeout, 1000));
                 } catch (InterruptedException e) {
                     LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                 }
@@ -163,7 +167,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
             Exchange exchange = null;
             try {
-                exchange = queue.poll(1000, TimeUnit.MILLISECONDS);
+                // use the end user configured poll timeout
+                exchange = queue.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 if (exchange != null) {
                     try {
                         // send a new copied exchange with new camel context
@@ -309,7 +314,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
         // submit needed number of tasks
         int tasks = poolSize - taskCount.get();
-        LOG.debug("Creating {} consumer tasks", tasks);
+        LOG.debug("Creating {} consumer tasks with poll timeout {} ms.", tasks, pollTimeout);
         for (int i = 0; i < tasks; i++) {
             executor.execute(this);
         }
