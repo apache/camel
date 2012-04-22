@@ -19,6 +19,7 @@ package org.apache.camel.management;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import javax.management.MBeanServerConnection;
@@ -47,7 +48,7 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
         String os = System.getProperty("os.name");
         // Does not work on AIX and the problem is hard to identify, could be issues not allowing to use a custom port
         // java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.NameNotFoundException: jmxrmi/camel
-        return !os.toLowerCase().contains("aix");
+        return !os.toLowerCase(Locale.ENGLISH).contains("aix");
     }
 
     @Override

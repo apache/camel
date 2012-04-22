@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.Locale;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -322,7 +324,7 @@ public final class CamelContextHelper {
         // ensure we support property placeholders
         String s = camelContext.resolvePropertyPlaceholders(text);
         if (s != null) {
-            s = s.trim().toLowerCase();
+            s = s.trim().toLowerCase(Locale.ENGLISH);
             if (s.equals("true") || s.equals("false")) {
                 return "true".equals(s) ? Boolean.TRUE : Boolean.FALSE;
             } else {

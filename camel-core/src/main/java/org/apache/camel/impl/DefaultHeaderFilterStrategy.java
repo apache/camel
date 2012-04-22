@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -218,7 +219,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             
         if (filter != null) {
             if (isLowerCase()) {
-                if (filter.contains(headerName.toLowerCase())) {
+                if (filter.contains(headerName.toLowerCase(Locale.ENGLISH))) {
                     return true;
                 }
             } else {

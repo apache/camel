@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
@@ -78,7 +79,7 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
         if (messageFrequency > 0) {
             return "SamplingThrottler[1 exchange per: " + messageFrequency + " messages received -> " + getProcessor() + "]";
         } else {
-            return "SamplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase() + " -> " + getProcessor() + "]";
+            return "SamplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH) + " -> " + getProcessor() + "]";
         }
     }
 
@@ -86,7 +87,7 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
         if (messageFrequency > 0) {
             return "samplingThrottler[1 exchange per: " + messageFrequency + " messages received]";
         } else {
-            return "samplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase() + "]";
+            return "samplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH) + "]";
         }
     }
 
