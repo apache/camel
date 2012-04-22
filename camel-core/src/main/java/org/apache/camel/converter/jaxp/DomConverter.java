@@ -34,8 +34,6 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
-
-
 /**
  * Converts from some DOM types to Java types
  *
@@ -89,7 +87,7 @@ public final class DomConverter {
     }
 
     @Converter
-    public Integer toInteger(NodeList nodeList) {
+    public static Integer toInteger(NodeList nodeList) {
         StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
         String s = buffer.toString();
@@ -97,7 +95,7 @@ public final class DomConverter {
     }
 
     @Converter
-    public Long toLong(NodeList nodeList) {
+    public static Long toLong(NodeList nodeList) {
         StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
         String s = buffer.toString();

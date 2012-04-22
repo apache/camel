@@ -40,8 +40,7 @@ public class CamelConverterTest extends ContextTestSupport {
         exchange.getIn().setHeader("foo", "bar");
         exchange.getIn().setBody("Hello World");
 
-        CamelConverter cc = new CamelConverter();
-        Processor pro = cc.toProcessor(exp);
+        Processor pro = CamelConverter.toProcessor(exp);
 
         pro.process(exchange);
 
@@ -55,8 +54,7 @@ public class CamelConverterTest extends ContextTestSupport {
         exchange.getIn().setHeader("foo", "bar");
         exchange.getIn().setBody("Hello World");
 
-        CamelConverter cc = new CamelConverter();
-        Processor pro = cc.toProcessor(pred);
+        Processor pro = CamelConverter.toProcessor(pred);
 
         pro.process(exchange);
 
