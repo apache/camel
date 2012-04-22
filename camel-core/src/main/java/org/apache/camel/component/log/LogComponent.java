@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.log;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -64,7 +65,7 @@ public class LogComponent extends DefaultComponent {
      */
     protected LoggingLevel getLoggingLevel(Map<String, Object> parameters) {
         String levelText = getAndRemoveParameter(parameters, "level", String.class, "INFO");
-        return LoggingLevel.valueOf(levelText.toUpperCase());
+        return LoggingLevel.valueOf(levelText.toUpperCase(Locale.ENGLISH));
     }
 
 }

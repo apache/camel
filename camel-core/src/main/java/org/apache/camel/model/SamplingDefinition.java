@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -67,7 +68,7 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
             return "Sample[1 Exchange per " + getMessageFrequency() + " messages received -> " + getOutputs() + "]";
         } else {
             TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-            return "Sample[1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase() + " -> " + getOutputs() + "]";
+            return "Sample[1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase(Locale.ENGLISH) + " -> " + getOutputs() + "]";
         }
     }
 
@@ -82,7 +83,7 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
             return "sample[1 Exchange per " + getMessageFrequency() + " messages received]";
         } else {
             TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-            return "sample[1 Exchange per " + getSamplePeriod() + " " + tu.name().toLowerCase() + "]";
+            return "sample[1 Exchange per " + getSamplePeriod() + " " + tu.name().toLowerCase(Locale.ENGLISH) + "]";
         }
     }
 

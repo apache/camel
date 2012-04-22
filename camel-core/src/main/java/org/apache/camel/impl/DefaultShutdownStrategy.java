@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -117,7 +118,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         if (timeout > 0) {
-            LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase() + ")");
+            LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH) + ")");
         } else {
             LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (no timeout)");
         }
