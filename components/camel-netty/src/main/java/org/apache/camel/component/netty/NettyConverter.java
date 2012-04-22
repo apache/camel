@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.netty;
 
 import java.io.IOException;
@@ -66,7 +65,6 @@ public final class NettyConverter {
     @Converter
     public static ChannelBuffer toByteBuffer(byte[] bytes) {
         ChannelBuffer buf = new DynamicChannelBuffer(bytes.length);
-
         buf.writeBytes(bytes);
         return buf;
     }

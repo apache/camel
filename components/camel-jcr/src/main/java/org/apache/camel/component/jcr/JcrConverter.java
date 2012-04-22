@@ -31,25 +31,28 @@ import org.apache.jackrabbit.value.StringValue;
  * A helper class to transform Object into JCR {@link Value} implementations 
  */
 @Converter
-public class JcrConverter {
+public final class JcrConverter {
+
+    private JcrConverter() {
+    }
 
     @Converter
-    public Value toValue(Boolean bool) {
+    public static Value toValue(Boolean bool) {
         return new BooleanValue(bool);
     }
 
     @Converter
-    public Value toValue(InputStream stream) {
+    public static Value toValue(InputStream stream) {
         return new BinaryValue(stream);
     }
 
     @Converter
-    public Value toValue(Calendar calendar) {
+    public static Value toValue(Calendar calendar) {
         return new DateValue(calendar);
     }
 
     @Converter
-    public Value toValue(String value) {
+    public static Value toValue(String value) {
         return new StringValue(value);
     }
 
