@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -39,7 +40,7 @@ public class ManagedShutdownStrategyTest extends ManagementTestSupport {
         assertEquals(300, timeout.longValue());
 
         TimeUnit unit = (TimeUnit) mbeanServer.getAttribute(on, "TimeUnit");
-        assertEquals("seconds", unit.toString().toLowerCase());
+        assertEquals("seconds", unit.toString().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

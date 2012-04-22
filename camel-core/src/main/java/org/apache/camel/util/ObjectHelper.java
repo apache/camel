@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
@@ -404,7 +405,7 @@ public final class ObjectHelper {
         if (length == 0) {
             return text;
         }
-        String answer = text.substring(0, 1).toUpperCase();
+        String answer = text.substring(0, 1).toUpperCase(Locale.ENGLISH);
         if (length > 1) {
             answer += text.substring(1, length);
         }
@@ -1077,7 +1078,7 @@ public final class ObjectHelper {
     public static String getPropertyName(Method method) {
         String propertyName = method.getName();
         if (propertyName.startsWith("set") && method.getParameterTypes().length == 1) {
-            propertyName = propertyName.substring(3, 4).toLowerCase() + propertyName.substring(4);
+            propertyName = propertyName.substring(3, 4).toLowerCase(Locale.ENGLISH) + propertyName.substring(4);
         }
         return propertyName;
     }

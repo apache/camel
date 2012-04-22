@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -71,7 +72,7 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
             return "1 Exchange per " + getMessageFrequency() + " messages received";
         } else {
             TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-            return "1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase();
+            return "1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase(Locale.ENGLISH);
         }
     }
 

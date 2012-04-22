@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -155,7 +156,7 @@ public final class ConfigurationHelper {
 
         // now try to set the field value
         try {
-            String setterName = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
+            String setterName = "set" + name.substring(0, 1).toUpperCase(Locale.ENGLISH) + name.substring(1);
             Method setter = config.getClass().getMethod(setterName, field.getType());
             setter.invoke(config, TC.convertTo(field.getType(), value));
         } catch (Exception e) {

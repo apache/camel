@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,7 +49,7 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
     protected boolean canRunOnThisPlatform() {
         String os = System.getProperty("os.name");
         // HP-UX is just to slow to run this test
-        return !os.toLowerCase().contains("hp-ux");
+        return !os.toLowerCase(Locale.ENGLISH).contains("hp-ux");
     }
 
     @Override

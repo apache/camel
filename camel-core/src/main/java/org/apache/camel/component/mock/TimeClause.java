@@ -17,6 +17,7 @@
 package org.apache.camel.component.mock;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -180,7 +181,7 @@ public class TimeClause extends BinaryPredicateSupport {
         if (timeFrom == null) {
             return "no later than " + timeTo + " " + getOperationText() + " (" + was + ")";
         } else {
-            return "between " + timeFrom.getNumber() + "-" + timeTo.getNumber() + " " + timeTo.getTimeUnit().toString().toLowerCase()
+            return "between " + timeFrom.getNumber() + "-" + timeTo.getNumber() + " " + timeTo.getTimeUnit().toString().toLowerCase(Locale.ENGLISH)
                     + " " + getOperationText() + " (" + was + ")";
         }
     }

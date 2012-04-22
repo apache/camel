@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.async;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -41,7 +42,7 @@ public class MyAsyncComponent extends DefaultComponent {
         String result = "";
         for (String word : words) {
             result += result.isEmpty() ? "" : " ";
-            result += word.substring(0, 1).toUpperCase() + word.substring(1);
+            result += word.substring(0, 1).toUpperCase(Locale.ENGLISH) + word.substring(1);
         }
         return result;
     }

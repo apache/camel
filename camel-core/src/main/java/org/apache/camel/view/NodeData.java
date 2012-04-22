@@ -18,6 +18,7 @@ package org.apache.camel.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
@@ -152,7 +153,7 @@ public class NodeData {
             }
         }
         if (isEmpty(this.url) && isNotEmpty(this.nodeType)) {
-            this.url = "http://camel.apache.org/" + this.nodeType.toLowerCase().replace(' ', '-') + ".html";
+            this.url = "http://camel.apache.org/" + this.nodeType.toLowerCase(Locale.ENGLISH).replace(' ', '-') + ".html";
         }
         if (node instanceof ProcessorDefinition && this.outputs == null) {
             ProcessorDefinition<?> processorType = (ProcessorDefinition<?>)node;

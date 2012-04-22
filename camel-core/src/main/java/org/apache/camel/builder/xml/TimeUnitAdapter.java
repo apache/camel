@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
@@ -39,7 +40,7 @@ public class TimeUnitAdapter extends XmlAdapter<String, TimeUnit> {
     public TimeUnit unmarshal(String v) throws Exception {
         TimeUnit result = null;
         if (v != null) {
-            result = TimeUnit.valueOf(v.toUpperCase());
+            result = TimeUnit.valueOf(v.toUpperCase(Locale.ENGLISH));
         }
         return result;
     }
