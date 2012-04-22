@@ -67,7 +67,7 @@ public final class StreamCaching implements InterceptStrategy {
      */
     public static void noStreamCaching(List<InterceptStrategy> interceptors) {
         for (InterceptStrategy strategy : interceptors) {
-            if (strategy instanceof StreamCachingInterceptor) {
+            if (strategy instanceof StreamCaching) {
                 interceptors.remove(strategy);
             }
         }
