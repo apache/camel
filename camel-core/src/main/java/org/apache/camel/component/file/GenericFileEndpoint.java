@@ -71,6 +71,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean delete;
     protected boolean flatten;
     protected int maxMessagesPerPoll;
+    protected boolean eagerMaxMessagesPerPoll = true;
     protected int maxDepth = Integer.MAX_VALUE;
     protected int minDepth;
     protected String tempPrefix;
@@ -556,6 +557,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
+    public boolean isEagerMaxMessagesPerPoll() {
+        return eagerMaxMessagesPerPoll;
+    }
+
+    public void setEagerMaxMessagesPerPoll(boolean eagerMaxMessagesPerPoll) {
+        this.eagerMaxMessagesPerPoll = eagerMaxMessagesPerPoll;
+    }
+
     public int getMaxDepth() {
         return maxDepth;
     }
@@ -565,7 +574,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     public int getMinDepth() {
-
         return minDepth;
     }
 

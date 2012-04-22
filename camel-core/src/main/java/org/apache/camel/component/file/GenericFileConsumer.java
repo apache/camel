@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -49,6 +50,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
     protected Processor customProcessor;
+    protected boolean eagerLimitMaxMessagesPerPoll = true;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
@@ -75,9 +77,18 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         this.customProcessor = processor;
     }
 
+    public boolean isEagerLimitMaxMessagesPerPoll() {
+        return eagerLimitMaxMessagesPerPoll;
+    }
+
+    public void setEagerLimitMaxMessagesPerPoll(boolean eagerLimitMaxMessagesPerPoll) {
+        this.eagerLimitMaxMessagesPerPoll = eagerLimitMaxMessagesPerPoll;
+    }
+
     /**
      * Poll for files
      */
+    @SuppressWarnings("unchecked")
     protected int poll() throws Exception {
         // must reset for each poll
         fileExpressionResult = null;
@@ -114,6 +125,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         }
 
         // sort using build in sorters so we can use expressions
+        // use a linked list so we can deque the exchanges
         LinkedList<Exchange> exchanges = new LinkedList<Exchange>();
         for (GenericFile<T> file : files) {
             Exchange exchange = endpoint.createExchange(file);
@@ -126,13 +138,24 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             Collections.sort(exchanges, endpoint.getSortBy());
         }
 
+        // use a queue for the exchanges
+        Deque<Exchange> q = exchanges;
+
+        // we are not eager limiting, but we have configured a limit, so cut the list of files
+        if (!eagerLimitMaxMessagesPerPoll && maxMessagesPerPoll > 0) {
+            if (files.size() > maxMessagesPerPoll) {
+                log.debug("Limiting maximum messages to poll at {} files as there was more messages in this poll.", maxMessagesPerPoll);
+                // must first remove excessive files from the in progress repository
+                removeExcessiveInProgressFiles(q, maxMessagesPerPoll);
+            }
+        }
+
         // consume files one by one
         int total = exchanges.size();
         if (total > 0) {
             log.debug("Total {} files to consume", total);
         }
 
-        Queue<Exchange> q = exchanges;
         int polledMessages = processBatch(CastUtils.cast(q));
 
         postPollCheck();
@@ -176,15 +199,22 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             }
         }
 
+        // drain any in progress files as we are done with this batch
+        removeExcessiveInProgressFiles((Deque) exchanges, 0);
+
+        return total;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void removeExcessiveInProgressFiles(Deque exchanges, int limit) {
         // remove the file from the in progress list in case the batch was limited by max messages per poll
-        while (exchanges.size() > 0) {
-            Exchange exchange = (Exchange) exchanges.poll();
+        while (exchanges.size() > limit) {
+            // must remove last
+            Exchange exchange = (Exchange) exchanges.removeLast();
             GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
         }
-
-        return total;
     }
 
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
@@ -242,6 +272,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * @return <tt>true</tt> to continue, <tt>false</tt> to stop due hitting maxMessagesPerPoll limit
      */
     public boolean canPollMoreFiles(List<?> fileList) {
+        // at this point we should not limit if we are not eager
+        if (!eagerLimitMaxMessagesPerPoll) {
+            return true;
+        }
+
         if (maxMessagesPerPoll <= 0) {
             // no limitation
             return true;
