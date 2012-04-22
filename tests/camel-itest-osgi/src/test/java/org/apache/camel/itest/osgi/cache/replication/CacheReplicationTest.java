@@ -17,6 +17,7 @@
 package org.apache.camel.itest.osgi.cache.replication;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,9 +31,8 @@ import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
-
-
 @RunWith(JUnit4TestRunner.class)
+@Ignore("Fix me")
 public class CacheReplicationTest extends OSGiIntegrationSpringTestSupport {
 
     @Override
@@ -40,7 +40,6 @@ public class CacheReplicationTest extends OSGiIntegrationSpringTestSupport {
         return new OsgiBundleXmlApplicationContext(new String[]{
             "org/apache/camel/itest/osgi/cache/replication/JMSReplicationCamelContext.xml"});
     }
-
 
     @Test
     public void testCache() throws Exception {

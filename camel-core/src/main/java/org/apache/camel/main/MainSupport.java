@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -108,7 +109,7 @@ public abstract class MainSupport extends ServiceSupport {
                 "Sets the time duration that the application will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
                 "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                String value = parameter.toUpperCase();
+                String value = parameter.toUpperCase(Locale.ENGLISH);
                 if (value.endsWith("S")) {
                     value = value.substring(0, value.length() - 1);
                     setTimeUnit(TimeUnit.SECONDS);

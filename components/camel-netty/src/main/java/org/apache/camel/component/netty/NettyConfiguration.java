@@ -68,8 +68,6 @@ public class NettyConfiguration implements Cloneable {
     private long sendBufferSize = 65536;
     private long receiveBufferSize = 65536;
     private int receiveBufferSizePredictor;
-    private int corePoolSize = 10;
-    private int maxPoolSize = 100;
     private int workerCount;
     private String keyStoreFormat;
     private String securityProvider;
@@ -383,22 +381,6 @@ public class NettyConfiguration implements Cloneable {
 
     public void setTrustStoreFile(File trustStoreFile) {
         this.trustStoreFile = trustStoreFile;
-    }
-
-    public int getCorePoolSize() {
-        return corePoolSize;
-    }
-
-    public void setCorePoolSize(int corePoolSize) {
-        this.corePoolSize = corePoolSize;
-    }
-
-    public int getMaxPoolSize() {
-        return maxPoolSize;
-    }
-
-    public void setMaxPoolSize(int maxPoolSize) {
-        this.maxPoolSize = maxPoolSize;
     }
 
     public String getKeyStoreFormat() {

@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -139,7 +140,7 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
     }
 
     private static String assembleKey(Object key) {
-        String s = key.toString().toLowerCase();
+        String s = key.toString().toLowerCase(Locale.ENGLISH);
         if (s.startsWith("camel")) {
             // use intern String for headers which is Camel* headers
             // this reduces memory allocations needed for those common headers

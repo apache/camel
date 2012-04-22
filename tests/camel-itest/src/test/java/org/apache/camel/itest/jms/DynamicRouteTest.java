@@ -57,7 +57,7 @@ public class DynamicRouteTest extends CamelTestSupport {
                 from("jms:queue:request") 
                     .dynamicRouter().method(MyDynamicRouter.class, "route");
                 from("direct:start")
-                    .dynamicRouter(bean(new MyDynamicRouter()));
+                    .dynamicRouter(method(new MyDynamicRouter()));
             }
 
         };

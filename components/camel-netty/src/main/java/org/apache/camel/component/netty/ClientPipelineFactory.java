@@ -16,53 +16,30 @@
  */
 package org.apache.camel.component.netty;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.Channels;
 
+/**
+ * Factory to create {@link ChannelPipeline} for clients, eg {@link NettyProducer}.
+ * <p/>
+ * Implementators should use implement the {@link #getPipeline(NettyProducer)} method.
+ *
+ * @see ChannelPipelineFactory
+ */
 public abstract class ClientPipelineFactory implements ChannelPipelineFactory {
-    protected NettyProducer producer;
-    protected Exchange exchange;
-    protected AsyncCallback callback;
 
     public ClientPipelineFactory() {
     }
-    
-    public ClientPipelineFactory(NettyProducer producer, Exchange exchange, AsyncCallback callback) {
-        this.producer = producer;
-        this.exchange = exchange;
-        this.callback = callback;
-    }
-    
+
+    /**
+     * Returns a newly created {@link ChannelPipeline}.
+     *
+     * @param producer the netty producer
+     */
+    public abstract ChannelPipeline getPipeline(NettyProducer producer) throws Exception;
+
+    @Override
     public ChannelPipeline getPipeline() throws Exception {
-        ChannelPipeline channelPipeline = Channels.pipeline();
-        return channelPipeline;
+        throw new UnsupportedOperationException("use getPipeline(NettyProducer) instead");
     }
-
-    public NettyProducer getProducer() {
-        return producer;
-    }
-
-    public void setProducer(NettyProducer producer) {
-        this.producer = producer;
-    }
-
-    public Exchange getExchange() {
-        return exchange;
-    }
-
-    public void setExchange(Exchange exchange) {
-        this.exchange = exchange;
-    }
-
-    public AsyncCallback getCallback() {
-        return callback;
-    }
-
-    public void setCallback(AsyncCallback callback) {
-        this.callback = callback;
-    }
-
 }

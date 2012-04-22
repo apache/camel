@@ -39,6 +39,7 @@
     <module>camel-example-cxf-osgi</module>
     <module>camel-example-cxf-proxy</module>
     <module>camel-example-cxf-tomcat</module>
+    <module>camel-example-console</module>
     <module>camel-example-docs</module>
     <module>camel-example-etl</module>
     <module>camel-example-gae</module>

@@ -17,7 +17,7 @@
 package org.apache.camel.web.resources;
 
 /**
- * @version 
+ *
  */
 public final class Constants {
 

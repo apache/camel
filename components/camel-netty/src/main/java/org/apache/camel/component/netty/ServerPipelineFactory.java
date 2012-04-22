@@ -18,29 +18,26 @@ package org.apache.camel.component.netty;
 
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.Channels;
 
+/**
+ * Factory to create {@link ChannelPipeline} for clients, eg {@link NettyConsumer}.
+ * <p/>
+ * Implementators should use implement the {@link #getPipeline(NettyConsumer)} method.
+ *
+ * @see ChannelPipelineFactory
+ */
 public abstract class ServerPipelineFactory implements ChannelPipelineFactory {
-    protected NettyConsumer consumer;
-      
-    public ServerPipelineFactory() {
-    }
-    
-    public ServerPipelineFactory(NettyConsumer consumer) {
-        this.consumer = consumer; 
-    }    
 
+    /**
+     * Returns a newly created {@link ChannelPipeline}.
+     *
+     * @param consumer the netty consumer
+     */
+    public abstract ChannelPipeline getPipeline(NettyConsumer consumer) throws Exception;
+
+    @Override
     public ChannelPipeline getPipeline() throws Exception {
-        ChannelPipeline channelPipeline = Channels.pipeline();
-        return channelPipeline;
+        throw new UnsupportedOperationException("use getPipeline(NettyConsumer) instead");
     }
 
-    public NettyConsumer getConsumer() {
-        return consumer;
-    }
-
-    public void setConsumer(NettyConsumer consumer) {
-        this.consumer = consumer;
-    }
-    
 }

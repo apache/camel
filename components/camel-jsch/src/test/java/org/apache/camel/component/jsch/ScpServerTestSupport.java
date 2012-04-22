@@ -95,7 +95,7 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
 
         if (sshd != null) {
             try {
-                sshd.stop();
+                sshd.stop(true);
                 sshd = null;
             } catch (Exception e) {
                 // ignore while shutting down as we could be polling during shutdown

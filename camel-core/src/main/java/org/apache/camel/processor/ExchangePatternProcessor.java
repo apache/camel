@@ -19,8 +19,9 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ServiceSupport;
 
-public class ExchangePatternProcessor implements Processor {
+public class ExchangePatternProcessor extends ServiceSupport implements Processor {
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     
     public ExchangePatternProcessor() {
@@ -41,5 +42,15 @@ public class ExchangePatternProcessor implements Processor {
     @Override
     public String toString() {
         return "SetExchangePattern[" + exchangePattern + "]";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

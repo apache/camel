@@ -41,7 +41,7 @@ public interface Endpoint extends IsSingleton, Service {
     /**
      * Returns the object representation of the endpoint configuration
      *
-     * @return the endpoint URI
+     * @return the endpoint configuration
      */
     EndpointConfiguration getEndpointConfiguration();
 

@@ -85,7 +85,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
                    .to("mock:result");
 
                 from("direct:bean").routeId("myBeanRoute")
-                   .setHeader("foo", bean("myCoolBean"))
+                   .setHeader("foo", method("myCoolBean"))
                    .to("mock:result");
             }
         };

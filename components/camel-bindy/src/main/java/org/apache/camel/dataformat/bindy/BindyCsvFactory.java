@@ -33,7 +33,7 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.format.FormatException;
-import org.apache.camel.dataformat.bindy.util.Converter;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -233,7 +233,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         // Check if separator exists
         ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
 
-        char separator = Converter.getCharDelimitor(this.getSeparator());
+        char separator = ConverterUtils.getCharDelimiter(this.getSeparator());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Separator converted: '0x{}', from: {}", Integer.toHexString(separator), this.getSeparator());
@@ -308,7 +308,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 }
 
                 if (it.hasNext()) {
-                    buffer.append(Converter.getStringCarriageReturn(getCarriageReturn()));
+                    buffer.append(ConverterUtils.getStringCarriageReturn(getCarriageReturn()));
                 }
             }
         }

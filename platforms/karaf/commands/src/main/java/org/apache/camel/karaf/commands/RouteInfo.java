@@ -92,7 +92,11 @@ public class RouteInfo extends OsgiCommandSupport {
                 System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + "ms"));
                 Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
                 System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + "ms"));
-
+                String load01 = (String) mBeanServer.getAttribute(routeMBean, "Load01");
+                String load05 = (String) mBeanServer.getAttribute(routeMBean, "Load05");
+                String load15 = (String) mBeanServer.getAttribute(routeMBean, "Load15");
+                System.out.println(StringEscapeUtils.unescapeJava("\tLoad Avg: " + load01 + ", " + load05 + ", " + load15));
+                
                 // Test for null to see if a any exchanges have been processed first to avoid NPE
                 Object firstExchangeTimestampObj = mBeanServer.getAttribute(routeMBean, "FirstExchangeCompletedTimestamp");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

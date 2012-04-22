@@ -159,6 +159,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         handleProvidesBreakpoint(context, testClass);
         handleShutdownTimeout(context, testClass);
         handleMockEndpoints(context, testClass);
+        handleMockEndpointsAndSkip(context, testClass);
         handleLazyLoadTypeConverters(context, testClass);
         
         // CamelContext(s) startup
@@ -416,6 +417,33 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                             + "CamelContext with name [{}].", mockEndpoints, contextName);
                     camelContext.addRegisterEndpointCallback(
                             new InterceptSendToMockEndpointStrategy(mockEndpoints));
+                }
+            });
+        }
+    }
+    
+    /**
+     * Handles auto-intercepting of endpoints with mocks based on {@link MockEndpoints} and skipping the
+     * original endpoint.
+     *
+     * @param context the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    protected void handleMockEndpointsAndSkip(GenericApplicationContext context, Class<?> testClass) throws Exception {
+        if (testClass.isAnnotationPresent(MockEndpoints.class)) {
+            
+            final String mockEndpoints = testClass.getAnnotation(
+                    MockEndpoints.class).value();
+            CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
+                
+                @Override
+                public void execute(String contextName, SpringCamelContext camelContext)
+                    throws Exception {
+                    
+                    LOG.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on "
+                            + "CamelContext with name [{}].", mockEndpoints, contextName);
+                    camelContext.addRegisterEndpointCallback(
+                            new InterceptSendToMockEndpointStrategy(mockEndpoints, true));
                 }
             });
         }

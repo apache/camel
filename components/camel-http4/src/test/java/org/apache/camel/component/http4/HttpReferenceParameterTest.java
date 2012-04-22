@@ -20,6 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.client.HttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 
 /**
@@ -29,19 +31,21 @@ import org.junit.Test;
  */
 public class HttpReferenceParameterTest extends CamelTestSupport {
 
-    private static final String TEST_URI_1 = "http4://localhost:8080?httpBindingRef=#customBinding&httpClientConfigurerRef=#customConfigurer";
-    private static final String TEST_URI_2 = "http4://localhost:8081?httpBindingRef=customBinding&httpClientConfigurerRef=customConfigurer";
+    private static final String TEST_URI_1 = "http4://localhost:8080?httpBindingRef=#customBinding&httpClientConfigurerRef=#customConfigurer&httpContext=#customContext";
+    private static final String TEST_URI_2 = "http4://localhost:8081?httpBindingRef=customBinding&httpClientConfigurerRef=customConfigurer&httpContext=customContext";
 
     private HttpEndpoint endpoint1;
     private HttpEndpoint endpoint2;
 
     private TestHttpBinding testBinding;
     private TestClientConfigurer testConfigurer;
+    private HttpContext testHttpContext;
 
     @Override
     public void setUp() throws Exception {
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();
+        this.testHttpContext = new BasicHttpContext();
         super.setUp();
         this.endpoint1 = context.getEndpoint(TEST_URI_1, HttpEndpoint.class);
         this.endpoint2 = context.getEndpoint(TEST_URI_2, HttpEndpoint.class);
@@ -59,11 +63,18 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
         assertSame(testConfigurer, endpoint2.getHttpClientConfigurer());
     }
 
+    @Test
+    public void testHttpContextRef() {
+        assertSame(testHttpContext, endpoint1.getHttpContext());
+        assertSame(testHttpContext, endpoint2.getHttpContext());
+    }
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         registry.bind("customBinding", testBinding);
         registry.bind("customConfigurer", testConfigurer);
+        registry.bind("customContext", testHttpContext);
         return registry;
     }
 

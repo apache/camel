@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.Builder;
+import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.RouteContext;
 
@@ -52,7 +51,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     }
 
     public RoutingSlipDefinition(String headerName, String uriDelimiter) {
-        super(Builder.header(headerName));
+        super(new HeaderExpression(headerName));
         setUriDelimiter(uriDelimiter);
     }
     

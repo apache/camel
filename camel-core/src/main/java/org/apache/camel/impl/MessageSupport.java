@@ -68,15 +68,14 @@ public abstract class MessageSupport implements Message {
 
             // lets first try converting the body itself first
             // as for some types like InputStream v Reader its more efficient to do the transformation
-            // from the body itself as its got efficient implementations of them, before trying the
-            // message
-            T answer = converter.convertTo(type, getExchange(), body);
+            // from the body itself as its got efficient implementations of them, before trying the message
+            T answer = converter.convertTo(type, e, body);
             if (answer != null) {
                 return answer;
             }
 
-            // fallback to the message itself (e.g. used in camel-http)
-            answer = converter.convertTo(type, getExchange(), this);
+            // fallback and try the message itself (e.g. used in camel-http)
+            answer = converter.tryConvertTo(type, e, this);
             if (answer != null) {
                 return answer;
             }

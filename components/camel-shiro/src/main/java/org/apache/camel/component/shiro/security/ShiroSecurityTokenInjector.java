@@ -17,11 +17,13 @@
 package org.apache.camel.component.shiro.security;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.util.IOHelper;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
 import org.apache.shiro.util.ByteSource;
@@ -55,14 +57,15 @@ public class ShiroSecurityTokenInjector implements Processor {
     }
 
     public ByteSource encrypt() throws Exception {
-        ByteArrayOutputStream stream = new  ByteArrayOutputStream();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
         ObjectOutput serialStream = new ObjectOutputStream(stream);
-        serialStream.writeObject(securityToken);
-        ByteSource byteSource = cipherService.encrypt(stream.toByteArray(), passPhrase);
-        serialStream.close();
-        stream.close();
-        
-        return byteSource;
+        try {
+            serialStream.writeObject(securityToken);
+            return cipherService.encrypt(stream.toByteArray(), passPhrase);
+        } finally {
+            close(serialStream);
+            IOHelper.close(stream);
+        }
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -92,5 +95,13 @@ public class ShiroSecurityTokenInjector implements Processor {
     public void setCipherService(CipherService cipherService) {
         this.cipherService = cipherService;
     }
-    
+
+    private static void close(ObjectOutput output) {
+        try {
+            output.close();
+        } catch (IOException e) {
+            // ignore
+        }
+    }
+
 }

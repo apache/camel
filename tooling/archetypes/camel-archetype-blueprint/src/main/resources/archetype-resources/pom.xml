@@ -115,6 +115,17 @@
           <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
+
+      <!-- to run the example using mvn camel:run -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel-version}</version>
+        <configuration>
+          <useBlueprint>true</useBlueprint>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 

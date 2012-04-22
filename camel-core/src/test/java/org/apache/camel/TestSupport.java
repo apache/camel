@@ -182,10 +182,10 @@ public abstract class TestSupport extends TestCase {
 
         Object actual;
         if (expected == null) {
-            actual = ExchangeHelper.getMandatoryInBody(exchange);
+            actual = exchange.getIn().getMandatoryBody();
             assertEquals("in body of: " + exchange, expected, actual);
         } else {
-            actual = ExchangeHelper.getMandatoryInBody(exchange, expected.getClass());
+            actual = exchange.getIn().getMandatoryBody(expected.getClass());
         }
         assertEquals("in body of: " + exchange, expected, actual);
 
@@ -204,10 +204,10 @@ public abstract class TestSupport extends TestCase {
 
         Object actual;
         if (expected == null) {
-            actual = ExchangeHelper.getMandatoryOutBody(exchange);
+            actual = exchange.getOut().getMandatoryBody();
             assertEquals("output body of: " + exchange, expected, actual);
         } else {
-            actual = ExchangeHelper.getMandatoryOutBody(exchange, expected.getClass());
+            actual = exchange.getOut().getMandatoryBody(expected.getClass());
         }
         assertEquals("output body of: " + exchange, expected, actual);
 

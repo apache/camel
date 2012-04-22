@@ -18,26 +18,34 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * A processor which sets the body on the OUT message with an expression
+ * A processor which sets the body on the OUT message with an {@link Expression}
  */
-public class TransformProcessor implements Processor, Traceable {
+public class TransformProcessor extends ServiceSupport implements Processor, Traceable {
     private final Expression expression;
 
     public TransformProcessor(Expression expression) {
+        ObjectHelper.notNull(expression, "expression", this);
         this.expression = expression;
     }
 
     public void process(Exchange exchange) throws Exception {
         Object newBody = expression.evaluate(exchange, Object.class);
-        exchange.getOut().setBody(newBody);
 
-        // propagate headers and attachments
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-        exchange.getOut().setAttachments(exchange.getIn().getAttachments());
+        Message old = exchange.getIn();
+
+        // create a new message container so we do not drag specialized message objects along
+        Message msg = new DefaultMessage();
+        msg.copyFrom(old);
+        msg.setBody(newBody);
+        exchange.setOut(msg);
     }
 
     @Override
@@ -47,5 +55,15 @@ public class TransformProcessor implements Processor, Traceable {
 
     public String getTraceLabel() {
         return "transform[" + expression + "]";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

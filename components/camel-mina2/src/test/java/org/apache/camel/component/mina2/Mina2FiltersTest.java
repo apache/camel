@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.mina2;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.naming.Context;
 
 import org.apache.camel.Endpoint;
@@ -75,11 +73,6 @@ public class Mina2FiltersTest extends BaseMina2Test {
         producer.process(exchange);
 
         assertMockEndpointsSatisfied();
-
-        Field field = producer.getClass().getDeclaredField("session");
-        field.setAccessible(true);
-        IoSession session = (IoSession) field.get(producer);
-        assertTrue("There should be a test filter", session.getFilterChain().contains(TestFilter.class.getCanonicalName()));
 
         assertEquals("The filter should have been called twice (producer and consumer)", 2, TestFilter.called);
 

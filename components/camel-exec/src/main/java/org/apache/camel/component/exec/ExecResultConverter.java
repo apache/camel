@@ -61,7 +61,14 @@ public final class ExecResultConverter {
 
     @Converter
     public static String convertToString(ExecResult result, Exchange exchange) throws FileNotFoundException {
-        return convertTo(String.class, exchange, result);
+        // special for string, as we want an empty string if no output from stdin / stderr
+        InputStream is = toInputStream(result);
+        if (is != null) {
+            return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
+        } else {
+            // no stdin/stdout, so return an empty string
+            return "";
+        }
     }
 
     @Converter
@@ -82,7 +89,7 @@ public final class ExecResultConverter {
      *             the file can not be found
      */
     @SuppressWarnings("unchecked")
-    public static <T> T convertTo(Class<T> type, Exchange exchange, ExecResult result) throws FileNotFoundException {
+    private static <T> T convertTo(Class<T> type, Exchange exchange, ExecResult result) throws FileNotFoundException {
         InputStream is = toInputStream(result);
         if (is != null) {
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, is);
@@ -111,7 +118,7 @@ public final class ExecResultConverter {
      *             not be opened. In this case the out file must have had a not
      *             <code>null</code> value
      */
-    public static InputStream toInputStream(ExecResult execResult) throws FileNotFoundException {
+    private static InputStream toInputStream(ExecResult execResult) throws FileNotFoundException {
         if (execResult == null) {
             LOG.warn("Received a null ExecResult instance to convert!");
             return null;

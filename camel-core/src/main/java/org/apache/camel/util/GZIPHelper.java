@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -106,6 +107,6 @@ public final class GZIPHelper {
     }
 
     public static boolean isGzip(String header) {
-        return header != null && header.toLowerCase().contains("gzip");
+        return header != null && header.toLowerCase(Locale.ENGLISH).contains("gzip");
     }
 }

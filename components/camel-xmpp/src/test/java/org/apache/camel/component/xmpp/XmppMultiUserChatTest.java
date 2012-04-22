@@ -60,11 +60,11 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
     }
 
     protected String getProducerUri() {
-        return "xmpp://jabber.org:5222?room=camel-test&user=camel_producer&password=secret&serviceName=jabber.org";
+        return "xmpp://jabber.org:5222?room=camel-test&user=camel_producer@jabber.org&password=secret&serviceName=jabber.org";
     }
     
     protected String getConsumerUri() {
-        return "xmpp://jabber.org:5222?room=camel-test&user=camel_consumer&password=secret&serviceName=jabber.org";
+        return "xmpp://jabber.org:5222?room=camel-test&user=camel_consumer@jabber.org&password=secret&serviceName=jabber.org";
     }
 
 }

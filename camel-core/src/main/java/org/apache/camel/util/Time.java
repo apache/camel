@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -83,6 +84,6 @@ public class Time {
 
     @Override
     public String toString() {
-        return number + " " + timeUnit.toString().toLowerCase();
+        return number + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH);
     }
 }

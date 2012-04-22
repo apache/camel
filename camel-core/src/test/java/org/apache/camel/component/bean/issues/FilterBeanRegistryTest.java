@@ -57,7 +57,7 @@ public class FilterBeanRegistryTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .filter().expression(bean("foo", "isGoldCustomer"))
+                    .filter().method("foo", "isGoldCustomer")
                     .to("mock:result");
             }
         });

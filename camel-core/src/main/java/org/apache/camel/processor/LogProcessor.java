@@ -21,15 +21,16 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelLogger;
 
 /**
- * A processor which evaluates an Expression and logs it.
+ * A processor which evaluates an {@link Expression} and logs it.
  *
  * @version 
  */
-public class LogProcessor implements AsyncProcessor, Traceable {
+public class LogProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
 
     private final Expression expression;
     private final CamelLogger logger;
@@ -66,5 +67,15 @@ public class LogProcessor implements AsyncProcessor, Traceable {
 
     public String getTraceLabel() {
         return "log[" + expression + "]";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

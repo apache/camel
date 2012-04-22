@@ -31,20 +31,23 @@ import org.apache.http.entity.InputStreamEntity;
  * Some converter methods to make it easier to convert the body to RequestEntity types.
  */
 @Converter
-public class HttpEntityConverter {
+public final class HttpEntityConverter {
+
+    private HttpEntityConverter() {
+    }
 
     @Converter
-    public HttpEntity toHttpEntity(byte[] data, Exchange exchange) throws Exception {
+    public static HttpEntity toHttpEntity(byte[] data, Exchange exchange) throws Exception {
         return asHttpEntity(data, exchange);
     }
 
     @Converter
-    public HttpEntity toHttpEntity(InputStream inStream, Exchange exchange) throws Exception {
+    public static HttpEntity toHttpEntity(InputStream inStream, Exchange exchange) throws Exception {
         return asHttpEntity(inStream, exchange);
     }
 
     @Converter
-    public HttpEntity toHttpEntity(String str, Exchange exchange) throws Exception {
+    public static HttpEntity toHttpEntity(String str, Exchange exchange) throws Exception {
         if (GZIPHelper.isGzip(exchange.getIn())) {
             byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, str);
             return asHttpEntity(data, exchange);
@@ -54,13 +57,12 @@ public class HttpEntityConverter {
         }
     }
 
-    private HttpEntity asHttpEntity(InputStream in, Exchange exchange) throws IOException {
+    private static HttpEntity asHttpEntity(InputStream in, Exchange exchange) throws IOException {
         String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
         String contentType = ExchangeHelper.getContentType(exchange);
 
-        InputStreamEntity entity = null;
-        if (exchange != null
-            && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+        InputStreamEntity entity;
+        if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             entity = new InputStreamEntity(GZIPHelper.compressGzip(contentEncoding, in), -1);        
         } else {
             entity = new InputStreamEntity(in, -1);
@@ -70,13 +72,12 @@ public class HttpEntityConverter {
         return entity;
     }
 
-    private HttpEntity asHttpEntity(byte[] data, Exchange exchange) throws Exception {
+    private static HttpEntity asHttpEntity(byte[] data, Exchange exchange) throws Exception {
         String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
         String contentType = ExchangeHelper.getContentType(exchange);
 
-        InputStreamEntity entity = null;
-        if (exchange != null
-            && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+        InputStreamEntity entity;
+        if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             entity = new InputStreamEntity(GZIPHelper.compressGzip(contentEncoding, data), -1);
         } else {
             entity = new InputStreamEntity(new ByteArrayInputStream(data), -1);

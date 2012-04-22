@@ -81,6 +81,9 @@ public abstract class ContextTestSupport extends TestSupport {
     
     @Override
     protected void setUp() throws Exception {
+        // make SEDA testing faster
+        System.setProperty("CamelSedaPollTimeout", "10");
+
         if (!useJmx()) {
             disableJMX();
         } else {
@@ -129,6 +132,7 @@ public abstract class ContextTestSupport extends TestSupport {
         }
         stopCamelContext();
         System.clearProperty(JmxSystemPropertyKeys.DISABLED);
+        System.clearProperty("CamelSedaPollTimeout");
     }
 
     /**

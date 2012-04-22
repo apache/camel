@@ -37,6 +37,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.UnitOfWork;
@@ -86,6 +87,16 @@ public final class ExchangeHelper {
         return endpoint;
     }
 
+    /**
+     * Gets the mandatory property of the exchange of the correct type
+     *
+     * @param exchange      the exchange
+     * @param propertyName  the property name
+     * @param type          the type
+     * @return the property value
+     * @throws TypeConversionException is thrown if error during type conversion
+     * @throws NoSuchPropertyException is thrown if no property exists
+     */
     public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type) throws NoSuchPropertyException {
         T result = exchange.getProperty(propertyName, type);
         if (result != null) {
@@ -94,10 +105,20 @@ public final class ExchangeHelper {
         throw new NoSuchPropertyException(exchange, propertyName, type);
     }
 
-    public static <T> T getMandatoryHeader(Exchange exchange, String propertyName, Class<T> type) throws NoSuchHeaderException {
-        T answer = exchange.getIn().getHeader(propertyName, type);
+    /**
+     * Gets the mandatory inbound header of the correct type
+     *
+     * @param exchange      the exchange
+     * @param headerName    the header name
+     * @param type          the type
+     * @return the header value
+     * @throws TypeConversionException is thrown if error during type conversion
+     * @throws NoSuchHeaderException is thrown if no headers exists
+     */
+    public static <T> T getMandatoryHeader(Exchange exchange, String headerName, Class<T> type) throws TypeConversionException, NoSuchHeaderException {
+        T answer = exchange.getIn().getHeader(headerName, type);
         if (answer == null) {
-            throw new NoSuchHeaderException(exchange, propertyName, type);
+            throw new NoSuchHeaderException(exchange, headerName, type);
         }
         return answer;
     }
@@ -105,7 +126,13 @@ public final class ExchangeHelper {
     /**
      * Returns the mandatory inbound message body of the correct type or throws
      * an exception if it is not present
+     *
+     * @param exchange the exchange
+     * @return the body, is never <tt>null</tt>
+     * @throws InvalidPayloadException Is thrown if the body being <tt>null</tt> or wrong class type
+     * @deprecated use {@link org.apache.camel.Message#getMandatoryBody()}
      */
+    @Deprecated
     public static Object getMandatoryInBody(Exchange exchange) throws InvalidPayloadException {
         return exchange.getIn().getMandatoryBody();
     }
@@ -113,7 +140,9 @@ public final class ExchangeHelper {
     /**
      * Returns the mandatory inbound message body of the correct type or throws
      * an exception if it is not present
+     * @deprecated use {@link org.apache.camel.Message#getMandatoryBody(Class)}
      */
+    @Deprecated
     public static <T> T getMandatoryInBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
         return exchange.getIn().getMandatoryBody(type);
     }
@@ -121,7 +150,9 @@ public final class ExchangeHelper {
     /**
      * Returns the mandatory outbound message body of the correct type or throws
      * an exception if it is not present
+     * @deprecated use {@link org.apache.camel.Message#getMandatoryBody()}
      */
+    @Deprecated
     public static Object getMandatoryOutBody(Exchange exchange) throws InvalidPayloadException {
         return exchange.getOut().getMandatoryBody();
     }
@@ -129,15 +160,22 @@ public final class ExchangeHelper {
     /**
      * Returns the mandatory outbound message body of the correct type or throws
      * an exception if it is not present
+     * @deprecated use {@link org.apache.camel.Message#getMandatoryBody(Class)}
      */
+    @Deprecated
     public static <T> T getMandatoryOutBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
         return exchange.getOut().getMandatoryBody(type);
     }
 
     /**
      * Converts the value to the given expected type or throws an exception
+     *
+     * @return the converted value
+     * @throws TypeConversionException is thrown if error during type conversion
+     * @throws NoTypeConversionAvailableException} if no type converters exists to convert to the given type
      */
-    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value) throws NoTypeConversionAvailableException {
+    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value)
+        throws TypeConversionException, NoTypeConversionAvailableException {
         CamelContext camelContext = exchange.getContext();
         ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
         TypeConverter converter = camelContext.getTypeConverter();
@@ -148,10 +186,12 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Converts the value to the given expected type returning null if it could
-     * not be converted
+     * Converts the value to the given expected type
+     *
+     * @return the converted value
+     * @throws org.apache.camel.TypeConversionException is thrown if error during type conversion
      */
-    public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) {
+    public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException {
         CamelContext camelContext = exchange.getContext();
         ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
         TypeConverter converter = camelContext.getTypeConverter();
@@ -333,6 +373,10 @@ public final class ExchangeHelper {
 
     /**
      * Creates a new instance of the given type from the injector
+     *
+     * @param exchange the exchange
+     * @param type     the given type
+     * @return the created instance of the given type
      */
     public static <T> T newInstance(Exchange exchange, Class<T> type) {
         return exchange.getContext().getInjector().newInstance(type);
@@ -376,6 +420,9 @@ public final class ExchangeHelper {
 
     /**
      * Returns the MIME content type on the input message or null if one is not defined
+     *
+     * @param exchange the exchange
+     * @return the MIME content type
      */
     public static String getContentType(Exchange exchange) {
         return MessageHelper.getContentType(exchange.getIn());
@@ -383,6 +430,9 @@ public final class ExchangeHelper {
 
     /**
      * Returns the MIME content encoding on the input message or null if one is not defined
+     *
+     * @param exchange the exchange
+     * @return the MIME content encoding
      */
     public static String getContentEncoding(Exchange exchange) {
         return MessageHelper.getContentEncoding(exchange.getIn());
@@ -390,8 +440,13 @@ public final class ExchangeHelper {
 
     /**
      * Performs a lookup in the registry of the mandatory bean name and throws an exception if it could not be found
+     *
+     * @param exchange the exchange
+     * @param name     the bean name
+     * @return the bean
+     * @throws NoSuchBeanException if no bean could be found in the registry
      */
-    public static Object lookupMandatoryBean(Exchange exchange, String name) {
+    public static Object lookupMandatoryBean(Exchange exchange, String name) throws NoSuchBeanException {
         Object value = lookupBean(exchange, name);
         if (value == null) {
             throw new NoSuchBeanException(name);
@@ -401,6 +456,12 @@ public final class ExchangeHelper {
 
     /**
      * Performs a lookup in the registry of the mandatory bean name and throws an exception if it could not be found
+     *
+     * @param exchange the exchange
+     * @param name     the bean name
+     * @param type     the expected bean type
+     * @return the bean
+     * @throws NoSuchBeanException if no bean could be found in the registry
      */
     public static <T> T lookupMandatoryBean(Exchange exchange, String name, Class<T> type) {
         T value = lookupBean(exchange, name, type);
@@ -412,6 +473,10 @@ public final class ExchangeHelper {
 
     /**
      * Performs a lookup in the registry of the bean name
+     *
+     * @param exchange the exchange
+     * @param name     the bean name
+     * @return the bean, or <tt>null</tt> if no bean could be found
      */
     public static Object lookupBean(Exchange exchange, String name) {
         return exchange.getContext().getRegistry().lookup(name);
@@ -419,6 +484,11 @@ public final class ExchangeHelper {
 
     /**
      * Performs a lookup in the registry of the bean name and type
+     *
+     * @param exchange the exchange
+     * @param name     the bean name
+     * @param type     the expected bean type
+     * @return the bean, or <tt>null</tt> if no bean could be found
      */
     public static <T> T lookupBean(Exchange exchange, String name, Class<T> type) {
         return exchange.getContext().getRegistry().lookup(name, type);
@@ -427,6 +497,10 @@ public final class ExchangeHelper {
     /**
      * Returns the first exchange in the given collection of exchanges which has the same exchange ID as the one given
      * or null if none could be found
+     *
+     * @param exchanges  the exchanges
+     * @param exchangeId the exchangeId to find
+     * @return matching exchange, or <tt>null</tt> if none found
      */
     public static Exchange getExchangeById(Iterable<Exchange> exchanges, String exchangeId) {
         for (Exchange exchange : exchanges) {
@@ -464,28 +538,63 @@ public final class ExchangeHelper {
         }
     }
 
+    /**
+     * Checks whether the exchange has been failure handed
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if failure handled, <tt>false</tt> otherwise
+     */
     public static boolean isFailureHandled(Exchange exchange) {
         return exchange.getProperty(Exchange.FAILURE_HANDLED, false, Boolean.class);
     }
 
+    /**
+     * Checks whether the exchange {@link UnitOfWork} is exhausted
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if exhausted, <tt>false</tt> otherwise
+     */
     public static boolean isUnitOfWorkExhausted(Exchange exchange) {
         return exchange.getProperty(Exchange.UNIT_OF_WORK_EXHAUSTED, false, Boolean.class);
     }
 
+    /**
+     * Sets the exchange to be failure handled.
+     *
+     * @param exchange  the exchange
+     */
     public static void setFailureHandled(Exchange exchange) {
         exchange.setProperty(Exchange.FAILURE_HANDLED, Boolean.TRUE);
         // clear exception since its failure handled
         exchange.setException(null);
     }
 
+    /**
+     * Checks whether the exchange is redelivery exhausted
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if exhausted, <tt>false</tt> otherwise
+     */
     public static boolean isRedeliveryExhausted(Exchange exchange) {
         return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
     }
 
+    /**
+     * Checks whether the exchange {@link UnitOfWork} is redelivered
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if redelivered, <tt>false</tt> otherwise
+     */
     public static boolean isRedelivered(Exchange exchange) {
         return exchange.getIn().hasHeaders() && exchange.getIn().getHeader(Exchange.REDELIVERED, false, Boolean.class);
     }
 
+    /**
+     * Checks whether the exchange {@link UnitOfWork} has been interrupted during processing
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if interrupted, <tt>false</tt> otherwise
+     */
     public static boolean isInterrupted(Exchange exchange) {
         return exchange.getException(InterruptedException.class) != null;
     }
@@ -592,8 +701,7 @@ public final class ExchangeHelper {
      * @param type    the expected body response type
      * @return the result body, can be <tt>null</tt>.
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
-     * @throws java.util.concurrent.TimeoutException
-     *                                 is thrown if a timeout triggered
+     * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
     public static <T> T extractFutureBody(CamelContext context, Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         try {
@@ -668,6 +776,13 @@ public final class ExchangeHelper {
         return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId()  + ")";
     }
 
+    /**
+     * Copies the exchange but the copy will be tied to the given context
+     *
+     * @param exchange  the source exchange
+     * @param context   the camel context
+     * @return a copy with the given camel context
+     */
     public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context) {
         DefaultExchange answer = new DefaultExchange(context, exchange.getPattern());
         if (exchange.hasProperties()) {

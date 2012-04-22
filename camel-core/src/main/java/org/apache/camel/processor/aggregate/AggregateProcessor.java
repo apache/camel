@@ -240,7 +240,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         // prepare the exchanges for aggregation and aggregate it
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
-        answer = onAggregation(oldExchange, exchange);
+        // must catch any exception from aggregation
+        try {
+            answer = onAggregation(oldExchange, exchange);
+        } catch (Throwable e) {
+            throw new CamelExchangeException("Error occurred during aggregation", exchange, e);
+        }
         if (answer == null) {
             throw new CamelExchangeException("AggregationStrategy " + aggregationStrategy + " returned null which is not allowed", exchange);
         }
@@ -373,6 +378,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // this key has been closed so add it to the closed map
         if (closedCorrelationKeys != null) {
             closedCorrelationKeys.put(key, key);
+        }
+
+        if (fromTimeout) {
+            // invoke timeout if its timeout aware aggregation strategy,
+            // to allow any custom processing before discarding the exchange
+            if (aggregationStrategy instanceof TimeoutAwareAggregationStrategy) {
+                long timeout = getCompletionTimeout() > 0 ? getCompletionTimeout() : -1;
+                ((TimeoutAwareAggregationStrategy) aggregationStrategy).timeout(exchange, -1, -1, timeout);
+            }
         }
 
         if (fromTimeout && isDiscardOnCompletionTimeout()) {

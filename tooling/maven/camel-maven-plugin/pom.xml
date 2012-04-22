@@ -43,6 +43,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-javaconfig</artifactId>
     </dependency>
+    <!-- camel-test-blueprint has Main class for running blueprint out of container -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-blueprint</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.mojo</groupId>
       <artifactId>exec-maven-plugin</artifactId>

@@ -58,4 +58,20 @@ public class DozerTypeConverter implements TypeConverter {
         return convertTo(type, value);
     }
 
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        try {
+            return convertTo(type, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        try {
+            return convertTo(type, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

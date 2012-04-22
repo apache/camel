@@ -649,6 +649,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                             return;
                         }
 
+                        // must catch any exceptions from aggregation
                         try {
                             doAggregate(getAggregationStrategy(subExchange), result, subExchange);
                         } catch (Throwable e) {

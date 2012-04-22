@@ -92,6 +92,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
         // set max messages per poll
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+        consumer.setEagerLimitMaxMessagesPerPoll(isEagerMaxMessagesPerPoll());
 
         configureConsumer(consumer);
         return consumer;

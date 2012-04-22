@@ -31,7 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
-import org.apache.camel.dataformat.bindy.util.Converter;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
@@ -61,7 +61,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
-        byte[] bytesCRLF = Converter.getByteReturn(factory.getCarriageReturn());
+        byte[] bytesCRLF = ConverterUtils.getByteReturn(factory.getCarriageReturn());
 
         if (factory.getGenerateHeaderColumnNames()) {
 

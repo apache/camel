@@ -712,13 +712,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // clear exception as we let the failure processor handle it
         exchange.setException(null);
 
-        boolean handled = false;
+        final boolean shouldHandle = shouldHandled(exchange, data);
+        final boolean shouldContinue = shouldContinue(exchange, data);
         // regard both handled or continued as being handled
-        if (shouldHandled(exchange, data) || shouldContinue(exchange, data)) {
+        boolean handled = false;
+
+        if (shouldHandle || shouldContinue) {
             // its handled then remove traces of redelivery attempted
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+            exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
             // and remove traces of rollback only and uow exhausted markers
             exchange.removeProperty(Exchange.ROLLBACK_ONLY);
@@ -759,7 +763,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 public void done(boolean sync) {
                     log.trace("Failure processor done: {} processing Exchange: {}", processor, exchange);
                     try {
-                        prepareExchangeAfterFailure(exchange, data);
+                        prepareExchangeAfterFailure(exchange, data, shouldHandle, shouldContinue);
                         // fire event as we had a failure processor to handle it, which there is a event for
                         boolean deadLetterChannel = processor == data.deadLetterProcessor && data.deadLetterProcessor != null;
                         EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel);
@@ -773,7 +777,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         } else {
             try {
                 // no processor but we need to prepare after failure as well
-                prepareExchangeAfterFailure(exchange, data);
+                prepareExchangeAfterFailure(exchange, data, shouldHandle, shouldContinue);
             } finally {
                 // callback we are done
                 callback.done(data.sync);
@@ -793,7 +797,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return sync;
     }
 
-    protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data) {
+    protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data,
+                                               final boolean shouldHandle, final boolean shouldContinue) {
         // we could not process the exchange so we let the failure processor handled it
         ExchangeHelper.setFailureHandled(exchange);
 
@@ -813,10 +818,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             return;
         }
 
-        if (shouldHandled(exchange, data)) {
+        if (shouldHandle) {
             log.trace("This exchange is handled so its marked as not failed: {}", exchange);
             exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
-        } else if (shouldContinue(exchange, data)) {
+        } else if (shouldContinue) {
             log.trace("This exchange is continued: {}", exchange);
             // okay we want to continue then prepare the exchange for that as well
             prepareExchangeForContinue(exchange, data);
@@ -905,6 +910,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * @return <tt>false</tt> to continue/redeliver, or <tt>true</tt> to exhaust.
      */
     private boolean isExhausted(Exchange exchange, RedeliveryData data) {
+        // if marked as rollback only then do not continue/redeliver
+        boolean exhausted = exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
+        if (exhausted) {
+            log.trace("This exchange is marked as redelivery exhausted: {}", exchange);
+            return true;
+        }
+
         // if marked as rollback only then do not continue/redeliver
         boolean rollbackOnly = exchange.getProperty(Exchange.ROLLBACK_ONLY, false, Boolean.class);
         if (rollbackOnly) {

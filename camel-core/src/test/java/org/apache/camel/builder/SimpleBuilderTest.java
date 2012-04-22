@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TestSupport;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
@@ -47,8 +48,13 @@ public class SimpleBuilderTest extends TestSupport {
         exchange.getIn().setHeader("cool", true);
 
         assertEquals("foo", SimpleBuilder.simple("${body}", String.class).evaluate(exchange, Object.class));
-        // not possible
-        assertEquals(null, SimpleBuilder.simple("${body}", int.class).evaluate(exchange, Object.class));
+        try {
+            // error during conversion
+            SimpleBuilder.simple("${body}", int.class).evaluate(exchange, Object.class);
+            fail("Should have thrown exception");
+        } catch (TypeConversionException e) {
+            assertIsInstanceOf(NumberFormatException.class, e.getCause());
+        }
 
         assertEquals(true, SimpleBuilder.simple("${header.cool}", boolean.class).evaluate(exchange, Object.class));
         assertEquals("true", SimpleBuilder.simple("${header.cool}", String.class).evaluate(exchange, Object.class));

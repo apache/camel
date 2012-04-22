@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -318,13 +319,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         if (isUseFixedDelay()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
-                        new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(), getEndpoint()});
+                        new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
             }
             future = executor.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
-                        new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(), getEndpoint()});
+                        new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
             }
             future = executor.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
         }

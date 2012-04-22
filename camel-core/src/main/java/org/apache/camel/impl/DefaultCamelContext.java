@@ -120,7 +120,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -145,7 +144,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
-    private Set<Route> routes;
+    private final Set<Route> routes = new LinkedHashSet<Route>();
     private final List<Service> servicesToClose = new ArrayList<Service>();
     private final Set<StartupListener> startupListeners = new LinkedHashSet<StartupListener>();
     private TypeConverter typeConverter;
@@ -393,7 +392,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else {
             for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
                 oldEndpoint = entry.getValue();
-                if (EndpointHelper.matchEndpoint(oldEndpoint.getEndpointUri(), uri)) {
+                if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
                     try {
                         stopServices(oldEndpoint);
                         answer.add(oldEndpoint);
@@ -434,7 +433,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         Endpoint answer;
         String scheme = null;
-        answer = endpoints.get(getEndpointKey(uri));
+        EndpointKey key = getEndpointKey(uri);
+        answer = endpoints.get(key);
         if (answer == null) {
             try {
                 // Use the URI prefix to find the component.
@@ -517,6 +517,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         ObjectHelper.notEmpty(uri, "uri");
         ObjectHelper.notNull(endpoint, "endpoint");
 
+        // if there is endpoint strategies, then use the endpoints they return
+        // as this allows to intercept endpoints etc.
         for (EndpointStrategy strategy : endpointStrategies) {
             endpoint = strategy.registerEndpoint(uri, endpoint);
         }
@@ -581,13 +583,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return routeStartupOrder;
     }
 
-    public synchronized List<Route> getRoutes() {
-        if (routes == null) {
-            routes = new LinkedHashSet<Route>();
-        }
-
-        // lets return a copy of the collection as objects are removed later
-        // when services are stopped
+    public List<Route> getRoutes() {
+        // lets return a copy of the collection as objects are removed later when services are stopped
         return new ArrayList<Route>(routes);
     }
 
@@ -606,19 +603,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     synchronized void removeRouteCollection(Collection<Route> routes) {
-        if (this.routes != null) {
-            this.routes.removeAll(routes);
-        }
+        this.routes.removeAll(routes);
     }
 
     synchronized void addRouteCollection(Collection<Route> routes) throws Exception {
-        if (this.routes == null) {
-            this.routes = new LinkedHashSet<Route>();
-        }
-
-        if (routes != null) {
-            this.routes.addAll(routes);
-        }
+        this.routes.addAll(routes);
     }
 
     public void addRoutes(RoutesBuilder builder) throws Exception {
@@ -2098,8 +2087,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             return (Injector) finder.newInstance("Injector");
         } catch (NoFactoryAvailableException e) {
-            // lets use the default
-            return new ReflectionInjector();
+            // lets use the default injector
+            return new DefaultInjector(this);
         }
     }
 

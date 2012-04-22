@@ -80,7 +80,7 @@ public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSuppor
             public void configure() {                
                 from("direct:expression")
                     .choice()
-                        .when().expression(bean(MyBean.class, "isGradeA")).to("mock:gradeA")
+                        .when(method(MyBean.class, "isGradeA")).to("mock:gradeA")
                         .otherwise().to("mock:otherGrade")
                     .end();
                 

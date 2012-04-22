@@ -84,12 +84,12 @@ public class ProcessInstance {
 
     @Transient
     public boolean isStarted() {
-        return timeStarted != null;
+        return getTimeStarted() != null;
     }
 
     @Transient
     public boolean isCompleted() {
-        return timeCompleted != null;
+        return getTimeCompleted() != null;
     }
 
     @Temporal(TemporalType.TIME)

@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -33,8 +34,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
@@ -95,14 +98,14 @@ public final class ObjectHelper {
         }
 
         // convert left to right
-        Object value = converter.convertTo(rightValue.getClass(), leftValue);
+        Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
         answer = equal(value, rightValue);
         if (answer) {
             return true;
         }
 
         // convert right to left
-        value = converter.convertTo(leftValue.getClass(), rightValue);
+        value = converter.tryConvertTo(leftValue.getClass(), rightValue);
         answer = equal(leftValue, value);
         return answer;
     }
@@ -125,15 +128,15 @@ public final class ObjectHelper {
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
 
         // if both values is numeric then compare using numeric
-        Long leftNum = converter.convertTo(Long.class, leftValue);
-        Long rightNum = converter.convertTo(Long.class, rightValue);
+        Long leftNum = converter.tryConvertTo(Long.class, leftValue);
+        Long rightNum = converter.tryConvertTo(Long.class, rightValue);
         if (leftNum != null && rightNum != null) {
             return leftNum.compareTo(rightNum);
         }
 
         // also try with floating point numbers
-        Double leftDouble = converter.convertTo(Double.class, leftValue);
-        Double rightDouble = converter.convertTo(Double.class, rightValue);
+        Double leftDouble = converter.tryConvertTo(Double.class, leftValue);
+        Double rightDouble = converter.tryConvertTo(Double.class, rightValue);
         if (leftDouble != null && rightDouble != null) {
             return leftDouble.compareTo(rightDouble);
         }
@@ -150,7 +153,7 @@ public final class ObjectHelper {
 
         // prefer to coerce to the right hand side at first
         if (rightValue instanceof Comparable) {
-            Object value = converter.convertTo(rightValue.getClass(), leftValue);
+            Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
             if (value != null) {
                 return ((Comparable) rightValue).compareTo(value) * -1;
             }
@@ -158,7 +161,7 @@ public final class ObjectHelper {
 
         // then fallback to the left hand side
         if (leftValue instanceof Comparable) {
-            Object value = converter.convertTo(leftValue.getClass(), rightValue);
+            Object value = converter.tryConvertTo(leftValue.getClass(), rightValue);
             if (value != null) {
                 return ((Comparable) leftValue).compareTo(value);
             }
@@ -402,7 +405,7 @@ public final class ObjectHelper {
         if (length == 0) {
             return text;
         }
-        String answer = text.substring(0, 1).toUpperCase();
+        String answer = text.substring(0, 1).toUpperCase(Locale.ENGLISH);
         if (length > 1) {
             answer += text.substring(1, length);
         }
@@ -863,6 +866,35 @@ public final class ObjectHelper {
     }
 
     /**
+     * Attempts to load the given resources from the given package name using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param packageName the name of the package to load its resources
+     * @return the URLs for the resources or null if it could not be loaded
+     */
+    public static Enumeration<URL> loadResourcesAsURL(String packageName) {
+        Enumeration<URL> url = null;
+
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null) {
+            try {
+                url = contextClassLoader.getResources(packageName);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        if (url == null) {
+            try {
+                url = ObjectHelper.class.getClassLoader().getResources(packageName);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        return url;
+    }
+
+    /**
      * A helper method to invoke a method via reflection and wrap any exceptions
      * as {@link RuntimeCamelException} instances
      *
@@ -1046,7 +1078,7 @@ public final class ObjectHelper {
     public static String getPropertyName(Method method) {
         String propertyName = method.getName();
         if (propertyName.startsWith("set") && method.getParameterTypes().length == 1) {
-            propertyName = propertyName.substring(3, 4).toLowerCase() + propertyName.substring(4);
+            propertyName = propertyName.substring(3, 4).toLowerCase(Locale.ENGLISH) + propertyName.substring(4);
         }
         return propertyName;
     }

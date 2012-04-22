@@ -26,6 +26,7 @@ import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
+import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.FixedReceiveBufferSizePredictorFactory;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
@@ -45,13 +46,16 @@ public class NettyConsumer extends DefaultConsumer {
     private DatagramChannelFactory datagramChannelFactory;
     private ServerBootstrap serverBootstrap;
     private ConnectionlessBootstrap connectionlessServerBootstrap;
+    private ServerPipelineFactory pipelineFactory;
     private Channel channel;
+    private ExecutorService bossExecutor;
+    private ExecutorService workerExecutor;
 
     public NettyConsumer(NettyEndpoint nettyEndpoint, Processor processor, NettyConfiguration configuration) {
         super(nettyEndpoint, processor);
         this.context = this.getEndpoint().getCamelContext();
         this.configuration = configuration;
-        this.allChannels = new DefaultChannelGroup("NettyProducer-" + nettyEndpoint.getEndpointUri());
+        this.allChannels = new DefaultChannelGroup("NettyConsumer-" + nettyEndpoint.getEndpointUri());
     }
 
     @Override
@@ -61,9 +65,16 @@ public class NettyConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
+
         LOG.debug("Netty consumer binding to: {}", configuration.getAddress());
 
-        super.doStart();
+        // setup pipeline factory
+        pipelineFactory = configuration.getServerPipelineFactory();
+        if (pipelineFactory == null) {
+            pipelineFactory = new DefaultServerPipelineFactory();
+        }
+
         if (isTcp()) {
             initializeTCPServerSocketCommunicationLayer();
         } else {
@@ -78,17 +89,26 @@ public class NettyConsumer extends DefaultConsumer {
         LOG.debug("Netty consumer unbinding from: {}", configuration.getAddress());
 
         // close all channels
+        LOG.trace("Closing {} channels", allChannels.size());
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
-        // and then release other resources
+        // close server external resources
         if (channelFactory != null) {
             channelFactory.releaseExternalResources();
         }
 
-        super.doStop();
+        // and then shutdown the thread pools
+        if (bossExecutor != null) {
+            context.getExecutorServiceManager().shutdownNow(bossExecutor);
+        }
+        if (workerExecutor != null) {
+            context.getExecutorServiceManager().shutdownNow(workerExecutor);
+        }
 
         LOG.info("Netty consumer unbound from: " + configuration.getAddress());
+
+        super.doStop();
     }
 
     public CamelContext getContext() {
@@ -144,28 +164,25 @@ public class NettyConsumer extends DefaultConsumer {
     }
 
     private void initializeTCPServerSocketCommunicationLayer() throws Exception {
-        ExecutorService bossExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPBoss",
-                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
-        ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPWorker",
-                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
+        bossExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
+        workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
 
-        if (configuration.getWorkerCount() == 0) {
+        if (configuration.getWorkerCount() <= 0) {
             channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
         } else {
             channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor,
                                                                configuration.getWorkerCount());
         }
         serverBootstrap = new ServerBootstrap(channelFactory);
-        if (configuration.getServerPipelineFactory() != null) {
-            configuration.getServerPipelineFactory().setConsumer(this);
-            serverBootstrap.setPipelineFactory(configuration.getServerPipelineFactory());
-        } else {
-            serverBootstrap.setPipelineFactory(new DefaultServerPipelineFactory(this));
-        }
         serverBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         serverBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
+        serverBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
+
+        // must get the pipeline from the factory when opening a new connection
+        ChannelPipeline serverPipeline = pipelineFactory.getPipeline(this);
+        serverBootstrap.setPipeline(serverPipeline);
 
         channel = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use
@@ -173,19 +190,16 @@ public class NettyConsumer extends DefaultConsumer {
     }
 
     private void initializeUDPServerSocketCommunicationLayer() throws Exception {
-        ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyUDPWorker",
-                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
-
-        datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
-        connectionlessServerBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
-        if (configuration.getServerPipelineFactory() != null) {
-            configuration.getServerPipelineFactory().setConsumer(this);
-            connectionlessServerBootstrap.setPipelineFactory(configuration.getServerPipelineFactory());
+        workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
+        if (configuration.getWorkerCount() <= 0) {
+            datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
         } else {
-            connectionlessServerBootstrap.setPipelineFactory(new DefaultServerPipelineFactory(this));
+            datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor, configuration.getWorkerCount());
         }
+        connectionlessServerBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
         connectionlessServerBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         connectionlessServerBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
+        connectionlessServerBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
         connectionlessServerBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
         connectionlessServerBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
         connectionlessServerBootstrap.setOption("child.broadcast", configuration.isBroadcast());
@@ -196,6 +210,10 @@ public class NettyConsumer extends DefaultConsumer {
             connectionlessServerBootstrap.setOption("receiveBufferSizePredictorFactory",
                 new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
         }
+
+        // must get the pipeline from the factory when opening a new connection
+        ChannelPipeline serverPipeline = pipelineFactory.getPipeline(this);
+        connectionlessServerBootstrap.setPipeline(serverPipeline);
 
         channel = connectionlessServerBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use

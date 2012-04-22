@@ -37,7 +37,7 @@ import org.apache.camel.web.resources.RouteStatusResource;
 import org.apache.camel.web.resources.RoutesResource;
 
 /**
- * @version 
+ *
  */
 public class CamelOSGIResourceConfig extends ClassNamesResourceConfig {
 

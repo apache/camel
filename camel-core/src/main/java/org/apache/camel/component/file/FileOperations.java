@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -207,7 +206,7 @@ public class FileOperations implements GenericFileOperations<File> {
             }
 
             // fallback and use stream based
-            InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+            InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
             writeFileByStream(in, file);
             // try to keep last modified timestamp if configured to do so
             keepLastModified(exchange, file);
@@ -257,6 +256,8 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, source.getName(), LOG);
+            // force updates to be written, and then close afterwards
+            IOHelper.force(out, target.getName(), LOG);
             IOHelper.close(out, target.getName(), LOG);
         }
     }
@@ -279,6 +280,8 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, target.getName(), LOG);
+            // force updates to be written, and then close afterwards
+            IOHelper.force(out, target.getName(), LOG);
             IOHelper.close(out, target.getName(), LOG);
         }
     }

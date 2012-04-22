@@ -44,6 +44,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParamBean;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParamBean;
+import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected ClientConnectionManager clientConnectionManager;
     protected HttpBinding httpBinding;
+    protected HttpContext httpContext;
     protected SSLContextParameters sslContextParameters;
     protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
 
@@ -171,20 +173,25 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (httpBinding == null) {
             httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         }
-        
+
         HttpClientConfigurer httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
         if (httpClientConfigurer == null) {
             httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         }
-        
+
+        HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContextRef", HttpContext.class);
+        if (httpContext == null) {
+            httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
+        }
+
         X509HostnameVerifier x509HostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
         if (x509HostnameVerifier == null) {
-            x509HostnameVerifier = this.x509HostnameVerifier;
+            x509HostnameVerifier = getX509HostnameVerifier();
         }
         
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         if (sslContextParameters == null) {
-            sslContextParameters = this.sslContextParameters;
+            sslContextParameters = getSslContextParameters();
         }
         
         boolean secure = HttpHelper.isSecureConnection(uri);
@@ -225,6 +232,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         if (httpClientConfigurer != null) {
             endpoint.setHttpClientConfigurer(httpClientConfigurer);
+        }
+        endpoint.setHttpContext(getHttpContext());
+        if (httpContext != null) {
+            endpoint.setHttpContext(httpContext);
         }
         // register port on schema registry
         int port = getPort(httpUri);
@@ -344,13 +355,29 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
     }
-    
+
+    public HttpContext getHttpContext() {
+        return httpContext;
+    }
+
+    public void setHttpContext(HttpContext httpContext) {
+        this.httpContext = httpContext;
+    }
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public X509HostnameVerifier getX509HostnameVerifier() {
+        return x509HostnameVerifier;
+    }
+
+    public void setX509HostnameVerifier(X509HostnameVerifier x509HostnameVerifier) {
+        this.x509HostnameVerifier = x509HostnameVerifier;
     }
 
     public int getMaxTotalConnections() {

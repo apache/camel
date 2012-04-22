@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.CamelContext;
@@ -32,18 +31,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class ConverterTest extends Assert {
-    
-    @Test
-    public void testToClassesList() throws Exception {
-        String classString = "java.lang.String, "
-            + "org.apache.camel.component.cxf.converter.ConverterTest ;"
-            + "java.lang.StringBuilder";
-        List<Class<?>> classList = CxfConverter.toClassList(classString);
-        assertEquals("Get the wrong number of classes", classList.size(), 3);
-        assertEquals("Get the wrong the class", classList.get(0), String.class);
-        assertEquals("Get the wrong the class", classList.get(1), ConverterTest.class);
-        assertEquals("Get the wrong the class", classList.get(2), StringBuilder.class);
-    }
     
     @Test
     public void testToArray() throws Exception {
@@ -79,9 +66,6 @@ public class ConverterTest extends Assert {
         result = CxfConverter.toInputStream(response, exchange);
         assertTrue("We should get the inputStream here ", result instanceof ByteArrayInputStream);
         EasyMock.verify(response);
-        
     }
-    
-    
 
 }

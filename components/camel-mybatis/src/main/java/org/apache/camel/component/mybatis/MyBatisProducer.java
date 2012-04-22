@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class MyBatisProducer extends DefaultProducer {
 
@@ -51,6 +51,8 @@ public class MyBatisProducer extends DefaultProducer {
             doSelectList(exchange); break;
         case Insert:
             doInsert(exchange); break;
+        case InsertList:
+            doInsertList(exchange); break;
         case Update:
             doUpdate(exchange); break;
         case Delete:
@@ -121,8 +123,36 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result);
             }
         } finally {
-            session.commit();
-            session.close();
+            try {
+                session.commit();
+            } finally {
+                session.close();                
+            }
+        }
+    }
+
+    private void doInsertList(Exchange exchange) throws Exception {
+        SqlSessionFactory client = endpoint.getSqlSessionFactory();
+        SqlSession session = client.openSession();
+        try {
+            Object result;
+            Object in = exchange.getIn().getBody();
+            if (in != null) {
+                // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
+                LOG.trace("Inserting: {} using statement: {}", in, statement);
+                result = session.insert(statement, in);
+                doProcessResult(exchange, result);
+            } else {
+                LOG.trace("Inserting using statement: {}", statement);
+                result = session.insert(statement);
+                doProcessResult(exchange, result);
+            }
+        } finally {
+            try {
+                session.commit();
+            } finally {
+                session.close();                
+            }
         }
     }
 
@@ -147,8 +177,11 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result);
             }
         } finally {
-            session.commit();
-            session.close();
+            try {
+                session.commit();
+            } finally {
+                session.close();                
+            }
         }
     }
 
@@ -173,8 +206,11 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result);
             }
         } finally {
-            session.commit();
-            session.close();
+            try {
+                session.commit();
+            } finally {
+                session.close();                
+            }
         }
     }
 

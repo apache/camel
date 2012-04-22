@@ -56,6 +56,10 @@ public class MailMessage extends DefaultMessage {
         MailMessage answer = (MailMessage)super.copy();
         answer.originalMailMessage = originalMailMessage;
         answer.mailMessage = mailMessage;
+        // force attachments to be created (by getting attachments) to ensure they are always available due Camel error handler
+        // makes defensive copies, and we have optimized it to avoid populating initial attachments, when not needed,
+        // as all other Camel components do not use attachments
+        getAttachments();
         return answer;
     }
 

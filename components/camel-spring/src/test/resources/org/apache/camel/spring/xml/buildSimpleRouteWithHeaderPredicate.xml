@@ -30,10 +30,10 @@
     <!-- START SNIPPET: example -->
     <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="seda:a"/>
+            <from uri="direct:a"/>
             <filter>
                 <xpath>$foo = 'bar'</xpath>
-                <to uri="seda:b"/>
+                <to uri="direct:b"/>
             </filter>
         </route>
     </camelContext>

@@ -52,7 +52,7 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
                 // where we defined at most 1 redelivery attempt. Here we will continue until
                 // the predicate returns false
                 onException(MyFunctionalException.class)
-                        .retryWhile(bean("myRetryHandler"))
+                        .retryWhile(method("myRetryHandler"))
                         .handled(true)
                         .transform().constant("Sorry");
                 // END SNIPPET: e1

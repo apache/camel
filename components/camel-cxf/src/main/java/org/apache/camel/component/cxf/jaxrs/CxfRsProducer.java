@@ -301,7 +301,8 @@ public class CxfRsProducer extends DefaultProducer {
         String uri = exchange.getFromEndpoint().getEndpointUri();
         String statusText = Response.Status.fromStatusCode(responseCode).toString();
         Map<String, String> headers = parseResponseHeaders(response, exchange);
-        String copy = response.toString();
+        //Get the response detail string
+        String copy = exchange.getContext().getTypeConverter().convertTo(String.class, response.getEntity());
         if (responseCode >= 300 && responseCode < 400) {
             String redirectLocation;
             if (response.getMetadata().getFirst("Location") != null) {

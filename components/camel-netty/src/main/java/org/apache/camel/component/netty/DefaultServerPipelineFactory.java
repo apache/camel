@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty;
 
 import java.util.List;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -25,25 +24,20 @@ import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultServerPipelineFactory implements ChannelPipelineFactory {
+public class DefaultServerPipelineFactory extends ServerPipelineFactory {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultServerPipelineFactory.class);
-    private NettyConsumer consumer;
-        
-    public DefaultServerPipelineFactory(NettyConsumer consumer) {
-        this.consumer = consumer; 
-    }    
 
-    public ChannelPipeline getPipeline() throws Exception {
+    @Override
+    public ChannelPipeline getPipeline(NettyConsumer consumer) throws Exception {
         ChannelPipeline channelPipeline = Channels.pipeline();
 
-        SslHandler sslHandler = configureServerSSLOnDemand();
+        SslHandler sslHandler = configureServerSSLOnDemand(consumer);
         if (sslHandler != null) {
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline");
             channelPipeline.addLast("ssl", sslHandler);            
@@ -64,7 +58,7 @@ public class DefaultServerPipelineFactory implements ChannelPipelineFactory {
         return channelPipeline;
     }
     
-    private SslHandler configureServerSSLOnDemand() throws Exception {
+    private SslHandler configureServerSSLOnDemand(NettyConsumer consumer) throws Exception {
         if (!consumer.getConfiguration().isSsl()) {
             return null;
         }

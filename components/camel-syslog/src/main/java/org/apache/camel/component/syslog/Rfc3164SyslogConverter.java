@@ -40,6 +40,7 @@ public final class Rfc3164SyslogConverter {
     }
 
     private static Map<String, MONTHS> monthValueMap = new HashMap<String, MONTHS>() {
+        private static final long serialVersionUID = 1L;
         {
             put("jan", MONTHS.jan);
             put("feb", MONTHS.feb);

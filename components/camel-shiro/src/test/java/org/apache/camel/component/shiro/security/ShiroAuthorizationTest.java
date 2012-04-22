@@ -104,8 +104,8 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
                     to("mock:authorizationException");
                 
                 from("direct:secureEndpoint").
-                    to("log:incoming payload").
                     policy(securityPolicy).
+                    to("log:incoming payload").
                     to("mock:success");
             }
         };
@@ -114,8 +114,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
     
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
 
-        public TestShiroSecurityTokenInjector(
-                ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
+        public TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
             super(shiroSecurityToken, bytes);
         }
         

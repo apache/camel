@@ -51,7 +51,6 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
 
                         public void process(Exchange exchange) throws Exception {
                             assertNull("We should not get this header", exchange.getIn().getHeader("CamelCxfTest"));
-                            System.out.println("header " + exchange.getIn().getHeader("SOAPAction"));
                             assertNull("We should not get this header", exchange.getIn().getHeader("Transfer-Encoding"));
                             //check the headers
                             exchange.getOut().setHeader("Content-Type", "text/xml");

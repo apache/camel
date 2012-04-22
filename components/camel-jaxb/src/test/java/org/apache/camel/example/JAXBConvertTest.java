@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
@@ -84,8 +85,9 @@ public class JAXBConvertTest extends Assert {
 
         try {
             converter.convertTo(PurchaseOrder.class, is);
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof UnmarshalException);
+            fail("Should have thrown exception");
+        } catch (TypeConversionException e) {
+            // expected
         }
         assertEquals(-1, is.read());
     }

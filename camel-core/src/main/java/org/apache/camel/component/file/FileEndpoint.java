@@ -84,6 +84,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         // set max messages per poll
         result.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+        result.setEagerLimitMaxMessagesPerPoll(isEagerMaxMessagesPerPoll());
 
         configureConsumer(result);
         return result;

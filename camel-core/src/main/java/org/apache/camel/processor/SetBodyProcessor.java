@@ -22,11 +22,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.ServiceSupport;
 
 /**
- * A processor which sets the body on the IN message with an expression
+ * A processor which sets the body on the IN message with an {@link Expression}
  */
-public class SetBodyProcessor implements Processor, Traceable {
+public class SetBodyProcessor extends ServiceSupport implements Processor, Traceable {
     private final Expression expression;
 
     public SetBodyProcessor(Expression expression) {
@@ -52,5 +53,15 @@ public class SetBodyProcessor implements Processor, Traceable {
 
     public String getTraceLabel() {
         return "setBody[" + expression + "]";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

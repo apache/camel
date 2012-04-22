@@ -80,7 +80,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor(final RouteContext routeContext) throws Exception {
         // create the detour
         final Processor detour = this.createChildProcessor(routeContext, true);
 
@@ -90,7 +90,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
                 if (endpoint instanceof InterceptSendToEndpoint) {
                     // endpoint already decorated
                     return endpoint;
-                } else if (getUri() == null || EndpointHelper.matchEndpoint(uri, getUri())) {
+                } else if (getUri() == null || EndpointHelper.matchEndpoint(routeContext.getCamelContext(), uri, getUri())) {
                     // only proxy if the uri is matched decorate endpoint with our proxy
                     // should be false by default
                     boolean skip = isSkipSendToOriginalEndpoint();

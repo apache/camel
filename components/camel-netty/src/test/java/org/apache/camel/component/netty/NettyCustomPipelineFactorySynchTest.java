@@ -81,15 +81,16 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         context.stop();
         
         assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);
-        assertEquals(true, clientPipelineFactory.isfactoryInvoked());
-        assertEquals(true, serverPipelineFactory.isfactoryInvoked());
+        assertEquals(true, clientPipelineFactory.isFactoryInvoked());
+        assertEquals(true, serverPipelineFactory.isFactoryInvoked());
     } 
     
     public class TestClientChannelPipelineFactory extends ClientPipelineFactory {
         private int maxLineSize = 1024;
         private boolean invoked;
-        
-        public ChannelPipeline getPipeline() throws Exception {
+
+        @Override
+        public ChannelPipeline getPipeline(NettyProducer producer) throws Exception {
             invoked = true;
             
             ChannelPipeline channelPipeline = Channels.pipeline();
@@ -97,12 +98,12 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
             channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));            
-            channelPipeline.addLast("handler", new ClientChannelHandler(producer, exchange, callback));
+            channelPipeline.addLast("handler", new ClientChannelHandler(producer));
 
             return channelPipeline;
         }
         
-        public boolean isfactoryInvoked() {
+        public boolean isFactoryInvoked() {
             return invoked;
         }
     }
@@ -110,8 +111,9 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
     public class TestServerChannelPipelineFactory extends ServerPipelineFactory {
         private int maxLineSize = 1024;
         private boolean invoked;
-        
-        public ChannelPipeline getPipeline() throws Exception {
+
+        @Override
+        public ChannelPipeline getPipeline(NettyConsumer consumer) throws Exception {
             invoked = true;
             
             ChannelPipeline channelPipeline = Channels.pipeline();
@@ -124,7 +126,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
             return channelPipeline;
         }
         
-        public boolean isfactoryInvoked() {
+        public boolean isFactoryInvoked() {
             return invoked;
         }
     }

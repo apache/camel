@@ -62,6 +62,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile MulticastProcessor consumerMulticastProcessor;
     private volatile boolean multicastStarted;
     private boolean blockWhenFull;
+    private int pollTimeout = 1000;
 
     public SedaEndpoint() {
     }
@@ -203,6 +204,15 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.multipleConsumers = multipleConsumers;
     }
 
+    @ManagedAttribute
+    public int getPollTimeout() {
+        return pollTimeout;
+    }
+
+    public void setPollTimeout(int pollTimeout) {
+        this.pollTimeout = pollTimeout;
+    }
+
     public boolean isSingleton() {
         return true;
     }
@@ -329,6 +339,16 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         if (isMultipleConsumers()) {
             updateMulticastProcessor();
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // special for unit testing where we can set a system property to make seda poll faster
+        // and therefore also react faster upon shutdown, which makes overall testing faster of the Camel project
+        String override = System.getProperty("CamelSedaPollTimeout", "" + getPollTimeout());
+        setPollTimeout(Integer.valueOf(override));
     }
 
     @Override

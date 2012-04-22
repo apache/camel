@@ -50,9 +50,9 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // generate a new file continously
+                // generate a new file continuously
                 from("timer:foo?period=50")
-                    .setHeader(Exchange.FILE_NAME, bean(FileAsyncStressFileDropper.class, "getFilename"))
+                    .setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropper.class, "getFilename"))
                     .setBody(constant("Hello World"))
                     .to("file:target/filestress")
                     .to("mock:result");

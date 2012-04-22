@@ -1,16 +1,18 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
- * agreements. See the NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License. You may obtain a
- * copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.mina2;
 
@@ -18,6 +20,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
@@ -38,10 +41,10 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.executor.UnorderedThreadPoolExecutor;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
-import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
@@ -59,6 +62,7 @@ public class Mina2Consumer extends DefaultConsumer {
     private SocketAddress address;
     private IoAcceptor acceptor;
     private Mina2Configuration configuration;
+    private ExecutorService workerPool;
 
     public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
@@ -71,11 +75,11 @@ public class Mina2Consumer extends DefaultConsumer {
 
         String protocol = configuration.getProtocol();
         if (protocol.equals("tcp")) {
-            createSocketEndpoint(protocol, configuration);
+            setupSocketProtocol(protocol, configuration);
         } else if (configuration.isDatagramProtocol()) {
-            createDatagramEndpoint(protocol, configuration);
+            setupDatagramProtocol(protocol, configuration);
         } else if (protocol.equals("vm")) {
-            createVmEndpoint(protocol, configuration);
+            setupVmProtocol(protocol, configuration);
         }
     }
 
@@ -95,9 +99,18 @@ public class Mina2Consumer extends DefaultConsumer {
         super.doStop();
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        if (workerPool != null) {
+            workerPool.shutdown();
+        }
+        super.doShutdown();
+    }
+
+
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void createVmEndpoint(String uri, Mina2Configuration configuration) {
+    protected void setupVmProtocol(String uri, Mina2Configuration configuration) {
 
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
@@ -117,24 +130,24 @@ public class Mina2Consumer extends DefaultConsumer {
         }
     }
 
-    protected void createSocketEndpoint(String uri, Mina2Configuration configuration) throws Exception {
+    protected void setupSocketProtocol(String uri, Mina2Configuration configuration) throws Exception {
         LOG.debug("createSocketEndpoint");
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
         address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
 
-        acceptor = new NioSocketAcceptor(
-            new NioProcessor(this.getEndpoint().getCamelContext().getExecutorServiceManager().
-            newDefaultThreadPool(this, "MinaSocketAcceptor")));
+        final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
+        acceptor = new NioSocketAcceptor(processorCount);
 
         // acceptor connectorConfig
         configureCodecFactory("Mina2Consumer", acceptor, configuration);
         ((NioSocketAcceptor) acceptor).setReuseAddress(true);
         acceptor.setCloseOnDeactivation(true);
-        acceptor.getFilterChain().addLast("threadPool",
-                                          new ExecutorFilter(this.getEndpoint().getCamelContext().
-            getExecutorServiceManager().newDefaultThreadPool(this, "MinaThreadPool")));
+
+        // using the unordered thread pool is fine as we dont need ordered invocation in our response handler
+        workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -146,8 +159,7 @@ public class Mina2Consumer extends DefaultConsumer {
         }
     }
 
-    protected void configureCodecFactory(String type, IoService service,
-                                         Mina2Configuration configuration) {
+    protected void configureCodecFactory(String type, IoService service, Mina2Configuration configuration) {
         if (configuration.getCodec() != null) {
             addCodecFactory(service, configuration.getCodec());
         } else if (configuration.isAllowDefaultCodec()) {
@@ -155,13 +167,11 @@ public class Mina2Consumer extends DefaultConsumer {
         }
     }
 
-    protected void configureDefaultCodecFactory(String type, IoService service,
-                                                Mina2Configuration configuration) {
+    protected void configureDefaultCodecFactory(String type, IoService service, Mina2Configuration configuration) {
         if (configuration.isTextline()) {
             Charset charset = getEncodingParameter(type, configuration);
             LineDelimiter delimiter = getLineDelimiterParameter(configuration.getTextlineDelimiter());
-            Mina2TextLineCodecFactory codecFactory = new Mina2TextLineCodecFactory(charset,
-                                                                                   delimiter);
+            Mina2TextLineCodecFactory codecFactory = new Mina2TextLineCodecFactory(charset, delimiter);
             if (configuration.getEncoderMaxLineLength() > 0) {
                 codecFactory.setEncoderMaxLineLength(configuration.getEncoderMaxLineLength());
             }
@@ -170,12 +180,10 @@ public class Mina2Consumer extends DefaultConsumer {
             }
             addCodecFactory(service, codecFactory);
             if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                    "{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                    new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
+                LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
+                          new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
                 LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
-                          codecFactory.getEncoderMaxLineLength(), codecFactory.
-                    getDecoderMaxLineLength());
+                          codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
             }
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
@@ -185,20 +193,17 @@ public class Mina2Consumer extends DefaultConsumer {
 
     }
 
-    protected void createDatagramEndpoint(String uri, Mina2Configuration configuration) {
+    protected void setupDatagramProtocol(String uri, Mina2Configuration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
         address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        acceptor = new NioDatagramAcceptor(this.getEndpoint().getCamelContext().
-            getExecutorServiceManager().newDefaultThreadPool(this, "MinaDatagramAcceptor"));
+        acceptor = new NioDatagramAcceptor();
 
         // acceptor connectorConfig
         configureDataGramCodecFactory("MinaConsumer", acceptor, configuration);
         acceptor.setCloseOnDeactivation(true);
         // reuse address is default true for datagram
-        //acceptor.getFilterChain().addLast("threadPool",
-        //                                  new ExecutorFilter(this.getEndpoint().getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaThreadPool")));
         if (minaLogger) {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -210,22 +215,18 @@ public class Mina2Consumer extends DefaultConsumer {
     }
 
     /**
-     * For datagrams the entire message is available as a single IoBuffer so lets just pass those
-     * around by default and try converting whatever they payload is into IoBuffer unless some
-     * custom converter is specified
+     * For datagrams the entire message is available as a single IoBuffer so lets just pass those around by default
+     * and try converting whatever they payload is into IoBuffer unless some custom converter is specified
      */
-    protected void configureDataGramCodecFactory(final String type, final IoService service,
-                                                 final Mina2Configuration configuration) {
+    protected void configureDataGramCodecFactory(final String type, final IoService service, final Mina2Configuration configuration) {
         ProtocolCodecFactory codecFactory = configuration.getCodec();
         if (codecFactory == null) {
             final Charset charset = getEncodingParameter(type, configuration);
 
-            codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext(),
-                                                            charset);
+            codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext(), charset);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {} using encoding: {}",
-                          new Object[]{type, codecFactory, charset});
+                LOG.debug("{}: Using CodecFactory: {} using encoding: {}", new Object[]{type, codecFactory, charset});
             }
         }
 
@@ -272,8 +273,7 @@ public class Mina2Consumer extends DefaultConsumer {
         return Charset.forName(encoding);
     }
 
-    private void appendIoFiltersToChain(List<IoFilter> filters,
-                                        DefaultIoFilterChainBuilder filterChain) {
+    private void appendIoFiltersToChain(List<IoFilter> filters, DefaultIoFilterChainBuilder filterChain) {
         if (filters != null && filters.size() > 0) {
             for (IoFilter ioFilter : filters) {
                 filterChain.addLast(ioFilter.getClass().getCanonicalName(), ioFilter);
@@ -356,8 +356,7 @@ public class Mina2Consumer extends DefaultConsumer {
                 Object in = object;
                 if (in instanceof byte[]) {
                     // byte arrays is not readable so convert to string
-                    in = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class,
-                                                                                      in);
+                    in = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, in);
                 }
                 LOG.debug("Received body: {}", in);
             }
@@ -394,6 +393,9 @@ public class Mina2Consumer extends DefaultConsumer {
             if (response != null) {
                 LOG.debug("Writing body: {}", response);
                 Mina2Helper.writeBody(session, response, exchange);
+            } else {
+                LOG.debug("Writing no response");
+                disconnect = Boolean.TRUE;
             }
 
             // should session be closed after complete?

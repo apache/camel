@@ -19,16 +19,16 @@ package org.apache.camel.dataformat.bindy.csv;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
-
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class BindyTabSeparatorTest extends CamelTestSupport {
 
@@ -37,7 +37,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:unmarshal", "123\tCamel in Action\t2");
+        template.sendBody("direct:unmarshal", "123\tCamel in Action\t2\tPlease hurry\tJane Doe\tJohn Doe\n");
 
         assertMockEndpointsSatisfied();
 
@@ -47,17 +47,63 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
         assertEquals(2, order.getAmount());
+        assertEquals("Please hurry", order.getOrderText());
+        assertEquals("Jane Doe", order.getSalesRef());
+        assertEquals("John Doe", order.getCustomerRef());
     }
 
     @Test
     public void testMarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
-        mock.expectedBodiesReceived("123\tCamel in Action\t2\n");
+        mock.expectedBodiesReceived("123\tCamel in Action\t2\tPlease hurry\tJane Doe\tJohn Doe\n");
 
         PurchaseOrder order = new PurchaseOrder();
         order.setId(123);
         order.setName("Camel in Action");
         order.setAmount(2);
+        order.setOrderText("Please hurry");
+        order.setSalesRef("Jane Doe");
+        order.setCustomerRef("John Doe");
+
+        template.sendBody("direct:marshal", order);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testUnmarshalEmptyTrailingNoneRequiredFields() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:unmarshal");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:unmarshal",
+                "123\tCamel in Action\t2\t\t\n456\tCamel in Action\t1\t\t\t\n"
+                        + "456\tCamel in Action\t2\t\t\n456\tCamel in Action\t1\t\t\t\n", Exchange.CONTENT_ENCODING, "iso8859-1");
+
+        assertMockEndpointsSatisfied();
+
+        List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
+        PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
+
+        assertEquals(123, order.getId());
+        assertEquals("Camel in Action", order.getName());
+        assertEquals(2, order.getAmount());
+        assertNull(order.getOrderText());
+        assertNull(order.getSalesRef());
+        assertNull(order.getCustomerRef());
+    }
+
+    @Test
+    public void testMarshalEmptyTrailingNoneRequiredFields() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:marshal");
+        mock.expectedBodiesReceived("123\tCamel in Action\t2\t\t\t\n");
+
+        PurchaseOrder order = new PurchaseOrder();
+        order.setId(123);
+        order.setName("Camel in Action");
+        order.setAmount(2);
+        order.setOrderText("");
+        order.setSalesRef("");
+        order.setCustomerRef("");
 
         template.sendBody("direct:marshal", order);
 
@@ -72,13 +118,13 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
                 BindyCsvDataFormat bindy = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.tab");
 
                 from("direct:marshal")
-                    .marshal(bindy)
-                    .convertBodyTo(String.class)
-                    .to("mock:marshal");
+                        .marshal(bindy)
+                        .convertBodyTo(String.class)
+                        .to("mock:marshal");
 
                 from("direct:unmarshal")
-                    .unmarshal(bindy)
-                    .to("mock:unmarshal");
+                        .unmarshal(bindy)
+                        .to("mock:unmarshal");
             }
         };
     }

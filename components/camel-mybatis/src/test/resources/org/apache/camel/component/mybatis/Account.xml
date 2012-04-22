@@ -62,7 +62,24 @@ aliases to match the properties of the target result class. -->
         )
     </insert>
 
-    <!-- Update example, using the Account parameter class -->
+    <!-- START SNIPPET: insertList -->
+    <!-- Batch Insert example, using the Account parameter class -->
+    <insert id="batchInsertAccount" parameterType="java.util.List">
+        insert into ACCOUNT (
+        ACC_ID,
+        ACC_FIRST_NAME,
+        ACC_LAST_NAME,
+        ACC_EMAIL
+        )
+        values (
+        <foreach item="Account" collection="list" open="" close="" separator="),(">
+            #{Account.id}, #{Account.firstName}, #{Account.lastName}, #{Account.emailAddress}
+        </foreach>
+        )
+    </insert>
+    <!-- END SNIPPET: insertList -->
+
+  <!-- Update example, using the Account parameter class -->
     <update id="updateAccount" parameterType="Account">
         update ACCOUNT set
         ACC_FIRST_NAME = #{firstName},

@@ -55,5 +55,16 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         return null;
     }
 
+    public Statistics getStatistics() {
+        return null;
+    }
+
+    public void start() throws Exception {
+        // noop
+    }
+
+    public void stop() throws Exception {
+        // noop
+    }
 }
 

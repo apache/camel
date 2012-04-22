@@ -28,15 +28,14 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -65,6 +64,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private QName partNamespace;
     private String partClass;
     private Class<Object> partialClass;
+
+    private TypeConverter typeConverter;
 
     public JaxbDataFormat() {
     }
@@ -122,33 +123,26 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     private FilteringXmlStreamWriter createFilteringWriter(OutputStream stream)
         throws XMLStreamException, FactoryConfigurationError {
-        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(stream);
+        XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
         FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
         return filteringWriter;
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         try {
-            // must create a new instance of unmarshaller as its not thread safe
             Object answer;
-            Unmarshaller unmarshaller = getContext().createUnmarshaller();
 
+            XMLStreamReader xmlReader;
+            if (needFiltering(exchange)) {
+                xmlReader = typeConverter.convertTo(XMLStreamReader.class, createNonXmlFilterReader(exchange, stream));
+            } else {
+                xmlReader = typeConverter.convertTo(XMLStreamReader.class, stream);
+            }
             if (partialClass != null) {
                 // partial unmarshalling
-                Source source;
-                if (needFiltering(exchange)) {
-                    source = new StreamSource(createNonXmlFilterReader(exchange, stream));
-                } else {
-                    source = new StreamSource(stream);
-                }
-                answer = unmarshaller.unmarshal(source, partialClass);
+                answer = createUnmarshaller().unmarshal(xmlReader, partialClass);
             } else {
-                if (needFiltering(exchange)) {
-                    NonXmlFilterReader reader = createNonXmlFilterReader(exchange, stream);
-                    answer = unmarshaller.unmarshal(reader);
-                } else  {
-                    answer = unmarshaller.unmarshal(stream);
-                }
+                answer = createUnmarshaller().unmarshal(xmlReader);
             }
 
             if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
@@ -262,6 +256,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         if (partClass != null) {
             partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass, Object.class);
         }
+        typeConverter = camelContext.getTypeConverter();
     }
 
     @Override
@@ -287,6 +282,10 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             LOG.info("Creating JAXBContext");
             return JAXBContext.newInstance();
         }
+    }
+    
+    protected Unmarshaller createUnmarshaller() throws JAXBException {
+        return getContext().createUnmarshaller();
     }
 
 }

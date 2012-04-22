@@ -23,10 +23,11 @@ import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 public class SpringWebserviceConfiguration {
-
+    
     /* Producer configuration */
     private WebServiceTemplate webServiceTemplate;
     private String soapAction;
@@ -37,9 +38,10 @@ public class SpringWebserviceConfiguration {
     private CamelEndpointMapping endpointMapping;
     private CamelEndpointDispatcher endpointDispatcher;
     private EndpointMappingKey endpointMappingKey;
+    private SSLContextParameters sslContextParameters;
 
     private XmlConverter xmlConverter;
-
+    
     public WebServiceTemplate getWebServiceTemplate() {
         return webServiceTemplate;
     }
@@ -100,6 +102,14 @@ public class SpringWebserviceConfiguration {
 
     public void setEndpointMappingKey(EndpointMappingKey endpointMappingKey) {
         this.endpointMappingKey = endpointMappingKey;
+    }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public CamelEndpointDispatcher getEndpointDispatcher() {

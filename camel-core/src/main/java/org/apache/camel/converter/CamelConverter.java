@@ -30,10 +30,16 @@ import org.apache.camel.Processor;
  * @version 
  */
 @Converter
-public class CamelConverter {
+public final class CamelConverter {
+
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private CamelConverter() {
+    }
 
     @Converter
-    public Processor toProcessor(final Predicate predicate) {
+    public static Processor toProcessor(final Predicate predicate) {
         return new Processor() {
             public void process(Exchange exchange) throws Exception {
                 boolean answer = predicate.matches(exchange);
@@ -46,7 +52,7 @@ public class CamelConverter {
     }
 
     @Converter
-    public Processor toProcessor(final Expression expresion) {
+    public static Processor toProcessor(final Expression expresion) {
         return new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Object answer = expresion.evaluate(exchange, Object.class);

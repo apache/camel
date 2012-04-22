@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
@@ -191,6 +192,28 @@ public final class IOHelper {
     }
 
     /**
+     * Forces any updates to this channel's file to be written to the storage device that contains it.
+     *
+     * @param channel the file channel
+     * @param name the name of the resource
+     * @param log the log to use when reporting closure warnings
+     */
+    public static void force(FileChannel channel, String name, Logger log) {
+        try {
+            channel.force(true);
+        } catch (Exception e) {
+            if (log != null) {
+                if (name != null) {
+                    log.warn("Cannot force FileChannel: " + name + ". Reason: " + e.getMessage(), e);
+                } else {
+                    log.warn("Cannot force FileChannel. Reason: " + e.getMessage(), e);
+                }
+            }
+        }
+
+    }
+
+    /**
      * Closes the given resource if it is available, logging any closing
      * exceptions to the given log
      *
@@ -240,7 +263,7 @@ public final class IOHelper {
      */
     public static void close(Closeable... closeables) {
         for (Closeable closeable : closeables) {
-            close(closeable, null, LOG);
+            close(closeable);
         }
     }
 

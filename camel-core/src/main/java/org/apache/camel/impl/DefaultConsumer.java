@@ -100,4 +100,15 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
         Throwable newt = (t == null) ? new IllegalArgumentException("Handling [null] exception") : t;
         getExceptionHandler().handleException(newt);
     }
+
+    /**
+     * Handles the given exception using the {@link #getExceptionHandler()}
+     *
+     * @param message additional message about the exception
+     * @param t the exception to handle
+     */
+    protected void handleException(String message, Throwable t) {
+        Throwable newt = (t == null) ? new IllegalArgumentException("Handling [null] exception") : t;
+        getExceptionHandler().handleException(message, newt);
+    }
 }
