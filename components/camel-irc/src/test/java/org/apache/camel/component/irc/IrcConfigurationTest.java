@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.URISupport;
 import org.junit.Test;
 
 public class IrcConfigurationTest extends CamelTestSupport {
@@ -99,8 +100,8 @@ public class IrcConfigurationTest extends CamelTestSupport {
 
         // Test with encoding of @realname
         deprecate = "irc://user@irc.freenode.net?keys=foo,&channels=#camel,#cxf&realname=Camel Bot&username=user&nickname=camelbot";
-        sanitized = "irc://user@irc.freenode.net?channel=camel!foo&channel=cxf&nickname=camelbot&realname=Camel%20Bot";
-        endpoint = component.createEndpoint(deprecate); 
+        sanitized = "irc://user@irc.freenode.net?realname=Camel%20Bot&nickname=camelbot&channel=camel!foo&channel=cxf";
+        endpoint = component.createEndpoint(deprecate);
         assertEquals(sanitized, endpoint.getEndpointUri());
         assertNotNull(new URI(endpoint.getEndpointUri()));
     }
