@@ -126,15 +126,15 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
                 }
             }
         }
-        
+
         Collections.sort(queryParams);
         String q = "";
         for (String entry : queryParams) {
             q += q.length() == 0 ? "" : "&";
             q += entry;
         }
-        
-        StringBuffer u = new StringBuffer(1024);
+
+        StringBuffer u = new StringBuffer(64);
         if (scheme != null) {
             u.append(scheme); // SHOULD NOT be null
             u.append(":");
@@ -152,6 +152,10 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
                 u.append(fragment);
             }
         } else {
+            // add leading // if not provided
+            if (!schemeSpecificPart.startsWith("//")) {
+                u.append("//");
+            }
             u.append(schemeSpecificPart);
         }
         return u.toString();
