@@ -31,7 +31,7 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
-import org.apache.camel.dataformat.bindy.util.Converter;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -424,7 +424,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         // Check if separator exists
         ObjectHelper.notNull(this.pairSeparator, "The pair separator has not been instantiated or property not defined in the @Message annotation");
 
-        char separator = Converter.getCharDelimitor(this.getPairSeparator());
+        char separator = ConverterUtils.getCharDelimiter(this.getPairSeparator());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Separator converted: '0x{}', from: {}", Integer.toHexString(separator), this.getPairSeparator());
