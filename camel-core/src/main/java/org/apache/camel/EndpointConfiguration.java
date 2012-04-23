@@ -53,16 +53,18 @@ public interface EndpointConfiguration {
      *
      * @param name the parameter name
      * @return the configuration URI.
+     * @throws RuntimeCamelException is thrown if error getting the parameter
      */
-    <T> T getParameter(String name);
+    <T> T getParameter(String name) throws RuntimeCamelException;
 
     /**
      * Sets the value of a particular parameter.
      *
      * @param name  the parameter name
      * @param value the parameter value
+     * @throws RuntimeCamelException is thrown if error setting the parameter
      */
-    <T> void setParameter(String name, T value);
+    <T> void setParameter(String name, T value) throws RuntimeCamelException;
 
     /**
      * Returns the formatted configuration string of an {@link Endpoint}.

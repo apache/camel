@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +27,10 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.EndpointConfiguration.UriFormat;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
@@ -56,8 +53,8 @@ import org.apache.camel.util.URISupport;
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
-    // private String endpointUri;
-    private EndpointConfiguration config;
+    private String endpointUri;
+    private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
@@ -150,19 +147,30 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     public String getEndpointUri() {
-        if (config == null) {
-            String uri = createEndpointUri();
-            if (uri == null) {
+        if (endpointUri == null) {
+            endpointUri = createEndpointUri();
+            if (endpointUri == null) {
                 throw new IllegalArgumentException("endpointUri is not specified and " + getClass().getName()
                     + " does not implement createEndpointUri() to create a default value");
             }
-            setEndpointUri(uri);
         }
-        return config.toUriString(UriFormat.Canonical);
+        return endpointUri;
     }
 
     public EndpointConfiguration getEndpointConfiguration() {
-        return config;
+        if (endpointConfiguration == null) {
+            endpointConfiguration = createEndpointConfiguration(getEndpointUri());
+        }
+        return endpointConfiguration;
+    }
+
+    /**
+     * Sets a custom {@link EndpointConfiguration}
+     *
+     * @param endpointConfiguration a custom endpoint configuration to be used.
+     */
+    public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
+        this.endpointConfiguration = endpointConfiguration;
     }
 
     public String getEndpointKey() {
@@ -291,6 +299,26 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
+     * A factory method to lazily create the endpoint configuration if none is specified
+     */
+    protected EndpointConfiguration createEndpointConfiguration(String uri) {
+        // using this factory method to be backwards compatible with the old code
+        if (getComponent() != null) {
+            // prefer to use component endpoint configuration
+            try {
+                return getComponent().createConfiguration(uri);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        } else if (getCamelContext() != null) {
+            // fallback and use a mapped endpoint configuration
+            return new MappedEndpointConfiguration(getCamelContext(), uri);
+        }
+        // not configuration possible
+        return null;
+    }
+
+    /**
      * Sets the endpointUri if it has not been specified yet via some kind of
      * dependency injection mechanism. This allows dependency injection
      * frameworks such as Spring or Guice to set the default endpoint URI in
@@ -298,13 +326,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * in which an Endpoint is created.
      */
     public void setEndpointUriIfNotSpecified(String value) {
-        if (config == null) {
-            // FIXME: set the component first
-            // ObjectHelper.notNull(camelContext, "camelContext");
-            int s = value.indexOf(":");
-            if (camelContext != null && s > 0) {
-                component = camelContext.getComponent(value.substring(0, s));
-            }
+        if (endpointUri == null) {
             setEndpointUri(value);
         }
     }
@@ -313,21 +335,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * Sets the URI that created this endpoint.
      */
     protected void setEndpointUri(String endpointUri) {
-        if (endpointUri == null) {
-            config = null;
-            return;
-        }
-        try {
-            if (component != null) {
-                config = component.createConfiguration(endpointUri);
-            } else {
-                MappedEndpointConfiguration cfg = new MappedEndpointConfiguration(null);
-                cfg.setURI(new URI(endpointUri));
-                config = cfg;
-            }
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
+        this.endpointUri = endpointUri;
     }
 
     public boolean isLenientProperties() {
