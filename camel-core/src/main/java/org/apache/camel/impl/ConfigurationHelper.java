@@ -72,10 +72,11 @@ public final class ConfigurationHelper {
                 new Object[]{scheme, component != null ? component.getClass().getName() : "<null>"});
         }
         if (component != null) {
-            DefaultEndpointConfiguration cfg = (DefaultEndpointConfiguration) component.createConfiguration(scheme);
-            // Should we be ok with URIs not properly encoded? (that method may need a bit of refactoring too)
-            cfg.setURI(new URI(UnsafeUriCharactersEncoder.encode(uri)));
-            return cfg;
+            EndpointConfiguration config = component.createConfiguration(scheme);
+            if (config instanceof DefaultEndpointConfiguration) {
+                ((DefaultEndpointConfiguration) config).setURI(uri);
+            }
+            return config;
         } else {
             // no component to create the configuration
             return null;

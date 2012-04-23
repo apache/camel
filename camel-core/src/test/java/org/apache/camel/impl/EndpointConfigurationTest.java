@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -58,6 +59,14 @@ public class EndpointConfigurationTest {
         String uri1 = cfg1.toUriString(EndpointConfiguration.UriFormat.Complete);
         String uri2 = cfg2.toUriString(EndpointConfiguration.UriFormat.Complete);
         assertEquals("Query parameter order should not matter", uri1, uri2);
+    }
+
+    @Test
+    @Ignore("Fails due CAMEL-5183")
+    public void testConfigurationPortParameter() throws Exception {
+        EndpointConfiguration cfg1 = ConfigurationHelper.createConfiguration("mapped://foo:8080?one=true&two=2&port=123", context);
+        String uri1 = cfg1.toUriString(EndpointConfiguration.UriFormat.Complete);
+        assertEquals("mapped://foo:8080?one=true&port=123&two=2", uri1);
     }
 
     private static class ConfiguredComponent implements Component {

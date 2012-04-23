@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * Default implementation of {@link EndpointConfiguration}.
@@ -60,7 +61,8 @@ public abstract class DefaultEndpointConfiguration implements EndpointConfigurat
 
     public void setURI(String uri) {
         try {
-            setURI(new URI(uri));
+            String encoded = UnsafeUriCharactersEncoder.encode(uri);
+            setURI(new URI(encoded));
         } catch (URISyntaxException e) {
             throw new RuntimeCamelException("Cannot parse uri: " + uri, e);
         }
