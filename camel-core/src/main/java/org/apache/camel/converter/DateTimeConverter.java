@@ -26,6 +26,9 @@ import org.apache.camel.Converter;
 @Converter
 public final class DateTimeConverter {
 
+    /**
+     * Utility classes should not have a public constructor.
+     */
     private DateTimeConverter() {
     }
 

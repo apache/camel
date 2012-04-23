@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
 public class StaxConverter {
     private static final transient Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);
 
+    // TODO: do not use a cxf system property
+    // TODO: make higher default pool size as 20 is not much in high end systems
     private static final BlockingQueue<XMLInputFactory> INPUT_FACTORY_POOL;
     private static final BlockingQueue<XMLOutputFactory> OUTPUT_FACTORY_POOL;
     static {
@@ -285,8 +287,6 @@ public class StaxConverter {
         }
     }
 
-    
-    
     private boolean isWoodstox(Object factory) {
         return factory.getClass().getPackage().getName().startsWith("com.ctc.wstx");
     }
@@ -345,12 +345,14 @@ public class StaxConverter {
     
     // Properties
     //-------------------------------------------------------------------------
+
     public XMLInputFactory getInputFactory() {
         if (inputFactory == null) {
             return getXMLInputFactory();
         }
         return inputFactory;
     }
+
     public XMLOutputFactory getOutputFactory() {
         if (outputFactory == null) {
             return getXMLOutputFactory();
@@ -361,9 +363,9 @@ public class StaxConverter {
     public void setInputFactory(XMLInputFactory inputFactory) {
         this.inputFactory = inputFactory;
     }
+
     public void setOutputFactory(XMLOutputFactory outputFactory) {
         this.outputFactory = outputFactory;
     }
-    
 
 }

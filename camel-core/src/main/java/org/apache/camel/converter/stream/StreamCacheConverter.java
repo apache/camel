@@ -37,52 +37,58 @@ import org.apache.camel.util.IOHelper;
  * implementation to ensure message re-readability (eg multicasting, retrying)
  */
 @Converter
-public class StreamCacheConverter {
+public final class StreamCacheConverter {
+
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private StreamCacheConverter() {
+    }
 
     @Converter
-    public StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
+    public static StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
         return new StreamSourceCache(source, exchange);
     }
 
     @Converter
-    public StreamCache convertToStreamCache(StringSource source) {
+    public static StreamCache convertToStreamCache(StringSource source) {
         //no need to do stream caching for a StringSource
         return null;
     }
 
     @Converter
-    public StreamCache convertToStreamCache(BytesSource source) {
+    public static StreamCache convertToStreamCache(BytesSource source) {
         //no need to do stream caching for a BytesSource
         return null;
     }
 
     @Converter
-    public StreamCache convertToStreamCache(SAXSource source, Exchange exchange) throws TransformerException {
+    public static StreamCache convertToStreamCache(SAXSource source, Exchange exchange) throws TransformerException {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, source);
         return new SourceCache(data);
     }
 
     @Converter
-    public StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
+    public static StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         IOHelper.copyAndCloseInput(stream, cos);
         return cos.getStreamCache();
     }
 
     @Converter
-    public StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
+    public static StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, reader);
         return new ReaderCache(data);
     }
 
     @Converter
-    public Serializable convertToSerializable(StreamCache cache, Exchange exchange) throws IOException {
+    public static Serializable convertToSerializable(StreamCache cache, Exchange exchange) throws IOException {
         byte[] data = convertToByteArray(cache, exchange);
         return new BytesSource(data);
     }
 
     @Converter
-    public byte[] convertToByteArray(StreamCache cache, Exchange exchange) throws IOException {
+    public static byte[] convertToByteArray(StreamCache cache, Exchange exchange) throws IOException {
         // lets serialize it as a byte array
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         cache.writeTo(os);

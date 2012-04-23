@@ -42,19 +42,17 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     
     private static final String TEST_FILE = "org/apache/camel/converter/stream/test.xml";
     private static final String MESSAGE = "<test>This is a test</test>";
-    private StreamCacheConverter converter;
     private Exchange exchange;
     
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        this.converter = new StreamCacheConverter();
         this.exchange = new DefaultExchange(context);
     }
     
     public void testConvertToStreamCache() throws Exception {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
-        StreamCache streamCache = converter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
+        StreamCache streamCache = StreamCacheConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
         String message = exchange.getContext().getTypeConverter().convertTo(String.class, streamCache);
         assertNotNull(message);
         assertEquals("The converted message is wrong", MESSAGE, message);
@@ -62,7 +60,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
 
     public void testConvertToStreamCacheStreamSource() throws Exception {
         StreamSource source = new StreamSource(getTestFileStream());
-        StreamCache cache = converter.convertToStreamCache(source, exchange);
+        StreamCache cache = StreamCacheConverter.convertToStreamCache(source, exchange);
         //assert re-readability of the cached StreamSource
         XmlConverter converter = new XmlConverter();
         assertNotNull(converter.toString((Source)cache, null));
@@ -72,19 +70,19 @@ public class StreamCacheConverterTest extends ContextTestSupport {
 
     public void testConvertToStreamCacheInputStream() throws Exception {
         InputStream is = getTestFileStream();
-        InputStream cache = (InputStream)converter.convertToStreamCache(is, exchange);
+        InputStream cache = (InputStream)StreamCacheConverter.convertToStreamCache(is, exchange);
         //assert re-readability of the cached InputStream
         assertNotNull(IOConverter.toString(cache, null));
         assertNotNull(IOConverter.toString(cache, null));
     }
     
-    public void testConvertToStreamCacheInpuStreamWithFileCache() throws Exception {
+    public void testConvertToStreamCacheInputStreamWithFileCache() throws Exception {
         // set up the properties
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(CachedOutputStream.THRESHOLD, "1");
         exchange.getContext().setProperties(properties);
         InputStream is = getTestFileStream();
-        InputStream cache = (InputStream)converter.convertToStreamCache(is, exchange);
+        InputStream cache = (InputStream)StreamCacheConverter.convertToStreamCache(is, exchange);
         assertNotNull(IOConverter.toString(cache, null));
         try {
             // since the stream is closed you delete the temp file
@@ -99,15 +97,15 @@ public class StreamCacheConverterTest extends ContextTestSupport {
 
     public void testConvertToSerializable() throws Exception {
         InputStream is = getTestFileStream();
-        StreamCache cache = converter.convertToStreamCache(is, exchange);
-        Serializable ser = converter.convertToSerializable(cache, exchange);
+        StreamCache cache = StreamCacheConverter.convertToStreamCache(is, exchange);
+        Serializable ser = StreamCacheConverter.convertToSerializable(cache, exchange);
         assertNotNull(ser);
     }
 
     public void testConvertToByteArray() throws Exception {
         InputStream is = getTestFileStream();
-        StreamCache cache = converter.convertToStreamCache(is, exchange);
-        byte[] bytes = converter.convertToByteArray(cache, exchange);
+        StreamCache cache = StreamCacheConverter.convertToStreamCache(is, exchange);
+        byte[] bytes = StreamCacheConverter.convertToByteArray(cache, exchange);
         assertNotNull(bytes);
     }
 
