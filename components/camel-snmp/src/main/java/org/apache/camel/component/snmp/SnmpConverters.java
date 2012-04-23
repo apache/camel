@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.snmp;
 
+import java.util.StringTokenizer;
+
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.snmp4j.PDU;
+import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 
 @Converter
@@ -40,6 +44,29 @@ public final class SnmpConverters {
         //Utility Class
     }
 
+    @Converter
+    public static OIDList toOIDList(String s, Exchange exchange) {
+        OIDList list = new OIDList();
+
+        if (s != null && s.indexOf(",") != -1) {
+            // seems to be a comma separated oid list
+            StringTokenizer strTok = new StringTokenizer(s, ",");
+            while (strTok.hasMoreTokens()) {
+                String tok = strTok.nextToken();
+                if (tok != null && tok.trim().length() > 0) {
+                    list.add(new OID(tok.trim()));
+                } else {
+                    // empty token - skip
+                }
+            }
+        } else if (s != null) {
+            // maybe a single oid
+            list.add(new OID(s.trim()));
+        }
+
+        return list;
+    }
+
     /**
      * Converts the given snmp pdu to a String body.
      *
@@ -50,10 +77,10 @@ public final class SnmpConverters {
     public static String toString(PDU pdu) {
      // the output buffer
         StringBuilder sb = new StringBuilder();
-        
+
         // prepare the header
         sb.append(SNMP_TAG_OPEN);
-                
+
         // now loop all variables of the response
         for (Object o : pdu.getVariableBindings()) {
             VariableBinding b = (VariableBinding)o;
@@ -67,13 +94,13 @@ public final class SnmpConverters {
             sb.append(VALUE_TAG_CLOSE);
             sb.append(ENTRY_TAG_CLOSE);
         }
-        
+
         // prepare the footer
         sb.append(SNMP_TAG_CLOSE);
-        
+
         return sb.toString();
     }
-    
+
     private static String getXmlSafeString(String string) {
         return string.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
     }
