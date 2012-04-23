@@ -22,20 +22,13 @@ import org.apache.camel.util.StopWatch;
 /**
  * @version 
  */
-public class PropertyEditorTypeConverterIssueTest extends ContextTestSupport {
+public class PrimitiveTypeConverterIssueTest extends ContextTestSupport {
 
-    public void testPropertyEditorTypeConverter() throws Exception {
-        // test that converters a custom object (MyBean) to a String which causes
-        // PropertyEditorTypeConverter to be used. And this test times how fast
-        // this is. As we want to optimize PropertyEditorTypeConverter to be faster
-        MyBean bean = new MyBean();
-        bean.setBar("Hello");
-
+    public void testPrimitiveTypeConverter() throws Exception {
         StopWatch watch = new StopWatch();
-        for (int i = 0; i < 500; i++) {
-            String s = context.getTypeConverter().convertTo(String.class, bean);
-            log.debug(s);
-            assertNotNull(s);
+        for (int i = 0; i < 10000; i++) {
+            int num = context.getTypeConverter().convertTo(int.class, "123");
+            assertEquals(123, num);
         }
         log.info("Time taken: " + watch.stop());
     }

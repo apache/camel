@@ -63,7 +63,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final PackageScanClassResolver resolver;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
-    protected final PropertyEditorTypeConverter propertyEditorTypeConverter = new PropertyEditorTypeConverter();
     protected final Statistics statistics = new UtilizationStatistics();
     protected final AtomicLong attemptCounter = new AtomicLong();
     protected final AtomicLong missCounter = new AtomicLong();
@@ -80,8 +79,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // always convert something to a string so we want it only as the last resort
         // ToStringTypeConverter should NOT allow to be promoted
         addFallbackTypeConverter(new ToStringTypeConverter(), false);
-        // do not assume property editor as it has a String converter
-        addFallbackTypeConverter(propertyEditorTypeConverter, false);
         // enum is okay to be promoted
         addFallbackTypeConverter(new EnumTypeConverter(), true);
         // arrays is okay to be promoted
@@ -123,7 +120,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             }
 
             // error occurred during type conversion
-            throw new TypeConversionException(value, type, e);
+            if (e instanceof TypeConversionException) {
+                throw (TypeConversionException) e;
+            } else {
+                throw new TypeConversionException(value, type, e);
+            }
         }
         if (answer == Void.TYPE) {
             // Could not find suitable conversion
@@ -155,7 +156,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         } catch (Exception e) {
             failedCounter.incrementAndGet();
             // error occurred during type conversion
-            throw new TypeConversionException(value, type, e);
+            if (e instanceof TypeConversionException) {
+                throw (TypeConversionException) e;
+            } else {
+                throw new TypeConversionException(value, type, e);
+            }
         }
         if (answer == Void.TYPE || value == null) {
             // Could not find suitable conversion
@@ -240,15 +245,48 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         TypeConverter converter = getOrFindTypeConverter(type, value);
         if (converter != null) {
             log.trace("Using converter: {} to convert {}", converter, key);
-            Object rc = converter.convertTo(type, exchange, value);
+            Object rc;
+            if (tryConvert) {
+                rc = converter.tryConvertTo(type, exchange, value);
+            } else {
+                rc = converter.convertTo(type, exchange, value);
+            }
             if (rc != null) {
                 return rc;
             }
         }
 
+        // not found with that type then if it was a primitive type then try again with the wrapper type
+        if (type.isPrimitive()) {
+            Class<?> primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
+            if (primitiveType != type) {
+                Class<?> fromType = value.getClass();
+                TypeConverter tc = getOrFindTypeConverter(primitiveType, value);
+                if (tc != null) {
+                    // add the type as a known type converter as we can convert from primitive to object converter
+                    addTypeConverter(type, fromType, tc);
+                    Object rc;
+                    if (tryConvert) {
+                        rc = tc.tryConvertTo(primitiveType, exchange, value);
+                    } else {
+                        rc = tc.convertTo(primitiveType, exchange, value);
+                    }
+                    if (rc != null) {
+                        return rc;
+                    }
+                }
+            }
+        }
+
         // fallback converters
         for (FallbackTypeConverter fallback : fallbackConverters) {
-            Object rc = fallback.getFallbackTypeConverter().convertTo(type, exchange, value);
+            TypeConverter tc = fallback.getFallbackTypeConverter();
+            Object rc;
+            if (tryConvert) {
+                rc = tc.tryConvertTo(type, exchange, value);
+            } else {
+                rc = tc.convertTo(type, exchange, value);
+            }
 
             if (Void.TYPE.equals(rc)) {
                 // it cannot be converted so give up
@@ -274,14 +312,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
                 // return converted value
                 return rc;
-            }
-        }
-
-        // not found with that type then if it was a primitive type then try again with the wrapper type
-        if (type.isPrimitive()) {
-            Class<?> primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
-            if (primitiveType != type) {
-                return convertTo(primitiveType, exchange, value);
             }
         }
 
@@ -492,7 +522,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         typeMappings.clear();
         misses.clear();
-        propertyEditorTypeConverter.clear();
         statistics.reset();
     }
 
