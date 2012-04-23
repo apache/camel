@@ -32,24 +32,27 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRouter.xml");
     }
-    
+
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     protected void doPostSetup() throws Exception {
         //clean up the default bus for template to use
         BusFactory.setDefaultBus(null);
     }
 
+    /**
+     * Calling an invalid URL on a running server. So we expect a 404 response in the CamelExecutionException
+     */
     @Test(expected = CamelExecutionException.class)
     public void testRestServerDirectlyAddCustomer() {
         Customer input = new Customer();
         input.setName("Donald Duck");
 
-        // we cannot convert directly to Customer as we need camel-jaxb
-        String response = template.requestBodyAndHeader("cxfrs:http://localhost:9002/customerservice/customers?throwExceptionOnFailure=true", input,
+        template.requestBodyAndHeader("cxfrs:http://localhost:9002/wrongurl?throwExceptionOnFailure=true", input,
             Exchange.HTTP_METHOD, "POST", String.class);
-
-        assertNotNull(response);
-        assertTrue(response.endsWith("<name>Donald Duck</name></Customer>"));
-        
     }
 
     @Test
@@ -57,11 +60,10 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
         Customer input = new Customer();
         input.setName("Donald Duck");
 
-        // we cannot convert directly to Customer as we need camel-jaxb
-        String response = template.requestBodyAndHeader("cxfrs:http://localhost:9002/customerservice/customers?throwExceptionOnFailure=false", input,
+        String response = template.requestBodyAndHeader("cxfrs:http://localhost:9002/wrongurl?throwExceptionOnFailure=false", input,
             Exchange.HTTP_METHOD, "POST", String.class);
 
         assertNotNull(response);
-        assertTrue(response.contains("Problem accessing /customerservice/customers"));
+        assertTrue(response.contains("Problem accessing /wrongurl"));
     }
 }
