@@ -31,20 +31,23 @@ import org.apache.commons.httpclient.methods.RequestEntity;
  * Some converter methods to make it easier to convert the body to RequestEntity types.
  */
 @Converter
-public class RequestEntityConverter {
+public final class RequestEntityConverter {
+
+    private RequestEntityConverter() {
+    }
 
     @Converter
-    public RequestEntity toRequestEntity(byte[] data, Exchange exchange) throws Exception {
+    public static RequestEntity toRequestEntity(byte[] data, Exchange exchange) throws Exception {
         return asRequestEntity(data, exchange);
     }
 
     @Converter
-    public RequestEntity toRequestEntity(InputStream inStream, Exchange exchange) throws Exception {
+    public static RequestEntity toRequestEntity(InputStream inStream, Exchange exchange) throws Exception {
         return asRequestEntity(inStream, exchange);
     }
 
     @Converter
-    public RequestEntity toRequestEntity(String str, Exchange exchange) throws Exception {
+    public static RequestEntity toRequestEntity(String str, Exchange exchange) throws Exception {
         if (GZIPHelper.isGzip(exchange.getIn())) {
             byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, str);
             return asRequestEntity(data, exchange);
@@ -54,7 +57,7 @@ public class RequestEntityConverter {
         }
     }
 
-    private RequestEntity asRequestEntity(InputStream in, Exchange exchange) throws IOException {
+    private static RequestEntity asRequestEntity(InputStream in, Exchange exchange) throws IOException {
         if (exchange != null
             && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             return new InputStreamRequestEntity(GZIPHelper.compressGzip(exchange.getIn()
@@ -70,7 +73,7 @@ public class RequestEntityConverter {
         }
     }
 
-    private RequestEntity asRequestEntity(byte[] data, Exchange exchange) throws Exception {
+    private static RequestEntity asRequestEntity(byte[] data, Exchange exchange) throws Exception {
         if (exchange != null
             && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             return new InputStreamRequestEntity(GZIPHelper.compressGzip(exchange.getIn()

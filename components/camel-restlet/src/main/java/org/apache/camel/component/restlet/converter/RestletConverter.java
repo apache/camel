@@ -28,16 +28,18 @@ import org.restlet.data.Method;
  * @version 
  */
 @Converter
-public class RestletConverter {
+public final class RestletConverter {
+
+    private RestletConverter() {
+    }
 
     @Converter
-    public Method toMethod(String name) {
+    public static Method toMethod(String name) {
         return Method.valueOf(name.toUpperCase());
     }
     
     @Converter
-    public Method[] toMethods(String name) {
-        
+    public static Method[] toMethods(String name) {
         String[] strings = name.split(",");
         List<Method> methods = new ArrayList<Method>();
         for (String string : strings) {
@@ -48,7 +50,7 @@ public class RestletConverter {
     }
     
     @Converter
-    public MediaType toMediaType(String name) {
+    public static MediaType toMediaType(String name) {
         return MediaType.valueOf(name);
     }
 

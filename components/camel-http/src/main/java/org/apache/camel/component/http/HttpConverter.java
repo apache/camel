@@ -56,8 +56,6 @@ public final class HttpConverter {
         }
         return message.getHeader(Exchange.HTTP_SERVLET_RESPONSE, HttpServletResponse.class);
     }
-    
-    
 
     @Converter
     public static ServletInputStream toServletInputStream(HttpMessage message) throws IOException {
