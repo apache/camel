@@ -18,15 +18,15 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.converter.PropertyEditorTypeConverter;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
@@ -34,16 +34,21 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  * that did not yet define a configuration type.
  */
 public final class MappedEndpointConfiguration extends DefaultEndpointConfiguration {
-    private static final TypeConverter CONVERTER = new PropertyEditorTypeConverter();
-    private Map<String, Object> params = new ConcurrentHashMap<String, Object>();
+    // TODO: need 2 sets to differentiate between user keys and fixed keys
+    private Map<String, Object> params = new LinkedHashMap<String, Object>();
 
-    MappedEndpointConfiguration(Component component) {
-        super(component);
+    MappedEndpointConfiguration(CamelContext camelContext) {
+        super(camelContext);
+    }
+
+    MappedEndpointConfiguration(CamelContext camelContext, String uri) {
+        super(camelContext);
+        setURI(uri);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getParameter(String name) {
-        return (T)params.get(name);
+        return (T) params.get(name);
     }
 
     @Override
@@ -55,7 +60,7 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
     public boolean equals(Object other) {
         // if all parameters including scheme are the same, the component and uri must be the same too
         boolean eq = params.equals(((MappedEndpointConfiguration)other).params);
-        return this == other || (other != null && this.getClass() == other.getClass() && eq);
+        return this == other || (this.getClass() == other.getClass() && eq);
     }
 
     @Override
@@ -65,9 +70,9 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
 
     @Override
     protected void parseURI() {
-        ConfigurationHelper.populateFromURI(this, new ConfigurationHelper.ParameterSetter() {
+        ConfigurationHelper.populateFromURI(getCamelContext(), this, new ConfigurationHelper.ParameterSetter() {
             @Override
-            public <T> void set(EndpointConfiguration config, String name, T value) {
+            public <T> void set(CamelContext camelContext, EndpointConfiguration config, String name, T value) {
                 if (name != null && value != null) {
                     params.put(name, value);
                 }
@@ -86,16 +91,18 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
         String path = null;
         String fragment = null;
 
+        TypeConverter converter = getCamelContext().getTypeConverter();
+
         // Separate URI values from query parameters
         for (Map.Entry<String, Object> entry : entries) {
             String key = entry.getKey();
             Object value = entry.getValue();
             if (key.equals(EndpointConfiguration.URI_SCHEME)) {
-                scheme = CONVERTER.convertTo(String.class, value);
+                scheme = converter.convertTo(String.class, value);
             } else if (key.equals(EndpointConfiguration.URI_SCHEME_SPECIFIC_PART)) {
-                schemeSpecificPart = CONVERTER.convertTo(String.class, value);
+                schemeSpecificPart = converter.convertTo(String.class, value);
             } else if (key.equals(EndpointConfiguration.URI_AUTHORITY)) {
-                authority = CONVERTER.convertTo(String.class, value);
+                authority = converter.convertTo(String.class, value);
             } else if (key.equals(EndpointConfiguration.URI_USER_INFO)) {
                 // ignore, part of authority
             } else if (key.equals(EndpointConfiguration.URI_HOST)) {
@@ -103,11 +110,11 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
             } else if (key.equals(EndpointConfiguration.URI_PORT)) {
                 // ignore, part of authority
             } else if (key.equals(EndpointConfiguration.URI_PATH)) {
-                path = CONVERTER.convertTo(String.class, value);
+                path = converter.convertTo(String.class, value);
             } else if (key.equals(EndpointConfiguration.URI_QUERY)) {
                 // ignore, but this should not be the case, may be a good idea to log...
             } else if (key.equals(EndpointConfiguration.URI_FRAGMENT)) {
-                fragment = CONVERTER.convertTo(String.class, value);
+                fragment = converter.convertTo(String.class, value);
             } else {
                 // convert to "param=value" format here, order will be preserved
                 if (value instanceof List) {

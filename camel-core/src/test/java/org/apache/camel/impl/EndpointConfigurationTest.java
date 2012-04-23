@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
@@ -26,7 +25,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
 
 public class EndpointConfigurationTest {
 
@@ -59,7 +57,7 @@ public class EndpointConfigurationTest {
         EndpointConfiguration cfg2 = ConfigurationHelper.createConfiguration("mapped://foo?two=2&one=true", context);
         String uri1 = cfg1.toUriString(EndpointConfiguration.UriFormat.Complete);
         String uri2 = cfg2.toUriString(EndpointConfiguration.UriFormat.Complete);
-        assertEquals("Query paramater order should not matter", uri1, uri2);
+        assertEquals("Query parameter order should not matter", uri1, uri2);
     }
 
     private static class ConfiguredComponent implements Component {
@@ -82,7 +80,7 @@ public class EndpointConfigurationTest {
 
         @Override
         public EndpointConfiguration createConfiguration(String uri) throws Exception {
-            return new MappedEndpointConfiguration(this);
+            return new MappedEndpointConfiguration(getCamelContext());
         }
     }
 }

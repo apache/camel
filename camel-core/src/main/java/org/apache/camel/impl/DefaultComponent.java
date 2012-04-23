@@ -111,7 +111,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     public EndpointConfiguration createConfiguration(String uri) throws Exception {
-        MappedEndpointConfiguration config = new MappedEndpointConfiguration(this);
+        MappedEndpointConfiguration config = new MappedEndpointConfiguration(getCamelContext());
         config.setURI(new URI(uri));
         return config;
     }
