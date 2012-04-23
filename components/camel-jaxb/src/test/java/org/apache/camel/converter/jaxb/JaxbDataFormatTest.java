@@ -16,17 +16,6 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -34,21 +23,12 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 
-
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.*;
 
 public class JaxbDataFormatTest {
 
     private JaxbDataFormat jaxbDataFormat;
-    private Marshaller marshallerMock;
-    private JaxbDataFormat jaxbDataFormatMock;
-    private Unmarshaller unmarshallerMock;
     private CamelContext camelContext;
 
     @Before
@@ -90,60 +70,6 @@ public class JaxbDataFormatTest {
         exchange.setProperty(Exchange.FILTER_NON_XML_CHARS, Boolean.FALSE);
 
         assertFalse(jaxbDataFormat.needFiltering(exchange));
-    }
-
-    @Test
-    public void testMarshalFilteringDisabled() throws IOException, XMLStreamException, JAXBException {
-        jaxbDataFormat.setFilterNonXmlChars(false);
-
-        jaxbDataFormatMock = spy(jaxbDataFormat);
-        marshallerMock = mock(Marshaller.class);
-
-        Object graph = new Object();
-        OutputStream stream = new ByteArrayOutputStream();
-        jaxbDataFormatMock.marshal(new DefaultExchange(camelContext), graph, stream, marshallerMock);
-
-        verify(marshallerMock).marshal(same(graph), same(stream));
-    }
-
-    @Test
-    public void testMarshalFilteringEnabled() throws XMLStreamException, JAXBException {
-        jaxbDataFormat.setFilterNonXmlChars(true);
-
-        jaxbDataFormatMock = spy(jaxbDataFormat);
-        marshallerMock = mock(Marshaller.class);
-
-        Object graph = new Object();
-        jaxbDataFormatMock.marshal(new DefaultExchange(camelContext), graph, new ByteArrayOutputStream(), marshallerMock);
-
-        verify(marshallerMock).marshal(same(graph), isA(FilteringXmlStreamWriter.class));
-    }
-
-    @Test
-    public void testUnmarshalFilteringDisabled() throws IOException, JAXBException {
-        jaxbDataFormat.setFilterNonXmlChars(false);
-
-        jaxbDataFormatMock = spy(jaxbDataFormat);
-
-        unmarshallerMock = mock(Unmarshaller.class);
-        doReturn(unmarshallerMock).when(jaxbDataFormatMock).createUnmarshaller();
-
-        jaxbDataFormatMock.unmarshal(new DefaultExchange(camelContext), new ByteArrayInputStream(new byte[] {}));
-
-        verify(unmarshallerMock).unmarshal((XMLStreamReader) argThat(instanceOf(XMLStreamReader.class)));
-    }
-
-    @Test
-    public void testUnmarshalFilteringEnabled() throws IOException, JAXBException {
-        jaxbDataFormat.setFilterNonXmlChars(true);
-        jaxbDataFormatMock = spy(jaxbDataFormat);
-        
-        unmarshallerMock = mock(Unmarshaller.class);
-        doReturn(unmarshallerMock).when(jaxbDataFormatMock).createUnmarshaller();
-
-        jaxbDataFormatMock.unmarshal(new DefaultExchange(camelContext), new ByteArrayInputStream(new byte[] {}));
-
-        verify(unmarshallerMock).unmarshal((XMLStreamReader) argThat(instanceOf(XMLStreamReader.class)));
     }
 
 }
