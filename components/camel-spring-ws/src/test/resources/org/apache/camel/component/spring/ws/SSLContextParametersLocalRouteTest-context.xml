@@ -1,139 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+  license agreements. See the NOTICE file distributed with this work for additional 
+  information regarding copyright ownership. The ASF licenses this file to 
+  You under the Apache License, Version 2.0 (the "License"); you may not use 
+  this file except in compliance with the License. You may obtain a copy of 
+  the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+  by applicable law or agreed to in writing, software distributed under the 
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+  OF ANY KIND, either express or implied. See the License for the specific 
+  language governing permissions and limitations under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-         
-         
-    <bean id="port"
-      class="org.apache.camel.test.AvailablePortFinder"
-      factory-method="getNextAvailable"/>
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <!-- producer routes (web service clients) -->
-        <route>
-            <from uri="direct:stockQuoteWebservice"/>
-            <to uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters"/>
-        </route>
-        <route>
-            <from uri="direct:stockQuoteWebserviceMock"/>
-            <pipeline>
-                <to uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters"/>
-                <to uri="mock:result" />
-            </pipeline>
-        </route>
-        <route>
-            <from uri="direct:stockQuoteWebserviceAsString"/>
-            <to uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters"/>
-            <convertBodyTo type="java.lang.String"/>
-        </route>
-        <route>
-            <from uri="direct:stockQuoteWebserviceWithDefaultTemplate"/>
-            <to uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters"/>
-        </route>
-        <route>
-            <from uri="direct:stockQuoteWebserviceWithNonDefaultMessageFactory"/>
-            <to uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;messageFactory=#messageFactory&amp;sslContextParameters=#sslContextParameters"/>
-        </route>
-        <route>
-            <from uri="direct:stockQuoteWebserviceWithoutDefaultUri"/>
-            <to uri="spring-ws:https://dummy?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters"/>
-            <convertBodyTo type="java.lang.String"/>
-        </route>
-        <!-- consumer route (providing the actual web service) -->
-        <route>
-            <from uri="spring-ws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping"/>
-            <to uri="responseProcessor"/>
-        </route>
-    </camelContext>
-    
-    <sslContextParameters xmlns="http://camel.apache.org/schema/spring"
-      id="sslContextParameters"
-      sessionTimeout="1"
-      secureSocketProtocol="TLS">
-    
-      <keyManagers
-          keyPassword="changeit">
-        <keyStore
-            resource="localhost.ks"
-            password="changeit"/>
-      </keyManagers>
-    
-      <trustManagers>
-        <keyStore
-            resource="localhost.ks"
-            password="changeit"/>
-      </trustManagers>
 
-    </sslContextParameters>
+  <bean id="port" class="org.apache.camel.test.AvailablePortFinder"
+    factory-method="getNextAvailable" />
 
-    <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- producer routes (web service clients) -->
+    <route>
+      <from uri="direct:stockQuoteWebservice" />
+      <to
+        uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters" />
+    </route>
+    <route>
+      <from uri="direct:stockQuoteWebserviceMock" />
+      <pipeline>
+        <to
+          uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters" />
+        <to uri="mock:result" />
+      </pipeline>
+    </route>
+    <route>
+      <from uri="direct:stockQuoteWebserviceAsString" />
+      <to
+        uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters" />
+      <convertBodyTo type="java.lang.String" />
+    </route>
+    <route>
+      <from uri="direct:stockQuoteWebserviceWithDefaultTemplate" />
+      <to
+        uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters" />
+    </route>
+    <route>
+      <from uri="direct:stockQuoteWebserviceWithNonDefaultMessageFactory" />
+      <to
+        uri="spring-ws:https://localhost:#{port}?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;messageFactory=#messageFactory&amp;sslContextParameters=#sslContextParameters" />
+    </route>
+    <route>
+      <from uri="direct:stockQuoteWebserviceWithoutDefaultUri" />
+      <to
+        uri="spring-ws:https://dummy?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;sslContextParameters=#sslContextParameters" />
+      <convertBodyTo type="java.lang.String" />
+    </route>
+  </camelContext>
 
-    <bean id="endpointMapping"
-          class="org.apache.camel.component.spring.ws.bean.CamelEndpointMapping"/>
+  <sslContextParameters xmlns="http://camel.apache.org/schema/spring"
+    id="sslContextParameters" sessionTimeout="1" secureSocketProtocol="TLS">
 
-    <bean id="responseProcessor"
-          class="org.apache.camel.component.spring.ws.StockQuoteResponseProcessor"/>
+    <keyManagers keyPassword="changeit">
+      <keyStore resource="localhost.ks" password="changeit" />
+    </keyManagers>
 
-    <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
-        <property name="defaultUri" value="https://localhost:#{port}/GetQuote"/>
-    </bean>
-    
-    <bean id="httpServer" class="sun.net.httpserver.HttpsServerImpl" init-method="start">
-      <constructor-arg>
-        <bean class="java.net.InetSocketAddress">
-          <constructor-arg value="localhost"/>
-          <constructor-arg ref="port"/>
-        </bean>
-      </constructor-arg>
-      <constructor-arg value="0"/>
-      <property name="httpsConfigurator">
-        <bean class="com.sun.net.httpserver.HttpsConfigurator">
+    <trustManagers>
+      <keyStore resource="localhost.ks" password="changeit" />
+    </trustManagers>
+
+  </sslContextParameters>
+  
+  <bean id="messageFactory"
+    class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory" />
+
+  <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+    <property name="defaultUri" value="https://localhost:#{port}/GetQuote" />
+  </bean>
+
+  <bean id="jettyServer" class="org.eclipse.jetty.server.Server"
+    destroy-method="stop" init-method="start">
+    <property name="connectors">
+      <list>
+        <bean id="Connector"
+          class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
           <constructor-arg>
-            <bean factory-bean="sslContextParameters" factory-method="createSSLContext"/>
+            <bean class="org.eclipse.jetty.http.ssl.SslContextFactory">
+              <property name="keyStorePath" value="src/test/resources/localhost.ks" />
+              <property name="keyStorePassword" value="changeit" />
+              <property name="trustStore" value="src/test/resources/localhost.ks" />
+              <property name="trustStorePassword" value="changeit" />
+            </bean>
           </constructor-arg>
+          <property name="port" ref="port" />
         </bean>
-      </property>
-    </bean>
-
-  <bean id="httpContext"
-    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject" ref="httpServer" />
-    <property name="targetMethod" value="createContext" />
-    <property name="arguments">
-      <array>
-        <value>/</value>
-        <bean class="org.springframework.ws.transport.http.WebServiceMessageReceiverHttpHandler">
-          <property name="messageFactory" ref="messageFactory"/>
-          <property name="messageReceiver">
-            <bean class="org.springframework.ws.soap.server.SoapMessageDispatcher">
-              <property name="endpointMappings">
+      </list>
+    </property>
+    <property name="handler">
+      <bean class="org.eclipse.jetty.servlet.ServletContextHandler">
+          <property name="contextPath" value="/"/>
+          <property name="servletHandler">
+            <bean class="org.eclipse.jetty.servlet.ServletHandler">
+              <property name="servlets">
                 <list>
-                  <ref bean="endpointMapping"/>
+                  <bean class="org.eclipse.jetty.servlet.ServletHolder">
+                    <property name="name" value="test"/>
+                    <property name="servlet">
+                      <bean
+                        class="org.springframework.ws.transport.http.MessageDispatcherServlet">
+                      </bean>
+                    </property>
+                    <property name="initParameters">
+                      <map>
+                        <entry key="contextConfigLocation"
+                          value="classpath:org/apache/camel/component/spring/ws/SSLContextParametersLocalRouteTest-servlet-context.xml" />
+                      </map>
+                    </property>
+                  </bean>
+                </list>
+              </property>
+              <property name="servletMappings">
+                <list>
+                  <bean class="org.eclipse.jetty.servlet.ServletMapping">
+                    <property name="pathSpec" value="/*"/>
+                    <property name="servletName" value="test"/>  
+                  </bean>
                 </list>
               </property>
             </bean>
           </property>
-        </bean>
-      </array>
+      </bean>
     </property>
   </bean>
-
 </beans>
