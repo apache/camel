@@ -28,6 +28,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.util.URISupport;
 import org.apache.cxf.transport.http.HTTPException;
 
 import org.junit.Test;
@@ -50,14 +51,19 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
     }
     
     @Test
-    public void testCreateCxfEndpointFromURI() {
+    public void testCreateCxfEndpointFromURI() throws Exception {
         CamelContext camelContext = ctx.getBean("camel", CamelContext.class);
+
         CxfEndpoint endpoint1 = camelContext.getEndpoint("cxf:bean:routerEndpoint?address=http://localhost:9000/test1", CxfEndpoint.class);
         CxfEndpoint endpoint2 = camelContext.getEndpoint("cxf:bean:routerEndpoint?address=http://localhost:8000/test2", CxfEndpoint.class);
         assertEquals("Get a wrong endpoint address.", "http://localhost:9000/test1", endpoint1.getAddress());
         assertEquals("Get a wrong endpoint address.", "http://localhost:8000/test2", endpoint2.getAddress());
-        assertEquals("Get a wrong endpoint key.", "cxf://bean:routerEndpoint?address=http://localhost:9000/test1", endpoint1.getEndpointKey());
-        assertEquals("Get a wrong endpoint key.", "cxf://bean:routerEndpoint?address=http://localhost:8000/test2", endpoint2.getEndpointKey());
+
+        // the uri will always be normalized
+        String uri1 = URISupport.normalizeUri("cxf://bean:routerEndpoint?address=http://localhost:9000/test1");
+        String uri2 = URISupport.normalizeUri("cxf://bean:routerEndpoint?address=http://localhost:8000/test2");
+        assertEquals("Get a wrong endpoint key.", uri1, endpoint1.getEndpointKey());
+        assertEquals("Get a wrong endpoint key.", uri2, endpoint2.getEndpointKey());
     }
 
     @Test
