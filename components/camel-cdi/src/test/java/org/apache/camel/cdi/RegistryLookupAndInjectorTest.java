@@ -32,7 +32,7 @@ public class RegistryLookupAndInjectorTest extends CamelCdiTestContainer {
 
     @Override
     public void setUp() throws Exception {
-       super.setUp();
+        super.setUp();
 
         resultEndpoint = getMockEndpoint("mock:result");
     }

@@ -49,6 +49,6 @@ public abstract class CamelCdiTestContainer extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-       return new CdiCamelContext();
+        return new CdiCamelContext();
     }
 }
