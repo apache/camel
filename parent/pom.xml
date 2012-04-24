@@ -131,9 +131,9 @@
     <mongo-java-driver-version>2.7.3</mongo-java-driver-version>
     <mvel-version>2.0.18</mvel-version>
     <mybatis-version>3.1.1</mybatis-version>
-    <!-- transitive dependency from avro -->
+    <!-- transitive dependency from avro, to use older netty bundle -->
     <netty-bundle-version>3.2.7.Final_1</netty-bundle-version>
-    <netty-version>3.3.1.Final</netty-version>
+    <netty-version>3.4.1.Final</netty-version>
     <ode-version>1.3.4</ode-version>
     <openwebbeans-version>1.1.3</openwebbeans-version>
     <ognl-version>3.0.4_1</ognl-version>
