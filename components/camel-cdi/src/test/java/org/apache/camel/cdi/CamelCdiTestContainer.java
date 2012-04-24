@@ -16,6 +16,8 @@
  */
 package org.apache.camel.cdi;
 
+import java.util.logging.LogManager;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -23,6 +25,7 @@ import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 /**
  * Base class for cdi tests.
@@ -30,6 +33,17 @@ import org.junit.Before;
 public abstract class CamelCdiTestContainer extends CamelTestSupport {
 
     private CdiContainer cdiContainer;
+
+    /**
+     * Reset configuration of java util logging and forward it to slf4j.
+     * 
+     * @throws Exception In case of failures.
+     */
+    @BeforeClass
+    public static void before() throws Exception {
+        LogManager.getLogManager().reset();
+        org.slf4j.bridge.SLF4JBridgeHandler.install();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -52,3 +66,4 @@ public abstract class CamelCdiTestContainer extends CamelTestSupport {
         return new CdiCamelContext();
     }
 }
+

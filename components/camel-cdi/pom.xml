@@ -88,6 +88,12 @@
       <version>${deltaspike-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -134,7 +140,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se</artifactId>
+            <artifactId>weld-se-core</artifactId>
             <version>${weld-version}</version>
             <scope>provided</scope>
         </dependency>
