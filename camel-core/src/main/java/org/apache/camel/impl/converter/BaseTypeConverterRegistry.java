@@ -178,6 +178,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return tryConvertTo(type, null, value);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
         if (!isRunAllowed()) {

@@ -28,7 +28,6 @@ import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.ErrorHandlerSupport;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.PredicateAssertHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

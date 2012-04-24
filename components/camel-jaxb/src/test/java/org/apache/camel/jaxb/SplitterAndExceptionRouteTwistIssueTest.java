@@ -158,6 +158,8 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
 @XmlRootElement(name = "twits")
 class Twits implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @XmlElement(name = "twit", required = true)
     protected List<Twit> twits;
 
@@ -181,6 +183,8 @@ class Twits implements Serializable {
 @XmlType(name = "Twit", propOrder = {"text"})
 @XmlRootElement(name = "twit")
 class Twit implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @XmlElement(required = true)
     protected String text;

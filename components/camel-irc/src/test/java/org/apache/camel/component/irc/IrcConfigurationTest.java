@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.URISupport;
 import org.junit.Test;
 
 public class IrcConfigurationTest extends CamelTestSupport {

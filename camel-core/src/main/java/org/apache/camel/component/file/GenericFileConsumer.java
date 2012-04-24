@@ -85,7 +85,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Poll for files
      */
-    @SuppressWarnings("unchecked")
     protected int poll() throws Exception {
         // must reset for each poll
         fileExpressionResult = null;
@@ -160,7 +159,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return polledMessages;
     }
 
-    @SuppressWarnings("unchecked")
     public int processBatch(Queue<Object> exchanges) {
         int total = exchanges.size();
 
@@ -198,13 +196,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return total;
     }
 
-    @SuppressWarnings("unchecked")
-    protected void removeExcessiveInProgressFiles(Deque exchanges, int limit) {
+    protected void removeExcessiveInProgressFiles(Deque<Exchange> exchanges, int limit) {
         // remove the file from the in progress list in case the batch was limited by max messages per poll
         while (exchanges.size() > limit) {
             // must remove last
-            Exchange exchange = (Exchange) exchanges.removeLast();
-            GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            Exchange exchange = exchanges.removeLast();
+            GenericFile<?> file = exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE, GenericFile.class);
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
         }

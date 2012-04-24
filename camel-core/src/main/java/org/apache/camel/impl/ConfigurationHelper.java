@@ -28,7 +28,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.URIField;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

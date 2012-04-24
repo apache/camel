@@ -81,7 +81,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
         }
 
         String resourceClasses = getAndRemoveParameter(parameters, "resourceClasses", String.class);
-        Iterator it = ObjectHelper.createIterator(resourceClasses);
+        Iterator<Object> it = ObjectHelper.createIterator(resourceClasses);
         while (it.hasNext()) {
             String name = (String) it.next();
             Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(name);
