@@ -34,6 +34,10 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.cdi.*</camel.osgi.export.pkg>
+    <deltaspike-version>0.2-incubating</deltaspike-version>
+    <!-- these properties should be in-sync with deltaspike -->
+    <owb-version>1.1.4</owb-version>
+    <weld-version>1.1.5.Final</weld-version>
   </properties>
 
   <dependencies>
@@ -43,41 +47,28 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- SPI API -->
     <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-spi</artifactId>
-      <version>${openwebbeans-version}</version>
+      <groupId>org.apache.deltaspike.core</groupId>
+      <artifactId>deltaspike-core-api</artifactId>
+      <version>${deltaspike-version}</version>
     </dependency>
 
-    <!-- EL Plugin -->
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-el10</artifactId>
-      <version>${openwebbeans-version}</version>
-    </dependency>
-
-    <!-- Interceptor API -->
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-interceptor_1.1_spec</artifactId>
-      <version>1.0</version>
-    </dependency>
-
-    <!-- JSR-299 API -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jcdi_1.0_spec</artifactId>
       <version>1.0</version>
-      <scope>provided</scope>
     </dependency>
 
-    <!-- JSR-330 API -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-atinject_1.0_spec</artifactId>
       <version>1.0</version>
-      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+      <version>1.0</version>
     </dependency>
 
     <!-- logging -->
@@ -87,47 +78,68 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- JSR-299 Impl -->
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-impl</artifactId>
-      <version>${openwebbeans-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Test -->
-    <dependency>
-      <groupId>org.apache.openwebbeans.test</groupId>
-      <artifactId>cditest</artifactId>
-      <version>${openwebbeans-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans.test</groupId>
-      <artifactId>cditest-owb</artifactId>
-      <version>${openwebbeans-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_2.5_spec</artifactId>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-api</artifactId>
+      <version>${deltaspike-version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>owb</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_2.5_spec</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.deltaspike.cdictrl</groupId>
+          <artifactId>deltaspike-cdictrl-owb</artifactId>
+          <version>${deltaspike-version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-impl</artifactId>
+          <version>${owb-version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-spi</artifactId>
+          <version>${owb-version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>weld</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.deltaspike.cdictrl</groupId>
+          <artifactId>deltaspike-cdictrl-weld</artifactId>
+          <version>${deltaspike-version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se</artifactId>
+            <version>${weld-version}</version>
+            <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
 </project>

@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.cdi;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.camel.component.cdi.util.BeanProvider;
+import javax.enterprise.inject.spi.Bean;
+
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.deltaspike.core.api.provider.BeanProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +37,7 @@ public class CdiBeanRegistry implements Registry {
     @Override
     public Object lookup(final String name) {
         ObjectHelper.notEmpty(name, "name");
-        LOG.trace("Looking up bean {}", name);
+        LOG.trace("Looking up bean with name {}", name);
 
         return BeanProvider.getContextualReference(name, true);
     }
@@ -43,15 +47,27 @@ public class CdiBeanRegistry implements Registry {
         ObjectHelper.notEmpty(name, "name");
         ObjectHelper.notNull(type, "type");
 
-        LOG.trace("Looking up bean {} of type {}", name, type);
+        LOG.trace("Looking up bean with name {} of type {}", name, type);
         return BeanProvider.getContextualReference(name, true, type);
     }
 
     @Override
     public <T> Map<String, T> lookupByType(final Class<T> type) {
         ObjectHelper.notNull(type, "type");
-        LOG.trace("Looking up beans of type {}", type);
-        return BeanProvider.getContextualNamesReferences(type, true, true);
+
+        LOG.trace("Lookups based of type {}", type);
+        Map<String, T> beans = new HashMap<String, T>();
+        Set<Bean<T>> definitions = BeanProvider.getBeanDefinitions(type, true, true);
+
+        if (definitions == null) {
+            return beans;
+        }
+        for (Bean<T> bean : definitions) {
+            if (bean.getName() != null) {
+                beans.put(bean.getName(), BeanProvider.getContextualReference(type, bean));
+            }
+        }
+        return beans;
     }
 
     @Override

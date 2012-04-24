@@ -24,8 +24,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class CdiCamelContext extends DefaultCamelContext {
 
     public CdiCamelContext() {
-        super.setRegistry(new CdiBeanRegistry());
+        setRegistry(new CdiBeanRegistry());
+        setInjector(new CdiInjector(getInjector()));
     }
-
 
 }
