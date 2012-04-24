@@ -92,9 +92,15 @@ public class Main extends MainSupport {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        // stop camel context
+        if (camelContext != null) {
+            camelContext.stop();
+        }
+        // and then stop blueprint
         LOG.debug("Stopping Blueprint XML file: " + descriptors);
         CamelBlueprintHelper.disposeBundleContext(bundleContext);
+        // call completed to properly stop as we count down the waiting latch
+        completed();
     }
 
     @Override
