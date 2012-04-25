@@ -17,7 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -25,9 +24,9 @@ import java.io.Serializable;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.IOHelper;
 
 /**
  * A set of converter methods for working with generic file types
@@ -64,11 +63,15 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static InputStream genericFileToInputStream(GenericFile<?> file, Exchange exchange) throws IOException {
+    public static InputStream genericFileToInputStream(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException {
         if (exchange != null) {
-            // use a file input stream if its a java.io.File
             if (file.getFile() instanceof java.io.File) {
-                return IOHelper.buffered(new FileInputStream((File) file.getFile()));
+                // prefer to use a file input stream if its a java.io.File (must use type converter to take care of encoding)
+                File f = (File) file.getFile();
+                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, f);
+                if (is != null) {
+                    return is;
+                }
             }
             // otherwise ensure the body is loaded as we want the input stream of the body
             file.getBinding().loadContent(exchange, file);
