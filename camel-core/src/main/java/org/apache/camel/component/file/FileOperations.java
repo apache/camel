@@ -21,7 +21,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
@@ -29,6 +32,8 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.WrappedFile;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -173,10 +178,24 @@ public class FileOperations implements GenericFileOperations<File> {
         // 3. write stream to file
         try {
 
-            // is the body file based
+            // determine charset, exchange property overrides endpoint configuration
+            String charset = IOHelper.getCharsetName(exchange, false);
+            if (charset == null) {
+                charset = endpoint.getCharset();
+            }
+
+            // we can optimize and use file based if no charset must be used, and the input body is a file
             File source = null;
-            // get the File Object from in message
-            source = exchange.getIn().getBody(File.class);
+            if (charset == null) {
+                // if no charset, then we can try using file directly (optimized)
+                Object body = exchange.getIn().getBody();
+                if (body instanceof WrappedFile) {
+                    body = ((WrappedFile) body).getFile();
+                }
+                if (body instanceof File) {
+                    source = (File) body;
+                }
+            }
 
             if (source != null) {
                 // okay we know the body is a file type
@@ -205,9 +224,22 @@ public class FileOperations implements GenericFileOperations<File> {
                 }
             }
 
-            // fallback and use stream based
-            InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
-            writeFileByStream(in, file);
+            if (charset != null) {
+                // charset configured so we must use a reader so we can write with encoding
+                Reader in = exchange.getIn().getBody(Reader.class);
+                if (in == null) {
+                    // okay no direct reader conversion, so use an input stream (which a lot can be converted as)
+                    InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+                    in = new InputStreamReader(is);
+                }
+                // buffer the reader
+                in = IOHelper.buffered(in);
+                writeFileByReaderWithCharset(in, file, charset);
+            } else {
+                // fallback and use stream based
+                InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
+                writeFileByStream(in, file);
+            }
             // try to keep last modified timestamp if configured to do so
             keepLastModified(exchange, file);
             return true;
@@ -239,7 +271,6 @@ public class FileOperations implements GenericFileOperations<File> {
 
     private boolean writeFileByLocalWorkPath(File source, File file) throws IOException {
         LOG.trace("Using local work file being renamed from: {} to: {}", source, file);
-
         return FileUtil.renameFile(source, file, endpoint.isCopyAndDeleteOnRenameFail());
     }
 
@@ -282,6 +313,19 @@ public class FileOperations implements GenericFileOperations<File> {
             IOHelper.close(in, target.getName(), LOG);
             // force updates to be written, and then close afterwards
             IOHelper.force(out, target.getName(), LOG);
+            IOHelper.close(out, target.getName(), LOG);
+        }
+    }
+
+    private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
+        boolean append = endpoint.getFileExist() == GenericFileExist.Append;
+        Writer out = IOConverter.toWriter(target, append, charset);
+        try {
+            LOG.trace("Using Reader to transfer from: {} to: {} with charset: {}", new Object[]{in, out, charset});
+            int size = endpoint.getBufferSize();
+            IOHelper.copy(in, out, size);
+        } finally {
+            IOHelper.close(in, target.getName(), LOG);
             IOHelper.close(out, target.getName(), LOG);
         }
     }

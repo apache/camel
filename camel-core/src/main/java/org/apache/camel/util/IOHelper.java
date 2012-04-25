@@ -191,6 +191,20 @@ public final class IOHelper {
         close(input, null, LOG);
     }
 
+    public static int copy(final Reader input, final Writer output, int bufferSize) throws IOException {
+        final char[] buffer = new char[bufferSize];
+        int n = input.read(buffer);
+        int total = 0;
+        while (-1 != n) {
+            output.write(buffer, 0, n);
+            total += n;
+            n = input.read(buffer);
+        }
+        output.flush();
+        return total;
+    }
+
+
     /**
      * Forces any updates to this channel's file to be written to the storage device that contains it.
      *

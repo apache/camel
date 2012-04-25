@@ -59,8 +59,6 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        endpoint.configureExchange(exchange);
-
         String target = createFileName(exchange);
 
         // use lock for same file name to avoid concurrent writes to the same file
