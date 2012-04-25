@@ -231,6 +231,25 @@ public class QuickfixjEngineTest {
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(JdbcLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
     }
+    
+    @Test
+    public void inferJdbcStoreViaJNDI() throws Exception {
+        // If there is a setting of the LOG_EVENT_TABLE, we should create a jdbcLogFactory for it
+        settings.setString(JdbcSetting.SETTING_JDBC_DS_NAME, "ds_name");
+        settings.setString(JdbcSetting.SETTING_LOG_EVENT_TABLE, "table");
+        
+        settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+
+        writeSettings();
+
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
+
+        assertThat(quickfixjEngine.getInitiator(), notNullValue());
+        assertThat(quickfixjEngine.getAcceptor(), nullValue());
+        assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(JdbcStoreFactory.class));
+        assertThat(quickfixjEngine.getLogFactory(), instanceOf(JdbcLogFactory.class));
+        assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
+    }
 
     @Test
     public void ambiguousMessageStore() throws Exception {
