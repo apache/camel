@@ -286,7 +286,7 @@ public class QuickfixjEngine {
     }
 
     private void isJdbcStore(SessionSettings settings, Set<MessageStoreFactory> impliedMessageStoreFactories) {
-        if (settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER)) {
+        if (settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER) || settings.isSetting(JdbcSetting.SETTING_JDBC_DS_NAME)) {
             impliedMessageStoreFactories.add(new JdbcStoreFactory(settings));
         }
     }
@@ -326,7 +326,8 @@ public class QuickfixjEngine {
     }
 
     private void isJdbcLog(SessionSettings settings, Set<LogFactory> impliedLogFactories) {
-        if (settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER) && settings.isSetting(JdbcSetting.SETTING_LOG_EVENT_TABLE)) {
+        if ((settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER) || settings.isSetting(JdbcSetting.SETTING_JDBC_DS_NAME))
+                && settings.isSetting(JdbcSetting.SETTING_LOG_EVENT_TABLE)) {
             impliedLogFactories.add(new JdbcLogFactory(settings));
         }
     }
