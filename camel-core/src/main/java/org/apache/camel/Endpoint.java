@@ -81,7 +81,9 @@ public interface Endpoint extends IsSingleton, Service {
      *
      * @param exchange given exchange to use for pre-populate
      * @return a new exchange
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     Exchange createExchange(Exchange exchange);
 
     /**

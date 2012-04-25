@@ -59,8 +59,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Exchange fileExchange = endpoint.createExchange(exchange);
-        endpoint.configureExchange(fileExchange);
+        endpoint.configureExchange(exchange);
 
         String target = createFileName(exchange);
 
@@ -77,8 +76,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         lock.lock();
         try {
-            processExchange(fileExchange, target);
-            ExchangeHelper.copyResults(exchange, fileExchange);
+            processExchange(exchange, target);
         } finally {
             // do not remove as the locks cache has an upper bound
             // this ensure the locks is appropriate reused
