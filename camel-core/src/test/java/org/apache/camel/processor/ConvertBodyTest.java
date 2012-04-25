@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,6 +42,21 @@ public class ConvertBodyTest extends ContextTestSupport {
         } catch (Exception e) {
             assertIsInstanceOf(UnsupportedCharsetException.class, e.getCause());
         }
+    }
+
+    public void testConvertBodyCharset() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:foo").convertBodyTo(byte[].class, "iso-8859-1").to("mock:foo");
+            }
+        });
+
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+
+        template.sendBody("direct:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
     public void testConvertToInteger() throws Exception {
