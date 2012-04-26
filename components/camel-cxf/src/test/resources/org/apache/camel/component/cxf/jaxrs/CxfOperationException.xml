@@ -46,8 +46,8 @@
   <cxf:rsServer id="rsServer" address="http://localhost:${CXFTestSupport.port1}/CxfOperationExceptionTest/route"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 
-  <!-- Defined the client endpoint to create the cxf-rs consumer -->
-  <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port2}/CxfOperationExceptionTest/rest"
+  <!-- Defined the client endpoint to create the cxf-rs producer -->
+  <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port1}/CxfOperationExceptionTest/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
   
   <!-- The camel route context -->
