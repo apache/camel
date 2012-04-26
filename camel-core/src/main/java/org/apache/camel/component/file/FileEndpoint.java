@@ -102,7 +102,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Exchange createExchange(GenericFile<File> file) {
-        Exchange exchange =  createExchange();
+        Exchange exchange = createExchange();
         if (file != null) {
             file.bindToExchange(exchange);
         }

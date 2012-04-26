@@ -98,7 +98,7 @@ public class FileConfigureTest extends ContextTestSupport {
             assertDirectoryEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
 
             file = new File(expectedPath + (expectedPath.endsWith(File.separator) ? "" : File.separator) + EXPECT_FILE);
-            GenericFile<File> consumedFile = FileConsumer.asGenericFile(endpoint.getFile().getPath(), file);
+            GenericFile<File> consumedFile = FileConsumer.asGenericFile(endpoint.getFile().getPath(), file, null);
 
             assertEquals(EXPECT_FILE, consumedFile.getRelativeFilePath());
         }

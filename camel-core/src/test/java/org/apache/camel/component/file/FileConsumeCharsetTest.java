@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for consuming the same filename only.
+ *
  */
 public class FileConsumeCharsetTest extends ContextTestSupport {
 
@@ -51,7 +51,9 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/files/?fileName=report.txt&delete=true&charset=UTF-8").convertBodyTo(String.class).to("mock:result");
+                from("file://target/files/?fileName=report.txt&delete=true&charset=UTF-8")
+                    .convertBodyTo(String.class)
+                    .to("mock:result");
             }
         };
     }

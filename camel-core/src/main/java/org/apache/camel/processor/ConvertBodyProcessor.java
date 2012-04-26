@@ -60,6 +60,8 @@ public class ConvertBodyProcessor extends ServiceSupport implements Processor {
         }
 
         if (charset != null) {
+            // override existing charset with configured charset as that is what the user
+            // have explicit configured and expects to be used
             exchange.setProperty(Exchange.CHARSET_NAME, charset);
         }
         // use mandatory conversion
@@ -74,6 +76,12 @@ public class ConvertBodyProcessor extends ServiceSupport implements Processor {
             exchange.setOut(msg);
         } else {
             exchange.setIn(msg);
+        }
+
+        // remove charset when we are done as we should not propagate that,
+        // as that can lead to double converting later on
+        if (charset != null) {
+            exchange.removeProperty(Exchange.CHARSET_NAME);
         }
     }
 
