@@ -31,12 +31,11 @@ import org.slf4j.LoggerFactory;
  * ZooKeeper API instructions and callbacks into callable and composable operation
  * objects.
  */
-@SuppressWarnings("rawtypes")
 public abstract class ZooKeeperOperation<ResultType> {
 
     protected static final transient Logger LOG = LoggerFactory.getLogger(ZooKeeperOperation.class);
 
-    protected static final Class[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class};
+    protected static final Class<?>[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class};
 
     protected String node;
 
@@ -104,7 +103,7 @@ public abstract class ZooKeeperOperation<ResultType> {
     }
 
     // TODO slightly different to a clone as it uses the constructor
-    public ZooKeeperOperation createCopy() throws Exception {
+    public ZooKeeperOperation<?> createCopy() throws Exception {
         return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(new Object[] {connection, node});
     }
 }

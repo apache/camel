@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 

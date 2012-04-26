@@ -42,8 +42,6 @@ public class JcrConsumerTest extends JcrRouteTestSupport {
     private String absPath = "/home/test";
     private int eventTypes = Event.NODE_ADDED;
     private boolean deep = true;
-    private String uuids;
-    private String nodeTypeNames;
     private boolean noLocal;
 
     @Test
@@ -94,12 +92,9 @@ public class JcrConsumerTest extends JcrRouteTestSupport {
         assertNotNull(eventIterator);
         assertEquals(1, eventIterator.getSize());
 
-        Object body = message.getBody();
-        assertTrue(body instanceof List);
-        @SuppressWarnings("unchecked")
-        List<Event> eventList = (List<Event>)body;
+        List<?> eventList = message.getBody(List.class);
         assertEquals(1, eventList.size());
-        Event event = eventList.get(0);
+        Event event = (Event) eventList.get(0);
         assertEquals(Event.NODE_ADDED, event.getType());
         assertNotNull(event.getPath());
         assertTrue(event.getPath().startsWith(absPath));

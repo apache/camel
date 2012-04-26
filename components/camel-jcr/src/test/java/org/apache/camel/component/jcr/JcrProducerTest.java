@@ -17,7 +17,6 @@
 package org.apache.camel.component.jcr;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 

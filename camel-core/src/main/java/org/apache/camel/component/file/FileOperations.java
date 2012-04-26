@@ -187,7 +187,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 // if no charset, then we can try using file directly (optimized)
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
-                    body = ((WrappedFile) body).getFile();
+                    body = ((WrappedFile<?>) body).getFile();
                 }
                 if (body instanceof File) {
                     source = (File) body;

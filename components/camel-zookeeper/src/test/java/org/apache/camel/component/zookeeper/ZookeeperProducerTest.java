@@ -107,7 +107,6 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
 
     @Test
     public void setUsingCreateModeFromHeader() throws Exception {
-
         client.createPersistent("/modes-test", "parent for modes");
         for (CreateMode mode : CreateMode.values()) {
             Exchange exchange = createExchangeWithBody(testPayload);
@@ -136,9 +135,7 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void setAndGetListing() throws Exception {
-
         client.createPersistent("/set-listing", "parent for set and list test");
 
         Exchange exchange = createExchangeWithBody(testPayload);
@@ -152,7 +149,6 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
 
     @Test
     public void testZookeeperMessage() throws Exception {
-
         MockEndpoint mock = getMockEndpoint("mock:consumed-from-node");
         mock.expectedMessageCount(1);
 

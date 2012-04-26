@@ -65,7 +65,7 @@ public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
     }
 
     @Override
-    public ZooKeeperOperation createCopy() throws Exception {
+    public ZooKeeperOperation<?> createCopy() throws Exception {
         return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(new Object[] {connection, node, getChangedData, sendEmptyMessageOnDelete});
     }
 }

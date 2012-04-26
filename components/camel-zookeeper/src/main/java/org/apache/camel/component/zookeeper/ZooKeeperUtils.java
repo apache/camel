@@ -106,7 +106,7 @@ public final class ZooKeeperUtils {
         return value;
     }
 
-    public static WatchedEvent getWatchedEvent(ZooKeeperOperation zooKeeperOperation) {
+    public static WatchedEvent getWatchedEvent(ZooKeeperOperation<?> zooKeeperOperation) {
         WatchedEvent watchedEvent = null;
         if (zooKeeperOperation instanceof WatchedEventProvider) {
             watchedEvent = ((WatchedEventProvider)zooKeeperOperation).getWatchedEvent();
@@ -114,7 +114,7 @@ public final class ZooKeeperUtils {
         return watchedEvent;
     }
 
-    public static boolean hasWatchedEvent(ZooKeeperOperation zooKeeperOperation) {
+    public static boolean hasWatchedEvent(ZooKeeperOperation<?> zooKeeperOperation) {
         return getWatchedEvent(zooKeeperOperation) != null;
     }
 }
