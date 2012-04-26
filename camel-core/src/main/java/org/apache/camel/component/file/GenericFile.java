@@ -44,6 +44,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
     private T file;
     private GenericFileBinding<T> binding;
     private boolean absolute;
+    private String charset;
 
     public char getFileSeparator() {
         return File.separatorChar;
@@ -74,6 +75,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
         result.setFile(source.getFile());
         result.setBody(source.getBody());
         result.setBinding(source.getBinding());
+        result.setCharset(source.getCharset());
 
         copyFromPopulateAdditional(source, result);
         return result;
@@ -251,9 +253,14 @@ public class GenericFile<T> implements WrappedFile<T>  {
         this.lastModified = lastModified;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.file.WrappedFile#getFile()
-     */
+    public String getCharset() {
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
+
     @Override
     public T getFile() {
         return file;

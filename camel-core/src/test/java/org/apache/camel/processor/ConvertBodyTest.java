@@ -52,7 +52,8 @@ public class ConvertBodyTest extends ContextTestSupport {
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:foo").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+        // do not propagate charset to avoid side effects with double conversion etc
+        getMockEndpoint("mock:foo").message(0).property(Exchange.CHARSET_NAME).isNull();
 
         template.sendBody("direct:foo", "Hello World");
 

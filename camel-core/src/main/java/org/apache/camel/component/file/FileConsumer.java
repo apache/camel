@@ -78,7 +78,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             }
 
             // creates a generic file
-            GenericFile<File> gf = asGenericFile(endpointPath, file);
+            GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset());
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && isValidFile(gf, true) && depth < endpoint.getMaxDepth()) {
@@ -116,11 +116,12 @@ public class FileConsumer extends GenericFileConsumer<File> {
      * @param file the source file
      * @return wrapped as a GenericFile
      */
-    public static GenericFile<File> asGenericFile(String endpointPath, File file) {
+    public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset) {
         GenericFile<File> answer = new GenericFile<File>();
         // use file specific binding
         answer.setBinding(new FileBinding());
 
+        answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
