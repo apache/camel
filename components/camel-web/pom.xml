@@ -37,29 +37,6 @@
         <webdriver-version>0.9.7376</webdriver-version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>glassfish-repo-archive</id>
-            <name>Nexus repository collection for Glassfish</name>
-            <url>http://maven.glassfish.org/content/groups/glassfish</url>
-            <snapshots>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>guiceyfruit.release</id>
-            <name>GuiceyFruit Release Repository</name>
-            <url>http://guiceyfruit.googlecode.com/svn/repo/releases/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
