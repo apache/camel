@@ -112,7 +112,7 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james@localhost?password=foo").convertBodyTo(String.class).to("mock:result");
+                from("pop3://james@localhost?password=foo").to("mock:result");
             }
         };
     }
