@@ -46,7 +46,7 @@ public class FutureEventDrivenOperationTest {
         fireEventIn(future, event, 100);
         assertEquals(data, future.get().getResult());
         assertEquals(statistics, future.get().getStatistics());
-        assertEquals(event, future.getEvent());
+        assertEquals(event, future.getWatchedEvent());
     }
 
     private void fireEventIn(final FutureEventDrivenOperation<String> future, final WatchedEvent event, final int millisecondsTillFire) {

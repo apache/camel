@@ -33,7 +33,7 @@ import org.apache.zookeeper.ZooKeeper;
  * mechanism to await specific ZooKeeper events. Typically this is used to await
  * changes to a particular node before retrieving the change.
  */
-public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOperation<ResultType> implements Watcher {
+public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOperation<ResultType> implements Watcher, WatchedEventProvider {
 
     private EventType[] awaitedTypes;
 
@@ -96,7 +96,8 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
      */
     protected abstract void installWatch();
 
-    public WatchedEvent getEvent() {
+    @Override
+    public WatchedEvent getWatchedEvent() {
         return event;
     }
 

@@ -29,13 +29,19 @@ import org.apache.zookeeper.data.Stat;
 @SuppressWarnings("rawtypes")
 public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
 
-    protected static final Class[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class, boolean.class};
+    protected static final Class[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class, boolean.class, boolean.class};
     
     private boolean getChangedData;
+    private boolean sendEmptyMessageOnDelete;
 
     public DataChangedOperation(ZooKeeper connection, String znode, boolean getChangedData) {
+        this(connection, znode, getChangedData, false);
+    }
+
+    public DataChangedOperation(ZooKeeper connection, String znode, boolean getChangedData, boolean sendEmptyMessageOnDelete) {
         super(connection, znode, EventType.NodeDataChanged, EventType.NodeDeleted);
         this.getChangedData = getChangedData;
+        this.sendEmptyMessageOnDelete = sendEmptyMessageOnDelete;
     }
 
     @Override
@@ -47,11 +53,19 @@ public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
     }
 
     public OperationResult<byte[]> getResult() {
-        return getChangedData ? new GetDataOperation(connection, getNode()).getResult() : null;
+        OperationResult<byte[]> answer;
+        if (EventType.NodeDeleted.equals(getWatchedEvent().getType()) && sendEmptyMessageOnDelete) {
+            answer = new OperationResult<byte[]>((byte[])null, null);
+        } else if (getChangedData) {
+            answer = new GetDataOperation(connection, getNode()).getResult();
+        } else {
+            answer = null;
+        }
+        return answer;
     }
 
     @Override
     public ZooKeeperOperation createCopy() throws Exception {
-        return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(new Object[] {connection, node, getChangedData});
+        return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(new Object[] {connection, node, getChangedData, sendEmptyMessageOnDelete});
     }
 }

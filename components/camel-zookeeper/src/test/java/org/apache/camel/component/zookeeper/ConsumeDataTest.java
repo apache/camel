@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
+import org.apache.zookeeper.Watcher.Event.EventType;
 import org.junit.Test;
 
 public class ConsumeDataTest extends ZooKeeperTestSupport {
@@ -36,17 +37,43 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
 
     @Test
     public void shouldAwaitCreationAndGetDataNotification() throws Exception {
+        EventType[] expectedEventTypes = new EventType[] {
+            EventType.NodeCreated,
+            EventType.NodeDataChanged,
+            EventType.NodeDataChanged,
+            EventType.NodeDataChanged,
+            EventType.NodeDataChanged,
+            EventType.NodeDataChanged,
+            EventType.NodeDataChanged,
+            EventType.NodeDataChanged,
+            EventType.NodeDataChanged,
+            EventType.NodeDataChanged,
+            EventType.NodeDeleted
+        };
 
         MockEndpoint mock = getMockEndpoint("mock:zookeeper-data");
-        mock.expectedMinimumMessageCount(10);
+        mock.expectedMessageCount(expectedEventTypes.length);
 
         createCamelNode();
+
         updateNode(10);
+
+        delay(200);
+        client.delete("/camel");
 
         mock.await(5, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
 
-        validateExchangesReceivedInOrderWithIncreasingVersion(mock);
+        int lastVersion = -1;
+        for (int i = 0; i < mock.getExchanges().size(); i++) {
+            assertEquals(expectedEventTypes[i], mock.getExchanges().get(i).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE));
+            if (!EventType.NodeDeleted.equals(expectedEventTypes[i])) {
+                // As a delete event does not carry statistics, ignore it in the version check.
+                int version = ZooKeeperMessage.getStatistics(mock.getExchanges().get(i).getIn()).getVersion();
+                assertTrue("Version did not increase", lastVersion < version);
+                lastVersion = version;
+            }
+        }
     }
 
     @Test

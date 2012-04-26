@@ -20,8 +20,11 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.zookeeper.operations.WatchedEventProvider;
+import org.apache.camel.component.zookeeper.operations.ZooKeeperOperation;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.data.ACL;
 
@@ -101,5 +104,17 @@ public final class ZooKeeperUtils {
             value = defaultValue;
         }
         return value;
+    }
+
+    public static WatchedEvent getWatchedEvent(ZooKeeperOperation zooKeeperOperation) {
+        WatchedEvent watchedEvent = null;
+        if (zooKeeperOperation instanceof WatchedEventProvider) {
+            watchedEvent = ((WatchedEventProvider)zooKeeperOperation).getWatchedEvent();
+        }
+        return watchedEvent;
+    }
+
+    public static boolean hasWatchedEvent(ZooKeeperOperation zooKeeperOperation) {
+        return getWatchedEvent(zooKeeperOperation) != null;
     }
 }

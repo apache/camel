@@ -20,6 +20,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.component.zookeeper.ZooKeeperUtils;
+import org.apache.zookeeper.WatchedEvent;
+
 /**
  * <code>AnyOfOperations</code> is a composite operation of one or more sub
  * operation, executing each in turn until any one succeeds. If any execute
@@ -31,9 +34,10 @@ import java.util.concurrent.TimeoutException;
  * if the test operation fails.
  */
 @SuppressWarnings("rawtypes")
-public class AnyOfOperations extends ZooKeeperOperation {
+public class AnyOfOperations extends ZooKeeperOperation implements WatchedEventProvider {
 
     private ZooKeeperOperation[] keeperOperations;
+    private ZooKeeperOperation operationProvidingResult;
 
     public AnyOfOperations(String node, ZooKeeperOperation... keeperOperations) {
         super(null, node, false);
@@ -46,6 +50,7 @@ public class AnyOfOperations extends ZooKeeperOperation {
             try {
                 OperationResult result = op.get();
                 if (result.isOk()) {
+                    operationProvidingResult = op;
                     return result;
                 }
             } catch (Exception e) {
@@ -71,5 +76,10 @@ public class AnyOfOperations extends ZooKeeperOperation {
             copy[x] = keeperOperations[x].createCopy();
         }
         return new AnyOfOperations(node, copy);
+    }
+
+    @Override
+    public WatchedEvent getWatchedEvent() {
+        return ZooKeeperUtils.getWatchedEvent(operationProvidingResult);
     }
 }
