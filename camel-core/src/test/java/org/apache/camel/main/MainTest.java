@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version 
@@ -38,14 +39,16 @@ public class MainTest extends TestCase {
                 from("direct:start").to("mock:results");
             }
         });
+        main.bind("foo", new Integer(31));
         main.start();
 
         main.getCamelTemplate().sendBody("direct:start", "<message>1</message>");
         
         List<CamelContext> contextList = main.getCamelContexts();
         assertNotNull(contextList);
-        assertEquals("size", 1, contextList.size());
+        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
         CamelContext camelContext = contextList.get(0);
+        assertEquals("Could not find the registry bound object", 31, ((DefaultCamelContext) camelContext).getRegistry().lookup("foo"));
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMinimumMessageCount(1);

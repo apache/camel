@@ -136,7 +136,7 @@ public abstract class MainSupport extends ServiceSupport {
      */
     public void run() throws Exception {
         if (!completed.get()) {
-            // if we have an issue starting the propagate exception to caller
+            // if we have an issue starting then propagate the exception to caller
             start();
             try {
                 afterStart();
@@ -144,7 +144,7 @@ public abstract class MainSupport extends ServiceSupport {
                 beforeStop();
                 stop();
             } catch (Exception e) {
-                // while running then just log errors
+                // however while running then just log errors
                 LOG.error("Failed: " + e, e);
             }
         }
