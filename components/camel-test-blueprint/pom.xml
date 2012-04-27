@@ -52,6 +52,8 @@
             </exclusions>
         </dependency>
 
+        <!-- the ordering of the dependencies can matter as we load the dependencies from the classpath
+             with pojosr, and you may get a weird error if wrong order -->
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint</artifactId>
@@ -90,6 +92,10 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.configadmin</artifactId>
+        </dependency>
 
         <!-- optional dependencies for running tests -->
         <dependency>
@@ -101,11 +107,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${slf4j-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.configadmin</artifactId>
             <scope>test</scope>
         </dependency>
 
