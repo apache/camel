@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -368,11 +369,15 @@ public class JettyHttpComponent extends HttpComponent {
             if (endpoint.isMatchOnUriPrefix()) {
                 pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
             }
-            context.addFilter(filterHolder, pathSpec, 0);
+            addFilter(context, filterHolder, pathSpec);
         }
         
     }
     
+    private void addFilter(ServletContextHandler context, FilterHolder filterHolder, String pathSpec) {
+        context.getServletHandler().addFilterWithMapping(filterHolder, pathSpec, 0);
+    }
+
     private void enableMultipartFilter(HttpEndpoint endpoint, Server server, String connectorKey) throws Exception {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         CamelContext camelContext = this.getCamelContext();
@@ -401,7 +406,7 @@ public class JettyHttpComponent extends HttpComponent {
         if (endpoint.isMatchOnUriPrefix()) {
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
-        context.addFilter(filterHolder, pathSpec, 0);
+        addFilter(context, filterHolder, pathSpec);
         LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
     }
 
@@ -487,12 +492,7 @@ public class JettyHttpComponent extends HttpComponent {
         
         if (endpointSslContextParameters != null) {
             SslContextFactory contextFact = new SslContextFactory() {
-                /**
-                 * We are going to provide the context so none of the configuration options
-                 * matter in the factory.  This method does not account for this scenario so
-                 * we short-circuit it here to just let things go when the context is already
-                 * provided.
-                 */
+
                 // This method is for Jetty 7.0.x ~ 7.4.x
                 @SuppressWarnings("unused")
                 public boolean checkConfig() {
@@ -509,7 +509,12 @@ public class JettyHttpComponent extends HttpComponent {
                 
             };
             contextFact.setSslContext(endpointSslContextParameters.createSSLContext());
-            answer = new SslSelectChannelConnector(contextFact);
+            for (Constructor<?> c : SslSelectChannelConnector.class.getConstructors()) {
+                if (c.getParameterTypes().length == 1
+                    && c.getParameterTypes()[0].isInstance(contextFact)) {
+                    answer = (SslSelectChannelConnector)c.newInstance(contextFact);
+                }
+            }
         } else {
             answer = new SslSelectChannelConnector();
             // with default null values, jetty ssl system properties
@@ -517,23 +522,23 @@ public class JettyHttpComponent extends HttpComponent {
     
             String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
             if (keystoreProperty != null) {
-                answer.getSslContextFactory().setKeyStorePath(keystoreProperty);
+                setKeyStorePath(answer, keystoreProperty);
             } else if (sslKeystore != null) {
-                answer.getSslContextFactory().setKeyStorePath(sslKeystore);
+                setKeyStorePath(answer, sslKeystore);
             }
     
             String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
             if (keystorePassword != null) {
-                answer.getSslContextFactory().setKeyManagerPassword(keystorePassword);
+                setKeyManagerPassword(answer, keystorePassword);
             } else if (sslKeyPassword != null) {
-                answer.getSslContextFactory().setKeyManagerPassword(sslKeyPassword);
+                setKeyManagerPassword(answer, sslKeyPassword);
             }
     
             String password = System.getProperty(JETTY_SSL_PASSWORD);
             if (password != null) {
-                answer.getSslContextFactory().setKeyStorePassword(password);
+                setKeyStorePassword(answer, password);
             } else if (sslPassword != null) {
-                answer.getSslContextFactory().setKeyStorePassword(sslPassword);
+                setKeyStorePassword(answer, sslPassword);
             }
         }
         
@@ -558,9 +563,30 @@ public class JettyHttpComponent extends HttpComponent {
         return answer;
     }
     
-    protected boolean checkSSLContextFactoryConfig(SslContextFactory instance) {
+    private void invokeSslContextFactoryMethod(Object connector, String method, String value) {
         try {
-            Method method = SslContextFactory.class.getMethod("checkConfig");
+            Object factory = connector.getClass().getMethod("getSslContextFactory").invoke(connector);
+            factory.getClass().getMethod(method, String.class).invoke(factory, value);
+        } catch (Exception e) {
+            LOG.info("Problem setting " + method, e);
+        }
+    }
+        
+    private void setKeyStorePassword(SslSelectChannelConnector answer, String password) {
+        invokeSslContextFactoryMethod(answer, "setKeyStorePassword", password);
+    }
+
+    private void setKeyManagerPassword(SslSelectChannelConnector answer, String keystorePassword) {
+        invokeSslContextFactoryMethod(answer, "setKeyManagerPassword", keystorePassword);
+    }
+
+    private void setKeyStorePath(SslSelectChannelConnector answer, String keystoreProperty) {
+        invokeSslContextFactoryMethod(answer, "setKeyStorePath", keystoreProperty);
+    }
+
+    protected boolean checkSSLContextFactoryConfig(Object instance) {
+        try {
+            Method method = instance.getClass().getMethod("checkConfig");
             return (Boolean)method.invoke(instance);
         } catch (NoSuchMethodException ex) {
             // ignore
