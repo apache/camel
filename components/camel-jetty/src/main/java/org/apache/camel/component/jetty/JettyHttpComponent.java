@@ -368,7 +368,7 @@ public class JettyHttpComponent extends HttpComponent {
             if (endpoint.isMatchOnUriPrefix()) {
                 pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
             }
-            context.addFilter(filterHolder, pathSpec, 0);
+            context.addFilter(filterHolder, pathSpec, null);
         }
         
     }
@@ -401,7 +401,7 @@ public class JettyHttpComponent extends HttpComponent {
         if (endpoint.isMatchOnUriPrefix()) {
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
-        context.addFilter(filterHolder, pathSpec, 0);
+        context.addFilter(filterHolder, pathSpec, null);
         LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
     }
 
