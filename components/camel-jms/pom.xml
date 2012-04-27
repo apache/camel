@@ -102,7 +102,13 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
-        <dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-pool</artifactId>
+        <version>${activemq-version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
             <exclusions>
