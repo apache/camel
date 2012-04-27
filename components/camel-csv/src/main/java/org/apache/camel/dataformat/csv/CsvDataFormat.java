@@ -53,6 +53,7 @@ public class CsvDataFormat implements DataFormat {
     private CSVConfig config = new CSVConfig();
     private boolean autogenColumns = true;
     private String delimiter;
+    private boolean skipFirstLine;
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         if (delimiter != null) {
@@ -97,8 +98,16 @@ public class CsvDataFormat implements DataFormat {
         try {
             CSVParser parser = new CSVParser(in, strategy);
             List<List<String>> list = new ArrayList<List<String>>();
+            boolean isFirstLine = true;
             while (true) {
                 String[] strings = parser.getLine();
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    if (skipFirstLine) {
+                        // skip considering the first line if we're asked to do so
+                        continue;
+                    }
+                }
                 if (strings == null) {
                     break;
                 }
@@ -149,6 +158,14 @@ public class CsvDataFormat implements DataFormat {
      */
     public void setAutogenColumns(boolean autogenColumns) {
         this.autogenColumns = autogenColumns;
+    }
+
+    public boolean isSkipFirstLine() {
+        return skipFirstLine;
+    }
+
+    public void setSkipFirstLine(boolean skipFirstLine) {
+        this.skipFirstLine = skipFirstLine;
     }
 
     private synchronized void updateFieldsInConfig(Set<?> set, Exchange exchange) {
