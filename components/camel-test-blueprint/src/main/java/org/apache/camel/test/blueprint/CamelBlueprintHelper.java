@@ -143,11 +143,11 @@ public final class CamelBlueprintHelper {
                 Dictionary<?, ?> dic = bundleContext.getBundle().getHeaders();
                 System.err.println("Test bundle headers: " + explode(dic));
 
-                for (ServiceReference<?> ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
+                for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
                     System.err.println("ServiceReference: " + ref);
                 }
 
-                for (ServiceReference<?> ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
+                for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
                     System.err.println("Filtered ServiceReference: " + ref);
                 }
 
@@ -180,8 +180,8 @@ public final class CamelBlueprintHelper {
     /**
      * Provides an iterable collection of references, even if the original array is <code>null</code>.
      */
-    private static Collection<ServiceReference<?>> asCollection(ServiceReference<?>[] references) {
-        return references  == null ? new ArrayList<ServiceReference<?>>(0) : Arrays.asList(references);
+    private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
+        return references  == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
     }
 
     private static TinyBundle createTestBundle(String name, String descriptors) throws FileNotFoundException, MalformedURLException {
