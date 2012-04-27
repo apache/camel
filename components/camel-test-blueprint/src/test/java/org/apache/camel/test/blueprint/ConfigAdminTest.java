@@ -22,7 +22,6 @@ import org.junit.Test;
 /**
  *
  */
-@Ignore("pojosr need to support config admin")
 public class ConfigAdminTest extends CamelBlueprintTestSupport {
 
     @Override
