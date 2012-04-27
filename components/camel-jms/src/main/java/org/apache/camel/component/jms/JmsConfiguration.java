@@ -124,7 +124,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean transferException;
     private boolean testConnectionOnStartup;
     private boolean asyncStartListener;
-    // if the message is a JmsMessage and mapJmsMessage=false, force the 
+    private boolean asyncStopListener;
+    // if the message is a JmsMessage and mapJmsMessage=false, force the
     // producer to send the javax.jms.Message body to the next JMS destination    
     private boolean forceSendOriginalMessage;
     // to force disabling time to live (works in both in-only or in-out mode)
@@ -1198,6 +1199,14 @@ public class JmsConfiguration implements Cloneable {
 
     public void setAsyncStartListener(boolean asyncStartListener) {
         this.asyncStartListener = asyncStartListener;
+    }
+
+    public boolean isAsyncStopListener() {
+        return asyncStopListener;
+    }
+
+    public void setAsyncStopListener(boolean asyncStopListener) {
+        this.asyncStopListener = asyncStopListener;
     }
 
     public boolean isTestConnectionOnStartup() {
