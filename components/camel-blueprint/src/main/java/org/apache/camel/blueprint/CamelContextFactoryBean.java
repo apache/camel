@@ -222,8 +222,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
                 for (String id : ids) {
                     sb.append("blueprint:").append(id).append(",");
                 }
-                // location supports multiple separated by comma
-                pc.setLocation(sb.toString());
+                if (sb.length() > 0) {
+                    // location supports multiple separated by comma
+                    pc.setLocation(sb.toString());
+                }
             }
 
             if (pc.getLocations() != null) {
