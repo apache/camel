@@ -18,7 +18,6 @@ package org.apache.camel.component.netty;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
@@ -27,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.util.IOHelper;
 import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
 import org.junit.Test;
@@ -109,12 +109,12 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     }
 
     public static void sendSopBuffer(byte[] buf, Socket server) throws Exception {
-        OutputStream netOut = server.getOutputStream();
-        OutputStream dataOut = new BufferedOutputStream(netOut);
+        BufferedOutputStream dataOut = IOHelper.buffered(server.getOutputStream());
         try {
             dataOut.write(buf, 0, buf.length);
             dataOut.flush();
         } catch (Exception e) {
+            IOHelper.close(dataOut);
             server.close();
             throw e;
         }

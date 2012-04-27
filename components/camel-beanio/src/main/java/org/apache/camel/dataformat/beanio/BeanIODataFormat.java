@@ -124,7 +124,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
     }
 
     private void writeModels(OutputStream stream, List<Object> models) {
-        BufferedWriter streamWriter = new BufferedWriter(new OutputStreamWriter(stream, encoding));
+        BufferedWriter streamWriter = IOHelper.buffered(new OutputStreamWriter(stream, encoding));
         BeanWriter out = factory.createWriter(streamName, streamWriter);
 
         for (Object obj : models) {
@@ -137,7 +137,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
 
     private List<Object> readModels(Exchange exchange, InputStream stream) {
         List<Object> results = new ArrayList<Object>();
-        BufferedReader streamReader = new BufferedReader(new InputStreamReader(stream, encoding));
+        BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, encoding));
 
         BeanReader in = factory.createReader(streamName, streamReader);
 

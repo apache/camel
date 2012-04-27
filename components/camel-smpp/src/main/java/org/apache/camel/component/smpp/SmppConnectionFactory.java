@@ -58,6 +58,7 @@ import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.codec.binary.Base64;
 import org.jsmpp.session.connection.Connection;
 import org.jsmpp.session.connection.ConnectionFactory;
@@ -121,7 +122,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
 
             int ch = 0;
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            BufferedReader reader = IOHelper.buffered(new InputStreamReader(in));
             String response = reader.readLine();
             if (response == null) {
                 throw new RuntimeCamelException("Empty response to CONNECT request to host " + host + ":" + port);

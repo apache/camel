@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.Map;
 
 import com.google.gson.ExclusionStrategy;
@@ -30,6 +29,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.IOHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -82,14 +82,14 @@ public class GsonDataFormat implements DataFormat {
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        Writer writer = new BufferedWriter(new OutputStreamWriter(stream));
+        BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream));
         gson.toJson(graph, writer);
         writer.close();
     }
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream));
         Object result = gson.fromJson(reader, this.unmarshalType);
         reader.close();
         return result;
