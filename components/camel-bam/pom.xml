@@ -33,6 +33,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.bam.*</camel.osgi.export.pkg>
+    <eclipselink-version>2.3.2</eclipselink-version>
   </properties>
 
   <dependencies>
@@ -152,7 +153,7 @@
         <dependency>
           <groupId>org.eclipse.persistence</groupId>
           <artifactId>eclipselink</artifactId>
-          <version>2.0.0</version>
+          <version>${eclipselink-version}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
