@@ -20,8 +20,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.util.CastUtils;
+import org.osgi.framework.Version;
 import org.springframework.osgi.mock.MockBundle;
 
 /**
@@ -98,6 +100,16 @@ public class CamelMockBundle extends MockBundle {
         } else {
             return CastUtils.cast(super.findEntries(path, filePattern, recurse));
         }
+    }
+
+    @Override
+    public Map getSignerCertificates(int signersType) {
+        return null;
+    }
+
+    @Override
+    public Version getVersion() {
+        return Version.parseVersion("1.0.0");
     }
 
     public Class<?> loadClass(String name) throws ClassNotFoundException {

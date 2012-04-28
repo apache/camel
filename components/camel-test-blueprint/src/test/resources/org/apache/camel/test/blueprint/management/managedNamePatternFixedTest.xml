@@ -26,7 +26,7 @@
   </bean>
 
   <!-- START SNIPPET: example -->
-  <camelContext managementNamePattern="cool" xmlns="http://camel.apache.org/schema/blueprint">
+  <camelContext id="cool" managementNamePattern="#name#-#version#" xmlns="http://camel.apache.org/schema/blueprint">
     <jmxAgent id="agent"/>
 
     <route>
