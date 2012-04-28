@@ -45,7 +45,7 @@ public class JmsRequestReplySharedReplyToTest extends CamelTestSupport {
         assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "E"));
 
         long delta = watch.stop();
-        assertTrue("Should be slower than about 3 seconds, was: " + delta, delta > 3200);
+        assertTrue("Should be slower than about 2 seconds, was: " + delta, delta > 2000);
     }
 
     protected CamelContext createCamelContext() throws Exception {

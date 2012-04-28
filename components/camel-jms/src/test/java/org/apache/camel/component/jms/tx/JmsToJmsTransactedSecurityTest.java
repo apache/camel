@@ -52,10 +52,6 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         template.sendBody("activemq:queue:foo", "Hello World");
 
         mock.assertIsSatisfied(3000);
-
-        // should be in DLQ
-        String reply = consumer.receiveBody("activemq:queue:ActiveMQ.DLQ", 5000, String.class);
-        assertEquals("Hello World", reply);
     }
 
     @Test
