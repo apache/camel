@@ -183,7 +183,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
                     }
                 });
             } else {
-                prepareAndStartListenerContainer();
+                stopAndDestroyListenerContainer();
             }
         }
 
