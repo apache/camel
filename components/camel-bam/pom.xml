@@ -189,8 +189,9 @@
           <plugin>
 
             <!-- Will enhance classes as we run in a non J2EE 5 env <plugin> -->
-            <groupId>org.codehaus.mojo</groupId>
+            <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa-maven-plugin</artifactId>
+            <version>${openjpa-version}</version>
             <executions>
               <execution>
                 <id>JPA Enhance</id>
@@ -224,18 +225,7 @@
         <dependency>
           <groupId>org.apache.openjpa</groupId>
           <artifactId>openjpa</artifactId>
-          <!--
-            Can't be used as we have this error : Caused by:
-            <openjpa-1.2.1-r752877:753278 nonfatal general error>
-            it is same with openjpa-1.2.2
-            org.apache.openjpa.persistence.PersistenceException: Constraint
-            already exists: UNQ_NAME in statement [CREATE TABLE
-            CAMEL_PROCESSDEFINITION (id BIGINT NOT NULL, name VARCHAR(255) NOT
-            NULL, PRIMARY KEY (id), CONSTRAINT UNQ_name UNIQUE (name))] and
-            solved in openJpa 1.3.0-SNAPSHOT, as we are heading to camel 2.2.2 release
-            I change the version to lastest released openjpa 
-          -->
-          <version>1.2.2</version>
+          <version>${openjpa-version}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
@@ -243,11 +233,11 @@
           <artifactId>hsqldb</artifactId>
           <scope>test</scope>
         </dependency>
-        <dependency>
-          <groupId>org.apache.derby</groupId>
-          <artifactId>derby</artifactId>
-          <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+          <!--<groupId>org.apache.derby</groupId>-->
+          <!--<artifactId>derby</artifactId>-->
+          <!--<scope>test</scope>-->
+        <!--</dependency>-->
       </dependencies>
     </profile>
   </profiles>

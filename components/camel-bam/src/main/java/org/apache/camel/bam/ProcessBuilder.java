@@ -50,10 +50,10 @@ public abstract class ProcessBuilder extends RouteBuilder {
     private JpaTemplate jpaTemplate;
     private TransactionTemplate transactionTemplate;
     private String processName;
-    private List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
+    private final List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
     private Class<ProcessInstance> entityType = ProcessInstance.class;
-    private ProcessRules processRules = new ProcessRules();
-    private ProcessDefinition processDefinition;
+    private final ProcessRules processRules = new ProcessRules();
+    private volatile ProcessDefinition processDefinition;
     private ActivityMonitorEngine engine;
 
     protected ProcessBuilder() {
@@ -138,7 +138,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         return processName;
     }
 
-    public ProcessDefinition getProcessDefinition() {
+    public synchronized ProcessDefinition getProcessDefinition() {
         if (processDefinition == null) {
             processDefinition = findOrCreateProcessDefinition();
         }
