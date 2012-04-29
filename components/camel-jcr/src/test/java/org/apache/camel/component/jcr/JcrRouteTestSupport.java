@@ -17,6 +17,9 @@
 package org.apache.camel.component.jcr;
 
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -41,6 +44,10 @@ public abstract class JcrRouteTestSupport extends CamelTestSupport {
 
     protected Repository getRepository() {
         return repository;
+    }
+
+    protected Session openSession() throws RepositoryException {
+        return getRepository().login(new SimpleCredentials("user", "pass".toCharArray()));
     }
 
     @Override

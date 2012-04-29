@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.jcr;
 
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Calendar;
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -33,37 +39,87 @@ public class JcrProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        TypeConverter converter = exchange.getContext().getTypeConverter();
         Session session = openSession();
+        String operation = determineOperation(exchange);
         try {
-            Node base = findOrCreateNode(session.getRootNode(),
-                    getJcrEndpoint().getBase());
-            Node node = findOrCreateNode(base, getNodeName(exchange));
-            TypeConverter converter = exchange.getContext().getTypeConverter();
-            for (String key : exchange.getProperties().keySet()) {
-                Value value = converter.convertTo(Value.class, exchange,
-                        exchange.getProperty(key));
-                node.setProperty(key, value);
+            if (JcrConstants.JCR_INSERT.equals(operation)) {
+                Node base = findOrCreateNode(session.getRootNode(), getJcrEndpoint().getBase());
+                Node node = findOrCreateNode(base, getNodeName(exchange));
+                for (String key : exchange.getProperties().keySet()) {
+                    Value value = converter.convertTo(Value.class, exchange, exchange.getProperty(key));
+                    node.setProperty(key, value);
+                }
+                node.addMixin("mix:referenceable");
+                exchange.getOut().setBody(node.getIdentifier());
+            } else if (JcrConstants.JCR_GET_BY_ID.equals(operation)) {
+                Node node = session.getNodeByIdentifier(exchange.getIn()
+                        .getMandatoryBody(String.class));
+                PropertyIterator properties = node.getProperties();
+                while (properties.hasNext()) {
+                    Property property = properties.nextProperty();
+                    Class<?> aClass = classForJCRType(property);
+                    Object value = converter.convertTo(aClass, exchange, property.getValue());
+                    exchange.setProperty(property.getName(), value);
+                }
+            } else {
+                throw new RuntimeException("Unsupported operation: " + operation);
             }
-            node.addMixin("mix:referenceable");
-            session.save();
-            exchange.getOut().setBody(node.getIdentifier());
+
         } finally {
+            session.save();
             if (session != null && session.isLive()) {
                 session.logout();
             }
         }
     }
 
+    private Class<?> classForJCRType(Property property) throws RepositoryException {
+        switch (property.getType()) {
+        case PropertyType.STRING:
+            return String.class;
+        case PropertyType.BINARY:
+            return InputStream.class;
+        case PropertyType.BOOLEAN:
+            return Boolean.class;
+        case PropertyType.LONG:
+            return Long.class;
+        case PropertyType.DOUBLE:
+            return Double.class;
+        case PropertyType.DECIMAL:
+            return BigDecimal.class;
+        case PropertyType.DATE:
+            return Calendar.class;
+        case PropertyType.NAME:
+            return String.class;
+        case PropertyType.PATH:
+            return String.class;
+        case PropertyType.REFERENCE:
+            return String.class;
+        case PropertyType.WEAKREFERENCE:
+            return String.class;
+        case PropertyType.URI:
+            return String.class;
+        case PropertyType.UNDEFINED:
+            return String.class;
+        default:
+            throw new IllegalArgumentException("unknown type: " + property.getType());
+        }
+    }
+
+    private String determineOperation(Exchange exchange) {
+        String operation = exchange.getIn().getHeader(JcrConstants.JCR_OPERATION, String.class);
+        return operation != null ? operation : JcrConstants.JCR_INSERT;
+    }
+
     private String getNodeName(Exchange exchange) {
         if (exchange.getProperty(JcrConstants.JCR_NODE_NAME) != null) {
-            return exchange.getProperty(JcrConstants.JCR_NODE_NAME,
-                    String.class);
+            return exchange.getProperty(JcrConstants.JCR_NODE_NAME, String.class);
         }
         return exchange.getExchangeId();
     }
 
-    private Node findOrCreateNode(Node parent, String path)
-        throws RepositoryException {
+    private Node findOrCreateNode(Node parent, String path) throws RepositoryException {
         Node result = parent;
         for (String component : path.split("/")) {
             component = Text.escapeIllegalJcrChars(component);
@@ -75,12 +131,10 @@ public class JcrProducer extends DefaultProducer {
     }
 
     protected Session openSession() throws RepositoryException {
-        return getJcrEndpoint().getRepository().login(
-                getJcrEndpoint().getCredentials());
+        return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
     }
 
     private JcrEndpoint getJcrEndpoint() {
-        JcrEndpoint endpoint = (JcrEndpoint) getEndpoint();
-        return endpoint;
+        return (JcrEndpoint)getEndpoint();
     }
 }

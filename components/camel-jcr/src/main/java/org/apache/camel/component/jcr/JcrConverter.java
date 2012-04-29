@@ -19,6 +19,7 @@ package org.apache.camel.component.jcr;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.camel.Converter;
@@ -54,6 +55,26 @@ public final class JcrConverter {
     @Converter
     public static Value toValue(String value) {
         return new StringValue(value);
+    }
+
+    @Converter
+    public static Boolean toBoolean(Value value) throws RepositoryException {
+        return value.getBoolean();
+    }
+
+    @Converter
+    public static InputStream toValue(Value value) throws RepositoryException {
+        return value.getBinary().getStream();
+    }
+
+    @Converter
+    public static Calendar toCalendar(Value value) throws RepositoryException {
+        return value.getDate();
+    }
+
+    @Converter
+    public static String toString(Value value) throws RepositoryException {
+        return value.getString();
     }
 
 }

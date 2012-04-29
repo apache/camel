@@ -56,7 +56,7 @@ public class JcrConsumerTest extends JcrRouteTestSupport {
 
         // now create a node under the specified event node path
 
-        Session session = getRepository().login(new SimpleCredentials("user", "pass".toCharArray()));
+        Session session = openSession();
 
         try {
             Node folderNode = session.getRootNode();
