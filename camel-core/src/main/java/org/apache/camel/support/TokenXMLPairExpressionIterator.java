@@ -88,7 +88,8 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
             this.inheritNamespaceToken = inheritNamespaceToken;
             if (inheritNamespaceToken != null) {
                 token = inheritNamespaceToken.substring(0, inheritNamespaceToken.length() - 1) + SCAN_TOKEN_REGEX;
-                this.inheritNamespaceTokenPattern = Pattern.compile(token);
+                // the namespaces on the parent tag can be in multi line, so we need to instruct the dot to support multilines
+                this.inheritNamespaceTokenPattern = Pattern.compile(token, Pattern.MULTILINE | Pattern.DOTALL);
             }
         }
 
