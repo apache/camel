@@ -36,14 +36,9 @@ public class FreemarkerComponent extends DefaultComponent {
     private Configuration noCacheConfiguration;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        FreemarkerEndpoint endpoint = new FreemarkerEndpoint(uri, this, remaining);
-
         // should we use regular configuration or no cache (content cache is default true)
         Configuration config;
         String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
-        if (ObjectHelper.isNotEmpty(encoding)) {
-            endpoint.setEncoding(encoding);
-        }
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
         if (cache) {
             config = getConfiguration();
@@ -55,7 +50,18 @@ public class FreemarkerComponent extends DefaultComponent {
             config = getNoCacheConfiguration();
         }
 
+        FreemarkerEndpoint endpoint = new FreemarkerEndpoint(uri, this, remaining);
+        if (ObjectHelper.isNotEmpty(encoding)) {
+            endpoint.setEncoding(encoding);
+        }
         endpoint.setConfiguration(config);
+
+        // if its a http resource then append any remaining parameters and update the resource uri
+        if (ResourceHelper.isHttpUri(remaining)) {
+            remaining = ResourceHelper.appendParameters(remaining, parameters);
+            endpoint.setResourceUri(remaining);
+        }
+
         return endpoint;
     }
 
