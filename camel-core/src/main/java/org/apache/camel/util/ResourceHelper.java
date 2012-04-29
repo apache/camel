@@ -23,8 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 import org.apache.camel.spi.ClassResolver;
 
@@ -125,4 +128,37 @@ public final class ResourceHelper {
         }
     }
 
+    /**
+     * Is the given uri a http uri?
+     *
+     * @param uri the uri
+     * @return <tt>true</tt> if the uri starts with <tt>http:</tt> or <tt>https:</tt>
+     */
+    public static boolean isHttpUri(String uri) {
+        if (uri == null) {
+            return false;
+        }
+        return uri.startsWith("http:") || uri.startsWith("https:");
+    }
+
+    /**
+     * Appends the parameters to the given uri
+     *
+     * @param uri the uri
+     * @param parameters the additional parameters (will clear the map)
+     * @return a new uri with the additional parameters appended
+     * @throws URISyntaxException is thrown if the uri is invalid
+     */
+    public static String appendParameters(String uri, Map<String, Object> parameters) throws URISyntaxException {
+        // add additional parameters to the resource uri
+        if (!parameters.isEmpty()) {
+            String query = URISupport.createQueryString(parameters);
+            URI u = new URI(uri);
+            u = URISupport.createURIWithQuery(u, query);
+            parameters.clear();
+            return u.toString();
+        } else {
+            return uri;
+        }
+    }
 }
