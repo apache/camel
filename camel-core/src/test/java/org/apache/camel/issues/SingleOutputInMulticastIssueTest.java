@@ -26,7 +26,7 @@ public class SingleOutputInMulticastIssueTest extends ContextTestSupport {
 
     public void testSingleOutputInMulticastIssue() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:auit").expectedMessageCount(0);
+        getMockEndpoint("mock:audit").expectedMessageCount(0);
 
         template.sendBody("direct:start", "Hello World");
 
