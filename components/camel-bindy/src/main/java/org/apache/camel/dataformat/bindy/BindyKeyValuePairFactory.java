@@ -56,8 +56,14 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     private boolean messageOrdered;
 
     public BindyKeyValuePairFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-
         super(resolver, packageNames);
+
+        // Initialize what is specific to Key Value Pair model
+        initKeyValuePairModel();
+    }
+
+    public BindyKeyValuePairFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
+        super(resolver, type);
 
         // Initialize what is specific to Key Value Pair model
         initKeyValuePairModel();

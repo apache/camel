@@ -20,10 +20,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the Bindy {@link org.apache.camel.spi.DataFormat}
@@ -35,10 +37,14 @@ import org.apache.camel.spi.RouteContext;
 public class BindyDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private BindyType type;
-    @XmlAttribute(required = true)
+    @XmlAttribute
     private String[] packages;
     @XmlAttribute
+    private String classType;
+    @XmlAttribute
     private String locale;
+    @XmlTransient
+    private Class<?> clazz;
 
     public BindyDataFormat() {
     }
@@ -59,6 +65,18 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.packages = packages;
     }
 
+    public String getClassType() {
+        return classType;
+    }
+
+    public void setClassType(String classType) {
+        this.classType = classType;
+    }
+
+    public void setClassType(Class<?> classType) {
+        this.clazz = classType;
+    }
+
     public String getLocale() {
         return locale;
     }
@@ -68,12 +86,27 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     protected DataFormat createDataFormat(RouteContext routeContext) {
+        if (packages == null && (classType == null && clazz == null)) {
+            throw new IllegalArgumentException("Either packages or classType must be specified");
+        }
+        if (packages != null && (classType != null || clazz != null)) {
+            throw new IllegalArgumentException("Only one of packages and classType must be specified");
+        }
+
         if (type == BindyType.Csv) {
             setDataFormatName("bindy-csv");
         } else if (type == BindyType.Fixed) {
             setDataFormatName("bindy-fixed");
         } else {
             setDataFormatName("bindy-kvp");
+        }
+
+        if (clazz == null && classType != null) {
+            try {
+                clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(classType);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
         }
         return super.createDataFormat(routeContext);
     }
@@ -82,6 +115,7 @@ public class BindyDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat) {
         setProperty(dataFormat, "packages", packages);
         setProperty(dataFormat, "locale", locale);
+        setProperty(dataFormat, "classType", clazz);
     }
 
 }

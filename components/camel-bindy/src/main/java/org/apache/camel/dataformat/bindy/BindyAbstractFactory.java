@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy;
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     private AnnotationModelLoader modelsLoader;
     private String[] packageNames;
     private String locale;
+    private Class<?> type;
 
     public BindyAbstractFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
         this.modelsLoader = new AnnotationModelLoader(resolver);
@@ -57,6 +59,13 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         initModel();
     }
 
+    public BindyAbstractFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
+        this.modelsLoader = new AnnotationModelLoader(resolver);
+        this.type = type;
+
+        initModel();
+    }
+
     /**
      * method uses to initialize the model representing the classes who will
      * bind the data. This process will scan for classes according to the
@@ -66,7 +75,15 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      */
     public void initModel() throws Exception {
         // Find classes defined as Model
-        initModelClasses(this.packageNames);
+        if (packageNames != null)  {
+            initModelClasses(this.packageNames);
+        } else if (type != null) {
+            // use the package name from the type as it may refer to types in the same package
+            String pckName = type.getPackage().getName();
+            initModelClasses(pckName);
+        } else {
+            throw new IllegalArgumentException("Either packagenames or type should be configured");
+        }
     }
 
     /**

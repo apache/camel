@@ -68,6 +68,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         initFixedLengthModel();
     }
 
+    public BindyFixedLengthFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
+        super(resolver, type);
+
+        // initialize specific parameters of the fixed length model
+        initFixedLengthModel();
+    }
+
     /**
      * method uses to initialize the model representing the classes who will
      * bind the data. This process will scan for classes according to the

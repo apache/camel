@@ -36,7 +36,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +51,10 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
     public BindyCsvDataFormat(String... packages) {
         super(packages);
+    }
+
+    public BindyCsvDataFormat(Class<?> type) {
+        super(type);
     }
 
     @SuppressWarnings("unchecked")
@@ -183,7 +186,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             if (models.size() == 0) {
                 throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
             } else {
-                return models;
+                return extractUnmarshalResult(models);
             }
 
         } finally {
@@ -256,6 +259,10 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        return new BindyCsvFactory(resolver, getPackages());
+        if (getClassType() != null) {
+            return new BindyCsvFactory(resolver, getClassType());
+        } else {
+            return new BindyCsvFactory(resolver, getPackages());
+        }
     }
 }
