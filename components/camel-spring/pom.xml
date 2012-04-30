@@ -37,9 +37,6 @@
         !org.apache.camel.osgi.*,
         !org.apache.camel.component,
         !org.apache.camel.component.event,
-        !org.apache.camel.component.test,
-        !org.apache.camel.component.validator,
-        !org.apache.camel.component.xslt,
         !org.apache.camel.language.spel,
         org.apache.camel.*;${camel.osgi.import.strict.version},
         org.osgi.framework;version="[1.3,2)",
@@ -54,9 +51,6 @@
         org.apache.camel.util.spring.*;${camel.osgi.version},
         org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
-        org.apache.camel.component.test;${camel.osgi.split.pkg};${camel.osgi.version},
-        org.apache.camel.component.validator;${camel.osgi.split.pkg};${camel.osgi.version},
-        org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
       </camel.osgi.export>
       <camel.osgi.private.pkg>
