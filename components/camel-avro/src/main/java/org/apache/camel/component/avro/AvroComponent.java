@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.avro;
 
 import java.lang.reflect.Field;
@@ -73,14 +72,10 @@ public class AvroComponent extends DefaultComponent {
     }
 
     /**
-     * Applies enpoint parameters to configuration & resolves protocol and other required configuration properties.
-     * @param config
-     * @param enpointUri
-     * @param parameters
-     * @throws Exception
+     * Applies endpoint parameters to configuration & resolves protocol and other required configuration properties.
      */
-    private void applyToConfiguration(AvroConfiguration config, URI enpointUri, Map<String, Object> parameters) throws Exception {
-        config.parseURI(enpointUri, parameters, this);
+    private void applyToConfiguration(AvroConfiguration config, URI endpointUri, Map<String, Object> parameters) throws Exception {
+        config.parseURI(endpointUri, parameters, this);
         setProperties(config, parameters);
 
         if (config.getProtocol() == null && config.getProtocolClassName() != null) {
@@ -98,7 +93,6 @@ public class AvroComponent extends DefaultComponent {
             throw new IllegalArgumentException("Avro configuration does not contain protocol");
         }
     }
-
 
     public AvroConfiguration getConfiguration() {
         return configuration;

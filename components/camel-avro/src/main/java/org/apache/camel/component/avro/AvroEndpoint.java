@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.avro;
 
 import org.apache.avro.Protocol;
@@ -42,7 +41,6 @@ public abstract class AvroEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-
     public Exchange createExchange(Protocol.Message message, Object request) {
         ExchangePattern pattern = ExchangePattern.InOut;
         if (message.getResponse().equals(Schema.Type.NULL)) {
@@ -54,14 +52,9 @@ public abstract class AvroEndpoint extends DefaultEndpoint {
         return exchange;
     }
 
-    /**
-     * Whether this class supports being singleton or not.
-     *
-     * @return <tt>true</tt> to be a single shared instance, <tt>false</tt> to create new instances.
-     */
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public AvroConfiguration getConfiguration() {

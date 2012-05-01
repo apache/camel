@@ -32,7 +32,7 @@ public class AvroHttpProducer extends AvroProducer {
     }
 
     @Override
-    public Transceiver createTranceiver() throws Exception {
+    public Transceiver createTransceiver() throws Exception {
         return new HttpTransceiver(new URL(URISupport.normalizeUri(getEndpoint().getEndpointUri())));
     }
 }

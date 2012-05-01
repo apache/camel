@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.avro;
 
 import org.apache.avro.ipc.Callback;
 import org.apache.avro.ipc.Requestor;
 import org.apache.avro.ipc.Transceiver;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
 
-public abstract class AvroProducer extends DefaultProducer implements ServicePoolAware {
+public abstract class AvroProducer extends DefaultAsyncProducer implements ServicePoolAware {
 
     Transceiver transceiver;
     Requestor requestor;
@@ -35,35 +35,53 @@ public abstract class AvroProducer extends DefaultProducer implements ServicePoo
         super(endpoint);
     }
 
-    public abstract Transceiver createTranceiver() throws Exception;
+    public abstract Transceiver createTransceiver() throws Exception;
 
-    /**
-     * Processes the message exchange
-     *
-     * @param exchange the message exchange
-     * @throws Exception if an internal processing error has occurred.
-     */
     @Override
-    public void process(final Exchange exchange) throws Exception {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         Object request = exchange.getIn().getBody();
 
         if (transceiver == null) {
-            transceiver = createTranceiver();
-            requestor = new AvroRequestor(getEndpoint().getProtocol(), transceiver);
+            try {
+                transceiver = createTransceiver();
+                requestor = new AvroRequestor(getEndpoint().getProtocol(), transceiver);
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
         }
 
-        requestor.request(exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class), wrapObjectToArray(request), new Callback<Object>() {
+        try {
+            requestor.request(exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class), wrapObjectToArray(request), new Callback<Object>() {
+                @Override
+                public void handleResult(Object result) {
+                    // got result from avro, so set it on the exchange and invoke the callback
+                    try {
+                        exchange.getOut().setBody(result);
+                    } finally {
+                        callback.done(false);
+                    }
+                }
 
-            @Override
-            public void handleResult(Object result) {
-                exchange.getOut().setBody(result);
-            }
+                @Override
+                public void handleError(Throwable error) {
+                    // got error from avro, so set it on the exchange and invoke the callback
+                    try {
+                        exchange.setException(error);
+                    } finally {
+                        callback.done(false);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
 
-            @Override
-            public void handleError(Throwable error) {
-                exchange.setException(error);
-            }
-        });
+        // okay we continue routing asynchronously
+        return false;
     }
 
     public Object[] wrapObjectToArray(Object object) {
