@@ -48,7 +48,7 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(3, order.size());
-        assertEquals("seda://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());
+        assertEquals("direct://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());
         assertEquals("direct://start", order.get(1).getRoute().getEndpoint().getEndpointUri());
         assertEquals("direct://bar", order.get(2).getRoute().getEndpoint().getEndpointUri());
     }
@@ -75,12 +75,12 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(4, order.size());
-        assertEquals("seda://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());
+        assertEquals("direct://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());
         assertEquals("direct://start", order.get(1).getRoute().getEndpoint().getEndpointUri());
         assertEquals("direct://bar", order.get(2).getRoute().getEndpoint().getEndpointUri());
 
         // however its started manually so its started after the auto started
-        assertEquals("seda://bar", order.get(3).getRoute().getEndpoint().getEndpointUri());
+        assertEquals("direct://baz", order.get(3).getRoute().getEndpoint().getEndpointUri());
     }
 
     @Override
@@ -88,13 +88,13 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("B").startupOrder(2).to("seda:foo");
+                from("direct:start").routeId("B").startupOrder(2).to("direct:foo");
 
-                from("seda:foo").routeId("A").startupOrder(1).to("mock:result");
+                from("direct:foo").routeId("A").startupOrder(1).to("mock:result");
 
-                from("direct:bar").routeId("D").startupOrder(9).to("seda:bar");
+                from("direct:bar").routeId("D").startupOrder(9).to("direct:baz");
 
-                from("seda:bar").routeId("C").noAutoStartup().startupOrder(5).to("mock:other");
+                from("direct:baz").routeId("C").noAutoStartup().startupOrder(5).to("mock:other");
             }
         };
     }

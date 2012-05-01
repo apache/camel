@@ -25,6 +25,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.camel.TestSupport;
+import org.apache.camel.util.IOHelper;
 
 /**
  * @version 
@@ -35,11 +36,14 @@ public class JndiTest extends TestSupport {
     @SuppressWarnings("unchecked")
     public static Context createInitialContext() throws Exception {
         InputStream in = JndiTest.class.getClassLoader().getResourceAsStream("jndi-example.properties");
-        assertNotNull("Cannot find jndi-example.properties on the classpath!", in);
-        Properties properties = new Properties();
-        properties.load(in);
-        return new InitialContext(new Hashtable(properties));
-
+        try{
+            assertNotNull("Cannot find jndi-example.properties on the classpath!", in);
+            Properties properties = new Properties();
+            properties.load(in);
+            return new InitialContext(new Hashtable<Object, Object>(properties));
+        } finally {
+            IOHelper.close(in);
+        }
     }
 
     public void testLookupOfSimpleName() throws Exception {
