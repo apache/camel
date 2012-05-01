@@ -387,26 +387,51 @@ public abstract class TestSupport extends Assert {
      * Recursively delete a directory, useful to zapping test data
      *
      * @param file the directory to be deleted
+     * @return <tt>false</tt> if error deleting directory
      */
-    public static void deleteDirectory(String file) {
-        deleteDirectory(new File(file));
+    public static boolean deleteDirectory(String file) {
+        return deleteDirectory(new File(file));
     }
 
     /**
      * Recursively delete a directory, useful to zapping test data
      *
      * @param file the directory to be deleted
+     * @return <tt>false</tt> if error deleting directory
      */
-    public static void deleteDirectory(File file) {
+    public static boolean deleteDirectory(File file) {
+        int tries = 0;
+        int maxTries = 5;
+        boolean exists = true;
+        while (exists && (tries < maxTries)) {
+            recursivelyDeleteDirectory(file);
+            tries++;
+            exists = file.exists();
+            if (exists) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+            }
+        }
+        return !exists;
+    }
+
+    private static void recursivelyDeleteDirectory(File file) {
+        if (!file.exists()) {
+            return;
+        }
+
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File child : files) {
-                deleteDirectory(child);
+                recursivelyDeleteDirectory(child);
             }
         }
-
-        if (file.exists()) {
-            assertTrue(file.delete(), "Deletion of file: " + file.getAbsolutePath() + " failed");
+        boolean success = file.delete();
+        if (!success) {
+            LOG.warn("Deletion of file: " + file.getAbsolutePath() + " failed");
         }
     }
 
