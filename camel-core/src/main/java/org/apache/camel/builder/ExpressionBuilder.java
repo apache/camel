@@ -1102,7 +1102,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
                 Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(regexTokenizer);
+                scanner.useDelimiter(pattern);
                 return scanner;
             }
 
@@ -1116,7 +1116,7 @@ public final class ExpressionBuilder {
     /**
      * Returns a sort expression which will sort the expression with the given comparator.
      * <p/>
-     * The expression is evaluted as a {@link List} object to allow sorting.
+     * The expression is evaluated as a {@link List} object to allow sorting.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static Expression sortExpression(final Expression expression, final Comparator comparator) {

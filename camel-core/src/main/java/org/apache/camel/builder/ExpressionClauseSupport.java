@@ -445,6 +445,17 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @param regex whether the token is a regular expression or not
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, boolean regex) {
+        return tokenize(token, null, regex);
+    }
+
+    /**
      * Evaluates a token expression on the given header
      *
      * @param token the token
