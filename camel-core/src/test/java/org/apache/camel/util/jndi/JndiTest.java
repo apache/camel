@@ -35,7 +35,7 @@ public class JndiTest extends TestSupport {
 
     public static Context createInitialContext() throws Exception {
         InputStream in = JndiTest.class.getClassLoader().getResourceAsStream("jndi-example.properties");
-        try{
+        try {
             assertNotNull("Cannot find jndi-example.properties on the classpath!", in);
             Properties properties = new Properties();
             properties.load(in);
