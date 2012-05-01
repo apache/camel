@@ -419,6 +419,29 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @param regex whether the token is a regular expression or not
+     * @param group to group by the given number
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, boolean regex, int group) {
+        return delegate.tokenize(token, regex);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @param group to group by the given number
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, int group) {
+        return delegate.tokenize(token, group);
+    }
+
+    /**
      * Evaluates a token expression on the given header
      *
      * @param token the token
