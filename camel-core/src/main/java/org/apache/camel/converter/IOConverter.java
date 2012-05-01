@@ -101,7 +101,8 @@ public final class IOConverter {
     }
 
     public static BufferedReader toReader(File file, String charset) throws IOException {
-        return IOHelper.buffered(new EncodingFileReader(file, charset));
+        FileInputStream in = new FileInputStream(file);
+        return IOHelper.buffered(new EncodingFileReader(in, charset));
     }
 
     @Converter
@@ -128,7 +129,8 @@ public final class IOConverter {
     }
 
     public static BufferedWriter toWriter(File file, boolean append, String charset) throws IOException {
-        return IOHelper.buffered(new EncodingFileWriter(file, append, charset));
+        FileOutputStream os = new FileOutputStream(file, append);
+        return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
 
     /**
@@ -432,15 +434,26 @@ public final class IOConverter {
      */
     private static class EncodingFileReader extends InputStreamReader {
 
+        private final FileInputStream in;
+
         /**
-         * @param file file to read
+         * @param in file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(File file, String charset)
+        public EncodingFileReader(FileInputStream in, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
-            super(new FileInputStream(file), charset);
+            super(in, charset);
+            this.in = in;
         }
 
+        @Override
+        public void close() throws IOException {
+            try {
+                super.close();
+            } finally {
+                in.close();
+            }
+        }
     }
     
     /**
@@ -448,25 +461,26 @@ public final class IOConverter {
      */
     private static class EncodingFileWriter extends OutputStreamWriter {
 
-        /**
-         * @param file file to write
-         * @param charset character set to use
-         */
-        public EncodingFileWriter(File file, String charset)
-            throws FileNotFoundException, UnsupportedEncodingException {
-            super(new FileOutputStream(file), charset);
-        }
+        private final FileOutputStream out;
 
         /**
-         * @param file file to write
-         * @param append whether to append to the file
+         * @param out file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(File file, boolean append, String charset)
+        public EncodingFileWriter(FileOutputStream out, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
-            super(new FileOutputStream(file, append), charset);
+            super(out, charset);
+            this.out = out;
         }
 
+        @Override
+        public void close() throws IOException {
+            try {
+                super.close();
+            } finally {
+                out.close();
+            }
+        }
     }
     
     /**
