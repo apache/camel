@@ -1119,7 +1119,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
-                Iterator it = expression.evaluate(exchange, Iterator.class);
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
                 return new GroupIterator(exchange.getContext(), it, token, group);
             }

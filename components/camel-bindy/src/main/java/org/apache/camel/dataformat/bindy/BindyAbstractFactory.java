@@ -19,7 +19,6 @@ package org.apache.camel.dataformat.bindy;
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

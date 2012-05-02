@@ -35,10 +35,10 @@ import org.apache.camel.NoTypeConversionAvailableException;
  * <p/>
  * For example if you group by new line, then a new line token is inserted between the lines.
  */
-public final class GroupIterator implements Iterator, Closeable {
+public final class GroupIterator implements Iterator<Object>, Closeable {
 
     private final CamelContext camelContext;
-    private final Iterator it;
+    private final Iterator<?> it;
     private final String token;
     private final int group;
     private boolean closed;
@@ -53,7 +53,7 @@ public final class GroupIterator implements Iterator, Closeable {
      * @param group         number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
      */
-    public GroupIterator(CamelContext camelContext, Iterator it, String token, int group) {
+    public GroupIterator(CamelContext camelContext, Iterator<?> it, String token, int group) {
         this.camelContext = camelContext;
         this.it = it;
         this.token = token;

@@ -19,7 +19,6 @@ package org.apache.camel.component.jcr;
 import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 

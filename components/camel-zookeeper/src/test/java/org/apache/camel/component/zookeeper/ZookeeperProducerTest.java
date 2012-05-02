@@ -25,7 +25,6 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.operations.GetChildrenOperation;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
@@ -142,7 +141,7 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         exchange.getIn().setHeader(ZOOKEEPER_NODE, "/set-listing/firstborn");
         exchange.setPattern(ExchangePattern.InOut);
         template.send("zookeeper://localhost:39913/set-listing?create=true&listChildren=true", exchange);
-        List<String> children = ExchangeHelper.getMandatoryOutBody(exchange, List.class);
+        List<?> children = exchange.getOut().getMandatoryBody(List.class);
         assertEquals(1, children.size());
         assertEquals("firstborn", children.get(0));
     }

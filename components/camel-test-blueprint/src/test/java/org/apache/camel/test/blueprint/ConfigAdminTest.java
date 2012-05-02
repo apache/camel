@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.blueprint;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
