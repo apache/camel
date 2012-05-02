@@ -47,7 +47,7 @@ public final class IOHelper {
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
     private IOHelper() {
-        //Utility Class
+        // Utility Class
     }
     
     /**
@@ -57,7 +57,7 @@ public final class IOHelper {
         try {
             return new String(bytes, UTF8_CHARSET.name());
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible failure: Charset.forName(\"utf-8\") returns invalid name.", e);
+            throw new RuntimeException("Impossible failure: Charset.forName(\"UTF-8\") returns invalid name.", e);
         }
     }
 
@@ -69,7 +69,7 @@ public final class IOHelper {
         try {
             return new String(bytes, start, length, UTF8_CHARSET.name());
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible failure: Charset.forName(\"utf-8\") returns invalid name.", e);
+            throw new RuntimeException("Impossible failure: Charset.forName(\"UTF-8\") returns invalid name.", e);
         }
     }
 
@@ -204,48 +204,49 @@ public final class IOHelper {
         return total;
     }
 
-
     /**
      * Forces any updates to this channel's file to be written to the storage device that contains it.
      *
      * @param channel the file channel
      * @param name the name of the resource
-     * @param log the log to use when reporting closure warnings
+     * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
      */
     public static void force(FileChannel channel, String name, Logger log) {
         try {
             channel.force(true);
         } catch (Exception e) {
-            if (log != null) {
-                if (name != null) {
-                    log.warn("Cannot force FileChannel: " + name + ". Reason: " + e.getMessage(), e);
-                } else {
-                    log.warn("Cannot force FileChannel. Reason: " + e.getMessage(), e);
-                }
+            if (log == null) {
+                // then fallback to use the own Logger
+                log = LOG;
+            }
+            if (name != null) {
+                log.warn("Cannot force FileChannel: " + name + ". Reason: " + e.getMessage(), e);
+            } else {
+                log.warn("Cannot force FileChannel. Reason: " + e.getMessage(), e);
             }
         }
-
     }
 
     /**
-     * Closes the given resource if it is available, logging any closing
-     * exceptions to the given log
+     * Closes the given resource if it is available, logging any closing exceptions to the given log.
      *
      * @param closeable the object to close
      * @param name the name of the resource
-     * @param log the log to use when reporting closure warnings
+     * @param log the log to use when reporting closure warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
      */
     public static void close(Closeable closeable, String name, Logger log) {
         if (closeable != null) {
             try {
                 closeable.close();
             } catch (IOException e) {
-                if (log != null) {
-                    if (name != null) {
-                        log.warn("Cannot close: " + name + ". Reason: " + e.getMessage(), e);
-                    } else {
-                        log.warn("Cannot close. Reason: " + e.getMessage(), e);
-                    }
+                if (log == null) {
+                    // then fallback to use the own Logger
+                    log = LOG;
+                }
+                if (name != null) {
+                    log.warn("Cannot close: " + name + ". Reason: " + e.getMessage(), e);
+                } else {
+                    log.warn("Cannot close. Reason: " + e.getMessage(), e);
                 }
             }
         }
