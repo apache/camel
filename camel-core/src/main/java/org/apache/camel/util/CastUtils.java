@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.util.Collection;
+import java.util.Deque;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -83,6 +84,14 @@ public final class CastUtils {
 
     public static <T> Queue<T> cast(Queue<?> p, Class<T> cls) {
         return (Queue<T>) p;
+    }
+
+    public static <T> Deque<T> cast(Deque<?> p) {
+        return (Deque<T>) p;
+    }
+
+    public static <T> Deque<T> cast(Deque<?> p, Class<T> cls) {
+        return (Deque<T>) p;
     }
 
     public static <T, U> Hashtable<T, U> cast(Hashtable<?, ?> p) {
