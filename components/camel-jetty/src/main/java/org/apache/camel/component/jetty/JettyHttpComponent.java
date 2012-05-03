@@ -564,11 +564,16 @@ public class JettyHttpComponent extends HttpComponent {
     }
     
     private void invokeSslContextFactoryMethod(Object connector, String method, String value) {
+        Object factory;
         try {
-            Object factory = connector.getClass().getMethod("getSslContextFactory").invoke(connector);
+            factory = connector.getClass().getMethod("getSslContextFactory").invoke(connector);
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error invoking method getSslContextFactory on " + connector, e);
+        }
+        try {
             factory.getClass().getMethod(method, String.class).invoke(factory, value);
         } catch (Exception e) {
-            LOG.info("Problem setting " + method, e);
+            throw new RuntimeCamelException("Error invoking method " + method + " on " + factory, e);
         }
     }
         
