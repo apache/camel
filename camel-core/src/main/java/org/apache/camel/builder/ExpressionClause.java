@@ -500,6 +500,17 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a XML token expression on the message body with XML content
+     *
+     * @param tagName the the tag name of the child nodes to tokenize
+     * @param group to group by the given number
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenizeXML(String tagName, int group) {
+        return tokenizeXML(tagName, null, group);
+    }
+
+    /**
      * Evaluates a token pair expression on the message body with XML content
      *
      * @param tagName the the tag name of the child nodes to tokenize
@@ -507,7 +518,19 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @return the builder to continue processing the DSL
      */
     public T tokenizeXML(String tagName, String inheritNamespaceTagName) {
-        return delegate.tokenizeXMLPair(tagName, inheritNamespaceTagName);
+        return tokenizeXML(tagName, inheritNamespaceTagName, 0);
+    }
+
+    /**
+     * Evaluates a token pair expression on the message body with XML content
+     *
+     * @param tagName the the tag name of the child nodes to tokenize
+     * @param inheritNamespaceTagName  parent or root tag name that contains namespace(s) to inherit
+     * @param group to group by the given number
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenizeXML(String tagName, String inheritNamespaceTagName, int group) {
+        return delegate.tokenizeXMLPair(tagName, inheritNamespaceTagName, group);
     }
 
     /**

@@ -547,13 +547,17 @@ public class ExpressionClauseSupport<T> {
      *
      * @param tagName the the tag name of the child nodes to tokenize
      * @param inheritNamespaceTagName  optional parent or root tag name that contains namespace(s) to inherit
+     * @param group to group by the given number
      * @return the builder to continue processing the DSL
      */
-    public T tokenizeXMLPair(String tagName, String inheritNamespaceTagName) {
+    public T tokenizeXMLPair(String tagName, String inheritNamespaceTagName, int group) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(tagName);
         expression.setInheritNamespaceTagName(inheritNamespaceTagName);
         expression.setXml(true);
+        if (group > 0) {
+            expression.setGroup(group);
+        }
         setExpressionType(expression);
         return result;
     }
