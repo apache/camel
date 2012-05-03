@@ -121,7 +121,7 @@
     <junit-version>4.10</junit-version>
     <jt400-version>6.0</jt400-version>
     <karaf-version>2.2.7</karaf-version>
-    <krati-version>0.4.4</krati-version>
+    <krati-version>0.4.5</krati-version>
     <leveldbjni-version>1.2</leveldbjni-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.5.0</lucene-version>
