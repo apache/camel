@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -29,14 +30,25 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedCamelContextTest extends ManagementTestSupport {
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // to force a different management name than the camel id
+        context.getManagementNameStrategy().setNamePattern("19-#name#");
+        return context;
+    }
+
     public void testManagedCamelContext() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
+
+        String managementName = (String) mbeanServer.getAttribute(on, "ManagementName");
+        assertEquals("19-camel-1", managementName);
 
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
@@ -85,7 +97,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
     public void testManagedCamelContextCreateEndpoint() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
 
         assertNull(context.hasEndpoint("seda:bar"));
 
@@ -95,7 +107,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertNotNull(context.hasEndpoint("seda:bar"));
 
-        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://bar\"");
+        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=endpoints,name=\"seda://bar\"");
         boolean registered = mbeanServer.isRegistered(seda);
         assertTrue("Should be registered " + seda, registered);
 
@@ -110,7 +122,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
     public void testManagedCamelContextRemoveEndpoint() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
 
         assertNull(context.hasEndpoint("seda:bar"));
 
@@ -120,7 +132,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertNotNull(context.hasEndpoint("seda:bar"));
 
-        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://bar\"");
+        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=endpoints,name=\"seda://bar\"");
         boolean registered = mbeanServer.isRegistered(seda);
         assertTrue("Should be registered " + seda, registered);
 
