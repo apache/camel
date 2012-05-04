@@ -60,6 +60,10 @@ public class ManagedCamelContext implements TimerListener, ManagedCamelContextMB
         return context.getName();
     }
 
+    public String getManagementName() {
+        return context.getManagementName();
+    }
+
     public String getCamelVersion() {
         return context.getVersion();
     }

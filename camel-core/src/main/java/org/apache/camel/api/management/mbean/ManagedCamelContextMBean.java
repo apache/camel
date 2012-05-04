@@ -27,6 +27,9 @@ public interface ManagedCamelContextMBean {
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
+    @ManagedAttribute(description = "Camel Management Name")
+    String getManagementName();
+
     @ManagedAttribute(description = "Camel Version")
     String getCamelVersion();
 
