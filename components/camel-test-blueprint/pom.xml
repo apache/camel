@@ -95,6 +95,14 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.configadmin</artifactId>
+                <!-- exclude the following dependency which otherwise would pop up a lot of compilation
+                     errors both by this and the camel-maven-plugin modules under eclipse. -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>org.osgi.foundation</artifactId>
+                    </exclusion>
+                </exclusions>
         </dependency>
 
         <!-- optional dependencies for running tests -->
