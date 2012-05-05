@@ -16,18 +16,21 @@
  */
 package org.apache.camel.component.jt400;
 
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400ByteArray;
+import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,37 +75,60 @@ public class Jt400PgmProducer extends DefaultProducer {
         }
     }
 
-    private ProgramParameter[] getParameterList(Exchange exchange) throws InvalidPayloadException {
+    private ProgramParameter[] getParameterList(Exchange exchange) throws InvalidPayloadException, PropertyVetoException {
 
-        Object body = ExchangeHelper.getMandatoryInBody(exchange);
+        Object body = exchange.getIn().getMandatoryBody();
 
-        String[] params = (String[]) body;
+        Object[] params = (Object[]) body;
 
         ProgramParameter[] parameterList = new ProgramParameter[params.length];
         for (int i = 0; i < params.length; i++) {
             Object param = params[i];
 
-            boolean input = param != null;
-            boolean output = getISeriesEndpoint().isFieldIdxForOuput(i);
+            boolean input;
+            boolean output;
+            if (getISeriesEndpoint().isFieldIdxForOuput(i)) {
+                output = true;
+                input = param != null;
+            } else {
+                output = false;
+                input = true;
+            }
 
             byte[] inputData = null;
-            int outputLength = -1;
+
+            // XXX Actually, returns any field length, not just output.
+            int length = getISeriesEndpoint().getOutputFieldLength(i);
+
             if (input) {
-                String value = (String) param;
-                inputData = new AS400Text(getISeriesEndpoint().getOutputFieldLength(i)).toBytes(value);
-            }
-            if (output) {
-                outputLength = getISeriesEndpoint().getOutputFieldLength(i);
+                if (param != null) {
+                    AS400DataType typeConverter;
+                    if (getISeriesEndpoint().getFormat() == Format.binary) {
+                        typeConverter = new AS400ByteArray(length);
+                    } else {
+                        typeConverter = new AS400Text(length, getISeriesEndpoint().getiSeries());
+                    }
+                    inputData = typeConverter.toBytes(param);
+                }
+                // Else, inputData will remain null.
             }
 
             if (input && output) {
-                parameterList[i] = new ProgramParameter(inputData, outputLength);
-            }
-            if (input) {
-                parameterList[i] = new ProgramParameter(inputData);
-            }
-            if (output) {
-                parameterList[i] = new ProgramParameter(outputLength);
+                LOG.trace("Parameter {} is both input and output.", i);
+                parameterList[i] = new ProgramParameter(inputData, length);
+            } else if (input) {
+                LOG.trace("Parameter {} is input.", i);
+                if (inputData != null) {
+                    parameterList[i] = new ProgramParameter(inputData);
+                } else {
+                    parameterList[i] = new ProgramParameter();
+                    parameterList[i].setParameterType(ProgramParameter.PASS_BY_REFERENCE);
+                    parameterList[i].setNullParameter(true); // Just for self documentation.
+                }
+            } else {
+                // output
+                LOG.trace("Parameter {} is output.", i);
+                parameterList[i] = new ProgramParameter(length);
             }
         }
 
@@ -111,29 +137,32 @@ public class Jt400PgmProducer extends DefaultProducer {
 
     private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, ProgramParameter[] inputs) throws InvalidPayloadException {
 
-        Object bodyIN = ExchangeHelper.getMandatoryInBody(exchange);
-        String[] params = (String[]) bodyIN;
+        Object body = exchange.getIn().getMandatoryBody();
+        Object[] params = (Object[]) body;
 
-        List<String> results = new ArrayList<String>();
+        List<Object> results = new ArrayList<Object>();
 
         int i = 1;
         for (ProgramParameter pgmParam : pgmCall.getParameterList()) {
             byte[] output = pgmParam.getOutputData();
-
-            String value = params[i - 1];
+            Object javaValue = params[i - 1];
 
             if (output != null) {
                 int length = pgmParam.getOutputDataLength();
-
-                AS400Text text = new AS400Text(length);
-                value = (String) text.toObject(output);
+                AS400DataType typeConverter;
+                if (getISeriesEndpoint().getFormat() == Format.binary) {
+                    typeConverter = new AS400ByteArray(length);
+                } else {
+                    typeConverter = new AS400Text(length, getISeriesEndpoint().getiSeries());
+                }
+                javaValue = typeConverter.toObject(output);
             }
 
-            results.add(value);
+            results.add(javaValue);
             i++;
         }
 
-        String[] bodyOUT = new String[results.size()];
+        Object[] bodyOUT = new Object[results.size()];
         bodyOUT = results.toArray(bodyOUT);
 
         exchange.getOut().setBody(bodyOUT);
@@ -158,7 +187,7 @@ public class Jt400PgmProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         if (!getISeriesEndpoint().getiSeries().isConnected()) {
-            LOG.info("Connecting to " + getISeriesEndpoint());
+            LOG.info("Connecting to {}", getISeriesEndpoint());
             getISeriesEndpoint().getiSeries().connectService(AS400.COMMAND);
         }
     }
@@ -166,7 +195,7 @@ public class Jt400PgmProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (getISeriesEndpoint().getiSeries().isConnected()) {
-            LOG.info("Disconnecting from " + getISeriesEndpoint());
+            LOG.info("Disconnecting from {}", getISeriesEndpoint());
             getISeriesEndpoint().getiSeries().disconnectAllServices();
         }
     }
