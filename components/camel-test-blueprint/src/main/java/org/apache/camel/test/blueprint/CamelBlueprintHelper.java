@@ -96,6 +96,13 @@ public final class CamelBlueprintHelper {
             bundles.add(getBundleDescriptor("target/bundles/" + jarName + ".jar", bundle));
         }
 
+        if (LOG.isDebugEnabled()) {
+            for (int i = 0; i < bundles.size(); i++) {
+                BundleDescriptor desc = bundles.get(i);
+                LOG.debug("Bundle #{} -> {}", i, desc);
+            }
+        }
+
         // setup pojosr to use our bundles
         Map<String, List<BundleDescriptor>> config = new HashMap<String, List<BundleDescriptor>>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
