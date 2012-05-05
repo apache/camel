@@ -191,7 +191,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         // drain any in progress files as we are done with this batch
-        removeExcessiveInProgressFiles((Deque) exchanges, 0);
+        removeExcessiveInProgressFiles(CastUtils.cast((Deque<?>) exchanges, Exchange.class), 0);
 
         return total;
     }
