@@ -46,6 +46,10 @@ public final class URISupport {
     // (applies to URI with authority component and userinfo token in the form "user:password").
     private static final Pattern USERINFO_PASSWORD = Pattern.compile("(.*://.*:)(.*)(@)");
     
+    // Match the user password in the URI path as second capture group
+    // (applies to URI path with authority component and userinfo token in the form "user:password").
+    private static final Pattern PATH_USERINFO_PASSWORD = Pattern.compile("(.*:)(.*)(@)");
+    
     private static final String CHARSET = "UTF-8";
 
     private URISupport() {
@@ -64,6 +68,22 @@ public final class URISupport {
         if (uri != null) {
             sanitized = SECRETS.matcher(sanitized).replaceAll("$1=******");
             sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1******$3");
+        }
+        return sanitized;
+    }
+    
+    /**
+     * Removes detected sensitive information (such as passwords) from the
+     * <em>path part</em> of an URI (that is, the part without the query
+     * parameters or component prefix) and returns the result.
+     * 
+     * @param path the URI path to sanitize
+     * @return null if the path is null, otherwise the sanitized path
+     */
+    public static String sanitizePath(String path) {
+        String sanitized = path;
+        if (path != null) {
+            sanitized = PATH_USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1******$3");
         }
         return sanitized;
     }

@@ -176,5 +176,16 @@ public class URISupportTest extends ContextTestSupport {
         String expected = "jt400://GEORGE:******@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
         assertEquals(expected, URISupport.sanitizeUri(uri));
     }
+    
+    public void testSanitizePathWithUserInfo() {
+        String path = "GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
+        String expected = "GEORGE:******@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
+        assertEquals(expected, URISupport.sanitizePath(path));
+    }
+    
+    public void testSanitizePathWithoutSensitiveInfoIsUnchanged() {
+        String path = "myhost:8080/mypath";
+        assertEquals(path, URISupport.sanitizePath(path));
+    }
 
 }
