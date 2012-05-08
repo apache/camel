@@ -1024,25 +1024,6 @@
 
       <!-- optional dependencies -->
       <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>${jaxb-api-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.xml</groupId>
-            <artifactId>jsr173</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.xml.stream</groupId>
-            <artifactId>stax-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>stax</groupId>
         <artifactId>stax-api</artifactId>
         <version>${stax-api-version}</version>
@@ -1793,15 +1774,10 @@
     	</activation>
     	
 	    <properties>
-	    	<jaxb-api-version>2.2</jaxb-api-version>
 	    	<jaxb-version>2.2.5</jaxb-version>
 	    </properties>
     	
     	<dependencies>
-	        <dependency>
-	          <groupId>javax.xml.bind</groupId>
-	          <artifactId>jaxb-api</artifactId>
-	        </dependency>
 	        <dependency>
 	          <groupId>com.sun.xml.bind</groupId>
 	          <artifactId>jaxb-impl</artifactId>

@@ -369,7 +369,7 @@
                         <docletArtifact>
                             <groupId>javax.xml.bind</groupId>
                             <artifactId>jaxb-api</artifactId>
-                            <version>${jaxb-api-version}</version>
+                            <version>2.1</version>
                         </docletArtifact>
                         <docletArtifact>
                             <groupId>com.sun.xml.bind</groupId>

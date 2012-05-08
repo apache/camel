@@ -47,7 +47,6 @@
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
-    <jaxb-api-version>2.1</jaxb-api-version>
 
     <maven-bundle-version>2.3.6</maven-bundle-version>
     <openjpa-version>2.2.0</openjpa-version>
@@ -282,11 +281,6 @@
           <artifactId>maven-antrun-plugin</artifactId>
           <version>1.6</version>
           <dependencies>
-              <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb-api-version}</version>
-              </dependency>
               <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
@@ -768,11 +762,6 @@
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.6</version>
                     <dependencies>
-                        <dependency>
-                          <groupId>javax.xml.bind</groupId>
-                          <artifactId>jaxb-api</artifactId>
-                          <version>${jaxb-api-version}</version>
-                        </dependency>
                         <dependency>
                           <groupId>com.sun.xml.bind</groupId>
                           <artifactId>jaxb-impl</artifactId>
