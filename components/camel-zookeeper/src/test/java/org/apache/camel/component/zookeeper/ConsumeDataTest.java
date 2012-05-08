@@ -91,9 +91,11 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
         // recreate and update a number of times.
         createCamelNode();
         updateNode(10);
-
+  
         mock.await(5, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
+        
+        client.delete("/camel");
     }
 
     private void updateNode(int times) throws InterruptedException, Exception {
