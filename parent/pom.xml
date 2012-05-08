@@ -187,7 +187,7 @@
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.3.4</zookeeper-version>
     <!-- used by camel archetypes -->
-    <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>2.4</maven-compiler-plugin-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
