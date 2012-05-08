@@ -36,7 +36,7 @@
     <compiler.fork>true</compiler.fork>
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.5.1</activemq-version>
+    <activemq-version>5.6.0</activemq-version>
     <ahc-version>1.7.4</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
