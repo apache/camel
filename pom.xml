@@ -482,6 +482,20 @@
             <_failok>${camel.osgi.failok}</_failok>
           </instructions>
 	    </configuration>
+        <executions>
+            <execution>
+                <id>versions</id>
+                <phase>validate</phase>
+                <goals>
+                    <goal>cleanVersions</goal>
+                </goals>
+                <configuration>
+                    <versions>
+                        <camel.osgi.version.clean>${project.version}</camel.osgi.version.clean>
+                    </versions>
+                </configuration>
+            </execution>
+        </executions>
       </plugin>
 
       <plugin>

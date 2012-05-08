@@ -262,8 +262,8 @@
             </goals>
           </execution>
           <execution>
-            <id>process-sources</id>
-            <phase>process-sources</phase>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
             <configuration>
               <target>
                 <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
@@ -294,6 +294,20 @@
                   </fileset>
                 </copy>
 
+
+                <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
+                <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
+                <property name="mv" value="${project.version}" />
+                <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0" />
+                <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0" />
+                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0" />
+                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
+                <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}" />
+                <mkdir dir="target" />
+                <echo file="target/camel.osgi.version.txt">
+                      camel.schema.version = ${camel.schema.version}
+                </echo>
+
                 <echo>Generating XSD schema</echo>
                 <mkdir dir="${project.build.directory}/schema" />
                 <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
@@ -311,7 +325,23 @@
           </execution>
         </executions>              
       </plugin>
-
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>target/camel.osgi.version.txt</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-spring-sources.jar -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
