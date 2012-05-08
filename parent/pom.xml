@@ -1032,6 +1032,14 @@
             <groupId>javax.xml</groupId>
             <artifactId>jsr173</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>javax.xml.stream</groupId>
+            <artifactId>stax-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -1515,6 +1523,17 @@
         <artifactId>xercesImpl</artifactId>
         <version>${xerces-version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <version>${woodstox-version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>javax.xml.stream</groupId>
+                  <artifactId>stax-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>        
 
       <!-- optional avro -->
       <dependency>
