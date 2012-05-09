@@ -32,6 +32,7 @@
   <feature name='camel' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-spring</feature>
+    <feature version='${project.version}'>camel-blueprint</feature>
   </feature>
   <feature name='camel-core' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='[3,4)'>spring</feature>
