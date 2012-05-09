@@ -99,7 +99,7 @@ public class CometdBinding {
             Object attribute = remote.getAttribute(attributeName);
 
             if (attribute instanceof Integer || attribute instanceof String || attribute instanceof Long
-                || attribute instanceof Double) {
+                || attribute instanceof Double || attribute instanceof Boolean) {
                 message.setHeader(attributeName, attribute);
             } else {
                 // Do we need to support other type of session objects ?

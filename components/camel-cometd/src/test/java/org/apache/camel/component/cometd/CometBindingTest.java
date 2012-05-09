@@ -31,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,6 +47,7 @@ public class CometBindingTest {
     private static final String DOUBLE_ATTR_NAME = "double";
     private static final String INTEGER_ATTR_NAME = "integer";
     private static final String STRING_ATTR_NAME = "string";
+    private static final String BOOLEAN_ATT_NAME = "boolean";
     private CometdBinding testObj;
     @Mock
     private BayeuxServerImpl bayeux;
@@ -60,13 +62,15 @@ public class CometBindingTest {
 
         Set<String> attributeNames = new HashSet<String>(Arrays.asList(STRING_ATTR_NAME, INTEGER_ATTR_NAME,
                                                                        LONG_ATTR_NAME, DOUBLE_ATTR_NAME,
-                                                                       FOO_ATTR_NAME));
+                                                                       FOO_ATTR_NAME, BOOLEAN_ATT_NAME));
         when(remote.getAttributeNames()).thenReturn(attributeNames);
         when(remote.getAttribute(STRING_ATTR_NAME)).thenReturn(HELLO);
         when(remote.getAttribute(INTEGER_ATTR_NAME)).thenReturn(EIGHT);
         when(remote.getAttribute(LONG_ATTR_NAME)).thenReturn(THIRTY_FOUR);
         when(remote.getAttribute(DOUBLE_ATTR_NAME)).thenReturn(TWO_POINT_ONE);
         when(remote.getAttribute(FOO_ATTR_NAME)).thenReturn(FOO);
+        when(remote.getAttribute(BOOLEAN_ATT_NAME)).thenReturn(Boolean.TRUE);
+        
     }
 
     @Test
@@ -78,12 +82,13 @@ public class CometBindingTest {
         Message result = testObj.createCamelMessage(remote, cometdMessage, null);
 
         // assert
-        assertEquals(5, result.getHeaders().size());
+        assertEquals(6, result.getHeaders().size());
         assertEquals(HELLO, result.getHeader(STRING_ATTR_NAME));
         assertEquals(EIGHT, result.getHeader(INTEGER_ATTR_NAME));
         assertEquals(THIRTY_FOUR, result.getHeader(LONG_ATTR_NAME));
         assertEquals(TWO_POINT_ONE, result.getHeader(DOUBLE_ATTR_NAME));
         assertEquals(null, result.getHeader(FOO_ATTR_NAME));
+        assertTrue((Boolean)result.getHeader(BOOLEAN_ATT_NAME));
     }
 
     @Test
@@ -98,6 +103,7 @@ public class CometBindingTest {
         assertEquals(null, result.getHeader(LONG_ATTR_NAME));
         assertEquals(null, result.getHeader(FOO_ATTR_NAME));
         assertEquals(null, result.getHeader(DOUBLE_ATTR_NAME));
+        assertEquals(null, result.getHeader(BOOLEAN_ATT_NAME));
     }
 
     @Test

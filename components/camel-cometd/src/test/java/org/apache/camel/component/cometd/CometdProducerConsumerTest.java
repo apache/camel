@@ -25,6 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.SecurityPolicy;
+import org.cometd.bayeux.server.ServerChannel;
+import org.cometd.bayeux.server.ServerMessage;
+import org.cometd.bayeux.server.ServerSession;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,6 +38,7 @@ import org.junit.Test;
  */
 public class CometdProducerConsumerTest extends CamelTestSupport {
 
+    private static final String SHOOKHANDS_SESSION_HEADER = "Shookhands";
     private int port;
     private String uri;
 
@@ -90,6 +96,22 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         CometdEndpoint cometdEndpoint = (CometdEndpoint)result;
         assertTrue(cometdEndpoint.areSessionHeadersEnabled());
     }
+    
+    @Test
+    public void testSessionInformationTransferred() throws Exception {
+        // act
+        template.sendBody("direct:input", "message");
+
+        // assert
+        MockEndpoint ep = context.getEndpoint("mock:test", MockEndpoint.class);
+        List<Exchange> exchanges = ep.getReceivedExchanges();
+        assertTrue(exchanges.size() > 0);
+        for (Exchange exchange : exchanges) {
+            Message message = exchange.getIn();
+            assertTrue((Boolean)message.getHeader(SHOOKHANDS_SESSION_HEADER));
+        }
+    }
+
 
     @Override
     @Before
@@ -106,9 +128,42 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                CometdComponent component = context.getComponent("cometd", CometdComponent.class);
+                // The security policy is used to set session attributes.
+                component.setSecurityPolicy(createTestSecurityPolicy());
                 from("direct:input").to(uri);
-
                 from(uri).to("mock:test");
+            }
+        };
+
+    }
+
+    private SecurityPolicy createTestSecurityPolicy() {
+        return new SecurityPolicy() {
+
+            @Override
+            public boolean canSubscribe(BayeuxServer server, ServerSession session, ServerChannel channel,
+                                        ServerMessage message) {
+                session.setAttribute("Subscribed", true);
+                return true;
+            }
+
+            @Override
+            public boolean canPublish(BayeuxServer server, ServerSession session, ServerChannel channel,
+                                      ServerMessage message) {
+                return true;
+            }
+
+            @Override
+            public boolean canHandshake(BayeuxServer server, ServerSession session, ServerMessage message) {
+                session.setAttribute(SHOOKHANDS_SESSION_HEADER, true);
+                return true;
+            }
+
+            @Override
+            public boolean canCreate(BayeuxServer server, ServerSession session, String channelId,
+                                     ServerMessage message) {
+                return true;
             }
         };
     }
