@@ -62,7 +62,6 @@ public class LdapProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         String filter = exchange.getIn().getBody(String.class);
-
         DirContext dirContext = getDirContext();
 
         try {
@@ -77,6 +76,8 @@ public class LdapProducer extends DefaultProducer {
                 data = pagedSearch((LdapContext) dirContext, filter);
             }
             exchange.getOut().setBody(data);
+            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getOut().setAttachments(exchange.getIn().getAttachments());
         } finally {
             dirContext.close();
         }
@@ -96,8 +97,7 @@ public class LdapProducer extends DefaultProducer {
 
     private List<SearchResult> simpleSearch(DirContext ldapContext, String searchFilter) throws NamingException {
         List<SearchResult> data = new ArrayList<SearchResult>();
-        NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, searchFilter,
-                searchControls);
+        NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, searchFilter, searchControls);
         while (namingEnumeration != null && namingEnumeration.hasMore()) {
             data.add(namingEnumeration.next());
         }

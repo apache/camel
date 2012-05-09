@@ -17,6 +17,8 @@
 package org.apache.camel.component.ldap;
 
 import java.util.Collection;
+
+import javax.activation.DataHandler;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
@@ -24,6 +26,7 @@ import javax.naming.ldap.LdapContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -35,12 +38,17 @@ import org.apache.directory.server.core.integ.AbstractLdapTestUnit;
 import org.apache.directory.server.core.integ.FrameworkRunner;
 import org.apache.directory.server.ldap.LdapServer;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(FrameworkRunner.class)
 @CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
@@ -85,10 +93,10 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         Exchange out = template.send(endpoint, exchange);
         Collection<SearchResult> searchResults = defaultLdapModuleOutAssertions(out);
 
-        Assert.assertFalse(contains("uid=test1,ou=test,ou=system", searchResults));
-        Assert.assertTrue(contains("uid=test2,ou=test,ou=system", searchResults));
-        Assert.assertTrue(contains("uid=testNoOU,ou=test,ou=system", searchResults));
-        Assert.assertTrue(contains("uid=tcruise,ou=actors,ou=system", searchResults));
+        assertFalse(contains("uid=test1,ou=test,ou=system", searchResults));
+        assertTrue(contains("uid=test2,ou=test,ou=system", searchResults));
+        assertTrue(contains("uid=testNoOU,ou=test,ou=system", searchResults));
+        assertTrue(contains("uid=tcruise,ou=actors,ou=system", searchResults));
         // START SNIPPET: invoke
     }
 
@@ -106,7 +114,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         Exchange out = template.send(endpoint, exchange);
 
         Collection<SearchResult> searchResults = defaultLdapModuleOutAssertions(out);
-        Assert.assertEquals(16, searchResults.size());
+        assertEquals(16, searchResults.size());
     }
 
     @Test
@@ -127,23 +135,47 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         Exchange out = template.send(endpoint, exchange);
         Collection<SearchResult> searchResults = defaultLdapModuleOutAssertions(out);
 
-        Assert.assertEquals(1, searchResults.size());
-        Assert.assertTrue(contains("uid=tcruise,ou=actors,ou=system", searchResults));
+        assertEquals(1, searchResults.size());
+        assertTrue(contains("uid=tcruise,ou=actors,ou=system", searchResults));
         Attributes theOneResultAtts = searchResults.iterator().next().getAttributes();
-        Assert.assertEquals("tcruise", theOneResultAtts.get("uid").get());
-        Assert.assertEquals("Tom Cruise", theOneResultAtts.get("cn").get());
+        assertEquals("tcruise", theOneResultAtts.get("uid").get());
+        assertEquals("Tom Cruise", theOneResultAtts.get("cn").get());
 
         // make sure this att is NOT returned anymore 
-        Assert.assertNull(theOneResultAtts.get("sn"));
+        assertNull(theOneResultAtts.get("sn"));
+    }
+    
+    @Test
+    public void testLdapRoutePreserveHeaderAndAttachments() throws Exception {
+        camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system"));
+        camel.start();
+
+        final DataHandler dataHandler = new DataHandler("test", "text");
+        Exchange out = template.request("direct:start", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("(!(ou=test1))");
+                exchange.getIn().setHeader("ldapTest", "Camel");
+                exchange.getIn().addAttachment("ldapAttachment", dataHandler);
+            }
+        });
+        
+        Collection<SearchResult> searchResults = defaultLdapModuleOutAssertions(out);
+
+        assertFalse(contains("uid=test1,ou=test,ou=system", searchResults));
+        assertTrue(contains("uid=test2,ou=test,ou=system", searchResults));
+        assertTrue(contains("uid=testNoOU,ou=test,ou=system", searchResults));
+        assertTrue(contains("uid=tcruise,ou=actors,ou=system", searchResults));
+        assertEquals("Camel", out.getOut().getHeader("ldapTest"));
+        assertSame(dataHandler, out.getOut().getAttachment("ldapAttachment"));
     }
 
     @SuppressWarnings("unchecked")
     private Collection<SearchResult> defaultLdapModuleOutAssertions(Exchange out) {
         // assertions of the response
-        Assert.assertNotNull(out);
-        Assert.assertNotNull(out.getOut());
+        assertNotNull(out);
+        assertNotNull(out.getOut());
         Collection<SearchResult> data = out.getOut().getBody(Collection.class);
-        Assert.assertNotNull("out body could not be converted to a Collection - was: " + out.getOut().getBody(), data);
+        assertNotNull("out body could not be converted to a Collection - was: " + out.getOut().getBody(), data);
         return data;
     }
 
