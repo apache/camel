@@ -18,7 +18,6 @@ package org.apache.camel.itest.karaf;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.JsonDataFormat;
-import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;

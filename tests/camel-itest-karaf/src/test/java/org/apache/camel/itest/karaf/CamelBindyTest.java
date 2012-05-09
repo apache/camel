@@ -18,7 +18,6 @@ package org.apache.camel.itest.karaf;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.BindyDataFormat;
-import org.apache.camel.spi.DataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -31,7 +30,9 @@ public class CamelBindyTest extends AbstractFeatureTest {
     public static final String COMPONENT = extractName(CamelBindyTest.class);
     
     protected DataFormatDefinition createDataformatDefinition(String format) {        
-        return new BindyDataFormat();
+        BindyDataFormat dataformate = new BindyDataFormat();
+        dataformate.setPackages(new String[]{"Dummy"});
+        return dataformate;
     }
 
     @Test
