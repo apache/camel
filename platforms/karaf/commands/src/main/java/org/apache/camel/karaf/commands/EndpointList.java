@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * List the Camel endpoints available in the Karaf instance.
  */
-@Command(scope = "camel", name = "endpoint-list", description = "Lists all Camel endpoints.")
+@Command(scope = "camel", name = "endpoint-list", description = "Lists all Camel endpoints available in CamelContexts.")
 public class EndpointList extends OsgiCommandSupport {
 
     protected static final String HEADER_FORMAT = "%-20s %-20s %-20s";
