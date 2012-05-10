@@ -23,10 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.Address;
 import org.apache.camel.example.Order;
+import org.apache.camel.jaxb.MyNameSpacePrefixMapper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
 
@@ -119,28 +118,19 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat(JAXBContext.newInstance(Order.class, Address.class));
 
                 JaxbDataFormat jaxbDataFormatWithNamespacePrefixMapper = new JaxbDataFormat(JAXBContext.newInstance(Order.class, Address.class));
-                jaxbDataFormatWithNamespacePrefixMapper.setNameSpacePrefixMapper(new NamespacePrefixMapper() {
-                    public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
-                        if (namespaceUri.equals("http://www.camel.apache.org/jaxb/example/order/1")) {
-                            return "order";
-                        } else if (namespaceUri.equals("http://www.camel.apache.org/jaxb/example/address/1")) {
-                            return "address";
-                        }
-                        return "ns";
-                    }
-                });
+                jaxbDataFormatWithNamespacePrefixMapper.setNameSpacePrefixMapper(new MyNameSpacePrefixMapper());
                 
                 from("direct:marshall")
-                        .marshal(jaxbDataFormat)
-                        .to("mock:marshall");
+                    .marshal(jaxbDataFormat)
+                    .to("mock:marshall");
                 
                 from("direct:marshallWithNamespacePrefixMapper")
                     .marshal(jaxbDataFormatWithNamespacePrefixMapper)
                     .to("mock:marshall");
 
                 from("direct:unmarshall")
-                        .unmarshal(jaxbDataFormat)
-                        .to("mock:unmarshall");
+                    .unmarshal(jaxbDataFormat)
+                    .to("mock:unmarshall");
             }
         };
     }

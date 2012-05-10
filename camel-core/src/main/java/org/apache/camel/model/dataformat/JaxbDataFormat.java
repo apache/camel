@@ -20,10 +20,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -51,6 +53,10 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String partClass;
     @XmlAttribute
     private String partNamespace;
+    @XmlAttribute
+    private String nameSpacePrefixMapper;
+    @XmlTransient
+    private Object nameSpacePrefixMapperInstance;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -125,6 +131,27 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.partNamespace = partNamespace;
     }
 
+    public String getNameSpacePrefixMapper() {
+        return nameSpacePrefixMapper;
+    }
+
+    public void setNameSpacePrefixMapper(String nameSpacePrefixMapper) {
+        this.nameSpacePrefixMapper = nameSpacePrefixMapper;
+    }
+    
+    protected DataFormat createDataFormat(RouteContext routeContext) {
+        if (nameSpacePrefixMapper != null) {
+            try {
+                Class<?> clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(nameSpacePrefixMapper);
+                nameSpacePrefixMapperInstance = clazz.newInstance();
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }   
+        }
+        
+        return super.createDataFormat(routeContext);
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -161,6 +188,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
             setProperty(dataFormat, "encoding", encoding);
         }
         setProperty(dataFormat, "contextPath", contextPath);
+        if (nameSpacePrefixMapperInstance != null) {
+            setProperty(dataFormat, "nameSpacePrefixMapper", nameSpacePrefixMapperInstance);
+        }
     }
-
 }
