@@ -18,7 +18,6 @@ package org.apache.camel.component.jcr;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,7 +39,7 @@ public class JcrProducerTest extends JcrRouteTestSupport {
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
         String uuid = out.getOut().getBody(String.class);
-        Session session = getRepository().login(new SimpleCredentials("user", "pass".toCharArray()));
+        Session session = openSession();
         try {
             Node node = session.getNodeByIdentifier(uuid);
             assertNotNull(node);
@@ -58,11 +57,11 @@ public class JcrProducerTest extends JcrRouteTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: jcr
+                // START SNIPPET: jcr-create-node
                 from("direct:a").setProperty(JcrConstants.JCR_NODE_NAME, constant("node"))
                         .setProperty("my.contents.property", body())
                         .to("jcr://user:pass@repository/home/test");
-                // END SNIPPET: jcr
+                // END SNIPPET: jcr-create-node
             }
         };
     }

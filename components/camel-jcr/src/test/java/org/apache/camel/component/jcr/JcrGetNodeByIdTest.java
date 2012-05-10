@@ -66,10 +66,12 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: jcr-get-node
                 from("direct:a")
                         .setHeader(JcrConstants.JCR_OPERATION, constant(JcrConstants.JCR_GET_BY_ID))
                         .to("jcr://user:pass@repository")
                         .to("mock:result");
+                // END SNIPPET: jcr-get-node
             }
         };
     }
