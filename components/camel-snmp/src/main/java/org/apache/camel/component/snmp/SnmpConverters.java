@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.snmp4j.PDU;
+import org.snmp4j.PDUv1;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 
@@ -67,6 +68,14 @@ public final class SnmpConverters {
         return list;
     }
 
+    private static void entryAppend(StringBuilder sb, String tag, String value) {
+        sb.append(ENTRY_TAG_OPEN);
+        sb.append("<" + tag + ">");
+        sb.append(value);
+        sb.append("</" + tag + ">");
+        sb.append(ENTRY_TAG_CLOSE);
+    }
+
     /**
      * Converts the given snmp pdu to a String body.
      *
@@ -79,7 +88,21 @@ public final class SnmpConverters {
         StringBuilder sb = new StringBuilder();
 
         // prepare the header
-        sb.append(SNMP_TAG_OPEN);
+        if (pdu.getType() == PDU.V1TRAP) {
+            sb.append("<" + SNMP_TAG + " messageType=\"v1\">");
+        } else {
+            sb.append(SNMP_TAG_OPEN);
+        }
+
+        // Extract SNMPv1 specific variables
+        if (pdu.getType() == PDU.V1TRAP) {
+            PDUv1 v1pdu = (PDUv1) pdu;
+            entryAppend(sb, "enterprise", v1pdu.getEnterprise().toString());
+            entryAppend(sb, "agent-addr", v1pdu.getAgentAddress().toString());
+            entryAppend(sb, "generic-trap", Integer.toString(v1pdu.getGenericTrap()));
+            entryAppend(sb, "specific-trap", Integer.toString(v1pdu.getSpecificTrap()));
+            entryAppend(sb, "time-stamp", Long.toString(v1pdu.getTimestamp()));
+        }
 
         // now loop all variables of the response
         for (Object o : pdu.getVariableBindings()) {
