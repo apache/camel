@@ -325,8 +325,11 @@ public class DefaultHttpBinding implements HttpBinding {
             // not convertable as a stream so try as a String
             String data = message.getBody(String.class);
             if (data != null) {
-                // set content length before we write data
-                response.setContentLength(data.length());
+                // set content length and encoding before we write data
+                String charset = IOHelper.getCharsetName(exchange, true);
+                final int dataByteLength = data.getBytes(charset).length;
+                response.setCharacterEncoding(charset);
+                response.setContentLength(dataByteLength);
                 response.getWriter().print(data);
                 response.getWriter().flush();
             }
