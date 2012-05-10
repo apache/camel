@@ -43,6 +43,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
@@ -64,6 +66,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private QName partNamespace;
     private String partClass;
     private Class<Object> partialClass;
+    private NamespacePrefixMapper nameSpacePrefixMapper;
 
     private TypeConverter typeConverter;
 
@@ -82,6 +85,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         try {            
             // must create a new instance of marshaller as its not thread safe
             Marshaller marshaller = getContext().createMarshaller();
+            if (nameSpacePrefixMapper != null) {
+                marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", nameSpacePrefixMapper);
+            }
             if (isPrettyPrint()) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             } 
@@ -244,6 +250,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
+    
+    public NamespacePrefixMapper getNameSpacePrefixMapper() {
+        return nameSpacePrefixMapper;
+    }
+
+    public void setNameSpacePrefixMapper(NamespacePrefixMapper nameSpacePrefixMapper) {
+        this.nameSpacePrefixMapper = nameSpacePrefixMapper;
+    }
 
     @Override
     protected void doStart() throws Exception {
@@ -287,5 +301,4 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     protected Unmarshaller createUnmarshaller() throws JAXBException {
         return getContext().createUnmarshaller();
     }
-
 }
