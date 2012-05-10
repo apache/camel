@@ -27,11 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.NaturalSortComparator.Order;
 import org.apache.camel.util.ExchangeHelper;
+
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
+
 import org.junit.Test;
 
-@SuppressWarnings("unchecked")
 public class ConsumeChildrenTest extends ZooKeeperTestSupport {
 
     @Override
@@ -60,10 +61,9 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
 
         validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"), createChildListing("hansel", "gretel"), createChildListing("gretel"),
                                          createChildListing());
-
     }
 
-    private void validateExchangesContainListings(MockEndpoint mock, List<String>... expected) throws InvalidPayloadException, NoSuchHeaderException {
+    private void validateExchangesContainListings(MockEndpoint mock, List<?>... expected) throws InvalidPayloadException, NoSuchHeaderException {
         int index = 0;
         for (Exchange received : mock.getReceivedExchanges()) {
             Watcher.Event.EventType expectedEvent;
@@ -72,7 +72,7 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
             } else {
                 expectedEvent = Watcher.Event.EventType.NodeChildrenChanged;
             }
-            List<String> actual = ExchangeHelper.getMandatoryInBody(received, List.class);
+            List<?> actual = received.getIn().getMandatoryBody(List.class);
             assertEquals(expected[index++], actual);
             assertEquals(expectedEvent, ExchangeHelper.getMandatoryHeader(received,  ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE, Watcher.Event.EventType.class));
             validateChildrenCountChangesEachTime(mock);

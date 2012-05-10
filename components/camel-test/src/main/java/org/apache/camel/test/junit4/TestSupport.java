@@ -37,11 +37,12 @@ import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.PredicateAssertHelper;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,10 +181,10 @@ public abstract class TestSupport extends Assert {
 
         Object actual;
         if (expected == null) {
-            actual = ExchangeHelper.getMandatoryInBody(exchange);
+            actual = exchange.getIn().getMandatoryBody();
             assertEquals("in body of: " + exchange, expected, actual);
         } else {
-            actual = ExchangeHelper.getMandatoryInBody(exchange, expected.getClass());
+            actual = exchange.getIn().getMandatoryBody(expected.getClass());
         }
         assertEquals("in body of: " + exchange, expected, actual);
 
@@ -202,10 +203,10 @@ public abstract class TestSupport extends Assert {
 
         Object actual;
         if (expected == null) {
-            actual = ExchangeHelper.getMandatoryOutBody(exchange);
+            actual = exchange.getOut().getMandatoryBody();
             assertEquals("output body of: " + exchange, expected, actual);
         } else {
-            actual = ExchangeHelper.getMandatoryOutBody(exchange, expected.getClass());
+            actual = exchange.getOut().getMandatoryBody(expected.getClass());
         }
         assertEquals("output body of: " + exchange, expected, actual);
 

@@ -24,8 +24,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.jndi.JndiContext;
+
 import org.junit.Test;
 
 import static org.apache.camel.language.juel.JuelExpression.el;
@@ -63,7 +63,7 @@ public class SimulatorTest extends CamelTestSupport {
 
         assertNotNull("Should receive a response!", response);
 
-        String text = ExchangeHelper.getMandatoryOutBody(response, String.class);
+        String text = response.getOut().getMandatoryBody(String.class);
         assertStringContains(text, containedText);
     }
 

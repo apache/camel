@@ -41,10 +41,10 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -673,7 +673,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
         InputStream is = null;
         try {
-            is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+            is = exchange.getIn().getMandatoryBody(InputStream.class);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
                 channel.put(is, targetName, ChannelSftp.APPEND);
             } else {

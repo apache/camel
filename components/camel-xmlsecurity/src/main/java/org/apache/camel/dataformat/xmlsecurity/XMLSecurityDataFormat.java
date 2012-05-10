@@ -48,7 +48,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.xml.DefaultNamespaceContext;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
@@ -439,7 +438,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     
     
     public Object unmarshal(Exchange exchange, Document document) throws Exception {
-        InputStream is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
         return unmarshal(exchange, is);
     }
     

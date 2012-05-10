@@ -25,6 +25,7 @@ import net.sf.flatpack.DataSet;
 import net.sf.flatpack.DefaultParserFactory;
 import net.sf.flatpack.Parser;
 import net.sf.flatpack.ParserFactory;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -36,7 +37,6 @@ import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
@@ -80,7 +80,7 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
     }
 
     public Parser createParser(Exchange exchange) throws InvalidPayloadException, IOException {
-        Reader bodyReader = ExchangeHelper.getMandatoryInBody(exchange, Reader.class);
+        Reader bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
         return createParser(getDefinition(), bodyReader);
     }
 
