@@ -32,8 +32,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -44,6 +42,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
