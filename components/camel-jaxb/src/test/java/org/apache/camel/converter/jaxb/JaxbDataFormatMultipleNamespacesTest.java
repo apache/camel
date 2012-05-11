@@ -33,7 +33,7 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:unmarshall")
     private MockEndpoint mockUnmarshall;
-
+    
     @Test
     public void testMarshallMultipleNamespaces() throws Exception {
         mockMarshall.expectedMessageCount(1);
@@ -52,12 +52,15 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
-        assertTrue(payload.contains("id>1</"));
-        assertTrue(payload.contains("street>Main Street</"));
-        assertTrue(payload.contains("streetNumber>3a</"));
-        assertTrue(payload.contains("zip>65843</"));
-        assertTrue(payload.contains("city>Sulzbach</"));
-        assertTrue(payload.contains("order>"));
+        assertTrue(payload.contains("<order:order xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\" xmlns:order=\"http://www.camel.apache.org/jaxb/example/order/1\">"));
+        assertTrue(payload.contains("<order:id>1</order:id>"));
+        assertTrue(payload.contains("<address:address>"));
+        assertTrue(payload.contains("<address:street>Main Street</address:street>"));
+        assertTrue(payload.contains("<address:streetNumber>3a</address:streetNumber>"));
+        assertTrue(payload.contains("<address:zip>65843</address:zip>"));
+        assertTrue(payload.contains("<address:city>Sulzbach</address:city>"));
+        assertTrue(payload.contains("</address:address>"));
+        assertTrue(payload.contains("</order:order>"));
     }
 
     @Test
