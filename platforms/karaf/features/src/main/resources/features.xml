@@ -26,7 +26,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-core-bundle-version}</bundle> 
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-core-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/${jaxb-bundle-version}</bundle>
   </feature>
   <feature name='camel' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -83,7 +83,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-cache/${project.version}</bundle> 
+    <bundle>mvn:org.apache.camel/camel-cache/${project.version}</bundle>
+  </feature>
+  <feature name='camel-cdi' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-cdi/${project.version}</bundle>
   </feature>
   <feature name='camel-castor' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -171,7 +175,7 @@
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.java-apns/${java-apns-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-apns/${project.version}</bundle>
-  </feature> 
+  </feature>
   <feature name='camel-atom' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
@@ -329,7 +333,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.hazelcast/hazelcast/${hazelcast-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hazelcast/${project.version}</bundle>
-  </feature> 
+  </feature>
   <feature name='camel-hawtdb' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
@@ -397,7 +401,7 @@
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jackson/${project.version}</bundle>
-  </feature>    
+  </feature>
   <feature name='camel-jasypt' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jasypt/${project.version}</bundle>
@@ -464,7 +468,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.serp/${serp-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
-    <bundle>mvn:org.apache.openjpa/openjpa/${openjpa-version}</bundle>	
+    <bundle>mvn:org.apache.openjpa/openjpa/${openjpa-version}</bundle>
     <feature version='[3,4)'>spring-orm</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jpa/${project.version}</bundle>
@@ -550,7 +554,7 @@
     <bundle>mvn:org.apache.camel/camel-mybatis/${project.version}</bundle>
   </feature>
   <feature name='camel-nagios' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>    
+    <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsendnsca-core/${jsendnsca-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-nagios/${project.version}</bundle>
   </feature>
@@ -558,7 +562,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:io.netty/netty/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty/${project.version}</bundle>
-  </feature>      
+  </feature>
   <feature name='camel-ognl' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
@@ -566,7 +570,7 @@
     <bundle>mvn:org.apache.camel/camel-ognl/${project.version}</bundle>
   </feature>
   <feature name='camel-paxlogging' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>    
+    <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-paxlogging/${project.version}</bundle>
   </feature>
   <feature name='camel-printer' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -595,7 +599,7 @@
   </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:http://maven.restlet.org!org.restlet.jse/org.restlet/${restlet-version}</bundle>    
+    <bundle dependency='true'>mvn:http://maven.restlet.org!org.restlet.jse/org.restlet/${restlet-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-restlet/${project.version}</bundle>
   </feature>
   <feature name='camel-rmi' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -677,7 +681,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-soap/${project.version}</bundle>
-  </feature>  
+  </feature>
   <feature name='camel-solr' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.solr-solrj/${solrj-bundle-version}</bundle>
