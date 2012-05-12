@@ -115,10 +115,14 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
                 httpExchange.setRequestContent(new ByteArrayBuffer(bos.toByteArray()));
                 IOHelper.close(bos);
             } else {
-                // try with String at first
-                String data = exchange.getIn().getBody(String.class);
-                if (data != null) {
-                    String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+                Object body = exchange.getIn().getBody();
+                if (body instanceof String) {
+                    String data = (String) body;
+                    // be a bit careful with String as any type can most likely be converted to String
+                    // so we only do an instanceof check and accept String if the body is really a String
+                    // do not fallback to use the default charset as it can influence the request
+                    // (for example application/x-www-form-urlencoded forms being sent)
+                    String charset = IOHelper.getCharsetName(exchange, false);
                     if (charset != null) {
                         httpExchange.setRequestContent(new ByteArrayBuffer(data, charset));
                     } else {
