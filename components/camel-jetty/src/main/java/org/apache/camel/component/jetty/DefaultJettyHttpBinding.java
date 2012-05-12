@@ -166,7 +166,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
                 throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
             }
         } else {
-            // just grab the content as string
+            // just grab the raw content body
             return httpExchange.getBody();
         }
     }
