@@ -151,8 +151,9 @@ public class JettyContentExchange extends ContentExchange {
         return headers;
     }
 
-    public String getBody() throws UnsupportedEncodingException {
-        return super.getResponseContent();
+    public byte[] getBody() {
+        // must return the content as raw bytes
+        return super.getResponseContentBytes();
     }
 
     public String getUrl() {
