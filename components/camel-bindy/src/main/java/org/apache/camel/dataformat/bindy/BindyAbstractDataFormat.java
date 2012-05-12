@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dataformat.bindy;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 
@@ -23,6 +27,7 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
     private String[] packages;
     private String locale;
     private BindyAbstractFactory modelFactory;
+    private Class<?> classType;
 
     public BindyAbstractDataFormat() {
     }
@@ -31,12 +36,24 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
         this.packages = packages;
     }
 
+    protected BindyAbstractDataFormat(Class<?> classType) {
+        this.classType = classType;
+    }
+
     public String[] getPackages() {
         return packages;
     }
 
     public void setPackages(String... packages) {
         this.packages = packages;
+    }
+
+    public Class<?> getClassType() {
+        return classType;
+    }
+
+    public void setClassType(Class<?> classType) {
+        this.classType = classType;
     }
 
     public String getLocale() {
@@ -60,4 +77,25 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
     }
     
     protected abstract BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception;
+
+    protected Object extractUnmarshalResult(List<Map<String, Object>> models) {
+        if (getClassType() != null) {
+            // we expect to find this type in the models, and grab only that type
+            List<Object> answer = new ArrayList<Object>();
+            for (Map<String, Object> entry : models) {
+                Object data = entry.get(getClassType().getName());
+                if (data != null) {
+                    answer.add(data);
+                }
+            }
+            // if there is only 1 then dont return a list
+            if (answer.size() == 1) {
+                return answer.get(0);
+            } else {
+                return answer;
+            }
+        } else {
+            return models;
+        }
+    }
 }

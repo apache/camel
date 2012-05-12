@@ -52,6 +52,8 @@ public interface Producer extends Processor, Service, IsSingleton {
      *
      * @param exchange the existing exchange
      * @return the created exchange
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     Exchange createExchange(Exchange exchange);
 }

@@ -909,7 +909,7 @@ public final class ObjectHelper {
         } catch (IllegalAccessException e) {
             throw new RuntimeCamelException(e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeCamelException(e.getCause());
+            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
         }
     }
 

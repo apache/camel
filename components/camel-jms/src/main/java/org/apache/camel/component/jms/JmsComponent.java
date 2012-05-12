@@ -54,7 +54,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     private ApplicationContext applicationContext;
     private QueueBrowseStrategy queueBrowseStrategy;
     private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
-    private ExecutorService asyncStartExecutorService;
+    private ExecutorService asyncStartStopExecutorService;
 
     public JmsComponent() {
     }
@@ -324,6 +324,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setAsyncStartListener(asyncStartListener);
     }
 
+    public void setAsyncStopListener(boolean asyncStopListener) {
+        getConfiguration().setAsyncStopListener(asyncStopListener);
+    }
+
     public void setForceSendOriginalMessage(boolean forceSendOriginalMessage) {
         getConfiguration().setForceSendOriginalMessage(forceSendOriginalMessage);
     }
@@ -404,20 +408,20 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
     @Override
     protected void doShutdown() throws Exception {
-        if (asyncStartExecutorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(asyncStartExecutorService);
-            asyncStartExecutorService = null;
+        if (asyncStartStopExecutorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(asyncStartStopExecutorService);
+            asyncStartStopExecutorService = null;
         }
         super.doShutdown();
     }
 
-    protected synchronized ExecutorService getAsyncStartExecutorService() {
-        if (asyncStartExecutorService == null) {
+    protected synchronized ExecutorService getAsyncStartStopExecutorService() {
+        if (asyncStartStopExecutorService == null) {
             // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
             // for each task, and the thread pool will shrink when no more tasks running
-            asyncStartExecutorService = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartListener");
+            asyncStartStopExecutorService = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
         }
-        return asyncStartExecutorService;
+        return asyncStartStopExecutorService;
     }
 
     @Override

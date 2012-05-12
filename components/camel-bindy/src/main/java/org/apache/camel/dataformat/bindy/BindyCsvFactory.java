@@ -72,6 +72,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         initCsvModel();
     }
 
+    public BindyCsvFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
+        super(resolver, type);
+
+        // initialize specific parameters of the csv model
+        initCsvModel();
+    }
+
     /**
      * method uses to initialize the model representing the classes who will
      * bind the data. This process will scan for classes according to the

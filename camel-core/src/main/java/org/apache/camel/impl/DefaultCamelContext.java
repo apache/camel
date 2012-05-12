@@ -449,7 +449,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         answer = component.createEndpoint(uri);
 
                         if (answer != null && log.isDebugEnabled()) {
-                            log.debug("{} converted to endpoint: {} by component: {}", new Object[]{uri, answer, component});
+                            log.debug("{} converted to endpoint: {} by component: {}", new Object[]{URISupport.sanitizeUri(uri), answer, component});
                         }
                     }
                 }

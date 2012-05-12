@@ -25,7 +25,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
@@ -59,9 +58,6 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Exchange fileExchange = endpoint.createExchange(exchange);
-        endpoint.configureExchange(fileExchange);
-
         String target = createFileName(exchange);
 
         // use lock for same file name to avoid concurrent writes to the same file
@@ -77,8 +73,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         lock.lock();
         try {
-            processExchange(fileExchange, target);
-            ExchangeHelper.copyResults(exchange, fileExchange);
+            processExchange(exchange, target);
         } finally {
             // do not remove as the locks cache has an upper bound
             // this ensure the locks is appropriate reused

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.data.Stat;
 
 /**
@@ -43,14 +44,23 @@ public class ZooKeeperMessage extends DefaultMessage {
 
     public static final String ZOOKEEPER_STATISTICS = "CamelZookeeperStatistics";
 
-    public ZooKeeperMessage(String node, Stat statistics) {
-        this(node, statistics, Collections.<String, Object>emptyMap());
+    public static final String ZOOKEEPER_EVENT_TYPE = "CamelZookeeperEventType";
+
+    public ZooKeeperMessage(String node, Stat statistics, WatchedEvent watchedEvent) {
+        this(node, statistics, Collections.<String, Object>emptyMap(), watchedEvent);
     }
 
     public ZooKeeperMessage(String node, Stat statistics, Map<String, Object> headers) {
+        this(node, statistics, headers, null);
+    }
+
+    public ZooKeeperMessage(String node, Stat statistics, Map<String, Object> headers, WatchedEvent watchedEvent) {
         setHeaders(headers);
         this.setHeader(ZOOKEEPER_NODE, node);
         this.setHeader(ZOOKEEPER_STATISTICS, statistics);
+        if (watchedEvent != null) {
+            this.setHeader(ZOOKEEPER_EVENT_TYPE, watchedEvent.getType());
+        }
     }
 
     public static Stat getStatistics(Message message) {

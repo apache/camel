@@ -21,6 +21,7 @@
     \u001B[36mcamel:route-start\u001B[0m Start a Camel route.
     \u001B[36mcamel:route-stop\u001B[0m Stops a Camel route.
     \u001B[36mcamel:route-suspend\u001B[0m Suspends a Camel route.
+    \u001B[36mcamel:endpoint-list\u001B[0m List all Camel endpoints available in Camel Context deployed
 
 \u001B[1mSEE ALSO\u001B[0m
     \u001B[36mhttp://camel.apache.org/karaf.html\u001B[0m

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
@@ -40,7 +41,8 @@ public class VelocityComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String propertiesFile = getAndRemoveParameter(parameters, "propertiesFile", String.class);
         String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);        
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+
         VelocityEndpoint answer = new VelocityEndpoint(uri, this, remaining);
         answer.setContentCache(cache);
         answer.setPropertiesFile(propertiesFile);
@@ -48,6 +50,13 @@ public class VelocityComponent extends DefaultComponent {
             answer.setEncoding(encoding);
         }
         answer.setVelocityEngine(velocityEngine);
+
+        // if its a http resource then append any remaining parameters and update the resource uri
+        if (ResourceHelper.isHttpUri(remaining)) {
+            remaining = ResourceHelper.appendParameters(remaining, parameters);
+            answer.setResourceUri(remaining);
+        }
+
         return answer;
     }
 }

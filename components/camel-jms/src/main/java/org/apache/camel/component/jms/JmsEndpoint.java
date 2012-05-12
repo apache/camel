@@ -469,12 +469,12 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return replyManagerExecutorService;
     }
     
-    protected ExecutorService getAsyncStartExecutorService() {
+    protected ExecutorService getAsyncStartStopExecutorService() {
         if (getComponent() == null) {
-            throw new IllegalStateException("AsyncStartListener requires JmsComponent to be configured on this endpoint: " + this);
+            throw new IllegalStateException("AsyncStartStopListener requires JmsComponent to be configured on this endpoint: " + this);
         }
         // use shared thread pool from component
-        return getComponent().getAsyncStartExecutorService();
+        return getComponent().getAsyncStartStopExecutorService();
     }
 
     /**
@@ -1093,6 +1093,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public boolean isAsyncStartListener() {
         return configuration.isAsyncStartListener();
+    }
+
+    @ManagedAttribute
+    public void setAsyncStopListener(boolean asyncStoptListener) {
+        configuration.setAsyncStopListener(asyncStoptListener);
+    }
+
+    @ManagedAttribute
+    public boolean isAsyncStopListener() {
+        return configuration.isAsyncStopListener();
     }
 
     @ManagedAttribute

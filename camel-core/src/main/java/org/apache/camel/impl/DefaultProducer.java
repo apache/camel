@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
 
     @Override
     public String toString() {
-        return "Producer[" + endpoint.getEndpointUri() + "]";
+        return "Producer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
     }
 
     public Endpoint getEndpoint() {

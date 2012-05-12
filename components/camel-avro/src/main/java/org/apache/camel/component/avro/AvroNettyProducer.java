@@ -31,7 +31,7 @@ public class AvroNettyProducer extends AvroProducer {
     }
 
     @Override
-    public Transceiver createTranceiver() throws Exception {
+    public Transceiver createTransceiver() throws Exception {
         AvroConfiguration configuration = getEndpoint().getConfiguration();
         return transceiver = new NettyTransceiver(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
     }

@@ -639,8 +639,10 @@ public class RunMojo extends AbstractExecMojo {
      */
     private ClassLoader getClassLoader() throws MojoExecutionException {
         List<URL> classpathURLs = new ArrayList<URL>();
-        this.addRelevantPluginDependenciesToClasspath(classpathURLs);
+        // project classpath must be first
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
+        // and plugin classpath last
+        this.addRelevantPluginDependenciesToClasspath(classpathURLs);
 
         if (logClasspath) {
             getLog().info("Classpath = " + classpathURLs);
@@ -664,6 +666,14 @@ public class RunMojo extends AbstractExecMojo {
             Iterator<Artifact> iter = this.determineRelevantPluginDependencies().iterator();
             while (iter.hasNext()) {
                 Artifact classPathElement = iter.next();
+
+                // we must skip org.osgi.core, otherwise we get a
+                // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
+                if (classPathElement.getArtifactId().equals("org.osgi.core")) {
+                    getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                    continue;
+                }
+
                 getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
                                    + " to classpath");
                 path.add(classPathElement.getFile().toURI().toURL());

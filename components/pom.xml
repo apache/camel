@@ -123,7 +123,6 @@
     <module>camel-printer</module>
     <module>camel-protobuf</module>
     <module>camel-quartz</module>
-    <module>camel-quickfix</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
@@ -159,5 +158,17 @@
     <module>camel-xstream</module>
     <module>camel-zookeeper</module>
   </modules>
+
+  <profiles>
+        <profile>
+            <id>jdk16</id>
+            <activation>
+                <jdk>1.6</jdk>
+            </activation>
+            <modules>
+                <module>camel-quickfix</module>
+            </modules>
+        </profile>
+  </profiles>
   
 </project>

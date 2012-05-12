@@ -46,6 +46,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
     private boolean regex;
     private boolean xml;
     private boolean includeTokens;
+    private int group;
 
     public static Expression tokenize(String token) {
         return tokenize(token, false);
@@ -97,19 +98,31 @@ public class TokenizeLanguage implements Language, IsSingleton {
     public Expression createExpression() {
         ObjectHelper.notNull(token, "token");
 
+        Expression answer = null;
         if (isXml()) {
-            return ExpressionBuilder.tokenizeXMLExpression(token, inheritNamespaceTagName);
+            answer = ExpressionBuilder.tokenizeXMLExpression(token, inheritNamespaceTagName);
         } else if (endToken != null) {
-            return ExpressionBuilder.tokenizePairExpression(token, endToken, includeTokens);
+            answer = ExpressionBuilder.tokenizePairExpression(token, endToken, includeTokens);
         }
 
-        // use the regular tokenizer
-        Expression exp = headerName == null ? ExpressionBuilder.bodyExpression() : ExpressionBuilder.headerExpression(headerName);
-        if (regex) {
-            return ExpressionBuilder.regexTokenizeExpression(exp, token);
-        } else {
-            return ExpressionBuilder.tokenizeExpression(exp, token);
+        if (answer == null) {
+            // use the regular tokenizer
+            Expression exp = headerName == null ? ExpressionBuilder.bodyExpression() : ExpressionBuilder.headerExpression(headerName);
+            if (regex) {
+                answer = ExpressionBuilder.regexTokenizeExpression(exp, token);
+            } else {
+                answer = ExpressionBuilder.tokenizeExpression(exp, token);
+            }
         }
+
+        // if group then wrap answer in group expression
+        if (group > 0) {
+            // only include group token if not xml
+            String groupToken = isXml() ? null : token;
+            answer = ExpressionBuilder.groupIteratorExpression(answer, groupToken, group);
+        }
+
+        return answer;
     }
 
     public Expression createExpression(String expression) {
@@ -173,6 +186,14 @@ public class TokenizeLanguage implements Language, IsSingleton {
 
     public void setIncludeTokens(boolean includeTokens) {
         this.includeTokens = includeTokens;
+    }
+
+    public int getGroup() {
+        return group;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
     }
 
     public boolean isSingleton() {

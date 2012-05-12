@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jt400;
 
+import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class Jt400PgmEndpointTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         endpoint = (Jt400PgmEndpoint)resolveMandatoryEndpoint("jt400://" + USER + ":" + PASSWORD
-                                                              + "@" + HOST + PGM + "?guiAvailable=true&outputFieldsIdx=1,2&fieldsLength=10,512,255");
+                                                              + "@" + HOST + PGM + "?guiAvailable=true&format=binary&outputFieldsIdx=1,2&fieldsLength=10,512,255");
     }
 
     /**
@@ -49,6 +50,7 @@ public class Jt400PgmEndpointTest extends CamelTestSupport {
         assertEquals(HOST, endpoint.getiSeries().getSystemName());
         assertEquals(PGM, endpoint.getProgramToExecute());
         assertTrue(endpoint.getiSeries().isGuiAvailable());
+        assertEquals(Format.binary, endpoint.getFormat());
         assertEquals(10, endpoint.getOutputFieldLength(0));
         assertEquals(512, endpoint.getOutputFieldLength(1));
         assertEquals(255, endpoint.getOutputFieldLength(2));

@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ExchangeHelper;
+
 import org.junit.Test;
 
 public class CryptoDataFormatTest extends CamelTestSupport {
@@ -108,10 +108,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         awaitAndAssert(unencrypted);
         awaitAndAssert(encrypted);
         for (Exchange e : unencrypted.getReceivedExchanges()) {
-            assertEquals(payload, ExchangeHelper.getMandatoryInBody(e, String.class));
+            assertEquals(payload, e.getIn().getMandatoryBody(String.class));
         }
         for (Exchange e : encrypted.getReceivedExchanges()) {
-            byte[] ciphertext = ExchangeHelper.getMandatoryInBody(e, byte[].class);
+            byte[] ciphertext = e.getIn().getMandatoryBody(byte[].class);
             assertNotSame(payload, new String(ciphertext));
         }
     }

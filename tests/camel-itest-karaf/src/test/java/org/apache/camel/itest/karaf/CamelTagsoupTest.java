@@ -17,7 +17,6 @@
 package org.apache.camel.itest.karaf;
 
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;

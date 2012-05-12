@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.avro;
 
 import org.apache.avro.Protocol;
@@ -30,11 +29,6 @@ public class AvroResponder extends SpecificResponder {
 
     private AvroConsumer consumer;
 
-    /**
-     * Constructor
-     *
-     * @param consumer
-     */
     public AvroResponder(AvroConsumer consumer) {
         super(consumer.getEndpoint().getProtocol(), null);
         this.consumer = consumer;
@@ -42,7 +36,7 @@ public class AvroResponder extends SpecificResponder {
 
     @Override
     public Object respond(Protocol.Message message, Object request) throws Exception {
-        Object response = null;
+        Object response;
         int numParams = message.getRequest().getFields().size();
         Object[] params = new Object[numParams];
         Class<?>[] paramTypes = new Class[numParams];
@@ -76,6 +70,6 @@ public class AvroResponder extends SpecificResponder {
             }
         }
         return response;
-
     }
+
 }

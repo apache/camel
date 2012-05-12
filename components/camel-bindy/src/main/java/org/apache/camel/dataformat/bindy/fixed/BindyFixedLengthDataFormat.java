@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
@@ -40,23 +42,24 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) using Bindy to marshal to and from Fixed Length
  */
-public class BindyFixedLengthDataFormat implements DataFormat {
+public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     private static final transient Logger LOG = LoggerFactory.getLogger(BindyFixedLengthDataFormat.class);
-
-    private String[] packages;
-    private BindyFixedLengthFactory modelFactory;
 
     public BindyFixedLengthDataFormat() {
     }
 
     public BindyFixedLengthDataFormat(String... packages) {
-        this.packages = packages;
+        super(packages);
+    }
+
+    public BindyFixedLengthDataFormat(Class<?> type) {
+        super(type);
     }
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
-        BindyFixedLengthFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -93,7 +96,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyFixedLengthFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
@@ -152,9 +155,9 @@ public class BindyFixedLengthDataFormat implements DataFormat {
             // Test if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
-                throw new java.lang.IllegalArgumentException("No records have been defined in the message");
+                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
             } else {
-                return models;
+                return extractUnmarshalResult(models);
             }
 
         } finally {
@@ -164,26 +167,13 @@ public class BindyFixedLengthDataFormat implements DataFormat {
 
     }
 
-    /**
-     * Method used to create the singleton of the BindyCsvFactory
-     */
-    public BindyFixedLengthFactory getFactory(PackageScanClassResolver resolver) throws Exception {
-        if (modelFactory == null) {
-            modelFactory = new BindyFixedLengthFactory(resolver, packages);
+    @Override
+    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
+        if (getClassType() != null) {
+            return new BindyFixedLengthFactory(resolver, getClassType());
+        } else {
+            return new BindyFixedLengthFactory(resolver, getPackages());
         }
-        return modelFactory;
-    }
-
-    public void setModelFactory(BindyFixedLengthFactory modelFactory) {
-        this.modelFactory = modelFactory;
-    }
-
-    public String[] getPackages() {
-        return packages;
-    }
-
-    public void setPackages(String[] packages) {
-        this.packages = packages;
     }
 
 }

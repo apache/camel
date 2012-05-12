@@ -19,6 +19,8 @@ package org.apache.camel.util;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
@@ -128,6 +130,25 @@ public class ResourceHelperTest extends TestSupport {
         assertTrue(text.contains("log4j"));
 
         context.stop();
+    }
+
+    public void testIsHttp() throws Exception {
+        assertFalse(ResourceHelper.isHttpUri("direct:foo"));
+        assertFalse(ResourceHelper.isHttpUri(""));
+        assertFalse(ResourceHelper.isHttpUri(null));
+
+        assertTrue(ResourceHelper.isHttpUri("http://camel.apache.org"));
+        assertTrue(ResourceHelper.isHttpUri("https://camel.apache.org"));
+    }
+
+    public void testAppendParameters() throws Exception {
+        Map<String, Object> params = new LinkedHashMap<String, Object>();
+        params.put("foo", 123);
+        params.put("bar", "yes");
+
+        // should clear the map after usage
+        assertEquals("http://localhost:8080/data?foo=123&bar=yes", ResourceHelper.appendParameters("http://localhost:8080/data", params));
+        assertEquals(0, params.size());
     }
 
 }

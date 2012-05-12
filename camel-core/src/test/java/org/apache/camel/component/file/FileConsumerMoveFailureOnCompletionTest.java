@@ -38,7 +38,7 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
         mock.expectedMessageCount(0);
         mock.expectedFileExists("target/failed/error/bye-error.txt", "Kabom");
 
-        getMockEndpoint("mock:failed").expectedBodiesReceived("Kabom");
+        getMockEndpoint("mock:failed").expectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
 
@@ -51,7 +51,7 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
         mock.expectedFileExists("target/failed/.camel/hello.txt", "Hello World");
         mock.expectedFileExists("target/failed/error/bye-error.txt", "Kabom");
 
-        getMockEndpoint("mock:failed").expectedBodiesReceived("Kabom");
+        getMockEndpoint("mock:failed").expectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");

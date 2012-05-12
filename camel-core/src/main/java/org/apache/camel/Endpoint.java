@@ -76,12 +76,14 @@ public interface Endpoint extends IsSingleton, Service {
     Exchange createExchange(ExchangePattern pattern);
 
     /**
-     * Creates a new exchange for communicating with this exchange using the
+     * Creates a new exchange for communicating with this endpoint using the
      * given exchange to pre-populate the values of the headers and messages
      *
      * @param exchange given exchange to use for pre-populate
      * @return a new exchange
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     Exchange createExchange(Exchange exchange);
 
     /**

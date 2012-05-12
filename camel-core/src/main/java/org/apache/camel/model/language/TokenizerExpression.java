@@ -49,6 +49,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     private Boolean xml;
     @XmlAttribute
     private Boolean includeTokens;
+    @XmlAttribute
+    private Integer group;
 
     public TokenizerExpression() {
     }
@@ -114,8 +116,21 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.includeTokens = includeTokens;
     }
 
+    public Integer getGroup() {
+        return group;
+    }
+
+    public void setGroup(Integer group) {
+        this.group = group;
+    }
+
     @Override
     public Expression createExpression(CamelContext camelContext) {
+        // special for new line tokens, if defined from XML then its 2 characters, so we replace that back to a single char
+        if (token.startsWith("\\n")) {
+            token = '\n' + token.substring(2);
+        }
+
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(token);
         language.setEndToken(endToken);
@@ -129,6 +144,12 @@ public class TokenizerExpression extends ExpressionDefinition {
         }
         if (includeTokens != null) {
             language.setIncludeTokens(includeTokens);
+        }
+        if (group != null) {
+            if (group <= 0) {
+                throw new IllegalArgumentException("Group must be a positive number, was: " + group);
+            }
+            language.setGroup(group);
         }
         return language.createExpression();
     }

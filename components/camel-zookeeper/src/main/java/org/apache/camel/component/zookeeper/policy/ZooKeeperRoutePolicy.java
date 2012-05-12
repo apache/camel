@@ -41,7 +41,7 @@ import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.impl.JavaUuidGenerator;
 import org.apache.camel.impl.RoutePolicySupport;
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.util.ExchangeHelper;
+
 import org.apache.zookeeper.CreateMode;
 
 /**
@@ -274,9 +274,9 @@ public class ZooKeeperRoutePolicy extends RoutePolicySupport {
              */
             from(zep).sort(body(), comparator).process(new Processor() {
 
-                @SuppressWarnings("unchecked")
                 public void process(Exchange e) throws Exception {
-                    List<String> candidates = (List<String>)ExchangeHelper.getMandatoryInBody(e);
+                    @SuppressWarnings("unchecked")
+                    List<String> candidates = e.getIn().getMandatoryBody(List.class);
 
                     int location = Math.abs(Collections.binarySearch(candidates, candidateName));
                     /**

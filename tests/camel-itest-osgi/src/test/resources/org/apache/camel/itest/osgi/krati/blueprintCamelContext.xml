@@ -35,7 +35,7 @@
     </camelContext>
 
     <bean id="kratiRepo" class="org.apache.camel.component.krati.processor.idempotent.KratiIdempotentRepository">
-        <argument value="idempotest"/>
+        <argument value="blueprinttest"/>
         <property name="initialCapacity" value="1"/>
     </bean>
 

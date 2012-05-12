@@ -344,10 +344,28 @@
       <!-- cxf -->
       <dependency>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-bundle</artifactId>
+          <artifactId>cxf-rt-rs-extension-providers</artifactId>
           <version>${cxf-version}</version>
           <scope>test</scope>
+      </dependency>  
+      <dependency>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-transports-http-jetty</artifactId>
+          <version>${cxf-version}</version>
+          <scope>test</scope>
+      </dependency>  
+      <dependency>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-ws-security</artifactId>
+          <version>${cxf-version}</version>
+          <scope>test</scope>
+      </dependency>  
+      <dependency>
+          <groupId>org.codehaus.jettison</groupId>
+          <artifactId>jettison</artifactId>
+          <scope>test</scope>
       </dependency>
+
       <dependency>
         <groupId>org.apache.ftpserver</groupId>
         <artifactId>ftpserver-core</artifactId>

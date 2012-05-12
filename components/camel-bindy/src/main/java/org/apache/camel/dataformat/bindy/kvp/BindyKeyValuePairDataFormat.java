@@ -53,6 +53,10 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         super(packages);
     }
 
+    public BindyKeyValuePairDataFormat(Class<?> type) {
+        super(type);
+    }
+
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyAbstractFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
@@ -136,9 +140,9 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
             // Test if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
-                throw new java.lang.IllegalArgumentException("No records have been defined in the KVP");
+                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
             } else {
-                return models;
+                return extractUnmarshalResult(models);
             }
 
         } finally {
@@ -148,6 +152,10 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
     }
 
     protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        return new BindyKeyValuePairFactory(resolver, getPackages());
+        if (getClassType() != null) {
+            return new BindyKeyValuePairFactory(resolver, getClassType());
+        } else {
+            return new BindyKeyValuePairFactory(resolver, getPackages());
+        }
     }
 }

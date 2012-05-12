@@ -25,6 +25,9 @@ public final class JcrConstants {
      * Property key for specifying the name of a node in the repository
      */
     public static final String JCR_NODE_NAME = "CamelJcrNodeName";
+    public static final String JCR_OPERATION = "CamelJcrOperation";
+    public static final String JCR_INSERT = "CamelJcrInsert";
+    public static final String JCR_GET_BY_ID = "CamelJcrGetById";
 
     private JcrConstants() {
         // Utility class

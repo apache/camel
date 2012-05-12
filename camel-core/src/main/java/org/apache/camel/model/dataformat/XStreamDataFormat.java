@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -196,8 +197,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "converterList", namespace = "http://camel.apache.org/schema/spring")
     public static class ConverterList {
-        @XmlElement(name = "converter")
+        @XmlElement(name = "converter", namespace = "http://camel.apache.org/schema/spring")
         private List<ConverterEntry> list;
 
         public List<ConverterEntry> getList() {
@@ -210,6 +212,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "converterEntry", namespace = "http://camel.apache.org/schema/spring")
     public static class ConverterEntry {
         @XmlAttribute(name = "class")
         private String clsName;
@@ -260,8 +263,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "implicitCollectionList", namespace = "http://camel.apache.org/schema/spring")
     public static class ImplicitCollectionList {
-        @XmlElement(name = "class")
+        @XmlElement(name = "class", namespace = "http://camel.apache.org/schema/spring")
         private List<ImplicitCollectionEntry> list;
 
         public List<ImplicitCollectionEntry> getList() {
@@ -274,11 +278,12 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "implicitCollectionEntry", namespace = "http://camel.apache.org/schema/spring")
     public static class ImplicitCollectionEntry {
         @XmlAttribute(name = "name")
         private String clsName;
 
-        @XmlElement(name = "field")
+        @XmlElement(name = "field", namespace = "http://camel.apache.org/schema/spring")
         private String[] fields;
 
         public ImplicitCollectionEntry() {
@@ -344,8 +349,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "aliasList", namespace = "http://camel.apache.org/schema/spring")
     public static class AliasList {
-        @XmlElement(name = "alias")
+        @XmlElement(name = "alias", namespace = "http://camel.apache.org/schema/spring")
         private List<AliasEntry> list;
 
         public List<AliasEntry> getList() {
@@ -358,6 +364,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "aliasEntry", namespace = "http://camel.apache.org/schema/spring")
     public static class AliasEntry {
 
         @XmlAttribute
@@ -433,8 +440,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "omitFieldList", namespace = "http://camel.apache.org/schema/spring")
     public static class OmitFieldList {
-        @XmlElement(name = "omitField")
+        @XmlElement(name = "omitField", namespace = "http://camel.apache.org/schema/spring")
         private List<OmitFieldEntry> list;
 
         public List<OmitFieldEntry> getList() {
@@ -447,12 +455,13 @@ public class XStreamDataFormat extends DataFormatDefinition {
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name = "omitFieldEntry", namespace = "http://camel.apache.org/schema/spring")
     public static class OmitFieldEntry {
 
         @XmlAttribute(name = "class")
         private String clsName;
 
-        @XmlElement(name = "field")
+        @XmlElement(name = "field", namespace = "http://camel.apache.org/schema/spring")
         private String[] fields;
 
         public OmitFieldEntry() {

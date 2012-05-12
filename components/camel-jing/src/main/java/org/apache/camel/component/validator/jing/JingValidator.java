@@ -78,7 +78,7 @@ public class JingValidator implements Processor {
         Message in = exchange.getIn();
         SAXSource saxSource = in.getBody(SAXSource.class);
         if (saxSource == null) {
-            Source source = ExchangeHelper.getMandatoryInBody(exchange, Source.class);
+            Source source = exchange.getIn().getMandatoryBody(Source.class);
             saxSource = ExchangeHelper.convertToMandatoryType(exchange, SAXSource.class, source);
         }
         InputSource bodyInput = saxSource.getInputSource();

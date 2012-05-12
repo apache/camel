@@ -33,36 +33,58 @@ import org.junit.Test;
 public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     private static final String POST_DATA = "<request> hello world </request>";
     private static final String CONTENT_TYPE = "text/xml";
+    private static final String UNICODE_TEXT = "B\u00FCe W\u00F6rld";
 
     @Test
     public void testHttpClient() throws Exception {
         WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/hello", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         ServletUnitClient client = newClient();
         WebResponse response = client.getResponse(req);
-        
+
         assertEquals("Get wrong content type", "text/xml", response.getContentType());
         assertTrue("UTF-8".equalsIgnoreCase(response.getCharacterSet()));
         assertEquals("Get a wrong message header", "/hello", response.getHeaderField("PATH"));
         assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
-        
+
         req = new PostMethodWebRequest(CONTEXT_URL + "/services/helloworld", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         response = client.getResponse(req);
-        
+
         assertEquals("Get wrong content type", "text/xml", response.getContentType());
         assertTrue("UTF-8".equalsIgnoreCase(response.getCharacterSet()));
         assertEquals("Get a wrong message header", "/helloworld", response.getHeaderField("PATH"));
         assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
         client.setExceptionsThrownOnErrorStatus(false);
     }
-    
+
     @Test
     public void testHttpConverter() throws Exception {
         WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testConverter", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         ServletUnitClient client = newClient();
         client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);        
+        WebResponse response = client.getResponse(req);
         assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
         assertEquals("The response body is wrong", "Bye World", response.getText());
+    }
+
+    @Test
+    public void testHttpUnicodeResponseWithStringResponse() throws Exception {
+        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testUnicodeWithStringResponse", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        ServletUnitClient client = newClient();
+        client.setExceptionsThrownOnErrorStatus(false);
+        WebResponse response = client.getResponse(req);
+        assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
+        assertEquals("The response body is wrong", UNICODE_TEXT, response.getText());
+        System.out.println(response.getText());
+    }
+
+    @Test
+    public void testHttpUnicodeResponseWithObjectResponse() throws Exception {
+        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testUnicodeWithObjectResponse", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        ServletUnitClient client = newClient();
+        client.setExceptionsThrownOnErrorStatus(false);
+        WebResponse response = client.getResponse(req);
+        assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
+        assertEquals("The response body is wrong", UNICODE_TEXT, response.getText());
     }
 
     @Test
@@ -80,11 +102,11 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
             });
             fail("Excepts exception here");
         } catch (Exception ex) {
-            assertTrue("Get a wrong exception." , ex instanceof FailedToCreateProducerException);
+            assertTrue("Get a wrong exception.", ex instanceof FailedToCreateProducerException);
             assertTrue("Get a wrong cause of exception.", ex.getCause() instanceof UnsupportedOperationException);
         }
     }
-    
+
     public static class MyServletRoute extends RouteBuilder {
 
         @Override
@@ -92,7 +114,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
             errorHandler(noErrorHandler());
             // START SNIPPET: route
             from("servlet:///hello?matchOnUriPrefix=true").process(new Processor() {
-                public void process(Exchange exchange) throws Exception {                    
+                public void process(Exchange exchange) throws Exception {
                     String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
                     String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
                     assertEquals("Get a wrong content type", CONTENT_TYPE, contentType);
@@ -101,30 +123,53 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                     assertEquals("Get a wrong charset name from the message heaer", "UTF-8", charsetEncoding);
                     // assert exchange charset
                     assertEquals("Get a wrong charset naem from the exchange property", "UTF-8", exchange.getProperty(Exchange.CHARSET_NAME));
-                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");                        
+                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
                     exchange.getOut().setHeader("PATH", path);
                     exchange.getOut().setBody("<b>Hello World</b>");
                 }
             });
             // END SNIPPET: route
-            
+
             from("servlet:///testConverter?matchOnUriPrefix=true")
-                .convertBodyTo(String.class)             
-                .process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
-                        assertNotNull("We should get request object here", request);
-                        HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
-                        assertNotNull("We should get response object here", response);
-                        String s = exchange.getIn().getBody(String.class);
-                        assertEquals("<request> hello world </request>", s);
-                    }
-                }).transform(constant("Bye World"));
+                    .convertBodyTo(String.class)
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
+                            assertNotNull("We should get request object here", request);
+                            HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
+                            assertNotNull("We should get response object here", response);
+                            String s = exchange.getIn().getBody(String.class);
+                            assertEquals("<request> hello world </request>", s);
+                        }
+                    }).transform(constant("Bye World"));
+
+            from("servlet:///testUnicodeWithStringResponse?matchOnUriPrefix=true")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
+                        }
+                    })
+                    .transform(constant(UNICODE_TEXT));
+
+            from("servlet:///testUnicodeWithObjectResponse?matchOnUriPrefix=true")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
+                        }
+                    })
+                    .transform(constant(new Object() {
+                        @Override
+                        public String toString() {
+                            return UNICODE_TEXT;
+                        }
+                    }));
         }
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new MyServletRoute();
-    }    
+    }
 
 }

@@ -32,7 +32,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
-        bundleContext = CamelBlueprintHelper.createBundleContext(getClass().getSimpleName(), getBlueprintDescriptor(), true);
+        this.bundleContext = CamelBlueprintHelper.createBundleContext(getClass().getSimpleName(), getBlueprintDescriptor(),
+                getBundleFilter(), getBundleVersion(), true);
         super.setUp();
     }
 
@@ -55,6 +56,26 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      */
     protected String getBlueprintDescriptor() {
         return null;
+    }
+
+    /**
+     * Gets filter expression of bundle descriptors.
+     * Modify this method if you wish to change default behavior.
+     *
+     * @return filter expression for OSGi bundles.
+     */
+    protected String getBundleFilter() {
+        return CamelBlueprintHelper.BUNDLE_FILTER;
+    }
+
+    /**
+     * Gets test bundle version.
+     * Modify this method if you wish to change default behavior.
+     *
+     * @return test bundle version
+     */
+    protected String getBundleVersion() {
+        return CamelBlueprintHelper.BUNDLE_VERSION;
     }
 
     @Override

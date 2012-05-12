@@ -25,7 +25,6 @@ import net.sf.flatpack.Parser;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -46,7 +45,7 @@ public class DelimitedEndpoint extends FixedLengthEndpoint {
     }
 
     public Parser createParser(Exchange exchange) throws InvalidPayloadException, IOException {
-        Reader bodyReader = ExchangeHelper.getMandatoryInBody(exchange, Reader.class);
+        Reader bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
         if (ObjectHelper.isEmpty(getDefinition())) {
             return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
         } else {

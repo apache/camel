@@ -1057,6 +1057,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.toLowerCase().length()}", 5);
     }
 
+    public void testBodyOgnlOnStringWithOgnlParams() throws Exception {
+        exchange.getIn().setBody("Camel");
+        exchange.getIn().setHeader("max", 4);
+        exchange.getIn().setHeader("min", 2);
+
+        assertExpression("${body.substring(${header.min}, ${header.max})}", "me");
+    }
+
     public void testClassSimpleName() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         exchange.getIn().setBody(tiger);

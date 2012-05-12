@@ -37,11 +37,12 @@ import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.PredicateAssertHelper;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,10 +181,10 @@ public abstract class TestSupport extends Assert {
 
         Object actual;
         if (expected == null) {
-            actual = ExchangeHelper.getMandatoryInBody(exchange);
+            actual = exchange.getIn().getMandatoryBody();
             assertEquals("in body of: " + exchange, expected, actual);
         } else {
-            actual = ExchangeHelper.getMandatoryInBody(exchange, expected.getClass());
+            actual = exchange.getIn().getMandatoryBody(expected.getClass());
         }
         assertEquals("in body of: " + exchange, expected, actual);
 
@@ -202,10 +203,10 @@ public abstract class TestSupport extends Assert {
 
         Object actual;
         if (expected == null) {
-            actual = ExchangeHelper.getMandatoryOutBody(exchange);
+            actual = exchange.getOut().getMandatoryBody();
             assertEquals("output body of: " + exchange, expected, actual);
         } else {
-            actual = ExchangeHelper.getMandatoryOutBody(exchange, expected.getClass());
+            actual = exchange.getOut().getMandatoryBody(expected.getClass());
         }
         assertEquals("output body of: " + exchange, expected, actual);
 
@@ -399,17 +400,19 @@ public abstract class TestSupport extends Assert {
      * Recursively delete a directory, useful to zapping test data
      *
      * @param file the directory to be deleted
+     * @return <tt>false</tt> if error deleting directory
      */
-    public static void deleteDirectory(String file) {
-        deleteDirectory(new File(file));
+    public static boolean deleteDirectory(String file) {
+        return deleteDirectory(new File(file));
     }
 
     /**
      * Recursively delete a directory, useful to zapping test data
      *
      * @param file the directory to be deleted
+     * @return <tt>false</tt> if error deleting directory
      */
-    public static void deleteDirectory(File file) {
+    public static boolean deleteDirectory(File file) {
         int tries = 0;
         int maxTries = 5;
         boolean exists = true;
@@ -425,9 +428,7 @@ public abstract class TestSupport extends Assert {
                 }
             }
         }
-        if (exists) {
-            throw new RuntimeException("Deletion of file " + file + " failed");
-        }
+        return !exists;
     }
 
     private static void recursivelyDeleteDirectory(File file) {

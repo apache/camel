@@ -19,9 +19,11 @@ package org.apache.camel.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.camel.Component;
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * Default implementation of {@link EndpointConfiguration}.
@@ -30,15 +32,16 @@ import org.apache.camel.RuntimeCamelException;
  */
 public abstract class DefaultEndpointConfiguration implements EndpointConfiguration {
 
-    private Component component;
+    private final CamelContext camelContext;
     private URI uri;
-    
-    public DefaultEndpointConfiguration(Component component) {
-        this.component = component;
+
+    public DefaultEndpointConfiguration(CamelContext camelContext) {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+        this.camelContext = camelContext;
     }
 
-    public DefaultEndpointConfiguration(Component component, String uri) {
-        this(component);
+    public DefaultEndpointConfiguration(CamelContext camelContext, String uri) {
+        this(camelContext);
         try {
             setURI(new URI(uri));
         } catch (URISyntaxException e) {
@@ -56,8 +59,13 @@ public abstract class DefaultEndpointConfiguration implements EndpointConfigurat
         parseURI();
     }
 
-    public void setComponent(Component component) {
-        this.component = component;
+    public void setURI(String uri) {
+        try {
+            String encoded = UnsafeUriCharactersEncoder.encode(uri);
+            setURI(new URI(encoded));
+        } catch (URISyntaxException e) {
+            throw new RuntimeCamelException("Cannot parse uri: " + uri, e);
+        }
     }
 
     @Override
@@ -68,19 +76,14 @@ public abstract class DefaultEndpointConfiguration implements EndpointConfigurat
 
     @Override
     public <T> void setParameter(String name, T value) {
-        ConfigurationHelper.setConfigurationField(this, name, value);
+        ConfigurationHelper.setConfigurationField(camelContext, this, name, value);
     }
 
-    @Override
-    public String toUriString(UriFormat format) {
-        return ConfigurationHelper.formatConfigurationUri(this, format);
-    }
-
-    protected Component getComponent() {
-        return component;
+    protected CamelContext getCamelContext() {
+        return camelContext;
     }
 
     protected void parseURI() {
-        ConfigurationHelper.populateFromURI(this, new ConfigurationHelper.FieldParameterSetter());
+        ConfigurationHelper.populateFromURI(camelContext, this, new ConfigurationHelper.FieldParameterSetter());
     }
 }

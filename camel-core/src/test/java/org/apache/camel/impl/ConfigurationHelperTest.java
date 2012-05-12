@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl;
 
 import java.lang.reflect.Field;
@@ -35,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 
 public class ConfigurationHelperTest {
 
@@ -138,10 +136,10 @@ public class ConfigurationHelperTest {
     @Test
     public void testConfigurationFormat() throws Exception {
         EndpointConfiguration config = ConfigurationHelper.createConfiguration("uri-dump:foo", context);
-        assertEquals("TBD", config.toUriString(EndpointConfiguration.UriFormat.Canonical));
-        assertEquals("TBD", config.toUriString(EndpointConfiguration.UriFormat.Provider));
-        assertEquals("TBD", config.toUriString(EndpointConfiguration.UriFormat.Consumer));
-        assertEquals("TBD", config.toUriString(EndpointConfiguration.UriFormat.Complete));
+        assertEquals(null, config.toUriString(EndpointConfiguration.UriFormat.Canonical));
+        assertEquals(null, config.toUriString(EndpointConfiguration.UriFormat.Provider));
+        assertEquals(null, config.toUriString(EndpointConfiguration.UriFormat.Consumer));
+        assertEquals(null, config.toUriString(EndpointConfiguration.UriFormat.Complete));
     }
 
     @Test
@@ -235,9 +233,9 @@ public class ConfigurationHelperTest {
         @Override
         public EndpointConfiguration createConfiguration(String uri) throws Exception {
             if (uri.equals(URIDUMP_SCHEME)) {
-                return new UriDumpConfiguration(this);
+                return new UriDumpConfiguration(getCamelContext());
             } else if (uri.equals(DUMMY_SCHEME)) {
-                return new DummyConfiguration(this);
+                return new DummyConfiguration(getCamelContext());
             }
             return null;
         }
@@ -254,8 +252,8 @@ public class ConfigurationHelperTest {
         private String query;
         private String fragment;
 
-        public UriDumpConfiguration(Component component) {
-            super(component);
+        public UriDumpConfiguration(CamelContext camelContext) {
+            super(camelContext);
         }
 
         public void setScheme(String scheme) {
@@ -329,6 +327,10 @@ public class ConfigurationHelperTest {
         public String getFragment() {
             return fragment;
         }
+
+        public String toUriString(UriFormat format) {
+            return null;
+        }
     }
 
     public static class DummyConfiguration extends DefaultEndpointConfiguration {
@@ -339,8 +341,8 @@ public class ConfigurationHelperTest {
         @URIField(component = "query", parameter = "second")
         private int second;
         
-        DummyConfiguration(Component component) {
-            super(component);
+        DummyConfiguration(CamelContext camelContext) {
+            super(camelContext);
         }
 
         public String getPath() {
@@ -365,6 +367,10 @@ public class ConfigurationHelperTest {
         
         public void setSecond(int second) {
             this.second = second;
+        }
+
+        public String toUriString(UriFormat format) {
+            return null;
         }
     }
 }

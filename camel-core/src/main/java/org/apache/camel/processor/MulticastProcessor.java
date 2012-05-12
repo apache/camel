@@ -867,14 +867,15 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {
                 processor = builder.createErrorHandler(routeContext, processor);
+
+                // and wrap in unit of work processor so the copy exchange also can run under UoW
+                answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
+
                 // must start the error handler
-                ServiceHelper.startServices(processor);
+                ServiceHelper.startServices(answer);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
-
-            // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
 
             // add to cache
             errorHandlers.putIfAbsent(key, answer);

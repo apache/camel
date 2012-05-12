@@ -39,7 +39,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 public class HazelcastComponent extends DefaultComponent {
 
     private HazelcastInstance hazelcastInstance;
-    private Boolean createOwnInstance;
+    private boolean createOwnInstance;
 
     public HazelcastComponent() {
     }

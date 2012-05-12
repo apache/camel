@@ -29,6 +29,11 @@ public class ManagedNamePatternFixedTest extends CamelBlueprintTestSupport {
         return "org/apache/camel/test/blueprint/management/managedNamePatternFixedTest.xml";
     }
 
+    @Override
+    protected String getBundleVersion() {
+        return "1.2.3";
+    }
+
     @Test
     public void testManagedNamePattern() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -37,7 +42,7 @@ public class ManagedNamePatternFixedTest extends CamelBlueprintTestSupport {
 
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        assertEquals("cool", context.getManagementName());
+        assertEquals("cool-1.2.3", context.getManagementName());
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName()
                 + ",type=context,name=\"" + context.getName() + "\"");

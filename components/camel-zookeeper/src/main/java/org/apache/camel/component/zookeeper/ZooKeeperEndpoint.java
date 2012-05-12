@@ -181,5 +181,14 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return this;
     }
 
+    @ManagedAttribute
+    public boolean isSendEmptyMessageOnDelete() {
+        return getConfiguration().isSendEmptyMessageOnDelete();
+    }
+
+    @ManagedAttribute
+    public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
+        getConfiguration().setSendEmptyMessageOnDelete(sendEmptyMessageOnDelete);
+    }
 
 }

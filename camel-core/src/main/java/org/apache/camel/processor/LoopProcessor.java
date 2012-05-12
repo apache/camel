@@ -150,8 +150,8 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
      */
     protected Exchange prepareExchange(Exchange exchange, int index) {
         if (copy) {
-            // create a correlated copy, and do not handover completions on copies
-            return ExchangeHelper.createCorrelatedCopy(exchange, false);
+            // use a copy but let it reuse the same exchange id so it appear as one exchange
+            return ExchangeHelper.createCopy(exchange, true);
         } else {
             ExchangeHelper.prepareOutToIn(exchange);
             return exchange;

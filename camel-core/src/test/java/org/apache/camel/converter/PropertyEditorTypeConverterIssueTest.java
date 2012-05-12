@@ -33,7 +33,9 @@ public class PropertyEditorTypeConverterIssueTest extends ContextTestSupport {
 
         StopWatch watch = new StopWatch();
         for (int i = 0; i < 500; i++) {
-            assertNotNull(context.getTypeConverter().convertTo(String.class, bean));
+            String s = context.getTypeConverter().convertTo(String.class, bean);
+            log.debug(s);
+            assertNotNull(s);
         }
         log.info("Time taken: " + watch.stop());
     }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dataformat.avro;
 
 import java.io.InputStream;
@@ -44,14 +43,11 @@ public class AvroDataFormat implements DataFormat {
     private Schema schema;
     private String instanceClassName;
 
-    /**
-     * @param schema
-     */
-    public AvroDataFormat(Schema schema) {
-        this.schema = schema;
+    public AvroDataFormat() {
     }
 
-    public AvroDataFormat() {
+    public AvroDataFormat(Schema schema) {
+        this.schema = schema;
     }
 
     public synchronized Schema getSchema(Exchange exchange, Object graph) throws Exception {

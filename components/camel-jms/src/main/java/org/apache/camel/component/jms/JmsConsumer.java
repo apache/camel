@@ -115,7 +115,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         }
         
         if (getEndpoint().getConfiguration().isAsyncStartListener()) {
-            getEndpoint().getAsyncStartExecutorService().submit(new Runnable() {
+            getEndpoint().getAsyncStartStopExecutorService().submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -151,19 +151,42 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         }
     }
 
-    @Override
-    protected void doStop() throws Exception {
+    protected void stopAndDestroyListenerContainer() {
         if (listenerContainer != null) {
             listenerContainer.stop();
             listenerContainer.destroy();
-            // TODO: The async destroy code does not work well see https://issues.apache.org/jira/browse/CAMEL-4309
-            // getEndpoint().destroyMessageListenerContainer(listenerContainer);
         }
-
         // null container and listener so they are fully re created if this consumer is restarted
         // then we will use updated configuration from jms endpoint that may have been managed using JMX
         listenerContainer = null;
         messageListener = null;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (listenerContainer != null) {
+
+            if (getEndpoint().getConfiguration().isAsyncStopListener()) {
+                getEndpoint().getAsyncStartStopExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            stopAndDestroyListenerContainer();
+                        } catch (Throwable e) {
+                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        }
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "AsyncStopListenerTask[" + getDestinationName() + "]";
+                    }
+                });
+            } else {
+                stopAndDestroyListenerContainer();
+            }
+        }
+
         super.doStop();
     }
 

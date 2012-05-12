@@ -40,6 +40,8 @@ public class MainExample {
         main = new Main();
         // enable hangup support so you can press ctrl + c to terminate the JVM
         main.enableHangupSupport();
+        // bind MyBean into the registery
+        main.bind("foo", new MyBean());
         // add routes
         main.addRouteBuilder(new MyRouteBuilder());
 
@@ -56,9 +58,15 @@ public class MainExample {
                     public void process(Exchange exchange) throws Exception {
                         System.out.println("Invoked timer at " + new Date());
                     }
-                });
+                })
+                .beanRef("foo");
         }
     }
 
+    public static class MyBean {
+        public void callMe() {
+            System.out.println("MyBean.calleMe method has been called");
+        }
+    }
 }
 // END SNIPPET: e1

@@ -40,7 +40,7 @@
     </camelContext>
 
     <bean id="kratiRepo" class="org.apache.camel.component.krati.processor.idempotent.KratiIdempotentRepository">
-        <constructor-arg value="idempotest"/>
+        <constructor-arg value="springtest"/>
         <property name="initialCapacity" value="1"/>
     </bean>
 

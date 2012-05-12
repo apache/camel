@@ -75,7 +75,7 @@ public class SolrProducer extends DefaultProducer {
 
         Object body = exchange.getIn().getBody();
         if (body instanceof WrappedFile) {
-            body = ((WrappedFile)body).getFile();
+            body = ((WrappedFile<?>)body).getFile();
         }
 
         if (body instanceof File) {

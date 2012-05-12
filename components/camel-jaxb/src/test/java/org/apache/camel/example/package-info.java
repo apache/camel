@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cdi.util;
+@XmlSchema(
+    xmlns = { 
+        @XmlNs(prefix = "order", namespaceURI = "http://www.camel.apache.org/jaxb/example/order/1"),
+        @XmlNs(prefix = "address", namespaceURI = "http://www.camel.apache.org/jaxb/example/address/1")
+        }
+)
+package org.apache.camel.example;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.util.AnnotationLiteral;
-
-public class AnyLiteral extends AnnotationLiteral<Any> {
-    private static final long serialVersionUID = 1L;
-}
+import javax.xml.bind.annotation.XmlNs;
+import javax.xml.bind.annotation.XmlSchema;

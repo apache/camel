@@ -206,6 +206,19 @@
       <artifactId>easymockclassextension</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-extension-providers</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>  
+    <dependency>
+      <groupId>org.codehaus.jettison</groupId>
+      <artifactId>jettison</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -317,26 +330,6 @@
   </build>
 
   <profiles>
-      <profile>
-        <id>cxf-2.6</id>
-        <properties>
-            <cxf-version>2.6.0-SNAPSHOT</cxf-version>
-        </properties>
-        <dependencies>
-            <dependency>
-              <groupId>org.apache.cxf</groupId>
-              <artifactId>cxf-rt-rs-extension-providers</artifactId>
-              <version>${cxf-version}</version>
-              <scope>test</scope>
-            </dependency>  
-          <dependency>
-            <groupId>org.codehaus.jettison</groupId>
-            <artifactId>jettison</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        </dependencies>
-      </profile>
     <profile>
       <id>fastinstall</id>
       <properties>

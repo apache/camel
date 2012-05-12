@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 
@@ -88,6 +89,17 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     /**
+     * creates an exchange for the given message
+     *
+     * @param pdu the pdu
+     * @param event a snmp4j CommandResponderEvent
+     * @return an exchange
+     */
+    public Exchange createExchange(PDU pdu, CommandResponderEvent event) {
+        return createExchange(getExchangePattern(), pdu, event);
+    }
+
+    /**
      * creates an exchange for the given pattern and message
      *
      * @param pattern the message exchange pattern
@@ -97,6 +109,20 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private Exchange createExchange(ExchangePattern pattern, PDU pdu) {
         Exchange exchange = new DefaultExchange(this, pattern);
         exchange.setIn(new SnmpMessage(pdu));
+        return exchange;
+    }
+
+    /**
+     * creates an exchange for the given pattern and message
+     *
+     * @param pattern the message exchange pattern
+     * @param pdu     the pdu
+     * @param event   a snmp4j CommandResponderEvent
+     * @return the exchange
+     */
+    private Exchange createExchange(ExchangePattern pattern, PDU pdu, CommandResponderEvent event) {
+        Exchange exchange = new DefaultExchange(this, pattern);
+        exchange.setIn(new SnmpMessage(pdu, event));
         return exchange;
     }
 

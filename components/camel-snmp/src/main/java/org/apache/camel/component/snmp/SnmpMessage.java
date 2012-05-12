@@ -17,7 +17,9 @@
 package org.apache.camel.component.snmp;
 
 import org.apache.camel.impl.DefaultMessage;
+import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
+import org.snmp4j.smi.OctetString;
 
 public class SnmpMessage extends DefaultMessage {
     private PDU pdu;
@@ -28,6 +30,12 @@ public class SnmpMessage extends DefaultMessage {
 
     public SnmpMessage(PDU pdu) {
         this.pdu = pdu;
+    }
+
+    public SnmpMessage(PDU pdu, CommandResponderEvent event) {
+        this.pdu = pdu;
+        this.setHeader("securityName", new OctetString(event.getSecurityName()));
+        this.setHeader("peerAddress", event.getPeerAddress());
     }
 
     @Override

@@ -16,25 +16,37 @@
  */
 package org.apache.camel.component.twitter;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.twitter.mocks.TwitterStreamMock;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
+
+import twitter4j.Status;
+import twitter4j.StatusListener;
+import twitter4j.TwitterStream;
 
 public class SearchEventTest extends CamelTwitterTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
 
-    private TwitterStreamMock twitterStream;
+    private TwitterStream twitterStream;
+    private StatusListener listener;
 
     @Test
     public void testSearchTimeline() throws Exception {
         resultEndpoint.expectedMinimumMessageCount(1);
+        Status status = (Status)Proxy.newProxyInstance(getClass().getClassLoader(),
+                                                              new Class[] {Status.class},
+                                                              new TwitterHandler()); 
 
-        twitterStream.updateStatus("#cameltest tweet");
+        listener.onStatus(status);
+        //"#cameltest tweet");
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -49,9 +61,29 @@ public class SearchEventTest extends CamelTwitterTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        twitterStream = new TwitterStreamMock();
+        twitterStream = (TwitterStream)Proxy.newProxyInstance(getClass().getClassLoader(),
+                                               new Class[] {TwitterStream.class},
+                                               new TwitterHandler()); 
         JndiRegistry registry = super.createRegistry();
         registry.bind("twitterStream", twitterStream);
         return registry;
+    }
+
+    public class TwitterHandler implements InvocationHandler {
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            //mock some methods
+            if ("addListener".equals(method.getName())) {
+                listener = (StatusListener)args[0];
+            } else if ("toString".equals(method.getName())) {
+                return this.toString();
+            } else if ("getText".equals(method.getName())) {
+                return "#cameltest tweet";
+            } else if ("getUser".equals(method.getName())) {
+                return Proxy.newProxyInstance(getClass().getClassLoader(),
+                                              new Class[] {twitter4j.User.class},
+                                              new TwitterHandler());
+            }
+            return null;
+        }
     }
 }

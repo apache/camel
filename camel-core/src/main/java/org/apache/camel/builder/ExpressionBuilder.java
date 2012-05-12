@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -45,6 +46,7 @@ import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLPairExpressionIterator;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.GroupIterator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -1102,7 +1104,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
                 Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(regexTokenizer);
+                scanner.useDelimiter(pattern);
                 return scanner;
             }
 
@@ -1113,10 +1115,26 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression groupIteratorExpression(final Expression expression, final String token, final int group) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // evaluate expression as iterator
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
+                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                return new GroupIterator(exchange.getContext(), it, token, group);
+            }
+
+            @Override
+            public String toString() {
+                return "group " + expression + " " + group + " times";
+            }
+        };
+    }
+
     /**
      * Returns a sort expression which will sort the expression with the given comparator.
      * <p/>
-     * The expression is evaluted as a {@link List} object to allow sorting.
+     * The expression is evaluated as a {@link List} object to allow sorting.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static Expression sortExpression(final Expression expression, final Comparator comparator) {

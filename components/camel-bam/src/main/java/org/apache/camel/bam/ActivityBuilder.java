@@ -29,10 +29,11 @@ import org.apache.camel.bam.rules.ActivityRules;
  * @version 
  */
 public class ActivityBuilder {
-    private ProcessBuilder processBuilder;
-    private Endpoint endpoint;
-    private ActivityRules activityRules;
+    private final ProcessBuilder processBuilder;
+    private final Endpoint endpoint;
+    private final ActivityRules activityRules;
     private Expression correlationExpression;
+    private volatile Processor processor;
 
     public ActivityBuilder(ProcessBuilder processBuilder, Endpoint endpoint) {
         this.processBuilder = processBuilder;
@@ -52,8 +53,10 @@ public class ActivityBuilder {
     /**
      * Returns the processor of the route
      */
-    public Processor getProcessor() throws Exception {
-        Processor processor = createProcessor();
+    public synchronized Processor getProcessor() throws Exception {
+        if (processor == null) {
+            processor = createProcessor();
+        }
         if (processor == null) {
             throw new IllegalArgumentException("No processor created for ActivityBuilder: " + this);
         }

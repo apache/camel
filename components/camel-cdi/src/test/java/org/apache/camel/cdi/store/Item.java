@@ -22,11 +22,9 @@ public class Item implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String name;
-
     private long price;
 
     public Item() {
-
     }
 
     public Item(String name, long price) {
@@ -62,5 +60,26 @@ public class Item implements Serializable {
         this.price = price;
     }
 
+    // Simple equals implementation
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
 
+        Item other = (Item)obj;
+        boolean nameMatch = name == null ? other.name == null : name.equals(other.name);
+        return nameMatch && price == other.price;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() * 997 + (int)price;
+    }
 }

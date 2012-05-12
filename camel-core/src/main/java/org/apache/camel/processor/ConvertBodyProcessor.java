@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -53,21 +54,34 @@ public class ConvertBodyProcessor extends ServiceSupport implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
-        if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+        if (in.getBody() == null) {
+            // only convert if the is a body
+            return;
         }
 
-        // only convert if the is a body
-        if (in.getBody() != null) {
-            Object value = in.getMandatoryBody(type);
+        if (charset != null) {
+            // override existing charset with configured charset as that is what the user
+            // have explicit configured and expects to be used
+            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+        }
+        // use mandatory conversion
+        Object value = in.getMandatoryBody(type);
 
-            if (exchange.getPattern().isOutCapable()) {
-                Message out = exchange.getOut();
-                out.copyFrom(in);
-                out.setBody(value);
-            } else {
-                in.setBody(value);
-            }
+        // create a new message container so we do not drag specialized message objects along
+        Message msg = new DefaultMessage();
+        msg.copyFrom(in);
+        msg.setBody(value);
+
+        if (exchange.getPattern().isOutCapable()) {
+            exchange.setOut(msg);
+        } else {
+            exchange.setIn(msg);
+        }
+
+        // remove charset when we are done as we should not propagate that,
+        // as that can lead to double converting later on
+        if (charset != null) {
+            exchange.removeProperty(Exchange.CHARSET_NAME);
         }
     }
 

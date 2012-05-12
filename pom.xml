@@ -33,7 +33,7 @@
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
-    <maven>2.2.1</maven>
+    <maven>3.0.2</maven>
   </prerequisites>
 
   <properties>
@@ -47,9 +47,8 @@
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
-    <jaxb-api-version>2.1</jaxb-api-version>
 
-    <maven-bundle-version>2.3.4</maven-bundle-version>
+    <maven-bundle-version>2.3.7</maven-bundle-version>
     <openjpa-version>2.2.0</openjpa-version>
   </properties>
 
@@ -148,7 +147,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.3.2</version>
+          <version>2.4</version>
           <configuration>
             <source>1.6</source>
             <target>1.6</target>
@@ -166,7 +165,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.8</version>
+          <version>2.9</version>
           <dependencies>
             <dependency>
               <groupId>org.apache.camel</groupId>
@@ -283,11 +282,6 @@
           <version>1.6</version>
           <dependencies>
               <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb-api-version}</version>
-              </dependency>
-              <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
                 <version>${jaxb-version}</version>
@@ -366,7 +360,14 @@
         <plugin>
 	      <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-remote-resources-plugin</artifactId>
-          <version>1.1</version>
+          <version>1.2.1</version>
+          <dependencies>
+              <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>1.7</version>
+              </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -376,12 +377,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.4</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -480,6 +476,20 @@
             <_failok>${camel.osgi.failok}</_failok>
           </instructions>
 	    </configuration>
+        <executions>
+            <execution>
+                <id>versions</id>
+                <phase>validate</phase>
+                <goals>
+                    <goal>cleanVersions</goal>
+                </goals>
+                <configuration>
+                    <versions>
+                        <camel.osgi.version.clean>${project.version}</camel.osgi.version.clean>
+                    </versions>
+                </configuration>
+            </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -752,11 +762,6 @@
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.6</version>
                     <dependencies>
-                        <dependency>
-                          <groupId>javax.xml.bind</groupId>
-                          <artifactId>jaxb-api</artifactId>
-                          <version>${jaxb-api-version}</version>
-                        </dependency>
                         <dependency>
                           <groupId>com.sun.xml.bind</groupId>
                           <artifactId>jaxb-impl</artifactId>

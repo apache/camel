@@ -19,8 +19,7 @@ package org.apache.camel.component.zookeeper;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static java.lang.String.format;
-
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.zookeeper.operations.AnyOfOperations;
@@ -33,7 +32,9 @@ import org.apache.camel.component.zookeeper.operations.GetDataOperation;
 import org.apache.camel.component.zookeeper.operations.OperationResult;
 import org.apache.camel.component.zookeeper.operations.ZooKeeperOperation;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooKeeper;
+
 
 /**
  * <code>ZooKeeperConsumer</code> uses various {@link ZooKeeperOperation} to
@@ -55,7 +56,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private ExecutorService executor;
 
     public ZooKeeperConsumer(ZooKeeperEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
+        super((Endpoint)endpoint, processor);
         this.connectionManager = endpoint.getConnectionManager();
         this.configuration = endpoint.getConfiguration();
     }
@@ -65,7 +66,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         super.doStart();
         connection = connectionManager.getConnection();
         if (log.isDebugEnabled()) {
-            log.debug(format("Connected to Zookeeper cluster %s", configuration.getConnectString()));
+            log.debug(String.format("Connected to Zookeeper cluster %s", configuration.getConnectString()));
         }
 
         initializeConsumer();
@@ -80,7 +81,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         shuttingDown = true;
         connection = connectionManager.getConnection();
         if (log.isTraceEnabled()) {
-            log.trace(format("Shutting down zookeeper consumer of '%s'", configuration.getPath()));
+            log.trace(String.format("Shutting down zookeeper consumer of '%s'", configuration.getPath()));
         }
         executor.shutdown();
         connectionManager.shutdown();
@@ -113,9 +114,9 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         }
     }
 
-    private Exchange createExchange(String path, OperationResult result) {
+    private Exchange createExchange(String path, OperationResult result, WatchedEvent watchedEvent) {
         Exchange e = getEndpoint().createExchange();
-        ZooKeeperMessage in = new ZooKeeperMessage(path, result.getStatistics());
+        ZooKeeperMessage in = new ZooKeeperMessage(path, result.getStatistics(), watchedEvent);
         e.setIn(in);
         if (result.isOk()) {
             in.setBody(result.getResult());
@@ -129,13 +130,15 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
         private ZooKeeperOperation current;
 
+        private WatchedEvent watchedEvent;
+
         public void run() {
             while (isRunAllowed()) {
 
                 try {
                     current = operations.take();
                     if (log.isTraceEnabled()) {
-                        log.trace(format("Processing '%s' operation", current.getClass().getSimpleName()));
+                        log.trace(String.format("Processing '%s' operation", current.getClass().getSimpleName()));
                     }
                 } catch (InterruptedException e) {
                     continue;
@@ -143,8 +146,12 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                 String node = current.getNode();
                 try {
                     OperationResult result = current.get();
+                    if (ZooKeeperUtils.hasWatchedEvent(current)) {
+                        watchedEvent = ZooKeeperUtils.getWatchedEvent(current);
+                    }
                     if (result != null && current.shouldProduceExchange()) {
-                        getProcessor().process(createExchange(node, result));
+                        getProcessor().process(createExchange(node, result, watchedEvent));
+                        watchedEvent = null;
                     }
                 } catch (Exception e) {
                     handleException(e);
@@ -177,7 +184,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         operations.clear();
         operations.add(new AnyOfOperations(node, new ExistsOperation(connection, node), new ExistenceChangedOperation(connection, node)));
         operations.add(new GetDataOperation(connection, node));
-        operations.add(new DataChangedOperation(connection, node, false));
+        operations.add(new DataChangedOperation(connection, node, false, configuration.isSendEmptyMessageOnDelete()));
     }
 
     private void addBasicChildListingSequence(String node) {

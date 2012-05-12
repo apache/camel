@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * @version 
@@ -27,8 +28,15 @@ import org.apache.camel.impl.DefaultComponent;
 public class StringTemplateComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint answer = new StringTemplateEndpoint(uri, this, remaining);
+        StringTemplateEndpoint answer = new StringTemplateEndpoint(uri, this, remaining);
         setProperties(answer, parameters);
+
+        // if its a http resource then append any remaining parameters and update the resource uri
+        if (ResourceHelper.isHttpUri(remaining)) {
+            remaining = ResourceHelper.appendParameters(remaining, parameters);
+            answer.setResourceUri(remaining);
+        }
+
         return answer;
     }
 }

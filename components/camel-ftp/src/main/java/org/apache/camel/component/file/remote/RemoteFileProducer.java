@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -46,10 +45,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     public void process(Exchange exchange) throws Exception {
-        Exchange remoteExchange = getEndpoint().createExchange(exchange);
         String target = createFileName(exchange);
-        processExchange(remoteExchange, target);
-        ExchangeHelper.copyResults(exchange, remoteExchange);
+        processExchange(exchange, target);
     }
 
     protected RemoteFileOperations<T> getOperations() {

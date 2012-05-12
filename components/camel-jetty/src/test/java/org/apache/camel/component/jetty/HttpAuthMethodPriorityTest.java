@@ -47,7 +47,6 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
         jndi.bind("myAuthHandler", getSecurityHandler());
         return jndi;
     }
-
     private SecurityHandler getSecurityHandler() throws IOException {
         Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
         constraint.setAuthenticate(true);
@@ -86,7 +85,10 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
             fail("Should have thrown an exception");
         } catch (FailedToCreateProducerException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
-            assertEquals("No enum const class org.apache.camel.component.http.AuthMethod.foo", cause.getMessage());
+            //JAXB 2.2 uses a slightly different message
+            boolean b = cause.getMessage().contains("No enum const")
+                && cause.getMessage().contains("org.apache.camel.component.http.AuthMethod.foo");
+            assertTrue("Bad fault message: " + cause.getMessage(), b);
         }
     }
 

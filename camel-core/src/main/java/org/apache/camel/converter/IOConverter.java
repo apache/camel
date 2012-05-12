@@ -73,17 +73,36 @@ public final class IOConverter {
         return IOHelper.buffered(new FileInputStream(file));
     }
 
+    public static InputStream toInputStream(File file, String charset) throws IOException {
+        if (charset != null) {
+            final BufferedReader reader = toReader(file, charset);
+            return new InputStream() {
+                @Override
+                public int read() throws IOException {
+                    return reader.read();
+                }
+            };
+        } else {
+            return IOHelper.buffered(new FileInputStream(file));
+        }
+    }
+
     /**
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
     public static BufferedReader toReader(File file) throws IOException {
-        return toReader(file, null);
+        return toReader(file, (String) null);
     }
 
     @Converter
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
-        return IOHelper.buffered(new EncodingFileReader(file, IOHelper.getCharsetName(exchange)));
+        return toReader(file, IOHelper.getCharsetName(exchange));
+    }
+
+    public static BufferedReader toReader(File file, String charset) throws IOException {
+        FileInputStream in = new FileInputStream(file);
+        return IOHelper.buffered(new EncodingFileReader(in, charset));
     }
 
     @Converter
@@ -101,12 +120,17 @@ public final class IOConverter {
      */
     @Deprecated
     public static BufferedWriter toWriter(File file) throws IOException {
-        return toWriter(file, null);
+        return toWriter(file, false, IOHelper.getCharsetName(null, true));
     }
     
     @Converter
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
-        return IOHelper.buffered(new EncodingFileWriter(file, IOHelper.getCharsetName(exchange)));
+        return toWriter(file, false, IOHelper.getCharsetName(exchange));
+    }
+
+    public static BufferedWriter toWriter(File file, boolean append, String charset) throws IOException {
+        FileOutputStream os = new FileOutputStream(file, append);
+        return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
 
     /**
@@ -281,7 +305,8 @@ public final class IOConverter {
     
     @Converter
     public static byte[] toByteArray(BufferedReader reader, Exchange exchange) throws IOException {
-        return toByteArray(toString(reader), exchange);
+        String s = toString(reader);
+        return toByteArray(s, exchange);
     }
 
     /**
@@ -409,15 +434,26 @@ public final class IOConverter {
      */
     private static class EncodingFileReader extends InputStreamReader {
 
+        private final FileInputStream in;
+
         /**
-         * @param file file to read
+         * @param in file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(File file, String charset)
+        public EncodingFileReader(FileInputStream in, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
-            super(new FileInputStream(file), charset);
+            super(in, charset);
+            this.in = in;
         }
 
+        @Override
+        public void close() throws IOException {
+            try {
+                super.close();
+            } finally {
+                in.close();
+            }
+        }
     }
     
     /**
@@ -425,15 +461,26 @@ public final class IOConverter {
      */
     private static class EncodingFileWriter extends OutputStreamWriter {
 
+        private final FileOutputStream out;
+
         /**
-         * @param file file to write
+         * @param out file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(File file, String charset)
+        public EncodingFileWriter(FileOutputStream out, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
-            super(new FileOutputStream(file), charset);
+            super(out, charset);
+            this.out = out;
         }
 
+        @Override
+        public void close() throws IOException {
+            try {
+                super.close();
+            } finally {
+                out.close();
+            }
+        }
     }
     
     /**

@@ -53,10 +53,10 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
         input.setName("Donald Duck");
 
         // we cannot convert directly to Customer as we need camel-jaxb
-        String response = template.requestBodyAndHeader("cxfrs:http://localhost:" + PORT1 + "/CxfOperationExceptionTest/customerservice/customers?throwExceptionOnFailure=false", input,
+        String response = template.requestBodyAndHeader("cxfrs:bean:rsClient?throwExceptionOnFailure=false", input,
             Exchange.HTTP_METHOD, "POST", String.class);
 
         assertNotNull(response);
-        assertTrue(response.contains("Problem accessing /CxfOperationExceptionTest/customerservice/customers"));
+        assertTrue(response.contains("Problem accessing /CxfOperationExceptionTest/rest"));
     }
 }

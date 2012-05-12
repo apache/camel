@@ -21,7 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Map;
-
 import javax.naming.OperationNotSupportedException;
 
 import com.ibm.as400.access.AS400;
@@ -30,6 +29,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +43,7 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
     private Integer[] outputFieldsLengthArray;
 
     private AS400 iSeries;
+    private Format format = Format.text;
 
     /**
      * Creates a new AS/400 PGM CALL endpoint
@@ -81,6 +82,7 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
+        // cannot be singleton as we store an AS400 instance on this endpoint
         return false;
     }
 
@@ -129,6 +131,14 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
                 outputFieldsLengthArray[i] = Integer.parseInt(str);
             }
         }
+    }
+
+    public void setFormat(Format format) {
+        this.format = format;
+    }
+
+    public Format getFormat() {
+        return format;
     }
 
     public void setGuiAvailable(boolean guiAvailable) throws PropertyVetoException {

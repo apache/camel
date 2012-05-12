@@ -42,6 +42,7 @@ public class ZooKeeperConfiguration implements Cloneable {
     private boolean listChildren;
     private boolean shouldCreate;
     private String createMode;
+    private boolean sendEmptyMessageOnDelete = true;
 
     public void addZookeeperServer(String server) {
         if (servers == null) {
@@ -158,7 +159,13 @@ public class ZooKeeperConfiguration implements Cloneable {
     public void setCreateMode(String createMode) {
         this.createMode = createMode;
     }
-    
-    
+
+    public boolean isSendEmptyMessageOnDelete() {
+        return sendEmptyMessageOnDelete;
+    }
+
+    public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
+        this.sendEmptyMessageOnDelete = sendEmptyMessageOnDelete;
+    }
 
 }

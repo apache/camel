@@ -16,8 +16,6 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;

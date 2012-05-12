@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty.handlers;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.netty.NettyConstants;
@@ -70,12 +71,12 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     }
     
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
+    public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent messageEvent) throws Exception {
         Object in = messageEvent.getMessage();
         LOG.debug("Incoming message: {}", in);
 
         // create Exchange and let the consumer process it
-        Exchange exchange = consumer.getEndpoint().createExchange(ctx, messageEvent);
+        final Exchange exchange = consumer.getEndpoint().createExchange(ctx, messageEvent);
         if (consumer.getConfiguration().isSync()) {
             exchange.setPattern(ExchangePattern.InOut);
         }
@@ -84,16 +85,39 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(consumer.getConfiguration().getCharsetName()));
         }
 
+        // process accordingly to endpoint configuration
+        if (consumer.getEndpoint().isSynchronous()) {
+            processSynchronously(exchange, messageEvent);
+        } else {
+            processAsynchronously(exchange, messageEvent);
+        }
+    }
+
+    private void processSynchronously(final Exchange exchange, final MessageEvent messageEvent) {
         try {
             consumer.getProcessor().process(exchange);
+            if (consumer.getConfiguration().isSync()) {
+                sendResponse(messageEvent, exchange);
+            }
         } catch (Throwable e) {
             consumer.getExceptionHandler().handleException(e);
         }
+    }
 
-        // send back response if the communication is synchronous
-        if (consumer.getConfiguration().isSync()) {
-            sendResponse(messageEvent, exchange);
-        }
+    private void processAsynchronously(final Exchange exchange, final MessageEvent messageEvent) {
+        consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+                // send back response if the communication is synchronous
+                try {
+                    if (consumer.getConfiguration().isSync()) {
+                        sendResponse(messageEvent, exchange);
+                    }
+                } catch (Throwable e) {
+                    consumer.getExceptionHandler().handleException(e);
+                }
+            }
+        });
     }
 
     private void sendResponse(MessageEvent messageEvent, Exchange exchange) throws Exception {

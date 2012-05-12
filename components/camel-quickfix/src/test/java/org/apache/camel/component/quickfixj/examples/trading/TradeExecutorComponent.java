@@ -35,7 +35,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,7 +130,7 @@ public class TradeExecutorComponent extends DefaultComponent {
                     executor.execute(new Runnable() {
                         public void run() {
                             try {
-                                tradeExecutor.execute(ExchangeHelper.getMandatoryInBody(exchange, Message.class));
+                                tradeExecutor.execute(exchange.getIn().getMandatoryBody(Message.class));
                             } catch (Exception e) {
                                 log.error("Error during trade execution", e);
                             }

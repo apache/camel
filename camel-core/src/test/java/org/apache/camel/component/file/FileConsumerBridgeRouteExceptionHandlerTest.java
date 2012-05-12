@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
@@ -73,17 +74,17 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
     // END SNIPPET: e2
 
     // used for simulating exception during acquiring a lock on the file
-    private class MyReadLockStrategy implements GenericFileExclusiveReadLockStrategy {
+    private static class MyReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
 
         private int counter;
 
         @Override
-        public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) throws Exception {
+        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
             // noop
         }
 
         @Override
-        public boolean acquireExclusiveReadLock(GenericFileOperations operations, GenericFile file, Exchange exchange) throws Exception {
+        public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
             if (file.getFileNameOnly().equals("bye.txt")) {
                 if (counter++ == 0) {
                     // force an exception on acquire attempt for the bye.txt file, on the first attempt
@@ -95,7 +96,7 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
         }
 
         @Override
-        public void releaseExclusiveReadLock(GenericFileOperations operations, GenericFile file, Exchange exchange) throws Exception {
+        public void releaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
             // noop
         }
 

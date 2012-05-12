@@ -47,14 +47,14 @@ public class DomConverterTest extends ContextTestSupport {
     public void testDomConverterToInteger() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>47</hello>");
 
-        Integer number = new DomConverter().toInteger(document.getChildNodes());
+        Integer number = DomConverter.toInteger(document.getChildNodes());
         assertEquals(47, number.intValue());
     }
 
     public void testDomConverterToLong() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>47</hello>");
 
-        Long number = new DomConverter().toLong(document.getChildNodes());
+        Long number = DomConverter.toLong(document.getChildNodes());
         assertEquals(47L, number.longValue());
     }
 

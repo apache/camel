@@ -32,7 +32,7 @@
         <camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
         <scalate-version>1.5.3</scalate-version>
         <jersey-version>1.12</jersey-version>
-        <logback-version>1.0.1</logback-version>
+        <logback-version>1.0.3</logback-version>
         <jetty-port>8080</jetty-port>
         <webdriver-version>0.9.7376</webdriver-version>
     </properties>
@@ -369,7 +369,7 @@
                         <docletArtifact>
                             <groupId>javax.xml.bind</groupId>
                             <artifactId>jaxb-api</artifactId>
-                            <version>${jaxb-api-version}</version>
+                            <version>2.1</version>
                         </docletArtifact>
                         <docletArtifact>
                             <groupId>com.sun.xml.bind</groupId>

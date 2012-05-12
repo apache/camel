@@ -165,7 +165,7 @@ public class FileLanguageTest extends LanguageTestSupport {
 
         // get the file handle
         file = new File("target/filelanguage/test/hello.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file);
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 

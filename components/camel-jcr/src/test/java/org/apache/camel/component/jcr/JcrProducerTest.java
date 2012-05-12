@@ -17,21 +17,14 @@
 package org.apache.camel.component.jcr;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.naming.Context;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.Before;
 import org.junit.Test;
 
-public class JcrRouteTest extends CamelTestSupport {
-
-    private Repository repository;
+public class JcrProducerTest extends JcrRouteTestSupport {
 
     @Override
     @Before
@@ -41,12 +34,12 @@ public class JcrRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJcrRoute() throws Exception {
+    public void testJcrProducer() throws Exception {
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
         String uuid = out.getOut().getBody(String.class);
-        Session session = repository.login(new SimpleCredentials("user", "pass".toCharArray()));
+        Session session = openSession();
         try {
             Node node = session.getNodeByIdentifier(uuid);
             assertNotNull(node);
@@ -64,19 +57,13 @@ public class JcrRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: jcr
+                // START SNIPPET: jcr-create-node
                 from("direct:a").setProperty(JcrConstants.JCR_NODE_NAME, constant("node"))
-                    .setProperty("my.contents.property", body()).to("jcr://user:pass@repository/home/test");
-                // END SNIPPET: jcr
+                        .setProperty("my.contents.property", body())
+                        .to("jcr://user:pass@repository/home/test");
+                // END SNIPPET: jcr-create-node
             }
         };
     }
 
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        repository = new TransientRepository("target/repository.xml", "target/repository");
-        context.bind("repository", repository);
-        return context;
-    }
 }

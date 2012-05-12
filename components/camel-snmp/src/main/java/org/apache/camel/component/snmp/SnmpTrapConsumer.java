@@ -98,17 +98,17 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         PDU pdu = event.getPDU();
         // check PDU not null
         if (pdu != null) {
-            processPDU(pdu);
+            processPDU(pdu, event);
         } else {
             LOG.debug("Received invalid trap PDU: " + pdu);
         }
     }
     
-    public void processPDU(PDU pdu) {
+    public void processPDU(PDU pdu, CommandResponderEvent event) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received trap event for {} : {}", this.endpoint.getAddress(), pdu);
         }
-        Exchange exchange = endpoint.createExchange(pdu);
+        Exchange exchange = endpoint.createExchange(pdu, event);
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {

@@ -29,6 +29,7 @@ import org.osgi.framework.BundleContext;
  * tokens (see {@link DefaultManagementNameStrategy}) and the following additional OSGi specific tokens
  * <ul>
  *     <li>#bundleId# - The bundle id</li>
+ *     <li>#version# - The bundle version</li>
  *     <li>#symbolicName# - The bundle symbolic name</li>
  * </ul>
  * <p/>
@@ -50,9 +51,11 @@ public class OsgiManagementNameStrategy extends DefaultManagementNameStrategy {
     protected String customResolveManagementName(String pattern, String answer) {
         String bundleId = "" + bundleContext.getBundle().getBundleId();
         String symbolicName = Matcher.quoteReplacement(bundleContext.getBundle().getSymbolicName());
+        String version = Matcher.quoteReplacement(bundleContext.getBundle().getVersion().toString());
 
         answer = answer.replaceFirst("#bundleId#", bundleId);
         answer = answer.replaceFirst("#symbolicName#", symbolicName);
+        answer = answer.replaceFirst("#version#", version);
         return answer;
     }
     

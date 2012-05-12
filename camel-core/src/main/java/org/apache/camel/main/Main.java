@@ -23,6 +23,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.view.ModelFileGenerator;
 
 /**
@@ -32,6 +34,7 @@ import org.apache.camel.view.ModelFileGenerator;
  */
 public class Main extends MainSupport {
     protected static Main instance;
+    private final SimpleRegistry registery = new SimpleRegistry();
 
     public Main() {
     }
@@ -51,6 +54,49 @@ public class Main extends MainSupport {
     public static Main getInstance() {
         return instance;
     }
+
+    /**
+     * Binds the given <code>name</code> to the <code>bean</code> object, so
+     * that it can be looked up inside the CamelContext this command line tool
+     * runs with.
+     * 
+     * @param name the used name through which we do bind
+     * @param bean the object to bind
+     */
+    public void bind(String name, Object bean) {
+        registery.put(name, bean);
+    }
+
+    /**
+     * Using the given <code>name</code> does lookup for the bean being already
+     * bound using the {@link #bind(String, Object)} method.
+     * 
+     * @see Registry#lookup(String)
+     */
+    public Object lookup(String name) {
+        return registery.get(name);
+    }
+
+    /**
+     * Using the given <code>name</code> and <code>type</code> does lookup for
+     * the bean being already bound using the {@link #bind(String, Object)}
+     * method.
+     * 
+     * @see Registry#lookup(String, Class)
+     */
+    public <T> T lookup(String name, Class<T> type) {
+        return registery.lookup(name, type);
+    }
+
+    /**
+     * Using the given <code>type</code> does lookup for the bean being already
+     * bound using the {@link #bind(String, Object)} method.
+     * 
+     * @see Registry#lookupByType(Class)
+     */
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return registery.lookupByType(type);
+    }    
     
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -73,7 +119,14 @@ public class Main extends MainSupport {
 
     protected Map<String, CamelContext> getCamelContextMap() {
         Map<String, CamelContext> answer = new HashMap<String, CamelContext>();
-        answer.put("camel-1", new DefaultCamelContext());
+
+        CamelContext camelContext = new DefaultCamelContext();
+        if (registery.size() > 0) {
+            // set the registry through which we've already bound some beans
+            ((DefaultCamelContext) camelContext).setRegistry(registery);
+        }
+
+        answer.put("camel-1", camelContext);
         return answer;
     }
 

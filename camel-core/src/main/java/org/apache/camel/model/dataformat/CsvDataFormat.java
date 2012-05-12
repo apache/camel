@@ -43,6 +43,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String configRef;
     @XmlAttribute
     private String strategyRef;
+    @XmlAttribute
+    private Boolean skipFirstLine;
 
     public CsvDataFormat() {
         super("csv");
@@ -85,6 +87,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.strategyRef = strategyRef;
     }
 
+    public Boolean isSkipFirstLine() {
+        return autogenColumns;
+    }
+
+    public void setSkipFirstLine(Boolean skipFirstLine) {
+        this.skipFirstLine = skipFirstLine;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         DataFormat csvFormat = super.createDataFormat(routeContext);
@@ -115,6 +125,10 @@ public class CsvDataFormat extends DataFormatDefinition {
         } else {
             // the default delimiter is ','
             setProperty(dataFormat, "delimiter", ",");
+        }
+
+        if (skipFirstLine != null) {
+            setProperty(dataFormat, "skipFirstLine", skipFirstLine);
         }
     }
 }

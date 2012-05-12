@@ -37,9 +37,9 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +105,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
 
             try {
-                write(channel, file, ExchangeHelper.getMandatoryInBody(exchange, InputStream.class), cfg);
+                write(channel, file, exchange.getIn().getMandatoryBody(InputStream.class), cfg);
             } catch (InvalidPayloadException e) {
                 throw new GenericFileOperationFailedException("Failed extract message body as InputStream", e);
             } catch (IOException e) {

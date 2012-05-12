@@ -55,8 +55,7 @@ public class ChildrenChangedOperation extends FutureEventDrivenOperation<List<St
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public ZooKeeperOperation createCopy() throws Exception {
+    public ZooKeeperOperation<?> createCopy() throws Exception {
         ChildrenChangedOperation copy = (ChildrenChangedOperation) super.createCopy();
         copy.getChangedListing = getChangedListing;
         return copy;

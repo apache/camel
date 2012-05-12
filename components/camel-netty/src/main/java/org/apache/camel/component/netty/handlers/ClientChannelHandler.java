@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     private static final transient Logger LOG = LoggerFactory.getLogger(ClientChannelHandler.class);
     private final NettyProducer producer;
-    private boolean messageReceived;
+    private volatile boolean messageReceived;
     private volatile boolean exceptionHandled;
 
     public ClientChannelHandler(NettyProducer producer) {
