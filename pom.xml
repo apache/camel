@@ -221,8 +221,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <!-- using this version to avoid build error of Maven 2.2.1 -->
-          <version>1.2.1</version>
+          <version>1.6</version>
         </plugin>
   
         <plugin>
