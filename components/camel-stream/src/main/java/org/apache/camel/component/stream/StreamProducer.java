@@ -93,7 +93,7 @@ public class StreamProducer extends DefaultProducer {
         File f = new File(fileName);
         // will create a new file if missing or append to existing
         f.createNewFile();
-        return new FileOutputStream(f);
+        return new FileOutputStream(f, true);
     }
 
     private OutputStream resolveStreamFromHeader(Object o, Exchange exchange) throws CamelExchangeException {
