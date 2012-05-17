@@ -30,7 +30,6 @@ import javax.xml.ws.handler.MessageContext.Scope;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
@@ -270,7 +269,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     /**
      * Get the parameters for the web service operation
      */
-    private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
+    @SuppressWarnings("deprecation")
+    private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) 
+        throws org.apache.camel.InvalidPayloadException {
       
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
