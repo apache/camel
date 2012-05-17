@@ -84,9 +84,9 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
             addService(channel, "push");
         }
 
-	private CometdBinding createBinding(BayeuxServerImpl bayeux) {
-	    boolean enableSessionHeaders = endpoint == null ? false : endpoint.areSessionHeadersEnabled();
-	    return new CometdBinding(bayeux, enableSessionHeaders);
+        private CometdBinding createBinding(BayeuxServerImpl bayeux) {
+            boolean enableSessionHeaders = endpoint == null ? false : endpoint.areSessionHeadersEnabled();
+            return new CometdBinding(bayeux, enableSessionHeaders);
         }
 
         public void push(ServerSession remote, String channelName, ServerMessage cometdMessage, String messageId) throws Exception {

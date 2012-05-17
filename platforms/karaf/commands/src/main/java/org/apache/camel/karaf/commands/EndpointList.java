@@ -16,14 +16,14 @@
  */
 package org.apache.camel.karaf.commands;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
-
-import java.util.List;
 
 /**
  * List the Camel endpoints available in the Karaf instance.
@@ -47,7 +47,7 @@ public class EndpointList extends OsgiCommandSupport {
         for (CamelContext camelContext : camelContexts) {
             List<Endpoint> endpoints = (List<Endpoint>) camelContext.getEndpoints();
             for (Endpoint endpoint : endpoints) {
-               System.out.println(String.format(OUTPUT_FORMAT, camelContext.getName(), endpoint.getEndpointUri(), getState(endpoint)));
+                System.out.println(String.format(OUTPUT_FORMAT, camelContext.getName(), endpoint.getEndpointUri(), getState(endpoint)));
             }
         }
 
