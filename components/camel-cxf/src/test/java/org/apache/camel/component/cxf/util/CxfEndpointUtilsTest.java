@@ -69,10 +69,25 @@ public class CxfEndpointUtilsTest extends Assert {
         assertEquals("We should get the right service name", service, SERVICE_NAME);
     }
 
+    public char sepChar() {
+        return '&';
+    }
+    
+    @SuppressWarnings("deprecation")
     @Test
-    public void testGetDataFormat() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "&dataFormat=MESSAGE");
+    public void testGetDataFormatMessage() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=MESSAGE");
         assertEquals("We should get the Message DataFormat", DataFormat.MESSAGE, endpoint.getDataFormat());
+    }
+    @Test
+    public void testGetDataFormatCXF() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=CXF_MESSAGE");
+        assertEquals("We should get the Message DataFormat", DataFormat.CXF_MESSAGE, endpoint.getDataFormat());
+    }
+    @Test
+    public void testGetDataFormatRAW() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=RAW");
+        assertEquals("We should get the Message DataFormat", DataFormat.RAW, endpoint.getDataFormat());
     }
 
     @Test

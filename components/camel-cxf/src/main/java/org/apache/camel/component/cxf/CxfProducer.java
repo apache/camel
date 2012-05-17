@@ -179,7 +179,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         requestContext.put(DataFormat.class.getName(), dataFormat);
 
         // don't let CXF ClientImpl close the input stream 
-        if (dataFormat == DataFormat.MESSAGE) {
+        if (dataFormat.dealias() == DataFormat.RAW) {
             cxfExchange.put(Client.KEEP_CONDUIT_ALIVE, true);
             LOG.trace("Set CXF Exchange property: {}={}", Client.KEEP_CONDUIT_ALIVE, true);
         }
@@ -303,7 +303,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         } else if (endpoint.getDataFormat() == DataFormat.PAYLOAD) {
             params = new Object[1];
             params[0] = exchange.getIn().getMandatoryBody(CxfPayload.class);
-        } else if (endpoint.getDataFormat() == DataFormat.MESSAGE) {
+        } else if (endpoint.getDataFormat().dealias() == DataFormat.RAW) {
             params = new Object[1];
             params[0] = exchange.getIn().getMandatoryBody(InputStream.class);
         }

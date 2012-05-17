@@ -29,18 +29,43 @@ public enum DataFormat {
      */
     PAYLOAD,
 
+
+    /**
+     * RAW is the raw message that is received from the transport layer.
+     * Streaming and non-streaming are both supported.
+     */
+    RAW,
+    
     /**
      * MESSAGE is the raw message that is received from the transport layer.
      * Streaming and non-streaming are both supported.
+     * @deprecated - equivalent to RAW mode for Camel 2.x
      */
-    MESSAGE,
+    @Deprecated
+    MESSAGE {
+        public DataFormat dealias() {
+            return RAW;
+        }
+    },
 
+    /**
+     * CXF_MESSAGE is the message that is received from the transport layer
+     * and then processed through the full set of CXF interceptors.  This 
+     * provides the same functionality as the CXF MESSAGE mode providers.
+     * Streaming and non-streaming are both supported.
+     */
+    CXF_MESSAGE,    
+    
     /**
      * POJOs (Plain old Java objects) are the Java parameters to the method
      * it is invoking on the target server.  The "serviceClass" property
      * must be included in the endpoint.  Streaming is not available for this
      * data format.
      */
-    POJO
+    POJO;
+    
+    public DataFormat dealias() {
+        return this;
+    }
     
 }

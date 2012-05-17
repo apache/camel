@@ -616,7 +616,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 Map<String, String> nsMap = new HashMap<String, String>();
                 answer = new CxfPayload<SoapHeader>(headers, getPayloadBodyElements(message, nsMap), nsMap);
                 
-            } else if (dataFormat == DataFormat.MESSAGE) {
+            } else if (dataFormat.dealias() == DataFormat.RAW) {
                 answer = message.getContent(InputStream.class);
             }
 
@@ -720,7 +720,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             answer = out.getBody();
         } else if (dataFormat == DataFormat.PAYLOAD) {
             answer = out.getBody(CxfPayload.class);
-        } else if (dataFormat == DataFormat.MESSAGE) {
+        } else if (dataFormat.dealias() == DataFormat.RAW) {
             answer = out.getBody(InputStream.class);
         }
         return answer;

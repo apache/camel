@@ -259,7 +259,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (!CxfEndpointUtils.hasAnnotation(cls, WebServiceProvider.class)) {
             if (getDataFormat() == DataFormat.PAYLOAD) {
                 sfb.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
-            } else if (getDataFormat() == DataFormat.MESSAGE) {
+            } else if (getDataFormat().dealias() == DataFormat.RAW) {
                 MessageDataFormatFeature feature = new MessageDataFormatFeature();
                 feature.addInIntercepters(getInInterceptors());
                 feature.addOutInterceptors(getOutInterceptors());
@@ -418,7 +418,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         // apply feature here
-        if (getDataFormat() == DataFormat.MESSAGE) {
+        if (getDataFormat().dealias() == DataFormat.RAW) {
             MessageDataFormatFeature feature = new MessageDataFormatFeature();
             feature.addInIntercepters(getInInterceptors());
             feature.addOutInterceptors(getOutInterceptors());
