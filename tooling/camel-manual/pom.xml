@@ -32,75 +32,65 @@
   <name>Camel :: Manual</name>
   <description>The Camel Manual which generates a HTML and PDF representation of the manual.</description>
 
-  <profiles>
-    <profile>
-      <id>build.manual</id>
-      <activation>
-        <property>
-          <name>!fastinstall</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-         <plugin>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>maven-html-to-pdf</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-                <phase>compile</phase>
-              </execution>
-            </executions>    
+  <build>
+    <plugins>
+     <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>maven-html-to-pdf</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>    
+        <configuration>
+          <page>http://camel.apache.org/book-in-one-page.html</page>
+          <contentDivClass>wiki-content maincontent</contentDivClass>
+          <head><![CDATA[ 
+              <link href="file:${basedir}/src/styles/print.css" rel="stylesheet" type="text/css" />
+              <style type="text/css">
+                @page :left {
+                  @top-left {
+                    content: "Apache Camel ${project.version} Developer's Manual";
+                  }
+                }
+              </style>
+          ]]></head>
+          <replaceToken><![CDATA[
+              <h3 id="replaceme">.*</h3>
+          ]]></replaceToken>
+          <replaceValue><![CDATA[
+              <h3>Version ${project.version}</h3>
+          ]]></replaceValue>
+          <transformerFactoryClassName>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</transformerFactoryClassName>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
             <configuration>
-              <page>http://camel.apache.org/book-in-one-page.html</page>
-              <contentDivClass>wiki-content maincontent</contentDivClass>
-              <head><![CDATA[ 
-                  <link href="file:${basedir}/src/styles/print.css" rel="stylesheet" type="text/css" />
-                  <style type="text/css">
-                    @page :left {
-                      @top-left {
-                        content: "Apache Camel ${project.version} Developer's Manual";
-                      }
-                    }
-                  </style>
-              ]]></head>
-              <replaceToken><![CDATA[
-                  <h3 id="replaceme">.*</h3>
-              ]]></replaceToken>
-              <replaceValue><![CDATA[
-                  <h3>Version ${project.version}</h3>
-              ]]></replaceValue>
-              <transformerFactoryClassName>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</transformerFactoryClassName>
+              <artifacts>
+                <!-- Don't need to attach PDF here because the html-to-pdf plugin did that already -->
+                <artifact>
+                  <file>${project.build.directory}/site/manual/camel-manual-${project.version}.html</file>
+                  <type>html</type>
+                </artifact>
+              </artifacts>
             </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-artifacts</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>attach-artifact</goal>
-                </goals>
-                <configuration>
-                  <artifacts>
-                    <!-- Don't need to attach PDF here because the html-to-pdf plugin did that already -->
-                    <artifact>
-                      <file>${project.build.directory}/site/manual/camel-manual-${project.version}.html</file>
-                      <type>html</type>
-                    </artifact>
-                  </artifacts>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>      
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+          </execution>
+        </executions>
+      </plugin>      
+    </plugins>
+  </build>
 
 </project>
