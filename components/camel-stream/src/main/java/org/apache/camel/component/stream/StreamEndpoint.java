@@ -29,17 +29,20 @@ import org.slf4j.LoggerFactory;
 public class StreamEndpoint extends DefaultEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
+    private String url;
+
     private String fileName;
     private boolean scanStream;
     private boolean retry;
     private long scanStreamDelay;
-    private String url;
     private long delay;
     private String encoding;
     private String promptMessage;
     private long promptDelay;
     private long initialPromptDelay = 2000;
     private int groupLines;
+    private int autoCloseCount = 0;
+    
     private Charset charset;
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {
@@ -154,6 +157,14 @@ public class StreamEndpoint extends DefaultEndpoint {
         this.groupLines = groupLines;
     }
     
+    public int getAutoCloseCount() {
+        return autoCloseCount;
+    }
+
+    public void setAutoCloseCount(int autoCloseCount) {
+        this.autoCloseCount = autoCloseCount;
+    }
+
     public Charset getCharset() {
         return charset;
     }
@@ -176,5 +187,4 @@ public class StreamEndpoint extends DefaultEndpoint {
 
         return Charset.forName(encoding);
     }
-
 }
