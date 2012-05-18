@@ -28,6 +28,7 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -47,6 +48,8 @@ public class StreamProducer extends DefaultProducer {
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private StreamEndpoint endpoint;
     private String uri;
+    private OutputStream outputStream;
+    private AtomicInteger count = new AtomicInteger();
 
     public StreamProducer(StreamEndpoint endpoint, String uri) throws Exception {
         super(endpoint);
@@ -54,26 +57,25 @@ public class StreamProducer extends DefaultProducer {
         validateUri(uri);
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        closeStream(true);
+    }
+
     public void process(Exchange exchange) throws Exception {
         delay(endpoint.getDelay());
-        OutputStream outputStream = System.out;         
-        boolean isSystemStream = false;
-        if ("out".equals(uri)) {
-            isSystemStream = true;
-            outputStream = System.out;
-        } else if ("err".equals(uri)) {
-            isSystemStream = true;
-            outputStream = System.err;
-        } else if ("file".equals(uri)) {
-            outputStream = resolveStreamFromFile();
-        } else if ("header".equals(uri)) {
-            outputStream = resolveStreamFromHeader(exchange.getIn().getHeader("stream"), exchange);
-        } else if ("url".equals(uri)) {
-            outputStream = resolveStreamFromUrl();
-        }
 
-        writeToStream(outputStream, exchange);
-        closeStream(outputStream, isSystemStream);
+        synchronized(this) {
+            openStream(exchange);
+            writeToStream(outputStream, exchange);
+            closeStream(false);
+        }
     }
 
     private OutputStream resolveStreamFromUrl() throws IOException {
@@ -108,7 +110,7 @@ public class StreamProducer extends DefaultProducer {
         Thread.sleep(ms);
     }
 
-    private void writeToStream(OutputStream outputStream, Exchange exchange) throws IOException, CamelExchangeException {
+    private synchronized void writeToStream(OutputStream outputStream, Exchange exchange) throws IOException, CamelExchangeException {
         Object body = exchange.getIn().getBody();
 
         // if not a string then try as byte array first
@@ -134,10 +136,52 @@ public class StreamProducer extends DefaultProducer {
         bw.flush();
     }
 
-    private void closeStream(OutputStream outputStream, boolean isSystemStream) throws Exception {
-        // important: do not close the writer on a standard system.out etc.
-        if (outputStream != null && !isSystemStream) {
+    private synchronized void openStream() throws Exception {
+        if (outputStream != null) {
+            return;
+        }
+
+        if ("out".equals(uri)) {
+            outputStream = System.out;
+        } else if ("err".equals(uri)) {
+            outputStream = System.err;
+        } else if ("file".equals(uri)) {
+            outputStream = resolveStreamFromFile();
+        } else if ("url".equals(uri)) {
+            outputStream = resolveStreamFromUrl();
+        }
+        count.set(outputStream == null ? 0 : endpoint.getAutoCloseCount());
+        LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
+    }
+
+    private synchronized void openStream(final Exchange exchange) throws Exception {
+        if (outputStream != null) {
+            return;
+        }
+        if ("header".equals(uri)) {
+            outputStream = resolveStreamFromHeader(exchange.getIn().getHeader("stream"), exchange);
+            LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
+        } else {
+            openStream();
+        }
+    }
+
+    private synchronized void closeStream(boolean force) throws Exception {
+        if (outputStream == null) {
+            return;
+        }
+
+        // never close a standard stream (system.out or system.err)
+        // always close a 'header' stream (unless it's a system stream)
+        boolean systemStream = outputStream != System.out || outputStream != System.err;
+        boolean headerStream = "header".equals(uri) && !systemStream;
+        boolean reachedLimit = endpoint.getAutoCloseCount() > 0 && count.decrementAndGet() <= 0;
+        boolean expiredStream = force || headerStream || reachedLimit;  // evaluation order is important!
+
+        if (expiredStream) {
             outputStream.close();
+            outputStream = null;
+            LOG.debug("Closed stream '{}'", endpoint.getEndpointKey());
         }
     }
 
@@ -161,4 +205,3 @@ public class StreamProducer extends DefaultProducer {
         }
     }
 }
-
