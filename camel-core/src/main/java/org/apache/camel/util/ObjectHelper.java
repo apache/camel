@@ -1145,7 +1145,10 @@ public final class ObjectHelper {
                 return false;
             }
         } else if (value instanceof NodeList) {
-            // is it an empty dom
+            // is it an empty dom with empty attributes
+            if (value instanceof Node && ((Node)value).hasAttributes()) {
+                return true;
+            }
             NodeList list = (NodeList) value;
             return list.getLength() > 0;
         } else if (value instanceof Collection) {
