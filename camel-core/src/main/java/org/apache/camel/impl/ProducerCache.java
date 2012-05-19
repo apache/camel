@@ -187,7 +187,7 @@ public class ProducerCache extends ServiceSupport {
     }
 
     /**
-     * Sends an exchange to an endpoint using a supplied callback
+     * Sends an exchange to an endpoint using a supplied callback, using the synchronous processing.
      * <p/>
      * If an exception was thrown during processing, it would be set on the given Exchange
      *
@@ -196,6 +196,7 @@ public class ProducerCache extends ServiceSupport {
      * @param pattern   the exchange pattern, can be <tt>null</tt>
      * @param callback  the callback
      * @return the response from the callback
+     * @see #doInAsyncProducer(org.apache.camel.Endpoint, org.apache.camel.Exchange, org.apache.camel.ExchangePattern, org.apache.camel.AsyncCallback, org.apache.camel.AsyncProducerCallback)
      */
     public <T> T doInProducer(Endpoint endpoint, Exchange exchange, ExchangePattern pattern, ProducerCallback<T> callback) {
         T answer = null;
