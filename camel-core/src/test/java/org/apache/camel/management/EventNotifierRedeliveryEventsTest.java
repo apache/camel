@@ -28,6 +28,7 @@ import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
 import org.apache.camel.management.event.ExchangeRedeliveryEvent;
+import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
@@ -90,21 +91,23 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(9, events.size());
+        assertEquals(11, events.size());
 
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(0));
-        ExchangeRedeliveryEvent e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(1));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(1));
+        ExchangeRedeliveryEvent e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(2));
         assertEquals(1, e.getAttempt());
-        e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(2));
-        assertEquals(2, e.getAttempt());
         e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(3));
-        assertEquals(3, e.getAttempt());
+        assertEquals(2, e.getAttempt());
         e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(4));
+        assertEquals(3, e.getAttempt());
+        e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(5));
         assertEquals(4, e.getAttempt());
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(5));
-        assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(6));
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(7));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(8));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
+        assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(8));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(9));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(10));
     }
 
     public void testExchangeRedeliveryAsync() throws Exception {
@@ -124,16 +127,17 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
 
         Thread.sleep(250);
 
-        assertEquals(9, events.size());
+        assertEquals(11, events.size());
 
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(0));
-        ExchangeRedeliveryEvent e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(1));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(1));
+        ExchangeRedeliveryEvent e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(2));
         assertEquals(1, e.getAttempt());
-        e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(2));
-        assertEquals(2, e.getAttempt());
         e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(3));
-        assertEquals(3, e.getAttempt());
+        assertEquals(2, e.getAttempt());
         e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(4));
+        assertEquals(3, e.getAttempt());
+        e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(5));
         assertEquals(4, e.getAttempt());
 
         // since its async the ordering of the rest can be different depending per OS and timing

@@ -31,6 +31,7 @@ import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
+import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
@@ -106,33 +107,39 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(9, events.size());
+        assertEquals(12, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(1));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(5));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(7));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(8));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(4));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(8));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(9));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(10));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(11));
 
-        assertEquals(5, events2.size());
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events2.get(0));
-        assertIsInstanceOf(ExchangeSentEvent.class, events2.get(1));
-        assertIsInstanceOf(ExchangeSentEvent.class, events2.get(2));
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events2.get(3));
-        assertIsInstanceOf(ExchangeSentEvent.class, events2.get(4));
+        assertEquals(8, events2.size());
+        assertIsInstanceOf(ExchangeSendingEvent.class, events2.get(0));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events2.get(1));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events2.get(2));
+        assertIsInstanceOf(ExchangeSentEvent.class, events2.get(3));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events2.get(4));
+        assertIsInstanceOf(ExchangeSentEvent.class, events2.get(5));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events2.get(6));
+        assertIsInstanceOf(ExchangeSentEvent.class, events2.get(7));
 
         context.stop();
 
-        assertEquals(13, events.size());
-        assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(9));
-        assertIsInstanceOf(RouteStoppedEvent.class, events.get(10));
-        assertIsInstanceOf(RouteStoppedEvent.class, events.get(11));
-        assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(12));
+        assertEquals(16, events.size());
+        assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(12));
+        assertIsInstanceOf(RouteStoppedEvent.class, events.get(13));
+        assertIsInstanceOf(RouteStoppedEvent.class, events.get(14));
+        assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(15));
 
-        assertEquals(5, events2.size());
+        assertEquals(8, events2.size());
     }
 
     public void testExchangeFailed() throws Exception {
@@ -144,29 +151,31 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         }
 
-        assertEquals(7, events.size());
+        assertEquals(8, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(1));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
-        assertIsInstanceOf(ExchangeFailedEvent.class, events.get(5));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(4));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeFailedEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
 
-        assertEquals(3, events2.size());
+        assertEquals(4, events2.size());
 
         context.stop();
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events2.get(0));
-        assertIsInstanceOf(ExchangeFailedEvent.class, events2.get(1));
-        assertIsInstanceOf(ExchangeSentEvent.class, events2.get(2));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events2.get(0));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events2.get(1));
+        assertIsInstanceOf(ExchangeFailedEvent.class, events2.get(2));
+        assertIsInstanceOf(ExchangeSentEvent.class, events2.get(3));
 
-        assertEquals(11, events.size());
-        assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(7));
-        assertIsInstanceOf(RouteStoppedEvent.class, events.get(8));
+        assertEquals(12, events.size());
+        assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(8));
         assertIsInstanceOf(RouteStoppedEvent.class, events.get(9));
-        assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(10));
+        assertIsInstanceOf(RouteStoppedEvent.class, events.get(10));
+        assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(11));
 
-        assertEquals(3, events2.size());
+        assertEquals(4, events2.size());
     }
 
     @Override

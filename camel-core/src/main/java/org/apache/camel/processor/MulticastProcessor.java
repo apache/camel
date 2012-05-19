@@ -571,6 +571,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 traced.pushBlock();
             }
 
+            if (producer != null) {
+                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+            }
             // let the prepared process it, remember to begin the exchange pair
             AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
             pair.begin();
@@ -703,6 +706,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 traced.pushBlock();
             }
 
+            if (producer != null) {
+                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+            }
             // let the prepared process it, remember to begin the exchange pair
             // we invoke it synchronously as parallel async routing is too hard
             AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);

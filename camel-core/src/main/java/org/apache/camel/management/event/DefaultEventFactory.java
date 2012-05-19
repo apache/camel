@@ -92,6 +92,10 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeRedeliveryEvent(exchange, attempt);
     }
 
+    public EventObject createExchangeSendingEvent(Exchange exchange, Endpoint endpoint) {
+        return new ExchangeSendingEvent(exchange, endpoint);
+    }
+
     public EventObject createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken) {
         return new ExchangeSentEvent(exchange, endpoint, timeTaken);
     }

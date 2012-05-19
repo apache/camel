@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
@@ -32,7 +33,7 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<EventObject>();
+    protected static List<EventObject> events = new ArrayList<EventObject>();
 
     @Override
     public void setUp() throws Exception {
@@ -78,21 +79,31 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(4, events.size());
-        ExchangeSentEvent e0 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(0));
-        ExchangeSentEvent e1 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(1));
+        assertEquals(8, events.size());
+        ExchangeSendingEvent e0 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));
+        ExchangeSendingEvent e1 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(1));
         ExchangeSentEvent e2 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(2));
-        ExchangeSentEvent e3 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(3));
+        ExchangeSendingEvent e3 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(3));
+        ExchangeSentEvent e4 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(4));
+        ExchangeSendingEvent e5 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(5));
+        ExchangeSentEvent e6 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
+        ExchangeSentEvent e7 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
 
-        assertEquals("log://foo", e0.getEndpoint().getEndpointUri());
-        assertEquals("direct://bar", e1.getEndpoint().getEndpointUri());
-        long time = e1.getTimeTaken();
+        assertEquals("direct://start", e0.getEndpoint().getEndpointUri());
+
+        assertEquals("log://foo", e1.getEndpoint().getEndpointUri());
+        assertEquals("log://foo", e2.getEndpoint().getEndpointUri());
+
+        assertEquals("direct://bar", e3.getEndpoint().getEndpointUri());
+        assertEquals("direct://bar", e4.getEndpoint().getEndpointUri());
+        long time = e4.getTimeTaken();
         assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
 
-        assertEquals("mock://result", e2.getEndpoint().getEndpointUri());
+        assertEquals("mock://result", e5.getEndpoint().getEndpointUri());
+        assertEquals("mock://result", e6.getEndpoint().getEndpointUri());
 
-        assertEquals("direct://start", e3.getEndpoint().getEndpointUri());
-        time = e3.getTimeTaken();
+        assertEquals("direct://start", e7.getEndpoint().getEndpointUri());
+        time = e7.getTimeTaken();
         assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
     }
 
@@ -104,22 +115,34 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give it time to complete
-        Thread.sleep(100);
+        Thread.sleep(200);
 
-        assertEquals(6, events.size());
-        ExchangeSentEvent e0 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(0));
-        ExchangeSentEvent e1 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(1));
+        assertEquals(12, events.size());
+        ExchangeSendingEvent e0 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));
+        ExchangeSendingEvent e1 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(1));
         ExchangeSentEvent e2 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(2));
-        ExchangeSentEvent e3 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(3));
-        ExchangeSentEvent e4 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(4));
+        ExchangeSendingEvent e3 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(3));
+        ExchangeSendingEvent e4 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(4));
         ExchangeSentEvent e5 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(5));
+        ExchangeSendingEvent e6 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(6));
+        ExchangeSentEvent e7 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
+        ExchangeSendingEvent e8 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(8));
+        ExchangeSentEvent e9 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(9));
+        ExchangeSentEvent e10 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(10));
+        ExchangeSentEvent e11 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(11));
 
-        assertEquals("direct://cool", e0.getEndpoint().getEndpointUri());
-        assertEquals("log://foo", e1.getEndpoint().getEndpointUri());
-        assertEquals("direct://bar", e2.getEndpoint().getEndpointUri());
-        assertEquals("mock://result", e3.getEndpoint().getEndpointUri());
-        assertEquals("direct://start", e4.getEndpoint().getEndpointUri());
-        assertEquals("direct://foo", e5.getEndpoint().getEndpointUri());
+        assertEquals("direct://foo", e0.getEndpoint().getEndpointUri());
+        assertEquals("direct://cool", e1.getEndpoint().getEndpointUri());
+        assertEquals("direct://cool", e2.getEndpoint().getEndpointUri());
+        assertEquals("direct://start", e3.getEndpoint().getEndpointUri());
+        assertEquals("log://foo", e4.getEndpoint().getEndpointUri());
+        assertEquals("log://foo", e5.getEndpoint().getEndpointUri());
+        assertEquals("direct://bar", e6.getEndpoint().getEndpointUri());
+        assertEquals("direct://bar", e7.getEndpoint().getEndpointUri());
+        assertEquals("mock://result", e8.getEndpoint().getEndpointUri());
+        assertEquals("mock://result", e9.getEndpoint().getEndpointUri());
+        assertEquals("direct://start", e10.getEndpoint().getEndpointUri());
+        assertEquals("direct://foo", e11.getEndpoint().getEndpointUri());
     }
 
     @Override

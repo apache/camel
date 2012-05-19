@@ -413,6 +413,34 @@ public final class EventHelper {
         }
     }
 
+    public static void notifyExchangeSending(CamelContext context, Exchange exchange, Endpoint endpoint) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return;
+        }
+
+        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
+                continue;
+            }
+
+            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createExchangeSendingEvent(exchange, endpoint);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
     public static void notifyExchangeSent(CamelContext context, Exchange exchange, Endpoint endpoint, long timeTaken) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event

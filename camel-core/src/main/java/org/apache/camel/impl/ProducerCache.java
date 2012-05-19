@@ -219,6 +219,9 @@ public class ProducerCache extends ServiceSupport {
         }
 
         try {
+            if (exchange != null) {
+                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+            }
             // invoke the callback
             answer = callback.doInProducer(producer, exchange, pattern);
         } catch (Throwable e) {
@@ -280,6 +283,9 @@ public class ProducerCache extends ServiceSupport {
         final StopWatch watch = exchange != null ? new StopWatch() : null;
 
         try {
+            if (exchange != null) {
+                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+            }
             // invoke the callback
             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(producer);
             sync = producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {
@@ -347,6 +353,7 @@ public class ProducerCache extends ServiceSupport {
                 // send the exchange using the processor
                 StopWatch watch = new StopWatch();
                 try {
+                    EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
                     // ensure we run in an unit of work
                     Producer target = new UnitOfWorkProducer(producer);
                     target.process(exchange);

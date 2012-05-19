@@ -54,7 +54,7 @@ public class PublishEventNotifierToRouteTest extends ContextTestSupport {
     }
 
     public void testExchangeFailed() throws Exception {
-        getMockEndpoint("mock:event").expectedMessageCount(4);
+        getMockEndpoint("mock:event").expectedMinimumMessageCount(4);
 
         try {
             template.sendBody("direct:fail", "Hello World");

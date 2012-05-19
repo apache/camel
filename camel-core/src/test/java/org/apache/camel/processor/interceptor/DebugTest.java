@@ -156,7 +156,7 @@ public class DebugTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(7, logs.size());
+        assertEquals(10, logs.size());
 
         // remove the breakpoint
         context.getDebugger().removeBreakpoint(breakpoint);
