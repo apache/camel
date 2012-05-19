@@ -117,7 +117,7 @@ public class InterceptSendToEndpoint implements Endpoint {
             public void process(Exchange exchange) throws Exception {
                 // process the detour so we do the detour routing
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", new Object[]{getEndpointUri(), detour, exchange});
+                    LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", new Object[]{getEndpoint(), detour, exchange});
                 }
                 // add header with the real endpoint uri
                 exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
@@ -130,7 +130,7 @@ public class InterceptSendToEndpoint implements Endpoint {
 
                 // Decide whether to continue or not; similar logic to the Pipeline
                 // check for error if so we should break out
-                if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpointUri(), LOG)) {
+                if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpoint(), LOG)) {
                     return;
                 }
 
@@ -153,7 +153,7 @@ public class InterceptSendToEndpoint implements Endpoint {
                     // route to original destination
                     producer.process(exchange);
                 } else {
-                    LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpointUri(), exchange);
+                    LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpoint(), exchange);
                 }
             }
 

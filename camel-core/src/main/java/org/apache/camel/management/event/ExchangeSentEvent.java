@@ -47,7 +47,7 @@ public class ExchangeSentEvent extends AbstractExchangeEvent {
 
     @Override
     public String toString() {
-        return getExchange().getExchangeId() + " exchange " + getExchange() + " sent to: " + endpoint.getEndpointUri() + " took: " + timeTaken + " ms.";
+        return getExchange().getExchangeId() + " exchange " + getExchange() + " sent to: " + endpoint + " took: " + timeTaken + " ms.";
     }
 
 }

@@ -312,7 +312,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             }
             manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
+            LOG.warn("Could not register Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
         }
     }
 
@@ -326,7 +326,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
             unmanageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not unregister Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
+            LOG.warn("Could not unregister Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
         }
     }
 

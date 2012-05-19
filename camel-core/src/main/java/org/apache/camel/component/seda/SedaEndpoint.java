@@ -42,6 +42,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * An implementation of the <a
@@ -125,7 +126,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         if (size > 1) {
             if (multicastExecutor == null) {
                 // create multicast executor as we need it when we have more than 1 processor
-                multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, getEndpointUri() + "(multicast)");
+                multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
             }
             // create list of consumers to multicast to
             List<Processor> processors = new ArrayList<Processor>(size);

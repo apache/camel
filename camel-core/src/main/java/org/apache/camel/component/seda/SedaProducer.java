@@ -27,6 +27,7 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * @version 
@@ -104,7 +105,7 @@ public class SedaProducer extends DefaultAsyncProducer {
 
                 @Override
                 public String toString() {
-                    return "onDone at [" + endpoint.getEndpointUri() + "]";
+                    return "onDone at endpoint: " + endpoint;
                 }
             });
 

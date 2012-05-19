@@ -70,12 +70,12 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     @Override
     public String toString() {
-        return "WireTap[" + destination.getEndpointUri() + "]";
+        return "WireTap[" + destination + "]";
     }
 
     @Override
     public String getTraceLabel() {
-        return "wireTap(" + destination.getEndpointUri() + ")";
+        return "wireTap(" + destination + ")";
     }
 
     public void process(Exchange exchange) throws Exception {
