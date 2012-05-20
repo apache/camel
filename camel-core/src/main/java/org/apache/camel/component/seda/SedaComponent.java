@@ -53,7 +53,7 @@ public class SedaComponent extends DefaultComponent {
         return defaultConcurrentConsumers;
     }
 
-    public synchronized BlockingQueue<Exchange> createQueue(String uri, Map<String, Object> parameters) {
+    public synchronized BlockingQueue<Exchange> getOrCreateQueue(String uri, Integer size) {
         String key = getQueueKey(uri);
 
         QueueReference ref = getQueues().get(key);
@@ -65,7 +65,6 @@ public class SedaComponent extends DefaultComponent {
 
         // create queue
         BlockingQueue<Exchange> queue;
-        Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
         if (size != null && size > 0) {
             queue = new LinkedBlockingQueue<Exchange>(size);
         } else {
@@ -96,7 +95,8 @@ public class SedaComponent extends DefaultComponent {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
                     + maxConcurrentConsumers + " was " + consumers);
         }
-        SedaEndpoint answer = new SedaEndpoint(uri, this, createQueue(uri, parameters), consumers);
+        Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
+        SedaEndpoint answer = new SedaEndpoint(uri, this, getOrCreateQueue(uri, size), consumers);
         answer.configureProperties(parameters);
         return answer;
     }
