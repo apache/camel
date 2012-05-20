@@ -1091,6 +1091,23 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("foo\\${header.foo}", "foo\\abc");
     }
 
+    public void testJSonLike() throws Exception {
+        exchange.getIn().setBody("Something");
+
+        assertExpression("{\n\"data\": \"${body}\"\n}", "{\n\"data\": \"Something\"\n}");
+    }
+
+    public void testFunctionEnds() throws Exception {
+        exchange.getIn().setBody("Something");
+
+        assertExpression("{{", "{{");
+        assertExpression("}}", "}}");
+        assertExpression("{{}}", "{{}}");
+        assertExpression("{{foo}}", "{{foo}}");
+        assertExpression("{{${body}}}", "{{Something}}");
+        assertExpression("{{${body}-${body}}}", "{{Something-Something}}");
+    }
+
     protected String getLanguageName() {
         return "simple";
     }
