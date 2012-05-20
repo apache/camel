@@ -94,13 +94,25 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     public synchronized BlockingQueue<Exchange> getQueue() {
         if (queue == null) {
-            if (size > 0) {
-                queue = new LinkedBlockingQueue<Exchange>(size);
+            // prefer to lookup queue from component, so if this endpoint is re-created or re-started
+            // then the existing queue from the component can be used, so new producers and consumers
+            // can use the already existing queue referenced from the component
+            if (getComponent() != null) {
+                queue = getComponent().getOrCreateQueue(getEndpointUri(), getSize());
             } else {
-                queue = new LinkedBlockingQueue<Exchange>();
+                // fallback and create queue (as this endpoint has no component)
+                queue = createQueue();
             }
         }
         return queue;
+    }
+
+    protected BlockingQueue<Exchange> createQueue() {
+        if (size > 0) {
+            return new LinkedBlockingQueue<Exchange>(size);
+        } else {
+            return new LinkedBlockingQueue<Exchange>();
+        }
     }
 
     protected synchronized MulticastProcessor getConsumerMulticastProcessor() throws Exception {
@@ -363,6 +375,10 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             getCamelContext().getExecutorServiceManager().shutdownNow(multicastExecutor);
             multicastExecutor = null;
         }
+
+        // clear queue, as we are shutdown, so if re-created then the queue must be updated
+        queue = null;
+
         super.doShutdown();
     }
 }
