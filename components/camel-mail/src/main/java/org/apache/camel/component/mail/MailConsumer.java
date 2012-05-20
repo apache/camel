@@ -275,7 +275,26 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 }
             }
 
-            if (getEndpoint().getConfiguration().isDelete()) {
+            org.apache.camel.Message in = exchange.getIn();
+            MailConfiguration config = getEndpoint().getConfiguration();
+            // header values override configuration values
+            String copyTo = in.getHeader("copyTo", config.getCopyTo(), String.class);
+            boolean delete = in.getHeader("delete", config.isDelete(), boolean.class);
+
+            // Copy message into different imap folder if asked
+            if (config.getProtocol().equals(MailUtils.PROTOCOL_IMAP) || config.getProtocol().equals(MailUtils.PROTOCOL_IMAPS)) {
+                if (copyTo != null) {
+                    LOG.trace("IMAP message needs to be copied to {}", copyTo);
+                    Folder destFolder = store.getFolder(copyTo);
+                    if (!destFolder.exists()) {
+                        destFolder.create(Folder.HOLDS_MESSAGES);
+                    }
+                    folder.copyMessages(new Message[]{mail}, destFolder);
+                    LOG.trace("IMAP message {} copied to {}", mail, copyTo);
+                }
+            }
+
+            if (delete) {
                 LOG.trace("Exchange processed, so flagging message as DELETED");
                 mail.setFlag(Flags.Flag.DELETED, true);
             } else {
@@ -283,8 +302,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 mail.setFlag(Flags.Flag.SEEN, true);
             }
         } catch (MessagingException e) {
-            LOG.warn("Error occurred during flagging message as DELETED/SEEN", e);
-            exchange.setException(e);
+            getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
         }
     }
 

@@ -48,6 +48,7 @@ public class MailConfiguration implements Cloneable {
     private String from = MailConstants.MAIL_DEFAULT_FROM;
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
     private boolean delete;
+    private String copyTo;
     private boolean unseen = true;
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
@@ -474,5 +475,13 @@ public class MailConfiguration implements Cloneable {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public String getCopyTo() {
+        return copyTo;
+    }
+
+    public void setCopyTo(String copyTo) {
+        this.copyTo = copyTo;
     }
 }
