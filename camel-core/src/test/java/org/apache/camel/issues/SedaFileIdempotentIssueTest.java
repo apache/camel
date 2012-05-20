@@ -85,7 +85,7 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
         assertEquals("No file should be reported consumed", 0, repository.getCache().keySet().size());
     }
 
-    private class ShutDown implements Processor {
+    protected class ShutDown implements Processor {
 
         @Override
         public void process(final Exchange exchange) throws Exception {
