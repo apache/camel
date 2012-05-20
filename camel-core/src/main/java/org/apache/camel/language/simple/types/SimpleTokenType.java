@@ -62,6 +62,13 @@ public class SimpleTokenType {
     }
 
     /**
+     * Whether the type is escape
+     */
+    public boolean isEscape() {
+        return type == TokenType.escape;
+    }
+
+    /**
      * Whether the type is single quote
      */
     public boolean isSingleQuote() {
