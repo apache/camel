@@ -30,6 +30,11 @@ public class FileConsumerPollManyFilesTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        // do not test on windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         deleteDirectory("target/manyfiles");
         super.setUp();
 
@@ -45,6 +50,11 @@ public class FileConsumerPollManyFilesTest extends ContextTestSupport {
     }
 
     public void testPollManyFiles() throws Exception {
+        // do not test on windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

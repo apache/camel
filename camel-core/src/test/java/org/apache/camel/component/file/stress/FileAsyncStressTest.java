@@ -33,6 +33,11 @@ public class FileAsyncStressTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        // do not test on windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         super.setUp();
         deleteDirectory("target/filestress");
         for (int i = 0; i < files; i++) {
@@ -41,6 +46,11 @@ public class FileAsyncStressTest extends ContextTestSupport {
     }
 
     public void testAsyncStress() throws Exception {
+        // do not test on windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         // start route when all the files have been written
         context.startRoute("foo");
 

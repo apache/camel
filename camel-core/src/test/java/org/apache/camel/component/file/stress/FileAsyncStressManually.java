@@ -30,6 +30,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileAsyncStressManually extends ContextTestSupport {
 
     public void testAsyncStress() throws Exception {
+        // do not test on windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         // test by starting the unit test FileAsyncStressFileDropper in another JVM
 
         MockEndpoint mock = getMockEndpoint("mock:result");
