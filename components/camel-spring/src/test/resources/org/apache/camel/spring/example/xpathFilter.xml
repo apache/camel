@@ -27,7 +27,9 @@
     <route>
       <from uri="direct:start"/>
       <filter>
-        <xpath>/person[@name='James']</xpath>
+        <xpath>
+          /person[@name='James']
+        </xpath>
         <to uri="mock:result"/>
       </filter>
     </route>
