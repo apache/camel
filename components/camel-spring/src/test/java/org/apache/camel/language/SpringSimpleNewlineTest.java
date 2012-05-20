@@ -14,19 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.simple.types;
+package org.apache.camel.language;
 
-/**
- * Classifications of known token types.
- */
-public enum TokenType {
+import org.apache.camel.spring.SpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-    whiteSpace, character,
-    booleanValue, numericValue, nullValue,
-    singleQuote, doubleQuote,
-    escape,
-    functionStart, functionEnd,
-    binaryOperator, unaryOperator, logicalOperator,
-    eol
+public class SpringSimpleNewlineTest extends SpringTestSupport {
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/language/springSimpleNewline.xml");
+    }
+    
+    public void testSimpleNewline() {
+        String result = template.requestBody("direct:start", "Camel", String.class);
+        assertEquals("Body is\non new line Camel\n", result);
+    }
 
 }

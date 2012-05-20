@@ -1088,7 +1088,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testSlashBeforeHeader() throws Exception {
         assertExpression("foo/${header.foo}", "foo/abc");
-        assertExpression("foo\\${header.foo}", "foo\\abc");
+        assertExpression("foo\\\\${header.foo}", "foo\\abc");
     }
 
     public void testJSonLike() throws Exception {
@@ -1106,6 +1106,26 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("{{foo}}", "{{foo}}");
         assertExpression("{{${body}}}", "{{Something}}");
         assertExpression("{{${body}-${body}}}", "{{Something-Something}}");
+    }
+
+    public void testEscape() throws Exception {
+        exchange.getIn().setBody("Something");
+
+        // slash foo
+        assertExpression("\\\\foo", "\\foo");
+
+        assertExpression("\\n${body}", "\nSomething");
+        assertExpression("\\t${body}", "\tSomething");
+        assertExpression("\\r${body}", "\rSomething");
+        assertExpression("\\n\\r${body}", "\n\rSomething");
+        assertExpression("\\n${body}\\n", "\nSomething\n");
+        assertExpression("\\t${body}\\t", "\tSomething\t");
+        assertExpression("\\r${body}\\r", "\rSomething\r");
+        assertExpression("\\n\\r${body}\\n\\r", "\n\rSomething\n\r");
+
+        assertExpression("\\$${body}", "$Something");
+        assertExpression("\\$\\{${body}\\}", "${Something}");
+        assertExpression("\\$\\{body\\}", "${body}");
     }
 
     protected String getLanguageName() {

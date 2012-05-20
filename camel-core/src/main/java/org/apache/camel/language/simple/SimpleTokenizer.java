@@ -42,6 +42,7 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "true"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "false"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.nullValue, "null"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.escape, "\\"));
 
         // binary operators
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "=="));
@@ -161,6 +162,30 @@ public final class SimpleTokenizer {
             }
             if (sb.length() > 0) {
                 return new SimpleToken(new SimpleTokenType(TokenType.numericValue, sb.toString()), index);
+            }
+        }
+
+        boolean escapeAllowed = acceptType(TokenType.escape, filters);
+        if (escapeAllowed) {
+            StringBuilder sb = new StringBuilder();
+            char ch = expression.charAt(index);
+            boolean escaped = '\\' == ch;
+            if (escaped && index < expression.length()) {
+                // grab next character to escape
+                char next = expression.charAt(++index);
+                // special for new line, tabs and carriage return
+                if ('n' == next) {
+                    sb.append("\n");
+                } else if ('t' == next) {
+                    sb.append("\t");
+                } else if ('r' == next) {
+                    sb.append("\r");
+                } else {
+                    // append the next
+                    sb.append(next);
+                }
+                // force 2 as length
+                return new SimpleToken(new SimpleTokenType(TokenType.character, sb.toString()), index, 2);
             }
         }
 
