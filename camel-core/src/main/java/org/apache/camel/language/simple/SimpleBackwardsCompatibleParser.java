@@ -43,12 +43,12 @@ public final class SimpleBackwardsCompatibleParser {
         // static methods
     }
 
-    public static Expression parseExpression(String expression) {
-        return doParseExpression(expression);
+    public static Expression parseExpression(String expression, boolean allowEscape) {
+        return doParseExpression(expression, allowEscape);
     }
 
-    public static Predicate parsePredicate(String expression) {
-        Expression answer = doParseExpression(expression);
+    public static Predicate parsePredicate(String expression, boolean allowEscape) {
+        Expression answer = doParseExpression(expression, allowEscape);
         if (answer != null) {
             return ExpressionToPredicateAdapter.toPredicate(answer);
         } else {
@@ -56,10 +56,10 @@ public final class SimpleBackwardsCompatibleParser {
         }
     }
 
-    private static Expression doParseExpression(String expression) {
+    private static Expression doParseExpression(String expression, boolean allowEscape) {
         // should have no function tokens
         for (int i = 0; i < expression.length(); i++) {
-            SimpleToken token = SimpleTokenizer.nextToken(expression, i, TokenType.functionStart, TokenType.functionEnd);
+            SimpleToken token = SimpleTokenizer.nextToken(expression, i, allowEscape, TokenType.functionStart, TokenType.functionEnd);
             if (token.getType().getType() == TokenType.functionStart || token.getType().getType() == TokenType.functionEnd) {
                 return null;
             }
