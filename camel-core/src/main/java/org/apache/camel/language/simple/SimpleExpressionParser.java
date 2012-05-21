@@ -38,8 +38,13 @@ import org.apache.camel.language.simple.types.TokenType;
  */
 public class SimpleExpressionParser extends BaseSimpleParser {
 
+    @Deprecated
     public SimpleExpressionParser(String expression) {
-        super(expression);
+        super(expression, true);
+    }
+
+    public SimpleExpressionParser(String expression, boolean allowEscape) {
+        super(expression, allowEscape);
     }
 
     public Expression parseExpression() {

@@ -51,8 +51,13 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  */
 public class SimplePredicateParser extends BaseSimpleParser {
 
+    @Deprecated
     public SimplePredicateParser(String expression) {
-        super(expression);
+        super(expression, true);
+    }
+
+    public SimplePredicateParser(String expression, boolean allowEscape) {
+        super(expression, allowEscape);
     }
 
     public Predicate parsePredicate() {

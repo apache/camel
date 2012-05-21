@@ -44,9 +44,11 @@ public abstract class BaseSimpleParser {
     protected SimpleToken token;
     protected int previousIndex;
     protected int index;
+    protected boolean allowEscape = true;
 
-    protected BaseSimpleParser(String expression) {
+    protected BaseSimpleParser(String expression, boolean allowEscape) {
         this.expression = expression;
+        this.allowEscape = allowEscape;
     }
 
     /**
@@ -55,7 +57,7 @@ public abstract class BaseSimpleParser {
      */
     protected void nextToken() {
         if (index < expression.length()) {
-            SimpleToken next = SimpleTokenizer.nextToken(expression, index);
+            SimpleToken next = SimpleTokenizer.nextToken(expression, index, allowEscape);
             // add token
             tokens.add(next);
             token = next;
@@ -76,7 +78,7 @@ public abstract class BaseSimpleParser {
      */
     protected void nextToken(TokenType... filter) {
         if (index < expression.length()) {
-            SimpleToken next = SimpleTokenizer.nextToken(expression, index, filter);
+            SimpleToken next = SimpleTokenizer.nextToken(expression, index, allowEscape, filter);
             // add token
             tokens.add(next);
             token = next;
