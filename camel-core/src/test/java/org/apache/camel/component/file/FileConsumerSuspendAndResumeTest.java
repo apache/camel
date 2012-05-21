@@ -47,8 +47,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-
-        Thread.sleep(250);
+        oneExchangeDone.matchesMockWaitTime();
 
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/suspended/").getAbsoluteFile().list();
