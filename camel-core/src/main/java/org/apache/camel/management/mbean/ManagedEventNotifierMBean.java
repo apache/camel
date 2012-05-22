@@ -54,4 +54,7 @@ public interface ManagedEventNotifierMBean {
 
     void setIgnoreExchangeSentEvents(boolean ignoreExchangeSentEvents);
 
+    boolean isIgnoreExchangeSendingEvents();
+
+    void setIgnoreExchangeSendingEvents(boolean ignoreExchangeSendingEvents);
 }

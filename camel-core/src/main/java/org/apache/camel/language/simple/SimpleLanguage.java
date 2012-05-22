@@ -93,7 +93,8 @@ public class SimpleLanguage implements Language, IsSingleton {
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
 
-    private Class<?> resultType;
+    protected Class<?> resultType;
+    protected boolean allowEscape = true;
 
     /**
      * Default constructor.
@@ -109,6 +110,14 @@ public class SimpleLanguage implements Language, IsSingleton {
         this.resultType = resultType;
     }
 
+    public boolean isAllowEscape() {
+        return allowEscape;
+    }
+
+    public void setAllowEscape(boolean allowEscape) {
+        this.allowEscape = allowEscape;
+    }
+
     @Override
     public boolean isSingleton() {
         // we cannot be singleton as we have state
@@ -122,10 +131,10 @@ public class SimpleLanguage implements Language, IsSingleton {
         expression = expression.trim();
         // support old simple language syntax
         @SuppressWarnings("deprecation")
-        Predicate answer = SimpleBackwardsCompatibleParser.parsePredicate(expression);
+        Predicate answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
         if (answer == null) {
             // use the new parser
-            SimplePredicateParser parser = new SimplePredicateParser(expression);
+            SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape);
             answer = parser.parsePredicate();
         }
         return answer;
@@ -138,10 +147,10 @@ public class SimpleLanguage implements Language, IsSingleton {
         expression = expression.trim();
         // support old simple language syntax
         @SuppressWarnings("deprecation")
-        Expression answer = SimpleBackwardsCompatibleParser.parseExpression(expression);
+        Expression answer = SimpleBackwardsCompatibleParser.parseExpression(expression, allowEscape);
         if (answer == null) {
             // use the new parser
-            SimpleExpressionParser parser = new SimpleExpressionParser(expression);
+            SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape);
             answer = parser.parseExpression();
         }
         if (resultType != null) {

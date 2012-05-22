@@ -14,28 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management.event;
-
-import org.apache.camel.Exchange;
+package org.apache.camel.language.simple;
 
 /**
- * Event after an {@link Exchange} has been created.
- * <p/>
- * <b>Notice:</b> This event may be emitted after an {@link ExchangeSendingEvent}, and
- * therefore its not guaranteed this event is the first event being send for a given {@link Exchange}
- * lifecycle.
  *
- * @version 
  */
-public class ExchangeCreatedEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = -19248832613958243L;
+public class FileLanguage extends SimpleLanguage {
 
-    public ExchangeCreatedEvent(Exchange source) {
-        super(source);
+    public FileLanguage() {
+        // do not allow escaping, as Windows uses \ as path separator
+        setAllowEscape(false);
     }
 
     @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange created: " + getExchange();
+    public void setAllowEscape(boolean allowEscape) {
+        if (allowEscape) {
+            throw new IllegalArgumentException("File language does not allow escape");
+        }
+        this.allowEscape = allowEscape;
     }
 }

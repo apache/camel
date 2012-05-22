@@ -34,11 +34,21 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        // do not test on windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         super.setUp();
         deleteDirectory("target/filestress");
     }
 
     public void testDropInNewFiles() throws Exception {
+        // do not test on windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(250);
 
@@ -56,7 +66,6 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
                     .setBody(constant("Hello World"))
                     .to("file:target/filestress")
                     .to("mock:result");
-
             }
         };
     }

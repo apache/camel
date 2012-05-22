@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
@@ -37,34 +33,8 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        File file = new File("./target/jettyport.txt");
-        file = file.getAbsoluteFile();
-
-        if (!file.exists()) {
-            // start from somewhere in the 23xxx range
-            port = AvailablePortFinder.getNextAvailable(23000);
-        } else {
-            // read port number from file
-            String s = IOConverter.toString(file, null);
-            port = Integer.parseInt(s);
-            // use next port
-            port++;
-        }
-
-    }
-
-    @AfterClass
-    public static void savePort() throws Exception {
-        File file = new File("./target/jettyport.txt");
-        file = file.getAbsoluteFile();
-
-        // save to file, do not append
-        FileOutputStream fos = new FileOutputStream(file, false);
-        try {
-            fos.write(String.valueOf(port).getBytes());
-        } finally {
-            fos.close();
-        }
+        // start from somewhere in the 23xxx range
+        port = AvailablePortFinder.getNextAvailable(23000);
     }
 
     @Override

@@ -104,7 +104,7 @@ public class SedaProducer extends DefaultAsyncProducer {
 
                 @Override
                 public String toString() {
-                    return "onDone at [" + endpoint.getEndpointUri() + "]";
+                    return "onDone at endpoint: " + endpoint;
                 }
             });
 
@@ -124,10 +124,10 @@ public class SedaProducer extends DefaultAsyncProducer {
                 }
                 if (!done) {
                     exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+                    // remove timed out Exchange from queue
+                    queue.remove(copy);
                     // count down to indicate timeout
                     latch.countDown();
-                    // remove   timed out Exchange from queue
-                    queue.remove(copy);
                 }
             } else {
                 if (log.isTraceEnabled()) {

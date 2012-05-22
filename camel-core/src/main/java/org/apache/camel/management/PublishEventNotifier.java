@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * A {@link org.apache.camel.spi.EventNotifier} which publishes the {@link EventObject} to some
@@ -122,7 +123,7 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
 
     @Override
     public String toString() {
-        return "PublishEventNotifier[" + (endpoint != null ? endpoint.getEndpointUri() : endpointUri) + "]";
+        return "PublishEventNotifier[" + (endpoint != null ? endpoint : URISupport.sanitizeUri(endpointUri)) + "]";
     }
 
 }

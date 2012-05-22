@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.processor.async;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -24,34 +24,49 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.management.event.ExchangeSendingEvent;
+import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * @version 
  */
-public class RemoveEventNotifierTest extends ContextTestSupport {
+public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<EventObject>();
-    private EventNotifier notifier;
+    private final List<EventObject> events = new ArrayList<EventObject>();
 
-    @Override
-    public void setUp() throws Exception {
-        events.clear();
-        super.setUp();
+    public void testAsyncEndpointEventNotifier() throws Exception {
+        getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
+
+        String reply = template.requestBody("direct:start", "Hello Camel", String.class);
+        assertEquals("Bye Camel", reply);
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(8, events.size());
+
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(1));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(2));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(3));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(4));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
-
-        notifier = new EventNotifierSupport() {
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(EventObject event) throws Exception {
+                System.out.println(event);
                 events.add(event);
             }
 
             public boolean isEnabled(EventObject event) {
-                return true;
+                return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent;
             }
 
             @Override
@@ -61,28 +76,8 @@ public class RemoveEventNotifierTest extends ContextTestSupport {
             @Override
             protected void doStop() throws Exception {
             }
-        };
-        context.getManagementStrategy().addEventNotifier(notifier);
-
+        });
         return context;
-    }
-
-    public void testRemove() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBody("direct:start", "Hello World");
-        assertMockEndpointsSatisfied();
-
-        assertEquals(11, events.size());
-
-        // remove and we should not get new events
-        context.getManagementStrategy().removeEventNotifier(notifier);
-
-        resetMocks();
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBody("direct:start", "Bye World");
-        assertMockEndpointsSatisfied();
-
-        assertEquals(11, events.size());
     }
 
     @Override
@@ -90,7 +85,12 @@ public class RemoveEventNotifierTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("mock:result");
+                context.addComponent("async", new MyAsyncComponent());
+
+                from("direct:start")
+                        .to("mock:before")
+                        .to("async:bye:camel?delay=250")
+                        .to("mock:result");
             }
         };
     }

@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -37,8 +38,13 @@ import org.apache.camel.language.simple.types.TokenType;
  */
 public class SimpleExpressionParser extends BaseSimpleParser {
 
+    @Deprecated
     public SimpleExpressionParser(String expression) {
-        super(expression);
+        super(expression, true);
+    }
+
+    public SimpleExpressionParser(String expression, boolean allowEscape) {
+        super(expression, allowEscape);
     }
 
     public Expression parseExpression() {
@@ -92,6 +98,9 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     protected void parseAndCreateAstModel() {
         // we loop the tokens and create a sequence of ast nodes
 
+        // counter to keep track of number of functions in the tokens
+        AtomicInteger functions = new AtomicInteger();
+
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {
             // break if eol
@@ -100,7 +109,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             }
 
             // create a node from the token
-            SimpleNode node = createNode(token);
+            SimpleNode node = createNode(token, functions);
             if (node != null) {
                 // a new token was created so the current image token need to be added first
                 if (imageToken != null) {
@@ -127,11 +136,15 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
     }
 
-    private SimpleNode createNode(SimpleToken token) {
+    private SimpleNode createNode(SimpleToken token, AtomicInteger functions) {
         // expression only support functions and unary operators
         if (token.getType().isFunctionStart()) {
+            // starting a new function
+            functions.incrementAndGet();
             return new SimpleFunctionStart(token);
-        } else if (token.getType().isFunctionEnd()) {
+        } else if (functions.get() > 0 && token.getType().isFunctionEnd()) {
+            // there must be a start function already, to let this be a end function
+            functions.decrementAndGet();
             return new SimpleFunctionEnd(token);
         } else if (token.getType().isUnary()) {
             return new UnaryExpression(token);

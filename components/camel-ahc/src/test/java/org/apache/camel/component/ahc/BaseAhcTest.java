@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.ahc;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -32,7 +29,6 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.SSLContextServerParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 public abstract class BaseAhcTest extends CamelTestSupport {
@@ -43,34 +39,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        File file = new File("./target/ahcport.txt");
-        file = file.getAbsoluteFile();
-
-        if (!file.exists()) {
-            // start from somewhere in the 24xxx range
-            port = AvailablePortFinder.getNextAvailable(24000);
-        } else {
-            // read port number from file
-            String s = IOConverter.toString(file, null);
-            port = Integer.parseInt(s);
-            // use next port
-            port++;
-        }
-
-    }
-
-    @AfterClass
-    public static void savePort() throws Exception {
-        File file = new File("./target/ahcport.txt");
-        file = file.getAbsoluteFile();
-
-        // save to file, do not append
-        FileOutputStream fos = new FileOutputStream(file, false);
-        try {
-            fos.write(String.valueOf(port).getBytes());
-        } finally {
-            fos.close();
-        }
+        port = AvailablePortFinder.getNextAvailable(24000);
     }
 
     @Override
@@ -168,7 +137,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         return "ahc:" + getProtocol() + "://localhost:{{port}}/foo";
     }
 
-    protected int getNextPort() {
+    protected synchronized int getNextPort() {
         port = AvailablePortFinder.getNextAvailable(port + 1);
         return port;
     }

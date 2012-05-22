@@ -80,4 +80,8 @@ public interface EventNotifier {
 
     void setIgnoreExchangeSentEvents(boolean ignoreExchangeSentEvents);
 
+    boolean isIgnoreExchangeSendingEvents();
+
+    void setIgnoreExchangeSendingEvents(boolean ignoreExchangeSendingEvents);
+
 }

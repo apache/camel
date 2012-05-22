@@ -14,28 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management.event;
+package org.apache.camel.issues;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Event after an {@link Exchange} has been created.
- * <p/>
- * <b>Notice:</b> This event may be emitted after an {@link ExchangeSendingEvent}, and
- * therefore its not guaranteed this event is the first event being send for a given {@link Exchange}
- * lifecycle.
  *
- * @version 
  */
-public class ExchangeCreatedEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = -19248832613958243L;
-
-    public ExchangeCreatedEvent(Exchange source) {
-        super(source);
-    }
+public class SedaFileIdempotentNoTimeoutIssueTest extends SedaFileIdempotentIssueTest {
 
     @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange created: " + getExchange();
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(RuntimeException.class).process(new ShutDown());
+
+                from("file:target/inbox?idempotent=true&noop=true&idempotentRepository=#repo&delay=1000")
+                    .to("log:begin")
+                    .inOut("seda:process?timeout=-1");
+
+                from("seda:process")
+                    .delay(1000)
+                    .throwException(new RuntimeException("Testing with exception"));
+            }
+        };
     }
+
 }

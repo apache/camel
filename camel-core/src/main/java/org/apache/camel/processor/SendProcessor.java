@@ -32,6 +32,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     }
 
     public String getTraceLabel() {
-        return destination.getEndpointUri();
+        return URISupport.sanitizeUri(destination.getEndpointUri());
     }
 
     public void process(final Exchange exchange) throws Exception {
@@ -158,7 +159,8 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
         if (lookup instanceof InterceptSendToEndpoint) {
             if (log.isDebugEnabled()) {
-                log.debug("Intercepted sending to {} -> {}", destination.getEndpointUri(), lookup.getEndpointUri());
+                log.debug("Intercepted sending to {} -> {}",
+                        URISupport.sanitizeUri(destination.getEndpointUri()), URISupport.sanitizeUri(lookup.getEndpointUri()));
             }
             destination = lookup;
         }

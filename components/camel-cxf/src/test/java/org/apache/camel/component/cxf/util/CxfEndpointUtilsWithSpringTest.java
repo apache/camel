@@ -71,18 +71,18 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
                      endpoint.getServiceClass().getName());
     }
     
-    @Test
-    public void testGetDataFormat() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "?dataFormat=MESSAGE");
-        assertEquals("We should get the Message DataFormat", DataFormat.MESSAGE, endpoint.getDataFormat());
+    public char sepChar() {
+        return '?';
     }
+
 
     @Test
     public void testGetProperties() throws Exception {
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)createEndpoint(getEndpointURI());
         QName service = endpoint.getServiceName();
         assertEquals("We should get the right service name", SERVICE_NAME, service);
-        assertEquals("The cxf endpoint's DataFromat should be MESSAGE", DataFormat.MESSAGE, endpoint.getDataFormat());
+        assertEquals("The cxf endpoint's DataFromat should be RAW", DataFormat.RAW,
+                     endpoint.getDataFormat().dealias());
         
         endpoint = (CxfSpringEndpoint)createEndpoint("cxf:bean:testPropertiesEndpoint");
         service = CxfEndpointUtils.getServiceName(endpoint);

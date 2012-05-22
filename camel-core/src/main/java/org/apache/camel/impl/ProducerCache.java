@@ -187,7 +187,7 @@ public class ProducerCache extends ServiceSupport {
     }
 
     /**
-     * Sends an exchange to an endpoint using a supplied callback
+     * Sends an exchange to an endpoint using a supplied callback, using the synchronous processing.
      * <p/>
      * If an exception was thrown during processing, it would be set on the given Exchange
      *
@@ -196,6 +196,7 @@ public class ProducerCache extends ServiceSupport {
      * @param pattern   the exchange pattern, can be <tt>null</tt>
      * @param callback  the callback
      * @return the response from the callback
+     * @see #doInAsyncProducer(org.apache.camel.Endpoint, org.apache.camel.Exchange, org.apache.camel.ExchangePattern, org.apache.camel.AsyncCallback, org.apache.camel.AsyncProducerCallback)
      */
     public <T> T doInProducer(Endpoint endpoint, Exchange exchange, ExchangePattern pattern, ProducerCallback<T> callback) {
         T answer = null;
@@ -219,6 +220,9 @@ public class ProducerCache extends ServiceSupport {
         }
 
         try {
+            if (exchange != null) {
+                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+            }
             // invoke the callback
             answer = callback.doInProducer(producer, exchange, pattern);
         } catch (Throwable e) {
@@ -280,6 +284,9 @@ public class ProducerCache extends ServiceSupport {
         final StopWatch watch = exchange != null ? new StopWatch() : null;
 
         try {
+            if (exchange != null) {
+                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+            }
             // invoke the callback
             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(producer);
             sync = producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {
@@ -347,6 +354,7 @@ public class ProducerCache extends ServiceSupport {
                 // send the exchange using the processor
                 StopWatch watch = new StopWatch();
                 try {
+                    EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
                     // ensure we run in an unit of work
                     Producer target = new UnitOfWorkProducer(producer);
                     target.process(exchange);

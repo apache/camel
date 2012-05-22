@@ -555,15 +555,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         final Exchange exchange = pair.getExchange();
         Processor processor = pair.getProcessor();
-        Producer producer = pair.getProducer();
+        final Producer producer = pair.getProducer();
 
         TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
 
         // compute time taken if sending to another endpoint
-        StopWatch watch = null;
-        if (producer != null) {
-            watch = new StopWatch();
-        }
+        final StopWatch watch = producer != null ? new StopWatch() : null;
 
         try {
             // prepare tracing starting from a new block
@@ -571,6 +568,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 traced.pushBlock();
             }
 
+            if (producer != null) {
+                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+            }
             // let the prepared process it, remember to begin the exchange pair
             AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
             pair.begin();
@@ -578,6 +578,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 public void done(boolean doneSync) {
                     // we are done with the exchange pair
                     pair.done();
+
+                    // okay we are done, so notify the exchange was sent
+                    if (producer != null) {
+                        long timeTaken = watch.stop();
+                        Endpoint endpoint = producer.getEndpoint();
+                        // emit event that the exchange was sent to the endpoint
+                        EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
+                    }
 
                     // we only have to handle async completion of the routing slip
                     if (doneSync) {
@@ -673,12 +681,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             if (traced != null) {
                 traced.popBlock();
             }
-            if (producer != null) {
-                long timeTaken = watch.stop();
-                Endpoint endpoint = producer.getEndpoint();
-                // emit event that the exchange was sent to the endpoint
-                EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
-            }
         }
 
         return sync;
@@ -703,10 +705,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 traced.pushBlock();
             }
 
+            if (producer != null) {
+                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+            }
             // let the prepared process it, remember to begin the exchange pair
-            // we invoke it synchronously as parallel async routing is too hard
             AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
             pair.begin();
+            // we invoke it synchronously as parallel async routing is too hard
             AsyncProcessorHelper.process(async, exchange);
         } finally {
             pair.done();
@@ -718,6 +723,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 long timeTaken = watch.stop();
                 Endpoint endpoint = producer.getEndpoint();
                 // emit event that the exchange was sent to the endpoint
+                // this is okay to do here in the finally block, as the processing is not using the async routing engine
+                //( we invoke it synchronously as parallel async routing is too hard)
                 EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
             }
         }

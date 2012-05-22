@@ -30,7 +30,6 @@ import javax.xml.ws.handler.MessageContext.Scope;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
@@ -180,7 +179,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         requestContext.put(DataFormat.class.getName(), dataFormat);
 
         // don't let CXF ClientImpl close the input stream 
-        if (dataFormat == DataFormat.MESSAGE) {
+        if (dataFormat.dealias() == DataFormat.RAW) {
             cxfExchange.put(Client.KEEP_CONDUIT_ALIVE, true);
             LOG.trace("Set CXF Exchange property: {}={}", Client.KEEP_CONDUIT_ALIVE, true);
         }
@@ -270,7 +269,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     /**
      * Get the parameters for the web service operation
      */
-    private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
+    @SuppressWarnings("deprecation")
+    private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) 
+        throws org.apache.camel.InvalidPayloadException {
       
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
@@ -302,7 +303,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         } else if (endpoint.getDataFormat() == DataFormat.PAYLOAD) {
             params = new Object[1];
             params[0] = exchange.getIn().getMandatoryBody(CxfPayload.class);
-        } else if (endpoint.getDataFormat() == DataFormat.MESSAGE) {
+        } else if (endpoint.getDataFormat().dealias() == DataFormat.RAW) {
             params = new Object[1];
             params[0] = exchange.getIn().getMandatoryBody(InputStream.class);
         }

@@ -29,6 +29,7 @@ import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
+import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.processor.SendProcessor;
@@ -90,23 +91,25 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(8, events.size());
+        assertEquals(10, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(1));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(2));
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(3));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(4));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(3));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
 
-        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(5));
+        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(7));
         assertEquals("should be DLC", true, e.isDeadLetterChannel());
         SendProcessor send = assertIsInstanceOf(SendProcessor.class, e.getFailureHandler());
         assertEquals("mock://dead", send.getDestination().getEndpointUri());
 
         // dead letter channel will mark the exchange as completed
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(8));
         // and the last event should be the direct:start
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
-        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(7);
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(9));
+        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(9);
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 
@@ -125,21 +128,23 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(8, events.size());
+        assertEquals(10, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(1));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(2));
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(3));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(4));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(3));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
+        assertIsInstanceOf(ExchangeSendingEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
 
-        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(5));
+        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(7));
         assertEquals("should NOT be DLC", false, e.isDeadLetterChannel());
 
         // onException will handle the exception
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(8));
         // and the last event should be the direct:start
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
-        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(7);
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(9));
+        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(9);
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 

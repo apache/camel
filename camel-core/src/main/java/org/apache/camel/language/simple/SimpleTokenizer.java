@@ -42,6 +42,7 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "true"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "false"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.nullValue, "null"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.escape, "\\"));
 
         // binary operators
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "=="));
@@ -115,11 +116,12 @@ public final class SimpleTokenizer {
      *
      * @param expression  the input expression
      * @param index       the current index
+     * @param allowEscape whether to allow escapes
      * @param filter      defines the accepted token types to be returned (character is always used as fallback)
      * @return the created token, will always return a token
      */
-    public static SimpleToken nextToken(String expression, int index, TokenType... filter) {
-        return doNextToken(expression, index, filter);
+    public static SimpleToken nextToken(String expression, int index, boolean allowEscape, TokenType... filter) {
+        return doNextToken(expression, index, allowEscape, filter);
     }
 
     /**
@@ -127,13 +129,14 @@ public final class SimpleTokenizer {
      *
      * @param expression  the input expression
      * @param index       the current index
+     * @param allowEscape whether to allow escapes
      * @return the created token, will always return a token
      */
-    public static SimpleToken nextToken(String expression, int index) {
-        return doNextToken(expression, index);
+    public static SimpleToken nextToken(String expression, int index, boolean allowEscape) {
+        return doNextToken(expression, index, allowEscape);
     }
 
-    private static SimpleToken doNextToken(String expression, int index, TokenType... filters) {
+    private static SimpleToken doNextToken(String expression, int index, boolean allowEscape, TokenType... filters) {
 
         boolean numericAllowed = acceptType(TokenType.numericValue, filters);
         if (numericAllowed) {
@@ -161,6 +164,30 @@ public final class SimpleTokenizer {
             }
             if (sb.length() > 0) {
                 return new SimpleToken(new SimpleTokenType(TokenType.numericValue, sb.toString()), index);
+            }
+        }
+
+        boolean escapeAllowed = allowEscape && acceptType(TokenType.escape, filters);
+        if (escapeAllowed) {
+            StringBuilder sb = new StringBuilder();
+            char ch = expression.charAt(index);
+            boolean escaped = '\\' == ch;
+            if (escaped && index < expression.length()) {
+                // grab next character to escape
+                char next = expression.charAt(++index);
+                // special for new line, tabs and carriage return
+                if ('n' == next) {
+                    sb.append("\n");
+                } else if ('t' == next) {
+                    sb.append("\t");
+                } else if ('r' == next) {
+                    sb.append("\r");
+                } else {
+                    // append the next
+                    sb.append(next);
+                }
+                // force 2 as length
+                return new SimpleToken(new SimpleTokenType(TokenType.character, sb.toString()), index, 2);
             }
         }
 

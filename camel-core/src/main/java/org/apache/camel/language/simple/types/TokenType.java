@@ -24,6 +24,7 @@ public enum TokenType {
     whiteSpace, character,
     booleanValue, numericValue, nullValue,
     singleQuote, doubleQuote,
+    escape,
     functionStart, functionEnd,
     binaryOperator, unaryOperator, logicalOperator,
     eol

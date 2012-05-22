@@ -164,7 +164,16 @@ public interface EventFactory {
     EventObject createExchangeRedeliveryEvent(Exchange exchange, int attempt);
 
     /**
-     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has completely been sent to the endpoint.
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} is about to be sent to the endpoint (eg before).
+     *
+     * @param exchange  the exchange
+     * @param endpoint  the destination
+     * @return the created event
+     */
+    EventObject createExchangeSendingEvent(Exchange exchange, Endpoint endpoint);
+
+    /**
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has completely been sent to the endpoint (eg after).
      *
      * @param exchange  the exchange
      * @param endpoint  the destination

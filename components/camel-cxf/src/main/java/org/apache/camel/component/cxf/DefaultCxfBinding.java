@@ -52,7 +52,6 @@ import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.frontend.MethodDispatcher;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.DOMUtils;
@@ -188,8 +187,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (boi != null) {
             Service service = cxfExchange.get(Service.class); 
             if (service != null) {
-                MethodDispatcher md = (MethodDispatcher)service
-                    .get(MethodDispatcher.class.getName());
+                @SuppressWarnings("deprecation")
+                org.apache.cxf.frontend.MethodDispatcher md 
+                    = (org.apache.cxf.frontend.MethodDispatcher)service
+                        .get(org.apache.cxf.frontend.MethodDispatcher.class.getName());
                 if (md != null) {
                     method = md.getMethod(boi);
                 }
@@ -615,7 +616,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 Map<String, String> nsMap = new HashMap<String, String>();
                 answer = new CxfPayload<SoapHeader>(headers, getPayloadBodyElements(message, nsMap), nsMap);
                 
-            } else if (dataFormat == DataFormat.MESSAGE) {
+            } else if (dataFormat.dealias() == DataFormat.RAW) {
                 answer = message.getContent(InputStream.class);
             }
 
@@ -719,7 +720,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             answer = out.getBody();
         } else if (dataFormat == DataFormat.PAYLOAD) {
             answer = out.getBody(CxfPayload.class);
-        } else if (dataFormat == DataFormat.MESSAGE) {
+        } else if (dataFormat.dealias() == DataFormat.RAW) {
             answer = out.getBody(InputStream.class);
         }
         return answer;

@@ -70,12 +70,23 @@ public class SplitTokenizerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    public void testSplitTokenizerF() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("<person name=\"Claus\"/>", "<person>James</person>", "<person>Willem</person>");
+
+        String xml = "<persons><person/><person name=\"Claus\"/><person>James</person><person>Willem</person></persons>";
+        template.sendBody("direct:f", xml);
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                
                 from("direct:a")
                     .split().tokenize(",")
                         .to("mock:split");
@@ -91,10 +102,19 @@ public class SplitTokenizerTest extends ContextTestSupport {
                 from("direct:d")
                     .split().tokenizePair("[", "]", true)
                         .to("mock:split");
-
+                
                 from("direct:e")
                     .split().tokenizeXML("person")
-                        .to("mock:split");
+                    .to("mock:split");
+
+                from("direct:f")
+                    .split().xpath("//person")
+                        // To test the body is not empty 
+                        // it will call the ObjectHelper.evaluateValuePredicate()
+                        .filter().simple("${body}")
+                            .to("mock:split");
+                
+              
             }
         };
     }

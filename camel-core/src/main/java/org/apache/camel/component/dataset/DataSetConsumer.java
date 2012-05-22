@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.CamelLogger;
+import org.apache.camel.util.URISupport;
 
 /**
  * DataSet consumer.
@@ -106,7 +107,9 @@ public class DataSetConsumer extends DefaultConsumer {
     }
 
     protected ThroughputLogger createReporter() {
-        CamelLogger logger = new CamelLogger(endpoint.getEndpointUri());
+        // must sanitize uri to avoid logging sensitive information
+        String uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
+        CamelLogger logger = new CamelLogger(uri);
         ThroughputLogger answer = new ThroughputLogger(logger, (int) endpoint.getDataSet().getReportCount());
         answer.setAction("Sent");
         return answer;

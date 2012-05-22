@@ -398,7 +398,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         answer.add(oldEndpoint);
                         endpoints.remove(entry.getKey());
                     } catch (Exception e) {
-                        log.warn("Endpoint '{}' matching pattern '{}' should be removed, but could not be stopped. Remove ignored...");
+                        log.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint);
                     }
                 }
             }

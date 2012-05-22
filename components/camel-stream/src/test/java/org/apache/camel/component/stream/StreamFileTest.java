@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
@@ -79,4 +80,28 @@ public class StreamFileTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    public void testFileProducer() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(3);
+        
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").routeId("produce")
+                    .to("stream:file?fileName=target/stream/StreamFileTest.txt&autoCloseCount=2");
+                from("file://target/stream?fileName=StreamFileTest.txt&noop=true").routeId("consume").autoStartup(false)
+                    .split().tokenize("\n").to("mock:result");
+            }
+        });
+        context.start();
+
+        template.sendBody("direct:start", "Hadrian");
+        template.sendBody("direct:start", "Apache");
+        template.sendBody("direct:start", "Camel");
+        
+        context.startRoute("consume");
+        assertMockEndpointsSatisfied();
+        context.stop();
+    }
 }

@@ -214,7 +214,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
 
     @Override
     public String toString() {
-        return "Enrich[" + producer.getEndpoint().getEndpointUri() + "]";
+        return "Enrich[" + producer.getEndpoint() + "]";
     }
 
     protected void doStart() throws Exception {

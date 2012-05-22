@@ -70,7 +70,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
     @Override
     public String toString() {
-        return "SedaConsumer[" + endpoint.getEndpointUri() + "]";
+        return "SedaConsumer[" + endpoint + "]";
     }
 
     public Endpoint getEndpoint() {

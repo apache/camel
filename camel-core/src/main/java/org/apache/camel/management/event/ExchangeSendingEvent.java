@@ -20,34 +20,35 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 /**
- * Event for <b>after</b> an {@link Exchange} has been sent to an {@link Endpoint}.
+ * Event for <b>before</b> sending an {@link Exchange} to an {@link Endpoint}.
+ * <p/>
+ * This event is emitted before attempting to send the {@link Exchange} to an {@link Endpoint}.
+ * There is still some internal processing occurring before the actual sending takes places, and
+ * therefore its not a 100% guarantee that the sending actually happens, as there may cause an
+ * internal error before.
+ * <p/>
+ * The {@link ExchangeSentEvent} is an event which is emitted <b>after</b> the sending is done.
  *
- * @see ExchangeSendingEvent
- * @version
+ * @see ExchangeSentEvent
+ * @version 
  */
-public class ExchangeSentEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = -19248832613958123L;
+public class ExchangeSendingEvent extends AbstractExchangeEvent {
+    private static final long serialVersionUID = -19248832613958122L;
 
     private final Endpoint endpoint;
-    private final long timeTaken;
 
-    public ExchangeSentEvent(Exchange source, Endpoint endpoint, long timeTaken) {
+    public ExchangeSendingEvent(Exchange source, Endpoint endpoint) {
         super(source);
         this.endpoint = endpoint;
-        this.timeTaken = timeTaken;
     }
 
     public Endpoint getEndpoint() {
         return endpoint;
     }
 
-    public long getTimeTaken() {
-        return timeTaken;
-    }
-
     @Override
     public String toString() {
-        return getExchange().getExchangeId() + " exchange " + getExchange() + " sent to: " + endpoint + " took: " + timeTaken + " ms.";
+        return getExchange().getExchangeId() + " exchange " + getExchange() + " sending to: " + endpoint;
     }
 
 }

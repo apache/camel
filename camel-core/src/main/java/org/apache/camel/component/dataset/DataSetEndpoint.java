@@ -29,6 +29,7 @@ import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,7 +202,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected ThroughputLogger createReporter() {
-        CamelLogger logger = new CamelLogger(this.getEndpointUri());
+        // must sanitize uri to avoid logging sensitive information
+        String uri = URISupport.sanitizeUri(getEndpointUri());
+        CamelLogger logger = new CamelLogger(uri);
         ThroughputLogger answer = new ThroughputLogger(logger, (int) this.getDataSet().getReportCount());
         answer.setAction("Received");
         return answer;

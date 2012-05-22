@@ -35,6 +35,7 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
     private boolean ignoreExchangeCompletedEvent;
     private boolean ignoreExchangeFailedEvents;
     private boolean ignoreExchangeRedeliveryEvents;
+    private boolean ignoreExchangeSendingEvents;
     private boolean ignoreExchangeSentEvents;
 
     public boolean isIgnoreCamelContextEvents() {
@@ -107,5 +108,13 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
 
     public void setIgnoreExchangeSentEvents(boolean ignoreExchangeSentEvents) {
         this.ignoreExchangeSentEvents = ignoreExchangeSentEvents;
+    }
+
+    public boolean isIgnoreExchangeSendingEvents() {
+        return ignoreExchangeSendingEvents;
+    }
+
+    public void setIgnoreExchangeSendingEvents(boolean ignoreExchangeSendingEvents) {
+        this.ignoreExchangeSendingEvents = ignoreExchangeSendingEvents;
     }
 }

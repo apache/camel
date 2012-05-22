@@ -158,6 +158,11 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("backup-${bean:generator.generateFilename}.txt", "backup-generatorbybean.txt");
     }
 
+    public void testNoEscapeAllowed() throws Exception {
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
+        assertExpression("target\\newdir\\onwindows\\${file:name}", "target\\newdir\\onwindows\\hello.txt");
+    }
+
     public Exchange createExchange() {
         // create the file
         String uri = "file://target/filelanguage?fileExist=Override";

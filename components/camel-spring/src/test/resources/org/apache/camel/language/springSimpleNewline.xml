@@ -22,18 +22,15 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="direct:start"/>
-      <filter>
-        <xpath>
-          /person[@name='James']
-        </xpath>
-        <to uri="mock:result"/>
-      </filter>
-    </route>
+      <route>
+	      <from uri="direct:start"/>
+        <transform>
+          <simple>
+            Body is\non new line ${body}\n
+          </simple>
+        </transform>
+      </route>
   </camelContext>
-  <!-- END SNIPPET: example -->
 
 </beans>

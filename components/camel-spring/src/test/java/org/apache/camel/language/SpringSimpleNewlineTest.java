@@ -14,28 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management.event;
+package org.apache.camel.language;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.spring.SpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Event after an {@link Exchange} has been created.
- * <p/>
- * <b>Notice:</b> This event may be emitted after an {@link ExchangeSendingEvent}, and
- * therefore its not guaranteed this event is the first event being send for a given {@link Exchange}
- * lifecycle.
- *
- * @version 
- */
-public class ExchangeCreatedEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = -19248832613958243L;
-
-    public ExchangeCreatedEvent(Exchange source) {
-        super(source);
-    }
+public class SpringSimpleNewlineTest extends SpringTestSupport {
 
     @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange created: " + getExchange();
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/language/springSimpleNewline.xml");
     }
+    
+    public void testSimpleNewline() {
+        String result = template.requestBody("direct:start", "Camel", String.class);
+        assertEquals("Body is\non new line Camel\n", result);
+    }
+
 }
