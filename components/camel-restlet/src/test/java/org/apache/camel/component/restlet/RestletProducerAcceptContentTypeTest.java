@@ -19,35 +19,28 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
 
 /**
- * @version 
+ * Unit test for sending "Accept" HTTP header
  */
-public class RestletPostXmlRouteAndJSONAsReturnTest extends RestletTestSupport {
-    
-    private static final String REQUEST_MESSAGE = 
-        "<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>";
-    private static final String REQUEST_MESSAGE_WITH_XML_TAG = 
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + REQUEST_MESSAGE;
-
+public class RestletProducerAcceptContentTypeTest extends RestletPostXmlRouteAndJSONAsReturnTest {
     private String url = "restlet:http://localhost:" + portNum + "/users?restletMethod=POST";
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                // enable POST support
-                from(url)
-                    .process(new Processor() {
+            public void configure() throws Exception {                
+                
+                from("jetty://http://localhost:" + + portNum + "/users")
+                    .process(new Processor() {                    
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);
                             assertNotNull(body);
-                            assertTrue("Get a wrong request message", body.indexOf(REQUEST_MESSAGE) >= 0);
                             exchange.getOut().setBody("{OK}");
                             exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                            assertEquals("application/json", exchange.getIn().getHeader("Accept", String.class));
+                            
                         }
                     });
 
@@ -56,22 +49,15 @@ public class RestletPostXmlRouteAndJSONAsReturnTest extends RestletTestSupport {
             }
         };
     }
-
-    @Test
-    public void testPostXml() throws Exception {
-        postRequestMessage(REQUEST_MESSAGE);
-    }
     
-    @Test
-    public void testPostXmlWithXmlTag() throws Exception {
-        postRequestMessage(REQUEST_MESSAGE_WITH_XML_TAG);
-    }
-    
+    @Override
     protected void postRequestMessage(final String message) throws Exception {
         Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(message);
                 exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+                
             }
         });
 
@@ -81,5 +67,4 @@ public class RestletPostXmlRouteAndJSONAsReturnTest extends RestletTestSupport {
         String s = exchange.getOut().getBody(String.class);
         assertEquals("{OK}", s);
     }
-
 }

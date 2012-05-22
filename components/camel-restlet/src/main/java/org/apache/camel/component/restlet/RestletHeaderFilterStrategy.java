@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.restlet;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 /**
@@ -32,5 +33,10 @@ public class RestletHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // filter headers used internally by this component
         getOutFilter().add(RestletConstants.RESTLET_LOGIN);
         getOutFilter().add(RestletConstants.RESTLET_PASSWORD);
+        
+        // The "CamelAcceptContentType" header is not added to the outgoing HTTP 
+        // headers but it will be going out as "Accept.
+        getOutFilter().add(Exchange.ACCEPT_CONTENT_TYPE);
+
     }
 }

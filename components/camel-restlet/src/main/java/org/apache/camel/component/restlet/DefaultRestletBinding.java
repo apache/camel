@@ -39,6 +39,7 @@ import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
+import org.restlet.data.Preference;
 import org.restlet.data.Status;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.InputRepresentation;
@@ -153,6 +154,12 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         } else {
             request.setEntity(body, mediaType);
         }
+        
+        MediaType acceptedMediaType = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.class);
+        if (acceptedMediaType != null) {
+            request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
+        }
+
     }
 
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) {
