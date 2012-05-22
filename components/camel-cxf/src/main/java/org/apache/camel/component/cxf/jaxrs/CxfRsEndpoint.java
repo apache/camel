@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -151,8 +152,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             cfb.setAddress(address);
         }
         if (getResourceClasses() != null && !getResourceClasses().isEmpty()) {
-            // TODO: a bit odd that this endpoint supports multiple resource classes, but cfb only supports one class
             cfb.setResourceClass(getResourceClasses().get(0));
+            cfb.getServiceFactory().setResourceClasses(getResourceClasses());
         }
         if (isLoggingFeatureEnabled()) {
             if (getLoggingSizeLimit() > 0) {
@@ -230,7 +231,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setResourceClasses(List<Class<?>> resourceClasses) {
         this.resourceClasses = resourceClasses;
     }
-
+    public void setResourceClasses(Class<?>... classes) {
+        setResourceClasses(Arrays.asList(classes));
+    }
+    
     public void setAddress(String address) {
         this.address = address;
     }
