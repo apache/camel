@@ -41,7 +41,7 @@ import org.junit.Test;
 
 public class HdfsProducerFileWriteTest extends CamelTestSupport {
     //Hadoop doesn't run on IBM JDK
-    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
+    private static final boolean SKIP = isJavaVendor("IBM");
 
     @Before
     public void setUp() throws Exception {
@@ -49,6 +49,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             return;
         }
         super.setUp();
+        deleteDirectory("target/test");
     }
     
     @Test
@@ -184,7 +185,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             return;
         }
 
-        final Path file = new Path(new File("target/test/test-camel-simple-write-file1").getAbsolutePath());
+        final Path file = new Path(new File("target/test/test-camel-simple-write-file3").getAbsolutePath());
         deleteDirectory("target/file-batch4");
 
         context.addRoutes(new RouteBuilder() {
@@ -210,7 +211,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + file.toUri());
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
-        MapFile.Reader reader = new MapFile.Reader(fs1, "target/test/test-camel-simple-write-file1", conf);
+        MapFile.Reader reader = new MapFile.Reader(fs1, "target/test/test-camel-simple-write-file3", conf);
         for (int i = 0; i < 10; ++i) {
             Text key = new Text("CIAO" + i);
             BytesWritable value = new BytesWritable();
@@ -228,7 +229,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             return;
         }
 
-        final Path file = new Path(new File("target/test/test-camel-simple-write-file1").getAbsolutePath());
+        final Path file = new Path(new File("target/test/test-camel-simple-write-file4").getAbsolutePath());
         deleteDirectory("target/file-batch5");
 
         context.addRoutes(new RouteBuilder() {
