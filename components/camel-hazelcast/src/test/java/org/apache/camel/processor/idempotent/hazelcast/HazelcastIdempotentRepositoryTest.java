@@ -39,9 +39,11 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
         repo = new HazelcastIdempotentRepository(hazelcastInstance, "myRepo");
         super.setUp();
         cache.clear();
+        repo.start();
     }
 
     public void tearDown() throws Exception {
+        repo.stop();
         super.tearDown();
         cache.clear();
         hazelcastInstance.getLifecycleService().shutdown();
