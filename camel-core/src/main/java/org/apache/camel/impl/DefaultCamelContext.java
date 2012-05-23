@@ -1473,7 +1473,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // start management strategy before lifecycles are started
-        getManagementStrategy().start();
+        ManagementStrategy managementStrategy = getManagementStrategy();
+        // inject CamelContext if aware
+        if (managementStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) managementStrategy).setCamelContext(this);
+        }
+        ServiceHelper.startService(managementStrategy);
 
         // start lifecycle strategies
         ServiceHelper.startServices(lifecycleStrategies);

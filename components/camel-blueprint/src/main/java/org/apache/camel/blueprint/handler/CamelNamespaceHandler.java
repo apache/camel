@@ -45,7 +45,6 @@ import org.apache.aries.blueprint.mutable.MutablePassThroughMetadata;
 import org.apache.aries.blueprint.mutable.MutableRefMetadata;
 import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.blueprint.BlueprintCamelContext;
@@ -521,15 +520,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         public Object beforeInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
             injectFields(bean, beanName);
             injectMethods(bean, beanName);
-            if (bean instanceof CamelContextAware) {
-                ((CamelContextAware) bean).setCamelContext(getCamelContext());
-            }
             return bean;
-        }
-
-        @Override
-        public CamelContext getCamelContext() {
-            return (CamelContext) blueprintContainer.getComponentInstance(camelContextName);
         }
 
         /**
@@ -616,14 +607,14 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
         }
 
-        public Object afterInit(Object o, String s, BeanCreator beanCreator, BeanMetadata beanMetadata) {
-            return o;
+        public Object afterInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
+            return bean;
         }
 
-        public void beforeDestroy(Object o, String s) {
+        public void beforeDestroy(Object bean, String beanName) {
         }
 
-        public void afterDestroy(Object o, String s) {
+        public void afterDestroy(Object bean, String beanName) {
         }
 
     }
