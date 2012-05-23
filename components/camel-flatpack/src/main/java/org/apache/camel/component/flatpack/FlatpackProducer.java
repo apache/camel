@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.flatpack;
 
+import net.sf.flatpack.DataError;
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.Parser;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
- * @version 
+ * @version
  */
 class FlatpackProducer extends DefaultProducer {
     private FixedLengthEndpoint endpoint;
@@ -32,9 +33,16 @@ class FlatpackProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Parser parser = endpoint.createParser(exchange);
         DataSet dataSet = parser.parse();
+
+        if (dataSet.getErrorCount() > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("Flatpack has found %s errors while parsing", dataSet.getErrorCount()));
+            throw new FlatpackException(sb.toString(), exchange, dataSet.getErrors());
+        }
 
         if (endpoint.isSplitRows()) {
             int counter = 0;
