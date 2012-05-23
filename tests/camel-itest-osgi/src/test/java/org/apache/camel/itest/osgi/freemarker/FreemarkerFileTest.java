@@ -33,7 +33,7 @@ public class FreemarkerFileTest extends FreemarkerTest {
         deleteDirectory("mydir");
         createDirectory("mydir");
 
-        File src = new File("../../src/test/resources/org/apache/camel/itest/osgi/freemarker/example.ftl");
+        File src = new File("../../../src/test/resources/org/apache/camel/itest/osgi/freemarker/example.ftl");
         File dest = new File("mydir/example.ftl");
         FileInputStream fis = new FileInputStream(src);
         FileOutputStream fos = new FileOutputStream(dest, false);

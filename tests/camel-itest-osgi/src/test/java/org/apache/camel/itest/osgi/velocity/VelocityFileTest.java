@@ -33,7 +33,7 @@ public class VelocityFileTest extends VelocityTest {
         deleteDirectory("mydir");
         createDirectory("mydir");
 
-        File src = new File("../../src/test/resources/org/apache/camel/itest/osgi/velocity/example.vm");
+        File src = new File("../../../src/test/resources/org/apache/camel/itest/osgi/velocity/example.vm");
         File dest = new File("mydir/example.vm");
         FileInputStream fis = new FileInputStream(src);
         FileOutputStream fos = new FileOutputStream(dest, false);

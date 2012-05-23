@@ -137,7 +137,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             dir = new File(workDir);
         }
         createDirectory(workDir);
-        System.out.println("Using working directory: " + workDir);
+        System.out.println("*** Using working directory: " + workDir + " ***");
 
         Option[] options = combine(
             // Set the karaf environment with some customer configuration
