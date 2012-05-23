@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -34,11 +35,13 @@ import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,7 +238,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
      * @param exchange the exchange
      * @throws Exception can be thrown if processing of the exchange failed
      */
-    protected void sendToConsumers(Exchange exchange) throws Exception {
+    protected void sendToConsumers(final Exchange exchange) throws Exception {
         int size = endpoint.getConsumers().size();
 
         // if there are multiple consumers then multicast to them
@@ -249,7 +252,10 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Multicasting to {} consumers for Exchange: {}", endpoint.getConsumers().size(), exchange);
             }
-           
+
+            // handover completions, as we need to done this when the multicast is done
+            final List<Synchronization> completions = exchange.handoverCompletions();
+
             // use a multicast processor to process it
             MulticastProcessor mp = endpoint.getConsumerMulticastProcessor();
             ObjectHelper.notNull(mp, "ConsumerMulticastProcessor", this);
@@ -257,7 +263,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             // and use the asynchronous routing engine to support it
             AsyncProcessorHelper.process(mp, exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
-                    // noop
+                    // done the uow on the copy
+                    UnitOfWorkHelper.doneSynchronizations(exchange, completions, LOG);
                 }
             });
         } else {
