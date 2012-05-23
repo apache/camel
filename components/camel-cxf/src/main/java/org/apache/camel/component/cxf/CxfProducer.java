@@ -306,6 +306,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         } else if (endpoint.getDataFormat().dealias() == DataFormat.RAW) {
             params = new Object[1];
             params[0] = exchange.getIn().getMandatoryBody(InputStream.class);
+        } else if (endpoint.getDataFormat().dealias() == DataFormat.CXF_MESSAGE) {
+            params = new Object[1];
+            params[0] = exchange.getIn().getBody();
         }
 
         if (LOG.isTraceEnabled()) {

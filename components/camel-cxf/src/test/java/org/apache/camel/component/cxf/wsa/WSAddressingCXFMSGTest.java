@@ -14,22 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.component.cxf.wsa;
 
-package org.apache.camel.component.cxf.feature;
+import org.springframework.test.context.ContextConfiguration;
 
-/**
- * <p>
- * MessageDataFormatFeature sets up the CXF endpoint interceptor for handling the
- * Message in Message data format.  Only the interceptors of these phases are
- * <b>preserved</b>:
- * </p>
- * <p>
- * In phases: {Phase.RECEIVE , Phase.INVOKE, Phase.POST_INVOKE}
- * </p>
- * <p>
- * Out phases: {Phase.PREPARE_SEND, Phase.WRITE, Phase.SEND, Phase.PREPARE_SEND_ENDING}
- * </p>
- */
-@Deprecated
-public class MessageDataFormatFeature extends RAWDataFormatFeature {
+@ContextConfiguration
+public class WSAddressingCXFMSGTest extends WSAddressingTest {
+
 }
