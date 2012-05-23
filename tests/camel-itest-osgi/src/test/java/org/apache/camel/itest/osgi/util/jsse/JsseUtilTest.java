@@ -33,7 +33,6 @@ public class JsseUtilTest extends OSGiIntegrationSpringTestSupport {
     
     @Test
     public void testSslContextParameters() throws Exception {
-        
         SSLContextParameters scp = this.applicationContext.getBean(SSLContextParameters.class);
         
         assertEquals("TLS", scp.getSecureSocketProtocol());
@@ -62,23 +61,19 @@ public class JsseUtilTest extends OSGiIntegrationSpringTestSupport {
     
     @Test
     public void testKeyStoreParametersResourceLoading() throws Exception {
-        
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setPassword("changeit");
         ksp.setResource("org/apache/camel/itest/osgi/util/jsse/localhost.ks");
-        
-        
+
         KeyStore ks = ksp.createKeyStore();
         assertNotNull(ks.getCertificate("server"));
-        
-        
+
         URL resourceUrl = this.getClass().getResource("/org/apache/camel/itest/osgi/util/jsse/localhost.ks");
         ksp.setResource(resourceUrl.toExternalForm());
         ks = ksp.createKeyStore();
         assertNotNull(ks.getCertificate("server"));
-        
-        
-        File file = new File("../test-classes/org/apache/camel/itest/osgi/util/jsse/localhost.ks");
+
+        File file = new File("../../test-classes/org/apache/camel/itest/osgi/util/jsse/localhost.ks");
         ksp.setResource(file.getAbsolutePath());
         ks = ksp.createKeyStore();
         assertNotNull(ks.getCertificate("server"));
