@@ -264,7 +264,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             // and use the asynchronous routing engine to support it
             AsyncProcessorHelper.process(mp, exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
-                    // done the uow on the copy
+                    // done the uow on the completions
                     UnitOfWorkHelper.doneSynchronizations(exchange, completions, LOG);
                 }
             });
