@@ -16,6 +16,7 @@
  */
 package org.apache.camel.blueprint;
 
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -64,6 +65,18 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
     protected CamelContext getCamelContextWithId(String camelContextId) {
         if (blueprintContainer != null) {
             return (CamelContext) blueprintContainer.getComponentInstance(camelContextId);
+        }
+        return null;
+    }
+
+    @Override
+    protected CamelContext discoverDefaultCamelContext() {
+        if (blueprintContainer != null) {
+            Set<String> ids = BlueprintCamelContextLookupHelper.lookupBlueprintCamelContext(blueprintContainer);
+            if (ids.size() == 1) {
+                // there is only 1 id for a BlueprintCamelContext so fallback and use this
+                return getCamelContextWithId(ids.iterator().next());
+            }
         }
         return null;
     }

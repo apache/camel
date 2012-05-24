@@ -37,6 +37,14 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
 
     protected abstract CamelContext getCamelContextWithId(String camelContextId);
 
+    /**
+     * If no explicit camelContext or camelContextId has been set
+     * then try to discover a default {@link CamelContext} to use.
+     */
+    protected CamelContext discoverDefaultCamelContext() {
+        return null;
+    }
+
     public void afterPropertiesSet() throws Exception {
     }
 
@@ -46,6 +54,9 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     public CamelContext getCamelContext() {
         if (camelContext == null && camelContextId != null) {
             camelContext = getCamelContextWithId(camelContextId);
+        }
+        if (camelContext == null) {
+            camelContext = discoverDefaultCamelContext();
         }
         return camelContext;
     }
