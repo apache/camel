@@ -89,10 +89,18 @@ public final class GTaskTestUtils {
                     return TestConfig.getPort();
                 }
 
+                public String getHostName() {
+                    return "localhost";
+                }
+
                 public void waitForServerToStart() {
                 }
 
                 public boolean enforceApiDeadlines() {
+                    return false;
+                }
+
+                public boolean simulateProductionLatencies() {
                     return false;
                 }
             };
