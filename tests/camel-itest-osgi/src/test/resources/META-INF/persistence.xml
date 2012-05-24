@@ -37,7 +37,7 @@
       <property name="openjpa.ConnectionURL" value="jdbc:derby:target/derby;create=true"/>
       <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
-      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO, SQL=TRACE"/>
+      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO, SQL=INFO"/>
     </properties>
   </persistence-unit>
 </persistence>
