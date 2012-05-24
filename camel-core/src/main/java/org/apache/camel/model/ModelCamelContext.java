@@ -54,6 +54,10 @@ public interface ModelCamelContext extends CamelContext {
 
     /**
      * Adds a collection of route definitions to the context
+     * <p/>
+     * <b>Important: </b> Each route in the same {@link org.apache.camel.CamelContext} must have an <b>unique</b> route id.
+     * If you use the API from {@link org.apache.camel.CamelContext} or {@link org.apache.camel.model.ModelCamelContext} to add routes, then any
+     * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
      *
      * @param routeDefinitions the route(s) definition to add
      * @throws Exception if the route definitions could not be created for whatever reason
@@ -62,6 +66,10 @@ public interface ModelCamelContext extends CamelContext {
 
     /**
      * Add a route definition to the context
+     * <p/>
+     * <b>Important: </b> Each route in the same {@link org.apache.camel.CamelContext} must have an <b>unique</b> route id.
+     * If you use the API from {@link org.apache.camel.CamelContext} or {@link org.apache.camel.model.ModelCamelContext} to add routes, then any
+     * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
      *
      * @param routeDefinition the route definition to add
      * @throws Exception if the route definition could not be created for whatever reason
