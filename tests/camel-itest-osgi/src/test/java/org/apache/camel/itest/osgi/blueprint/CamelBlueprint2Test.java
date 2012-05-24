@@ -16,12 +16,9 @@
  */
 package org.apache.camel.itest.osgi.blueprint;
 
-import java.lang.reflect.Method;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,18 +37,6 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
  */
 @RunWith(JUnit4TestRunner.class)
 public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
-
-    @Test
-    public void testEndpointInjection() throws Exception {
-        getInstalledBundle("CamelBlueprintTestBundle10").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle10)", 10000);
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle10)", 10000);
-        Object producer = ctn.getComponentInstance("producer");
-        assertNotNull(producer);
-        assertEquals(TestProducer.class.getName(), producer.getClass().getName());
-        Method mth = producer.getClass().getMethod("getTestEndpoint");
-        assertNotNull(mth.invoke(producer));
-    }
 
     @Test
     public void testRouteContext() throws Exception {
@@ -93,54 +78,12 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
         assertEquals(1, ctx.getRoutes().size());
         assertSame(ctn.getComponentInstance("mycomp"), ctx.getComponent("mycomp"));
     }
-    
-    @Test
-    public void testJsseUtilNamespace() throws Exception {
-        getInstalledBundle("CamelBlueprintTestBundle18").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle18)", 10000);
-        
-        SSLContextParameters scp = (SSLContextParameters) ctn.getComponentInstance("sslContextParameters");
-        
-        assertEquals("TLS", scp.getSecureSocketProtocol());
-        
-        assertNotNull(scp.getKeyManagers());
-        assertEquals("changeit", scp.getKeyManagers().getKeyPassword());
-        assertNull(scp.getKeyManagers().getProvider());
-        assertNotNull(scp.getKeyManagers().getKeyStore());
-        assertNull(scp.getKeyManagers().getKeyStore().getType());
-        
-        assertNotNull(scp.getTrustManagers());
-        assertNull(scp.getTrustManagers().getProvider());
-        assertNotNull(scp.getTrustManagers().getKeyStore());
-        assertNull(scp.getTrustManagers().getKeyStore().getType());
-        
-        assertNull(scp.getSecureRandom());
-        
-        assertNull(scp.getClientParameters());
-        
-        assertNull(scp.getServerParameters());
-        
-        assertEquals("test", scp.getCamelContext().getName());
-        
-        assertNotNull(scp.getCamelContext());
-        assertNotNull(scp.getKeyManagers().getCamelContext());
-        assertNotNull(scp.getKeyManagers().getKeyStore().getCamelContext());
-        assertNotNull(scp.getTrustManagers().getCamelContext());
-        assertNotNull(scp.getTrustManagers().getKeyStore().getCamelContext());
-    }
 
     @Configuration
     public static Option[] configure() throws Exception {
 
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
-
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-10.xml"))
-                        .add(TestProducer.class)
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle10")
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build()).noStart(),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-11.xml"))
@@ -167,15 +110,7 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle15")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
-                        
-                bundle(newBundle()
-                       .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-18.xml"))
-                       .add(JsseUtilTester.class)
-                       .add("localhost.ks", OSGiBlueprintTestSupport.class.getResourceAsStream("/org/apache/camel/itest/osgi/util/jsse/localhost.ks"))
-                       .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle18")
-                       .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                       .build()).noStart(),
-                       
+
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb", "camel-jms"));
