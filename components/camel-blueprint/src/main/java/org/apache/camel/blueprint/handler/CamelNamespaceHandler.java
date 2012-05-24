@@ -526,9 +526,17 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             this.blueprintContainer = blueprintContainer;
         }
 
+        @Override
+        public CamelContext getCamelContext() {
+            if (blueprintContainer != null) {
+                CamelContext answer = (CamelContext) blueprintContainer.getComponentInstance(camelContextName);
+                return answer;
+            }
+            return null;
+        }
+
         public Object beforeInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
-            injectFields(bean, beanName);
-            injectMethods(bean, beanName);
+            // prefer to inject later in afterInit
             return bean;
         }
 
@@ -618,6 +626,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         public Object afterInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
             // we cannot inject CamelContextAware beans as the CamelContext may not be ready
+            injectFields(bean, beanName);
+            injectMethods(bean, beanName);
             return bean;
         }
 

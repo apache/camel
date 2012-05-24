@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.model.IdentifiedType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -52,8 +53,13 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     }
 
     public CamelContext getCamelContext() {
+        // when getting CamelContext then we assume it must exists
+
         if (camelContext == null && camelContextId != null) {
             camelContext = getCamelContextWithId(camelContextId);
+            if (camelContext == null) {
+                throw new IllegalStateException("Cannot find CamelContext with id: " + camelContextId);
+            }
         }
         if (camelContext == null) {
             camelContext = discoverDefaultCamelContext();
