@@ -99,7 +99,7 @@
     <httpclient4-version>4.1.3</httpclient4-version>
     <httpclient-version>3.1</httpclient-version>
     <icu4j-version>4.0.1</icu4j-version>
-    <jackson-version>1.9.5</jackson-version>
+    <jackson-version>1.9.7</jackson-version>
     <jackrabbit-version>2.2.12</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasypt-version>1.9.0</jasypt-version>
