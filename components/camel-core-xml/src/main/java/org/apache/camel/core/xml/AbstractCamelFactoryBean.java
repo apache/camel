@@ -53,8 +53,6 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     }
 
     public CamelContext getCamelContext() {
-        // when getting CamelContext then we assume it must exists
-
         if (camelContext == null && camelContextId != null) {
             camelContext = getCamelContextWithId(camelContextId);
             if (camelContext == null) {
