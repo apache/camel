@@ -47,8 +47,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     private static CountDownLatch latch = new CountDownLatch(10);
     private Properties originalValues = new Properties();
     private String pwd = "changeit";
-    private String uriConsumer;
-    private String uriProducer;
+    private String uri;
     private String server = "127.0.0.1";
     private int port = 8443;
 
@@ -58,8 +57,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
 
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
-        uriConsumer = "websocket://" + server + ":" + port + "/test?sslContextParametersRef=#sslContextParameters";
-        uriProducer = "websocket://" + server + ":" + port + "/test";
+        uri = "websocket://" + server + ":" + port + "/test?sslContextParametersRef=#sslContextParameters";
 
         super.setUp();
     }
@@ -180,12 +178,12 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from(uriConsumer)
+                from(uri)
                      .log(">>> Message received from WebSocket Client : ${body}")
                      .to("mock:client")
                      .loop(10)
                          .setBody().constant(">> Welcome on board!")
-                         .to(uriConsumer);
+                         .to(uri);
             }
         };
     }
