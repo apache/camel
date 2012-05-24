@@ -36,9 +36,6 @@
         <gae.application.name>replaceme</gae.application.name>
         <gae.consumer.key>replaceme</gae.consumer.key>
         <gae.consumer.secret>replaceme</gae.consumer.secret>
-
-        <!-- dependency versions -->
-        <gdata-version>1.41.1</gdata-version>
     </properties>
 
     <dependencies>
@@ -47,34 +44,14 @@
             <artifactId>camel-gae</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.appengine.orm</groupId>
-            <artifactId>datanucleus-appengine</artifactId>
-            <version>1.0.5</version>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-servlet_2.5_spec</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.gdata</groupId>
-            <artifactId>gdata-core</artifactId>
-            <version>${gdata-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gdata</groupId>
-            <artifactId>gdata-client</artifactId>
-            <version>${gdata-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gdata</groupId>
-            <artifactId>gdata-calendar</artifactId>
-            <version>${gdata-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gdata</groupId>
-            <artifactId>gdata-calendar-meta</artifactId>
-            <version>${gdata-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.common</groupId>
-            <artifactId>google-collect</artifactId>
-            <version>1.0</version>
+            <groupId>org.openengsb.wrapped</groupId>
+            <artifactId>com.google.gdata-calendar</artifactId>
+            <version>${google-gdata-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -132,19 +109,5 @@
             </resource>
         </resources>
     </build>
-
-    <repositories>
-        <repository>
-            <id>camel.internal.maven.repository</id>
-            <name>Camel Maven Repository</name>
-            <url>http://svn.apache.org/repos/asf/camel/m2-repo</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
 </project>
