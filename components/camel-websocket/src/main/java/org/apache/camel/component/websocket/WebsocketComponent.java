@@ -195,6 +195,8 @@ public class WebsocketComponent extends DefaultComponent {
                     connector = new SelectChannelConnector();
                 }
 
+                LOG.debug("Jetty Connector added : " + connector.getName());
+
                 if (port != null) {
                     connector.setPort(port);
                 } else {
@@ -242,6 +244,7 @@ public class WebsocketComponent extends DefaultComponent {
                 connectorRef = new ConnectorRef(server, connector, defaultServlet);
                 CONNECTORS.put(connectorKey, connectorRef);
 
+                LOG.debug("Jetty Server started for host : " + connector.getHost() + ", on port : " + connector.getPort());
                 server.start();
 
             } else {
@@ -417,6 +420,7 @@ public class WebsocketComponent extends DefaultComponent {
         WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync);
         servlets.put(pathSpec, servlet);
         handler.addServlet(new ServletHolder(servlet), pathSpec);
+        LOG.debug("WebSocket servlet added for the following path : " + pathSpec);
         return servlet;
     }
 

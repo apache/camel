@@ -42,6 +42,10 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         Message in = exchange.getIn();
         String message = in.getMandatoryBody(String.class);
 
+/*        if (!endpoint.isStarted()) {
+            endpoint.connect(this);
+        }*/
+
         if (isSendToAllSet(in)) {
             sendToAll(store, message, exchange);
         } else {
@@ -59,6 +63,19 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
 
     public WebsocketEndpoint getEndpoint() {
         return endpoint;
+    }
+
+
+    @Override
+    public void start() throws Exception {
+        endpoint.connect(this);
+        super.start();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        endpoint.disconnect(this);
+        super.stop();
     }
 
     boolean isSendToAllSet(Message in) {

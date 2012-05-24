@@ -33,8 +33,8 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
 
     @Override
     public void start() throws Exception {
-        super.start();
         endpoint.connect(this);
+        super.start();
     }
 
     @Override
@@ -48,6 +48,15 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
     }
 
     public void sendMessage(final String connectionKey, final String message) {
+
+/*        if (!endpoint.isStarted()) {
+            try {
+                endpoint.connect(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }*/
+
         final Exchange exchange = getEndpoint().createExchange();
 
         // set header and body
