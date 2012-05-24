@@ -36,10 +36,10 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
  * @version 
  */
 @RunWith(JUnit4TestRunner.class)
-@Ignore("Fix me")
 public class CamelBlueprint8Test extends OSGiBlueprintTestSupport {
 
     @Test
+    @Ignore("Fix me")
     public void testEndpointInjection() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle10").start();
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle10)", 10000);
@@ -91,12 +91,12 @@ public class CamelBlueprint8Test extends OSGiBlueprintTestSupport {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
 
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-10.xml"))
-                        .add(TestProducer.class)
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle10")
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build()).noStart(),
+//                bundle(newBundle()
+//                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-10.xml"))
+//                        .add(TestProducer.class)
+//                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle10")
+//                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+//                        .build()).noStart(),
 
 
                 bundle(newBundle()

@@ -321,6 +321,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setId(".camelBlueprint.factory." + id);
         factory2.setFactoryComponent(factory);
         factory2.setFactoryMethod("call");
+        factory2.setInitMethod("afterPropertiesSet");
+        factory2.setDestroyMethod("destroy");
+        factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
@@ -355,6 +358,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setId(".camelBlueprint.factory." + id);
         factory2.setFactoryComponent(factory);
         factory2.setFactoryMethod("call");
+        factory2.setInitMethod("afterPropertiesSet");
+        factory2.setDestroyMethod("destroy");
+        factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
@@ -389,6 +395,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setId(".camelBlueprint.factory." + id);
         factory2.setFactoryComponent(factory);
         factory2.setFactoryMethod("call");
+        factory2.setInitMethod("afterPropertiesSet");
+        factory2.setDestroyMethod("destroy");
+        factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
@@ -608,6 +617,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
 
         public Object afterInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
+            // we cannot inject CamelContextAware beans as the CamelContext may not be ready
             return bean;
         }
 

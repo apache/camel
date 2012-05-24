@@ -137,8 +137,6 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         return answer;
     }
 
-    protected abstract CamelContext getCamelContextWithId(String camelContextId);
-
     public Class<RedeliveryPolicy> getObjectType() {
         return RedeliveryPolicy.class;
     }
