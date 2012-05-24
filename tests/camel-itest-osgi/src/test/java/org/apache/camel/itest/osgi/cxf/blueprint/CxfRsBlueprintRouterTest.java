@@ -79,8 +79,12 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         try {
             HttpResponse response = httpclient.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
-            assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", 
-                         EntityUtils.toString(response.getEntity()));
+
+            // should either by John or Mary depending on PUT test executed first
+            String s = EntityUtils.toString(response.getEntity());
+            boolean isJohn = "{\"Customer\":{\"id\":123,\"name\":\"John\"}}".equals(s);
+            boolean isMary = "{\"Customer\":{\"id\":123,\"name\":\"Mary\"}}".equals(s);
+            assertTrue("Should be John or Mary", isJohn || isMary);
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
