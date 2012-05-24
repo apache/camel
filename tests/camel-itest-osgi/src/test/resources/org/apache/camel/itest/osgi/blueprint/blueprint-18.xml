@@ -23,7 +23,7 @@
       <argument ref="sslContextParameters"/>
     </bean>
     
-    <sslContextParameters xmlns="http://camel.apache.org/schema/blueprint"
+    <sslContextParameters xmlns="http://camel.apache.org/schema/blueprint" camelContextId="test"
       id="sslContextParameters"
       sessionTimeout="1"
       secureSocketProtocol="TLS">
