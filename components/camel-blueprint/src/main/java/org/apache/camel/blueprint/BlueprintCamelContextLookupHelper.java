@@ -39,19 +39,19 @@ public final class BlueprintCamelContextLookupHelper {
      * @return a set with the ids of the {@link BlueprintCamelContext}, never <tt>null</tt>, but can be empty set.
      */
     public static Set<String> lookupBlueprintCamelContext(BlueprintContainer container) {
-        Set<String> found = new LinkedHashSet<String>();
+        Set<String> ids = new LinkedHashSet<String>();
         for (Object id : container.getComponentIds()) {
             ComponentMetadata meta = container.getComponentMetadata(id.toString());
 
             // must be extended meta, to see if its the blueprint camel context
             if (meta instanceof ExtendedBeanMetadata) {
-                ExtendedBeanMetadata emata = (ExtendedBeanMetadata) meta;
-                if (emata.getRuntimeClass() != null && BlueprintCamelContext.class.getName().equals(emata.getRuntimeClass().getName())) {
+                Class<?> clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
+                if (clazz != null && BlueprintCamelContext.class.isAssignableFrom(clazz)) {
                     // okay we found a BlueprintCamelContext
-                    found.add(emata.getId());
+                    ids.add(meta.getId());
                 }
             }
         }
-        return found;
+        return ids;
     }
 }
