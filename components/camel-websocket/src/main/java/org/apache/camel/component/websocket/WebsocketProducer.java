@@ -24,14 +24,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 
-public class WebsocketProducer extends DefaultProducer {
+public class WebsocketProducer extends DefaultProducer implements WebsocketProducerConsumer {
+
     private final WebsocketStore store;
     private final Boolean sendToAll;
+    private final WebsocketEndpoint endpoint;
 
     public WebsocketProducer(WebsocketEndpoint endpoint, WebsocketStore store) {
         super(endpoint);
         this.store = store;
         this.sendToAll = endpoint.getSendToAll();
+        this.endpoint = endpoint;
     }
 
     @Override
@@ -52,6 +55,10 @@ public class WebsocketProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Failed to send message to single connection; connetion key not set.");
             }
         }
+    }
+
+    public WebsocketEndpoint getEndpoint() {
+        return endpoint;
     }
 
     boolean isSendToAllSet(Message in) {

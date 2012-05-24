@@ -22,10 +22,29 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
-public class WebsocketConsumer extends DefaultConsumer {
+public class WebsocketConsumer extends DefaultConsumer implements WebsocketProducerConsumer {
 
-    public WebsocketConsumer(Endpoint endpoint, Processor processor) {
+    private final WebsocketEndpoint endpoint;
+
+    public WebsocketConsumer(WebsocketEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        this.endpoint = endpoint;
+    }
+
+    @Override
+    public void start() throws Exception {
+        super.start();
+        endpoint.connect(this);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        endpoint.disconnect(this);
+        super.stop();
+    }
+
+    public WebsocketEndpoint getEndpoint() {
+        return endpoint;
     }
 
     public void sendMessage(final String connectionKey, final String message) {

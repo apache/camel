@@ -16,18 +16,10 @@
  */
 package org.apache.camel.component.websocket;
 
-public final class WebsocketConstants {
+public interface WebsocketProducerConsumer {
 
-    public static final int DEFAULT_PORT = 9292;
-    public static final String DEFAULT_HOST = "0.0.0.0";
-
-    public static final String CONNECTION_KEY = "websocket.connectionKey";
-    public static final String SEND_TO_ALL = "websocket.sendToAll";
-
-    public static final String WS_PROTOCOL ="ws";
-    public static final String WSS_PROTOCOL ="wss";
-
-    private WebsocketConstants() {
-    };
-
+    /**
+     * Gets the endpoint
+     */
+    WebsocketEndpoint getEndpoint();
 }

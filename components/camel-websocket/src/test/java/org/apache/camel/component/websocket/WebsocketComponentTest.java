@@ -78,8 +78,11 @@ public class WebsocketComponentTest {
         assertNotNull(handler);
     }
 
+    // TODO - Update tests to use endpoint instead of createServer - chm - 22/05/2012
+    /*
+
     @Test
-    public void testCreateServerWithoutStaticContent() {
+    public void testCreateServerWithoutStaticContent() throws Exception {
         ServletContextHandler handler = component.createContext();
         Server server = component.createServer(handler, "localhost", 1988, null);
         assertEquals(1, server.getConnectors().length);
@@ -95,11 +98,12 @@ public class WebsocketComponentTest {
         assertNull(handler.getServletHandler().getHolderEntry("/"));
     }
 
+
     @Test
-    public void testCreateServerWithStaticContent() {
+    public void testCreateServerWithStaticContent() throws Exception {
         ServletContextHandler handler = component.createContext();
         Server server = component.createServer(handler, "localhost", 1988, "public/");
-        assertEquals(1, server.getConnectors().length);
+        assertEquals(2, server.getConnectors().length);
         assertEquals("localhost", server.getConnectors()[0].getHost());
         assertEquals(1988, server.getConnectors()[0].getPort());
         assertFalse(server.getConnectors()[0].isStarted());
@@ -112,6 +116,7 @@ public class WebsocketComponentTest {
         assertTrue(handler.getResourceBase().endsWith("public"));
         assertNotNull(handler.getServletHandler().getHolderEntry("/"));
     }
+    */
 
     @Test
     public void testCreateEndpoint() throws Exception {
