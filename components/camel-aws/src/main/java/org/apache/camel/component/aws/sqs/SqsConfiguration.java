@@ -39,6 +39,9 @@ public class SqsConfiguration {
     private Collection<String> attributeNames;
     private Integer defaultVisibilityTimeout;
     
+    // producer properties
+    private Integer delaySeconds;
+    
     // queue properties
     private Integer maximumMessageSize;
     private Integer messageRetentionPeriod;
@@ -116,6 +119,14 @@ public class SqsConfiguration {
         this.defaultVisibilityTimeout = defaultVisibilityTimeout;
     }
 
+    public Integer getDelaySeconds() {
+        return delaySeconds;
+    }
+
+    public void setDelaySeconds(Integer delaySeconds) {
+        this.delaySeconds = delaySeconds;
+    }
+
     public Integer getMaximumMessageSize() {
         return maximumMessageSize;
     }
@@ -152,6 +163,7 @@ public class SqsConfiguration {
             + ", defaultVisibilityTimeout=" + defaultVisibilityTimeout
             + ", maximumMessageSize=" + maximumMessageSize
             + ", messageRetentionPeriod=" + messageRetentionPeriod
+            + ", delaySeconds=" + delaySeconds
             + ", policy=" + policy
             + "]";
     }

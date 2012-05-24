@@ -44,6 +44,7 @@ public class SqsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
+        request.setDelaySeconds(getEndpoint().getConfiguration().getDelaySeconds());
 
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
         
