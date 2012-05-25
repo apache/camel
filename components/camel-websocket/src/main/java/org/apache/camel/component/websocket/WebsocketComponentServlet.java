@@ -20,12 +20,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class WebsocketComponentServlet extends WebSocketServlet {
     private static final long serialVersionUID = 1L;
+    private final transient Logger log = LoggerFactory.getLogger(getClass());
 
     private final NodeSynchronization sync;
     private WebsocketConsumer consumer;
+
+    private ConcurrentMap<String, WebsocketConsumer> consumers = new ConcurrentHashMap<String, WebsocketConsumer>();
 
     public WebsocketComponentServlet(NodeSynchronization sync) {
         this.sync = sync;
@@ -37,6 +45,16 @@ public class WebsocketComponentServlet extends WebSocketServlet {
 
     public void setConsumer(WebsocketConsumer consumer) {
         this.consumer = consumer;
+    }
+
+    public void connect(WebsocketConsumer consumer) {
+        log.debug("Connecting consumer: {}", consumer);
+        consumers.put(consumer.getPath(), consumer);
+    }
+
+    public void disconnect(WebsocketConsumer consumer) {
+        log.debug("Disconnecting consumer: {}", consumer);
+        consumers.remove(consumer.getPath());
     }
 
     @Override

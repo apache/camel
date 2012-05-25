@@ -29,16 +29,16 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
+public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<String>();
     private static CountDownLatch latch = new CountDownLatch(1);
 
     @Test
-    public void testWSHttpCallEcho1() throws Exception {
+    public void testWSHttpCall() throws Exception {
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/echo").execute(
+        WebSocket websocket = c.prepareGet("ws://localhost:9494/echo").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
@@ -76,62 +76,20 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         c.close();
     }
 
-    @Test
-    public void testWSHttpCallEcho2() throws Exception {
-        AsyncHttpClient c = new AsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9393/echo").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketTextListener() {
-                            @Override
-                            public void onMessage(String message) {
-                                received.add(message);
-                                log.info("received --> " + message);
-                                latch.countDown();
-                            }
-
-                            @Override
-                            public void onFragment(String fragment, boolean last) {
-                            }
-
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onClose(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                t.printStackTrace();
-                            }
-                        }).build()).get();
-
-        websocket.sendTextMessage("Beer");
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
-
-        assertEquals(1, received.size());
-        assertEquals("BeerBeer", received.get(0));
-
-        websocket.close();
-        c.close();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
 
-                from("websocket://localhost:9292/echo")
+                WebsocketComponent websocketComponent = getContext().getComponent("websocket", WebsocketComponent.class);
+                websocketComponent.setHost("localhost");
+                websocketComponent.setPort(9494);
+
+                from("websocket://echo")
                     .log(">>> Message received from WebSocket Client : ${body}")
                     .transform().simple("${body}${body}")
-                    .to("websocket://localhost:9292/echo");
+                    .to("websocket://echo");
 
-                from("websocket://localhost:9393/echo")
-                        .log(">>> Message received from WebSocket Client : ${body}")
-                        .transform().simple("${body}${body}")
-                        .to("websocket://localhost:9393/echo");
             }
         };
     }

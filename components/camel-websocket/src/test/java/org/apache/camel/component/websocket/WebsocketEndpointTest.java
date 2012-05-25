@@ -58,6 +58,10 @@ public class WebsocketEndpointTest {
     @Before
     public void setUp() throws Exception {
         websocketEndpoint = new WebsocketEndpoint(component, URI, REMAINING, null);
+        component = new WebsocketComponent();
+        component.setPort(1988);
+        component.setHost("localhost");
+        component.createServer();
     }
 
     /**
@@ -66,6 +70,8 @@ public class WebsocketEndpointTest {
     @Test
     public void testCreateConsumer() throws Exception {
         Consumer consumer = websocketEndpoint.createConsumer(processor);
+        component.connect((WebsocketProducerConsumer) consumer);
+
         assertNotNull(consumer);
         assertEquals(WebsocketConsumer.class, consumer.getClass());
         InOrder inOrder = inOrder(component, processor);
@@ -85,6 +91,8 @@ public class WebsocketEndpointTest {
     @Test
     public void testCreateProducer() throws Exception {
         Producer producer = websocketEndpoint.createProducer();
+        component.connect((WebsocketProducerConsumer) producer);
+
         assertNotNull(producer);
         assertEquals(WebsocketProducer.class, producer.getClass());
         InOrder inOrder = inOrder(component, processor);

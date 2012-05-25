@@ -16,14 +16,20 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,16 +72,18 @@ public class WebsocketComponentTest {
     private CamelContext camelContext;
 
     private WebsocketComponent component;
+    private Server server;
+    private ServletContextHandler context;
 
     @Before
     public void setUp() throws Exception {
         component = new WebsocketComponent();
+        setUpJettyServer();
     }
 
-    @Test
-    public void testCreateContext() {
-        ServletContextHandler handler = component.createContext();
-        assertNotNull(handler);
+    @After
+    public void shutdown() throws Exception {
+        server.stop();
     }
 
     // TODO - Update tests to use endpoint instead of createServer - chm - 22/05/2012
@@ -83,8 +91,6 @@ public class WebsocketComponentTest {
 
     @Test
     public void testCreateServerWithoutStaticContent() throws Exception {
-        ServletContextHandler handler = component.createContext();
-        Server server = component.createServer(handler, "localhost", 1988, null);
         assertEquals(1, server.getConnectors().length);
         assertEquals("localhost", server.getConnectors()[0].getHost());
         assertEquals(1988, server.getConnectors()[0].getPort());
@@ -150,7 +156,6 @@ public class WebsocketComponentTest {
     @Test
     public void testAddServletProducersOnly() throws Exception {
         component.setCamelContext(camelContext);
-        component.setPort(0);
         component.doStart();
         WebsocketComponentServlet s1 = component.addServlet(sync, null, PATH_ONE);
         WebsocketComponentServlet s2 = component.addServlet(sync, null, PATH_TWO);
@@ -165,7 +170,6 @@ public class WebsocketComponentTest {
     @Test
     public void testAddServletConsumersOnly() throws Exception {
         component.setCamelContext(camelContext);
-        component.setPort(0);
         component.doStart();
         WebsocketComponentServlet s1 = component.addServlet(sync, consumer, PATH_ONE);
         WebsocketComponentServlet s2 = component.addServlet(sync, consumer, PATH_TWO);
@@ -180,7 +184,6 @@ public class WebsocketComponentTest {
     @Test
     public void testAddServletProducerAndConsumer() throws Exception {
         component.setCamelContext(camelContext);
-        component.setPort(0);
         component.doStart();
         WebsocketComponentServlet s1 = component.addServlet(sync, null, PATH_ONE);
         WebsocketComponentServlet s2 = component.addServlet(sync, consumer, PATH_ONE);
@@ -203,6 +206,17 @@ public class WebsocketComponentTest {
         assertEquals(s1, s2);
         assertEquals(consumer, s1.getConsumer());
         component.doStop();
+    }
+
+    private void setUpJettyServer() throws Exception {
+        server = component.createServer();
+        Connector connector = new SelectChannelConnector();
+        connector.setHost("localhost");
+        connector.setPort(1988);
+        context = component.createContext(server,connector,null);
+        server.addConnector(connector);
+        server.setHandler(context);
+        server.start();
     }
 
 }

@@ -23,9 +23,11 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.eclipse.jetty.server.Handler;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 public class WebsocketEndpoint extends DefaultEndpoint {
@@ -35,9 +37,11 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private WebsocketComponent component;
     private SSLContextParameters sslContextParameters;
     private URI uri;
+    private List<Handler> handlers;
 
     private Boolean sendToAll;
     private boolean enableJmx;
+    private boolean sessionSupport;
 
     private String remaining;
     private String host;
@@ -69,22 +73,28 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(component, "component");
         WebsocketConsumer consumer = new WebsocketConsumer(this, processor);
-        getComponent().addServlet(sync, consumer, remaining);
+        // We will create the servlet when we
+        // will call connect method and Jetty Server created
+        // getComponent().addServlet(sync, consumer, remaining);
         return consumer;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        getComponent().addServlet(sync, null, remaining);
+        // We will create the servlet when we
+        // will call connect method and Jetty Server created
+        // getComponent().addServlet(sync, null, remaining);
         return new WebsocketProducer(this, memoryStore);
     }
 
-    public void connect(WebsocketProducerConsumer prodcons) throws Exception {
-        component.connect(prodcons);
+    public void connect(WebsocketConsumer consumer) throws Exception {
+        component.connect(consumer);
+        getComponent().addServlet(sync, consumer, remaining);
     }
 
-    public void disconnect(WebsocketProducerConsumer prodcons) throws Exception {
-        component.disconnect(prodcons);
+    public void disconnect(WebsocketConsumer consumer) throws Exception {
+        component.disconnect(consumer);
+        getComponent().addServlet(sync, consumer, remaining);
     }
 
     @Override
@@ -127,6 +137,31 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     public void setSendToAll(Boolean sendToAll) {
         this.sendToAll = sendToAll;
     }
+
+    public String getProtocol() {
+        return uri.getScheme();
+    }
+
+    public String getPath() {
+        return uri.getPath();
+    }
+
+    public void setSessionSupport(boolean support) {
+        sessionSupport = support;
+    }
+
+    public boolean isSessionSupport() {
+        return sessionSupport;
+    }
+
+    public List<Handler> getHandlers() {
+        return handlers;
+    }
+
+    public void setHandlers(List<Handler> handlers) {
+        this.handlers = handlers;
+    }
+
 
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;

@@ -33,8 +33,8 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
 
     @Override
     public void start() throws Exception {
-        endpoint.connect(this);
         super.start();
+        endpoint.connect(this);
     }
 
     @Override
@@ -45,6 +45,10 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
 
     public WebsocketEndpoint getEndpoint() {
         return endpoint;
+    }
+
+    public String getPath() {
+        return endpoint.getPath();
     }
 
     public void sendMessage(final String connectionKey, final String message) {
