@@ -547,6 +547,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
 
         public Object beforeInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
+            LOG.trace("Before init of bean: {} -> {}", beanName, bean);
             // prefer to inject later in afterInit
             return bean;
         }
@@ -636,6 +637,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
 
         public Object afterInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
+            LOG.trace("After init of bean: {} -> {}", beanName, bean);
             // we cannot inject CamelContextAware beans as the CamelContext may not be ready
             injectFields(bean, beanName);
             injectMethods(bean, beanName);

@@ -41,7 +41,7 @@ public class BlueprintLanguageResolver extends OsgiLanguageResolver {
                 return ((LanguageResolver) bean).resolveLanguage(name, context);
             }
         } catch (Exception e) {
-            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
         }
         return super.resolveLanguage(name, context);
     }
