@@ -42,10 +42,6 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         Message in = exchange.getIn();
         String message = in.getMandatoryBody(String.class);
 
-/*        if (!endpoint.isStarted()) {
-            endpoint.connect(this);
-        }*/
-
         if (isSendToAllSet(in)) {
             sendToAll(store, message, exchange);
         } else {

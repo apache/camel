@@ -357,7 +357,6 @@ public class WebsocketComponent extends DefaultComponent {
                 ServletContextHandler context = (ServletContextHandler)connectorRef.server.getHandler();
                 servlet = createServlet(sync, pathSpec, servlets, context);
                 connectorRef.servlet = servlet;
-                servlets.put(pathSpec,servlet);
                 LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
 
