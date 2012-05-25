@@ -32,10 +32,13 @@ import java.util.concurrent.TimeUnit;
 public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<String>();
-    private static CountDownLatch latch = new CountDownLatch(1);
+    private static CountDownLatch latch;
 
     @Test
     public void testWSHttpCallEcho1() throws Exception {
+        received.clear();
+        latch = new CountDownLatch(1);
+
         AsyncHttpClient c = new AsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/echo").execute(
@@ -78,9 +81,12 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCallEcho2() throws Exception {
+        received.clear();
+        latch = new CountDownLatch(1);
+
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9393/echo").execute(
+        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/bar").execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(new WebSocketTextListener() {
                             @Override
@@ -108,11 +114,11 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
                             }
                         }).build()).get();
 
-        websocket.sendTextMessage("Beer");
+        websocket.sendTextMessage("wine");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(1, received.size());
-        assertEquals("BeerBeer", received.get(0));
+        assertEquals("The bar has wine", received.get(0));
 
         websocket.close();
         c.close();
@@ -124,14 +130,14 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
             public void configure() {
 
                 from("websocket://localhost:9292/echo")
-                    .log(">>> Message received from WebSocket Client : ${body}")
+                    .log(">>> Message received from ECHO WebSocket Client : ${body}")
                     .transform().simple("${body}${body}")
                     .to("websocket://localhost:9292/echo");
 
-                from("websocket://localhost:9393/echo")
-                        .log(">>> Message received from WebSocket Client : ${body}")
-                        .transform().simple("${body}${body}")
-                        .to("websocket://localhost:9393/echo");
+                from("websocket://localhost:9292/bar")
+                        .log(">>> Message received from BAR WebSocket Client : ${body}")
+                        .transform().simple("The bar has ${body}")
+                        .to("websocket://localhost:9292/bar");
             }
         };
     }
