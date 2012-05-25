@@ -88,13 +88,19 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     public void connect(WebsocketConsumer consumer) throws Exception {
+        // Jetty instance will be created
+        // if it does not exist
         component.connect(consumer);
+
+        // We will add a WebSocket servlet
+        // to a Jetty server using Handler
         getComponent().addServlet(sync, consumer, remaining);
     }
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {
         component.disconnect(consumer);
-        getComponent().addServlet(sync, consumer, remaining);
+        // Servlet should be removed
+        // getComponent().addServlet(sync, consumer, remaining);
     }
 
     @Override

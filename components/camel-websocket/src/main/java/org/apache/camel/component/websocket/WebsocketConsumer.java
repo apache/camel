@@ -53,14 +53,6 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
 
     public void sendMessage(final String connectionKey, final String message) {
 
-/*        if (!endpoint.isStarted()) {
-            try {
-                endpoint.connect(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
-
         final Exchange exchange = getEndpoint().createExchange();
 
         // set header and body

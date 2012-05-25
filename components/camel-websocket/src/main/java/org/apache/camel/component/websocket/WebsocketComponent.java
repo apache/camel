@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
@@ -185,8 +186,9 @@ public class WebsocketComponent extends DefaultComponent {
 
                 server.addConnector(connector);
 
-                // Create ServletContextHandler
+                // Create ServletContextHandler and add it to the Jetty server
                 context = createContext(server,connector,endpoint.getHandlers());
+                server.setHandler(context);
 
                 // Don't provide a Servlet object as Producer/Consumer will create them later on
                 connectorRef = new ConnectorRef(server, connector, null);
@@ -334,24 +336,42 @@ public class WebsocketComponent extends DefaultComponent {
         return server;
     }
 
-    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String remaining) {
-        String pathSpec = createPathSpec(remaining);
-        WebsocketComponentServlet servlet = servlets.get(pathSpec);
-        if (servlet == null) {
-            servlet = createServlet(sync, pathSpec, servlets, context);
+    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String remaining) throws Exception {
+
+        // Get Connector from one of the Jetty Instances to add WebSocket Servlet
+        WebsocketEndpoint endpoint = consumer.getEndpoint();
+        WebsocketComponent component = endpoint.getComponent();
+        String key = getConnectorKey(endpoint);
+        ConnectorRef connectorRef = component.getConnectors().get(key);
+
+        WebsocketComponentServlet servlet;
+
+        if (connectorRef!= null) {
+            String pathSpec = createPathSpec(remaining);
+            servlet = servlets.get(pathSpec);
+            if (servlet == null) {
+                // Retrieve Context
+                ServletContextHandler context = (ServletContextHandler)connectorRef.server.getHandler();
+                servlet = createServlet(sync, pathSpec, servlets, context);
+                connectorRef.servlet = servlet;
+                servlets.put(pathSpec,servlet);
+                LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
+            }
+            if (servlet.getConsumer() == null && consumer != null) {
+                // TODO Do we have to call connect(consumer) or setConsumer on the Consumer endpoint
+                servlet.setConsumer(consumer);
+            }
+            return servlet;
+        } else {
+            throw new Exception("Jetty instance has not been retrieved for : " + key);
         }
-        if (servlet.getConsumer() == null && consumer != null) {
-            // TODO Do we have to call connect(consumer) or setConsumer on the Consumer endpoint
-            servlet.setConsumer(consumer);
-        }
-        return servlet;
+
     }
 
     protected WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
         WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync);
         servlets.put(pathSpec, servlet);
         handler.addServlet(new ServletHolder(servlet), pathSpec);
-        LOG.debug("WebSocket servlet added for the following path : " + pathSpec);
         return servlet;
     }
 
@@ -629,6 +649,10 @@ public class WebsocketComponent extends DefaultComponent {
 
     public ServletContextHandler getContext() {
         return context;
+    }
+
+    public static HashMap<String, ConnectorRef> getConnectors() {
+        return CONNECTORS;
     }
 
 

@@ -104,6 +104,7 @@
                 <configuration>
                     <excludes>
                         <exclude>**/WebsocketEndpointTest.java</exclude>
+                        <exclude>**/WebsocketComponentTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

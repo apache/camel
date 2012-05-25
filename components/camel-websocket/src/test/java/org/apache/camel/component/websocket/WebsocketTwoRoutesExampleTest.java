@@ -35,13 +35,15 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
     private static CountDownLatch latch;
 
     @Test
-    public void testWSHttpCallEcho1() throws Exception {
+    public void testWSHttpCallEcho() throws Exception {
+
+        // We call the route WebSocket BAR
         received.clear();
         latch = new CountDownLatch(1);
 
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/echo").execute(
+        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/bar").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
@@ -73,20 +75,18 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(1, received.size());
-        assertEquals("BeerBeer", received.get(0));
+        assertEquals("The bar has Beer", received.get(0));
 
         websocket.close();
         c.close();
-    }
 
-    @Test
-    public void testWSHttpCallEcho2() throws Exception {
+        // We call the route WebSocket PUB
         received.clear();
         latch = new CountDownLatch(1);
 
-        AsyncHttpClient c = new AsyncHttpClient();
+        c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/bar").execute(
+        websocket = c.prepareGet("ws://127.0.0.1:9292/pub").execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(new WebSocketTextListener() {
                             @Override
@@ -118,7 +118,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(1, received.size());
-        assertEquals("The bar has wine", received.get(0));
+        assertEquals("The pub has wine", received.get(0));
 
         websocket.close();
         c.close();
@@ -129,15 +129,15 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from("websocket://localhost:9292/echo")
-                    .log(">>> Message received from ECHO WebSocket Client : ${body}")
-                    .transform().simple("${body}${body}")
-                    .to("websocket://localhost:9292/echo");
-
                 from("websocket://localhost:9292/bar")
-                        .log(">>> Message received from BAR WebSocket Client : ${body}")
-                        .transform().simple("The bar has ${body}")
-                        .to("websocket://localhost:9292/bar");
+                    .log(">>> Message received from BAR WebSocket Client : ${body}")
+                    .transform().simple("The bar has ${body}")
+                    .to("websocket://localhost:9292/bar");
+
+                from("websocket://localhost:9292/pub")
+                        .log(">>> Message received from PUB WebSocket Client : ${body}")
+                        .transform().simple("The pub has ${body}")
+                        .to("websocket://localhost:9292/pub");
             }
         };
     }
