@@ -33,10 +33,6 @@
     <name>Camel :: Integration Tests :: Karaf</name>
     <description>Performs Karaf compliance integration tests</description>
 
-    <properties>
-        <pax-exam-version>2.3.0</pax-exam-version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -57,7 +53,7 @@
         <dependency>
             <groupId>org.openengsb.labs.paxexam.karaf</groupId>
             <artifactId>paxexam-karaf-container</artifactId>
-            <version>0.5.3</version>
+            <version>${paxexam-karaf-container-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

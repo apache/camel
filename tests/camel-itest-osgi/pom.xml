@@ -40,23 +40,7 @@
     </repository>
   </repositories>
 
-  <properties>
-     <pax-exam-version>2.3.0</pax-exam-version>
-  </properties>
-
   <dependencies>
-    <!--dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-container-paxrunner</artifactId>
-      <version>${pax-exam-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-link-mvn</artifactId>
-      <version>${pax-exam-version}</version>
-      <scope>test</scope>
-    </dependency-->
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-junit4</artifactId>
@@ -76,7 +60,7 @@
     <dependency>
       <groupId>org.openengsb.labs.paxexam.karaf</groupId>
       <artifactId>paxexam-karaf-container</artifactId>
-      <version>0.5.3</version>
+      <version>${paxexam-karaf-container-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
