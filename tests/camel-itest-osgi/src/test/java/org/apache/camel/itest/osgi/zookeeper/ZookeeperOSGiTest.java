@@ -40,8 +40,9 @@ import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_CR
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_NODE;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("Causes processes to not cleanly shutdown")
-@Ignore("There is an issue with the zookeeper bundle, so the server cannot be started in pax-exam karaf container")
+
+@Ignore("Causes processes to not cleanly shutdown. "
++ "And There is an issue with the zookeeper bundle, so the server cannot be started in pax-exam karaf container")
 public class ZookeeperOSGiTest extends ZookeeperOSGiTestSupport {
 
     // TODO: Should not use hardcoded port numbers, but the AvailablePortFinder
