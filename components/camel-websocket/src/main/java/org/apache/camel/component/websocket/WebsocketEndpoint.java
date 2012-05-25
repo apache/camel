@@ -73,17 +73,11 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(component, "component");
         WebsocketConsumer consumer = new WebsocketConsumer(this, processor);
-        // We will create the servlet when we
-        // will call connect method and Jetty Server created
-        // getComponent().addServlet(sync, consumer, remaining);
         return consumer;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        // We will create the servlet when we
-        // will call connect method and Jetty Server created
-        // getComponent().addServlet(sync, null, remaining);
         return new WebsocketProducer(this, memoryStore);
     }
 
@@ -99,6 +93,17 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {
         component.disconnect(consumer);
+        // Servlet should be removed
+        // getComponent().addServlet(sync, consumer, remaining);
+    }
+
+    public void connect(WebsocketProducer producer) throws Exception {
+        component.connect(producer);
+        getComponent().addServlet(sync, producer, remaining);
+    }
+
+    public void disconnect(WebsocketProducer producer) throws Exception {
+        component.disconnect(producer);
         // Servlet should be removed
         // getComponent().addServlet(sync, consumer, remaining);
     }

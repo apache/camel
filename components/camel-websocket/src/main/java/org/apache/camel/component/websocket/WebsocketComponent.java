@@ -27,7 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
@@ -213,7 +215,8 @@ public class WebsocketComponent extends DefaultComponent {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
 
-            // TODO - As we can define WebSocket for Consumer/Producer
+            // TODO - chm - 25/05
+            // As we can define WebSocket for Consumer/Producer
             // This part of the code must be adapted compare to camel-jetty where we only use
             // Jetty as a server = Consumer
             // connectorRef.servlet.connect(consumer);
@@ -336,6 +339,35 @@ public class WebsocketComponent extends DefaultComponent {
         return server;
     }
 
+    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketProducer producer, String remaining) throws Exception {
+
+        // Get Connector from one of the Jetty Instances to add WebSocket Servlet
+        WebsocketEndpoint endpoint = producer.getEndpoint();
+        WebsocketComponent component = endpoint.getComponent();
+        String key = getConnectorKey(endpoint);
+        ConnectorRef connectorRef = component.getConnectors().get(key);
+
+        WebsocketComponentServlet servlet;
+
+        if (connectorRef!= null) {
+            String pathSpec = createPathSpec(remaining);
+            servlet = servlets.get(pathSpec);
+            if (servlet == null) {
+                // Retrieve Context
+                ServletContextHandler context = (ServletContextHandler)connectorRef.server.getHandler();
+                servlet = createServlet(sync, pathSpec, servlets, context);
+                connectorRef.servlet = servlet;
+                servlets.put(pathSpec,servlet);
+                LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
+            }
+
+            return servlet;
+        } else {
+            throw new Exception("Jetty instance has not been retrieved for : " + key);
+        }
+
+    }
+
     protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String remaining) throws Exception {
 
         // Get Connector from one of the Jetty Instances to add WebSocket Servlet
@@ -357,10 +389,16 @@ public class WebsocketComponent extends DefaultComponent {
                 servlets.put(pathSpec,servlet);
                 LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
-            if (servlet.getConsumer() == null && consumer != null) {
-                // TODO Do we have to call connect(consumer) or setConsumer on the Consumer endpoint
-                servlet.setConsumer(consumer);
+
+            if (consumer != null) {
+                if (servlet.getConsumer() == null)  {
+                        // TODO - chm - 25/05
+                        // Why do we have to do a setConsumer on the Servlet ?
+                        servlet.setConsumer(consumer);
+                }
+
             }
+
             return servlet;
         } else {
             throw new Exception("Jetty instance has not been retrieved for : " + key);

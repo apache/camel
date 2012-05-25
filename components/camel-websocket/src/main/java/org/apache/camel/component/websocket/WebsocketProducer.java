@@ -69,12 +69,12 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
     @Override
     public void start() throws Exception {
         super.start();
-        // endpoint.connect(this);
+        endpoint.connect(this);
     }
 
     @Override
     public void stop() throws Exception {
-        // endpoint.disconnect(this);
+        endpoint.disconnect(this);
         super.stop();
     }
 
