@@ -124,7 +124,7 @@
         <version>${openjpa-version}</version>
         <configuration>
           <persistenceXmlFile>${project.basedir}/src/test/resources/META-INF/persistence.xml</persistenceXmlFile>
-          <includes>org/apache/camel/examples/*.class</includes>
+          <includes>org/apache/camel/processor/idempotent/jpa/MessageProcessed.class,org/apache/camel/processor/interceptor/jpa/JpaTraceEventMessage.class,org/apache/camel/examples/*.class</includes>
           <addDefaultConstructor>true</addDefaultConstructor>
           <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
         </configuration>
