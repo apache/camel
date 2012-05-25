@@ -43,7 +43,6 @@ import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 public class SqlRouteTest extends OSGiIntegrationTestSupport {
@@ -142,7 +141,7 @@ public class SqlRouteTest extends OSGiIntegrationTestSupport {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(), "camel-sql"),
+                loadCamelFeatures("camel-sql"),
 
                 // and use derby as the database
                 mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"));

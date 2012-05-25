@@ -17,8 +17,8 @@
 package org.apache.camel.itest.osgi.velocity;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
@@ -33,11 +33,10 @@ public class VelocityFileTest extends VelocityTest {
         deleteDirectory("mydir");
         createDirectory("mydir");
 
-        File src = new File("../../../src/test/resources/org/apache/camel/itest/osgi/velocity/example.vm");
+        InputStream is = VelocityFileTest.class.getResourceAsStream("/org/apache/camel/itest/osgi/velocity/example.vm");
         File dest = new File("mydir/example.vm");
-        FileInputStream fis = new FileInputStream(src);
         FileOutputStream fos = new FileOutputStream(dest, false);
-        IOHelper.copyAndCloseInput(fis, fos);
+        IOHelper.copyAndCloseInput(is, fos);
         fos.close();
 
         super.setUp();

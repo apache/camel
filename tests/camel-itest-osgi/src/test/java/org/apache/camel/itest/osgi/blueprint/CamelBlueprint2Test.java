@@ -29,7 +29,6 @@ import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
@@ -110,8 +109,7 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
                         .build()).noStart(),
 
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb", "camel-jms"));
+                loadCamelFeatures("camel-blueprint", "camel-mail", "camel-jaxb", "camel-jms"));
                 
                 // for remote debugging
                 // vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"));

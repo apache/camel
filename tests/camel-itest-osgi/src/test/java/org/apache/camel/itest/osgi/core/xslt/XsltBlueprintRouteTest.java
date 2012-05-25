@@ -32,7 +32,6 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
@@ -76,8 +75,7 @@ public class XsltBlueprintRouteTest extends OSGiBlueprintTestSupport {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-blueprint"),
+                loadCamelFeatures("camel-blueprint"),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", XsltBlueprintRouteTest.class.getResource("XsltBlueprintRouter.xml"))

@@ -30,20 +30,16 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 
-
-import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.vmOption;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
 public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
     //Hadoop doesn't run on IBM JDK
     private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
-    private static final File HOME = new File("target/paxrunner/");
-
+    
     @Test
     public void testWriteAndReadString() throws Exception {
         if (SKIP) {
@@ -66,25 +62,16 @@ public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
-                new Customizer() {
-                    @Override
-                    public InputStream customizeTestProbe(InputStream testProbe) {
-                        return modifyBundle(testProbe)
-                                .add("core-default.xml", HdfsRouteTest.class.getResource("core-default.xml"))
-                                .add("OSGI-INF/blueprint/test.xml", HdfsRouteTest.class.getResource("blueprintCamelContext.xml"))
-                                .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintHdfsTestBundle")
-                                .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                                .build();
-                    }
-                },
+                provision(newBundle().add("core-default.xml", HdfsRouteTest.class.getResource("core-default.xml"))
+                          .add("OSGI-INF/blueprint/test.xml", HdfsRouteTest.class.getResource("blueprintCamelContext.xml"))
+                          .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintHdfsTestBundle")
+                          .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                          .build()),
+               
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-blueprint", "camel-hdfs"),
-                workingDirectory("target/paxrunner/"),
-                vmOption("-Dkaraf.base=" + HOME.getAbsolutePath()),
-                //vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
-                felix());
-
+                loadCamelFeatures(
+                        "camel-blueprint", "camel-hdfs"));
+                
         return options;
     }
 }

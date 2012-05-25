@@ -18,14 +18,16 @@ package org.apache.camel.itest.osgi;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.FileUtil;
-import org.apache.karaf.testing.Helper;
-import org.ops4j.pax.exam.Inject;
+import org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
@@ -35,10 +37,12 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
+import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 public class OSGiIntegrationTestSupport extends CamelTestSupport {
     protected static final transient Logger LOG = LoggerFactory.getLogger(OSGiIntegrationTestSupport.class);
@@ -109,60 +113,42 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             artifactId("enterprise").version(karafVersion).type(type);
     }
 
-    private static URL getResource(String location) {
-        URL url = null;
-        if (Thread.currentThread().getContextClassLoader() != null) {
-            url = Thread.currentThread().getContextClassLoader().getResource(location);
+    public static Option loadCamelFeatures(String... features) {
+
+        List<String> result = new ArrayList<String>();
+        result.add("cxf-jaxb");
+        result.add("camel-core");
+        result.add("camel-spring");
+        result.add("camel-test");
+        for (String feature : features) {
+            result.add(feature);
         }
-        if (url == null) {
-            url = Helper.class.getResource(location);
-        }
-        if (url == null) {
-            throw new RuntimeException("Unable to find resource " + location);
-        }
-        return url;
+        return scanFeatures(getCamelKarafFeatureUrl(), result.toArray(new String[4 + features.length]));
     }
-    
+              
     public static Option[] getDefaultCamelKarafOptions() {
-        // create temporary working directory that is unique to avoid windows issues
-        // lock files between tests, and causing tests to fail
-        deleteDirectory("target/paxrunner");
+        Option[] options =
+        // Set the karaf environment with some customer configuration
+            new Option[] {
+                      karafDistributionConfiguration()
+                          .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
+                          // This version is not actual karaf version that we use.
+                          .karafVersion("2.2.7")
+                          .name("Apache Karaf")
+                          .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
-        // check if file exists
-        int failsafe = 1000;
-        workDir = "target/paxrunner/work-" + COUNTER.getAndIncrement();
-        File dir = new File(workDir);
-        while (dir.exists() && failsafe-- > 0) {
-            workDir = "target/paxrunner/work-" + COUNTER.getAndIncrement();
-            dir = new File(workDir);
-        }
-        createDirectory(workDir);
-        System.out.println("*** Using working directory: " + workDir + " ***");
+                      KarafDistributionOption.keepRuntimeFolder(),
+                      // override the jre.properties
+                      replaceConfigurationFile("etc/jre.properties",
+                                               new File(
+                                                        "src/test/resources/org/apache/camel/itest/karaf/jre.properties")),
+                      // install the cxf jaxb spec as the karaf doesn't provide
+                      // it by default
+                      scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring",
+                                   "camel-test")};
 
-        Option[] options = combine(
-            // Set the karaf environment with some customer configuration
-            combine(
-                Helper.getDefaultConfigOptions(
-                    Helper.getDefaultSystemOptions(),
-                    getResource("/org/apache/camel/itest/karaf/config.properties"),
-                    // this is how you set the default log level when using pax logging (logProfile)
-                    Helper.setLogLevel("WARN")),
-                Helper.getDefaultProvisioningOptions()),                             
-            // install the spring, http features first
-            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
-
-            // install the cxf jaxb spec as the karaf doesn't provide it by default
-            scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb"),
-
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                "camel-core", "camel-spring", "camel-test"),
-                                   
-            workingDirectory(workDir));
-
-            //equinox(),
-            //felix());
         return options;
+
     }
 
     @Configuration

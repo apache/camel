@@ -20,6 +20,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
         <route>
           <from uri="direct:start"/>
+          <process ref="myProcessor"/>
           <to uri="jpa://org.apache.camel.itest.osgi.jpa.SendEmail"/>
         </route>
         <route>
@@ -31,5 +32,7 @@
     <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
         <jpa:unit unitname="camel" property="enitityManagerFactory"/>
     </bean>
+    
+    <bean id="myProcessor" class="org.apache.camel.itest.osgi.jpa.MyProcessor"/>
 
 </blueprint>

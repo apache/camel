@@ -17,41 +17,36 @@
 
 package org.apache.camel.itest.osgi.jpa;
 
-import java.io.InputStream;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 
-//import static org.ops4j.pax.exam.CoreOptions.equinox;
-//import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.provision;
+import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
-
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
 public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
     @Test
     public void testBlueprintRouteJpa() throws Exception {
-        getInstalledBundle("CamelBlueprintJpaTestBundle").start();
+        //getInstalledBundle("CamelBlueprintJpaTestBundle").start();
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintJpaTestBundle)", 20000);
 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
 
         ProducerTemplate template = ctx.createProducerTemplate();
-        template.sendBody("direct:start", new SendEmail(1L, "someone@somewhere.org"));
-        template.sendBody("direct:start", new SendEmail(2L, "someoneelse@somewhere.org"));
+        template.sendBodyAndHeader("direct:start", "someone@somewhere.org", "index", 1);
+        template.sendBodyAndHeader("direct:start", "someoneelse@somewhere.org", "index", 2);
 
         assertMockEndpointsSatisfied();
     }
@@ -61,19 +56,16 @@ public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
-                new Customizer() {
-                    @Override
-                    public InputStream customizeTestProbe(InputStream testProbe) {
-                        return modifyBundle(testProbe)
-                                .add(SendEmail.class)
-                                .add("META-INF/persistence.xml", JpaBlueprintRouteTest.class.getResource("/META-INF/persistence.xml"))
-                                .add("OSGI-INF/blueprint/test.xml", JpaBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
-                                .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintJpaTestBundle")
-                                .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                                .set("Meta-Persistence", "META-INF/persistence.xml")
-                                .build();
-                    }
-                },
+                provision(newBundle()
+                    .add(SendEmail.class)
+                    .add(MyProcessor.class)
+                    .add("META-INF/persistence.xml", JpaBlueprintRouteTest.class.getResource("/META-INF/persistence.xml"))
+                    .add("OSGI-INF/blueprint/test.xml", JpaBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
+                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintJpaTestBundle")
+                    .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                    .set("Meta-Persistence", "META-INF/persistence.xml")
+                    .build()),
+               
                 scanFeatures(getKarafEnterpriseFeatureUrl(), "jndi", "jpa", "transaction"),
                 mavenBundle("org.apache.derby", "derby", "10.4.2.0"),
                 // using the features to install the camel components

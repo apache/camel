@@ -40,15 +40,27 @@
     </repository>
   </repositories>
 
+  <properties>
+     <pax-exam-version>2.3.0</pax-exam-version>
+  </properties>
+
   <dependencies>
-    <dependency>
+    <!--dependency>
       <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam</artifactId>
+      <artifactId>pax-exam-container-paxrunner</artifactId>
+      <version>${pax-exam-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-junit</artifactId>
+      <artifactId>pax-exam-link-mvn</artifactId>
+      <version>${pax-exam-version}</version>
+      <scope>test</scope>
+    </dependency-->
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-junit4</artifactId>
+      <version>${pax-exam-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -57,39 +69,32 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-container-default</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-junit-extender-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.ops4j.pax.swissbox</groupId>
       <artifactId>pax-swissbox-tinybundles</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.karaf.tooling</groupId>
-      <artifactId>org.apache.karaf.tooling.testing</artifactId>
+      <groupId>org.openengsb.labs.paxexam.karaf</groupId>
+      <artifactId>paxexam-karaf-container</artifactId>
+      <version>0.5.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf</groupId>
+      <artifactId>apache-karaf</artifactId>
       <version>${karaf-version}</version>
+      <type>tar.gz</type>
+      <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.karaf</groupId>
-          <artifactId>manual</artifactId>
+          <groupId>org.apache.karaf.shell</groupId>
+          <artifactId>org.apache.karaf.shell.dev</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.karaf</groupId>
-          <artifactId>org.apache.karaf.client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.ops4j.pax.logging</groupId>
-          <artifactId>pax-logging-api</artifactId>
+          <groupId>org.eclipse</groupId>
+          <artifactId>osgi</artifactId>
         </exclusion>
       </exclusions>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>

@@ -30,7 +30,6 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
@@ -72,8 +71,7 @@ public class CamelBlueprintManagedNamePatternFixedTest extends OSGiBlueprintTest
                         .build()).noStart(),
 
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-blueprint"));
+                loadCamelFeatures("camel-blueprint"));
 
         return options;
     }

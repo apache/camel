@@ -30,8 +30,6 @@ import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
@@ -82,8 +80,7 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
             getDefaultCamelKarafOptions(),
            
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(),
-                         "camel-http", "camel-cxf"),
+            loadCamelFeatures("camel-http", "camel-cxf"),
                                         
             // need to install the generated src as the pax-exam doesn't wrap this bundles
             provision(newBundle()

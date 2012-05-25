@@ -19,13 +19,14 @@ package org.apache.camel.itest.osgi.servlet;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
+import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
@@ -46,11 +47,10 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
             // install the war features first
             scanFeatures(getKarafFeatureUrl(),  "war"),
             // set the system property for pax web
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.osgi.service.http.port").value("9080"),
+            KarafDistributionOption.editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port", "9080"),
 
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(),
-                "camel-blueprint", "camel-http", "camel-servlet")
+            loadCamelFeatures("camel-blueprint", "camel-http", "camel-servlet")
 
         );
         return options;

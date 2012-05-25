@@ -25,9 +25,8 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
+import static org.ops4j.pax.exam.OptionUtils.combine;
 
 /**
  * Test camel-script for Ruby expressions in OSGi
@@ -58,7 +57,7 @@ public class RubyOsgiTest extends OSGiIntegrationTestSupport {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the other camel components             
-            scanFeatures(getCamelKarafFeatureUrl(), "camel-script", "camel-ruby"));
+            loadCamelFeatures("camel-script", "camel-ruby"));
         
         return options;
     }

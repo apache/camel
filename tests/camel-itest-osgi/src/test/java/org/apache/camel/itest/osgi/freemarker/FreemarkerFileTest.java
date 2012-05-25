@@ -17,8 +17,8 @@
 package org.apache.camel.itest.osgi.freemarker;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
@@ -32,12 +32,12 @@ public class FreemarkerFileTest extends FreemarkerTest {
     public void setUp() throws Exception {
         deleteDirectory("mydir");
         createDirectory("mydir");
-
-        File src = new File("../../../src/test/resources/org/apache/camel/itest/osgi/freemarker/example.ftl");
+        
+        InputStream is = FreemarkerFileTest.class.getResourceAsStream("/org/apache/camel/itest/osgi/freemarker/example.ftl");
+       
         File dest = new File("mydir/example.ftl");
-        FileInputStream fis = new FileInputStream(src);
         FileOutputStream fos = new FileOutputStream(dest, false);
-        IOHelper.copyAndCloseInput(fis, fos);
+        IOHelper.copyAndCloseInput(is, fos);
         fos.close();
 
         super.setUp();

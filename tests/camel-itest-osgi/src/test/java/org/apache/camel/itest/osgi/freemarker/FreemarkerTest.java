@@ -29,7 +29,6 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 public class FreemarkerTest extends OSGiIntegrationTestSupport {
@@ -64,7 +63,7 @@ public class FreemarkerTest extends OSGiIntegrationTestSupport {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the other camel components             
-            scanFeatures(getCamelKarafFeatureUrl(), "camel-freemarker"));
+            loadCamelFeatures("camel-freemarker"));
         
         return options;
     }

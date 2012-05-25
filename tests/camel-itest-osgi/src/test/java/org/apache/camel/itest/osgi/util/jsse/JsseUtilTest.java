@@ -73,7 +73,8 @@ public class JsseUtilTest extends OSGiIntegrationSpringTestSupport {
         ks = ksp.createKeyStore();
         assertNotNull(ks.getCertificate("server"));
 
-        File file = new File("../../test-classes/org/apache/camel/itest/osgi/util/jsse/localhost.ks");
+        File file = new File("../../../test-classes/org/apache/camel/itest/osgi/util/jsse/localhost.ks");
+        System.out.println("the file is " + file.getAbsolutePath());
         ksp.setResource(file.getAbsolutePath());
         ks = ksp.createKeyStore();
         assertNotNull(ks.getCertificate("server"));

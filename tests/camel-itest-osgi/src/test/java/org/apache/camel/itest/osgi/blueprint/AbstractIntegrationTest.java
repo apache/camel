@@ -22,9 +22,11 @@ import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
+import javax.inject.Inject;
+
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.ops4j.pax.exam.CoreOptions;
-import org.ops4j.pax.exam.Inject;
+
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

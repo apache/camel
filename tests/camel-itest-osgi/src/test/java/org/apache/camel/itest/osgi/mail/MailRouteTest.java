@@ -40,9 +40,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 @Ignore("Does not work anymore as the mock javamail does not kick in as mail provider")
@@ -126,7 +125,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
 
             getDefaultCamelKarafOptions(),
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(), "jetty"),
+            loadCamelFeatures("jetty"),
 
             // using the java mail API bundle
             mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.javamail-api-1.4").version("1.3.0"),

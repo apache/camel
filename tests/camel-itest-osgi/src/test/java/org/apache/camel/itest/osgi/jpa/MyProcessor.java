@@ -14,27 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.itest.osgi.jpa;
 
-package org.apache.camel.itest.osgi.aws;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 
-import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
+public class MyProcessor implements Processor {
 
-import static org.ops4j.pax.exam.OptionUtils.combine;
-
-
-public abstract class AwsTestSupport extends OSGiIntegrationSpringTestSupport {
-    
-    
-    @Configuration
-    public static Option[] configure() {
-        Option[] options = combine(
-            getDefaultCamelKarafOptions(),
-            // using the features to install the other camel components             
-            loadCamelFeatures("camel-aws"));
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        // create SendEmail instance
+        Message in = exchange.getIn();
+        long index = (Integer)in.getHeader("index");
+        String email = in.getBody(String.class);
+        exchange.getOut().setBody(new SendEmail(index, email));
         
-        return options;
     }
 
 }

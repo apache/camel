@@ -33,7 +33,6 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 /**
  * @version 
@@ -106,7 +105,7 @@ public class MyBatisTest extends OSGiIntegrationTestSupport {
 
             getDefaultCamelKarafOptions(),
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(), "jetty", "camel-mybatis"),
+            loadCamelFeatures("jetty", "camel-mybatis"),
 
             // use derby as the database
             mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"));
