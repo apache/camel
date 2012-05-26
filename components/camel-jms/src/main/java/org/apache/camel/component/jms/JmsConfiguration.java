@@ -984,12 +984,8 @@ public class JmsConfiguration implements Cloneable {
         PlatformTransactionManager tm = getTransactionManager();
         if (tm != null) {
             container.setTransactionManager(tm);
-        } else if (transacted && transactionManager == null) {
-            if (!lazyCreateTransactionManager) {
-                container.setSessionTransacted(true);
-            } else {
-                throw new IllegalArgumentException("Property transacted is enabled but neither a transactionManager is available nor lazyCreateTransactionManager is disabled!");
-            }
+        } else if (transactionManager == null && transacted && !lazyCreateTransactionManager) {
+            container.setSessionTransacted(true);
         }
         if (transactionName != null) {
             container.setTransactionName(transactionName);

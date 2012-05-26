@@ -205,13 +205,15 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     public void testSessionTransacted() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?transacted=true&lazyCreateTransactionManager=false", JmsEndpoint.class);
         AbstractMessageListenerContainer container = endpoint.createConsumer(dummyProcessor).getListenerContainer();
-        assertTrue(container.isSessionTransacted());
-        assertFalse(endpoint.isLazyCreateTransactionManager());
+        assertTrue("The JMS sessions will not be transactional!", container.isSessionTransacted());
+        assertFalse("The transactionManager gets lazily generated!", endpoint.isLazyCreateTransactionManager());
+        assertNull("The endpoint has an injected TransactionManager!", endpoint.getTransactionManager());
 
         endpoint = resolveMandatoryEndpoint("jms:queue:Foo?transacted=true", JmsEndpoint.class);
         container = endpoint.createConsumer(dummyProcessor).getListenerContainer();
-        assertFalse(container.isSessionTransacted());
-        assertTrue(endpoint.isLazyCreateTransactionManager());
+        assertFalse("The JMS sessions will be transactional!", container.isSessionTransacted());
+        assertTrue("The transactionManager doesn't get lazily generated!", endpoint.isLazyCreateTransactionManager());
+        assertNotNull("The endpoint has no injected TransactionManager!", endpoint.getTransactionManager());
     }
 
     @Test
