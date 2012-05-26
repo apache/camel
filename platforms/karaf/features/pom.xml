@@ -56,7 +56,7 @@
       <commons-dbcp-bundle-version>1.4_3</commons-dbcp-bundle-version>
       <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
-      <ezmorph-bundle-version>1.0.6_1-SNAPSHOT</ezmorph-bundle-version>
+      <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
       <fastinfoset-version>1.2.7_4</fastinfoset-version>
       <features.file>features.xml</features.file>
       <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
@@ -69,7 +69,7 @@
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
       <gernimo-jaxws22-spec-version>1.1</gernimo-jaxws22-spec-version>
       <guice-bundle-version>2.0_2</guice-bundle-version>
-      <hadoop-bundle-version>1.0.0_2-SNAPSHOT</hadoop-bundle-version>
+      <hadoop-bundle-version>1.0.0_2</hadoop-bundle-version>
       <hapi-bundle-version>0.5.1_5</hapi-bundle-version>
       <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
       <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
@@ -87,13 +87,13 @@
       <josql-bundle-version>1.5_5</josql-bundle-version>
       <jsch-bundle-version>0.1.46_1</jsch-bundle-version>
       <jsendnsca-bundle-version>1.3.1_3</jsendnsca-bundle-version>
-      <jsonlib-bundle-version>2.4_1-SNAPSHOT</jsonlib-bundle-version>
+      <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
       <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
       <juel-bundle-version>2.1.2_2</juel-bundle-version>
       <junit-bundle-version>4.10_1</junit-bundle-version>
       <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
       <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
-      <lucene-bundle-version>3.5.0_1</lucene-bundle-version>
+      <lucene-bundle-version>3.6.0_1</lucene-bundle-version>
       <mvel-bundle-version>2.0.18_3</mvel-bundle-version>
       <mina-bundle-version>1.1.7_6</mina-bundle-version>
       <neethi-bundle-version>3.0.1</neethi-bundle-version>
@@ -107,13 +107,13 @@
       <regexp-bundle-version>1.3_3</regexp-bundle-version>
       <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
       <rome-bundle-version>1.0_3</rome-bundle-version>
-      <saxon-bundle-version>9.3.0.11_1</saxon-bundle-version>
+      <saxon-bundle-version>9.3.0.11_2</saxon-bundle-version>
       <scala-bundle-version>2.9.1_3</scala-bundle-version>
       <scriptengines-version>1.1</scriptengines-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_4</serp-bundle-version>
       <smack-bundle-version>3.2.1_1</smack-bundle-version>
-      <solrj-bundle-version>3.5.0_2</solrj-bundle-version>
+      <solrj-bundle-version>3.6.0_1</solrj-bundle-version>
       <spring-osgi-version>1.2.1</spring-osgi-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version>
