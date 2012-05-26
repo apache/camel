@@ -759,6 +759,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public boolean isLazyCreateTransactionManager() {
+        return getConfiguration().isLazyCreateTransactionManager();
+    }
+
+    @ManagedAttribute
     @Deprecated
     public boolean isTransactedInOut() {
         return getConfiguration().isTransactedInOut();
@@ -988,6 +993,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @Deprecated
     public void setTransactedInOut(boolean transactedInOut) {
         getConfiguration().setTransactedInOut(transactedInOut);
+    }
+
+    @ManagedAttribute
+    public void setLazyCreateTransactionManager(boolean lazyCreating) {
+        getConfiguration().setLazyCreateTransactionManager(lazyCreating);
     }
 
     public void setTransactionManager(PlatformTransactionManager transactionManager) {

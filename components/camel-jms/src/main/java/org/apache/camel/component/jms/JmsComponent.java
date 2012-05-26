@@ -304,6 +304,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setTransacted(consumerTransacted);
     }
 
+    public void setLazyCreateTransactionManager(boolean lazyCreating) {
+        getConfiguration().setLazyCreateTransactionManager(lazyCreating);
+    }
+
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         getConfiguration().setTransactionManager(transactionManager);
     }

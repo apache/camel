@@ -126,7 +126,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean asyncStartListener;
     private boolean asyncStopListener;
     // if the message is a JmsMessage and mapJmsMessage=false, force the
-    // producer to send the javax.jms.Message body to the next JMS destination    
+    // producer to send the javax.jms.Message body to the next JMS destination
     private boolean forceSendOriginalMessage;
     // to force disabling time to live (works in both in-only or in-out mode)
     private boolean disableTimeToLive;
@@ -152,7 +152,6 @@ public class JmsConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 
     public static class CamelJmsTemplate extends JmsTemplate {
         private JmsConfiguration config;
@@ -280,7 +279,6 @@ public class JmsConfiguration implements Cloneable {
             }
         }
     }
-
 
     /**
      * Creates a {@link JmsOperations} object used for request/response using a request timeout value
@@ -650,7 +648,7 @@ public class JmsConfiguration implements Cloneable {
     public void setIdleConsumerLimit(int idleConsumerLimit) {
         this.idleConsumerLimit = idleConsumerLimit;
     }
-    
+
     public int getMaxConcurrentConsumers() {
         return maxConcurrentConsumers;
     }
@@ -873,7 +871,6 @@ public class JmsConfiguration implements Cloneable {
         };
     }
 
-
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
                                                      JmsEndpoint endpoint) throws Exception {
         container.setConnectionFactory(getListenerConnectionFactory());
@@ -905,7 +902,6 @@ public class JmsConfiguration implements Cloneable {
 
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
-        container.setSessionTransacted(transacted);
         if (transacted) {
             container.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
         } else {
@@ -964,7 +960,7 @@ public class JmsConfiguration implements Cloneable {
         }
         if (idleConsumerLimit >= 0) {
             container.setIdleConsumerLimit(idleConsumerLimit);
-        }        
+        }
         if (maxConcurrentConsumers > 0) {
             if (maxConcurrentConsumers < concurrentConsumers) {
                 throw new IllegalArgumentException("Property maxConcurrentConsumers: " + maxConcurrentConsumers
@@ -988,8 +984,12 @@ public class JmsConfiguration implements Cloneable {
         PlatformTransactionManager tm = getTransactionManager();
         if (tm != null) {
             container.setTransactionManager(tm);
-        } else if (transacted) {
-            throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
+        } else if (transacted && transactionManager == null) {
+            if (!lazyCreateTransactionManager) {
+                container.setSessionTransacted(true);
+            } else {
+                throw new IllegalArgumentException("Property transacted is enabled but neither a transactionManager is available nor lazyCreateTransactionManager is disabled!");
+            }
         }
         if (transactionName != null) {
             container.setTransactionName(transactionName);
@@ -1084,7 +1084,6 @@ public class JmsConfiguration implements Cloneable {
             explicitQosEnabled = true;
         }
     }
-
 
     public boolean isAlwaysCopyMessage() {
         return alwaysCopyMessage;
@@ -1261,11 +1260,11 @@ public class JmsConfiguration implements Cloneable {
     public void setAsyncConsumer(boolean asyncConsumer) {
         this.asyncConsumer = asyncConsumer;
     }
-    
+
     public void setReplyToCacheLevelName(String name) {
         this.replyToCacheLevelName = name;
     }
-    
+
     public String getReplyToCacheLevelName() {
         return replyToCacheLevelName;
     }
