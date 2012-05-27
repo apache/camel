@@ -68,7 +68,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             LOG.debug("Configuring server-side SSLContext session timeout: " + this.getSessionTimeout());
             this.configureSessionContext(context.getServerSessionContext(), this.getSessionTimeout());
         }
-        LOG.debug("Configured server-side SSLContext parameters.");   
+        LOG.debug("Configured server-side SSLContext parameters.");
     }
 
     /**

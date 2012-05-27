@@ -229,7 +229,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      */
     public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
         
-        LOG.debug("Creating SSLContext from SSLContextParameters: {}", this);
+        LOG.trace("Creating SSLContext from SSLContextParameters: {}", this);
 
         KeyManager[] keyManagers = this.keyManagers == null ? null : this.keyManagers.createKeyManagers();
         TrustManager[] trustManagers = this.trustManagers == null ? null : this.trustManagers.createTrustManagers();
@@ -254,7 +254,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
                         this.getSSLEngineConfigurers(context),
                         this.getSSLSocketFactoryConfigurers(context),
                         this.getSSLServerSocketFactoryConfigurers(context)));
-        
+        LOG.debug("Created {}", context);
         return context;
     }
     
