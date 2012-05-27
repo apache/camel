@@ -83,7 +83,12 @@ public class SimpleExpression extends ExpressionDefinition {
             }
         }
 
-        SimpleBuilder answer = new SimpleBuilder(getExpression());
+        String exp = getExpression();
+        if (isTrim() && exp != null) {
+            exp = exp.trim();
+        }
+
+        SimpleBuilder answer = new SimpleBuilder(exp);
         answer.setResultType(resultType);
         return answer;
     }

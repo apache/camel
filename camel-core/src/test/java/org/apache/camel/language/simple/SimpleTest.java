@@ -77,7 +77,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testEmptyExpression() throws Exception {
         assertExpression("", "");
-        assertExpression(" ", "");
+        assertExpression(" ", " ");
         try {
             assertExpression(null, null);
             fail("Should have thrown exception");
@@ -126,10 +126,10 @@ public class SimpleTest extends LanguageTestSupport {
     }
     
     public void testTrimSimpleExpressions() throws Exception {
-        assertExpression(" \texchangeId\n", exchange.getExchangeId());
-        assertExpression("\nid\r", exchange.getIn().getMessageId());
-        assertExpression("\t\r body", "<hello id='m123'>world!</hello>");
-        assertExpression("\nin.body\r", "<hello id='m123'>world!</hello>");
+        assertExpression(" \texchangeId\n".trim(), exchange.getExchangeId());
+        assertExpression("\nid\r".trim(), exchange.getIn().getMessageId());
+        assertExpression("\t\r body".trim(), "<hello id='m123'>world!</hello>");
+        assertExpression("\nin.body\r".trim(), "<hello id='m123'>world!</hello>");
     }
 
     public void testSimpleThreadName() throws Exception {
