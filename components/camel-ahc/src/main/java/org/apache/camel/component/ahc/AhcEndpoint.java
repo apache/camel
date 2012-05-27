@@ -18,6 +18,8 @@ package org.apache.camel.component.ahc;
 
 import java.net.URI;
 
+import javax.net.ssl.SSLContext;
+
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import org.apache.camel.Consumer;
@@ -161,7 +163,13 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
                 
                 if (sslContextParameters != null) {
-                    builder.setSSLContext(sslContextParameters.createSSLContext());
+
+                    // TODO: Remove us, but part of investigation issue on Java7 on ubuntu
+                    System.out.println(sslContextParameters);
+                    SSLContext ssl = sslContextParameters.createSSLContext();
+                    System.out.println(ssl);
+
+                    builder.setSSLContext(ssl);
                 }
                 
                 config = builder.build();
@@ -169,8 +177,14 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 if (sslContextParameters != null) {
                     AsyncHttpClientConfig.Builder builder =
                         new AsyncHttpClientConfig.Builder();
-                    
-                    builder.setSSLContext(sslContextParameters.createSSLContext());
+
+                    // TODO: Remove us, but part of investigation issue on Java7 on ubuntu
+                    System.out.println(sslContextParameters);
+
+                    SSLContext ssl = sslContextParameters.createSSLContext();
+                    System.out.println(ssl);
+
+                    builder.setSSLContext(ssl);
                     config = builder.build();
                 }
             }
