@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
@@ -23,9 +22,11 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.SSLContextServerParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.Test;
 
@@ -46,6 +47,11 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
         
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
+
+        // NOTE: Needed since the client uses a loose trust configuration when no ssl context
+        // is provided.  We turn on WANT client-auth to prefer using authentication
+        SSLContextServerParameters scsp = new SSLContextServerParameters();
+        scsp.setClientAuthentication(ClientAuthentication.WANT.name());
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
