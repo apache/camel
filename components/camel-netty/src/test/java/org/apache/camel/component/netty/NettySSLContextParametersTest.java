@@ -56,6 +56,7 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
+        sslContextParameters.setServerParameters(scsp);
 
         JndiRegistry registry = super.createRegistry();
         registry.bind("sslContextParameters", sslContextParameters);
