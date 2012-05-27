@@ -27,11 +27,11 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class Mina2SslConextParametersUdpTest extends BaseMina2Test {
+public class Mina2SslContextParametersUdpTest extends BaseMina2Test {
 
     protected int messageCount = 3;
 
-    public Mina2SslConextParametersUdpTest() {
+    public Mina2SslContextParametersUdpTest() {
     }
 
     @Test
@@ -52,8 +52,7 @@ public class Mina2SslConextParametersUdpTest extends BaseMina2Test {
                 String text = "Hello Message: " + Integer.toString(i);
                 byte[] data = text.getBytes();
 
-                //DatagramPacket packet = new DatagramPacket(data, data.length, address, getPort());
-                DatagramPacket packet = new DatagramPacket(data, data.length, address, 10111);
+                DatagramPacket packet = new DatagramPacket(data, data.length, address, getPort());
                 socket.send(packet);
             }
             Thread.sleep(2000);
@@ -71,7 +70,7 @@ public class Mina2SslConextParametersUdpTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:udp://127.0.0.1:10111?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters").to("mock:result");
+                from("mina2:udp://127.0.0.1:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters").to("mock:result");
             }
         };
     }
