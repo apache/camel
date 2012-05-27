@@ -181,7 +181,7 @@ public class KeyStoreParameters extends JsseParameters {
         builder.append("KeyStoreParameters [type=");
         builder.append(type);
         builder.append(", password=");
-        builder.append(password);
+        builder.append("********");
         builder.append(", provider=");
         builder.append(provider);
         builder.append(", resource=");
