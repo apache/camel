@@ -49,7 +49,7 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
                 }
             }
         } catch (Exception e) {
-            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
         }
         try {
             Object bean = context.getRegistry().lookup(".camelBlueprint.componentResolver." + name);
@@ -58,7 +58,7 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
                 return ((ComponentResolver) bean).resolveComponent(name, context);
             }
         } catch (Exception e) {
-            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
         }
         return getComponent(name, context);
     }

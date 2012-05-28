@@ -26,10 +26,8 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-
-import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 @Ignore("Fix me")
@@ -66,13 +64,11 @@ public class CacheReplicationTest extends OSGiIntegrationSpringTestSupport {
                 // Default karaf environment
                 getDefaultCamelKarafOptions(),
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(), "jetty", "camel-jms", "camel-cache"),
+                loadCamelFeatures("jetty", "camel-jms", "camel-cache"),
 
                 // using the features to install AMQ
                 scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.5.0/xml/features",
-                        "activemq"),
-
-                felix());
+                        "activemq"));
 
         return options;
     }

@@ -106,14 +106,10 @@
         </configuration>
       </plugin>
 
-      <!-- must use fork mode pertest for unit testing with camel-test-blueprint -->
       <plugin>
         <groupId>org.apache.maven.surefire</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin-version}</version>
-        <configuration>
-          <forkMode>pertest</forkMode>
-        </configuration>
       </plugin>
 
       <!-- to run the example using mvn camel:run -->

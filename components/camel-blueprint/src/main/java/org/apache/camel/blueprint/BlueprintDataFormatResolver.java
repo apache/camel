@@ -41,7 +41,7 @@ public class BlueprintDataFormatResolver extends OsgiDataFormatResolver {
                 return ((DataFormatResolver) bean).resolveDataFormat(name, context);
             }
         } catch (Exception e) {
-            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
         }
         return super.resolveDataFormat(name, context);
     }

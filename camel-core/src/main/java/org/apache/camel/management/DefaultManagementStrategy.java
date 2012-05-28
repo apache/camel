@@ -32,6 +32,7 @@ import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -57,6 +58,13 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
     private ManagementAgent managementAgent;
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
     private CamelContext camelContext;
+
+    public DefaultManagementStrategy() {
+    }
+
+    public DefaultManagementStrategy(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public List<EventNotifier> getEventNotifiers() {
         return eventNotifiers;
@@ -182,9 +190,21 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
     }
 
     public void start() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+
         if (eventNotifiers != null) {
-            ServiceHelper.startServices(eventNotifiers);
+            for (EventNotifier notifier : eventNotifiers) {
+
+                // inject CamelContext if the service is aware
+                if (notifier instanceof CamelContextAware) {
+                    CamelContextAware aware = (CamelContextAware) notifier;
+                    aware.setCamelContext(camelContext);
+                }
+
+                ServiceHelper.startService(notifier);
+            }
         }
+
         if (managementAgent != null) {
             managementAgent.start();
             // set the naming strategy using the domain name from the agent

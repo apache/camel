@@ -27,9 +27,7 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 @Ignore("Not fully implemented, see TODO")
@@ -53,9 +51,8 @@ public class ScpTest extends OSGiIntegrationSpringTestSupport {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(), "camel-jsch"),
+            loadCamelFeatures("camel-jsch"));
 
-            /*felix(),*/ equinox());
         
         return options;
     }

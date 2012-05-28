@@ -31,7 +31,6 @@ import org.apache.qpid.url.URLSyntaxException;
 public class AMQPComponent extends JmsComponent {
 
     public AMQPComponent() {
-        init();
     }
 
     public AMQPComponent(JmsConfiguration configuration) {
@@ -40,9 +39,7 @@ public class AMQPComponent extends JmsComponent {
 
     public AMQPComponent(CamelContext context) {
         super(context);
-        init();
     }
-
 
     public AMQPComponent(AMQConnectionFactory connectionFactory) {
         setConnectionFactory(connectionFactory);
@@ -51,14 +48,6 @@ public class AMQPComponent extends JmsComponent {
     public static Component amqpComponent(String uri) throws URLSyntaxException {
         AMQConnectionFactory connectionFactory = new AMQConnectionFactory(uri);
         return new AMQPComponent(connectionFactory);
-    }
-
-    /**
-     * Let's install the default connection factory
-     */
-    private void init() {
-        AMQConnectionFactory connectionFactory = new AMQConnectionFactory();
-        setConnectionFactory(connectionFactory);
     }
 
 }

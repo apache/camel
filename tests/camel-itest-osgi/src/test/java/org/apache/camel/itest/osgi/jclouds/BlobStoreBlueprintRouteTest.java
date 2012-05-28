@@ -23,7 +23,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jclouds.JcloudsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
-import org.apache.karaf.testing.Helper;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
@@ -37,9 +36,9 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.provision;
+import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
@@ -80,20 +79,15 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
     public static Option[] configure() throws Exception {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
-                Helper.setLogLevel("INFO"),
-                new Customizer() {
-                    @Override
-                    public InputStream customizeTestProbe(InputStream testProbe) {
-                        return modifyBundle(testProbe)
-                                .add(SimpleObject.class)
-                                .add("META-INF/persistence.xml", BlobStoreBlueprintRouteTest.class.getResource("/META-INF/persistence.xml"))
-                                .add("OSGI-INF/blueprint/test.xml", BlobStoreBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
-                                .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintJcloudsTestBundle")
-                                .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                                .set("Meta-Persistence", "META-INF/persistence.xml")
-                                .build();
-                    }
-                },
+                //Helper.setLogLevel("INFO"),
+                provision(newBundle()
+                        .add(SimpleObject.class)
+                        .add("META-INF/persistence.xml", BlobStoreBlueprintRouteTest.class.getResource("/META-INF/persistence.xml"))
+                        .add("OSGI-INF/blueprint/test.xml", BlobStoreBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintJcloudsTestBundle")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .set("Meta-Persistence", "META-INF/persistence.xml")
+                        .build()),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", BlobStoreBlueprintRouteTest.class.getResource("blueprintBlobStoreService.xml"))
@@ -103,7 +97,7 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
                         .build()).start(),
 
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
+                loadCamelFeatures(
                         "camel-blueprint", "camel-jclouds"),
                 workingDirectory("target/paxrunner/"),
                 felix());

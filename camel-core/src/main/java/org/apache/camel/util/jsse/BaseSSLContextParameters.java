@@ -49,6 +49,8 @@ import org.apache.camel.util.jsse.FilterParameters.Patterns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedString;
+
 /**
  * Represents configuration options that can be applied in the client-side
  * or server-side context depending on what they are applied to.
@@ -322,7 +324,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             Arrays.asList(engine.getEnabledCipherSuites()),
                             enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
                             !allowPassthrough);
-                 
+
+                LOG.trace("Enabled ChiperSuites: {}", filteredCipherSuites);
                 engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
@@ -332,6 +335,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             !allowPassthrough);
                 
                 engine.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+                LOG.trace("Enabled Protocols: {}", filteredSecureSocketProtocols);
+
                 return engine;
             }
         };
@@ -727,6 +732,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         public SSLContextDecorator(SSLContextSpiDecorator decorator) {
             super(decorator, decorator.getDelegate().getProvider(), decorator.getDelegate().getProtocol());
+        }
+
+        @Override
+        public String toString() {
+            return String.format("SSLContext[provider=%s, protocol=%s, needClientAuth=%s, wantClientAuth=%s\n\tdefaultProtocols=%s\n\tdefaultChiperSuites=%s\n\tsupportedProtocols=%s\n\tsupportedChiperSuites=%s\n]",
+                    getProvider(), getProtocol(), getDefaultSSLParameters().getNeedClientAuth(), getDefaultSSLParameters().getWantClientAuth(),
+                    collectionAsCommaDelimitedString(getDefaultSSLParameters().getProtocols()),
+                    collectionAsCommaDelimitedString(getDefaultSSLParameters().getCipherSuites()),
+                    collectionAsCommaDelimitedString(getSupportedSSLParameters().getProtocols()),
+                    collectionAsCommaDelimitedString(getSupportedSSLParameters().getCipherSuites()));
         }
     }
     

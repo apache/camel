@@ -194,7 +194,7 @@ public class KeyManagersParameters extends JsseParameters {
         builder.append("KeyManagersParameters [keyStore=");
         builder.append(keyStore);
         builder.append(", keyPassword=");
-        builder.append(keyPassword);
+        builder.append("********");
         builder.append(", provider=");
         builder.append(provider);
         builder.append(", algorithm=");

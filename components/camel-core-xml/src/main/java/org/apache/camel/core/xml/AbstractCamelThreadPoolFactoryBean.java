@@ -86,8 +86,6 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         return answer;
     }
 
-    protected abstract CamelContext getCamelContextWithId(String camelContextId);
-
     public Class<ExecutorService> getObjectType() {
         return ExecutorService.class;
     }

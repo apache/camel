@@ -20,12 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.qpid.client.transport.TransportConnection;
-import org.junit.AfterClass;
+import org.apache.qpid.server.Broker;
+import org.apache.qpid.server.BrokerOptions;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
@@ -33,70 +30,15 @@ import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 /**
  * @version 
  */
-@Ignore("AMQP testing is a bit unstable")
 public class AMQPRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
+    protected Broker broker;
     
-    @BeforeClass
-    public static void startBroker() throws Exception {
-        // create an in-JVM broker
-        try {
-            TransportConnection.createVMBroker(1);
-        } catch (Exception e) {
-            // fails the first time, so create it again
-            TransportConnection.createVMBroker(1);
-        }
-    }
-    
-    @AfterClass
-    public static void shutdownBroker() {
-        TransportConnection.killVMBroker(1);
-    }
-    
-
     @Test
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
 
-        boolean windows = System.getProperty("os.name").startsWith("Windows");
-
-        if (windows) {
-            // it could sometimes send it twice so we expect at least 1 msg
-            resultEndpoint.expectedMinimumMessageCount(1);
-        } else {
-            resultEndpoint.expectedBodiesReceived(expectedBody);
-        }
-
-        resultEndpoint.message(0).header("cheese").isEqualTo(123);
-
-        sendExchange(expectedBody);
-        
-        if (windows) {
-            // send the message twice to walk around the AMQP's drop first message issue on Windows box
-            sendExchange(expectedBody);
-        }
-
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testJmsRouteWithObjectMessage() throws Exception {
-        PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
-
-        resultEndpoint.expectedBodiesReceived(expectedBody);
-        resultEndpoint.message(0).header("cheese").isEqualTo(123);
-
-        sendExchange(expectedBody);
-
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testJmsRouteWithByteArrayMessage() throws Exception {
-        PurchaseOrder aPO = new PurchaseOrder("Beer", 10);
-        byte[] expectedBody = SerializationUtils.serialize(aPO);
-
-        resultEndpoint.expectedBodiesReceived(expectedBody);
+        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         sendExchange(expectedBody);
@@ -105,29 +47,38 @@ public class AMQPRouteTest extends CamelTestSupport {
     }
 
     protected void sendExchange(final Object expectedBody) {
-        template.sendBodyAndHeader("amqp:queue:test.a", expectedBody, "cheese", 123);
+        template.sendBodyAndHeader("amqp:queue:ping", expectedBody, "cheese", 123);
     }
-
 
     @Before
     public void setUp() throws Exception {
+        BrokerOptions options = new BrokerOptions();
+        options.setConfigFile("src/test/resources/config.xml");
+        options.setLogConfigFile("src/test/resources/log4j.xml");
+
+        broker = new Broker();
+        broker.startup(options);
+
         super.setUp();
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
     }
 
+    @Override
+    public void tearDown() throws Exception {
+        broker.shutdown();
+        super.tearDown();
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-
-        camelContext.addComponent("amqp", amqpComponent("amqp://guest:guest@/test?brokerlist='vm://:1'"));
-
+        camelContext.addComponent("amqp", amqpComponent("amqp://guest:guest@/test?brokerlist='tcp://localhost:5672'"));
         return camelContext;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("amqp:test.a").to("amqp:test.b");
-                from("amqp:test.b").to("mock:result");
+                from("amqp:queue:ping").to("mock:result");
             }
         };
     }

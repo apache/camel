@@ -39,8 +39,7 @@ public class CreateOperationTest extends ZooKeeperTestSupport {
 
     @Test
     public void createBasic() throws Exception {
-
-        CreateOperation create = new CreateOperation(connection, "/one");
+         CreateOperation create = new CreateOperation(connection, "/one");
 
         OperationResult<String> result = create.get();
         assertEquals("/one", result.getResult());
@@ -66,9 +65,10 @@ public class CreateOperationTest extends ZooKeeperTestSupport {
         create.setCreateMode(CreateMode.EPHEMERAL_SEQUENTIAL);
 
         OperationResult<String> result = create.get();
-        assertEquals("/three0000000002", result.getResult());
+        String out = result.getResult();
 
-        verifyNodeContainsData("/three0000000002", testPayloadBytes);
+        assertTrue(out.startsWith("/three"));
+        verifyNodeContainsData(out, testPayloadBytes);
     }
 
     @Test

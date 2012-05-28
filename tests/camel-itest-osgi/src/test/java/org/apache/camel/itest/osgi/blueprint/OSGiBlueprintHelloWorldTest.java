@@ -28,7 +28,6 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
@@ -51,8 +50,9 @@ public class OSGiBlueprintHelloWorldTest extends OSGiBlueprintTestSupport {
         getInstalledBundle(name).start();
 
         // must use the camel context from osgi
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=" + name + ")"
-                + "&&(camel.context.name=camel1)", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, 
+               //"(camel.context.symbolicname=" + name + ")"
+               "camel.context.name=camel1", 10000);
 
         ProducerTemplate myTemplate = ctx.createProducerTemplate();
         myTemplate.start();
@@ -80,8 +80,7 @@ public class OSGiBlueprintHelloWorldTest extends OSGiBlueprintTestSupport {
                         .build()).noStart(),
                 
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-blueprint"));
+                loadCamelFeatures("camel-blueprint"));
 
         return options;
     }

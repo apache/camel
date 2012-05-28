@@ -17,6 +17,8 @@
 
 package org.apache.camel.itest.osgi.jclouds;
 
+import javax.inject.Inject;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.jclouds.JcloudsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,16 +29,13 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 public class BlobStoreRouteTest extends OSGiIntegrationTestSupport {
@@ -88,7 +87,7 @@ public class BlobStoreRouteTest extends OSGiIntegrationTestSupport {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(), "camel-jclouds"));
+                loadCamelFeatures("camel-jclouds"));
 
         return options;
     }

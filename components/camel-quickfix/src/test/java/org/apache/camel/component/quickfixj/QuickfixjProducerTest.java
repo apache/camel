@@ -86,12 +86,12 @@ public class QuickfixjProducerTest {
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
         Mockito.doThrow(new TestException()).when(mockSession).send(Mockito.isA(Message.class));
 
-        producer.process(mockExchange);    
+        producer.process(mockExchange);
         Mockito.verify(mockExchange).setException(Matchers.isA(TestException.class));
     }
     
     @Test
-    public void processInOnlyExchange() throws Exception {        
+    public void processInOnlyExchangeSuccess() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
         Mockito.doReturn(true).when(mockSession).send(Mockito.isA(Message.class));
@@ -101,9 +101,21 @@ public class QuickfixjProducerTest {
         Mockito.verify(mockExchange, Mockito.never()).setException(Matchers.isA(IllegalStateException.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
     }
+    
+    @Test
+    public void processInOnlyExchangeSendUnsuccessful() throws Exception {
+        Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
+        Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
+        Mockito.doReturn(false).when(mockSession).send(Mockito.isA(Message.class));
+
+        producer.process(mockExchange);
+        
+        Mockito.verify(mockSession).send(inboundFixMessage);
+        Mockito.verify(mockExchange).setException(Matchers.isA(CannotSendException.class));
+    }    
 
     @Test
-    public void processInOutExchange() throws Exception {
+    public void processInOutExchangeSuccess() throws Exception {
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY)).thenReturn(
             new MessagePredicate(sessionID, MsgType.EMAIL));
@@ -143,4 +155,46 @@ public class QuickfixjProducerTest {
         Mockito.verify(mockSession).send(inboundFixMessage);
         Mockito.verify(mockOutboundCamelMessage).setBody(outboundFixMessage);
     }
+    
+    @Test
+    public void processInOutExchangeSendUnsuccessful() throws Exception {
+        Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
+        Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY)).thenReturn(
+            new MessagePredicate(sessionID, MsgType.EMAIL));
+        Mockito.when(mockExchange.getProperty(
+            QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
+            1000L, Long.class)).thenReturn(5000L);
+                
+        org.apache.camel.Message mockOutboundCamelMessage = Mockito.mock(org.apache.camel.Message.class);
+        Mockito.when(mockExchange.getOut()).thenReturn(mockOutboundCamelMessage);
+                
+        final Message outboundFixMessage = new Email();
+        outboundFixMessage.getHeader().setString(SenderCompID.FIELD, "TARGET");
+        outboundFixMessage.getHeader().setString(TargetCompID.FIELD, "SENDER");
+        
+        Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
+        Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
+        Mockito.doAnswer(new Answer<Boolean>() {
+            @Override
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                new Timer().schedule(new TimerTask() {                
+                    @Override
+                    public void run() {
+                        try {
+                            quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID, outboundFixMessage);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, 10);
+                return false;
+            }            
+        }).when(mockSession).send(Mockito.isA(Message.class));
+
+        producer.process(mockExchange);
+        
+        Mockito.verify(mockOutboundCamelMessage, Mockito.never()).setBody(Mockito.isA(Message.class));
+        Mockito.verify(mockSession).send(inboundFixMessage);
+        Mockito.verify(mockExchange).setException(Matchers.isA(CannotSendException.class));
+    }    
 }

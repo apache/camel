@@ -77,15 +77,17 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         tmp.setKeyStore(ksp);
 
         // NOTE: Needed since the client uses a loose trust configuration when no ssl context
-        // is provided.  We turn on client-auth to ensure that the tests onlt pass when
-        // the client is configured explicitly.
+        // is provided.  We turn on WANT client-auth to prefer using authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
-        scsp.setClientAuthentication(ClientAuthentication.REQUIRE.name());
-        
+        scsp.setClientAuthentication(ClientAuthentication.WANT.name());
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
+        // use SSLv3 to avoid issue with (eg disable TLS)
+        // Caused by: javax.net.ssl.SSLException: bad record MAC
+        sslContextParameters.setSecureSocketProtocol("SSLv3");
 
         registry.bind("sslContextParameters", sslContextParameters);
     }

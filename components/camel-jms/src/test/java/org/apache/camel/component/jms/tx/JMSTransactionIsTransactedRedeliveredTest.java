@@ -72,6 +72,8 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         error.assertIsSatisfied();
 
         // check JMX stats
+        // need a little sleep to ensure JMX is updated
+        Thread.sleep(500);
 
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"myRoute\"");
 

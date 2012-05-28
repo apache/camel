@@ -23,9 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.CommandResponder;
 import org.snmp4j.CommandResponderEvent;
+import org.snmp4j.MessageException;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
 import org.snmp4j.TransportMapping;
+import org.snmp4j.mp.StateReference;
+import org.snmp4j.mp.StatusInformation;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.GenericAddress;
 import org.snmp4j.smi.TcpAddress;
@@ -98,6 +101,31 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         PDU pdu = event.getPDU();
         // check PDU not null
         if (pdu != null) {
+            // check for INFORM
+            // code take from the book "Essential SNMP"
+            if ((pdu.getType() != PDU.TRAP) && (pdu.getType() != PDU.V1TRAP) && (pdu.getType() != PDU.REPORT)
+                && (pdu.getType() != PDU.RESPONSE)) {
+                // first response the inform-message and then process the
+                // message
+                pdu.setErrorIndex(0);
+                pdu.setErrorStatus(0);
+                pdu.setType(PDU.RESPONSE);
+                StatusInformation statusInformation = new StatusInformation();
+                StateReference ref = event.getStateReference();
+                try {
+                    event.getMessageDispatcher().returnResponsePdu(event.getMessageProcessingModel(),
+                                                                   event.getSecurityModel(),
+                                                                   event.getSecurityName(),
+                                                                   event.getSecurityLevel(), pdu,
+                                                                   event.getMaxSizeResponsePDU(), ref,
+                                                                   statusInformation);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("response to INFORM sent");
+                    }
+                } catch (MessageException ex) {
+                    getExceptionHandler().handleException(ex);
+                }
+            }
             processPDU(pdu, event);
         } else {
             LOG.debug("Received invalid trap PDU: " + pdu);

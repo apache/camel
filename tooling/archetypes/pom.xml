@@ -35,6 +35,7 @@
     <module>camel-archetype-activemq</module>
     <module>camel-archetype-blueprint</module>
     <module>camel-archetype-component</module>
+    <module>camel-archetype-component-scala</module>
     <module>camel-archetype-dataformat</module>
     <module>camel-archetype-java</module>
     <module>camel-archetype-scala</module>

@@ -20,44 +20,125 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.eclipse.jetty.server.Handler;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
 
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private NodeSynchronization sync;
-    private String remaining;
     private WebsocketStore memoryStore;
-    private Boolean sendToAll;
+    private WebsocketComponent component;
+    private SSLContextParameters sslContextParameters;
+    private URI uri;
+    private List<Handler> handlers;
 
-    public WebsocketEndpoint(String uri, WebsocketComponent component, String remaining) {
+    private Boolean sendToAll;
+    private boolean enableJmx;
+    private boolean sessionSupport;
+
+    private String remaining;
+    private String host;
+    // Base Resource for the ServletContextHandler
+    private String home;
+
+    private Integer port;
+
+    public WebsocketEndpoint(WebsocketComponent component, String uri, String remaining, Map<String, Object> parameters) {
         super(uri, component);
         this.remaining = remaining;
-
         this.memoryStore = new MemoryWebsocketStore();
         this.sync = new DefaultNodeSynchronization(memoryStore);
+        this.component = component;
+        try {
+            this.uri = new URI(uri);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
     public WebsocketComponent getComponent() {
+        ObjectHelper.notNull(component, "component");
         return (WebsocketComponent) super.getComponent();
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notNull(component, "component");
         WebsocketConsumer consumer = new WebsocketConsumer(this, processor);
-        getComponent().addServlet(sync, consumer, remaining);
         return consumer;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        getComponent().addServlet(sync, null, remaining);
         return new WebsocketProducer(this, memoryStore);
+    }
+
+    public void connect(WebsocketConsumer consumer) throws Exception {
+        // Jetty instance will be created
+        // if it does not exist
+        component.connect(consumer);
+
+        // We will add a WebSocket servlet
+        // to a Jetty server using Handler
+        getComponent().addServlet(sync, consumer, remaining);
+    }
+
+    public void disconnect(WebsocketConsumer consumer) throws Exception {
+        component.disconnect(consumer);
+        // Servlet should be removed
+        // getComponent().addServlet(sync, consumer, remaining);
+    }
+
+    public void connect(WebsocketProducer producer) throws Exception {
+        component.connect(producer);
+        getComponent().addServlet(sync, producer, remaining);
+    }
+
+    public void disconnect(WebsocketProducer producer) throws Exception {
+        component.disconnect(producer);
+        // Servlet should be removed
+        // getComponent().addServlet(sync, consumer, remaining);
     }
 
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    public URI getUri() {
+        return uri;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getHome() {
+        return home;
+    }
+
+    public void setHome(String home) {
+        this.home = home;
     }
 
     public Boolean getSendToAll() {
@@ -67,6 +148,48 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     public void setSendToAll(Boolean sendToAll) {
         this.sendToAll = sendToAll;
     }
+
+    public String getProtocol() {
+        return uri.getScheme();
+    }
+
+    public String getPath() {
+        return uri.getPath();
+    }
+
+    public void setSessionSupport(boolean support) {
+        sessionSupport = support;
+    }
+
+    public boolean isSessionSupport() {
+        return sessionSupport;
+    }
+
+    public List<Handler> getHandlers() {
+        return handlers;
+    }
+
+    public void setHandlers(List<Handler> handlers) {
+        this.handlers = handlers;
+    }
+
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isEnableJmx() {
+        return this.enableJmx;
+    }
+
+    public void setEnableJmx(boolean enableJmx) {
+        this.enableJmx = enableJmx;
+    }
+
 
     @Override
     protected void doStart() throws Exception {

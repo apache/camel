@@ -44,8 +44,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
 
 @RunWith(JUnit4TestRunner.class)

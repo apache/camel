@@ -60,6 +60,11 @@
             <artifactId>jetty-servlet</artifactId>
             <version>${jetty-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jmx</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
         <!-- Unit test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -80,9 +85,10 @@
             <groupId>com.ning</groupId>
             <artifactId>async-http-client</artifactId>
             <version>${ahc-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- logging -->
+            <!--<version>1.8.0-SNAPSHOT</version> -->
+          <scope>test</scope>
+      </dependency>
+      <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -90,4 +96,19 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/WebsocketEndpointTest.java</exclude>
+                        <exclude>**/WebsocketComponentTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
 </project>

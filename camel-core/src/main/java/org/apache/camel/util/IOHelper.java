@@ -213,7 +213,9 @@ public final class IOHelper {
      */
     public static void force(FileChannel channel, String name, Logger log) {
         try {
-            channel.force(true);
+            if (channel != null) {
+                channel.force(true);
+            }
         } catch (Exception e) {
             if (log == null) {
                 // then fallback to use the own Logger

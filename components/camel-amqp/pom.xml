@@ -55,33 +55,17 @@
       <artifactId>qpid-common</artifactId>
       <version>${qpid-version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.mina</groupId>
-      <artifactId>mina-core</artifactId>
-      <version>1.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.4</version>
-    </dependency>
 
     <!-- testing -->
     <dependency>
+      <groupId>org.apache.qpid</groupId>
+      <artifactId>qpid-broker</artifactId>
+      <version>${qpid-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-      <version>1.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>backport-util-concurrent</groupId>
-      <artifactId>backport-util-concurrent</artifactId>
-      <version>3.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -109,27 +93,4 @@
     </plugins>
   </build>
 
-  <!--
-    It's necessary to explicitly include the mina-filter-ssl dependency
-    when using the ibm jdk as well.
-  -->
-  <profiles>
-    <profile>
-      <id>ibmjdk</id>
-      <activation>
-        <property>
-          <name>java.vendor</name>
-          <value>IBM Corporation</value>
-        </property>
-      </activation> 
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.mina</groupId>
-          <artifactId>mina-filter-ssl</artifactId>
-          <version>1.0.1</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
 </project>

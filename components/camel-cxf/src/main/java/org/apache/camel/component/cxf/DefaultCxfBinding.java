@@ -618,6 +618,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 
             } else if (dataFormat.dealias() == DataFormat.RAW) {
                 answer = message.getContent(InputStream.class);
+                
+            } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE) {
+                answer = message.getContent(List.class).get(0);
             }
 
             LOG.trace("Extracted body from CXF message = {}", answer);
@@ -722,6 +725,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             answer = out.getBody(CxfPayload.class);
         } else if (dataFormat.dealias() == DataFormat.RAW) {
             answer = out.getBody(InputStream.class);
+        } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE) {
+            answer = out.getBody();
         }
         return answer;
     }

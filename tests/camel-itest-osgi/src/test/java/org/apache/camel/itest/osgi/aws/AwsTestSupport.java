@@ -22,7 +22,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 
 public abstract class AwsTestSupport extends OSGiIntegrationSpringTestSupport {
@@ -33,7 +32,7 @@ public abstract class AwsTestSupport extends OSGiIntegrationSpringTestSupport {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the other camel components             
-            scanFeatures(getCamelKarafFeatureUrl(), "camel-aws"));
+            loadCamelFeatures("camel-aws"));
         
         return options;
     }

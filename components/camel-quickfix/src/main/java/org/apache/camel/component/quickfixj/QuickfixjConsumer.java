@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-
+import org.quickfixj.QFJException;
 import quickfix.MessageUtils;
 import quickfix.Session;
 import quickfix.SessionID;
@@ -45,25 +45,23 @@ public class QuickfixjConsumer extends DefaultConsumer {
         }
     }
 
-    private void sendOutMessage(Exchange exchange) {
-        try {
-            Message camelMessage = exchange.getOut();
-            quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
-     
-            if (log.isDebugEnabled()) {
-                log.debug("Sending FIX message reply: " + quickfixjMessage.toString());
-            }
-            
-            SessionID messageSessionID = MessageUtils.getReverseSessionID(exchange.getIn().getBody(quickfix.Message.class));
-            
-            Session session = getSession(messageSessionID);
-            if (session == null) {
-                throw new IllegalStateException("Unknown session: " + messageSessionID);
-            }
-            
-            session.send(quickfixjMessage);
-        } catch (Exception e) {
-            exchange.setException(e);
+    private void sendOutMessage(Exchange exchange) throws QFJException {
+        Message camelMessage = exchange.getOut();
+        quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Sending FIX message reply: " + quickfixjMessage.toString());
+        }
+
+        SessionID messageSessionID = MessageUtils.getReverseSessionID(exchange.getIn().getBody(quickfix.Message.class));
+
+        Session session = getSession(messageSessionID);
+        if (session == null) {
+            throw new IllegalStateException("Unknown session: " + messageSessionID);
+        }
+
+        if (!session.send(quickfixjMessage)) {
+            throw new CannotSendException("Could not send FIX message reply: " + quickfixjMessage.toString());
         }
     }
 

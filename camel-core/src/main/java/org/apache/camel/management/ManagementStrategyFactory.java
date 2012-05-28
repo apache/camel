@@ -35,7 +35,7 @@ public class ManagementStrategyFactory {
             log.info("JMX is disabled.");
         } else {
             try {
-                answer = new ManagedManagementStrategy(new DefaultManagementAgent(context));
+                answer = new ManagedManagementStrategy(context, new DefaultManagementAgent(context));
                 // must start it to ensure JMX works and can load needed Spring JARs
                 ServiceHelper.startService(answer);
                 // prefer to have it at first strategy
@@ -48,7 +48,7 @@ public class ManagementStrategyFactory {
         }
 
         if (answer == null) {
-            answer = new DefaultManagementStrategy();
+            answer = new DefaultManagementStrategy(context);
         }
         return answer;
     }

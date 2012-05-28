@@ -31,11 +31,10 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
 public class XstreamBlueprintRouteTest extends OSGiBlueprintTestSupport {
@@ -65,22 +64,18 @@ public class XstreamBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
-                new Customizer() {
-                    @Override
-                    public InputStream customizeTestProbe(InputStream testProbe) {
-                        return modifyBundle(testProbe)
-                                .add(SampleObject.class)
-                                .add(XstreamRouteBuilder.class)
-                                .add("OSGI-INF/blueprint/test.xml", XstreamBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
-                                .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintXstreamTestBundle")
-                                .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                                .build();
-                    }
-                },
+                provision(newBundle()
+                    .add(SampleObject.class)
+                    .add(XstreamRouteBuilder.class)
+                    .add("OSGI-INF/blueprint/test.xml", XstreamBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
+                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintXstreamTestBundle")
+                    .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                    .build()),
+                   
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(), "xml-specs-api", "camel-blueprint", "camel-xstream"),
+                loadCamelFeatures("xml-specs-api", "camel-blueprint", "camel-xstream"));
                 //vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
-                felix(), equinox());
+                
 
         return options;
     }

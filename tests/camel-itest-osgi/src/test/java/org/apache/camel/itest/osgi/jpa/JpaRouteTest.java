@@ -18,6 +18,8 @@ package org.apache.camel.itest.osgi.jpa;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
@@ -25,7 +27,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -40,7 +41,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 public class JpaRouteTest extends OSGiIntegrationTestSupport {
@@ -129,7 +129,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
 
             getDefaultCamelKarafOptions(),
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(), "camel-jpa"),
+            loadCamelFeatures("camel-jpa"),
 
             // use derby as the database
             mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"));

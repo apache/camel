@@ -26,7 +26,6 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 /**
  * Test camel-script for groovy expressions in OSGi
@@ -54,7 +53,7 @@ public class GroovyScriptOsgiTest extends OSGiIntegrationTestSupport {
     public static Option[] configure() {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
-            scanFeatures(getCamelKarafFeatureUrl(), "camel-script", "camel-groovy"));
+            loadCamelFeatures("camel-script", "camel-groovy"));
         return options;
     }
     

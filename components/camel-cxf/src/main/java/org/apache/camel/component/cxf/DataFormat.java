@@ -52,7 +52,6 @@ public enum DataFormat {
      * CXF_MESSAGE is the message that is received from the transport layer
      * and then processed through the full set of CXF interceptors.  This 
      * provides the same functionality as the CXF MESSAGE mode providers.
-     * Streaming and non-streaming are both supported.
      */
     CXF_MESSAGE,    
     

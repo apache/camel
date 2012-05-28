@@ -125,9 +125,6 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
         private void cleanZookeeperDir() throws Exception {
             File working = zookeeperBaseDir;
             deleteDir(working);
-            if (working.exists()) {
-                throw new Exception("Could not delete Test Zookeeper Server working dir " + zookeeperBaseDir);
-            }
         }
 
         public void shutdown() throws Exception {
@@ -138,7 +135,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
                 zkServer.shutdown();
                 Thread.sleep(100);
             }
-            //cleanZookeeperDir();
+            cleanZookeeperDir();
         }
     }
 
@@ -174,7 +171,6 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
         public void create(String node, String data) throws Exception {
             log.debug(String.format("Creating node '%s' with data '%s' ", node, data));
             create(node, data, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-
         }
 
         public void createPersistent(String node, String data) throws Exception {
@@ -200,7 +196,6 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
         }
 
         public void process(WatchedEvent event) {
-
             if (event.getState() == KeeperState.SyncConnected) {
                 log.info("TestClient connected");
                 connected.countDown();

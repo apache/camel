@@ -40,7 +40,6 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
@@ -79,8 +78,12 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         try {
             HttpResponse response = httpclient.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
-            assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", 
-                         EntityUtils.toString(response.getEntity()));
+
+            // should either by John or Mary depending on PUT test executed first
+            String s = EntityUtils.toString(response.getEntity());
+            boolean isJohn = "{\"Customer\":{\"id\":123,\"name\":\"John\"}}".equals(s);
+            boolean isMary = "{\"Customer\":{\"id\":123,\"name\":\"Mary\"}}".equals(s);
+            assertTrue("Should be John or Mary", isJohn || isMary);
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
@@ -185,7 +188,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
             getDefaultCamelKarafOptions(),
            
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(),
+            loadCamelFeatures(
                          "camel-blueprint", "camel-http4", "camel-cxf"),
                                         
             bundle(newBundle()

@@ -58,7 +58,8 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
     
     private T createInstanceInternal() throws Exception {
         T newInstance = createInstance();
-        
+        newInstance.setCamelContext(getCamelContext());
+
         if (cipherSuites != null) {
             CipherSuitesParameters cipherSuitesInstance = new CipherSuitesParameters();
             cipherSuitesInstance.getCipherSuite().addAll(cipherSuites.getCipherSuite());
@@ -82,7 +83,7 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
         if (sessionTimeout != null) {
             newInstance.setSessionTimeout(sessionTimeout);
         }
-        
+
         return newInstance;
     }
     

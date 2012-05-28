@@ -34,9 +34,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
+import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
 public class KratiBlueprintRouteTest extends OSGiBlueprintTestSupport {
@@ -48,7 +48,7 @@ public class KratiBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
     @Test
     public void testProducerConsumerAndIdempotent() throws Exception {
-        getInstalledBundle("CamelBlueprintKratiTestBundle").start();
+        //getInstalledBundle("CamelBlueprintKratiTestBundle").start();
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintKratiTestBundle)", 20000);
         MockEndpoint mock = ctx.getEndpoint("mock:results", MockEndpoint.class);
         ProducerTemplate template = ctx.createProducerTemplate();
@@ -65,20 +65,15 @@ public class KratiBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
                 getDefaultCamelKarafOptions(),
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(), "camel-blueprint", "camel-krati"),
+                loadCamelFeatures("camel-blueprint", "camel-krati"),
 
-                new Customizer() {
-                    @Override
-                    public InputStream customizeTestProbe(InputStream testProbe) {
-                        return modifyBundle(testProbe)
+                provision(newBundle()
                                 .add(SomeObject.class)
                                 .add("META-INF/persistence.xml", KratiBlueprintRouteTest.class.getResource("/META-INF/persistence.xml"))
                                 .add("OSGI-INF/blueprint/test.xml", KratiBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
                                 .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintKratiTestBundle")
                                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                                .build();
-                    }
-                });
+                                .build()));
 
         return options;
     }

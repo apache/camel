@@ -28,8 +28,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
+import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
@@ -77,8 +77,7 @@ public class CamelMultiVersionBlueprintTest extends OSGiBlueprintTestSupport {
                                 .build()).noStart(),
 
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                                "camel-blueprint", "camel-test")
+                loadCamelFeatures("camel-blueprint", "camel-test")
 
         );
         return options;

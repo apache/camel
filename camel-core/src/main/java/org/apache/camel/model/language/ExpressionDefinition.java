@@ -56,6 +56,8 @@ public class ExpressionDefinition implements Expression, Predicate {
     private String id;
     @XmlValue
     private String expression;
+    @XmlAttribute
+    private Boolean trim;
     @XmlTransient
     private Predicate predicate;
     @XmlTransient
@@ -150,7 +152,12 @@ public class ExpressionDefinition implements Expression, Predicate {
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
-                predicate = language.createPredicate(getExpression());
+                String exp = getExpression();
+                // trim if configured to trim
+                if (exp != null && isTrim()) {
+                    exp = exp.trim();
+                }
+                predicate = language.createPredicate(exp);
                 configurePredicate(camelContext, predicate);
             }
         }
@@ -168,7 +175,12 @@ public class ExpressionDefinition implements Expression, Predicate {
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
-                setExpressionValue(language.createExpression(getExpression()));
+                String exp = getExpression();
+                // trim if configured to trim
+                if (exp != null && isTrim()) {
+                    exp = exp.trim();
+                }
+                setExpressionValue(language.createExpression(exp));
                 configureExpression(camelContext, getExpressionValue());
             }
         }
@@ -212,6 +224,19 @@ public class ExpressionDefinition implements Expression, Predicate {
 
     public ExpressionDefinition getExpressionType() {
         return expressionType;
+    }
+
+    public Boolean getTrim() {
+        return trim;
+    }
+
+    public void setTrim(Boolean trim) {
+        this.trim = trim;
+    }
+
+    public boolean isTrim() {
+        // trim by default
+        return trim == null || trim;
     }
 
     /**

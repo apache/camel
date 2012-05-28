@@ -23,15 +23,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-
 /**
  *
  */
 @RunWith(JUnit4TestRunner.class)
+@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
 public class AhcTest extends OSGiIntegrationTestSupport {
 
     @Test
@@ -67,12 +68,10 @@ public class AhcTest extends OSGiIntegrationTestSupport {
     public static Option[] configure() throws Exception {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
-            
             // using the features to install other camel components
-            scanFeatures(getCamelKarafFeatureUrl(),
-                          "camel-jetty", "camel-ahc"));
-
+            loadCamelFeatures("camel-jetty", "camel-ahc"));
         return options;
     }
 
+   
 }

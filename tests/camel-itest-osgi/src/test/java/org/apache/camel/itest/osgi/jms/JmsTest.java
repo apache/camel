@@ -24,8 +24,8 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
+import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 /**
  * @version 
@@ -56,7 +56,7 @@ public class JmsTest extends OSGiIntegrationSpringTestSupport {
             scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.4.0/xml/features", "activemq"),
 
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(), "camel-jms"));
+            loadCamelFeatures("camel-jms"));
 
         return options;
     }

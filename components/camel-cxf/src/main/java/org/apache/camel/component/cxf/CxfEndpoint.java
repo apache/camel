@@ -43,8 +43,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
+import org.apache.camel.component.cxf.feature.CXFMessageDataFormatFeature;
 import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
+import org.apache.camel.component.cxf.feature.RAWDataFormatFeature;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -61,6 +62,7 @@ import org.apache.cxf.common.injection.ResourceInjector;
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
 import org.apache.cxf.databinding.DataBinding;
+import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
@@ -207,7 +209,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         // address
         sfb.setAddress(getAddress());
 
-        // service class
         sfb.setServiceClass(cls);
 
         sfb.setInInterceptors(in);
@@ -259,8 +260,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (!CxfEndpointUtils.hasAnnotation(cls, WebServiceProvider.class)) {
             if (getDataFormat() == DataFormat.PAYLOAD) {
                 sfb.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
+            } else if (getDataFormat().dealias() == DataFormat.CXF_MESSAGE) {
+                sfb.getFeatures().add(new CXFMessageDataFormatFeature());
+                sfb.setDataBinding(new SourceDataBinding());
             } else if (getDataFormat().dealias() == DataFormat.RAW) {
-                MessageDataFormatFeature feature = new MessageDataFormatFeature();
+                RAWDataFormatFeature feature = new RAWDataFormatFeature();
                 feature.addInIntercepters(getInInterceptors());
                 feature.addOutInterceptors(getOutInterceptors());
                 sfb.getFeatures().add(feature);
@@ -282,7 +286,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         // set the document-literal wrapped style
-        if (getWrappedStyle() != null) {
+        if (getWrappedStyle() != null && getDataFormat().dealias() != DataFormat.CXF_MESSAGE) {
             sfb.getServiceFactory().setWrapped(getWrappedStyle());
         }
 
@@ -419,10 +423,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         // apply feature here
         if (getDataFormat().dealias() == DataFormat.RAW) {
-            MessageDataFormatFeature feature = new MessageDataFormatFeature();
+            RAWDataFormatFeature feature = new RAWDataFormatFeature();
             feature.addInIntercepters(getInInterceptors());
             feature.addOutInterceptors(getOutInterceptors());
             factoryBean.getFeatures().add(feature);
+        } else if (getDataFormat().dealias() == DataFormat.CXF_MESSAGE) {
+            factoryBean.getFeatures().add(new CXFMessageDataFormatFeature());
+            factoryBean.setDataBinding(new SourceDataBinding());
         } else if (getDataFormat() == DataFormat.PAYLOAD) {
             factoryBean.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
             factoryBean.setDataBinding(new HybridSourceDataBinding());

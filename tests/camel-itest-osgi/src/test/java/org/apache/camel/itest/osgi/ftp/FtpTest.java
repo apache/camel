@@ -29,7 +29,6 @@ import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 @Ignore("Not fully implemented, see TODO")
@@ -54,7 +53,7 @@ public class FtpTest extends OSGiIntegrationSpringTestSupport {
 
             getDefaultCamelKarafOptions(),
             // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(), "jetty", "camel-ftp"),
+            loadCamelFeatures("jetty", "camel-ftp"),
 
             // ftp server bundles
             mavenBundle().groupId("org.apache.mina").artifactId("mina-core").version("2.0.0"),

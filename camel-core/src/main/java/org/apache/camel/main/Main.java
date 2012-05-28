@@ -33,8 +33,9 @@ import org.apache.camel.view.ModelFileGenerator;
  * @version 
  */
 public class Main extends MainSupport {
+
     protected static Main instance;
-    private final SimpleRegistry registery = new SimpleRegistry();
+    protected final SimpleRegistry registry = new SimpleRegistry();
 
     public Main() {
     }
@@ -64,7 +65,7 @@ public class Main extends MainSupport {
      * @param bean the object to bind
      */
     public void bind(String name, Object bean) {
-        registery.put(name, bean);
+        registry.put(name, bean);
     }
 
     /**
@@ -74,7 +75,7 @@ public class Main extends MainSupport {
      * @see Registry#lookup(String)
      */
     public Object lookup(String name) {
-        return registery.get(name);
+        return registry.get(name);
     }
 
     /**
@@ -85,7 +86,7 @@ public class Main extends MainSupport {
      * @see Registry#lookup(String, Class)
      */
     public <T> T lookup(String name, Class<T> type) {
-        return registery.lookup(name, type);
+        return registry.lookup(name, type);
     }
 
     /**
@@ -95,7 +96,7 @@ public class Main extends MainSupport {
      * @see Registry#lookupByType(Class)
      */
     public <T> Map<String, T> lookupByType(Class<T> type) {
-        return registery.lookupByType(type);
+        return registry.lookupByType(type);
     }    
     
     // Implementation methods
@@ -120,14 +121,20 @@ public class Main extends MainSupport {
     protected Map<String, CamelContext> getCamelContextMap() {
         Map<String, CamelContext> answer = new HashMap<String, CamelContext>();
 
-        CamelContext camelContext = new DefaultCamelContext();
-        if (registery.size() > 0) {
+        CamelContext camelContext = createContext();
+        if (registry.size() > 0) {
             // set the registry through which we've already bound some beans
-            ((DefaultCamelContext) camelContext).setRegistry(registery);
+            if (DefaultCamelContext.class.isAssignableFrom(camelContext.getClass())) {
+                ((DefaultCamelContext) camelContext).setRegistry(registry);
+            }
         }
 
         answer.put("camel-1", camelContext);
         return answer;
+    }
+
+    protected CamelContext createContext() {
+        return new DefaultCamelContext();
     }
 
     protected ModelFileGenerator createModelFileGenerator() throws JAXBException {

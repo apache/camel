@@ -45,7 +45,7 @@ public class WebsocketConsumerTest {
     private static final String MESSAGE = "message";
 
     @Mock
-    private Endpoint endpoint;
+    private WebsocketEndpoint endpoint;
     @Mock
     private ExceptionHandler exceptionHandler;
     @Mock

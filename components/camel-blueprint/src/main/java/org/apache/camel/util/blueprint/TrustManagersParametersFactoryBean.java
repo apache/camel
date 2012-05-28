@@ -16,9 +16,11 @@
  */
 package org.apache.camel.util.blueprint;
 
+import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.blueprint.BlueprintCamelContextLookupHelper;
 import org.apache.camel.core.xml.util.jsse.AbstractTrustManagersParametersFactoryBean;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
@@ -49,4 +51,17 @@ public class TrustManagersParametersFactoryBean extends AbstractTrustManagersPar
         }
         return null;
     }
+
+    @Override
+    protected CamelContext discoverDefaultCamelContext() {
+        if (blueprintContainer != null) {
+            Set<String> ids = BlueprintCamelContextLookupHelper.lookupBlueprintCamelContext(blueprintContainer);
+            if (ids.size() == 1) {
+                // there is only 1 id for a BlueprintCamelContext so fallback and use this
+                return getCamelContextWithId(ids.iterator().next());
+            }
+        }
+        return null;
+    }
+
 }

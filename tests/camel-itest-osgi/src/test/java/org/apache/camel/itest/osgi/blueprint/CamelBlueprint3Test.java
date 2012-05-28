@@ -26,7 +26,6 @@ import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
@@ -102,8 +101,7 @@ public class CamelBlueprint3Test extends OSGiBlueprintTestSupport {
                         .build()).noStart(),
                         
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-blueprint", "camel-ftp", "camel-jackson", "camel-jms"));
+                loadCamelFeatures("camel-blueprint", "camel-ftp", "camel-jackson", "camel-jms"));
 
         return options;
     }
