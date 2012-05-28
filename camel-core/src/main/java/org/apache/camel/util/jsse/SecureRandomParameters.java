@@ -56,7 +56,7 @@ public class SecureRandomParameters extends JsseParameters {
      *             not exist.
      */
     public SecureRandom createSecureRandom() throws GeneralSecurityException {
-        LOG.trace("Creating SecureRandom from SecureRandomParameters: {}", this);
+        LOG.debug("Creating SecureRandom from SecureRandomParameters: {}", this);
 
         SecureRandom secureRandom;
         if (this.getProvider() != null) {
