@@ -61,7 +61,6 @@ public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(EventObject event) throws Exception {
-                System.out.println(event);
                 events.add(event);
             }
 
