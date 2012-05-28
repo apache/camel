@@ -84,6 +84,7 @@
     <module>camel-guice</module>
     <module>camel-hawtdb</module>
     <module>camel-hazelcast</module>
+    <module>camel-hbase</module>
     <module>camel-hdfs</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>

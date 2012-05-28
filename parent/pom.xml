@@ -93,6 +93,7 @@
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hazelcast-version>2.0.2</hazelcast-version>
+    <hbase-version>0.92.1</hbase-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <hsqldb-version>2.2.8</hsqldb-version>
@@ -1412,6 +1413,19 @@
         <groupId>org.apache.servicemix.bundles</groupId>
         <artifactId>org.apache.servicemix.bundles.ehcache</artifactId>
         <version>${ehcache-bundle-version}</version>
+      </dependency>
+
+      <!-- Hadoop, Hbase -->
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-core</artifactId>
+          <version>${hadoop-version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase</artifactId>
+          <version>${hbase-version}</version>
       </dependency>
 
       <!-- hibernate and other db systems -->
