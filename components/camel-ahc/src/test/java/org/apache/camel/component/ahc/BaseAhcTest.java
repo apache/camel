@@ -80,11 +80,14 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         // is provided.  We turn on WANT client-auth to prefer using authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
         scsp.setClientAuthentication(ClientAuthentication.WANT.name());
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
+        // use SSLv3 to avoid issue with (eg disable TLS)
+        // Caused by: javax.net.ssl.SSLException: bad record MAC
+        sslContextParameters.setSecureSocketProtocol("SSLv3");
 
         registry.bind("sslContextParameters", sslContextParameters);
     }
