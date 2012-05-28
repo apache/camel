@@ -324,7 +324,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             Arrays.asList(engine.getEnabledCipherSuites()),
                             enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
                             !allowPassthrough);
-                 
+
+                LOG.trace("Enabled ChiperSuites: {}", filteredCipherSuites);
                 engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
@@ -334,6 +335,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             !allowPassthrough);
                 
                 engine.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+                LOG.trace("Enabled Protocols: {}", filteredSecureSocketProtocols);
+
                 return engine;
             }
         };
