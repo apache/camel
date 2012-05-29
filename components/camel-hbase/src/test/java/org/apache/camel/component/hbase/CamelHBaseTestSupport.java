@@ -17,15 +17,10 @@
 
 package org.apache.camel.component.hbase;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.hbase.HBaseTestingUtility;
-import org.apache.hadoop.hbase.client.HTablePool;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -33,19 +28,20 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     protected static HBaseTestingUtility hbaseUtil = new HBaseTestingUtility();
     protected static int numServers = 1;
-    protected static final String REQUIREDUMASK = "0022";
     protected static final String DEFAULTTABLE = "DEFAULTTABLE";
     protected static final String DEFAULTFAMILY = "DEFAULTFAMILY";
 
-    protected static String actualMask = "0022";
+    //The hbase testing utility has special requirements on the umask.
+    //We hold this value to check if the the minicluster has properly started and tests can be run.
     protected static Boolean systemReady = true;
 
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        systemReady = checkUmask();
-        if (systemReady) {
+        try {
             hbaseUtil.startMiniCluster(numServers);
+        } catch (Exception e) {
+           systemReady = false;
         }
     }
 
@@ -54,24 +50,6 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         if (systemReady) {
             hbaseUtil.shutdownMiniCluster();
         }
-    }
-
-
-    protected static boolean checkUmask() throws IOException {
-        String operatingSystem = System.getProperty("os.name");
-        if (!operatingSystem.startsWith("Win")) {
-            Process p = Runtime.getRuntime().exec("umask");
-            InputStream is = p.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            actualMask = sb.toString().trim();
-            return REQUIREDUMASK.equals(actualMask);
-        }
-        return false;
     }
 
     @Override
