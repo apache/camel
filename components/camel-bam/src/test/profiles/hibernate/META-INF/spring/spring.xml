@@ -38,7 +38,7 @@
 	
 	<!-- Hibernate addapter -->
 	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
+		<property name="databasePlatform" value="org.hibernate.dialect.DerbyDialect" />
 	</bean>
 	
 </beans>

@@ -14,9 +14,8 @@
     the specific language governing permissions and limitations under the
     License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -24,7 +23,7 @@
     <artifactId>camel-parent</artifactId>
     <version>2.10-SNAPSHOT</version>
     <relativePath>../../parent</relativePath>
-    </parent>
+  </parent>
 
   <artifactId>camel-bam</artifactId>
   <packaging>bundle</packaging>
@@ -65,6 +64,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-juel</artifactId>
       <scope>test</scope>
@@ -100,16 +104,16 @@
   </build>
 
   <profiles>
-    <!--  Hibernate Derby profile -->
+    <!-- Hibernate Derby profile -->
     <profile>
-      <id>hibernate-derby</id>
+      <id>hibernate</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <testResources>
           <testResource>
-            <directory>${basedir}/src/test/profiles/derby</directory>
+            <directory>${basedir}/src/test/profiles/hibernate</directory>
           </testResource>
         </testResources>
       </build>
@@ -125,21 +129,14 @@
           <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.apache.derby</groupId>
-          <artifactId>derby</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-jta_1.1_spec</artifactId>
-          <version>${geronimo-jta-spec-version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
     </profile>
 
-    <!-- EclipseLink HSQLDB profile -->
-    <!-- TODO fix the issue of CAMEL-2277 -->
+    <!-- EclipseLink Derby profile -->
     <profile>
       <id>eclipselink</id>
       <build>
@@ -156,11 +153,6 @@
           <version>${eclipselink-version}</version>
           <scope>test</scope>
         </dependency>
-        <dependency>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
-          <scope>test</scope>
-        </dependency>
       </dependencies>
       <repositories>
         <repository>
@@ -170,8 +162,7 @@
       </repositories>
     </profile>
 
-    <!--  OpenJPA HSQLDB profile -->
-    <!-- TODO fix the issue of CAMEL-2277 -->
+    <!-- OpenJPA Derby profile -->
     <profile>
       <id>openjpa</id>
       <build>
@@ -180,15 +171,8 @@
             <directory>${basedir}/src/test/profiles/openjpa</directory>
           </testResource>
         </testResources>
-        <resources>
-          <resource>
-            <directory>${basedir}/src/test/profiles/openjpa</directory>
-          </resource>
-        </resources>
         <plugins>
           <plugin>
-
-            <!-- Will enhance classes as we run in a non J2EE 5 env <plugin> -->
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa-maven-plugin</artifactId>
             <version>${openjpa-version}</version>
@@ -202,6 +186,7 @@
               </execution>
             </executions>
             <configuration>
+              <persistenceXmlFile>${project.basedir}/src/test/profiles/openjpa/META-INF/persistence.xml</persistenceXmlFile>
               <addDefaultConstructor>true</addDefaultConstructor>
               <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
             </configuration>
@@ -228,16 +213,6 @@
           <version>${openjpa-version}</version>
           <scope>test</scope>
         </dependency>
-        <dependency>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <!--<dependency>-->
-          <!--<groupId>org.apache.derby</groupId>-->
-          <!--<artifactId>derby</artifactId>-->
-          <!--<scope>test</scope>-->
-        <!--</dependency>-->
       </dependencies>
     </profile>
   </profiles>

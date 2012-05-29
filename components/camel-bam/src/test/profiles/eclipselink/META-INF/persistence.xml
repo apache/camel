@@ -20,19 +20,15 @@
 		<class>org.apache.camel.bam.model.ProcessInstance</class>
 
 		<properties>
-			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
-			<property name="javax.persistence.jdbc.user" value="sa" />
-			<property name="javax.persistence.jdbc.password" value="" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:camel_bam" />
+			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:derby:target/test/database;create=true" />
 			<property name="eclipselink.logging.level" value="FINE" />
 			<property name="eclipselink.logging.file" value="target/camel-eclipselink.log" />
 			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
-			<property name="eclipselink.ddl-generation.output-mode"
-				value="database" />
+			<property name="eclipselink.ddl-generation.output-mode" value="database" />
 			<!-- <property name="eclipselink.logging.thread" value="false" />-->
 			<!-- <property name="eclipselink.logging.session" value="false" />-->
 			<!-- <property name="eclipselink.logging.exceptions" value="false" />-->
 		</properties>
-
 	</persistence-unit>
 </persistence>

@@ -16,7 +16,7 @@
 -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             version="2.0">
+             version="1.0">
 
   <persistence-unit name="bam" transaction-type="RESOURCE_LOCAL">
     <class>org.apache.camel.bam.model.ActivityDefinition</class>
@@ -25,21 +25,10 @@
     <class>org.apache.camel.bam.model.ProcessInstance</class>
 
     <properties>
-      
-      <!-- Derby DB -->
-      <!--<property name="openjpa.ConnectionURL" value="jdbc:derby:target/bamTest;create=true"/>-->
-      <!--<property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>-->
-      <!--<property name="openjpa.Log" value="DefaultLevel=INFO, Tool=INFO, Runtime=TRACE, SQL=TRACE"/>-->
-      <!--<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />-->
-
-      <!--  HSQL DB -->
-      <property name="openjpa.ConnectionDriverName" value="org.hsqldb.jdbcDriver"/>
-      <property name="openjpa.ConnectionURL" value="jdbc:hsqldb:target/bamTest"/>
-      <property name="openjpa.Log" value="commons"/>
-      <property name="openjpa.ConnectionUserName" value="sa"/>
-      <property name="openjpa.ConnectionPassword" value=""/>
-      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
-
+      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/bamTest;create=true"/>
+      <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="openjpa.Log" value="DefaultLevel=INFO, Tool=INFO, Runtime=TRACE, SQL=TRACE"/>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />
     </properties>
   </persistence-unit>
 </persistence>
