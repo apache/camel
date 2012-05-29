@@ -46,7 +46,7 @@
     <avro-bundle-version>1.6.1_1</avro-bundle-version>
     <aws-java-sdk-version>1.3.10</aws-java-sdk-version>
     <axiom-version>1.2.10</axiom-version>
-    <beanio-version>1.2.3</beanio-version>
+    <beanio-version>2.0.0</beanio-version>
     <bouncycastle-version>1.46</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
