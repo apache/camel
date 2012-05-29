@@ -84,8 +84,8 @@
       <artifactId>hibernate</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -106,7 +106,20 @@
 
   <build>
     <plugins>
-
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>always</forkMode>
+          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+          <systemProperties>
+            <property>
+              <name>derby.stream.error.file</name>
+              <value>target/derby.log</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+      
       <!-- Allows the example to be run via 'mvn camel:run' -->
       <plugin>
         <groupId>org.apache.camel</groupId>
