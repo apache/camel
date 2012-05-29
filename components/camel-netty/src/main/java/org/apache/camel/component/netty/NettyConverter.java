@@ -48,7 +48,10 @@ public final class NettyConverter {
     public static String toString(ChannelBuffer buffer, Exchange exchange) {
         byte[] bytes = toByteArray(buffer);
         // use type converter as it can handle encoding set on the Exchange
-        return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, bytes);
+        if (exchange != null) {
+            return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, bytes);
+        }
+        return new String(bytes);
     }
 
     @Converter
