@@ -902,6 +902,7 @@ public class JmsConfiguration implements Cloneable {
 
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
+        container.setSessionTransacted(transacted);
         if (transacted) {
             container.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
         } else {
