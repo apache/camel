@@ -19,11 +19,17 @@ package org.apache.camel.component.aws.sqs;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.MessageNotInflightException;
+import com.amazonaws.services.sqs.model.ReceiptHandleIsInvalidException;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 
@@ -47,6 +53,7 @@ import org.slf4j.LoggerFactory;
 public class SqsConsumer extends ScheduledBatchPollingConsumer {
     
     private static final transient Logger LOG = LoggerFactory.getLogger(SqsConsumer.class);
+    private ScheduledExecutorService scheduledExecutor;
 
     public SqsConsumer(SqsEndpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
@@ -115,9 +122,31 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange [{}]...", exchange);
 
-            getProcessor().process(exchange);
+            // schedule task to extend visibility if enabled
+            ScheduledFuture<?> scheduledFuture = null;
+            Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
+            if (scheduledExecutor != null && visibilityTimeout != null && (visibilityTimeout.intValue() / 2) > 0) {
+                int delay = visibilityTimeout.intValue() / 2;
+                int period = visibilityTimeout.intValue();
+                LOG.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {} period (seconds) to extend exchangeId: {}",
+                        new Object[]{delay, period, exchange.getExchangeId()});
+                scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(
+                        new TimeoutExtender(exchange, visibilityTimeout), delay, period, TimeUnit.SECONDS);
+            }
+
+            LOG.trace("Processing exchange [{}]...", exchange);
+            try {
+                // This blocks while message is consumed.
+                getProcessor().process(exchange);
+            } finally {
+                LOG.trace("Processing exchange [{}] done.", exchange);
+                // cancel task as we are done
+                if (scheduledFuture != null) {
+                    LOG.trace("Processing done so cancelling TimeoutExtender task for exchangeId: {}", exchange.getExchangeId());
+                    scheduledFuture.cancel(true);
+                }
+            }
         }
 
         return total;
@@ -141,8 +170,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Message deleted");
             }
         } catch (AmazonClientException e) {
-            LOG.warn("Error occurred during deleting message", e);
-            exchange.setException(e);
+            getExceptionHandler().handleException("Error occurred during deleting message.", e);
         }
     }
 
@@ -181,4 +209,52 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     public String toString() {
         return "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (getConfiguration().isExtendMessageVisibility() && scheduledExecutor == null) {
+            this.scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "SqsTimeoutExtender");
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        if (scheduledExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
+            scheduledExecutor = null;
+        }
+    }
+
+    private class TimeoutExtender implements Runnable {
+
+        private final Exchange exchange;
+        private final int repeatSeconds;
+
+        public TimeoutExtender(Exchange exchange, int repeatSeconds) {
+            this.exchange = exchange;
+            this.repeatSeconds = repeatSeconds;
+        }
+
+        @Override
+        public void run() {
+            ChangeMessageVisibilityRequest request = new ChangeMessageVisibilityRequest(getQueueUrl(),
+                    exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class), repeatSeconds);
+
+            try {
+                LOG.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
+                getEndpoint().getClient().changeMessageVisibility(request);
+                LOG.debug("Extended visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
+            } catch (ReceiptHandleIsInvalidException e) {
+                // Ignore.
+            } catch (MessageNotInflightException e) {
+                // Ignore.
+            } catch (Exception e) {
+                LOG.warn("Extending visibility window failed for exchange " + exchange
+                        + ". Will not attempt to extend visibility further. This exception will be ignored.", e);
+            }
+        }
+    }
+
 }

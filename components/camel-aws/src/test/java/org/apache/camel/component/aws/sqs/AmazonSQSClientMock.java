@@ -27,6 +27,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
@@ -41,6 +42,7 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     
     List<Message> messages = new ArrayList<Message>();
     Map<String, Map<String, String>> queueAttributes = new HashMap<String, Map<String, String>>();
+    List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new ArrayList<ChangeMessageVisibilityRequest>();
     
     public AmazonSQSClientMock() {
         super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
@@ -105,5 +107,10 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
                 queueAttributes.get(setQueueAttributesRequest.getQueueUrl()).put(entry.getKey(), entry.getValue());
             }
         }
+    }
+
+    @Override
+    public void changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest) throws AmazonServiceException, AmazonClientException {
+        this.changeMessageVisibilityRequests.add(changeMessageVisibilityRequest);
     }
 }
