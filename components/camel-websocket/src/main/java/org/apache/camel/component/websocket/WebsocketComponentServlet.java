@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class WebsocketComponentServlet extends WebSocketServlet {
     private static final long serialVersionUID = 1L;

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,11 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map;
 
 public class WebsocketEndpoint extends DefaultEndpoint {
 

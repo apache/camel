@@ -16,6 +16,15 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.io.IOException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.websocket.WebSocket;
@@ -31,15 +40,6 @@ import org.apache.camel.util.jsse.SSLContextServerParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
 

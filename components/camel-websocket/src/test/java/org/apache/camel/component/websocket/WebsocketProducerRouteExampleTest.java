@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.websocket.WebSocket;
 import com.ning.http.client.websocket.WebSocketTextListener;
@@ -25,11 +30,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
 
@@ -72,7 +72,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                 }).build()).get();
 
         // Send message to the direct endpoint
-        producer.sendBodyAndHeader("Beer on stock at Apache Mall",WebsocketConstants.SEND_TO_ALL,"true");
+        producer.sendBodyAndHeader("Beer on stock at Apache Mall", WebsocketConstants.SEND_TO_ALL, "true");
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 

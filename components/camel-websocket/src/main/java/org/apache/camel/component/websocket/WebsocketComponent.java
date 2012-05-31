@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.MBeanServer;
+import javax.servlet.Servlet;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -59,9 +62,6 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.management.MBeanServer;
-import javax.servlet.Servlet;
 
 public class WebsocketComponent extends DefaultComponent {
 
@@ -188,7 +188,7 @@ public class WebsocketComponent extends DefaultComponent {
                 server.addConnector(connector);
 
                 // Create ServletContextHandler and add it to the Jetty server
-                context = createContext(server,connector,endpoint.getHandlers());
+                context = createContext(server, connector, endpoint.getHandlers());
                 server.setHandler(context);
 
                 // Don't provide a Servlet object as Producer/Consumer will create them later on
@@ -348,7 +348,7 @@ public class WebsocketComponent extends DefaultComponent {
 
         WebsocketComponentServlet servlet;
 
-        if (connectorRef!= null) {
+        if (connectorRef != null) {
             String pathSpec = createPathSpec(remaining);
             servlet = servlets.get(pathSpec);
             if (servlet == null) {
@@ -376,7 +376,7 @@ public class WebsocketComponent extends DefaultComponent {
 
         WebsocketComponentServlet servlet;
 
-        if (connectorRef!= null) {
+        if (connectorRef != null) {
             String pathSpec = createPathSpec(remaining);
             servlet = servlets.get(pathSpec);
             if (servlet == null) {
@@ -384,15 +384,15 @@ public class WebsocketComponent extends DefaultComponent {
                 ServletContextHandler context = (ServletContextHandler)connectorRef.server.getHandler();
                 servlet = createServlet(sync, pathSpec, servlets, context);
                 connectorRef.servlet = servlet;
-                servlets.put(pathSpec,servlet);
+                servlets.put(pathSpec, servlet);
                 LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
 
             if (consumer != null) {
                 if (servlet.getConsumer() == null)  {
-                        // TODO - chm - 25/05
-                        // Why do we have to do a setConsumer on the Servlet ?
-                        servlet.setConsumer(consumer);
+                    // TODO - chm - 25/05
+                    // Why do we have to do a setConsumer on the Servlet ?
+                    servlet.setConsumer(consumer);
                 }
 
             }
