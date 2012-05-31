@@ -833,12 +833,13 @@ public final class ObjectHelper {
     public static InputStream loadResourceAsStream(String name) {
         InputStream in = null;
 
+        String resolvedName = resolveUriPath(name);
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         if (contextClassLoader != null) {
-            in = contextClassLoader.getResourceAsStream(name);
+            in = contextClassLoader.getResourceAsStream(resolvedName);
         }
         if (in == null) {
-            in = ObjectHelper.class.getClassLoader().getResourceAsStream(name);
+            in = ObjectHelper.class.getClassLoader().getResourceAsStream(resolvedName);
         }
 
         return in;
@@ -854,12 +855,13 @@ public final class ObjectHelper {
     public static URL loadResourceAsURL(String name) {
         URL url = null;
 
+        String resolvedName = resolveUriPath(name);
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         if (contextClassLoader != null) {
-            url = contextClassLoader.getResource(name);
+            url = contextClassLoader.getResource(resolvedName);
         }
         if (url == null) {
-            url = ObjectHelper.class.getClassLoader().getResource(name);
+            url = ObjectHelper.class.getClassLoader().getResource(resolvedName);
         }
 
         return url;
@@ -892,6 +894,28 @@ public final class ObjectHelper {
         }
 
         return url;
+    }
+    
+    /**
+     * Helper operation used to remove relative path notation from 
+     * resources.  Most critical for resources on the Classpath
+     * as resource loaders will not resolve the relative paths correctly.
+     * 
+     * @param name the name of the resource to load
+     * @return the modified or unmodified string if there were no changes
+     */
+    private static String resolveUriPath(String name) {
+        String answer = name;
+        if(answer.indexOf("//") > -1) {
+            answer = answer.replaceAll("//", "/");
+        }
+        if(answer.indexOf("../") > -1) {
+            answer = answer.replaceAll("[A-Za-z0-9]*/\\.\\./", "");
+        }
+        if(answer.indexOf("./") > -1) {
+            answer = answer.replaceAll("\\./", "");
+        }
+        return answer;
     }
 
     /**
