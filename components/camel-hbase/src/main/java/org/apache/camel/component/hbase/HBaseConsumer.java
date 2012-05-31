@@ -181,7 +181,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             table = tablePool.getTable(tableName);
             endpoint.getRemoveHandler().remove(table, row);
         } finally {
-                table.close();
+            table.close();
         }
     }
 

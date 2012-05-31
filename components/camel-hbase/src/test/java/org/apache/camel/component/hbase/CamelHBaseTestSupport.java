@@ -41,7 +41,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         try {
             hbaseUtil.startMiniCluster(numServers);
         } catch (Exception e) {
-           systemReady = false;
+            systemReady = false;
         }
     }
 

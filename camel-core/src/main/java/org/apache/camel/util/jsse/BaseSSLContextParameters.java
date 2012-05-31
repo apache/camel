@@ -736,13 +736,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         @Override
         public String toString() {
-            return String.format("SSLContext[provider=%s, protocol=%s, needClientAuth=%s, "
-                    + "wantClientAuth=%s\n\tdefaultProtocols=%s\n\tdefaultChiperSuites=%s\n\tsupportedProtocols=%s\n\tsupportedChiperSuites=%s\n]",
-                    getProvider(), getProtocol(), getDefaultSSLParameters().getNeedClientAuth(), getDefaultSSLParameters().getWantClientAuth(),
-                    collectionAsCommaDelimitedString(getDefaultSSLParameters().getProtocols()),
-                    collectionAsCommaDelimitedString(getDefaultSSLParameters().getCipherSuites()),
-                    collectionAsCommaDelimitedString(getSupportedSSLParameters().getProtocols()),
-                    collectionAsCommaDelimitedString(getSupportedSSLParameters().getCipherSuites()));
+            return String.format("SSLContext[provider=%s, protocol=%s, needClientAuth=%s, " 
+                + "wantClientAuth=%s\n\tdefaultProtocols=%s\n\tdefaultChiperSuites=%s\n\tsupportedProtocols=%s\n\tsupportedChiperSuites=%s\n]",
+                getProvider(), getProtocol(), getDefaultSSLParameters().getNeedClientAuth(), getDefaultSSLParameters().getWantClientAuth(),
+                collectionAsCommaDelimitedString(getDefaultSSLParameters().getProtocols()),
+                collectionAsCommaDelimitedString(getDefaultSSLParameters().getCipherSuites()),
+                collectionAsCommaDelimitedString(getSupportedSSLParameters().getProtocols()),
+                collectionAsCommaDelimitedString(getSupportedSSLParameters().getCipherSuites()));
         }
     }
     
