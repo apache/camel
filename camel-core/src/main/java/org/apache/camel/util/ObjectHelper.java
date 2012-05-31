@@ -906,13 +906,13 @@ public final class ObjectHelper {
      */
     private static String resolveUriPath(String name) {
         String answer = name;
-        if(answer.indexOf("//") > -1) {
+        if (answer.indexOf("//") > -1) {
             answer = answer.replaceAll("//", "/");
         }
-        if(answer.indexOf("../") > -1) {
+        if (answer.indexOf("../") > -1) {
             answer = answer.replaceAll("[A-Za-z0-9]*/\\.\\./", "");
         }
-        if(answer.indexOf("./") > -1) {
+        if (answer.indexOf("./") > -1) {
             answer = answer.replaceAll("\\./", "");
         }
         return answer;
