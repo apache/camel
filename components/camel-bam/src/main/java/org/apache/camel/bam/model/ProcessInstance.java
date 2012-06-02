@@ -18,7 +18,7 @@ package org.apache.camel.bam.model;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -42,7 +42,7 @@ import org.apache.camel.bam.rules.ActivityRules;
 @Table(name = "CAMEL_PROCESSINSTANCE")
 public class ProcessInstance {
     private ProcessDefinition processDefinition;
-    private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
+    private Collection<ActivityState> activityStates = new CopyOnWriteArraySet<ActivityState>();
     private String correlationKey;
     private Date timeStarted;
     private Date timeCompleted;
