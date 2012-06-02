@@ -38,7 +38,6 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call super
         if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
-            System.out.println("XXXX");
             return false;
         }
 
