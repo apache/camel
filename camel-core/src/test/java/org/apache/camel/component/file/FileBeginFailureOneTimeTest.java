@@ -83,6 +83,11 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
             return true;
         }
 
+        public void abort(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
+                          Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+            // noop
+        }
+
         public void commit(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                             Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
         }

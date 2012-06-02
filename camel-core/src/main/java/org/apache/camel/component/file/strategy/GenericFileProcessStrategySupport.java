@@ -30,6 +30,9 @@ import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Base class for implementations of {@link GenericFileProcessStrategy}.
+ */
 public abstract class GenericFileProcessStrategySupport<T> implements GenericFileProcessStrategy<T> {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
@@ -51,6 +54,14 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         }
 
         return true;
+    }
+
+    public void abort(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+        if (exclusiveReadLockStrategy != null) {
+            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+        }
+
+        deleteLocalWorkFile(exchange);
     }
 
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {

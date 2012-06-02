@@ -107,6 +107,10 @@ public final class FtpProcessStrategyFactory {
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
                 }
+                Long checkInterval = (Long) params.get("readLockCheckInterval");
+                if (checkInterval != null) {
+                    readLockStrategy.setCheckInterval(checkInterval);
+                }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
                 GenericFileExclusiveReadLockStrategy<FTPFile> readLockStrategy = new FtpChangedExclusiveReadLockStrategy();

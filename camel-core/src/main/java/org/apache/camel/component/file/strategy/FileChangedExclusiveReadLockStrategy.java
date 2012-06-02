@@ -21,7 +21,6 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -36,68 +35,53 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     private long timeout;
     private long checkInterval = 1000;
 
-    @Override
-    public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
-        // noop
-    }
-
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        // must call super
+        if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
+            System.out.println("XXXX");
+            return false;
+        }
+
         File target = new File(file.getAbsoluteFilePath());
         boolean exclusive = false;
 
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
-        try {
-            long lastModified = Long.MIN_VALUE;
-            long length = Long.MIN_VALUE;
-            StopWatch watch = new StopWatch();
+        long lastModified = Long.MIN_VALUE;
+        long length = Long.MIN_VALUE;
+        StopWatch watch = new StopWatch();
 
-            while (!exclusive) {
-                // timeout check
-                if (timeout > 0) {
-                    long delta = watch.taken();
-                    if (delta > timeout) {
-                        LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
-                        // we could not get the lock within the timeout period, so return false
-                        return false;
-                    }
-                }
-
-                long newLastModified = target.lastModified();
-                long newLength = target.length();
-
-                LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
-                LOG.trace("Previous length: {}, new length: {}", length, newLength);
-
-                if (newLastModified == lastModified && newLength == length) {
-                    // let super handle the last part of acquiring the lock now the file is not
-                    // currently being in progress of being copied as file length and modified
-                    // are stable
-                    exclusive = super.acquireExclusiveReadLock(operations, file, exchange);
-                } else {
-                    // set new base file change information
-                    lastModified = newLastModified;
-                    length = newLength;
-
-                    boolean interrupted = sleep();
-                    if (interrupted) {
-                        // we were interrupted while sleeping, we are likely being shutdown so return false
-                        return false;
-                    }
+        while (!exclusive) {
+            // timeout check
+            if (timeout > 0) {
+                long delta = watch.taken();
+                if (delta > timeout) {
+                    LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    // we could not get the lock within the timeout period, so return false
+                    return false;
                 }
             }
-        } catch (IOException e) {
-            // must handle IOException as some apps on Windows etc. will still somehow hold a lock to a file
-            // such as AntiVirus or MS Office that has special locks for it's supported files
-            if (timeout == 0) {
-                // if not using timeout, then we cant retry, so rethrow
-                throw e;
-            }
-            LOG.debug("Cannot acquire read lock. Will try again.", e);
-            boolean interrupted = sleep();
-            if (interrupted) {
-                // we were interrupted while sleeping, we are likely being shutdown so return false
-                return false;
+
+            long newLastModified = target.lastModified();
+            long newLength = target.length();
+
+            LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
+            LOG.trace("Previous length: {}, new length: {}", length, newLength);
+
+            if (newLastModified == lastModified && newLength == length && length != 0) {
+                // We consider that zero-length files are files in progress
+                LOG.trace("Read lock acquired.");
+                exclusive = true;
+            } else {
+                // set new base file change information
+                lastModified = newLastModified;
+                length = newLength;
+
+                boolean interrupted = sleep();
+                if (interrupted) {
+                    // we were interrupted while sleeping, we are likely being shutdown so return false
+                    return false;
+                }
             }
         }
 
