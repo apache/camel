@@ -54,7 +54,7 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
                     .inOut("direct:source")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            // System.out.println(exchange.getIn().getBody(String.class));
+                            log.info("The exchange's IN body as String is {}", exchange.getIn().getBody(String.class));
                         }
                     })
                     .to("mock:result");
