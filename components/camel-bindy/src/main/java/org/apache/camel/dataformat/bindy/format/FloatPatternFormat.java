@@ -29,7 +29,11 @@ public class FloatPatternFormat extends NumberPatternFormat<Float> {
 
     @Override
     public Float parse(String string) throws Exception {
-        return super.getNumberFormat().parse(string).floatValue();
+        if (getNumberFormat() != null) {
+            return getNumberFormat().parse(string).floatValue();
+        } else {
+            return Float.valueOf(string);
+        }
     }
 
 }

@@ -76,22 +76,20 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             outputStream.write(bytesCRLF);
         }
 
-        List<Map<String, Object>> models;
+        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
-        // the body is not a prepared list so help a bit here and create one for us
-        if (exchange.getContext().getTypeConverter().convertTo(List.class, body) == null) {
-            models = new ArrayList<Map<String, Object>>();
-            Iterator<Object> it = ObjectHelper.createIterator(body);
-            while (it.hasNext()) {
-                Object model = it.next();
+        // the body is not a prepared list of map that bindy expects so help a bit here and create one for us
+        Iterator<Object> it = ObjectHelper.createIterator(body);
+        while (it.hasNext()) {
+            Object model = it.next();
+            if (model instanceof Map) {
+                models.add((Map<String, Object>) model);
+            } else {
                 String name = model.getClass().getName();
-                Map<String, Object> row = new HashMap<String, Object>();
-                row.put(name, body);
+                Map<String, Object> row = new HashMap<String, Object>(1);
+                row.put(name, model);
                 models.add(row);
             }
-        } else {
-            // cast to the expected type
-            models = (List<Map<String, Object>>) body;
         }
 
         for (Map<String, Object> model : models) {

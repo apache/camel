@@ -29,27 +29,12 @@ public class IntegerPatternFormat extends NumberPatternFormat<Integer> {
     }
 
     @Override
-    public Integer parse(String string) throws FormatException {
-
-        Integer res = null;
-        NumberFormat pat;
-
-        // First we will test if the string can become an Integer
-        try {
-            res = Integer.parseInt(string);
-
-            // Second, we will parse the string using DecimalPattern
-            // to apply pattern
-
-            pat = super.getNumberFormat();
-            pat.parse(string).intValue();
-
-        } catch (Exception ex) {
-            throw new FormatException("String provided does not fit the Integer pattern defined or is not parseable");
+    public Integer parse(String string) throws Exception {
+        if (getNumberFormat() != null) {
+            return getNumberFormat().parse(string).intValue();
+        } else {
+            return Integer.valueOf(string);
         }
-
-        return res;
-
     }
 
 }

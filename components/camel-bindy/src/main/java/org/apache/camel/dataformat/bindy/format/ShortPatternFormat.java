@@ -29,6 +29,10 @@ public class ShortPatternFormat extends NumberPatternFormat<Short> {
 
     @Override
     public Short parse(String string) throws Exception {
-        return super.getNumberFormat().parse(string).shortValue();
+        if (getNumberFormat() != null) {
+            return getNumberFormat().parse(string).shortValue();
+        } else {
+            return Short.valueOf(string);
+        }
     }
 }

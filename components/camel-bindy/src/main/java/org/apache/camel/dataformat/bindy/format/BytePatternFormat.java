@@ -29,7 +29,11 @@ public class BytePatternFormat extends NumberPatternFormat<Byte> {
 
     @Override
     public Byte parse(String string) throws Exception {
-        return super.getNumberFormat().parse(string).byteValue();
+        if (getNumberFormat() != null) {
+            return getNumberFormat().parse(string).byteValue();
+        } else {
+            return Byte.valueOf(string);
+        }
     }
 
 }

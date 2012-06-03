@@ -31,8 +31,6 @@ public @interface Section {
 
     /**
      * Number of the section
-     * 
-     * @return
      */
     int number();
 }

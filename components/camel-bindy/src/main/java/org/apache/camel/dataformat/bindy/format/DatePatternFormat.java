@@ -27,14 +27,14 @@ import org.apache.camel.util.ObjectHelper;
 public class DatePatternFormat implements PatternFormat<Date> {
 
     private String pattern;
-    private Locale locale = Locale.getDefault();
+    private Locale locale;
 
     public DatePatternFormat() {
     }
 
     public DatePatternFormat(String pattern, Locale locale) {
         this.pattern = pattern;
-        this.locale = locale != null ? locale : Locale.getDefault();
+        this.locale = locale;
     }
 
     public String format(Date object) throws Exception {
@@ -69,7 +69,11 @@ public class DatePatternFormat implements PatternFormat<Date> {
     }
 
     protected java.text.DateFormat getDateFormat() {
-        return new SimpleDateFormat(this.pattern, locale);
+        if (locale != null) {
+            return new SimpleDateFormat(pattern, locale);
+        } else {
+            return new SimpleDateFormat(pattern);
+        }
     }
 
     public String getPattern() {

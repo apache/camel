@@ -29,7 +29,11 @@ public class LongPatternFormat extends NumberPatternFormat<Long> {
 
     @Override
     public Long parse(String string) throws Exception {
-        return super.getNumberFormat().parse(string).longValue();
+        if (getNumberFormat() != null) {
+            return getNumberFormat().parse(string).longValue();
+        } else {
+            return Long.valueOf(string);
+        }
     }
 
 }
