@@ -22,10 +22,13 @@ import java.net.URISyntaxException;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConfiguration</code>
@@ -71,6 +74,7 @@ public class SmppConfigurationTest {
         assertEquals(new Integer(3128), configuration.getHttpProxyPort());
         assertEquals(null, configuration.getHttpProxyUsername());
         assertEquals(null, configuration.getHttpProxyPassword());
+        assertEquals(null, configuration.getSessionStateListener());
     }
     
     @Test
@@ -105,6 +109,7 @@ public class SmppConfigurationTest {
         assertEquals(new Integer(3129), configuration.getHttpProxyPort());
         assertEquals("user", configuration.getHttpProxyUsername());
         assertEquals("secret", configuration.getHttpProxyPassword());
+        assertNotNull(configuration.getSessionStateListener());
     }
 
     @Test
@@ -149,7 +154,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getHttpProxyPort(), configuration.getHttpProxyPort());
         assertEquals(config.getHttpProxyUsername(), configuration.getHttpProxyUsername());
         assertEquals(config.getHttpProxyPassword(), configuration.getHttpProxyPassword());
-        
+        assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
     }
     
     @Test
@@ -217,5 +222,9 @@ public class SmppConfigurationTest {
         config.setHttpProxyPort(new Integer(3129));
         config.setHttpProxyUsername("user");
         config.setHttpProxyPassword("secret");
+        config.setSessionStateListener(new SessionStateListener() {
+            public void onStateChange(SessionState arg0, SessionState arg1, Object arg2) {
+            }
+        });
     }
 }

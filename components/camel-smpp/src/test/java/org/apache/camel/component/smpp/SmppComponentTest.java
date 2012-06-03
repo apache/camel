@@ -23,12 +23,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
+import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -40,10 +42,12 @@ import static org.junit.Assert.assertTrue;
 public class SmppComponentTest {
     
     private SmppComponent component;
+    private DefaultCamelContext context;
 
     @Before
     public void setUp() {
-        component = new SmppComponent();
+        context = new DefaultCamelContext();
+        component = new SmppComponent(context);
     }
 
     @Test
@@ -117,7 +121,7 @@ public class SmppComponentTest {
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getConnectionString());
         assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
         assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
-        assertNull(smppEndpoint.getCamelContext());
+        assertNotNull(smppEndpoint.getCamelContext());
     }
 
     @Test
@@ -133,7 +137,7 @@ public class SmppComponentTest {
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getConnectionString());
         assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
         assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
-        assertNull(smppEndpoint.getCamelContext());
+        assertNotNull(smppEndpoint.getCamelContext());
     }
 
     @Test
@@ -149,7 +153,7 @@ public class SmppComponentTest {
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getConnectionString());
         assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
         assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
-        assertNull(smppEndpoint.getCamelContext());
+        assertNotNull(smppEndpoint.getCamelContext());
     }
 
     @Test
@@ -158,5 +162,19 @@ public class SmppComponentTest {
         component.setConfiguration(configuration);
         
         assertSame(configuration, component.getConfiguration());
+    }
+    
+    @Test
+    public void createEndpointWithSessionStateListener() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("sessionStateListener", new SessionStateListener() {
+            public void onStateChange(SessionState arg0, SessionState arg1, Object arg2) {
+            }
+        });
+        context.setRegistry(registry);
+        component = new SmppComponent(context);
+        SmppEndpoint endpoint = (SmppEndpoint) component.createEndpoint("smpp://smppclient@localhost:2775?password=password&sessionStateListener=#sessionStateListener");
+        
+        assertNotNull(endpoint.getConfiguration().getSessionStateListener());
     }
 }
