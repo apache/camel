@@ -24,6 +24,7 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.session.SessionStateListener;
 
 /**
  * Contains the SMPP component configuration properties</a>
@@ -63,6 +64,7 @@ public class SmppConfiguration implements Cloneable {
     private Integer httpProxyPort = Integer.valueOf(3128);
     private String httpProxyUsername;
     private String httpProxyPassword;
+    private SessionStateListener sessionStateListener;
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -324,6 +326,14 @@ public class SmppConfiguration implements Cloneable {
     
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
+    }
+    
+    public SessionStateListener getSessionStateListener() {
+        return sessionStateListener;
+    }
+
+    public void setSessionStateListener(SessionStateListener sessionStateListener) {
+        this.sessionStateListener = sessionStateListener;
     }
 
     @Override

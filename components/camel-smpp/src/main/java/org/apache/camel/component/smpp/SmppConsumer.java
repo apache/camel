@@ -48,7 +48,8 @@ public class SmppConsumer extends DefaultConsumer {
     private SmppConfiguration configuration;
     private SMPPSession session;
     private MessageReceiverListener messageReceiverListener;
-    private SessionStateListener sessionStateListener;
+    private SessionStateListener internalSessionStateListener;
+
     private final ReentrantLock reconnectLock = new ReentrantLock();
 
     /**
@@ -59,11 +60,14 @@ public class SmppConsumer extends DefaultConsumer {
         super(endpoint, processor);
 
         this.configuration = config;
-        this.sessionStateListener = new SessionStateListener() {
+        this.internalSessionStateListener = new SessionStateListener() {
             public void onStateChange(SessionState newState, SessionState oldState, Object source) {
+                if (configuration.getSessionStateListener() != null) {
+                    configuration.getSessionStateListener().onStateChange(newState, oldState, source);
+                }
+                
                 if (newState.equals(SessionState.CLOSED)) {
-                    LOG.warn("Lost connection to: " + getEndpoint().getConnectionString()
-                            + " - trying to reconnect...");
+                    LOG.warn("Lost connection to: {} - trying to reconnect...", getEndpoint().getConnectionString());
                     closeSession();
                     reconnect(configuration.getInitialReconnectDelay());
                 }
@@ -86,7 +90,7 @@ public class SmppConsumer extends DefaultConsumer {
         SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(configuration.getEnquireLinkTimer());
         session.setTransactionTimer(configuration.getTransactionTimer());
-        session.addSessionStateListener(sessionStateListener);
+        session.addSessionStateListener(internalSessionStateListener);
         session.setMessageReceiverListener(messageReceiverListener);
         session.connectAndBind(this.configuration.getHost(), this.configuration.getPort(),
                 new BindParameter(BindType.BIND_RX, this.configuration.getSystemId(),
@@ -119,7 +123,7 @@ public class SmppConsumer extends DefaultConsumer {
 
     private void closeSession() {
         if (session != null) {
-            session.removeSessionStateListener(this.sessionStateListener);
+            session.removeSessionStateListener(this.internalSessionStateListener);
             // remove this hack after http://code.google.com/p/jsmpp/issues/detail?id=93 is fixed
             try {
                 Thread.sleep(1000);
