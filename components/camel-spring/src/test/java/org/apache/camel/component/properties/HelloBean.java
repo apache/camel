@@ -16,28 +16,22 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Properties;
-
-import org.apache.camel.CamelContext;
-
 /**
- * A resolver to load properties from a given source such as a file from a classpath.
- * <p/>
- * Implementations can also load properties from another source source as JNDI.
  *
- * @version 
  */
-public interface PropertiesResolver {
+public class HelloBean {
 
-    /**
-     * Resolve properties from the given uri
-     *
-     * @param context the camel context
-     * @param ignoreMissingLocation ignore silently if the property file is missing
-     * @param uri uri(s) defining the source(s)
-     * @return the properties
-     * @throws Exception is thrown if resolving the properties failed
-     */
-    Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception;
-    
+    private String greeting;
+
+    public String getGreeting() {
+        return greeting;
+    }
+
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
+    }
+
+    public String say(String hi) {
+        return greeting + " " + hi;
+    }
 }

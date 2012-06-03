@@ -16,28 +16,26 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Properties;
-
-import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * A resolver to load properties from a given source such as a file from a classpath.
- * <p/>
- * Implementations can also load properties from another source source as JNDI.
  *
- * @version 
  */
-public interface PropertiesResolver {
+public class CamelSpringPropertyPlaceholderConfigurer2Test extends SpringTestSupport {
 
-    /**
-     * Resolve properties from the given uri
-     *
-     * @param context the camel context
-     * @param ignoreMissingLocation ignore silently if the property file is missing
-     * @param uri uri(s) defining the source(s)
-     * @return the properties
-     * @throws Exception is thrown if resolving the properties failed
-     */
-    Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception;
-    
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurer2Test.xml");
+    }
+
+    public void testCamelSpringPropertyPlaceholderConfigurerTest() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bonjour Camel");
+
+        template.sendBody("direct:bar", "Camel");
+
+        assertMockEndpointsSatisfied();
+    }
+
 }
