@@ -1,303 +1,307 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Licensed to the Apache Software Foundation (ASF) under one or more
+	contributor license agreements. See the NOTICE file distributed with
+	this work for additional information regarding copyright ownership.
+	The ASF licenses this file to You under the Apache License, Version
+	2.0 (the "License"); you may not use this file except in compliance
+	with the License. You may obtain a copy of the License at
 
-	<!--
-		Licensed to the Apache Software Foundation (ASF) under one or more
-		contributor license agreements. See the NOTICE file distributed with
-		this work for additional information regarding copyright ownership.
-		The ASF licenses this file to You under the Apache License, Version
-		2.0 (the "License"); you may not use this file except in compliance
-		with the License. You may obtain a copy of the License at
+	http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+	applicable law or agreed to in writing, software distributed under the
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+	CONDITIONS OF ANY KIND, either express or implied. See the License for
+	the specific language governing permissions and limitations under the
+	License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
-		applicable law or agreed to in writing, software distributed under the
-		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-		CONDITIONS OF ANY KIND, either express or implied. See the License for
-		the specific language governing permissions and limitations under the
-		License.
-	-->
+  <modelVersion>4.0.0</modelVersion>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>examples</artifactId>
+    <version>2.10-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
 
-	<modelVersion>4.0.0</modelVersion>
+  <artifactId>camel-example-etl</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: Example :: ETL</name>
+  <description>An example showing how to use Camel as an Extract Transform and Load (ETL) tool</description>
 
-	<parent>
-		<groupId>org.apache.camel</groupId>
-		<artifactId>examples</artifactId>
-		<version>2.10-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.example.etl.*</camel.osgi.export.pkg>
+    <!-- to avoid us import bunch other package -->
+    <camel.osgi.dynamic>*</camel.osgi.dynamic>
+  </properties>
 
-	<artifactId>camel-example-etl</artifactId>
-	<packaging>bundle</packaging>
-	<name>Camel :: Example :: ETL</name>
-	<description>An example showing how to use Camel as an Extract Transform and Load (ETL) tool</description>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jaxb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-juel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+    </dependency>
 
-	<properties>
-		<camel.osgi.export.pkg>org.apache.camel.example.etl.*</camel.osgi.export.pkg>
-	 	<!-- to avoid us import bunch other package -->
-		<camel.osgi.dynamic>*</camel.osgi.dynamic>
-	</properties>
+    <!-- lets use log4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jaxb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-juel</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
 
-		<!-- lets use log4j -->
+    <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/classes/features.xml</file>
+                  <type>xml</type>
+                  <classifier>features</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Allows the example to be run via 'mvn camel:run' -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </plugin>
+
+      <!-- Allows the example to be run via 'mvn compile exec:java' -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>org.apache.camel.example.etl.Main</mainClass>
+          <includePluginDependencies>false</includePluginDependencies>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+          <childDelegation>false</childDelegation>
+          <useFile>true</useFile>
+          <excludes>
+            <exclude>**/RunTest.*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>hibernate</id>
+      <properties>
+        <camel.osgi.import.additional>
+          org.hsqldb,
+          org.hsqldb.util,
+          org.hsqldb.jdbc,
+          org.hibernate.ejb
+        </camel.osgi.import.additional>
+      </properties>
+      <build>
+        <resources>
+          <resource>
+            <directory>${basedir}/src/profiles/hibernate</directory>
+          </resource>
+          <resource>
+            <directory>${basedir}/src/main/resources</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
+      </build>
+      <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
+      </dependencies>
+    </profile>
+    
+    <profile>
+      <id>openjpa</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <resources>
+          <resource>
+            <directory>${basedir}/src/profiles/openjpa</directory>
+          </resource>
+          <resource>
+            <directory>${basedir}/src/main/resources</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
+        <!-- Will enhance classes as we run in a non J2EE 5 env -->
+        <plugins>
+          <plugin>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-maven-plugin</artifactId>
+            <version>${openjpa-version}</version>
+            <configuration>
+              <persistenceXmlFile>${project.basedir}/src/profiles/openjpa/META-INF/persistence.xml</persistenceXmlFile>
+              <includes>org/apache/camel/example/etl/*Entity.class</includes>
+              <addDefaultConstructor>true</addDefaultConstructor>
+              <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+            </configuration>
+            <executions>
+              <execution>
+                <id>enhancer</id>
+                <phase>process-classes</phase>
+                <goals>
+                  <goal>enhance</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.openjpa</groupId>
+                <artifactId>openjpa</artifactId>
+                <version>${openjpa-version}</version>
+              </dependency>
+              <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging-version}</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+      <properties>
+        <camel.osgi.import.additional>
+          org.hsqldb,
+          org.hsqldb.util,
+          org.hsqldb.jdbc
+        </camel.osgi.import.additional>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openjpa</groupId>
+          <artifactId>openjpa-persistence-jdbc</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
 
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-jta_1.1_spec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-		</dependency>
+    <!-- EclipseLink - HSQLDB -->
+    <profile>
+      <id>eclipselink</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>${basedir}/src/profiles/eclipselink</directory>
+          </resource>
+          <resource>
+            <directory>${basedir}/src/main/resources</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
+      </build>
+      <properties>
+        <camel.osgi.import.additional>
+          org.hsqldb,
+          org.hsqldb.util,
+          org.hsqldb.jdbc
+        </camel.osgi.import.additional>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.eclipse.persistence</groupId>
+          <artifactId>javax.persistence</artifactId>
+          <version>1.2.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.eclipse.persistence</groupId>
+          <artifactId>org.eclipse.persistence.antlr</artifactId>
+          <version>1.2.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.eclipse.persistence</groupId>
+          <artifactId>org.eclipse.persistence.asm</artifactId>
+          <version>1.2.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.eclipse.persistence</groupId>
+          <artifactId>org.eclipse.persistence.core</artifactId>
+          <version>1.2.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.eclipse.persistence</groupId>
+          <artifactId>org.eclipse.persistence.jpa</artifactId>
+          <version>1.2.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.hsqldb</groupId>
+          <artifactId>hsqldb</artifactId>
+        </dependency>
+      </dependencies>
+      <repositories>
+        <repository>
+          <id>Eclipse</id>
+          <url>http://eclipse.ialto.org/rt/eclipselink/maven.repo</url>
+        </repository>
+      </repositories>
+    </profile>
 
-		<!-- testing -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>attach-artifact</goal>
-						</goals>
-						<configuration>
-							<artifacts>
-								<artifact>
-									<file>target/classes/features.xml</file>
-									<type>xml</type>
-									<classifier>features</classifier>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Allows the example to be run via 'mvn camel:run' -->
-			<plugin>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-maven-plugin</artifactId>
-				<version>${project.version}</version>
-			</plugin>
-
-			<!-- Allows the example to be run via 'mvn compile exec:java' -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<configuration>
-					<mainClass>org.apache.camel.example.etl.Main</mainClass>
-					<includePluginDependencies>false</includePluginDependencies>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-				    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-					<childDelegation>false</childDelegation>
-					<useFile>true</useFile>
-					<excludes>
-						<exclude>**/RunTest.*</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
-
-	<profiles>
-		<profile>
-			<id>hibernate</id>
-			<properties>
-				<camel.osgi.import.additional>
-					org.hsqldb,
-					org.hsqldb.util,
-					org.hsqldb.jdbc,
-					org.hibernate.ejb
-     			</camel.osgi.import.additional>
-			</properties>
-			<build>
-				<resources>
-					<resource>
-						<directory>${basedir}/src/profiles/hibernate</directory>
-					</resource>
-					<resource>
-						<directory>${basedir}/src/main/resources</directory>
-                        <filtering>true</filtering>
-					</resource>
-				</resources>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-entitymanager</artifactId>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>openjpa</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-			<build>
-				<resources>
-					<resource>
-						<directory>${basedir}/src/profiles/openjpa</directory>
-					</resource>
-					<resource>
-						<directory>${basedir}/src/main/resources</directory>
-                        <filtering>true</filtering>
-					</resource>
-				</resources>
-				<!--  Will enhance classes as we run in a non J2EE 5 env -->
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>openjpa-maven-plugin</artifactId>
-						<version>1.0</version>
-						<executions>
-							<execution>
-								<id>JPA Enhance</id>
-								<phase>process-classes</phase>
-								<goals>
-									<goal>enhance</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<includes>org/apache/camel/example/etl/*Entity.class</includes>
-							<toolProperties>
-								<property>
-									<name>addDefaultConstructor</name>
-									<value>true</value>
-								</property>
-								<property>
-									<name>enforcePropertyRestrictions</name>
-									<value>true</value>
-								</property>
-							</toolProperties>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-			<properties>
-				<camel.osgi.import.additional>
-					org.hsqldb,
-					org.hsqldb.util,
-					org.hsqldb.jdbc
-     			</camel.osgi.import.additional>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>org.apache.openjpa</groupId>
-					<artifactId>openjpa-persistence-jdbc</artifactId>
-				</dependency>
-			</dependencies>
-		</profile>
-
-		<!-- EclipseLink - HSQLDB -->
-		<profile>
-			<id>eclipselink</id>
-			<build>
-				<resources>
-					<resource>
-						<directory>${basedir}/src/profiles/eclipselink</directory>
-					</resource>
-					<resource>
-						<directory>${basedir}/src/main/resources</directory>
-                        <filtering>true</filtering>
-					</resource>
-				</resources>
-			</build>
-			<properties>
-				<camel.osgi.import.additional>
-					org.hsqldb,
-					org.hsqldb.util,
-					org.hsqldb.jdbc
-     			</camel.osgi.import.additional>
-			</properties>
-			<dependencies>
-				<dependency>
-					  <groupId>org.eclipse.persistence</groupId>
-					  <artifactId>javax.persistence</artifactId>
-					  <version>1.2.0</version>
-				</dependency>
-				<dependency>
-  					<groupId>org.eclipse.persistence</groupId>
-  					<artifactId>org.eclipse.persistence.antlr</artifactId>
-  					<version>1.2.0</version>
-				</dependency>
-				<dependency>
-  					<groupId>org.eclipse.persistence</groupId>
-  					<artifactId>org.eclipse.persistence.asm</artifactId>
-  					<version>1.2.0</version>
-				</dependency>
-				<dependency>
-  					<groupId>org.eclipse.persistence</groupId>
-  					<artifactId>org.eclipse.persistence.core</artifactId>
-  					<version>1.2.0</version>
-				</dependency>
-				<dependency>
-  					<groupId>org.eclipse.persistence</groupId>
-  					<artifactId>org.eclipse.persistence.jpa</artifactId>
-  					<version>1.2.0</version>
-				</dependency>
-				<dependency>
-					<groupId>org.hsqldb</groupId>
-					<artifactId>hsqldb</artifactId>
-				</dependency>
-			</dependencies>
-			<repositories>
-				<repository>
-					<id>Eclipse</id>
-					<url>http://eclipse.ialto.org/rt/eclipselink/maven.repo</url>
-				</repository>
-			</repositories>
-		</profile>
-
-	</profiles>
+  </profiles>
 
 </project>
