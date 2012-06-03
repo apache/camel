@@ -264,8 +264,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             }
             pc.setLocations(updatedLocations);
         } else if (beans.size() > 1) {
-            LOG.warn("Cannot bridge Camel and Spring property placeholders, as only exact 1 bean of type CamelSpringPropertyPlaceholderConfigurer"
-                    + " must be defined, was {} beans", beans.size());
+            LOG.warn("Cannot bridge Camel and Spring property placeholders, as exact only 1 bean of type BridgePropertyPlaceholderConfigurer"
+                    + " must be defined, was {} beans defined.", beans.size());
         }
     }
 
