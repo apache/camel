@@ -94,8 +94,7 @@
     <hawtdb-version>1.6</hawtdb-version>
     <hazelcast-version>2.0.2</hazelcast-version>
     <hbase-version>0.90.5</hbase-version>
-    <hibernate-version>3.2.6.ga</hibernate-version>
-    <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
+    <hibernate-version>3.6.10.Final</hibernate-version>
     <hsqldb-version>2.2.8</hsqldb-version>
     <httpunit-version>1.6.2</httpunit-version>
     <httpcore4-version>4.1.4</httpcore4-version>
@@ -1432,11 +1431,6 @@
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-entitymanager</artifactId>
-        <version>${hibernate-entitymanager-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate</artifactId>
         <version>${hibernate-version}</version>
         <exclusions>
           <exclusion>
