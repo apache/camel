@@ -65,11 +65,8 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
                 }
             }
         }
-        if (answer.isEmpty()) {
-            return null;
-        } else {
-            return answer;
-        }
+        // must not return null
+        return answer;
     }
 
     public void setResolver(PropertiesResolver resolver) {
