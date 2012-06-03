@@ -58,6 +58,10 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jpa_2.0_spec</artifactId>
+    </dependency>
 
     <!-- lets use log4j -->
     <dependency>
@@ -70,8 +74,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -151,9 +155,7 @@
       <id>hibernate</id>
       <properties>
         <camel.osgi.import.additional>
-          org.hsqldb,
-          org.hsqldb.util,
-          org.hsqldb.jdbc,
+          org.apache.derby.*,
           org.hibernate.ejb
         </camel.osgi.import.additional>
       </properties>
@@ -229,9 +231,7 @@
       </build>
       <properties>
         <camel.osgi.import.additional>
-          org.hsqldb,
-          org.hsqldb.util,
-          org.hsqldb.jdbc
+          org.apache.derby.*
         </camel.osgi.import.additional>
       </properties>
       <dependencies>
@@ -258,46 +258,20 @@
       </build>
       <properties>
         <camel.osgi.import.additional>
-          org.hsqldb,
-          org.hsqldb.util,
-          org.hsqldb.jdbc
+          org.apache.derby.*
         </camel.osgi.import.additional>
       </properties>
       <dependencies>
         <dependency>
           <groupId>org.eclipse.persistence</groupId>
-          <artifactId>javax.persistence</artifactId>
-          <version>1.2.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.eclipse.persistence</groupId>
-          <artifactId>org.eclipse.persistence.antlr</artifactId>
-          <version>1.2.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.eclipse.persistence</groupId>
-          <artifactId>org.eclipse.persistence.asm</artifactId>
-          <version>1.2.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.eclipse.persistence</groupId>
-          <artifactId>org.eclipse.persistence.core</artifactId>
-          <version>1.2.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.eclipse.persistence</groupId>
-          <artifactId>org.eclipse.persistence.jpa</artifactId>
-          <version>1.2.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
+          <artifactId>eclipselink</artifactId>
+          <version>2.3.2</version>
         </dependency>
       </dependencies>
       <repositories>
         <repository>
           <id>Eclipse</id>
-          <url>http://eclipse.ialto.org/rt/eclipselink/maven.repo</url>
+          <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
         </repository>
       </repositories>
     </profile>
