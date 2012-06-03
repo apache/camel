@@ -17,17 +17,17 @@
 
 package org.apache.camel.component.jclouds;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
-import org.apache.camel.util.IOHelper;
+import javax.ws.rs.core.MediaType;
+import com.google.common.base.Strings;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.domain.Location;
+import org.jclouds.io.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 
 public final class JcloudsBlobStoreHelper {
 
@@ -38,30 +38,64 @@ public final class JcloudsBlobStoreHelper {
     }
 
     /**
-     * Writes payload to the the blobstore.
+     * Creates all directories that are part of the blobName.
+     *
+     * @param blobStore
+     * @param container
+     * @param blobName
+     */
+    public static void mkDirs(BlobStore blobStore, String container, String blobName) {
+        if (blobStore != null && !Strings.isNullOrEmpty(blobName) && blobName.contains("/")) {
+            String directory = BlobStoreUtils.parseDirectoryFromPath(blobName);
+            blobStore.createDirectory(container, directory);
+        }
+    }
+
+    /**
+     * Checks if container exists and creates one if not.
+     *
+     * @param blobStore  The {@link BlobStore} to use.
+     * @param container  The container name to check against.
+     * @param locationId The locationId to create the container if not found.
+     */
+    public static void ensureContainerExists(BlobStore blobStore, String container, String locationId) {
+        if (blobStore != null && !Strings.isNullOrEmpty(container) && !blobStore.containerExists(container)) {
+            blobStore.createContainerInLocation(getLocationById(blobStore, locationId), container);
+        }
+    }
+
+    /**
+     * Returns the {@link Location} that matches the locationId.
+     *
+     * @param blobStore
+     * @param locationId
+     * @return
+     */
+    public static Location getLocationById(BlobStore blobStore, String locationId) {
+        if (blobStore != null && !Strings.isNullOrEmpty(locationId)) {
+            for (Location location : blobStore.listAssignableLocations()) {
+                if (locationId.equals(location.getId())) {
+                    return location;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Writes {@link Payload} to the the {@link BlobStore}.
      *
      * @param blobStore
      * @param container
      * @param blobName
      * @param payload
      */
-    public static void writeBlob(BlobStore blobStore, String container, String blobName, Object payload) {
+    public static void writeBlob(BlobStore blobStore, String container, String blobName, Payload payload) {
         if (blobName != null && payload != null) {
-            Blob blob = blobStore.blobBuilder(blobName).build();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = null;
-            try {
-                oos = new ObjectOutputStream(baos);
-                oos.writeObject(payload);
-                blob.setPayload(baos.toByteArray());
-                blobStore.putBlob(container, blob);
-            } catch (IOException e) {
-                LOG.error("Error while writing blob", e);
-            } finally {
-                IOHelper.close(oos, baos);
-            }
+            mkDirs(blobStore, container, blobName);
+            Blob blob = blobStore.blobBuilder(blobName).payload(payload).contentType(MediaType.APPLICATION_OCTET_STREAM).contentDisposition(blobName).build();
+            blobStore.putBlob(container, blob, multipart());
         }
-
     }
 
     /**
@@ -71,34 +105,14 @@ public final class JcloudsBlobStoreHelper {
      * @param blobName
      * @return
      */
-    public static Object readBlob(BlobStore blobStore, String container, String blobName, final ClassLoader classLoader) {
-        Object result = null;
-        ObjectInputStream ois = null;
-        blobStore.createContainerInLocation(null, container);
-
-        InputStream is = blobStore.getBlob(container, blobName).getPayload().getInput();
-
-        try {
-            ois = new ObjectInputStream(is) {
-                @Override
-                public Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-                    try {
-                        return classLoader.loadClass(desc.getName());
-                    } catch (Exception e) {
-                    }
-                    return super.resolveClass(desc);
-                }
-            };
-            result = ois.readObject();
-        } catch (IOException
-                e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException
-                e) {
-            e.printStackTrace();
-        } finally {
-            IOHelper.close(ois, is);
+    public static InputStream readBlob(BlobStore blobStore, String container, String blobName) {
+        InputStream is = null;
+        if (!Strings.isNullOrEmpty(blobName)) {
+            Blob blob = blobStore.getBlob(container, blobName);
+            if (blob != null && blob.getPayload() != null) {
+                is = blobStore.getBlob(container, blobName).getPayload().getInput();
+            }
         }
-        return result;
+        return is;
     }
 }
