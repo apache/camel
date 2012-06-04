@@ -226,6 +226,11 @@
       <artifactId>camel-rss</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xmljson</artifactId>
+      <scope>test</scope>
+    </dependency>
 	<dependency>
 	  <groupId>org.apache.camel.tests</groupId>
 	  <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>

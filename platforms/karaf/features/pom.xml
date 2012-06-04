@@ -54,6 +54,7 @@
       <commons-jxpath-version>1.3</commons-jxpath-version>
       <commons-math-version>2.2</commons-math-version>
       <commons-dbcp-bundle-version>1.4_3</commons-dbcp-bundle-version>
+      <commons-lang-version-xmljson>2.5</commons-lang-version-xmljson>
       <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
       <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
