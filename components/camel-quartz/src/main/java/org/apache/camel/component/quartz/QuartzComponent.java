@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
-    private final AtomicInteger jobs = new AtomicInteger();
     private Scheduler scheduler;
     private final List<JobToAdd> jobsToAdd = new ArrayList<JobToAdd>();
     private SchedulerFactory factory;
@@ -165,7 +164,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     public void onCamelContextStarted(CamelContext camelContext, boolean alreadyStarted) throws Exception {
         if (scheduler != null) {
             // register current camel context to scheduler so we can look it up when jobs is being triggered
-            scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getName(), getCamelContext());
+            // must use management name as it should be unique in the same JVM
+            scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getManagementName(), getCamelContext());
         }
 
         // if not configure to auto start then don't start it
@@ -191,9 +191,9 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         super.doStop();
 
         if (scheduler != null) {
-            int number = jobs.get();
-            if (number > 0) {
-                LOG.info("Cannot shutdown Quartz scheduler: " + scheduler.getSchedulerName() + " as there are still " + number + " jobs registered.");
+            AtomicInteger number = (AtomicInteger) scheduler.getContext().get("CamelJobs");
+            if (number != null && number.get() > 0) {
+                LOG.info("Cannot shutdown Quartz scheduler: " + scheduler.getSchedulerName() + " as there are still " + number.get() + " jobs registered.");
             } else {
                 // no more jobs then shutdown the scheduler
                 LOG.info("There are no more jobs registered, so shutting down Quartz scheduler: " + scheduler.getSchedulerName());
@@ -214,7 +214,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     private void doAddJob(JobDetail job, Trigger trigger) throws SchedulerException {
-        jobs.incrementAndGet();
+        incrementJobCounter(getScheduler());
 
         Trigger existingTrigger = getScheduler().getTrigger(trigger.getName(), trigger.getGroup());
         if (existingTrigger == null) {
@@ -254,7 +254,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     public void pauseJob(Trigger trigger) throws SchedulerException {
-        jobs.decrementAndGet();
+        decrementJobCounter(getScheduler());
 
         if (isClustered()) {
             // do not pause jobs which are clustered, as we want the jobs to continue running on the other nodes
@@ -470,8 +470,31 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         }
 
         // register current camel context to scheduler so we can look it up when jobs is being triggered
-        scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getName(), getCamelContext());
+        // must use management name as it should be unique in the same JVM
+        scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getManagementName(), getCamelContext());
+
+        // store Camel job counter
+        AtomicInteger number = (AtomicInteger) scheduler.getContext().get("CamelJobs");
+        if (number == null) {
+            number = new AtomicInteger(0);
+            scheduler.getContext().put("CamelJobs", number);
+        }
+
         return scheduler;
+    }
+
+    private static void decrementJobCounter(Scheduler scheduler) throws SchedulerException {
+        AtomicInteger number = (AtomicInteger) scheduler.getContext().get("CamelJobs");
+        if (number != null) {
+            number.decrementAndGet();
+        }
+    }
+
+    private static void incrementJobCounter(Scheduler scheduler) throws SchedulerException {
+        AtomicInteger number = (AtomicInteger) scheduler.getContext().get("CamelJobs");
+        if (number != null) {
+            number.incrementAndGet();
+        }
     }
 
 }
