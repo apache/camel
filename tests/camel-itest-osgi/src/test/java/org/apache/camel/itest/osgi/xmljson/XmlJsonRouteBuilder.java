@@ -21,8 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Simple route for testing camel-xmljson
- * @author Raul Kripalani
- *
  */
 public class XmlJsonRouteBuilder extends RouteBuilder {
 

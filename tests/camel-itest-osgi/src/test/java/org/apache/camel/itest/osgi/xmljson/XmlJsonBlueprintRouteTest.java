@@ -34,8 +34,6 @@ import org.osgi.framework.Constants;
 
 /**
  * OSGi integration test for camel-xmljson
- * @author Raul Kripalani
- *
  */
 @RunWith(JUnit4TestRunner.class)
 public class XmlJsonBlueprintRouteTest extends OSGiBlueprintTestSupport {
