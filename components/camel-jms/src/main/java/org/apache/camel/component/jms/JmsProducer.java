@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.Connection;
 import javax.jms.Destination;
@@ -29,11 +30,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
+import org.apache.camel.component.jms.reply.PersistentQueueReplyManager;
 import org.apache.camel.component.jms.reply.ReplyManager;
+import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.component.jms.reply.UseMessageIdAsCorrelationIdMessageSentCallback;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.ValueHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +46,7 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.support.JmsUtils;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
+
 /**
  * @version 
  */
@@ -57,6 +62,11 @@ public class JmsProducer extends DefaultAsyncProducer {
     public JmsProducer(JmsEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+    }
+
+    @Override
+    public JmsEndpoint getEndpoint() {
+        return (JmsEndpoint) super.getEndpoint();
     }
 
     protected void initReplyManager() {
@@ -76,12 +86,12 @@ public class JmsProducer extends DefaultAsyncProducer {
                     }
 
                     if (endpoint.getReplyTo() != null) {
-                        replyManager = endpoint.getReplyManager(endpoint.getReplyTo());
+                        replyManager = createReplyManager(endpoint.getReplyTo());
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Using JmsReplyManager: {} to process replies from: {}", replyManager, endpoint.getReplyTo());
                         }
                     } else {
-                        replyManager = endpoint.getReplyManager();
+                        replyManager = createReplyManager();
                         LOG.debug("Using JmsReplyManager: {} to process replies from temporary queue", replyManager);
                     }
                 } catch (Exception e) {
@@ -89,6 +99,16 @@ public class JmsProducer extends DefaultAsyncProducer {
                 }
                 started.set(true);
             }
+        }
+    }
+
+    protected void unInitReplyManager() {
+        try {
+            ServiceHelper.stopService(replyManager);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } finally {
+            started.set(false);
         }
     }
 
@@ -444,5 +464,35 @@ public class JmsProducer extends DefaultAsyncProducer {
 
     protected void doStop() throws Exception {
         super.doStop();
+
+        // must stop/un-init reply manager if it was in use
+        unInitReplyManager();
     }
+
+    protected ReplyManager createReplyManager() throws Exception {
+        // use a temporary queue
+        ReplyManager replyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
+        replyManager.setEndpoint(getEndpoint());
+
+        String name = "JmsReplyManagerTimeoutChecker[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
+        ScheduledExecutorService replyManagerExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
+        replyManager.setScheduledExecutorService(replyManagerExecutorService);
+        ServiceHelper.startService(replyManager);
+
+        return replyManager;
+    }
+
+    protected ReplyManager createReplyManager(String replyTo) throws Exception {
+        // use a persistent queue
+        ReplyManager replyManager = new PersistentQueueReplyManager(getEndpoint().getCamelContext());
+        replyManager.setEndpoint(getEndpoint());
+
+        String name = "JmsReplyManagerTimeoutChecker[" + replyTo + "]";
+        ScheduledExecutorService replyManagerExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
+        replyManager.setScheduledExecutorService(replyManagerExecutorService);
+        ServiceHelper.startService(replyManager);
+
+        return replyManager;
+    }
+
 }
