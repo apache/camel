@@ -50,6 +50,8 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
     private boolean splitRows = true;
+    private boolean allowShortLines;
+    private boolean ignoreExtraColumns;
 
     public FixedLengthEndpoint() {
     }
@@ -87,7 +89,16 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
     protected Parser createParser(String resourceUri, Reader bodyReader) throws IOException {
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
         InputStreamReader reader = new InputStreamReader(is);
-        return getParserFactory().newFixedLengthParser(reader, bodyReader);
+        Parser parser = getParserFactory().newFixedLengthParser(reader, bodyReader);
+        if (allowShortLines) {
+            parser.setHandlingShortLines(true);
+            parser.setIgnoreParseWarnings(true);
+        }
+        if (ignoreExtraColumns) {
+            parser.setIgnoreExtraColumns(true);
+            parser.setIgnoreParseWarnings(true);
+        }
+        return parser;
     }
 
     // Properties
@@ -117,7 +128,32 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
         return splitRows;
     }
 
+    /**
+     * Sets the Component to send each row as a separate exchange once parsed
+     */
     public void setSplitRows(boolean splitRows) {
         this.splitRows = splitRows;
+    }
+
+    public boolean isAllowShortLines() {
+        return this.allowShortLines;
+    }
+
+    /**
+     * Allows for lines to be shorter than expected and ignores the extra characters
+     */
+    public void setAllowShortLines(boolean allowShortLines) {
+        this.allowShortLines = allowShortLines;
+    }
+
+    /**
+     * Allows for lines to be longer than expected and ignores the extra characters
+     */
+    public void setIgnoreExtraColumns(boolean ignoreExtraColumns) {
+        this.ignoreExtraColumns = ignoreExtraColumns;
+    }
+
+    public boolean isIgnoreExtraColumns() {
+        return ignoreExtraColumns;
     }
 }
