@@ -70,7 +70,8 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
             trigger.setStartTime(new Date());
         }
         detail.getJobDataMap().put(QuartzConstants.QUARTZ_ENDPOINT_URI, getEndpointUri());
-        detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, getCamelContext().getName());
+        // must use management name as it should be unique in the same JVM
+        detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, getCamelContext().getManagementName());
         if (detail.getJobClass() == null) {
             detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }

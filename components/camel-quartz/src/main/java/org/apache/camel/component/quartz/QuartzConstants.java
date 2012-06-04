@@ -23,6 +23,7 @@ public final class QuartzConstants {
 
     public static final String QUARTZ_ENDPOINT_URI = "CamelQuartzEndpoint";
 
+    // Note: using the CamelContext management name to ensure its unique in the JVM
     public static final String QUARTZ_CAMEL_CONTEXT_NAME = "CamelQuartzCamelContextName";
 
     public static final String QUARTZ_CAMEL_CONTEXT = "CamelQuartzCamelContext";
