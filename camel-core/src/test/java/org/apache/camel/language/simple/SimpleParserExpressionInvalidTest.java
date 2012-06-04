@@ -25,7 +25,7 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
     public void testSimpleUnbalanceFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body is a nice day");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body is a nice day", true);
         try {
             parser.parseExpression();
             fail("Should thrown exception");
@@ -35,7 +35,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     }
 
     public void testSimpleNestedUnbalanceFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body${foo}");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body${foo}", true);
         try {
             parser.parseExpression();
             fail("Should thrown exception");
@@ -45,7 +45,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     }
 
     public void testSimpleUnknownFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${foo} how are you?");
+        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${foo} how are you?", true);
         try {
             parser.parseExpression();
             fail("Should thrown exception");
@@ -55,7 +55,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     }
 
     public void testSimpleNestedUnknownFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${bodyAs(${foo})} how are you?");
+        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${bodyAs(${foo})} how are you?", true);
         try {
             // nested functions can only be syntax evaluated when evaluating an exchange at runtime
             parser.parseExpression().evaluate(exchange, String.class);
@@ -66,7 +66,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     }
     
     public void testNoEndFunction() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${body");
+        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${body", true);
         try {
             parser.parseExpression();
             fail("Should thrown exception");

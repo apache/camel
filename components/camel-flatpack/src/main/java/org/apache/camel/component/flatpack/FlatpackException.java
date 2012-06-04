@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
  */
 public class FlatpackException extends CamelExchangeException {
 
+    private static final long serialVersionUID = 1L;
     private final List<DataError> errors;
 
     public FlatpackException(String message, Exchange exchange, List<DataError> errors) {

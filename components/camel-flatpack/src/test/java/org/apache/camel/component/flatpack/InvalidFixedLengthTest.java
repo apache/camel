@@ -20,8 +20,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.util.Assert;
@@ -31,7 +29,6 @@ import org.springframework.util.Assert;
  */
 @ContextConfiguration
 public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FixedLengthTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;

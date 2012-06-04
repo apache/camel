@@ -55,7 +55,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true and ${header.foo} == 123");
+        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true and ${header.foo} == 123", true);
         Predicate pre = parser.parsePredicate();
 
         assertTrue("Should match", pre.matches(exchange));
@@ -66,7 +66,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == false or ${header.foo} == 123");
+        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == false or ${header.foo} == 123", true);
         Predicate pre = parser.parsePredicate();
 
         assertTrue("Should match", pre.matches(exchange));

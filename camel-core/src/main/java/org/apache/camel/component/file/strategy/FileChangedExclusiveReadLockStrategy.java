@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;

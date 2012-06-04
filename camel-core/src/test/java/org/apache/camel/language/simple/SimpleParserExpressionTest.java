@@ -25,14 +25,14 @@ import org.apache.camel.Expression;
 public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleParserEol() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello");
+        SimpleExpressionParser parser = new SimpleExpressionParser("Hello", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("Hello", exp.evaluate(exchange, String.class));
     }
 
     public void testSimpleSingleQuote() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("'Hello'");
+        SimpleExpressionParser parser = new SimpleExpressionParser("'Hello'", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("'Hello'", exp.evaluate(exchange, String.class));
@@ -40,7 +40,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleSingleQuoteWithFunction() throws Exception {
         exchange.getIn().setBody("World");
-        SimpleExpressionParser parser = new SimpleExpressionParser("'Hello ${body} how are you?'");
+        SimpleExpressionParser parser = new SimpleExpressionParser("'Hello ${body} how are you?'", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("'Hello World how are you?'", exp.evaluate(exchange, String.class));
@@ -48,14 +48,14 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleSingleQuoteWithFunctionBodyAs() throws Exception {
         exchange.getIn().setBody("World");
-        SimpleExpressionParser parser = new SimpleExpressionParser("'Hello ${bodyAs(String)} how are you?'");
+        SimpleExpressionParser parser = new SimpleExpressionParser("'Hello ${bodyAs(String)} how are you?'", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("'Hello World how are you?'", exp.evaluate(exchange, String.class));
     }
 
     public void testSimpleSingleQuoteEol() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("'Hello' World");
+        SimpleExpressionParser parser = new SimpleExpressionParser("'Hello' World", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("'Hello' World", exp.evaluate(exchange, String.class));
@@ -63,21 +63,21 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleFunction() throws Exception {
         exchange.getIn().setBody("World");
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body}");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body}", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("World", exp.evaluate(exchange, String.class));
     }
 
     public void testSimpleSingleQuoteDollar() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$ today");
+        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$ today", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("Pay 200$ today", exp.evaluate(exchange, String.class));
     }
 
     public void testSimpleSingleQuoteDollarEnd() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$");
+        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("Pay 200$", exp.evaluate(exchange, String.class));
@@ -85,7 +85,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleUnaryInc() throws Exception {
         exchange.getIn().setBody("122");
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body}++");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body}++", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("123", exp.evaluate(exchange, String.class));
@@ -93,7 +93,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleUnaryDec() throws Exception {
         exchange.getIn().setBody("122");
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body}--");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body}--", true);
         Expression exp = parser.parseExpression();
 
         assertEquals("121", exp.evaluate(exchange, String.class));
@@ -101,7 +101,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleUnaryIncInt() throws Exception {
         exchange.getIn().setBody(122);
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body}++");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body}++", true);
         Expression exp = parser.parseExpression();
 
         assertEquals(Integer.valueOf(123), exp.evaluate(exchange, Integer.class));
@@ -109,7 +109,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleUnaryDecInt() throws Exception {
         exchange.getIn().setBody(122);
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body}--");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body}--", true);
         Expression exp = parser.parseExpression();
 
         assertEquals(Integer.valueOf(121), exp.evaluate(exchange, Integer.class));
@@ -118,7 +118,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     public void testHeaderNestedFunction() throws Exception {
         exchange.getIn().setBody("foo");
         exchange.getIn().setHeader("foo", "abc");
-        SimpleExpressionParser parser = new SimpleExpressionParser("${header.${body}}");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${header.${body}}", true);
         Expression exp = parser.parseExpression();
 
         Object obj = exp.evaluate(exchange, Object.class);
@@ -129,7 +129,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     public void testBodyAsNestedFunction() throws Exception {
         exchange.getIn().setBody("123");
         exchange.getIn().setHeader("foo", "Integer");
-        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo})}");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo})}", true);
         Expression exp = parser.parseExpression();
 
         Object obj = exp.evaluate(exchange, Object.class);
@@ -143,7 +143,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("foo", "Int");
         exchange.getIn().setHeader("bar", "e");
         exchange.getIn().setHeader("baz", "ger");
-        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo}${header.bar}${header.baz})}");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo}${header.bar}${header.baz})}", true);
         Expression exp = parser.parseExpression();
 
         Object obj = exp.evaluate(exchange, Object.class);
@@ -156,7 +156,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         exchange.getIn().setBody("123");
         exchange.getIn().setHeader("foo", "Integer");
         exchange.getIn().setHeader("bar", "foo");
-        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.${header.bar}})}");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.${header.bar}})}", true);
         Expression exp = parser.parseExpression();
 
         Object obj = exp.evaluate(exchange, Object.class);

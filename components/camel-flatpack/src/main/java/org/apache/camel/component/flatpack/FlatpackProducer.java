@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.flatpack;
 
-import net.sf.flatpack.DataError;
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.Parser;
 import org.apache.camel.Exchange;
