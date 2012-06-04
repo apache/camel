@@ -29,6 +29,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.MessageHelper;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.ChallengeResponse;
@@ -256,6 +257,10 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             LOG.debug("Populate exchange from Restlet response: {}", text);
             exchange.getOut().setBody(text);
         }
+
+        // preserve headers from in by copying any non existing headers
+        // to avoid overriding existing headers with old values
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
