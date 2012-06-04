@@ -25,13 +25,9 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 
 public final class JcloudsBlobStoreHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JcloudsBlobStoreHelper.class);
 
     private JcloudsBlobStoreHelper() {
         //Utility Class

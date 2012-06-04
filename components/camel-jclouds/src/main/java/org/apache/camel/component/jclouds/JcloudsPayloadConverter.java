@@ -16,37 +16,28 @@
  */
 package org.apache.camel.component.jclouds;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
-import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.IOHelper;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
 import org.jclouds.io.payloads.StringPayload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Converter
 public final class JcloudsPayloadConverter {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JcloudsPayloadConverter.class);
 
     private JcloudsPayloadConverter() {
         //Utility Class
@@ -101,12 +92,13 @@ public final class JcloudsPayloadConverter {
     }
 
     @FallbackConverter
+    @SuppressWarnings("unchecked")
     public static <T extends Payload> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws IOException {
-        Class sourceType = value.getClass();
+        Class<?> sourceType = value.getClass();
         if (GenericFile.class.isAssignableFrom(sourceType)) {
-            GenericFile genericFile = (GenericFile) value;
+            GenericFile<?> genericFile = (GenericFile<?>) value;
             if (genericFile.getFile() != null) {
-                Class genericFileType = genericFile.getFile().getClass();
+                Class<?> genericFileType = genericFile.getFile().getClass();
                 TypeConverter converter = registry.lookup(Payload.class, genericFileType);
                 if (converter != null) {
                     return (T) converter.convertTo(Payload.class, genericFile.getFile());

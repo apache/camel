@@ -39,7 +39,6 @@ import org.junit.Test;
 public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
 
     private static final String TEST_CONTAINER = "testContainer";
-    private static final String TEST_BLOB = "testBlob";
     private static final String TEST_BLOB_IN_DIR = "/dir/testBlob";
     private static final String MESSAGE = "<test>This is a test</test>";
 
