@@ -24,6 +24,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
 import org.apache.camel.component.jms.ReplyToType;
@@ -40,6 +41,10 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
 
     private String replyToSelectorValue;
     private MessageSelectorCreator dynamicMessageSelector;
+
+    public PersistentQueueReplyManager(CamelContext camelContext) {
+        super(camelContext);
+    }
 
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
