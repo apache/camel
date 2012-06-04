@@ -30,7 +30,7 @@ public class HBaseCell {
     private String qualifier;
     private Object value;
     //The value type can be optionally specified for Gets and Scan, to specify how the byte[] read will be converted.
-    private Class valueType = String.class;
+    private Class<?> valueType = String.class;
 
     @XmlAttribute(name = "family")
     public String getFamily() {
@@ -60,11 +60,11 @@ public class HBaseCell {
     }
 
     @XmlAttribute(name = "type")
-    public Class getValueType() {
+    public Class<?> getValueType() {
         return valueType;
     }
 
-    public void setValueType(Class valueType) {
+    public void setValueType(Class<?> valueType) {
         this.valueType = valueType;
     }
 

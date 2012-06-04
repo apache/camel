@@ -26,7 +26,7 @@ public class HBaseRow implements Cloneable {
 
     private Object id;
     //The row type can be optionally specified for Gets and Scan, to specify how the byte[] read will be converted.
-    private Class rowType = String.class;
+    private Class<?> rowType = String.class;
     private Set<HBaseCell> cells;
 
     /**
@@ -54,11 +54,11 @@ public class HBaseRow implements Cloneable {
     }
 
     @XmlAttribute(name = "type")
-    public Class getRowType() {
+    public Class<?> getRowType() {
         return rowType;
     }
 
-    public void setRowType(Class rowType) {
+    public void setRowType(Class<?> rowType) {
         this.rowType = rowType;
     }
 

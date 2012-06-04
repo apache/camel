@@ -16,19 +16,8 @@
  */
 package org.apache.camel.component.hbase.converter;
 
-import java.math.BigInteger;
 import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.component.hbase.HBaseHelper;
-import org.apache.camel.component.hbase.model.HBaseRow;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Converter
 public final class HBaseModelConverter {

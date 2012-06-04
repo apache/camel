@@ -26,8 +26,6 @@ import org.apache.camel.component.hbase.HbaseAttribute;
 import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseData;
 import org.apache.camel.component.hbase.model.HBaseRow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -40,8 +38,6 @@ import org.slf4j.LoggerFactory;
  * <p>Suffixes need to be sequential</p>.
  */
 public class HeaderMappingStrategy implements CellMappingStrategy {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HeaderMappingStrategy.class);
 
     /**
      * Resolves the cell that the {@link Exchange} refers to.
@@ -57,13 +53,13 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
         if (message != null) {
             Object id =  message.getHeader(HbaseAttribute.HBASE_ROW_ID.asHeader(index));
             String rowClassName = message.getHeader(HbaseAttribute.HBASE_ROW_TYPE.asHeader(index), String.class);
-            Class rowClass = rowClassName == null || rowClassName.isEmpty() ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(rowClassName);
+            Class<?> rowClass = rowClassName == null || rowClassName.isEmpty() ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(rowClassName);
             String columnFamily = (String) message.getHeader(HbaseAttribute.HBASE_FAMILY.asHeader(index));
             String columnName = (String) message.getHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(index));
             Object value =  message.getHeader(HbaseAttribute.HBASE_VALUE.asHeader(index));
 
             String valueClassName = message.getHeader(HbaseAttribute.HBASE_VALUE_TYPE.asHeader(index), String.class);
-            Class valueClass = valueClassName == null || valueClassName.isEmpty() ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(valueClassName);
+            Class<?> valueClass = valueClassName == null || valueClassName.isEmpty() ? String.class : message.getExchange().getContext().getClassResolver().resolveClass(valueClassName);
 
             //Id can be accepted as null when using get, scan etc.
             if (id == null && columnFamily == null && columnName == null) {

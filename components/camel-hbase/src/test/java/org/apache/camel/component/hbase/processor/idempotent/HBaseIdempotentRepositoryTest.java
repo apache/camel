@@ -32,7 +32,7 @@ import org.junit.Test;
 
 public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
 
-    IdempotentRepository repository;
+    IdempotentRepository<Object> repository;
     HTable table;
 
     private String key01 = "123";

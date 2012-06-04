@@ -40,14 +40,11 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The HBase producer.
  */
 public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(HBaseProducer.class);
     private HBaseEndpoint endpoint;
     private String tableName;
     private final HTablePool tablePool;

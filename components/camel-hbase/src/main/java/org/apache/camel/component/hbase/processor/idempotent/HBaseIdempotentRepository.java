@@ -32,23 +32,15 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HBaseIdempotentRepository extends ServiceSupport implements IdempotentRepository {
+public class HBaseIdempotentRepository extends ServiceSupport implements IdempotentRepository<Object> {
     private static final Logger LOG = LoggerFactory.getLogger(HBaseIdempotentRepository.class);
 
-    private final Configuration configuration;
     private final String tableName;
     private final String family;
     private final String qualifer;
     private final HTable table;
 
-    /**
-     * Constructor
-     *
-     * @param configuration
-     * @param tableName
-     */
     public HBaseIdempotentRepository(Configuration configuration, String tableName, String family, String qualifier) throws IOException {
-        this.configuration = configuration;
         this.tableName = tableName;
         this.family = family;
         this.qualifer = qualifier;

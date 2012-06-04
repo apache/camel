@@ -27,15 +27,11 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.filter.Filter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents an HBase endpoint.
  */
 public class HBaseEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HBaseEndpoint.class);
 
     private Configuration configuration;
     private String tableName;
@@ -64,10 +60,6 @@ public class HBaseEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.tableName = tableName;
         this.tablePool = tablePool;
-    }
-
-    public HBaseEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public Producer createProducer() throws Exception {

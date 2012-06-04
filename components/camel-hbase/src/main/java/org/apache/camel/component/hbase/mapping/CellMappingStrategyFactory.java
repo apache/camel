@@ -60,17 +60,15 @@ public class CellMappingStrategyFactory {
 
 
     private CellMappingStrategy loadStrategyfromClassName(String strategyClassName) {
-        CellMappingStrategy strategy = null;
-        Class<? extends CellMappingStrategy> clazz = null;
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader != null) {
             try {
-                clazz = (Class<? extends CellMappingStrategy>) classLoader.loadClass(strategyClassName);
-                strategy = clazz.newInstance();
+                Class<?> clazz = classLoader.loadClass(strategyClassName);
+                return (CellMappingStrategy) clazz.newInstance();
             } catch (Throwable e) {
                 LOG.warn("Failed to load HBase cell mapping strategy from class {}.", strategyClassName);
             }
         }
-        return strategy;
+        return null;
     }
 }

@@ -19,9 +19,6 @@ package org.apache.camel.component.hbase.mapping;
 
 import org.apache.camel.Message;
 import org.apache.camel.component.hbase.model.HBaseData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * A  {@link org.apache.camel.component.hbase.mapping.CellMappingStrategy} implementation.
@@ -32,9 +29,7 @@ import org.slf4j.LoggerFactory;
  * <p>Suffixes start from number 2</p>.
  * <p>Suffixes need to be sequential</p>.
  */
-public class BodyMappingStrategy<R, V> implements CellMappingStrategy {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BodyMappingStrategy.class);
+public class BodyMappingStrategy implements CellMappingStrategy {
 
     /**
      * Resolves the cells that the {@link org.apache.camel.Exchange} refers to.

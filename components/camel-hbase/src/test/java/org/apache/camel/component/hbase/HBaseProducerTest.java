@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.client.Get;
@@ -287,7 +286,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             Object result2 = resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(2));
             Object result3 = resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(3));
 
-            List bodies = Arrays.asList(body);
+            List<?> bodies = Arrays.asList(body);
             assertTrue(bodies.contains(result1) && bodies.contains(result2) && bodies.contains(result3));
 
         }
