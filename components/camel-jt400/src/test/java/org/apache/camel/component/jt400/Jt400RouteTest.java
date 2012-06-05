@@ -56,7 +56,7 @@ public class Jt400RouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 if (SYSTEM != null) {
                     String uri = String.format("jt400://%s:%s@%s/QSYS.LIB/%s.LIB/%s.DTAQ", USER, PASSWORD,
-                                               SYSTEM, LIBRARY, QUEUE);
+                            SYSTEM, LIBRARY, QUEUE);
                     from("direct:a").to(uri);
                     from(uri).to("mock:a");
                 }

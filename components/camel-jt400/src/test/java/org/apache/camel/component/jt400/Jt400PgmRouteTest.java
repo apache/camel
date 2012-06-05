@@ -54,20 +54,20 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
                     Exchange exchange = endpoint.getReceivedExchanges().get(0);
                     char[] secondParameter = new char[512];
                     Arrays.fill(secondParameter, ' ');
-                    String[] expectedBody = new String[] {"1234", new String(secondParameter), "01"};
+                    String[] expectedBody = new String[]{"1234", new String(secondParameter), "01"};
                     Object actualBody = exchange.getIn().getBody();
 
                     assertNotNull(actualBody);
                     assertTrue(actualBody.getClass().isArray());
 
-                    String[] actualBodyTyped = (String[])actualBody;
+                    String[] actualBodyTyped = (String[]) actualBody;
                     for (int i = 0; i < expectedBody.length; i++) {
                         assertEquals(expectedBody[i], actualBodyTyped[i]);
                     }
                 }
             };
             endpoint.expects(runnable);
-            sendBody("direct:a", new String[] {"1234", "", ""});
+            sendBody("direct:a", new String[]{"1234", "", ""});
             endpoint.assertIsSatisfied();
         }
     }
@@ -80,8 +80,8 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 if (SYSTEM != null) {
                     String uri = String
-                        .format("jt400://%s:%s@%s/QSYS.LIB/%s.LIB/%s.pgm?outputFieldsIdx=%s&fieldsLength=%s",
-                                USER, PASSWORD, SYSTEM, LIBRARY, PGM, OUTPUT_FIELDS, FIELDS_LENGTH);
+                            .format("jt400://%s:%s@%s/QSYS.LIB/%s.LIB/%s.pgm?outputFieldsIdx=%s&fieldsLength=%s",
+                                    USER, PASSWORD, SYSTEM, LIBRARY, PGM, OUTPUT_FIELDS, FIELDS_LENGTH);
                     from("direct:a").to(uri).to("mock:a");
                 }
             }

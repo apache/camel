@@ -34,8 +34,6 @@ import org.junit.Test;
  * <code>"jt400test.properties"</code>, in a property with key
  * <code>"org.apache.camel.component.jt400.emptydtaq.uri"</code>).
  * </p>
- *
- * @version 
  */
 @Ignore("Test manual")
 public class Jt400DataQueueConsumerTest extends TestCase {

@@ -17,14 +17,13 @@
 package org.apache.camel.component.jt400;
 
 import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test case for {@link Jt400DataQueueEndpoint}
  */
-public class Jt400PgmEndpointTest extends CamelTestSupport {
+public class Jt400PgmEndpointTest extends Jt400TestSupport {
 
     private static final String USER = "USER";
     private static final String HOST = "host";
@@ -37,8 +36,9 @@ public class Jt400PgmEndpointTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        endpoint = (Jt400PgmEndpoint)resolveMandatoryEndpoint("jt400://" + USER + ":" + PASSWORD
-                                                              + "@" + HOST + PGM + "?guiAvailable=true&format=binary&outputFieldsIdx=1,2&fieldsLength=10,512,255");
+        endpoint = (Jt400PgmEndpoint) resolveMandatoryEndpoint("jt400://" + USER + ":" + PASSWORD
+                + "@" + HOST + PGM
+                + "?connectionPool=#mockPool&guiAvailable=true&format=binary&outputFieldsIdx=1,2&fieldsLength=10,512,255");
     }
 
     /**

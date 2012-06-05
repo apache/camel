@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jt400;
 
-import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.BaseDataQueue;
 import com.ibm.as400.access.DataQueue;
 import com.ibm.as400.access.KeyedDataQueue;
@@ -31,10 +30,16 @@ import org.apache.camel.impl.DefaultProducer;
 public class Jt400DataQueueProducer extends DefaultProducer {
 
     private final Jt400DataQueueEndpoint endpoint;
+    
+    /**
+     * Performs the lifecycle logic of this producer.
+     */
+    private final Jt400DataQueueService queueService;
 
     protected Jt400DataQueueProducer(Jt400DataQueueEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.queueService = new Jt400DataQueueService(endpoint);
     }
 
     /**
@@ -48,7 +53,7 @@ public class Jt400DataQueueProducer extends DefaultProducer {
      * then the {@link org.apache.camel.Message} header <code>KEY</code> must be set.
      */
     public void process(Exchange exchange) throws Exception {
-        BaseDataQueue queue = endpoint.getDataQueue();
+        BaseDataQueue queue = queueService.getDataQueue();
         if (endpoint.isKeyed()) {
             process((KeyedDataQueue) queue, exchange);
         } else {
@@ -74,18 +79,12 @@ public class Jt400DataQueueProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        if (!endpoint.getSystem().isConnected()) {
-            log.info("Connecting to " + endpoint);
-            endpoint.getSystem().connectService(AS400.DATAQUEUE);
-        }
+        queueService.start();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (endpoint.getSystem().isConnected()) {
-            log.info("Disconnecting from " + endpoint);
-            endpoint.getSystem().disconnectAllServices();
-        }
+        queueService.stop();
     }
 
 }
