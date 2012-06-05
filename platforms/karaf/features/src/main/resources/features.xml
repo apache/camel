@@ -717,6 +717,12 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-solr/${project.version}</bundle>
   </feature>
+  <feature name='camel-spring-batch' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.springframework.batch/spring-batch-core/${spring-batch-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.batch/spring-batch-infrastructure/${spring-batch-version}</bundle>
+    <feature version='${project.version}'>camel-spring</feature>
+    <bundle>mvn:org.apache.camel/camel-spring-batch/${project.version}</bundle>
+  </feature>
   <feature name='camel-spring-integration' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.springframework.integration/spring-integration-core/${spring-integration-version}</bundle>
     <feature version='${project.version}'>camel-spring</feature>
