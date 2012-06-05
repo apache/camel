@@ -32,6 +32,12 @@ public class NumberAggregationStrategy implements AggregationStrategy {
             return newExchange;
         }
 
+        // check for stop command
+        String input = newExchange.getIn().getBody(String.class);
+        if ("STOP".equalsIgnoreCase(input)) {
+            return oldExchange;
+        }
+
         Integer num1 = oldExchange.getIn().getBody(Integer.class);
         Integer num2 = newExchange.getIn().getBody(Integer.class);
 
