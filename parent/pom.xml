@@ -165,6 +165,7 @@
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
     <snmp4j-version>1.10.1_1</snmp4j-version>
     <solr-version>3.6.0</solr-version>
+    <spring-batch-version>2.1.8.RELEASE</spring-batch-version>
     <spring-integration-version>2.1.1.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-version>3.0.7.RELEASE</spring-version>

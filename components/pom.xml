@@ -138,6 +138,7 @@
     <module>camel-snmp</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
+    <module>camel-spring-batch</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-security</module>
@@ -171,5 +172,5 @@
             </modules>
         </profile>
   </profiles>
-  
+
 </project>
