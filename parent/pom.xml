@@ -62,7 +62,7 @@
     <commons-net-version>3.1</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
-    <cxf-version>2.6.0</cxf-version>
+    <cxf-version>2.6.1</cxf-version>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <derby-version>10.8.2.2</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
