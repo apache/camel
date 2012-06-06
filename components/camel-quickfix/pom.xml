@@ -38,9 +38,9 @@
 
   <repositories>
     <repository>
-      <id>smx.m2</id>
-      <name>ServiceMix M2 Repository</name>
-      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+      <id>marketcetera.m2</id>
+      <name>Marketcetera M2 Repository</name>
+      <url>http://repo.marketcetera.org/maven</url>
     </repository>
   </repositories>
 
@@ -50,7 +50,7 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.quickfixj</groupId>
+      <groupId>quickfixj</groupId>
       <artifactId>quickfixj-all</artifactId>
       <version>${quickfix-version}</version>
     </dependency>

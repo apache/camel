@@ -161,16 +161,4 @@
     <module>camel-zookeeper</module>
   </modules>
 
-  <profiles>
-        <profile>
-            <id>jdk16</id>
-            <activation>
-                <jdk>1.6</jdk>
-            </activation>
-            <modules>
-                <module>camel-quickfix</module>
-            </modules>
-        </profile>
-  </profiles>
-
 </project>

@@ -160,7 +160,7 @@ public class TradeExecutor {
         if (order.getChar(OrdType.FIELD) == OrdType.LIMIT) {
             BigDecimal limitPrice = new BigDecimal(order.getString(Price.FIELD));
             char side = order.getChar(Side.FIELD);
-            BigDecimal thePrice = new BigDecimal(Double.toString(price.getValue()));
+            BigDecimal thePrice = price.getValue();
 
             return (side == Side.BUY && thePrice.compareTo(limitPrice) <= 0) 
                 || ((side == Side.SELL || side == Side.SELL_SHORT) && thePrice.compareTo(limitPrice) >= 0);

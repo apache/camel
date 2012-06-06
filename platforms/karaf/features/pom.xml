@@ -104,7 +104,7 @@
       <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
       <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
       <qpid-bundle-version>0.14_1</qpid-bundle-version>
-      <quickfix-bundle-version>1.5.1_2</quickfix-bundle-version>
+      <quickfix-bundle-version>1.5.2_1</quickfix-bundle-version>
       <regexp-bundle-version>1.3_3</regexp-bundle-version>
       <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
       <rome-bundle-version>1.0_3</rome-bundle-version>

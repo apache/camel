@@ -100,15 +100,17 @@ public final class QuickfixjConverters {
     private static DataDictionary getDataDictionary(Exchange exchange) throws ConfigError {
         Object dictionaryValue = exchange.getProperties().get(QuickfixjEndpoint.DATA_DICTIONARY_KEY);
 
-        DataDictionary dataDictionary;
+        DataDictionary dataDictionary = null;
         if (dictionaryValue instanceof DataDictionary) {
             dataDictionary = (DataDictionary) dictionaryValue;
         } else if (dictionaryValue instanceof String) {
             dataDictionary = new DataDictionary((String) dictionaryValue);
         } else {
-            SessionID sessionID = (SessionID) exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY);
-            Session session = Session.lookupSession(sessionID);
-            dataDictionary = session != null ? session.getDataDictionary() : null;
+            SessionID sessionID = exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY, SessionID.class);
+            if (sessionID != null) {
+                Session session = Session.lookupSession(sessionID);
+                dataDictionary = session != null ? session.getDataDictionary() : null;
+            }
         }
 
         return dataDictionary;

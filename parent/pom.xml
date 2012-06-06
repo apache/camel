@@ -151,7 +151,7 @@
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-version>0.16</qpid-version>
     <quartz-version>1.8.5</quartz-version>
-    <quickfix-version>1.5.1</quickfix-version>
+    <quickfix-version>1.5.2-bd</quickfix-version>
     <restlet-version>2.0.14</restlet-version>
     <rome-version>1.0</rome-version>
     <saxon-version>9.3.0.11</saxon-version>
