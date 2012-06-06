@@ -17,63 +17,53 @@
 package org.apache.camel.component.stream;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.stream.mock.MockURLConnection;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Unit test for System.out
+ * Unit test for producer writing to URL.
  */
-public class StreamSystemOutTest extends CamelTestSupport {
+public class StreamToUrlTest extends CamelTestSupport {
 
-    String message = "Hello World";
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-    PrintStream stdOut = System.out;
+    String message = "message";
 
-    ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
+    String existingHandlers = System.getProperty("java.protocol.handler.pkgs");
 
-    // START SNIPPET: e1
-    @Test
-    public void testStringContent() throws Exception {
-        try {
-            // Given
-            System.setOut(new PrintStream(mockOut));
-
-            // When
-            template.sendBody("direct:in", message);
-
-            // Then
-            assertEquals(message + "\n", new String(mockOut.toByteArray()));
-        } finally {
-            System.setOut(stdOut);
-        }
+    @Override
+    protected void doPreSetup() throws Exception {
+        System.setProperty("java.protocol.handler.pkgs", getClass().getPackage().getName());
+        MockURLConnection.setOutputStream(buffer);
     }
 
-    @Test
-    public void testBinaryContent() {
-        try {
-            // Given
-            System.setOut(new PrintStream(mockOut));
-
-            // When
-            template.sendBody("direct:in", message.getBytes());
-
-            // Then
-            assertEquals(message, new String(mockOut.toByteArray()));
-        } finally {
-            System.setOut(stdOut);
+    @Override
+    public void tearDown() throws Exception {
+        if (existingHandlers != null) {
+            System.setProperty("java.protocol.handler.pkgs", existingHandlers);
         }
+        super.tearDown();
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").to("stream:out");
+                from("direct:start").to("stream:url?url=mock:");
             }
         };
     }
-    // END SNIPPET: e1
+
+    @Test
+    public void shouldSendToUrlOutputStream() throws Exception {
+        // When
+        template.sendBody("direct:start", message);
+
+        // Then
+        String messageReceived = new String(buffer.toByteArray()).trim();
+        assertEquals(message, messageReceived);
+    }
 
 }
