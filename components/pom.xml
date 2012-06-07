@@ -124,6 +124,7 @@
     <module>camel-printer</module>
     <module>camel-protobuf</module>
     <module>camel-quartz</module>
+    <module>camel-quickfix</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
