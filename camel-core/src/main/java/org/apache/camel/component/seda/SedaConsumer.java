@@ -57,7 +57,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     private static final transient Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
     private final AtomicInteger taskCount = new AtomicInteger();
-    private CountDownLatch latch;
+    private volatile CountDownLatch latch;
     private volatile boolean shutdownPending;
     private SedaEndpoint endpoint;
     private AsyncProcessor processor;
@@ -111,13 +111,15 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         // signal we want to shutdown
         shutdownPending = true;
 
-        LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
+        if (latch != null) {
+            LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
 
-        // wait for all threads to end
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            // ignore
+            // wait for all threads to end
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                // ignore
+            }
         }
     }
 
