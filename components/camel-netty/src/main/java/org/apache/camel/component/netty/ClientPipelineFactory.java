@@ -22,24 +22,20 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
 /**
  * Factory to create {@link ChannelPipeline} for clients, eg {@link NettyProducer}.
  * <p/>
- * Implementators should use implement the {@link #getPipeline(NettyProducer)} method.
+ * Implementators must support creating a new instance of this factory which is associated
+ * to the given {@link NettyProducer} using the {@link #createPipelineFactory(NettyProducer)}
+ * method.
  *
  * @see ChannelPipelineFactory
  */
 public abstract class ClientPipelineFactory implements ChannelPipelineFactory {
 
-    public ClientPipelineFactory() {
-    }
-
     /**
-     * Returns a newly created {@link ChannelPipeline}.
+     * Creates a new {@link ClientPipelineFactory} using the given {@link NettyProducer}
      *
-     * @param producer the netty producer
+     * @param producer the associated producers
+     * @return the {@link ClientPipelineFactory} associated to ghe given producer.
      */
-    public abstract ChannelPipeline getPipeline(NettyProducer producer) throws Exception;
+    public abstract ClientPipelineFactory createPipelineFactory(NettyProducer producer);
 
-    @Override
-    public ChannelPipeline getPipeline() throws Exception {
-        throw new UnsupportedOperationException("use getPipeline(NettyProducer) instead");
-    }
 }

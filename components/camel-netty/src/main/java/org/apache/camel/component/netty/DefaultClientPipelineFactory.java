@@ -30,11 +30,16 @@ import org.jboss.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultClientPipelineFactory extends ClientPipelineFactory {
+public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultClientPipelineFactory.class);
 
-    @Override
-    public ChannelPipeline getPipeline(NettyProducer producer) throws Exception {
+    private NettyProducer producer;
+
+    public DefaultClientPipelineFactory(NettyProducer producer) {
+        this.producer = producer;
+    }
+
+    public ChannelPipeline getPipeline() throws Exception {
         // create a new pipeline
         ChannelPipeline channelPipeline = Channels.pipeline();
 
@@ -93,4 +98,8 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory {
         }
     }
 
+    @Override
+    public ClientPipelineFactory createPipelineFactory(NettyProducer producer) {
+        return new DefaultClientPipelineFactory(producer);
+    }
 }

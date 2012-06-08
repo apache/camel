@@ -33,8 +33,14 @@ import org.slf4j.LoggerFactory;
 public class DefaultServerPipelineFactory extends ServerPipelineFactory {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultServerPipelineFactory.class);
 
+    private final NettyConsumer consumer;
+
+    public DefaultServerPipelineFactory(NettyConsumer consumer) {
+        this.consumer = consumer;
+    }
+
     @Override
-    public ChannelPipeline getPipeline(NettyConsumer consumer) throws Exception {
+    public ChannelPipeline getPipeline() throws Exception {
         ChannelPipeline channelPipeline = Channels.pipeline();
 
         SslHandler sslHandler = configureServerSSLOnDemand(consumer);
@@ -80,5 +86,10 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
             SSLEngine sslEngine = sslEngineFactory.createServerSSLEngine();
             return new SslHandler(sslEngine);
         }
+    }
+
+    @Override
+    public ServerPipelineFactory createPipelineFactory(NettyConsumer consumer) {
+        return new DefaultServerPipelineFactory(consumer);
     }
 }
