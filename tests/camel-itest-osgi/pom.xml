@@ -410,7 +410,7 @@
               <forkMode>pertest</forkMode>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
               <includes>
-                  <include>**/*Test.*</include>
+                  <include>**/*Test.class</include>
               </includes>
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
