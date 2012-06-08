@@ -26,7 +26,6 @@ import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
-import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.FixedReceiveBufferSizePredictorFactory;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
@@ -70,9 +69,11 @@ public class NettyConsumer extends DefaultConsumer {
         LOG.debug("Netty consumer binding to: {}", configuration.getAddress());
 
         // setup pipeline factory
-        pipelineFactory = configuration.getServerPipelineFactory();
-        if (pipelineFactory == null) {
-            pipelineFactory = new DefaultServerPipelineFactory();
+        ServerPipelineFactory factory = configuration.getServerPipelineFactory();
+        if (factory != null) {
+            pipelineFactory = factory.createPipelineFactory(this);
+        } else {
+            pipelineFactory = new DefaultServerPipelineFactory(this);
         }
 
         if (isTcp()) {
@@ -180,9 +181,8 @@ public class NettyConsumer extends DefaultConsumer {
         serverBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
 
-        // must get the pipeline from the factory when opening a new connection
-        ChannelPipeline serverPipeline = pipelineFactory.getPipeline(this);
-        serverBootstrap.setPipeline(serverPipeline);
+        // set the pipeline factory, which creates the pipeline for each newly created channels
+        serverBootstrap.setPipelineFactory(pipelineFactory);
 
         channel = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use
@@ -211,9 +211,8 @@ public class NettyConsumer extends DefaultConsumer {
                 new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
         }
 
-        // must get the pipeline from the factory when opening a new connection
-        ChannelPipeline serverPipeline = pipelineFactory.getPipeline(this);
-        connectionlessServerBootstrap.setPipeline(serverPipeline);
+        // set the pipeline factory, which creates the pipeline for each newly created channels
+        connectionlessServerBootstrap.setPipelineFactory(pipelineFactory);
 
         channel = connectionlessServerBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use

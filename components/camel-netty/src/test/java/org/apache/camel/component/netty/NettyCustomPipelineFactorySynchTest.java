@@ -37,17 +37,15 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
-    private TestClientChannelPipelineFactory clientPipelineFactory;
-    private TestServerChannelPipelineFactory serverPipelineFactory;
+    private volatile boolean clientInvoked;
+    private volatile boolean serverInvoked;
     private String response;
     
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        clientPipelineFactory = new TestClientChannelPipelineFactory();
-        serverPipelineFactory = new TestServerChannelPipelineFactory();
-        registry.bind("cpf", clientPipelineFactory);
-        registry.bind("spf", serverPipelineFactory);
+        registry.bind("cpf", new TestClientChannelPipelineFactory(null));
+        registry.bind("spf", new TestServerChannelPipelineFactory(null));
         return registry;
     }
     
@@ -81,41 +79,50 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         context.stop();
         
         assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);
-        assertEquals(true, clientPipelineFactory.isFactoryInvoked());
-        assertEquals(true, serverPipelineFactory.isFactoryInvoked());
-    } 
-    
+        assertEquals(true, clientInvoked);
+        assertEquals(true, serverInvoked);
+    }
+
     public class TestClientChannelPipelineFactory extends ClientPipelineFactory {
         private int maxLineSize = 1024;
-        private boolean invoked;
+        private NettyProducer producer;
+
+        public TestClientChannelPipelineFactory(NettyProducer producer) {
+            this.producer = producer;
+        }
 
         @Override
-        public ChannelPipeline getPipeline(NettyProducer producer) throws Exception {
-            invoked = true;
-            
+        public ChannelPipeline getPipeline() throws Exception {
+            clientInvoked = true;
+
             ChannelPipeline channelPipeline = Channels.pipeline();
 
             channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
-            channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));            
+            channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ClientChannelHandler(producer));
 
             return channelPipeline;
         }
-        
-        public boolean isFactoryInvoked() {
-            return invoked;
-        }
-    }
-    
-    public class TestServerChannelPipelineFactory extends ServerPipelineFactory {
-        private int maxLineSize = 1024;
-        private boolean invoked;
 
         @Override
-        public ChannelPipeline getPipeline(NettyConsumer consumer) throws Exception {
-            invoked = true;
-            
+        public ClientPipelineFactory createPipelineFactory(NettyProducer producer) {
+            return new TestClientChannelPipelineFactory(producer);
+        }
+    }
+
+    public class TestServerChannelPipelineFactory extends ServerPipelineFactory {
+        private int maxLineSize = 1024;
+        private NettyConsumer consumer;
+
+        public TestServerChannelPipelineFactory(NettyConsumer consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public ChannelPipeline getPipeline() throws Exception {
+            serverInvoked = true;
+
             ChannelPipeline channelPipeline = Channels.pipeline();
 
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
@@ -125,9 +132,10 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
 
             return channelPipeline;
         }
-        
-        public boolean isFactoryInvoked() {
-            return invoked;
+
+        @Override
+        public ServerPipelineFactory createPipelineFactory(NettyConsumer consumer) {
+            return new TestServerChannelPipelineFactory(consumer);
         }
     }
 
