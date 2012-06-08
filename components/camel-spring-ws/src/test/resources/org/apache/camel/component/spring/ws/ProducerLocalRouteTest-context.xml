@@ -52,6 +52,13 @@
             <to uri="spring-ws:http://dummy?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote"/>
             <convertBodyTo type="java.lang.String"/>
         </route>
+        <route>
+            <from uri="direct:stockQuoteWebserviceInOnly"/>
+            <setExchangePattern pattern="InOnly"/>
+            <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote"/>
+            <convertBodyTo type="java.lang.String"/>
+            <to uri="mock:inOnly" />
+        </route>
         <!-- consumer route (providing the actual web service) -->
         <route>
             <from uri="spring-ws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping"/>
