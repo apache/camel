@@ -61,6 +61,8 @@ public class SpringWebserviceProducer extends DefaultProducer {
         if (ExchangeHelper.isOutCapable(exchange)) {
             exchange.getOut().copyFrom(exchange.getIn());
             exchange.getOut().setBody(body);
+        } else {
+            exchange.getIn().setBody(body);
         }
     }
 
