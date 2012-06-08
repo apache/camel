@@ -58,8 +58,10 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor implements 
 
         if (this.counter instanceof DelegatePerformanceCounter) {
             ((DelegatePerformanceCounter) this.counter).setCounter(mpc);
-        } else {
+        } else if (mpc != null) {
             this.counter = mpc;
+        } else if (counter instanceof PerformanceCounter) {
+            this.counter = (PerformanceCounter) counter;
         }
     }
 
