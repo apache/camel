@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import javax.xml.ws.Holder;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
