@@ -16,30 +16,20 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
-import java.net.URI;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.management.MBeanServer;
-import javax.servlet.Servlet;
 
-import org.apache.camel.Component;
-import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.jmx.MBeanContainer;
@@ -71,19 +61,24 @@ public class WebsocketComponent extends DefaultComponent {
     protected SSLContextParameters sslContextParameters;
     protected MBeanContainer mbContainer;
     protected ThreadPool threadPool;
-    protected ServletContextHandler context;
 
-    protected Integer port;
+    protected Integer port = 9292;
     protected Integer minThreads;
     protected Integer maxThreads;
 
     protected boolean enableJmx;
 
-    protected String host;
+    protected String host = "0.0.0.0";
     protected String staticResources;
+    protected Server staticResourcesServer;
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
+
+    /**
+     * Map for storing servlets. {@link WebsocketComponentServlet} is identified by pathSpec {@link String}.
+     */
+    private Map<String, WebsocketComponentServlet> servlets = new HashMap<String, WebsocketComponentServlet>();
 
     class ConnectorRef {
         Server server;
@@ -111,14 +106,8 @@ public class WebsocketComponent extends DefaultComponent {
         }
     }
 
-    /**
-     * Map for storing servlets. {@link WebsocketComponentServlet} is identified by pathSpec {@link String}.
-     */
-    private Map<String, WebsocketComponentServlet> servlets = new HashMap<String, WebsocketComponentServlet>();
-
     public WebsocketComponent() {
     }
-
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -126,7 +115,6 @@ public class WebsocketComponent extends DefaultComponent {
     public void connect(WebsocketProducerConsumer prodcon) throws Exception {
 
         Server server = null;
-        String baseResource = null;
         WebsocketEndpoint endpoint = prodcon.getEndpoint();
 
         String connectorKey = getConnectorKey(endpoint);
@@ -141,42 +129,18 @@ public class WebsocketComponent extends DefaultComponent {
                     connector = new SelectChannelConnector();
                 }
 
-                LOG.debug("Jetty Connector added : " + connector.getName());
+                LOG.trace("Jetty Connector added: {}", connector.getName());
 
-                if (port != null) {
-                    connector.setPort(port);
-                } else {
+                if (endpoint.getPort() != null) {
                     connector.setPort(endpoint.getPort());
-                }
-
-                if (host != null) {
-                    connector.setHost(host);
                 } else {
-                    connector.setHost(endpoint.getHost());
+                    connector.setPort(port);
                 }
 
-                connector.setHost(endpoint.getHost());
-
-                // TODO -  Is it the right place to define static resources ?
-                if (endpoint.getHome() != null) {
-
-                    ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
-
-                    if (endpoint.getHome().startsWith("classpath:")) {
-                        baseResource = ObjectHelper.after(endpoint.getHome(), "classpath:");
-                        LOG.debug("Using base resource from classpath: {}", baseResource);
-                        context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), baseResource));
-                    } else {
-                        LOG.debug("Using base resource: {}", baseResource);
-                        context.setResourceBase(baseResource);
-                    }
-                    DefaultServlet defaultServlet = new DefaultServlet();
-                    ServletHolder holder = new ServletHolder(defaultServlet);
-
-                    // avoid file locking on windows
-                    // http://stackoverflow.com/questions/184312/how-to-make-jetty-dynamically-load-static-pages
-                    holder.setInitParameter("useFileMappedBuffer", "false");
-                    context.addServlet(holder, "/");
+                if (endpoint.getHost() != null) {
+                    connector.setHost(endpoint.getHost());
+                } else {
+                    connector.setHost(host);
                 }
 
                 // Create Server and add connector
@@ -184,11 +148,10 @@ public class WebsocketComponent extends DefaultComponent {
                 if (endpoint.isEnableJmx()) {
                     enableJmx(server);
                 }
-
                 server.addConnector(connector);
 
-                // Create ServletContextHandler and add it to the Jetty server
-                context = createContext(server, connector, endpoint.getHandlers());
+                // Create ServletContextHandler
+                ServletContextHandler context = createContext(server, connector, endpoint.getHandlers());
                 server.setHandler(context);
 
                 // Don't provide a Servlet object as Producer/Consumer will create them later on
@@ -198,12 +161,10 @@ public class WebsocketComponent extends DefaultComponent {
                 if (endpoint.isSessionSupport()) {
                     enableSessionSupport(connectorRef.server, connectorKey);
                 }
+                LOG.info("Jetty Server starting on host: {}:{}", connector.getHost(), connector.getPort());
                 connectorRef.server.start();
 
                 CONNECTORS.put(connectorKey, connectorRef);
-
-                LOG.debug("Jetty Server started for host : " + connector.getHost() + ", on port : " + connector.getPort());
-                server.start();
 
             } else {
                 connectorRef.increment();
@@ -214,12 +175,10 @@ public class WebsocketComponent extends DefaultComponent {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
 
-            // TODO - chm - 25/05
-            // As we can define WebSocket for Consumer/Producer
-            // This part of the code must be adapted compare to camel-jetty where we only use
-            // Jetty as a server = Consumer
-            // connectorRef.servlet.connect(consumer);
-
+            if (prodcon instanceof WebsocketConsumer) {
+                // connect websocket consumer, to servlet
+                connectorRef.servlet.connect((WebsocketConsumer) prodcon);
+            }
         }
 
     }
@@ -238,7 +197,10 @@ public class WebsocketComponent extends DefaultComponent {
             if (connectorRef != null) {
                 if (connectorRef.decrement() == 0) {
                     connectorRef.server.removeConnector(connectorRef.connector);
-                    connectorRef.connector.stop();
+                    if (connectorRef.connector != null) {
+                        // static server may not have set a connector
+                        connectorRef.connector.stop();
+                    }
                     connectorRef.server.stop();
                     CONNECTORS.remove(connectorKey);
                     // Camel controls the lifecycle of these entities so remove the
@@ -247,6 +209,9 @@ public class WebsocketComponent extends DefaultComponent {
                         mbContainer.removeBean(connectorRef.server);
                         mbContainer.removeBean(connectorRef.connector);
                     }
+                }
+                if (prodcon instanceof WebsocketConsumer) {
+                    connectorRef.servlet.disconnect((WebsocketConsumer) prodcon);
                 }
             }
         }
@@ -276,8 +241,6 @@ public class WebsocketComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
-        Map<String, Object> websocketParameters = new HashMap<String, Object>(parameters);
 
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
@@ -338,13 +301,49 @@ public class WebsocketComponent extends DefaultComponent {
         return server;
     }
 
+    protected Server createStaticResourcesServer(ServletContextHandler context, String host, int port, String home) {
+        Server server = new Server();
+
+        Connector connector = new SelectChannelConnector();
+        connector.setHost(host);
+        connector.setPort(port);
+        server.addConnector(connector);
+
+        context.setContextPath("/");
+
+        SessionManager sm = new HashSessionManager();
+        SessionHandler sh = new SessionHandler(sm);
+        context.setSessionHandler(sh);
+
+        if (home != null) {
+            if (home.startsWith("classpath:")) {
+                home = ObjectHelper.after(home, "classpath:");
+                LOG.debug("Using base resource from classpath: {}", home);
+                context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), home));
+            } else {
+                LOG.debug("Using base resource: {}", home);
+                context.setResourceBase(home);
+            }
+            DefaultServlet defaultServlet = new DefaultServlet();
+            ServletHolder holder = new ServletHolder(defaultServlet);
+
+            // avoid file locking on windows
+            // http://stackoverflow.com/questions/184312/how-to-make-jetty-dynamically-load-static-pages
+            holder.setInitParameter("useFileMappedBuffer", "false");
+            context.addServlet(holder, "/");
+        }
+
+        server.setHandler(context);
+
+        return server;
+    }
+
     protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketProducer producer, String remaining) throws Exception {
 
         // Get Connector from one of the Jetty Instances to add WebSocket Servlet
         WebsocketEndpoint endpoint = producer.getEndpoint();
-        WebsocketComponent component = endpoint.getComponent();
         String key = getConnectorKey(endpoint);
-        ConnectorRef connectorRef = component.getConnectors().get(key);
+        ConnectorRef connectorRef = getConnectors().get(key);
 
         WebsocketComponentServlet servlet;
 
@@ -358,21 +357,18 @@ public class WebsocketComponent extends DefaultComponent {
                 connectorRef.servlet = servlet;
                 LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
-
             return servlet;
         } else {
             throw new Exception("Jetty instance has not been retrieved for : " + key);
         }
-
     }
 
     protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketConsumer consumer, String remaining) throws Exception {
 
         // Get Connector from one of the Jetty Instances to add WebSocket Servlet
         WebsocketEndpoint endpoint = consumer.getEndpoint();
-        WebsocketComponent component = endpoint.getComponent();
         String key = getConnectorKey(endpoint);
-        ConnectorRef connectorRef = component.getConnectors().get(key);
+        ConnectorRef connectorRef = getConnectors().get(key);
 
         WebsocketComponentServlet servlet;
 
@@ -388,20 +384,13 @@ public class WebsocketComponent extends DefaultComponent {
                 LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
 
-            if (consumer != null) {
-                if (servlet.getConsumer() == null)  {
-                    // TODO - chm - 25/05
-                    // Why do we have to do a setConsumer on the Servlet ?
-                    servlet.setConsumer(consumer);
-                }
-
+            if (servlet.getConsumer() == null)  {
+                servlet.setConsumer(consumer);
             }
-
             return servlet;
         } else {
             throw new Exception("Jetty instance has not been retrieved for : " + key);
         }
-
     }
 
     protected WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
@@ -410,7 +399,6 @@ public class WebsocketComponent extends DefaultComponent {
         handler.addServlet(new ServletHolder(servlet), pathSpec);
         return servlet;
     }
-
 
     protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) throws Exception {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
@@ -430,9 +418,7 @@ public class WebsocketComponent extends DefaultComponent {
             }
         }
 
-        this.context = context;
         return context;
-
     }
 
     /**
@@ -491,7 +477,6 @@ public class WebsocketComponent extends DefaultComponent {
         return sslSocketConnector;
     }
 
-
     /**
      * Override the key/trust store check method as it does not account for a factory that has
      * a pre-configured {@link javax.net.ssl.SSLContext}.
@@ -541,7 +526,7 @@ public class WebsocketComponent extends DefaultComponent {
         }
     }
 
-    private static int extractPortNumber(String remaining) {
+    private int extractPortNumber(String remaining) {
         int index1 = remaining.indexOf(":");
         int index2 = remaining.indexOf("/");
 
@@ -549,19 +534,17 @@ public class WebsocketComponent extends DefaultComponent {
             String result = remaining.substring(index1 + 1, index2);
             return Integer.parseInt(result);
         } else {
-            return 9292;
+            return port;
         }
-
     }
 
-    private static String extractHostName(String remaining) {
+    private String extractHostName(String remaining) {
         int index = remaining.indexOf(":");
         if (index != -1) {
             return remaining.substring(0, index);
         } else {
-            return null;
+            return host;
         }
-
     }
 
     private String getConnectorKey(WebsocketEndpoint endpoint) {
@@ -683,20 +666,31 @@ public class WebsocketComponent extends DefaultComponent {
         this.sslContextParameters = sslContextParameters;
     }
 
-    public ServletContextHandler getContext() {
-        return context;
-    }
-
     public static HashMap<String, ConnectorRef> getConnectors() {
         return CONNECTORS;
     }
 
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        //LOG.info("Starting server {}:{}; static resources: {}", new Object[]{host, port, staticResources});
-        //server = createServer(context, host, port, staticResources);
+
+        if (staticResources != null) {
+            // host and port must be configured
+            ObjectHelper.notEmpty(host, "host", this);
+            ObjectHelper.notNull(port, "port", this);
+
+            LOG.info("Starting static resources server {}:{} with static resource: {}", new Object[]{host, port, staticResources});
+            ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+            staticResourcesServer = createStaticResourcesServer(context, host, port, staticResources);
+            staticResourcesServer.start();
+            Connector connector = staticResourcesServer.getConnectors()[0];
+
+            // must add static resource server to CONNECTORS in case the websocket producers/consumers
+            // uses the same port number, and therefore we must be part of this
+            ConnectorRef ref = new ConnectorRef(staticResourcesServer, connector, null);
+            String key = "websocket:" + host + ":" + port;
+            CONNECTORS.put(key, ref);
+        }
     }
 
     @Override
@@ -709,11 +703,21 @@ public class WebsocketComponent extends DefaultComponent {
                     connectorRef.server.removeConnector(connectorRef.connector);
                     connectorRef.connector.stop();
                     connectorRef.server.stop();
+                    connectorRef.servlet = null;
                 }
                 CONNECTORS.remove(connectorKey);
             }
         }
+        CONNECTORS.clear();
 
+        if (staticResourcesServer != null) {
+            LOG.info("Stopping static resources server {}:{} with static resource: {}", new Object[]{host, port, staticResources});
+            staticResourcesServer.stop();
+            staticResourcesServer.destroy();
+            staticResourcesServer = null;
+        }
+
+        servlets.clear();
     }
 }
 
