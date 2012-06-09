@@ -60,6 +60,12 @@ public class PropertiesComponent extends DefaultComponent {
      */
     public static final String SUFFIX_TOKEN = DEFAULT_SUFFIX_TOKEN;
 
+    /**
+     * Key for stores special override properties that containers such as OSGi can store
+     * in the OSGi service registry
+     */
+    public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
+
     // must be non greedy patterns
     private static final Pattern ENV_PATTERN = Pattern.compile("\\$\\{env:(.*?)\\}", Pattern.DOTALL);
     private static final Pattern SYS_PATTERN = Pattern.compile("\\$\\{(.*?)\\}", Pattern.DOTALL);
@@ -76,6 +82,7 @@ public class PropertiesComponent extends DefaultComponent {
     private boolean fallbackToUnaugmentedProperty = true;
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
+    private Properties overrideProperties;
     
     public PropertiesComponent() {
     }
@@ -128,6 +135,15 @@ public class PropertiesComponent extends DefaultComponent {
                     cacheMap.put(key, prop);
                 }
             }
+        }
+
+        // use override properties
+        if (prop != null && overrideProperties != null) {
+            // make a copy to avoid affecting the original properties
+            Properties override = new Properties();
+            override.putAll(prop);
+            override.putAll(overrideProperties);
+            prop = override;
         }
 
         // enclose tokens if missing
@@ -246,6 +262,20 @@ public class PropertiesComponent extends DefaultComponent {
         } else {
             this.suffixToken = suffixToken;
         }
+    }
+
+    public Properties getOverrideProperties() {
+        return overrideProperties;
+    }
+
+    /**
+     * Sets a special list of override properties that take precedence
+     * and will use first, if a property exist.
+     *
+     * @param overrideProperties properties that is used first
+     */
+    public void setOverrideProperties(Properties overrideProperties) {
+        this.overrideProperties = overrideProperties;
     }
 
     @Override

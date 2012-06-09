@@ -16,7 +16,10 @@
  */
 package org.apache.camel.test.blueprint;
 
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
@@ -37,6 +40,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         String symbolicName = getClass().getSimpleName();
         this.bundleContext = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
                 getBundleFilter(), getBundleVersion(), true);
+
+        // must register override properties early in OSGi containers
+        Properties extra = useOverridePropertiesWithPropertiesComponent();
+        if (extra != null) {
+            bundleContext.registerService(PropertiesComponent.OVERRIDE_PROPERTIES, extra, null);
+        }
+
         super.setUp();
 
         // must wait for blueprint container to be published then the namespace parser is complete and we are ready for testing

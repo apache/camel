@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.aries.blueprint.ExtendedBeanMetadata;
 import org.apache.aries.blueprint.ext.AbstractPropertyPlaceholder;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -41,12 +42,14 @@ import org.osgi.service.blueprint.reflect.ComponentMetadata;
  */
 public class BlueprintPropertiesParser extends DefaultPropertiesParser {
 
+    private final PropertiesComponent propertiesComponent;
     private final BlueprintContainer container;
-    private PropertiesParser delegate;
+    private final PropertiesParser delegate;
     private final Set<AbstractPropertyPlaceholder> placeholders = new LinkedHashSet<AbstractPropertyPlaceholder>();
     private Method method;
 
-    public BlueprintPropertiesParser(BlueprintContainer container, PropertiesParser delegate) {
+    public BlueprintPropertiesParser(PropertiesComponent propertiesComponent, BlueprintContainer container, PropertiesParser delegate) {
+        this.propertiesComponent = propertiesComponent;
         this.container = container;
         this.delegate = delegate;
     }
@@ -104,24 +107,34 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     public String parseProperty(String key, String value, Properties properties) {
         log.trace("Parsing property key: {} with value: {}", key, value);
 
+        String answer = null;
+
+        // prefer any override properties
+        // this logic is special for BlueprintPropertiesParser as we otherwise prefer
+        // to use the AbstractPropertyPlaceholder from OSGi blueprint config admins
+        // service to lookup otherwise
+        if (key != null && propertiesComponent.getOverrideProperties() != null) {
+            answer = (String) propertiesComponent.getOverrideProperties().get(key);
+        }
+
         // lookup key in blueprint and return its value
-        if (key != null) {
+        if (answer == null && key != null) {
             for (AbstractPropertyPlaceholder placeholder : placeholders) {
-                value = (String) ObjectHelper.invokeMethod(method, placeholder, key);
-                if (value != null) {
-                    log.debug("Blueprint parsed property key: {} as value: {}", key, value);
+                answer = (String) ObjectHelper.invokeMethod(method, placeholder, key);
+                if (answer != null) {
+                    log.debug("Blueprint parsed property key: {} as value: {}", key, answer);
                     break;
                 }
             }
         }
 
-        if (value == null && delegate != null) {
+        if (answer == null && delegate != null) {
             // let delegate have a try since blueprint didn't resolve it
-            value = delegate.parseProperty(key, value, properties);
+            answer = delegate.parseProperty(key, value, properties);
         }
 
-        log.trace("Returning parsed property key: {} as value: {}", key, value);
-        return value;
+        log.trace("Returning parsed property key: {} as value: {}", key, answer);
+        return answer;
     }
 
 }
