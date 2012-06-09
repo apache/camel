@@ -294,6 +294,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getRoutes");
 
+        // lets inject the namespaces into any namespace aware POJOs
+        injectNamespaces(element, binder);
+
         return ctx;
     }
 
