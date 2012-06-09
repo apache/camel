@@ -81,7 +81,11 @@ public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
         DataHandler handler = out.getIn().getAttachment("logo.jpeg");
         assertNotNull("The logo should be there", handler);
 
-        assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
+        if (isJava16()) {
+            assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
+        } else {
+            assertEquals("application/octet-stream; name=logo.jpeg", handler.getContentType());
+        }
 
         producer.stop();
     }

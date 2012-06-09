@@ -78,7 +78,12 @@ public class MailAttachmentsUmlautIssueTest extends CamelTestSupport {
         DataHandler handler = out.getIn().getAttachment(name);
         assertNotNull("The " + name + " should be there", handler);
 
-        assertEquals("image/jpeg; name=\"" + name + "\"", handler.getContentType());
+        if (isJava16()) {
+            assertEquals("image/jpeg; name=\"" + name + "\"", handler.getContentType());
+        } else {
+            assertEquals("application/octet-stream; name=\"" + name + "\"", handler.getContentType());
+        }
+
         assertEquals("Handler name should be the file name", name, handler.getName());
 
         producer.stop();
