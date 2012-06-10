@@ -21,33 +21,40 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import org.apache.camel.dataformat.bindy.PatternFormat;
-import org.apache.camel.util.ObjectHelper;
 
 public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
 
     private String pattern;
-    private Locale locale = Locale.getDefault();
+    private Locale locale;
 
     public NumberPatternFormat() {
     }
 
     public NumberPatternFormat(String pattern, Locale locale) {
         this.pattern = pattern;
-        this.locale = locale != null ? locale : Locale.getDefault();
+        this.locale = locale;
     }
 
     public String format(T object) throws Exception {
-        ObjectHelper.notNull(this.pattern, "pattern");
-        return this.getNumberFormat().format(object);
+        if (getNumberFormat() != null) {
+            return this.getNumberFormat().format(object);
+        } else {
+            return object.toString();
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    public T parse(String string) throws Exception {
-        ObjectHelper.notNull(this.pattern, "pattern");
-        return (T)this.getNumberFormat().parse(string);
-    }
+    public abstract T parse(String string) throws Exception;
 
+    /**
+     * Gets the number format if in use.
+     *
+     * @return the number format, or <tt>null</tt> if not in use
+     */
     protected NumberFormat getNumberFormat() {
+        if (locale == null) {
+            return null;
+        }
+
         NumberFormat format = NumberFormat.getNumberInstance(locale);
         if (format instanceof DecimalFormat) {
             ((DecimalFormat)format).applyLocalizedPattern(pattern);

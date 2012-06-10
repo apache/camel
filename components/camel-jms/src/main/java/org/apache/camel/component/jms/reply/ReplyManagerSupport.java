@@ -24,6 +24,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.component.jms.JmsEndpoint;
@@ -45,6 +46,7 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final CamelContext camelContext;
     protected ScheduledExecutorService executorService;
     protected JmsEndpoint endpoint;
     protected Destination replyTo;
@@ -52,6 +54,10 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected final CountDownLatch replyToLatch = new CountDownLatch(1);
     protected final long replyToTimeout = 10000;
     protected CorrelationTimeoutMap correlation;
+
+    public ReplyManagerSupport(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public void setScheduledExecutorService(ScheduledExecutorService executorService) {
         this.executorService = executorService;
@@ -228,6 +234,12 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             listenerContainer.stop();
             listenerContainer.destroy();
             listenerContainer = null;
+        }
+
+        // must also stop executor service
+        if (executorService != null) {
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            executorService = null;
         }
     }
 

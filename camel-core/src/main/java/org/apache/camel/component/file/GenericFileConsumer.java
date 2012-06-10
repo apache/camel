@@ -285,9 +285,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             boolean begin = processStrategy.begin(operations, endpoint, exchange, file);
             if (!begin) {
-                log.debug(endpoint + " cannot begin processing file: {}", file);
-                // begin returned false, so remove file from the in progress list as its no longer in progress
-                endpoint.getInProgressRepository().remove(absoluteFileName);
+                log.debug("{} cannot begin processing file: {}", endpoint, file);
+                try {
+                    // abort
+                    processStrategy.abort(operations, endpoint, exchange, file);
+                } finally {
+                    // begin returned false, so remove file from the in progress list as its no longer in progress
+                    endpoint.getInProgressRepository().remove(absoluteFileName);
+                }
                 return;
             }
         } catch (Exception e) {

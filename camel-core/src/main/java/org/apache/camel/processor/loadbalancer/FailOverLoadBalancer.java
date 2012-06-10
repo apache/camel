@@ -17,10 +17,13 @@
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -36,9 +39,10 @@ import org.apache.camel.util.ObjectHelper;
  * as the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
-public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceable {
+public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceable, CamelContextAware {
 
     private final List<Class<?>> exceptions;
+    private CamelContext camelContext;
     private boolean roundRobin;
     private int maximumFailoverAttempts = -1;
 
@@ -58,6 +62,16 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
             }
         }
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public List<Class<?>> getExceptions() {
@@ -113,6 +127,16 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         return answer;
     }
 
+    @Override
+    public boolean isRunAllowed() {
+        // determine if we can still run, or the camel context is forcing a shutdown
+        boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
+        if (forceShutdown) {
+            log.trace("Run not allowed as ShutdownStrategy is forcing shutting down");
+        }
+        return !forceShutdown && super.isRunAllowed();
+    }
+
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final List<Processor> processors = getProcessors();
 
@@ -133,6 +157,18 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         log.trace("Failover starting with endpoint index {}", index);
 
         while (first || shouldFailOver(copy)) {
+
+            // can we still run
+            if (!isRunAllowed()) {
+                log.trace("Run not allowed, will reject executing exchange: {}", exchange);
+                if (exchange.getException() == null) {
+                    exchange.setException(new RejectedExecutionException());
+                }
+                // we cannot process so invoke callback
+                callback.done(true);
+                return true;
+            }
+
             if (!first) {
                 attempts.incrementAndGet();
                 // are we exhausted by attempts?
@@ -240,6 +276,17 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             }
 
             while (shouldFailOver(copy)) {
+
+                // can we still run
+                if (!isRunAllowed()) {
+                    log.trace("Run not allowed, will reject executing exchange: {}", exchange);
+                    if (exchange.getException() == null) {
+                        exchange.setException(new RejectedExecutionException());
+                    }
+                    // we cannot process so invoke callback
+                    callback.done(false);
+                }
+
                 attempts.incrementAndGet();
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {

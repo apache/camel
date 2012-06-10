@@ -25,11 +25,9 @@
     <class>org.apache.camel.bam.model.ProcessInstance</class>
 
     <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-      <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
-      <property name="hibernate.connection.username" value="sa"/>
-      <property name="hibernate.connection.password" value=""/>
-      <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:camel_bam"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect"/>
+      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="hibernate.connection.url" value="jdbc:derby:target/test/database;create=true"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
 

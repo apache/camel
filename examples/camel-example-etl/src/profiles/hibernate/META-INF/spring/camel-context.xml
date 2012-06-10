@@ -24,14 +24,15 @@
  -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:camel="http://camel.apache.org/schema/spring"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <package>org.apache.camel.example.etl</package>
-  </camelContext>
+  <camel:camelContext id="camel" trace="true">
+    <camel:package>org.apache.camel.example.etl</camel:package>
+  </camel:camelContext>
 
    <!--  Added for OSGI platform to allow -->
   <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
@@ -53,34 +54,9 @@
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
     <property name="persistenceUnitName" value="camel"/>
     <property name="jpaVendorAdapter" ref="jpaAdapter"/>
-    <property name="dataSource" ref="dataSource" />
   </bean>
   
-  <bean id="jpaAdapter"
-        class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
+  <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="org.hibernate.dialect.DerbyDialect" />
   </bean>
-  
-  <!--  DataSource Definition -->
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-        <property name="url" value="jdbc:hsqldb:mem:camel_etl" />
-        <property name="username" value="sa" />
-        <property name="password" value="" />
-  </bean>
-
-  <!-- lets show a simple UI to browse the database, url should be - -url without the space -->
-  <!-- This bean will cause OSGi server exit, so we disable it here -->
-  <!--
-  <bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner" lazy-init="false">
-    <property name="main" value="org.hsqldb.util.DatabaseManagerSwing"/>
-    <property name="args">
-      <list>
-        <value>- -url</value>
-        <value>jdbc:hsqldb:mem:camel_etl</value>
-      </list>
-    </property>
-    <property name="delay" value="1000"/>
-  </bean>
-  -->
 </beans>

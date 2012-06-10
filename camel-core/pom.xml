@@ -125,6 +125,12 @@
                   <include>com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru</include>
                 </includes>
               </artifactSet>
+              <relocations>
+                 <relocation>
+                   <pattern>com.googlecode.concurrentlinkedhashmap</pattern>
+                   <shadedPattern>org.apache.camel.com.googlecode.concurrentlinkedhashmap</shadedPattern>
+                 </relocation>
+              </relocations>
             </configuration>
           </execution>
         </executions>

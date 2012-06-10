@@ -51,10 +51,12 @@ import org.apache.camel.impl.EndpointRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedProducerCache;
+import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
@@ -103,7 +105,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>>();
     private final List<PreRegisterService> preServices = new ArrayList<PreRegisterService>();
     private final TimerListenerManager timerListenerManager = new TimerListenerManager();
-    private CamelContext camelContext;
+    private volatile CamelContext camelContext;
+    private volatile ManagedCamelContext camelContextMBean;
     private volatile boolean initialized;
     private final Set<String> knowRouteIds = new HashSet<String>();
     private final Map<Tracer, ManagedTracer> managedTracers = new HashMap<Tracer, ManagedTracer>();
@@ -183,6 +186,10 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         // yes we made it and are initialized
         initialized = true;
 
+        if (mc instanceof ManagedCamelContext) {
+            camelContextMBean = (ManagedCamelContext) mc;
+        }
+
         // register any pre registered now that we are initialized
         enlistPreRegisteredServices();
     }
@@ -251,6 +258,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         } catch (Exception e) {
             LOG.warn("Could not unregister CamelContext MBean", e);
         }
+
+        camelContextMBean = null;
     }
 
     public void onComponentAdd(String name, Component component) {
@@ -493,9 +502,17 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             if (route instanceof EventDrivenConsumerRoute) {
                 EventDrivenConsumerRoute edcr = (EventDrivenConsumerRoute) route;
                 Processor processor = edcr.getProcessor();
-                if (processor instanceof InstrumentationProcessor) {
+                if (processor instanceof InstrumentationProcessor && mr instanceof ManagedRoute) {
                     InstrumentationProcessor ip = (InstrumentationProcessor) processor;
-                    ip.setCounter(mr);
+                    ManagedRoute routeMBean = (ManagedRoute) mr;
+
+                    // we need to wrap the counter with the camel context so we get stats updated on the context as well
+                    if (camelContextMBean != null) {
+                        CompositePerformanceCounter wrapper = new CompositePerformanceCounter(routeMBean, camelContextMBean);
+                        ip.setCounter(wrapper);
+                    } else {
+                        ip.setCounter(routeMBean);
+                    }
                 }
             }
 

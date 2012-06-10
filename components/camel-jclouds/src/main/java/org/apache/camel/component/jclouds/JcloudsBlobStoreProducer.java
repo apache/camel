@@ -19,6 +19,7 @@ package org.apache.camel.component.jclouds;
 import org.apache.camel.Exchange;
 
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.io.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +27,21 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JcloudsBlobStoreProducer.class);
 
+    private final JcloudsBlobStoreEndpoint endpoint;
     private BlobStore blobStore;
 
-    public JcloudsBlobStoreProducer(JcloudsEndpoint endpoint, BlobStore blobStore) {
+    public JcloudsBlobStoreProducer(JcloudsBlobStoreEndpoint endpoint, BlobStore blobStore) {
         super(endpoint);
         this.blobStore = blobStore;
+        this.endpoint = endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        String container = endpoint.getContainer();
+        String locationId = endpoint.getLocationId();
+        JcloudsBlobStoreHelper.ensureContainerExists(blobStore, container, locationId);
     }
 
     @Override
@@ -40,10 +51,10 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         String operation = getOperation(exchange);
 
         LOG.trace("Processing {} operation on '{}'", operation, container + "/" + blobName);
-        Object body = exchange.getIn().getBody();
         if (JcloudsConstants.GET.equals(operation)) {
-            exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName, Thread.currentThread().getContextClassLoader()));
+            exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName));
         } else {
+            Payload body = exchange.getIn().getBody(Payload.class);
             JcloudsBlobStoreHelper.writeBlob(blobStore, container, blobName, body);
         }
     }
@@ -87,6 +98,21 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
 
         if (exchange.getIn().getHeader(JcloudsConstants.OPERATION) != null) {
             operation = (String) exchange.getIn().getHeader(JcloudsConstants.OPERATION);
+        }
+        return operation;
+    }
+
+    /**
+     * Retrieves the locationId from the URI or from the exchange headers. The header will take precedence over the URI.
+     *
+     * @param exchange
+     * @return
+     */
+    public String getLocationId(Exchange exchange) {
+        String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getLocationId();
+
+        if (exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID) != null) {
+            operation = (String) exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID);
         }
         return operation;
     }

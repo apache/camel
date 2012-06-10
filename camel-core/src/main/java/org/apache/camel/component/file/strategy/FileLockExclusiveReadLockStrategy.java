@@ -26,7 +26,6 @@ import java.nio.channels.FileLock;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * After granting the read lock it is released, we just want to make sure that when we start
  * consuming the file its not currently in progress of being written by third party.
  */
-public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
+public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final transient Logger LOG = LoggerFactory.getLogger(FileLockExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 1000;
@@ -50,6 +49,11 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
     }
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        // must call super
+        if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
+            return false;
+        }
+
         File target = new File(file.getAbsoluteFilePath());
 
         LOG.trace("Waiting for exclusive read lock to file: {}", target);
@@ -110,6 +114,10 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
 
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
+
+        // must call super
+        super.releaseExclusiveReadLock(operations, file, exchange);
+
         if (lock != null) {
             Channel channel = lock.channel();
             try {

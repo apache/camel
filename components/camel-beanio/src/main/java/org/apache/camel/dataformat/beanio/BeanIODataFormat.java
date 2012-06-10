@@ -163,7 +163,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
 
             @Override
             public void invalidRecord(InvalidRecordException ex) throws Exception {
-                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getContext().getRecordText());
+                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
 
                 if (!ignoreInvalidRecords) {
                     throw ex;
@@ -172,7 +172,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
 
             @Override
             public void unexpectedRecord(UnexpectedRecordException ex) throws Exception {
-                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getContext().getRecordText());
+                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
 
                 if (!ignoreUnexpectedRecords) {
                     throw ex;
@@ -181,7 +181,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
 
             @Override
             public void unidentifiedRecord(UnidentifiedRecordException ex) throws Exception {
-                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getContext().getRecordText());
+                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
 
                 if (!ignoreUnidentifiedRecords) {
                     throw ex;

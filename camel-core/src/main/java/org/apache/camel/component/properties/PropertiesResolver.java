@@ -32,10 +32,10 @@ public interface PropertiesResolver {
     /**
      * Resolve properties from the given uri
      *
-     *
      * @param context the camel context
      * @param ignoreMissingLocation ignore silently if the property file is missing
-     * @param uri uri(s) defining the source(s)  @return the properties
+     * @param uri uri(s) defining the source(s)
+     * @return the properties
      * @throws Exception is thrown if resolving the properties failed
      */
     Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception;

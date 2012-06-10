@@ -29,7 +29,11 @@ public class DoublePatternFormat extends NumberPatternFormat<Double> {
 
     @Override
     public Double parse(String string) throws Exception {
-        return super.getNumberFormat().parse(string).doubleValue();
+        if (getNumberFormat() != null) {
+            return getNumberFormat().parse(string).doubleValue();
+        } else {
+            return Double.valueOf(string);
+        }
     }
 
 }

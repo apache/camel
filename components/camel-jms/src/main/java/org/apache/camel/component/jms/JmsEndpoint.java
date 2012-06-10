@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -43,16 +40,12 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.jms.reply.PersistentQueueReplyManager;
-import org.apache.camel.component.jms.reply.ReplyManager;
-import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,10 +74,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private Destination destination;
     private String selector;
     private JmsConfiguration configuration;
-    private final Map<String, ReplyManager> replyToReplyManager = new HashMap<String, ReplyManager>();
-    private ReplyManager replyManager;
-    // scheduled executor to check for timeout (reply not received)
-    private ScheduledExecutorService replyManagerExecutorService;
     private final AtomicBoolean running = new AtomicBoolean();
     private volatile boolean destroying;
 
@@ -176,14 +165,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         synchronized (this) {
             notifyAll();
         }
-    }
-    public void destroyMessageListenerContainer(final AbstractMessageListenerContainer listenerContainer) {
-        destroying = true;
-        this.getReplyManagerExecutorService().execute(new Runnable() {
-            public void run() {
-                destroyMessageListenerContainerInternal(listenerContainer);
-            }
-        });
     }
 
     public AbstractMessageListenerContainer createMessageListenerContainer() throws Exception {
@@ -389,31 +370,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return true;
     }
 
-    public synchronized ReplyManager getReplyManager() throws Exception {
-        if (replyManager == null) {
-            // use a temporary queue
-            replyManager = new TemporaryQueueReplyManager();
-            replyManager.setEndpoint(this);
-            replyManager.setScheduledExecutorService(getReplyManagerExecutorService());
-            ServiceHelper.startService(replyManager);
-        }
-        return replyManager;
-    }
-
-    public synchronized ReplyManager getReplyManager(String replyTo) throws Exception {
-        ReplyManager answer = replyToReplyManager.get(replyTo);
-        if (answer == null) {
-            // use a persistent queue
-            answer = new PersistentQueueReplyManager();
-            answer.setEndpoint(this);
-            answer.setScheduledExecutorService(getReplyManagerExecutorService());
-            ServiceHelper.startService(answer);
-            // remember this manager so we can re-use it
-            replyToReplyManager.put(replyTo, answer);
-        }
-        return answer;
-    }
-
     public boolean isPubSubDomain() {
         return pubSubDomain;
     }
@@ -449,7 +405,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return metadata;
     }
 
-
     /**
      * Returns the {@link JmsOperations} used for metadata operations such as creating temporary destinations
      */
@@ -461,14 +416,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return template;
     }
 
-    protected synchronized ScheduledExecutorService getReplyManagerExecutorService() {
-        if (replyManagerExecutorService == null) {
-            String name = "JmsReplyManagerTimeoutChecker[" + getEndpointConfiguredDestinationName() + "]";
-            replyManagerExecutorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
-        }
-        return replyManagerExecutorService;
-    }
-    
     protected ExecutorService getAsyncStartStopExecutorService() {
         if (getComponent() == null) {
             throw new IllegalStateException("AsyncStartStopListener requires JmsComponent to be configured on this endpoint: " + this);
@@ -492,23 +439,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @Override
     protected void doStop() throws Exception {
         running.set(false);
-
-        if (replyManager != null) {
-            ServiceHelper.stopService(replyManager);
-            replyManager = null;
-        }
-
-        if (!replyToReplyManager.isEmpty()) {
-            for (ReplyManager replyManager : replyToReplyManager.values()) {
-                ServiceHelper.stopService(replyManager);
-            }
-            replyToReplyManager.clear();
-        }
-
-        if (replyManagerExecutorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(replyManagerExecutorService);
-            replyManagerExecutorService = null;
-        }
     }
 
     // Delegated properties from the configuration

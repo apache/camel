@@ -17,52 +17,54 @@
 package org.apache.camel.component.jt400;
 
 import java.beans.PropertyVetoException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Map;
 import javax.naming.OperationNotSupportedException;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400ConnectionPool;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 
 public class Jt400PgmEndpoint extends DefaultEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Jt400PgmEndpoint.class);
-
-    private String programToExecute;
+    /**
+     * Encapsulates the base endpoint options and functionality.
+     */
+    private final Jt400Endpoint baseEndpoint;
 
     private Integer[] outputFieldsIdxArray;
     private Integer[] outputFieldsLengthArray;
 
-    private AS400 iSeries;
-    private Format format = Format.text;
-
     /**
-     * Creates a new AS/400 PGM CALL endpoint
+     * Creates a new AS/400 PGM CALL endpoint using a default connection pool
+     * provided by the component.
+     * 
+     * @throws NullPointerException if {@code component} is null
      */
     protected Jt400PgmEndpoint(String endpointUri, Jt400Component component) throws CamelException {
+        this(endpointUri, component, component.getConnectionPool());
+    }
+
+    /**
+     * Creates a new AS/400 PGM CALL endpoint using the specified connection
+     * pool.
+     */
+    protected Jt400PgmEndpoint(String endpointUri, Jt400Component component, AS400ConnectionPool connectionPool) throws CamelException {
         super(endpointUri, component);
+        ObjectHelper.notNull(connectionPool, "connectionPool");
         try {
-            URI uri = new URI(endpointUri);
-            String[] credentials = uri.getUserInfo().split(":");
-            iSeries = new AS400(uri.getHost(), credentials[0], credentials[1]);
-            programToExecute = uri.getPath();
+            baseEndpoint = new Jt400Endpoint(endpointUri, connectionPool);
         } catch (URISyntaxException e) {
             throw new CamelException("Unable to parse URI for " + endpointUri, e);
-        }
-
-        try {
-            iSeries.setGuiAvailable(false);
-        } catch (PropertyVetoException e) {
-            LOG.warn("Failed do disable AS/400 prompting in the environment running Camel.", e);
         }
     }
 
@@ -70,7 +72,17 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
     public Jt400PgmEndpoint(String endpointUri, String programToExecute, Map<String, Object> parameters,
                             CamelContext camelContext) {
         super(endpointUri, camelContext);
-        this.programToExecute = programToExecute;
+        ObjectHelper.notNull(parameters, "parameters", this);
+        if (!parameters.containsKey(Jt400Component.CONNECTION_POOL)) {
+            throw new RuntimeCamelException(String.format("parameters must specify '%s'", Jt400Component.CONNECTION_POOL));
+        }
+        String poolId = parameters.get(Jt400Component.CONNECTION_POOL).toString();
+        AS400ConnectionPool connectionPool = EndpointHelper.resolveReferenceParameter(camelContext, poolId, AS400ConnectionPool.class, true);
+        try {
+            this.baseEndpoint = new Jt400Endpoint(endpointUri, connectionPool);
+        } catch (URISyntaxException e) {
+            throw new RuntimeCamelException("Unable to parse URI for " + endpointUri, e);
+        }
     }
 
     public Producer createProducer() throws Exception {
@@ -86,14 +98,6 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
         return false;
     }
 
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-        if (iSeries != null) {
-            iSeries.disconnectAllServices();
-        }
-    }
-
     public boolean isFieldIdxForOuput(int idx) {
         return Arrays.binarySearch(outputFieldsIdxArray, idx) >= 0;
     }
@@ -104,11 +108,28 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
 
     // getters and setters
     public String getProgramToExecute() {
-        return programToExecute;
+        return baseEndpoint.getObjectPath();
     }
 
+    /**
+     * Obtains an {@code AS400} object that connects to this endpoint. Since
+     * these objects represent limited resources, clients have the
+     * responsibility of {@link #releaseiSeries(AS400) releasing them} when
+     * done.
+     * 
+     * @return an {@code AS400} object that connects to this endpoint
+     */
     public AS400 getiSeries() {
-        return iSeries;
+        return baseEndpoint.getConnection();
+    }
+    
+    /**
+     * Releases a previously obtained {@code AS400} object from use.
+     * 
+     * @param iSeries a previously obtained {@code AS400} object
+     */
+    public void releaseiSeries(AS400 iSeries) {
+        baseEndpoint.releaseConnection(iSeries);
     }
 
     public void setOutputFieldsIdx(String outputFieldsIdx) {
@@ -134,19 +155,19 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
     }
 
     public void setFormat(Format format) {
-        this.format = format;
+        baseEndpoint.setFormat(format);
     }
 
     public Format getFormat() {
-        return format;
+        return baseEndpoint.getFormat();
     }
 
     public void setGuiAvailable(boolean guiAvailable) throws PropertyVetoException {
-        this.iSeries.setGuiAvailable(guiAvailable);
+        baseEndpoint.setGuiAvailable(guiAvailable);
     }
 
     public boolean isGuiAvailable() {
-        return iSeries != null && iSeries.isGuiAvailable();
+        return baseEndpoint.isGuiAvailable();
     }
 
 }

@@ -50,6 +50,7 @@ import org.apache.cxf.binding.soap.Soap11;
 import org.apache.cxf.binding.soap.Soap12;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
+import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.headers.Header;
@@ -60,6 +61,7 @@ import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.message.MessageUtils;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.BindingMessageInfo;
@@ -338,7 +340,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                     LOG.trace("Set Out CXF message content = {}", resList);
                 }
             }
-        }         
+        } else if (!cxfExchange.isOneWay() 
+            && cxfExchange.getInMessage() != null
+            && MessageUtils.isTrue(cxfExchange.getInMessage().getContextualProperty("jaxws.provider.interpretNullAsOneway"))) { 
+            // treat this non-oneway call as oneway when the provider returns a null
+            changeToOneway(cxfExchange);
+            return;
+        }
         
         // propagate attachments if the data format is not POJO
         if (!DataFormat.POJO.equals(dataFormat)) {
@@ -761,4 +769,19 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
     }
 
+    //TODO replace this method with the cxf util's method when it becomes available
+    private static void changeToOneway(org.apache.cxf.message.Exchange cxfExchange) {
+        cxfExchange.setOneWay(true);
+        Object httpresp = cxfExchange.getInMessage().get("HTTP.RESPONSE");
+        if (httpresp != null) {
+            try {
+                Method m = ReflectionUtil.findMethod(httpresp.getClass(), "setStatus", int.class);
+                if (m != null) {
+                    m.invoke(httpresp, 202);
+                }
+            } catch (Exception e) {
+                LOG.warn("Unable to set the http ", e);
+            }
+        }
+    }
 }

@@ -121,7 +121,7 @@ public final class FileProcessStrategyFactory {
                 }
                 return readLockStrategy;
             } else if ("rename".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy<File> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<File>();
+                GenericFileExclusiveReadLockStrategy<File> readLockStrategy = new FileRenameExclusiveReadLockStrategy();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);

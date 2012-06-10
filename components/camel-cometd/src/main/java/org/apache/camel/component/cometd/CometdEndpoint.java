@@ -41,6 +41,9 @@ public class CometdEndpoint extends DefaultEndpoint {
     private int logLevel = 1;
     private URI uri;
     private CometdComponent component;
+    private boolean crossOriginFilterOn;
+    private String allowedOrigins;
+    private String filterPath;
 
     public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
         super(uri, component);
@@ -165,5 +168,29 @@ public class CometdEndpoint extends DefaultEndpoint {
 
     public void setLogLevel(int logLevel) {
         this.logLevel = logLevel;
+    }
+
+    public String getAllowedOrigins() {
+        return allowedOrigins;
+    }
+
+    public void setAllowedOrigins(String allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
+    }
+
+    public boolean isCrossOriginFilterOn() {
+        return crossOriginFilterOn;
+    }
+
+    public void setCrossOriginFilterOn(boolean crossOriginFilterOn) {
+        this.crossOriginFilterOn = crossOriginFilterOn;
+    }
+
+    public String getFilterPath() {
+        return filterPath;
+    }
+
+    public void setFilterPath(String filterPath) {
+        this.filterPath = filterPath;
     }
 }

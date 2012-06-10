@@ -37,7 +37,6 @@ import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelLocal;
-import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
@@ -94,9 +93,11 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         super.doStart();
 
         // setup pipeline factory
-        pipelineFactory = configuration.getClientPipelineFactory();
-        if (pipelineFactory == null) {
-            pipelineFactory = new DefaultClientPipelineFactory();
+        ClientPipelineFactory factory = configuration.getClientPipelineFactory();
+        if (factory != null) {
+            pipelineFactory = factory.createPipelineFactory(this);
+        } else {
+            pipelineFactory = new DefaultClientPipelineFactory(this);
         }
 
         if (isTcp()) {
@@ -273,10 +274,6 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
     private ChannelFuture openConnection() throws Exception {
         ChannelFuture answer;
-        ChannelPipeline clientPipeline;
-
-        // must get the pipeline from the factory when opening a new connection
-        clientPipeline = pipelineFactory.getPipeline(this);
 
         if (isTcp()) {
             ClientBootstrap clientBootstrap = new ClientBootstrap(channelFactory);
@@ -285,8 +282,8 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             clientBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
             clientBootstrap.setOption("connectTimeoutMillis", configuration.getConnectTimeout());
 
-            // set the pipeline on the bootstrap
-            clientBootstrap.setPipeline(clientPipeline);
+            // set the pipeline factory, which creates the pipeline for each newly created channels
+            clientBootstrap.setPipelineFactory(pipelineFactory);
             answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             return answer;
         } else {
@@ -299,8 +296,8 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             connectionlessClientBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
             connectionlessClientBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
 
-            // set the pipeline on the bootstrap
-            connectionlessClientBootstrap.setPipeline(clientPipeline);
+            // set the pipeline factory, which creates the pipeline for each newly created channels
+            connectionlessClientBootstrap.setPipelineFactory(pipelineFactory);
             // bind and store channel so we can close it when stopping
             Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
             ALL_CHANNELS.add(channel);

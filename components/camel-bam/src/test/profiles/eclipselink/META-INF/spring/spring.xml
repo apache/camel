@@ -18,8 +18,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="transactionTemplate"
-		class="org.springframework.transaction.support.TransactionTemplate">
+	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
 		<property name="transactionManager">
 			<bean class="org.springframework.orm.jpa.JpaTransactionManager">
 				<property name="entityManagerFactory" ref="entityManagerFactory" />
@@ -36,23 +35,9 @@
 		<property name="jpaVendorAdapter" ref="jpaAdapter"/>
 	</bean>
 	
-	<!-- Hibernate addapter 
-	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
-	</bean>
-	-->
-	
-    <!-- OpenJPA addapter 
-	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter">
-		<property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.HSQLDictionary"/>
-		<property name="database" value="HSQL"/> 
-	</bean>
-	-->
-	
-	<!-- EclipseLink adapter -->
 	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
-   		<property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
+   		<property name="databasePlatform" value="org.eclipse.persistence.platform.database.DerbyPlatform" />
+        <property name="database" value="DERBY"/>
    		<property name="showSql" value="true" />
 	</bean>
-	
 </beans>

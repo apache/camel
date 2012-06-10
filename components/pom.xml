@@ -84,6 +84,7 @@
     <module>camel-guice</module>
     <module>camel-hawtdb</module>
     <module>camel-hazelcast</module>
+    <module>camel-hbase</module>
     <module>camel-hdfs</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
@@ -113,6 +114,7 @@
     <module>camel-mina</module>
     <module>camel-mina2</module>
     <module>camel-mongodb</module>
+    <module>camel-mqtt</module>
     <module>camel-msv</module>
     <module>camel-mvel</module>
     <module>camel-mybatis</module>
@@ -123,6 +125,7 @@
     <module>camel-printer</module>
     <module>camel-protobuf</module>
     <module>camel-quartz</module>
+    <module>camel-quickfix</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
@@ -137,6 +140,7 @@
     <module>camel-snmp</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
+    <module>camel-spring-batch</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-security</module>
@@ -159,16 +163,4 @@
     <module>camel-zookeeper</module>
   </modules>
 
-  <profiles>
-        <profile>
-            <id>jdk16</id>
-            <activation>
-                <jdk>1.6</jdk>
-            </activation>
-            <modules>
-                <module>camel-quickfix</module>
-            </modules>
-        </profile>
-  </profiles>
-  
 </project>

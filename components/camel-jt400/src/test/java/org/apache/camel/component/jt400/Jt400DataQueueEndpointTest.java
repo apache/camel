@@ -17,14 +17,13 @@
 package org.apache.camel.component.jt400;
 
 import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test case for {@link Jt400DataQueueEndpoint}
  */
-public class Jt400DataQueueEndpointTest extends CamelTestSupport {
+public class Jt400DataQueueEndpointTest extends Jt400TestSupport {
 
     private Jt400DataQueueEndpoint endpoint;
 
@@ -32,7 +31,7 @@ public class Jt400DataQueueEndpointTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        endpoint = (Jt400DataQueueEndpoint)resolveMandatoryEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true");
+        endpoint = (Jt400DataQueueEndpoint) resolveMandatoryEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true&connectionPool=#mockPool");
     }
 
     /**
@@ -45,5 +44,10 @@ public class Jt400DataQueueEndpointTest extends CamelTestSupport {
         assertEquals(500, endpoint.getSystem().getCcsid());
         assertEquals(Format.binary, endpoint.getFormat());
         assertTrue(endpoint.getSystem().isGuiAvailable());
+    }
+
+    @Test
+    public void testToString() {
+        assertEquals("Endpoint[jt400://user:******@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&connectionPool=%23mockPool&format=binary&guiAvailable=true]", endpoint.toString());
     }
 }

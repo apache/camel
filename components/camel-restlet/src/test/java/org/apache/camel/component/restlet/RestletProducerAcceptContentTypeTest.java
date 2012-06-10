@@ -32,7 +32,7 @@ public class RestletProducerAcceptContentTypeTest extends RestletPostXmlRouteAnd
             @Override
             public void configure() throws Exception {                
                 
-                from("jetty://http://localhost:" + + portNum + "/users")
+                from("jetty://http://localhost:" + portNum + "/users")
                     .process(new Processor() {                    
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);

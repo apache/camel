@@ -30,6 +30,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
@@ -40,22 +41,19 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.spi.ManagementStrategy;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed CamelContext")
-public class ManagedCamelContext implements TimerListener, ManagedCamelContextMBean {
+public class ManagedCamelContext extends ManagedPerformanceCounter implements TimerListener, ManagedCamelContextMBean {
     private final ModelCamelContext context;   
     private final LoadTriplet load = new LoadTriplet();
 
     public ManagedCamelContext(ModelCamelContext context) {
         this.context = context;
-    }
-
-    public void init(ManagementStrategy strategy) {
-        // do nothing
+        boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+        setStatisticsEnabled(enabled);
     }
 
     public CamelContext getContext() {
@@ -241,7 +239,10 @@ public class ManagedCamelContext implements TimerListener, ManagedCamelContextMB
     @Override
     public String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         StringBuilder sb = new StringBuilder();
-        sb.append("<camelContextStat").append(String.format(" id=\"%s\"", getCamelId())).append(">\n");
+        sb.append("<camelContextStat").append(String.format(" id=\"%s\"", getCamelId()));
+        // use substring as we only want the attributes
+        String stat = dumpStatsAsXml(fullStats);
+        sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
@@ -266,7 +267,7 @@ public class ManagedCamelContext implements TimerListener, ManagedCamelContextMB
                 ManagedRouteMBean route = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedRouteMBean.class, true);
                 sb.append("    <routeStat").append(String.format(" id=\"%s\"", route.getRouteId()));
                 // use substring as we only want the attributes
-                String stat = route.dumpStatsAsXml(fullStats);
+                stat = route.dumpStatsAsXml(fullStats);
                 sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
                 // add processor details if needed

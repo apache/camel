@@ -16,8 +16,8 @@
  */
 package org.apache.camel.bam.rules;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.bam.model.ActivityState;
@@ -31,7 +31,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class ProcessRules extends ServiceSupport {
     private ProcessDefinition processDefinition;
-    private List<ActivityRules> activities = new ArrayList<ActivityRules>();
+    private List<ActivityRules> activities = new CopyOnWriteArrayList<ActivityRules>();
 
     public synchronized void processExpired(ActivityState activityState) throws Exception {
         for (ActivityRules activityRules : activities) {

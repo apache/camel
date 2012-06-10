@@ -97,13 +97,14 @@ public final class FormatFactory {
     }
 
     private static Locale getLocale(String locale) {
+        Locale answer = null;
         if (locale != null && !(locale.length() == 0)) {
             String[] result = locale.split("-");
             if (result.length <= 2) {
-                return result.length == 1 ? new Locale(result[0]) : new Locale(result[0], result[1]);
+                answer = result.length == 1 ? new Locale(result[0]) : new Locale(result[0], result[1]);
             }
         }
-        return null;
+        return answer;
     }
 
 }

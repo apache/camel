@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.stream;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -25,15 +28,43 @@ import org.junit.Test;
  */
 public class StreamSystemOutTest extends CamelTestSupport {
 
+    String message = "Hello World";
+
+    PrintStream stdOut = System.out;
+
+    ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
+
     // START SNIPPET: e1
     @Test
     public void testStringContent() throws Exception {
-        template.sendBody("direct:in", "Hello Text World\n");
+        try {
+            // Given
+            System.setOut(new PrintStream(mockOut));
+
+            // When
+            template.sendBody("direct:in", message);
+
+            // Then
+            assertEquals(message + "\n", new String(mockOut.toByteArray()));
+        } finally {
+            System.setOut(stdOut);
+        }
     }
 
     @Test
     public void testBinaryContent() {
-        template.sendBody("direct:in", "Hello Bytes World\n".getBytes());
+        try {
+            // Given
+            System.setOut(new PrintStream(mockOut));
+
+            // When
+            template.sendBody("direct:in", message.getBytes());
+
+            // Then
+            assertEquals(message, new String(mockOut.toByteArray()));
+        } finally {
+            System.setOut(stdOut);
+        }
     }
 
     protected RouteBuilder createRouteBuilder() {

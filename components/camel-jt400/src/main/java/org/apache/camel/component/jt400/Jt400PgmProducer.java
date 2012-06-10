@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 public class Jt400PgmProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Jt400PgmProducer.class);
+    
+    private AS400 iSeries;
 
     public Jt400PgmProducer(Jt400PgmEndpoint endpoint) {
         super(endpoint);
@@ -47,8 +49,6 @@ public class Jt400PgmProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-
-        AS400 iSeries = getISeriesEndpoint().getiSeries();
 
         String commandStr = getISeriesEndpoint().getProgramToExecute();
         ProgramParameter[] parameterList = getParameterList(exchange);
@@ -106,7 +106,7 @@ public class Jt400PgmProducer extends DefaultProducer {
                     if (getISeriesEndpoint().getFormat() == Format.binary) {
                         typeConverter = new AS400ByteArray(length);
                     } else {
-                        typeConverter = new AS400Text(length, getISeriesEndpoint().getiSeries());
+                        typeConverter = new AS400Text(length, iSeries);
                     }
                     inputData = typeConverter.toBytes(param);
                 }
@@ -153,7 +153,7 @@ public class Jt400PgmProducer extends DefaultProducer {
                 if (getISeriesEndpoint().getFormat() == Format.binary) {
                     typeConverter = new AS400ByteArray(length);
                 } else {
-                    typeConverter = new AS400Text(length, getISeriesEndpoint().getiSeries());
+                    typeConverter = new AS400Text(length, iSeries);
                 }
                 javaValue = typeConverter.toObject(output);
             }
@@ -186,17 +186,21 @@ public class Jt400PgmProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        if (!getISeriesEndpoint().getiSeries().isConnected()) {
+        if (iSeries == null) {
+            iSeries = getISeriesEndpoint().getiSeries();
+        }
+        if (!iSeries.isConnected(AS400.COMMAND)) {
             LOG.info("Connecting to {}", getISeriesEndpoint());
-            getISeriesEndpoint().getiSeries().connectService(AS400.COMMAND);
+            iSeries.connectService(AS400.COMMAND);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (getISeriesEndpoint().getiSeries().isConnected()) {
-            LOG.info("Disconnecting from {}", getISeriesEndpoint());
-            getISeriesEndpoint().getiSeries().disconnectAllServices();
+        if (iSeries != null) {
+            LOG.info("Releasing connection to {}", getISeriesEndpoint());
+            getISeriesEndpoint().releaseiSeries(iSeries);
+            iSeries = null;
         }
     }
 

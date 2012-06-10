@@ -49,6 +49,20 @@ public interface GenericFileProcessStrategy<T> {
                   Exchange exchange, GenericFile<T> file) throws Exception;
 
     /**
+     * Called when a begin is aborted, for example to release any resources which may have
+     * been acquired during the {@link #begin(GenericFileOperations, GenericFileEndpoint, org.apache.camel.Exchange, GenericFile)}
+     * operation.
+     *
+     * @param operations file operations
+     * @param endpoint   the endpoint
+     * @param exchange   the exchange
+     * @param file       the file
+     * @throws Exception can be thrown in case of errors
+     */
+    void abort(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint,
+               Exchange exchange, GenericFile<T> file) throws Exception;
+
+    /**
      * Releases any file locks and possibly deletes or moves the file after
      * successful processing
      *

@@ -38,6 +38,7 @@ public class SqsConfiguration {
     private Integer visibilityTimeout;
     private Collection<String> attributeNames;
     private Integer defaultVisibilityTimeout;
+    private Boolean extendMessageVisibility = Boolean.FALSE;
     
     // producer properties
     private Integer delaySeconds;
@@ -151,6 +152,14 @@ public class SqsConfiguration {
         this.policy = policy;
     }
 
+    public boolean isExtendMessageVisibility() {
+        return this.extendMessageVisibility;
+    }
+
+    public void setExtendMessageVisibility(Boolean extendMessageVisibility) {
+        this.extendMessageVisibility = extendMessageVisibility;
+    }
+
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
@@ -165,6 +174,7 @@ public class SqsConfiguration {
             + ", messageRetentionPeriod=" + messageRetentionPeriod
             + ", delaySeconds=" + delaySeconds
             + ", policy=" + policy
+            + ", extendMessageVisibility=" + extendMessageVisibility
             + "]";
     }
 }

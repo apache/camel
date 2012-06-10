@@ -17,10 +17,10 @@
 package org.apache.camel.component.jt400;
 
 import java.beans.PropertyVetoException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400ConnectionPool;
 import com.ibm.as400.access.BaseDataQueue;
 import com.ibm.as400.access.DataQueue;
 import com.ibm.as400.access.KeyedDataQueue;
@@ -28,8 +28,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * AS/400 Data queue endpoint
@@ -61,47 +60,55 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
         binary;
     }
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Jt400DataQueueEndpoint.class);
+    /**
+     * Encapsulates the base endpoint options and functionality.
+     */
+    private final Jt400Endpoint baseEndpoint;
 
-    private final AS400 system;
-    private final String objectPath;
+    /**
+     * @deprecated Used by {@link #getDataQueue()}, which is deprecated.
+     */
+    @Deprecated
     private BaseDataQueue dataQueue;
-    private Format format = Format.text;
+
     private boolean keyed;
     private String searchKey;
     private SearchType searchType = SearchType.EQ;
 
     /**
-     * Creates a new AS/400 data queue endpoint
+     * Creates a new AS/400 data queue endpoint using a default connection pool
+     * provided by the component.
+     * 
+     * @throws NullPointerException if {@code component} is null
      */
     protected Jt400DataQueueEndpoint(String endpointUri, Jt400Component component) throws CamelException {
+        this(endpointUri, component, component.getConnectionPool());
+    }
+
+    /**
+     * Creates a new AS/400 data queue endpoint using the specified connection
+     * pool.
+     */
+    protected Jt400DataQueueEndpoint(String endpointUri, Jt400Component component, AS400ConnectionPool connectionPool) throws CamelException {
         super(endpointUri, component);
+        ObjectHelper.notNull(connectionPool, "connectionPool");
         try {
-            URI uri = new URI(endpointUri);
-            String[] credentials = uri.getUserInfo().split(":");
-            system = new AS400(uri.getHost(), credentials[0], credentials[1]);
-            objectPath = uri.getPath();
+            baseEndpoint = new Jt400Endpoint(endpointUri, connectionPool);
         } catch (URISyntaxException e) {
             throw new CamelException("Unable to parse URI for " + endpointUri, e);
-        }
-
-        try {
-            system.setGuiAvailable(false);
-        } catch (PropertyVetoException e) {
-            LOG.warn("Failed to disable AS/400 prompting in the environment running Camel. This exception will be ignored.", e);
         }
     }
 
     public void setCcsid(int ccsid) throws PropertyVetoException {
-        this.system.setCcsid(ccsid);
+        baseEndpoint.setCcsid(ccsid);
     }
 
     public void setFormat(Format format) {
-        this.format = format;
+        baseEndpoint.setFormat(format);
     }
 
     public Format getFormat() {
-        return format;
+        return baseEndpoint.getFormat();
     }
 
     public void setKeyed(boolean keyed) {
@@ -129,7 +136,7 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
     }
 
     public void setGuiAvailable(boolean guiAvailable) throws PropertyVetoException {
-        this.system.setGuiAvailable(guiAvailable);
+        baseEndpoint.setGuiAvailable(guiAvailable);
     }
 
     @Override
@@ -142,15 +149,50 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
         return new Jt400DataQueueProducer(this);
     }
 
+    /**
+     * Obtains an {@code AS400} object that connects to this endpoint. Since
+     * these objects represent limited resources, clients have the
+     * responsibility of {@link #releaseSystem(AS400) releasing them} when done.
+     * 
+     * @return an {@code AS400} object that connects to this endpoint
+     */
     protected AS400 getSystem() {
-        return system;
+        return baseEndpoint.getConnection();
+    }
+    
+    /**
+     * Releases a previously obtained {@code AS400} object from use.
+     * 
+     * @param system a previously obtained {@code AS400} object
+     */
+    protected void releaseSystem(AS400 system) {
+        baseEndpoint.releaseConnection(system);
     }
 
+    /**
+     * @deprecated This method does not benefit from connection pooling; data
+     *             queue instances should be constructed with a connection
+     *             obtained by {@link #getSystem()}.
+     */
+    @Deprecated
     protected BaseDataQueue getDataQueue() {
         if (dataQueue == null) {
+            AS400 system = new AS400(baseEndpoint.getSystemName(), baseEndpoint.getUserID(), baseEndpoint.getPassword());
+            String objectPath = baseEndpoint.getObjectPath();
             dataQueue = keyed ? new KeyedDataQueue(system, objectPath) : new DataQueue(system, objectPath);
         }
         return dataQueue;
+    }
+    
+    /**
+     * Returns the fully qualified integrated file system path name of the data
+     * queue of this endpoint.
+     * 
+     * @return the fully qualified integrated file system path name of the data
+     *         queue of this endpoint
+     */
+    protected String getObjectPath() {
+        return baseEndpoint.getObjectPath();
     }
 
     public boolean isSingleton() {

@@ -571,7 +571,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
     /**
      * Set the default values for the non defined fields.
-     * @param The model which has its default fields set.
+     * @param model the model which has its default fields set.
      * @throws IllegalAccessException if the underlying fields are inaccessible
      * @throws Exception In case the field cannot be parsed
      */

@@ -23,6 +23,7 @@ import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -35,6 +36,10 @@ import org.springframework.jms.support.destination.DestinationResolver;
  * @version 
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
+
+    public TemporaryQueueReplyManager(CamelContext camelContext) {
+        super(camelContext);
+    }
 
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {

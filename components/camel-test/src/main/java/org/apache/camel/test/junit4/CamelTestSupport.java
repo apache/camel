@@ -36,6 +36,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -276,6 +277,18 @@ public abstract class CamelTestSupport extends TestSupport {
             context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
 
+        // configure properties component
+        Properties extra = useOverridePropertiesWithPropertiesComponent();
+        if (extra != null && !extra.isEmpty()) {
+            PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+            pc.setOverrideProperties(extra);
+        }
+        Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
+        if (ignore != null) {
+            PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+            pc.setIgnoreMissingLocation(ignore);
+        }
+
         postProcessTest();
         
         if (isUseRouteBuilder()) {
@@ -359,6 +372,28 @@ public abstract class CamelTestSupport extends TestSupport {
         return false;
     }
 
+    /**
+     * Override this method to include and override properties
+     * with the Camel {@link PropertiesComponent}.
+     *
+     * @return additional properties to add/override.
+     */
+    protected Properties useOverridePropertiesWithPropertiesComponent() {
+        return null;
+    }
+
+    /**
+     * Whether to ignore missing locations with the {@link PropertiesComponent}.
+     * For example when unit testing you may want to ignore locations that are
+     * not available in the environment you use for testing.
+     *
+     * @return <tt>true</tt> to ignore, <tt>false</tt> to not ignore, and <tt>null</tt> to leave as configured
+     * on the {@link PropertiesComponent}
+     */
+    protected Boolean ignoreMissingLocationWithPropertiesComponent() {
+        return null;
+    }
+
     protected void postProcessTest() throws Exception {
         context = threadCamelContext.get();
         template = threadTemplate.get();
@@ -374,40 +409,34 @@ public abstract class CamelTestSupport extends TestSupport {
         doStopCamelContext(context, camelContextService);
     }
 
-    private static void doStopCamelContext(CamelContext context,
-                                           Service camelContextService) throws Exception {
+    private static void doStopCamelContext(CamelContext context, Service camelContextService) throws Exception {
         if (camelContextService != null) {
             if (camelContextService == threadService.get()) {
                 threadService.remove();
             }
             camelContextService.stop();
-            camelContextService = null;
         } else {
             if (context != null) {
                 if (context == threadCamelContext.get()) {
                     threadCamelContext.remove();
                 }
                 context.stop();
-                context = null;
             }
         }
     }
 
-    private static void doStopTemplates(ConsumerTemplate consumer,
-                                        ProducerTemplate template) throws Exception {
+    private static void doStopTemplates(ConsumerTemplate consumer, ProducerTemplate template) throws Exception {
         if (consumer != null) {
             if (consumer == threadConsumer.get()) {
                 threadConsumer.remove();
             }
             consumer.stop();
-            consumer = null;
         }
         if (template != null) {
             if (template == threadTemplate.get()) {
                 threadTemplate.remove();
             }
             template.stop();
-            template = null;
         }
     }
 

@@ -19,7 +19,6 @@ package org.apache.camel.component.hdfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.xml.ws.Holder;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;

@@ -22,8 +22,7 @@
        http://camel.apache.org/schema/spring
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<camel:camelContext id="camel" trace="true"
-		xmlns="http://camel.apache.org/schema/spring">
+	<camel:camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
 		<camel:package>org.apache.camel.example.etl</camel:package>
 	</camel:camelContext>
 
@@ -32,8 +31,7 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 
-	<bean id="transactionTemplate"
-		class="org.springframework.transaction.support.TransactionTemplate">
+	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
 		<property name="transactionManager">
 			<bean class="org.springframework.orm.jpa.JpaTransactionManager">
 				<property name="entityManagerFactory" ref="entityManagerFactory" />
@@ -45,39 +43,13 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="camel" />
 		<property name="jpaVendorAdapter" ref="jpaAdapter" />
 	</bean>
 
-	<!--
-		Hibernate addapter <bean id="jpaAdapter"
-		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="databasePlatform"
-		value="org.hibernate.dialect.HSQLDialect" /> </bean>
-	-->
-
-	<!-- OpenJPA addapter -->
 	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter">
-		<property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.HSQLDictionary" />
-		<property name="database" value="HSQL" />
+		<property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.DerbyDictionary" />
+		<property name="database" value="DERBY" />
 	</bean>
-
-
-    <!-- This bean will cause OSGi server exit, so we disable it here -->
-	<!-- lets show a simple UI to browse the database -->
-    <!--
-	<bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner"
-		lazy-init="false">
-		<property name="main" value="org.hsqldb.util.DatabaseManagerSwing" />
-		<property name="args">
-			<list>
-				<value>- -url</value>
-				<value>jdbc:hsqldb:mem:camel_etl</value>
-			</list>
-		</property>
-		<property name="delay" value="3000" />
-	</bean>
-    -->
 </beans>

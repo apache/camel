@@ -24,6 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.io.payloads.StringPayload;
 import org.junit.Test;
 
 public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
@@ -32,6 +33,10 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     private static final String TEST_BLOB1 = "testBlob1";
     private static final String TEST_BLOB2 = "testBlob2";
 
+    private static final String TEST_CONTAINER_WITH_DIR = "testContainerWithDirectories";
+    private static final String TEST_BLOB_IN_DIR = "dir/testBlob";
+    private static final String TEST_BLOB_IN_OTHER = "other/testBlob";
+
     BlobStoreContextFactory contextFactory = new BlobStoreContextFactory();
     BlobStoreContext blobStoreContext = contextFactory.createContext("transient", "identity", "credential");
     BlobStore blobStore = blobStoreContext.getBlobStore();
@@ -39,7 +44,7 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     @Test
     public void testBlobStoreGetOneBlob() throws InterruptedException {
         String message = "Some message";
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB1, message);
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB1, new StringPayload(message));
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
@@ -53,30 +58,61 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     @Test
     public void testBlobStoreGetTwoBlobs() throws InterruptedException {
         String message1 = "Blob 1";
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB1, message1);
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB1, new StringPayload(message1));
 
         String message2 = "Blob 2";
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB2, message2);
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB2, new StringPayload(message2));
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(2);
         mockEndpoint.expectedBodiesReceived(message1, message2);
 
         mockEndpoint.assertIsSatisfied();
+    }
 
+    @Test
+    public void testBlobStoreWithDirectory() throws InterruptedException {
+        String message1 = "Blob in directory";
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_DIR, new StringPayload(message1));
+
+        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results-in-dir", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+        mockEndpoint.expectedBodiesReceived(message1);
+
+        mockEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testBlobStoreWithMultipleDirectories() throws InterruptedException {
+        String message1 = "Blob in directory";
+        String message2 = "Blob in other directory";
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_DIR, new StringPayload(message1));
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_OTHER, new StringPayload(message2));
+
+        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results-in-dir", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+        mockEndpoint.expectedBodiesReceived(message1);
+
+        mockEndpoint.assertIsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         blobStore.createContainerInLocation(null, TEST_CONTAINER);
+        blobStore.createContainerInLocation(null, TEST_CONTAINER_WITH_DIR);
         ((JcloudsComponent) context.getComponent("jclouds")).setBlobStores(Lists.newArrayList(blobStore));
 
         return new RouteBuilder() {
             public void configure() {
 
                 from("jclouds:blobstore:transient?container=" + TEST_CONTAINER)
+                        .convertBodyTo(String.class)
                         .to("mock:results");
+
+                from("jclouds:blobstore:transient?container=" + TEST_CONTAINER_WITH_DIR + "&directory=dir")
+                        .convertBodyTo(String.class)
+                        .to("mock:results-in-dir");
             }
         };
     }

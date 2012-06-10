@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedCamelContextMBean {
+public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();

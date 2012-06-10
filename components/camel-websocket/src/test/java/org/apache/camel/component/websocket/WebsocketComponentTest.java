@@ -214,11 +214,9 @@ public class WebsocketComponentTest {
         Connector connector = new SelectChannelConnector();
         connector.setHost("localhost");
         connector.setPort(1988);
-        context = component.createContext(server,connector,null);
+        context = component.createContext(server, connector, null);
         server.addConnector(connector);
         server.setHandler(context);
         server.start();
     }
-
-
 }

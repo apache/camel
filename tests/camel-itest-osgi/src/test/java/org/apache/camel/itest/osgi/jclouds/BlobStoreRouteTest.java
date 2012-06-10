@@ -63,8 +63,8 @@ public class BlobStoreRouteTest extends OSGiIntegrationTestSupport {
     public void testProducerAndConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:results");
         mock.expectedMessageCount(2);
-        template.sendBodyAndHeader("direct:start", new SimpleObject("1", "Test 1"), JcloudsConstants.BLOB_NAME, "blob1");
-        template.sendBodyAndHeader("direct:start", new SimpleObject("2", "Test 2"), JcloudsConstants.BLOB_NAME, "blob2");
+        template.sendBodyAndHeader("direct:start", "Test 1", JcloudsConstants.BLOB_NAME, "blob1");
+        template.sendBodyAndHeader("direct:start", "Test 2", JcloudsConstants.BLOB_NAME, "blob2");
         assertMockEndpointsSatisfied();
     }
 

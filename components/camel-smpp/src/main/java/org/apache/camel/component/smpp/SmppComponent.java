@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * @version 
@@ -53,11 +52,7 @@ public class SmppComponent extends DefaultComponent {
         SmppConfiguration config = this.configuration.copy();
 
         config.configureFromURI(new URI(uri));
-        if (getCamelContext() != null) {
-            IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, parameters);
-        } else {
-            IntrospectionSupport.setProperties(config, parameters);
-        }
+        setProperties(config, parameters);
 
         return createEndpoint(uri, config);
     }

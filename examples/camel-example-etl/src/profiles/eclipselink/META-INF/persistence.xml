@@ -17,10 +17,10 @@
 		<class>org.apache.camel.example.etl.CustomerEntity</class>
 
 		<properties>
-			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
+			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:derby:target/derby;create=true" />
 			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:camel_etl" />
             <!-- property name="eclipselink.logging.file" value="target/camel-example-etl.log" />
 			<property name="eclipselink.logging.level" value="FINE" /-->
 			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" />

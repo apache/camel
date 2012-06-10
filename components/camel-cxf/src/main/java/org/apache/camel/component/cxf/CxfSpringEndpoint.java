@@ -156,7 +156,15 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         
         // get service class
         Class<?> cls = getSEIClass();                
-                
+        
+        if (getWsdlURL() == null && cls == null) {
+            // no WSDL and serviceClass specified, set our default serviceClass
+            if (getDataFormat().equals(DataFormat.PAYLOAD)) {
+                setServiceClass(org.apache.camel.component.cxf.DefaultPayloadProviderSEI.class.getName());
+            } 
+            cls = getServiceClass();
+        }
+        
         // create server factory bean
         // Shouldn't use CxfEndpointUtils.getServerFactoryBean(cls) as it is for
         // CxfSoapComponent

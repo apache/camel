@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jt400;
 
-import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.BaseDataQueue;
 import com.ibm.as400.access.DataQueue;
 import com.ibm.as400.access.DataQueueEntry;
@@ -34,6 +33,11 @@ import org.apache.camel.impl.PollingConsumerSupport;
 public class Jt400DataQueueConsumer extends PollingConsumerSupport {
 
     private final Jt400DataQueueEndpoint endpoint;
+    
+    /**
+     * Performs the lifecycle logic of this consumer.
+     */
+    private final Jt400DataQueueService queueService;
 
     /**
      * Creates a new consumer instance
@@ -41,22 +45,17 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
     protected Jt400DataQueueConsumer(Jt400DataQueueEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.queueService = new Jt400DataQueueService(endpoint);
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (!endpoint.getSystem().isConnected()) {
-            log.info("Connecting to " + endpoint);
-            endpoint.getSystem().connectService(AS400.DATAQUEUE);
-        }
+        queueService.start();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (endpoint.getSystem().isConnected()) {
-            log.info("Disconnecting from " + endpoint);
-            endpoint.getSystem().disconnectAllServices();
-        }
+        queueService.stop();
     }
 
     public Exchange receive() {
@@ -86,7 +85,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
      *                indicates a blocking read.
      */
     public Exchange receive(long timeout) {
-        BaseDataQueue queue = endpoint.getDataQueue();
+        BaseDataQueue queue = queueService.getDataQueue();
         try {
             if (endpoint.isKeyed()) {
                 return receive((KeyedDataQueue) queue, timeout);

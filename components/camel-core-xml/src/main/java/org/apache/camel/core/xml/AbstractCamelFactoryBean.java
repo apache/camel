@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.model.IdentifiedType;
 
 @XmlAccessorType(XmlAccessType.FIELD)

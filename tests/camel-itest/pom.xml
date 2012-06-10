@@ -305,6 +305,15 @@
       <classifier>tests</classifier>
       <scope>test</scope>
   	</dependency>
+  	
+  	<!-- for validator tests -->
+  	<dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-validator-test-resources</artifactId>
+      <version>${project.version}</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/src/test/lib/camel-validator-test-resources.jar</systemPath>
+     </dependency>
 
     <!-- atomikos XA TX manager -->
     <dependency>

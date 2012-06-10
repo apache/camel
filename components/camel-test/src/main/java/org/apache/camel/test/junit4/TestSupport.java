@@ -529,6 +529,16 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
+     * Is this Java 1.6
+     *
+     * @return <tt>true</tt> if its Java 1.6, <tt>false</tt> if its not (for example Java 1.7 or better)
+     */
+    public static boolean isJava16() {
+        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
+        return javaVersion.startsWith("1.6");
+    }
+
+    /**
      * Gets the current test method name
      *
      * @return the method name

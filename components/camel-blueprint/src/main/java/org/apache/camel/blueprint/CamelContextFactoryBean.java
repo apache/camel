@@ -19,6 +19,7 @@ package org.apache.camel.blueprint;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -56,6 +57,7 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,8 +214,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             // lookup existing configured properties component
             PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
 
-            BlueprintPropertiesParser parser = new BlueprintPropertiesParser(blueprintContainer, pc.getPropertiesParser());
+            BlueprintPropertiesParser parser = new BlueprintPropertiesParser(pc, blueprintContainer, pc.getPropertiesParser());
             BlueprintPropertiesResolver resolver = new BlueprintPropertiesResolver(pc.getPropertiesResolver(), parser);
+
+            // any extra properties
+            ServiceReference ref = bundleContext.getServiceReference(PropertiesComponent.OVERRIDE_PROPERTIES);
+            if (ref != null) {
+                Properties extra = (Properties) bundleContext.getService(ref);
+                if (extra != null) {
+                    pc.setOverrideProperties(extra);
+                }
+            }
 
             // no locations has been set, so its a default component
             if (pc.getLocations() == null) {

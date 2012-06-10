@@ -43,63 +43,48 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
         LOG.trace("Waiting for exclusive read lock to file: " + file);
 
-        try {
-            long lastModified = Long.MIN_VALUE;
-            long length = Long.MIN_VALUE;
-            StopWatch watch = new StopWatch();
+        long lastModified = Long.MIN_VALUE;
+        long length = Long.MIN_VALUE;
+        StopWatch watch = new StopWatch();
 
-            while (!exclusive) {
-                // timeout check
-                if (timeout > 0) {
-                    long delta = watch.taken();
-                    if (delta > timeout) {
-                        LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
-                        // we could not get the lock within the timeout period, so return false
-                        return false;
-                    }
-                }
-
-                long newLastModified = 0;
-                long newLength = 0;
-                List<FTPFile> files = operations.listFiles(file.getParent());
-                for (FTPFile f : files) {
-                    if (f.getName().equals(file.getFileName())) {
-                        newLastModified = f.getTimestamp().getTimeInMillis();
-                        newLength = f.getSize();
-                    }
-                }
-
-                LOG.trace("Previous last modified: " + lastModified + ", new last modified: " + newLastModified);
-                LOG.trace("Previous length: " + length + ", new length: " + newLength);
-
-                if (newLastModified == lastModified && newLength == length && length != 0) {
-                    // We consider that zero-length files are files in progress on some FTP servers
-                    LOG.trace("Read lock acquired.");
-                    exclusive = true;
-                } else {
-                    // set new base file change information
-                    lastModified = newLastModified;
-                    length = newLength;
-
-                    boolean interrupted = sleep();
-                    if (interrupted) {
-                        // we were interrupted while sleeping, we are likely being shutdown so return false
-                        return false;
-                    }
+        while (!exclusive) {
+            // timeout check
+            if (timeout > 0) {
+                long delta = watch.taken();
+                if (delta > timeout) {
+                    LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    // we could not get the lock within the timeout period, so return false
+                    return false;
                 }
             }
-        } catch (Exception e) {
-            // must handle IOException as some apps on Windows etc. will still somehow hold a lock to a file
-            // such as AntiVirus or MS Office that has special locks for it's supported files
-            if (timeout == 0) {
-                // if not using timeout, then we cant retry, so rethrow
-                throw e;
+
+            long newLastModified = 0;
+            long newLength = 0;
+            List<FTPFile> files = operations.listFiles(file.getParent());
+            for (FTPFile f : files) {
+                if (f.getName().equals(file.getFileName())) {
+                    newLastModified = f.getTimestamp().getTimeInMillis();
+                    newLength = f.getSize();
+                }
             }
-            LOG.debug("Cannot acquire read lock. Will try again.", e);
-            boolean interrupted = sleep();
-            if (interrupted) {
-                // we were interrupted while sleeping, we are likely being shutdown so return false
-                return false;
+
+            LOG.trace("Previous last modified: " + lastModified + ", new last modified: " + newLastModified);
+            LOG.trace("Previous length: " + length + ", new length: " + newLength);
+
+            if (newLastModified == lastModified && newLength == length && length != 0) {
+                // We consider that zero-length files are files in progress on some FTP servers
+                LOG.trace("Read lock acquired.");
+                exclusive = true;
+            } else {
+                // set new base file change information
+                lastModified = newLastModified;
+                length = newLength;
+
+                boolean interrupted = sleep();
+                if (interrupted) {
+                    // we were interrupted while sleeping, we are likely being shutdown so return false
+                    return false;
+                }
             }
         }
 

@@ -41,7 +41,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     private long promptDelay;
     private long initialPromptDelay = 2000;
     private int groupLines;
-    private int autoCloseCount = 0;
+    private int autoCloseCount;
     
     private Charset charset;
     private GroupStrategy groupStrategy = new DefaultGroupStrategy();

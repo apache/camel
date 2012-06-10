@@ -73,7 +73,7 @@ public class StreamProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         delay(endpoint.getDelay());
 
-        synchronized(this) {
+        synchronized (this) {
             openStream(exchange);
             writeToStream(outputStream, exchange);
             closeStream(false);

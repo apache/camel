@@ -521,9 +521,18 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     ServerFactoryBean createServerFactoryBean() throws Exception {
 
         Class<?> cls = null;
-        if (getDataFormat() == DataFormat.POJO || getServiceClass() != null) {
-            // get service class
+        if (getDataFormat() == DataFormat.POJO) {
             ObjectHelper.notNull(getServiceClass(), CxfConstants.SERVICE_CLASS);
+        }
+        
+        if (getWsdlURL() == null && getServiceClass() == null) {
+            // no WSDL and serviceClass specified, set our default serviceClass
+            if (getDataFormat().equals(DataFormat.PAYLOAD)) {
+                setServiceClass(org.apache.camel.component.cxf.DefaultPayloadProviderSEI.class.getName());
+            }
+        }
+        
+        if (getServiceClass() != null) {
             cls = getServiceClass();
         }
 

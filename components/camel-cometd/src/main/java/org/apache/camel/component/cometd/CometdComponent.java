@@ -18,6 +18,7 @@ package org.apache.camel.component.cometd;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.cometd.server.BayeuxServerImpl;
 import org.cometd.server.CometdServlet;
 import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.DispatcherType;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -41,8 +43,10 @@ import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.server.ssl.SslConnector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,6 +195,8 @@ public class CometdComponent extends DefaultComponent {
             }
         }
 
+        applyCrossOriginFiltering(endpoint, context);
+
         context.addServlet(holder, "/cometd/*");
         context.addServlet("org.eclipse.jetty.servlet.DefaultServlet", "/");
         context.setSessionHandler(new SessionHandler(new HashSessionManager()));
@@ -307,7 +313,17 @@ public class CometdComponent extends DefaultComponent {
     protected void doStart() throws Exception {
         super.doStart();
     }
-    
+
+    private void applyCrossOriginFiltering(CometdEndpoint endpoint, ServletContextHandler context) {
+        if (endpoint.isCrossOriginFilterOn()) {
+            FilterHolder filterHolder = new FilterHolder();
+            CrossOriginFilter filter = new CrossOriginFilter();
+            filterHolder.setFilter(filter);
+            filterHolder.setInitParameter("allowedOrigins", endpoint.getAllowedOrigins());
+            context.addFilter(filterHolder, endpoint.getFilterPath(), EnumSet.allOf(DispatcherType.class));
+        }
+    }
+
     /**
      * Override the key/trust store check method as it does not account for a factory that has
      * a pre-configured {@link SSLContext}.

@@ -40,6 +40,6 @@ public class EntitySupport {
     }
 
     public String toString() {
-        return getClass().getName() + "[" + id + "]";
+        return getClass().getName() + "[" + getId() + "]";
     }
 }

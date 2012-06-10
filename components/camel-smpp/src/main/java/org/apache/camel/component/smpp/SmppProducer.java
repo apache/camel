@@ -44,16 +44,20 @@ public class SmppProducer extends DefaultProducer {
 
     private SmppConfiguration configuration;
     private SMPPSession session;
-    private SessionStateListener sessionStateListener;
+    private SessionStateListener internalSessionStateListener;
     private final ReentrantLock connectLock = new ReentrantLock();
 
     public SmppProducer(SmppEndpoint endpoint, SmppConfiguration config) {
         super(endpoint);
         this.configuration = config;
-        this.sessionStateListener = new SessionStateListener() {
+        this.internalSessionStateListener = new SessionStateListener() {
             public void onStateChange(SessionState newState, SessionState oldState, Object source) {
+                if (configuration.getSessionStateListener() != null) {
+                    configuration.getSessionStateListener().onStateChange(newState, oldState, source);
+                }
+                
                 if (newState.equals(SessionState.CLOSED)) {
-                    LOG.warn("Lost connection to: " + getEndpoint().getConnectionString() + " - trying to reconnect...");
+                    LOG.warn("Lost connection to: {} - trying to reconnect...", getEndpoint().getConnectionString());
                     closeSession();
                     reconnect(configuration.getInitialReconnectDelay());
                 }
@@ -82,7 +86,7 @@ public class SmppProducer extends DefaultProducer {
         SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(this.configuration.getEnquireLinkTimer());
         session.setTransactionTimer(this.configuration.getTransactionTimer());
-        session.addSessionStateListener(sessionStateListener);
+        session.addSessionStateListener(internalSessionStateListener);
         session.connectAndBind(
                 this.configuration.getHost(),
                 this.configuration.getPort(),
@@ -147,7 +151,7 @@ public class SmppProducer extends DefaultProducer {
     
     private void closeSession() {
         if (session != null) {
-            session.removeSessionStateListener(this.sessionStateListener);
+            session.removeSessionStateListener(this.internalSessionStateListener);
             // remove this hack after http://code.google.com/p/jsmpp/issues/detail?id=93 is fixed
             try {
                 Thread.sleep(1000);

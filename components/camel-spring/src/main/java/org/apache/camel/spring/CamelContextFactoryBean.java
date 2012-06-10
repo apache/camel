@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,6 +32,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
@@ -51,6 +53,7 @@ import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -232,6 +235,40 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         }
     }
 
+    @Override
+    protected void initPropertyPlaceholder() throws Exception {
+        super.initPropertyPlaceholder();
+
+        Map<String, BridgePropertyPlaceholderConfigurer> beans = applicationContext.getBeansOfType(BridgePropertyPlaceholderConfigurer.class);
+        if (beans.size() == 1) {
+            // setup properties component that uses this beans
+            BridgePropertyPlaceholderConfigurer configurer = beans.values().iterator().next();
+            String id = beans.keySet().iterator().next();
+            LOG.info("Bridging Camel and Spring property placeholder configurer with id: " + id);
+
+            // get properties component
+            PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
+            // replace existing resolver with us
+            configurer.setResolver(pc.getPropertiesResolver());
+            String ref = "ref:" + id;
+            pc.setPropertiesResolver(configurer);
+            // and update locations to have our as ref first
+            String[] locations = pc.getLocations();
+            String[] updatedLocations;
+            if (locations != null && locations.length > 0) {
+                updatedLocations = new String[locations.length + 1];
+                updatedLocations[0] = ref;
+                System.arraycopy(locations, 0, updatedLocations, 1, locations.length);
+            } else {
+                updatedLocations = new String[]{ref};
+            }
+            pc.setLocations(updatedLocations);
+        } else if (beans.size() > 1) {
+            LOG.warn("Cannot bridge Camel and Spring property placeholders, as exact only 1 bean of type BridgePropertyPlaceholderConfigurer"
+                    + " must be defined, was {} beans defined.", beans.size());
+        }
+    }
+
     public void onApplicationEvent(ApplicationEvent event) {
         // From Spring 3.0.1, The BeanFactory applicationEventListener 
         // and Bean's applicationEventListener will be called,
@@ -248,7 +285,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
                 // now lets start the CamelContext so that all its possible
                 // dependencies are initialized
                 try {
-                    LOG.debug("Starting the context now!");
+                    LOG.trace("Starting the context now");
                     getContext().start();
                 } catch (Exception e) {
                     throw wrapRuntimeCamelException(e);

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,11 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map;
 
 public class WebsocketEndpoint extends DefaultEndpoint {
 
@@ -82,30 +82,23 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     public void connect(WebsocketConsumer consumer) throws Exception {
-        // Jetty instance will be created
-        // if it does not exist
         component.connect(consumer);
-
-        // We will add a WebSocket servlet
-        // to a Jetty server using Handler
-        getComponent().addServlet(sync, consumer, remaining);
+        component.addServlet(sync, consumer, remaining);
     }
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {
         component.disconnect(consumer);
         // Servlet should be removed
-        // getComponent().addServlet(sync, consumer, remaining);
     }
 
     public void connect(WebsocketProducer producer) throws Exception {
         component.connect(producer);
-        getComponent().addServlet(sync, producer, remaining);
+        component.addServlet(sync, producer, remaining);
     }
 
     public void disconnect(WebsocketProducer producer) throws Exception {
         component.disconnect(producer);
         // Servlet should be removed
-        // getComponent().addServlet(sync, consumer, remaining);
     }
 
     @Override
