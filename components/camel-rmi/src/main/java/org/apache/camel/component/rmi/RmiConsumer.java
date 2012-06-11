@@ -17,10 +17,10 @@
 package org.apache.camel.component.rmi;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -89,10 +89,31 @@ public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
         BeanInvocation invocation = new BeanInvocation(method, args);
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setBody(invocation);
-        getProcessor().process(exchange);
+        try {
+            log.debug("Invoking {} with args {}", method, args);
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        // is there a matching exception from the signature, then throw that
+        // or fallback and ensure the exception is thrown as a RemoteException
         Throwable fault = exchange.getException();
         if (fault != null) {
-            throw new InvocationTargetException(fault);
+            Object match = null;
+            for (Class<?> type : method.getExceptionTypes()) {
+                Object found = exchange.getException(type);
+                if (found != null) {
+                    match = found;
+                    break;
+                }
+            }
+            if (match != null && match instanceof Throwable) {
+                // we have a match
+                throw (Throwable) match;
+            } else {
+                throw new RemoteException("Error invoking " + method, fault);
+            }
         }
         return exchange.getOut().getBody();
     }
