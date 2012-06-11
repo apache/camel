@@ -72,6 +72,7 @@
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-hawtdb</include>
         <include>org.apache.camel:camel-hazelcast</include>
+        <include>org.apache.camel:camel-hbase</include>
         <include>org.apache.camel:camel-hdfs</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-http4</include>
