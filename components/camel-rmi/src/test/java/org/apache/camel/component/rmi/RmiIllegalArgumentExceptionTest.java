@@ -18,11 +18,10 @@ package org.apache.camel.component.rmi;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -31,12 +30,12 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class RmiConcurrencyTest extends CamelTestSupport {
+public class RmiIllegalArgumentExceptionTest extends CamelTestSupport {
 
     private static boolean created;
 
     protected int getPort() {
-        return 37543;
+        return 37545;
     }
 
     @Override
@@ -56,37 +55,24 @@ public class RmiConcurrencyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoConcurrentProducers() throws Exception {
-        doSendMessages(1, 1);
-    }
-
-    @Test
-    public void testConcurrentProducers() throws Exception {
-        doSendMessages(10, 5);
-    }
-
-    private void doSendMessages(int files, int poolSize) throws Exception {
+    public void tesIllegal() throws Exception {
         if (classPathHasSpaces()) {
             return;
         }
 
-        getMockEndpoint("mock:result").expectedMessageCount(files);
-        getMockEndpoint("mock:result").assertNoDuplicates(body());
-        getMockEndpoint("mock:result").message(0).body().contains("Echo");
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        for (int i = 0; i < files; i++) {
-            final int index = i;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    template.sendBody("direct:echo", "" + index);
-                    return null;
-                }
-            });
+        try {
+            template.sendBody("direct:echo", "Hello World");
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(RemoteException.class, e.getCause());
+            // wrapped far down
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause().getCause());
+            assertEquals("Illegal", iae.getMessage());
         }
 
         assertMockEndpointsSatisfied();
-        executor.shutdownNow();
     }
 
     @Override
@@ -95,12 +81,12 @@ public class RmiConcurrencyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // setup the jmi server endpoint
-                RmiEndpoint echo = (RmiEndpoint)endpoint("rmi://localhost:37543/echo");
+                RmiEndpoint echo = (RmiEndpoint)endpoint("rmi://localhost:37545/echo");
                 echo.setRemoteInterfaces(IEcho.class);
                 from(echo).to("bean:echo");
 
                 // and our route where we call the server
-                from("direct:echo").to("rmi://localhost:37543/echo?method=echo").to("mock:result");
+                from("direct:echo").to("rmi://localhost:37545/echo?method=foo").to("mock:result");
             }
         };
     }

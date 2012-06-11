@@ -16,22 +16,12 @@
  */
 package org.apache.camel.component.rmi;
 
-import java.rmi.RemoteException;
-
 /**
- * @version 
+ *
  */
-public class EchoService implements IEcho {
+public class DamnException extends Exception {
 
-    public String echo(String s) throws RemoteException {
-        return "Echo " + s;
-    }
-
-    public String damn(String s) throws DamnException, RemoteException {
-        throw new DamnException("Damn this did not work");
-    }
-
-    public String foo(String s) throws RemoteException {
-        throw new IllegalArgumentException("Illegal");
+    public DamnException(String s) {
+        super(s);
     }
 }
