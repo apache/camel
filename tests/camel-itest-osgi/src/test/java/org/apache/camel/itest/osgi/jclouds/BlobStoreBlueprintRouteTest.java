@@ -74,8 +74,8 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
         MockEndpoint mock = ctx.getEndpoint("mock:results", MockEndpoint.class);
         ProducerTemplate template = ctx.createProducerTemplate();
         mock.expectedMessageCount(2);
-        template.sendBodyAndHeader("direct:start", new SimpleObject("1", "Test 1"), JcloudsConstants.BLOB_NAME, "blob1");
-        template.sendBodyAndHeader("direct:start", new SimpleObject("2", "Test 2"), JcloudsConstants.BLOB_NAME, "blob2");
+        template.sendBodyAndHeader("direct:start", "Test 1", JcloudsConstants.BLOB_NAME, "blob1");
+        template.sendBodyAndHeader("direct:start", "Test 2", JcloudsConstants.BLOB_NAME, "blob2");
         assertMockEndpointsSatisfied();
     }
 
@@ -88,7 +88,6 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
                     @Override
                     public InputStream customizeTestProbe(InputStream testProbe) {
                         return modifyBundle(testProbe)
-                                .add(SimpleObject.class)
                                 .add("META-INF/persistence.xml", BlobStoreBlueprintRouteTest.class.getResource("/META-INF/persistence.xml"))
                                 .add("OSGI-INF/blueprint/test.xml", BlobStoreBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
                                 .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintJcloudsTestBundle")
