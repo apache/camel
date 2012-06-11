@@ -92,6 +92,7 @@
     <hapi-version>1.2</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
+    <hawtdispatch-version>1.11</hawtdispatch-version>
     <hazelcast-version>2.0.2</hazelcast-version>
     <hbase-version>0.90.5</hbase-version>
     <hibernate-version>3.6.10.Final</hibernate-version>
@@ -609,6 +610,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mongodb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mqtt</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

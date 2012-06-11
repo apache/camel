@@ -557,6 +557,14 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jackson</feature>
   </feature>
+  <feature name='camel-mqtt' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.fusesource.mqtt-client/mqtt-client/${mqtt-client-version}</bundle>
+    <bundle dependency='true'>mvn:org.fusesource.hawtdispatch/hawtdispatch/${hawtdispatch-version}</bundle>
+    <bundle dependency='true'>mvn:org.fusesource.hawtdispatch/hawtdispatch-transport/${hawtdispatch-version}</bundle>
+    <bundle dependency='true'>mvn:org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mqtt/${project.version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+  </feature>
   <feature name='camel-msv' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
