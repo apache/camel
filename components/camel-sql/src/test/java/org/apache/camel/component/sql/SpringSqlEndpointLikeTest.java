@@ -14,29 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
+package org.apache.camel.component.sql;
 
-import org.junit.Ignore;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@RunWith(JUnit4TestRunner.class)
-@Ignore("Requires Spring 3.1")
-public class CamelSpringWebServiceTest extends AbstractFeatureTest {
+/**
+ * @version 
+ */
+public class SpringSqlEndpointLikeTest extends CamelSpringTestSupport {
 
-    public static final String COMPONENT = "spring-ws";
-
-    @Test
-    public void test() throws Exception {
-        testComponent(COMPONENT);
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/sql/SpringSqlEndpointLikeTest.xml");
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+    @Test
+    public void testSQLEndpoint() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+
+        template.sendBody("direct:start", "");
+
+        assertMockEndpointsSatisfied();
     }
 
 }

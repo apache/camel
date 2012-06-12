@@ -23,4 +23,8 @@ public interface IEcho extends Remote {
 
     String echo(String s) throws RemoteException;
 
+    String damn(String s) throws RemoteException, DamnException;
+
+    String foo(String s) throws RemoteException;
+
 }

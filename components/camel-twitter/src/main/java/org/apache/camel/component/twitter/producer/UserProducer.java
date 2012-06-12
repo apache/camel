@@ -22,10 +22,10 @@ import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import twitter4j.StatusUpdate;
 
 /**
  * Produces text as a status update.
- * 
  */
 public class UserProducer extends DefaultProducer implements Processor {
 
@@ -39,8 +39,21 @@ public class UserProducer extends DefaultProducer implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         // update user's status
-        String status = exchange.getIn().getBody(String.class);
+        Object in = exchange.getIn().getBody();
+        if (in instanceof StatusUpdate) {
+            updateStatus((StatusUpdate) in);
+        } else {
+            String s = exchange.getIn().getMandatoryBody(String.class);
+            updateStatus(s);
+        }
+    }
 
+    private void updateStatus(StatusUpdate status) throws Exception {
+        te.getTwitter().updateStatus(status);
+        LOG.debug("Updated status: {}", status);
+    }
+
+    private void updateStatus(String status) throws Exception {
         if (status.length() > 160) {
             LOG.warn("Message is longer than 160 characters. Message will be truncated!");
             status = status.substring(0, 160);

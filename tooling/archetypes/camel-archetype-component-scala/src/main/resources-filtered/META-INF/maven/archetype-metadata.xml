@@ -42,8 +42,8 @@
     <requiredProperty key="scala-version">
       <defaultValue>${scala-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="scala-plugin-version">
-      <defaultValue>${scala-plugin-version}</defaultValue>
+    <requiredProperty key="scala-maven-plugin-version">
+      <defaultValue>${scala-maven-plugin-version}</defaultValue>
     </requiredProperty>
   </requiredProperties>
  <fileSets>

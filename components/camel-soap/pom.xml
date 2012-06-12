@@ -129,6 +129,9 @@
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
+                            <!-- Add a workaround for running the build within Chinese code page in Windows -->
+                            <fork>always</fork>
+                            <additionalJvmArgs>-Duser.language=en</additionalJvmArgs>
                             <xsdOptions>
                                 <xsdOption>
                                     <xsd>${basedir}/src/main/resources/soap.xsd</xsd>

@@ -18,7 +18,7 @@ package org.apache.camel.component.websocket;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.DispatcherType;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.SessionManager;
@@ -46,8 +47,11 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.server.ssl.SslConnector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -154,6 +158,14 @@ public class WebsocketComponent extends DefaultComponent {
                 ServletContextHandler context = createContext(server, connector, endpoint.getHandlers());
                 server.setHandler(context);
 
+                // Apply CORS (http://www.w3.org/TR/cors/)
+                applyCrossOriginFiltering(endpoint, context);
+
+                // Create Static resources
+                if (endpoint.getStaticResources() != null) {
+                    server = createStaticResourcesServer(server, context, endpoint.getStaticResources());
+                }
+
                 // Don't provide a Servlet object as Producer/Consumer will create them later on
                 connectorRef = new ConnectorRef(server, connector, null);
 
@@ -242,8 +254,9 @@ public class WebsocketComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
+        Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
+        String staticResources = getAndRemoveParameter(parameters, "staticResources", String.class);
         int port = extractPortNumber(remaining);
         String host = extractHostName(remaining);
 
@@ -255,8 +268,29 @@ public class WebsocketComponent extends DefaultComponent {
             endpoint.setEnableJmx(isEnableJmx());
         }
 
+        /*
         if (sslContextParameters == null) {
             sslContextParameters = this.sslContextParameters;
+        } */
+
+        // prefer to use endpoint configured over component configured
+        if (sslContextParameters == null) {
+            // fallback to component configured
+            sslContextParameters = getSslContextParameters();
+        }
+
+        if (sslContextParameters != null) {
+            endpoint.setSslContextParameters(sslContextParameters);
+        }
+
+        // prefer to use endpoint configured over component configured
+        if (staticResources == null) {
+            // fallback to component configured
+            staticResources = getStaticResources();
+        }
+
+        if (staticResources != null) {
+            endpoint.setStaticResources(staticResources);
         }
 
         endpoint.setSslContextParameters(sslContextParameters);
@@ -301,13 +335,7 @@ public class WebsocketComponent extends DefaultComponent {
         return server;
     }
 
-    protected Server createStaticResourcesServer(ServletContextHandler context, String host, int port, String home) {
-        Server server = new Server();
-
-        Connector connector = new SelectChannelConnector();
-        connector.setHost(host);
-        connector.setPort(port);
-        server.addConnector(connector);
+    protected Server createStaticResourcesServer(Server server, ServletContextHandler context, String home) throws Exception {
 
         context.setContextPath("/");
 
@@ -316,13 +344,15 @@ public class WebsocketComponent extends DefaultComponent {
         context.setSessionHandler(sh);
 
         if (home != null) {
-            if (home.startsWith("classpath:")) {
-                home = ObjectHelper.after(home, "classpath:");
-                LOG.debug("Using base resource from classpath: {}", home);
-                context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), home));
-            } else {
-                LOG.debug("Using base resource: {}", home);
-                context.setResourceBase(home);
+            String[] resources = home.split(":");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">>> Protocol found: " + resources[0] + ", and resource: " + resources[1]);
+            }
+
+            if (resources[0].equals("classpath")) {
+                context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
+            } else if (resources[0].equals("file")) {
+                context.setBaseResource(Resource.newResource(resources[1]));
             }
             DefaultServlet defaultServlet = new DefaultServlet();
             ServletHolder holder = new ServletHolder(defaultServlet);
@@ -336,6 +366,15 @@ public class WebsocketComponent extends DefaultComponent {
         server.setHandler(context);
 
         return server;
+    }
+
+    protected Server createStaticResourcesServer(ServletContextHandler context, String host, int port, String home) throws Exception {
+        Server server = new Server();
+        Connector connector = new SelectChannelConnector();
+        connector.setHost(host);
+        connector.setPort(port);
+        server.addConnector(connector);
+        return createStaticResourcesServer(server, context, home);
     }
 
     protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketProducer producer, String remaining) throws Exception {
@@ -352,10 +391,10 @@ public class WebsocketComponent extends DefaultComponent {
             servlet = servlets.get(pathSpec);
             if (servlet == null) {
                 // Retrieve Context
-                ServletContextHandler context = (ServletContextHandler)connectorRef.server.getHandler();
+                ServletContextHandler context = (ServletContextHandler) connectorRef.server.getHandler();
                 servlet = createServlet(sync, pathSpec, servlets, context);
                 connectorRef.servlet = servlet;
-                LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
+                LOG.debug("WebSocket Producer Servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
             return servlet;
         } else {
@@ -377,14 +416,14 @@ public class WebsocketComponent extends DefaultComponent {
             servlet = servlets.get(pathSpec);
             if (servlet == null) {
                 // Retrieve Context
-                ServletContextHandler context = (ServletContextHandler)connectorRef.server.getHandler();
+                ServletContextHandler context = (ServletContextHandler) connectorRef.server.getHandler();
                 servlet = createServlet(sync, pathSpec, servlets, context);
                 connectorRef.servlet = servlet;
                 servlets.put(pathSpec, servlet);
                 LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
             }
 
-            if (servlet.getConsumer() == null)  {
+            if (servlet.getConsumer() == null) {
                 servlet.setConsumer(consumer);
             }
             return servlet;
@@ -402,7 +441,7 @@ public class WebsocketComponent extends DefaultComponent {
 
     protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) throws Exception {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
-        context.setConnectorNames(new String[] {connector.getName()});
+        context.setConnectorNames(new String[]{connector.getName()});
 
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
@@ -457,6 +496,26 @@ public class WebsocketComponent extends DefaultComponent {
             SslContextFactory sslContextFactory = new WebSocketComponentSslContextFactory();
             try {
                 sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
+
+                if (sslContextParameters.getCipherSuites() != null) {
+                    String[] ciphers = (String[]) sslContextParameters.getCipherSuites().getCipherSuite().toArray();
+                    sslContextFactory.setIncludeCipherSuites(ciphers);
+                } else {
+                    // Define Cipher suites
+                    String[] ciphers = {"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA", "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA", "Unknown 0x0:0x88", "Unknown 0x0:0x87"
+                            , "TLS_DHE_RSA_WITH_AES_256_CBC_SHA", "TLS_DHE_DSS_WITH_AES_256_CBC_SHA", "TLS_ECDH_RSA_WITH_AES_256_CBC_SHA"
+                            , "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA", "Unknown 0x0:0x84", "TLS_RSA_WITH_AES_256_CBC_SHA", "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA"
+                            , "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA", "TLS_ECDHE_RSA_WITH_RC4_128_SHA", "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
+                            , "Unknown 0x0:0x45", "Unknown 0x0:0x44", "SSL_DHE_DSS_WITH_RC4_128_SHA", "TLS_DHE_RSA_WITH_AES_128_CBC_SHA"
+                            , "TLS_DHE_DSS_WITH_AES_128_CBC_SHA", "TLS_ECDH_RSA_WITH_RC4_128_SHA", "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA"
+                            , "TLS_ECDH_ECDSA_WITH_RC4_128_SHA", "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA", "Unknown 0x0:0x96", "Unknown 0x0:0x41"
+                            , "SSL_RSA_WITH_RC4_128_SHA", "SSL_RSA_WITH_RC4_128_MD5", "TLS_RSA_WITH_AES_128_CBC_SHA", "TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA"
+                            , "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA", "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA", "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA"
+                            , "TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA", "TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA", "SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA"
+                            , "SSL_RSA_WITH_3DES_EDE_CBC_SHA"};
+                    sslContextFactory.setIncludeCipherSuites(ciphers);
+                }
+
             } catch (Exception e) {
                 throw new RuntimeCamelException("Error initiating SSLContext.", e);
             }
@@ -559,6 +618,16 @@ public class WebsocketComponent extends DefaultComponent {
             // Since we may have many Servers running, don't tie the MBeanContainer
             // to a Server lifecycle or we end up closing it while it is still in use.
             //server.addBean(mbContainer);
+        }
+    }
+
+    private void applyCrossOriginFiltering(WebsocketEndpoint endpoint, ServletContextHandler context) {
+        if (endpoint.isCrossOriginFilterOn()) {
+            FilterHolder filterHolder = new FilterHolder();
+            CrossOriginFilter filter = new CrossOriginFilter();
+            filterHolder.setFilter(filter);
+            filterHolder.setInitParameter("allowedOrigins", endpoint.getAllowedOrigins());
+            context.addFilter(filterHolder, endpoint.getFilterPath(), EnumSet.allOf(DispatcherType.class));
         }
     }
 

@@ -19,9 +19,10 @@ package org.apache.camel.util;
 import junit.framework.TestCase;
 
 public class UnsafeCharactersEncoderTest extends TestCase {
+
     private void testEncoding(String before, String after) {
         String result = UnsafeUriCharactersEncoder.encode(before);
-        assertEquals("Get the wrong encoding result", result, after);
+        assertEquals("Get the wrong encoding result", after, result);
     }
     
     public void testQnameEncoder() {
@@ -39,4 +40,41 @@ public class UnsafeCharactersEncoderTest extends TestCase {
         String noEncoding = "http://test.com/\uFD04";
         testEncoding(noEncoding, noEncoding);
     }
+
+    public void testPercentEncode() {
+        String beforeEncoding = "sql:select * from foo where bar like '%A'";
+        String afterEncoding = "sql:select%20*%20from%20foo%20where%20bar%20like%20'%25A'";
+        testEncoding(beforeEncoding, afterEncoding);
+    }
+
+    public void testPercentEncodeAlready() {
+        String beforeEncoding = "sql:select * from foo where bar like '%25A'";
+        String afterEncoding = "sql:select%20*%20from%20foo%20where%20bar%20like%20'%25A'";
+        testEncoding(beforeEncoding, afterEncoding);
+    }
+
+    public void testPercentEncodeDanishChar() {
+        String beforeEncoding = "http://localhost:{{port}}/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
+        String afterEncoding = "http://localhost:%7B%7Bport%7D%7D/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
+        testEncoding(beforeEncoding, afterEncoding);
+    }
+
+    public void testPercentEncodeDanishCharEncoded() {
+        String beforeEncoding = "http://localhost:{{port}}/myapp/mytest?columns=claus,s%C3%B8ren&username=apiuser";
+        String afterEncoding = "http://localhost:%7B%7Bport%7D%7D/myapp/mytest?columns=claus,s%C3%B8ren&username=apiuser";
+        testEncoding(beforeEncoding, afterEncoding);
+    }
+
+    public void testAlreadyEncoded() {
+        String beforeEncoding = "http://www.example.com?query=foo%20bar";
+        String afterEncoding = "http://www.example.com?query=foo%20bar";
+        testEncoding(beforeEncoding, afterEncoding);
+    }
+
+    public void testPercentEncodedLast() {
+        String beforeEncoding = "http://www.example.com?like=foo%25";
+        String afterEncoding = "http://www.example.com?like=foo%25";
+        testEncoding(beforeEncoding, afterEncoding);
+    }
+
 }

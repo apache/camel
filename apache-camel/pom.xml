@@ -193,6 +193,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-hbase</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-hdfs</artifactId>
     </dependency>
     <dependency>
@@ -325,6 +329,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mongodb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mqtt</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

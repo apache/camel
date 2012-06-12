@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rmi;
+package org.apache.camel.itest.karaf;
 
-import java.rmi.RemoteException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-/**
- * @version 
- */
-public class EchoService implements IEcho {
+@RunWith(JUnit4TestRunner.class)
+public class CamelHbaseTest extends AbstractFeatureTest {
 
-    public String echo(String s) throws RemoteException {
-        return "Echo " + s;
+    public static final String COMPONENT = extractName(CamelHbaseTest.class);
+
+    @Test
+    public void test() throws Exception {
+        testComponent(COMPONENT);
     }
 
-    public String damn(String s) throws DamnException, RemoteException {
-        throw new DamnException("Damn this did not work");
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
     }
 
-    public String foo(String s) throws RemoteException {
-        throw new IllegalArgumentException("Illegal");
-    }
 }
