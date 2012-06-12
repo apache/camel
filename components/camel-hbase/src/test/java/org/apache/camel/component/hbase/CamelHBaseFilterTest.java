@@ -14,20 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hbase;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.hbase.filters.ModelAwareColumnMatchingFilter;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.hadoop.hbase.TableExistsException;
+import org.apache.hadoop.hbase.filter.Filter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class HBaseConsumerTest extends CamelHBaseTestSupport {
+public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
+
+    List<Filter> filters = new LinkedList<Filter>();
 
     @Before
     public void setUp() throws Exception {
@@ -45,39 +52,34 @@ public class HBaseConsumerTest extends CamelHBaseTestSupport {
     @After
     public void tearDown() throws Exception {
         if (systemReady) {
+            hbaseUtil.deleteTable(DEFAULTTABLE.getBytes());
             super.tearDown();
         }
     }
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        filters.add(new ModelAwareColumnMatchingFilter());
+        jndi.bind("myFilters", filters);
+        return jndi;
+    }
 
     @Test
-    public void testPutMultiRowsAndConsume() throws Exception {
+    public void testPutMultiRowsAndScanWithFilters() throws Exception {
         if (systemReady) {
+            putMultipleRows();
             ProducerTemplate template = context.createProducerTemplate();
-            Map<String, Object> headers = new HashMap<String, Object>();
-            headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-            headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);
-            headers.put(HbaseAttribute.HBASE_VALUE.asHeader(), body[0]);
+            Endpoint endpoint = context.getEndpoint("direct:scan");
 
-            headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(2), key[1]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(2), family[0]);
-            headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(2), column[0]);
-            headers.put(HbaseAttribute.HBASE_VALUE.asHeader(2), body[1]);
+            Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
+            exchange.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+            exchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);
+            exchange.getIn().setHeader(HbaseAttribute.HBASE_VALUE.asHeader(), body[0]);
+            Exchange resp = template.send(endpoint, exchange);
+            Message out = resp.getOut();
+            assertTrue(out.getHeaders().containsValue(body[0]) && !out.getHeaders().containsValue(body[1]) && !out.getHeaders().containsValue(body[2]));
 
-            headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(3), key[2]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(3), family[0]);
-            headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(3), column[0]);
-            headers.put(HbaseAttribute.HBASE_VALUE.asHeader(3), body[2]);
-
-            headers.put(HBaseContats.OPERATION, HBaseContats.PUT);
-
-            template.sendBodyAndHeaders("direct:start", null, headers);
-
-            MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-            mockEndpoint.expectedMessageCount(3);
-            mockEndpoint.assertIsSatisfied(10000);
-            Thread.sleep(10000);
         }
     }
 
@@ -92,10 +94,10 @@ public class HBaseConsumerTest extends CamelHBaseTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("hbase://" + DEFAULTTABLE);
-
-                from("hbase://" + DEFAULTTABLE)
-                        .to("mock:result");
+                from("direct:scan")
+                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseContats.SCAN + "&maxResults=2&filters=#myFilters");
             }
         };
     }
+
 }

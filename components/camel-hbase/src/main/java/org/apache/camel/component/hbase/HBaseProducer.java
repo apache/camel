@@ -20,7 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.ServicePoolAware;
+import org.apache.camel.component.hbase.filters.ModelAwareFilter;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategy;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
 import org.apache.camel.component.hbase.model.HBaseCell;
@@ -206,6 +208,11 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         List<HBaseRow> rowSet = new LinkedList<HBaseRow>();
         Scan scan = new Scan();
         if (filters != null && !filters.isEmpty()) {
+            for (Filter filter : filters) {
+                if (ModelAwareFilter.class.isAssignableFrom(filter.getClass())) {
+                    ((ModelAwareFilter) filter).apply(endpoint.getCamelContext(), model);
+                }
+            }
             scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, filters));
         }
         Set<HBaseCell> cellModels = model.getCells();
@@ -231,6 +238,8 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 resultRow.setId(endpoint.getCamelContext().getTypeConverter().convertTo(model.getRowType(), result.getRow()));
                 resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(modelCell.getValueType(),
                         result.getValue(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column))));
+                resultCell.setFamily(modelCell.getFamily());
+                resultCell.setQualifier(modelCell.getQualifier());
                 resultRow.getCells().add(resultCell);
                 rowSet.add(resultRow);
             }
