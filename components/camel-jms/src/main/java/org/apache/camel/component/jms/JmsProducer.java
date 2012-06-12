@@ -123,12 +123,20 @@ public class JmsProducer extends DefaultAsyncProducer {
             return true;
         }
 
-        if (!endpoint.isDisableReplyTo() && exchange.getPattern().isOutCapable()) {
-            // in out requires a bit more work than in only
-            return processInOut(exchange, callback);
-        } else {
-            // in only
-            return processInOnly(exchange, callback);
+        try {
+            if (!endpoint.isDisableReplyTo() && exchange.getPattern().isOutCapable()) {
+                // in out requires a bit more work than in only
+                return processInOut(exchange, callback);
+            } else {
+                // in only
+                return processInOnly(exchange, callback);
+            }
+        } catch (Throwable e) {
+            // must catch exception to ensure callback is invoked as expected
+            // to let Camel error handling deal with this
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
     }
 
