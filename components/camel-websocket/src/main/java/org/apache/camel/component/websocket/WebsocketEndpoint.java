@@ -42,11 +42,16 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private Boolean sendToAll;
     private boolean enableJmx;
     private boolean sessionSupport;
+    private boolean crossOriginFilterOn;
 
     private String remaining;
     private String host;
+    private String allowedOrigins;
+    // Used to filter CORS
+    private String filterPath;
+
     // Base Resource for the ServletContextHandler
-    private String home;
+    private String staticResources;
 
     private Integer port;
 
@@ -126,12 +131,12 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         this.port = port;
     }
 
-    public String getHome() {
-        return home;
+    public String getStaticResources() {
+        return staticResources;
     }
 
-    public void setHome(String home) {
-        this.home = home;
+    public void setStaticResources(String staticResources) {
+        this.staticResources = staticResources;
     }
 
     public Boolean getSendToAll() {
@@ -181,6 +186,30 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
+    }
+
+    public String getAllowedOrigins() {
+        return allowedOrigins;
+    }
+
+    public void setAllowedOrigins(String allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
+    }
+
+    public boolean isCrossOriginFilterOn() {
+        return crossOriginFilterOn;
+    }
+
+    public void setCrossOriginFilterOn(boolean crossOriginFilterOn) {
+        this.crossOriginFilterOn = crossOriginFilterOn;
+    }
+
+    public String getFilterPath() {
+        return filterPath;
+    }
+
+    public void setFilterPath(String filterPath) {
+        this.filterPath = filterPath;
     }
 
 
