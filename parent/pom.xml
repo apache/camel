@@ -159,6 +159,7 @@
     <saxon-version>9.3.0.11</saxon-version>
     <scala-version>2.9.1</scala-version>
     <scala-plugin-version>2.15.2</scala-plugin-version>
+    <scala-maven-plugin-version>3.0.2</scala-maven-plugin-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
     <shiro-version>1.2.0</shiro-version>
     <slf4j-api-version>1.6.1</slf4j-api-version>
