@@ -85,12 +85,13 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cache/${project.version}</bundle>
   </feature>
+<!-- TODO: Karaf does not yet support CDI seamless in the container 
   <feature name='camel-cdi' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <!-- TODO We still need to find a way to install the CDI container -->
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jcdi_1.0_spec/1.0</bundle>
     <bundle>mvn:org.apache.camel/camel-cdi/${project.version}</bundle>
   </feature>
+-->
   <feature name='camel-castor' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
