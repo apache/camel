@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.DataFormat;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.cxf.message.MessageContentsList;
 import org.slf4j.Logger;
@@ -86,6 +87,19 @@ public final class CxfConverter {
             LOG.error("Get the exception when converting the SOAPMessage into String, the exception is " + e);
         }
         return baos.toString();
+    }
+    
+    @Converter
+    public static InputStream soapMessageToInputStream(final SOAPMessage soapMessage, Exchange exchange) {
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        InputStream in = null;
+        try {
+            soapMessage.writeTo(cos);
+            in = cos.getInputStream();
+        } catch (Exception e) {
+            LOG.error("Get the exception when converting the SOAPMessage into InputStream, the exception is " + e);
+        }
+        return in;
     }
     
     @Converter
