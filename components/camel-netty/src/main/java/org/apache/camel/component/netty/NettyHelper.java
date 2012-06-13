@@ -18,11 +18,11 @@ package org.apache.camel.component.netty;
 
 import java.net.SocketAddress;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,16 +73,16 @@ public final class NettyHelper {
     }
 
     /**
-     * Writes the given body to Netty channel. Will wait until the body has been written.
+     * Writes the given body to Netty channel. Will <b>not</b >wait until the body has been written.
      *
      * @param channel         the Netty channel
      * @param remoteAddress   the remote address when using UDP
      * @param body            the body to write (send)
      * @param exchange        the exchange
-     * @throws CamelExchangeException is thrown if the body could not be written for some reasons
-     *                                (eg remote connection is closed etc.)
+     * @param listener        listener with work to be executed when the operation is complete
      */
-    public static void writeBodySync(Channel channel, SocketAddress remoteAddress, Object body, Exchange exchange) throws CamelExchangeException {
+    public static void writeBodyAsync(Channel channel, SocketAddress remoteAddress, Object body,
+                                      Exchange exchange, ChannelFutureListener listener) {
         // the write operation is asynchronous. Use future to wait until the session has been written
         ChannelFuture future;
         if (remoteAddress != null) {
@@ -91,15 +91,7 @@ public final class NettyHelper {
             future = channel.write(body);
         }
 
-        // wait for the write
-        LOG.trace("Waiting for write to complete");
-        future.awaitUninterruptibly();
-
-        // if it was not a success then thrown an exception
-        if (!future.isSuccess()) {
-            LOG.warn("Cannot write body: " + body + " using channel: " + channel);
-            throw new CamelExchangeException("Cannot write body", exchange, future.getCause());
-        }
+        future.addListener(listener);
     }
 
     /**
