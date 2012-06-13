@@ -37,7 +37,7 @@
 
     <!-- START SNIPPET: registry-beans -->
     <util:list id="decoders" list-class="java.util.LinkedList">
-        <bean class="org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder">
+        <bean class="org.apache.camel.component.netty.ChannelHandlerFactories" factory-method="newLengthFieldBasedFrameDecoder">
             <constructor-arg value="1048576"/>
             <constructor-arg value="0"/>
             <constructor-arg value="4"/>
@@ -59,7 +59,7 @@
     </bean>
     <bean id="string-encoder" class="org.jboss.netty.handler.codec.string.StringEncoder"/>
 
-    <bean id="length-decoder" class="org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder">
+    <bean id="length-decoder" class="org.apache.camel.component.netty.ChannelHandlerFactories" factory-method="newLengthFieldBasedFrameDecoder">
         <constructor-arg value="1048576"/>
         <constructor-arg value="0"/>
         <constructor-arg value="4"/>
