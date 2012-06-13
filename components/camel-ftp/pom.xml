@@ -40,7 +40,6 @@
   </properties>
 
   <dependencies>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -73,7 +72,7 @@
       <scope>test</scope>
     </dependency>
 
-      <!-- for unit testing AntPathMatcher -->
+    <!-- for unit testing AntPathMatcher -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
@@ -92,22 +91,22 @@
       <scope>test</scope>
     </dependency>
 
-      <!-- for testing sftp -->
-      <dependency>
-          <groupId>org.apache.sshd</groupId>
-          <artifactId>sshd-core</artifactId>
-          <version>0.4.0</version>
-          <scope>test</scope>
-      </dependency>
-      <!-- needed for sftp server -->
-      <dependency>
-          <groupId>org.apache.servicemix.bundles</groupId>
-          <artifactId>org.apache.servicemix.bundles.bcpg-jdk16</artifactId>
-          <version>1.46_1</version>
-          <scope>test</scope>
-      </dependency>
+    <!-- for testing sftp -->
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-core</artifactId>
+      <version>${sshd-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- needed for sftp server -->
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpg-jdk16</artifactId>
+      <version>${bouncycastle-version}</version>
+      <scope>test</scope>
+    </dependency>
 
-      <!-- ftpserver using mina 2.0.0 -->
+    <!-- ftpserver using mina 2.0.0 -->
     <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
