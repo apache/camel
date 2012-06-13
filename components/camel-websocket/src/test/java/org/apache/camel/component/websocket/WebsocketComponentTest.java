@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +42,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -68,29 +64,57 @@ public class WebsocketComponentTest {
     private Map<String, WebsocketComponentServlet> servlets;
     @Mock
     private ServletContextHandler handler;
-    @Mock
-    private CamelContext camelContext;
 
     private WebsocketComponent component;
+    private WebsocketProducer producer;
     private Server server;
-    private ServletContextHandler context;
 
     @Before
     public void setUp() throws Exception {
         component = new WebsocketComponent();
-        setUpJettyServer();
+        component.setCamelContext(new DefaultCamelContext());
+
+        Connector connector = new SelectChannelConnector();
+        connector.setHost("localhost");
+        connector.setPort(1988);
+
+        server = component.createServer();
+        server.addConnector(connector);
+
+        WebsocketEndpoint endpoint = (WebsocketEndpoint) component.createEndpoint("websocket://x");
+        producer = (WebsocketProducer) endpoint.createProducer();
+        component.connect(producer);
+
+        // wire the consumer with the endpoint so that WebSocketComponent.getConnectorKey() works without throwing NPE
+        when(consumer.getEndpoint()).thenReturn(endpoint);
     }
 
-    @After
-    public void shutdown() throws Exception {
-        server.stop();
+    @Test
+    public void testCreateContext() throws Exception {
+        ServletContextHandler handler = component.createContext(server, server.getConnectors()[0], null);
+        assertNotNull(handler);
     }
-
-    // TODO - Update tests as it fails now - chm - 22/05/2012
-    /*
 
     @Test
     public void testCreateServerWithoutStaticContent() throws Exception {
+        ServletContextHandler handler = component.createContext(server, server.getConnectors()[0], null);
+        assertEquals(1, server.getConnectors().length);
+        assertEquals("localhost", server.getConnectors()[0].getHost());
+        assertEquals(1988, server.getConnectors()[0].getPort());
+        assertFalse(server.getConnectors()[0].isStarted());
+        assertEquals(handler, server.getHandler());
+        assertEquals(1, server.getHandlers().length);
+        assertEquals(handler, server.getHandlers()[0]);
+        assertEquals("/", handler.getContextPath());
+        assertNull(handler.getSessionHandler());
+        assertNull(handler.getResourceBase());
+        assertNull(handler.getServletHandler().getHolderEntry("/"));
+    }
+
+    @Test
+    public void testCreateServerWithStaticContent() throws Exception {
+        ServletContextHandler handler = component.createContext(server, server.getConnectors()[0], null);
+        Server server = component.createStaticResourcesServer(handler, "localhost", 1988, "classpath:public");
         assertEquals(1, server.getConnectors().length);
         assertEquals("localhost", server.getConnectors()[0].getHost());
         assertEquals(1988, server.getConnectors()[0].getPort());
@@ -100,36 +124,14 @@ public class WebsocketComponentTest {
         assertEquals(handler, server.getHandlers()[0]);
         assertEquals("/", handler.getContextPath());
         assertNotNull(handler.getSessionHandler());
-        assertNull(handler.getResourceBase());
-        assertNull(handler.getServletHandler().getHolderEntry("/"));
-    }
-
-
-    @Test
-    public void testCreateServerWithStaticContent() throws Exception {
-        ServletContextHandler handler = component.createContext();
-        Server server = component.createServer(handler, "localhost", 1988, "public/");
-        assertEquals(2, server.getConnectors().length);
-        assertEquals("localhost", server.getConnectors()[0].getHost());
-        assertEquals(1988, server.getConnectors()[0].getPort());
-        assertFalse(server.getConnectors()[0].isStarted());
-        assertEquals(handler, server.getHandler());
-        assertEquals(1, server.getHandlers().length);
-        assertEquals(handler, server.getHandlers()[0]);
-        assertEquals("/", handler.getContextPath());
-        assertNotNull(handler.getSessionHandler());
         assertNotNull(handler.getResourceBase());
-        assertTrue(handler.getResourceBase().endsWith("public"));
+        assertTrue(handler.getResourceBase().startsWith(JettyClassPathResource.class.getName()));
         assertNotNull(handler.getServletHandler().getHolderEntry("/"));
     }
-
 
     @Test
     public void testCreateEndpoint() throws Exception {
         Map<String, Object> parameters = new HashMap<String, Object>();
-
-        component.setCamelContext(camelContext);
-
         Endpoint e1 = component.createEndpoint("websocket://foo", "foo", parameters);
         Endpoint e2 = component.createEndpoint("websocket://foo", "foo", parameters);
         Endpoint e3 = component.createEndpoint("websocket://bar", "bar", parameters);
@@ -155,22 +157,17 @@ public class WebsocketComponentTest {
 
     @Test
     public void testAddServletProducersOnly() throws Exception {
-        component.setCamelContext(camelContext);
-        component.doStart();
-        WebsocketComponentServlet s1 = component.addServlet(sync, null, PATH_ONE);
-        WebsocketComponentServlet s2 = component.addServlet(sync, null, PATH_TWO);
+        WebsocketComponentServlet s1 = component.addServlet(sync, producer, PATH_ONE);
+        WebsocketComponentServlet s2 = component.addServlet(sync, producer, PATH_TWO);
         assertNotNull(s1);
         assertNotNull(s2);
         assertNotSame(s1, s2);
         assertNull(s1.getConsumer());
         assertNull(s2.getConsumer());
-        component.doStop();
     }
 
     @Test
     public void testAddServletConsumersOnly() throws Exception {
-        component.setCamelContext(camelContext);
-        component.doStart();
         WebsocketComponentServlet s1 = component.addServlet(sync, consumer, PATH_ONE);
         WebsocketComponentServlet s2 = component.addServlet(sync, consumer, PATH_TWO);
         assertNotNull(s1);
@@ -178,45 +175,26 @@ public class WebsocketComponentTest {
         assertNotSame(s1, s2);
         assertEquals(consumer, s1.getConsumer());
         assertEquals(consumer, s2.getConsumer());
-        component.doStop();
     }
 
     @Test
     public void testAddServletProducerAndConsumer() throws Exception {
-        component.setCamelContext(camelContext);
-        component.doStart();
-        WebsocketComponentServlet s1 = component.addServlet(sync, null, PATH_ONE);
+        WebsocketComponentServlet s1 = component.addServlet(sync, producer, PATH_ONE);
         WebsocketComponentServlet s2 = component.addServlet(sync, consumer, PATH_ONE);
         assertNotNull(s1);
         assertNotNull(s2);
         assertEquals(s1, s2);
         assertEquals(consumer, s1.getConsumer());
-        component.doStop();
     }
 
     @Test
     public void testAddServletConsumerAndProducer() throws Exception {
-        component.setCamelContext(camelContext);
-        component.setPort(0);
-        component.doStart();
         WebsocketComponentServlet s1 = component.addServlet(sync, consumer, PATH_ONE);
-        WebsocketComponentServlet s2 = component.addServlet(sync, null, PATH_ONE);
+        WebsocketComponentServlet s2 = component.addServlet(sync, producer, PATH_ONE);
         assertNotNull(s1);
         assertNotNull(s2);
         assertEquals(s1, s2);
         assertEquals(consumer, s1.getConsumer());
-        component.doStop();
     }
-            */
 
-    private void setUpJettyServer() throws Exception {
-        server = component.createServer();
-        Connector connector = new SelectChannelConnector();
-        connector.setHost("localhost");
-        connector.setPort(1988);
-        context = component.createContext(server, connector, null);
-        server.addConnector(connector);
-        server.setHandler(context);
-        server.start();
-    }
 }

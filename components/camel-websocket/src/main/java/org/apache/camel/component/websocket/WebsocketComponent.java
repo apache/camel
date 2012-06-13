@@ -552,6 +552,7 @@ public class WebsocketComponent extends DefaultComponent {
         }
 
         // This method is for Jetty 7.5.x
+        @Override
         public void checkKeyStore() {
             // here we don't check the SslContext as it is already created
         }
@@ -606,7 +607,7 @@ public class WebsocketComponent extends DefaultComponent {
         }
     }
 
-    private String getConnectorKey(WebsocketEndpoint endpoint) {
+    private static String getConnectorKey(WebsocketEndpoint endpoint) {
         return endpoint.getProtocol() + ":" + endpoint.getHost() + ":" + endpoint.getPort();
     }
 
