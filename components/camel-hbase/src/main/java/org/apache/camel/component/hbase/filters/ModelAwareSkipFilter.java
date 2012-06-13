@@ -40,7 +40,7 @@ public class ModelAwareSkipFilter extends SkipFilter implements ModelAwareFilter
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {
         if (ModelAwareFilter.class.isAssignableFrom(getFilter().getClass())) {
-            ((ModelAwareFilter) getFilter()).apply(context, rowModel);
+            ((ModelAwareFilter<?>) getFilter()).apply(context, rowModel);
         }
     }
 

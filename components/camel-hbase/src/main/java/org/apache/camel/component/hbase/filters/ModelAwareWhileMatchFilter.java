@@ -19,7 +19,6 @@ package org.apache.camel.component.hbase.filters;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.SkipFilter;
 import org.apache.hadoop.hbase.filter.WhileMatchFilter;
 
 public class ModelAwareWhileMatchFilter extends WhileMatchFilter implements ModelAwareFilter<WhileMatchFilter> {
@@ -40,7 +39,7 @@ public class ModelAwareWhileMatchFilter extends WhileMatchFilter implements Mode
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {
         if (ModelAwareFilter.class.isAssignableFrom(getFilter().getClass())) {
-            ((ModelAwareFilter) getFilter()).apply(context, rowModel);
+            ((ModelAwareFilter<?>) getFilter()).apply(context, rowModel);
         }
     }
 

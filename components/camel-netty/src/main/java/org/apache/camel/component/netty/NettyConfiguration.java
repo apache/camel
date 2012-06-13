@@ -79,14 +79,13 @@ public class NettyConfiguration implements Cloneable {
     /**
      * Returns a copy of this configuration
      */
-    @SuppressWarnings("unchecked")
     public NettyConfiguration copy() {
         try {
             NettyConfiguration answer = (NettyConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List encodersCopy = new ArrayList(encoders);
+            List<ChannelHandler> encodersCopy = new ArrayList<ChannelHandler>(encoders);
             answer.setEncoders(encodersCopy);
-            List decodersCopy = new ArrayList(decoders);
+            List<ChannelHandler> decodersCopy = new ArrayList<ChannelHandler>(decoders);
             answer.setDecoders(decodersCopy);
             return answer;
         } catch (CloneNotSupportedException e) {

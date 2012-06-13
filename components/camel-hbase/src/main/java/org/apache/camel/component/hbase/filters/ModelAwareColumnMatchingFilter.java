@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.hbase.HBaseHelper;
 import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseRow;
-import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.SingleColumnValueExcludeFilter;

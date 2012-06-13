@@ -70,7 +70,7 @@ public class ModelAwareFilterList extends FilterList implements ModelAwareFilter
     public void apply(CamelContext context, HBaseRow rowModel) {
         for (Filter filter : getFilters()) {
             if (ModelAwareFilter.class.isAssignableFrom(filter.getClass())) {
-                ((ModelAwareFilter) filter).apply(context, rowModel);
+                ((ModelAwareFilter<?>) filter).apply(context, rowModel);
             }
         }
     }

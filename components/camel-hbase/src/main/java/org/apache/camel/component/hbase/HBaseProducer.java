@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.hbase.filters.ModelAwareFilter;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategy;
@@ -210,7 +209,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         if (filters != null && !filters.isEmpty()) {
             for (Filter filter : filters) {
                 if (ModelAwareFilter.class.isAssignableFrom(filter.getClass())) {
-                    ((ModelAwareFilter) filter).apply(endpoint.getCamelContext(), model);
+                    ((ModelAwareFilter<?>) filter).apply(endpoint.getCamelContext(), model);
                 }
             }
             scan.setFilter(new FilterList(FilterList.Operator.MUST_PASS_ALL, filters));

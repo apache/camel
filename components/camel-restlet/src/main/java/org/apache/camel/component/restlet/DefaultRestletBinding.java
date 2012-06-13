@@ -276,7 +276,6 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
     }
 
-    @SuppressWarnings("unchecked")
     protected void setResponseHeader(Exchange exchange, org.restlet.Message message, String header, Object value) throws NoTypeConversionAvailableException {
         // put the header first
         message.getAttributes().put(header, value);
