@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
+import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
 import org.jboss.netty.handler.codec.frame.LengthFieldPrepender;
@@ -38,7 +39,8 @@ public class MultipleCodecsTest extends BaseNettyTest {
         JndiRegistry registry = super.createRegistry();
 
         // START SNIPPET: registry-beans
-        LengthFieldBasedFrameDecoder lengthDecoder = new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+        ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+
         StringDecoder stringDecoder = new StringDecoder();
         registry.bind("length-decoder", lengthDecoder);
         registry.bind("string-decoder", stringDecoder);
@@ -48,11 +50,11 @@ public class MultipleCodecsTest extends BaseNettyTest {
         registry.bind("length-encoder", lengthEncoder);
         registry.bind("string-encoder", stringEncoder);
 
-        List<ChannelUpstreamHandler> decoders = new ArrayList<ChannelUpstreamHandler>();
+        List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
         decoders.add(lengthDecoder);
         decoders.add(stringDecoder);
 
-        List<ChannelDownstreamHandler> encoders = new ArrayList<ChannelDownstreamHandler>();
+        List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
         encoders.add(lengthEncoder);
         encoders.add(stringEncoder);
 

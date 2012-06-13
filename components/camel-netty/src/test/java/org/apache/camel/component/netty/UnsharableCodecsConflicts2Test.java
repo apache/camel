@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
@@ -26,59 +27,55 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.IOHelper;
 import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.junit.Test;
 
 /**
  *
  */
-public class UnsharableCodecsConflictsTest extends BaseNettyTest {
+public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
 
-    static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 4096 bytes
+    static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 16384 bytes
 
     private Processor processor = new P();
-
-    private int port1;
-    private int port2;
+    private int port;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        // we can share the decoder between multiple netty consumers, because they have the same configuration
-        // and we use a ChannelHandlerFactory
+        // create a single decoder
         ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
         registry.bind("length-decoder", decoder);
-        registry.bind("length-decoder2", decoder);
 
         return registry;
     }
 
     @Test
-    public void canSupplyMultipleCodecsToEndpointPipeline() throws Exception {
-        byte[] sPort1 = new byte[8192];
-        byte[] sPort2 = new byte[16383];
-        Arrays.fill(sPort1, (byte) 0x38);
-        Arrays.fill(sPort2, (byte) 0x39);
-        byte[] bodyPort1 = (new String(LENGTH_HEADER) + new String(sPort1)).getBytes();
-        byte[] bodyPort2 = (new String(LENGTH_HEADER) + new String(sPort2)).getBytes();
+    public void unsharableCodecsConflictsTest() throws Exception {
+        byte[] data1 = new byte[8192];
+        byte[] data2 = new byte[16383];
+        Arrays.fill(data1, (byte) 0x38);
+        Arrays.fill(data2, (byte) 0x39);
+        byte[] body1 = (new String(LENGTH_HEADER) + new String(data1)).getBytes();
+        byte[] body2 = (new String(LENGTH_HEADER) + new String(data2)).getBytes();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived(new String(sPort2) + "9");
+        mock.expectedBodiesReceived(new String(data2) + "9");
 
-        Socket server1 = getSocket("localhost", port1);
-        Socket server2 = getSocket("localhost", port2);
+        Socket client1 = getSocket("localhost", port);
+        Socket client2 = getSocket("localhost", port);
 
+        // use two clients to send to the same server at the same time
         try {
-            sendSopBuffer(bodyPort2, server2);
-            sendSopBuffer(bodyPort1, server1);
-            sendSopBuffer(new String("9").getBytes(), server2);
+            sendBuffer(body2, client2);
+            sendBuffer(body1, client1);
+            sendBuffer(new String("9").getBytes(), client2);
         } catch (Exception e) {
             log.error("", e);
         } finally {
-            server1.close();
-            server2.close();
+            client1.close();
+            client2.close();
         }
 
         mock.assertIsSatisfied();
@@ -87,13 +84,9 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
+                port = getPort();
 
-                from("netty:tcp://localhost:" + port1 + "?decoder=#length-decoder&sync=false")
-                        .process(processor);
-
-                from("netty:tcp://localhost:" + port2 + "?decoder=#length-decoder2&sync=false")
+                from("netty:tcp://localhost:{{port}}?decoder=#length-decoder&sync=false")
                         .process(processor)
                         .to("mock:result");
             }
@@ -106,13 +99,13 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
         return s;
     }
 
-    public static void sendSopBuffer(byte[] buf, Socket server) throws Exception {
-        BufferedOutputStream dataOut = IOHelper.buffered(server.getOutputStream());
+    public static void sendBuffer(byte[] buf, Socket server) throws Exception {
+        OutputStream netOut = server.getOutputStream();
+        OutputStream dataOut = new BufferedOutputStream(netOut);
         try {
             dataOut.write(buf, 0, buf.length);
             dataOut.flush();
         } catch (Exception e) {
-            IOHelper.close(dataOut);
             server.close();
             throw e;
         }
@@ -122,8 +115,9 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(new String(((BigEndianHeapChannelBuffer) exchange.getIn().getBody()).array()));
+            exchange.getOut().setBody(
+                    new String(((BigEndianHeapChannelBuffer) exchange.getIn()
+                            .getBody()).array()));
         }
     }
-
 }

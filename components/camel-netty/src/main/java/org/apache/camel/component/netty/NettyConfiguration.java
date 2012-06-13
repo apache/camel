@@ -26,16 +26,11 @@ import java.util.Map;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.jboss.netty.channel.ChannelDownstreamHandler;
-import org.jboss.netty.channel.ChannelUpstreamHandler;
-import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.handler.codec.frame.Delimiters;
-import org.jboss.netty.handler.codec.serialization.ClassResolvers;
-import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
-import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
-import org.jboss.netty.handler.codec.string.StringDecoder;
-import org.jboss.netty.handler.codec.string.StringEncoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.util.CharsetUtil;
 import org.slf4j.Logger;
@@ -62,8 +57,8 @@ public class NettyConfiguration implements Cloneable {
     private File keyStoreFile;
     private File trustStoreFile;
     private SslHandler sslHandler;
-    private List<ChannelDownstreamHandler> encoders = new ArrayList<ChannelDownstreamHandler>();
-    private List<ChannelUpstreamHandler> decoders = new ArrayList<ChannelUpstreamHandler>();
+    private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
+    private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
     private boolean ssl;
     private long sendBufferSize = 65536;
     private long receiveBufferSize = 65536;
@@ -84,17 +79,49 @@ public class NettyConfiguration implements Cloneable {
     /**
      * Returns a copy of this configuration
      */
+    @SuppressWarnings("unchecked")
     public NettyConfiguration copy() {
         try {
             NettyConfiguration answer = (NettyConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelDownstreamHandler> encodersCopy = new ArrayList<ChannelDownstreamHandler>(encoders);
+            List encodersCopy = new ArrayList(encoders);
             answer.setEncoders(encodersCopy);
-            List<ChannelUpstreamHandler> decodersCopy = new ArrayList<ChannelUpstreamHandler>(decoders);
+            List decodersCopy = new ArrayList(decoders);
             answer.setDecoders(decodersCopy);
             return answer;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
+        }
+    }
+
+    public void validateConfiguration() {
+        // validate that the encoders is either shareable or is a handler factory
+        for (ChannelHandler encoder : encoders) {
+            if (encoder instanceof ChannelHandlerFactory) {
+                continue;
+            }
+            if (ObjectHelper.getAnnotation(encoder, ChannelHandler.Sharable.class) != null) {
+                continue;
+            }
+            LOG.warn("The encoder {} is not @Shareable or an ChannelHandlerFactory instance. The encoder cannot safely be used.", encoder);
+        }
+
+        // validate that the decoders is either shareable or is a handler factory
+        for (ChannelHandler decoder : decoders) {
+            if (decoder instanceof ChannelHandlerFactory) {
+                continue;
+            }
+            if (ObjectHelper.getAnnotation(decoder, ChannelHandler.Sharable.class) != null) {
+                continue;
+            }
+            LOG.warn("The decoder {} is not @Shareable or an ChannelHandlerFactory instance. The decoder cannot safely be used.", decoder);
+        }
+        if (sslHandler != null) {
+            boolean factory = sslHandler instanceof ChannelHandlerFactory;
+            boolean shareable = ObjectHelper.getAnnotation(sslHandler, ChannelHandler.Sharable.class) != null;
+            if (!factory && !shareable) {
+                LOG.warn("The sslHandler {} is not @Shareable or an ChannelHandlerFactory instance. The sslHandler cannot safely be used.", sslHandler);
+            }
         }
     }
 
@@ -118,10 +145,10 @@ public class NettyConfiguration implements Cloneable {
         serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, null);
 
         // set custom encoders and decoders first
-        List<ChannelDownstreamHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelDownstreamHandler.class, null);
-        addToHandlersList(encoders, referencedEncoders, ChannelDownstreamHandler.class);
-        List<ChannelUpstreamHandler> referencedDecoders = component.resolveAndRemoveReferenceListParameter(parameters, "decoders", ChannelUpstreamHandler.class, null);
-        addToHandlersList(decoders, referencedDecoders, ChannelUpstreamHandler.class);
+        List<ChannelHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);
+        addToHandlersList(encoders, referencedEncoders, ChannelHandler.class);
+        List<ChannelHandler> referencedDecoders = component.resolveAndRemoveReferenceListParameter(parameters, "decoders", ChannelHandler.class, null);
+        addToHandlersList(decoders, referencedDecoders, ChannelHandler.class);
 
         // then set parameters with the help of the camel context type converters
         EndpointHelper.setReferenceProperties(component.getCamelContext(), this, parameters);
@@ -133,9 +160,10 @@ public class NettyConfiguration implements Cloneable {
                 // are we textline or object?
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
-                    encoders.add(new StringEncoder(charset));
-                    decoders.add(new DelimiterBasedFrameDecoder(decoderMaxLineLength, true, delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter()));
-                    decoders.add(new StringDecoder(charset));
+                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset));
+                    ChannelBuffer[] delimiters = delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter();
+                    decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(decoderMaxLineLength, delimiters));
+                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}", 
@@ -143,8 +171,8 @@ public class NettyConfiguration implements Cloneable {
                     }
                 } else {
                     // object serializable is then used
-                    encoders.add(new ObjectEncoder());
-                    decoders.add(new ObjectDecoder(ClassResolvers.weakCachingResolver(null)));
+                    encoders.add(ChannelHandlerFactories.newObjectEncoder());
+                    decoders.add(ChannelHandlerFactories.newObjectDecoder());
 
                     LOG.debug("Using object encoders and decoders");
                 }
@@ -291,40 +319,40 @@ public class NettyConfiguration implements Cloneable {
         this.sslHandler = sslHandler;
     }
 
-    public List<ChannelDownstreamHandler> getEncoders() {
-        return encoders;
-    }
-
-    public List<ChannelUpstreamHandler> getDecoders() {
+    public List<ChannelHandler> getDecoders() {
         return decoders;
     }
 
-    public ChannelDownstreamHandler getEncoder() {
+    public void setDecoders(List<ChannelHandler> decoders) {
+        this.decoders = decoders;
+    }
+
+    public List<ChannelHandler> getEncoders() {
+        return encoders;
+    }
+
+    public void setEncoders(List<ChannelHandler> encoders) {
+        this.encoders = encoders;
+    }
+
+    public ChannelHandler getEncoder() {
         return encoders.isEmpty() ? null : encoders.get(0);
     }
 
-    public void setEncoder(ChannelDownstreamHandler encoder) {
+    public void setEncoder(ChannelHandler encoder) {
         if (!encoders.contains(encoder)) {
             encoders.add(encoder);
         }
     }
 
-    public void setEncoders(List<ChannelDownstreamHandler> encoders) {
-        this.encoders = encoders;
-    }
-
-    public ChannelUpstreamHandler getDecoder() {
+    public ChannelHandler getDecoder() {
         return decoders.isEmpty() ? null : decoders.get(0);
     }
 
-    public void setDecoder(ChannelUpstreamHandler decoder) {
+    public void setDecoder(ChannelHandler decoder) {
         if (!decoders.contains(decoder)) {
             decoders.add(decoder);
         }
-    }
-
-    public void setDecoders(List<ChannelUpstreamHandler> decoders) {
-        this.decoders = decoders;
     }
 
     public long getSendBufferSize() {
@@ -451,17 +479,6 @@ public class NettyConfiguration implements Cloneable {
         return host + ":" + port;
     }
 
-    private <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
-        if (handlers != null) {
-            for (int x = 0; x < handlers.size(); x++) {
-                T handler = handlers.get(x);
-                if (handlerType.isInstance(handler)) {
-                    configured.add(handler);
-                }
-            }
-        }
-    }
-
     public void setClientPipelineFactory(ClientPipelineFactory clientPipelineFactory) {
         this.clientPipelineFactory = clientPipelineFactory;
     }
@@ -477,7 +494,7 @@ public class NettyConfiguration implements Cloneable {
     public ServerPipelineFactory getServerPipelineFactory() {
         return serverPipelineFactory;
     }
-    
+
     public int getWorkerCount() {
         return workerCount;
     }
@@ -492,5 +509,16 @@ public class NettyConfiguration implements Cloneable {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
+        if (handlers != null) {
+            for (int x = 0; x < handlers.size(); x++) {
+                T handler = handlers.get(x);
+                if (handlerType.isInstance(handler)) {
+                    configured.add(handler);
+                }
+            }
+        }
     }
 }
