@@ -114,6 +114,8 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def addOnCompletion(onCompletion: Synchronization) { exchange.addOnCompletion(onCompletion) }
   
+  def containsOnCompletion(onCompletion: Synchronization) = exchange.containsOnCompletion(onCompletion)
+
   def handoverCompletions(exchange : Exchange) { exchange.handoverCompletions(exchange) }
 
   def handoverCompletions = exchange.handoverCompletions

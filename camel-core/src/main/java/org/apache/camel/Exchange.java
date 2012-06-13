@@ -486,6 +486,15 @@ public interface Exchange {
     void addOnCompletion(Synchronization onCompletion);
 
     /**
+     * Checks if the passed {@link org.apache.camel.spi.Synchronization} instance is
+     * already contained on this exchange.
+     *
+     * @param onCompletion  the callback instance that is being checked for
+     * @return <tt>true</tt>, if callback instance is already contained on this exchange, else <tt>false</tt>
+     */
+    boolean containsOnCompletion(Synchronization onCompletion);
+
+    /**
      * Handover all the on completions from this exchange to the target exchange.
      *
      * @param target the target exchange

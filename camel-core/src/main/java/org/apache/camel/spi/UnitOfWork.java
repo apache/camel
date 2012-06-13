@@ -44,6 +44,15 @@ public interface UnitOfWork extends Service {
     void removeSynchronization(Synchronization synchronization);
 
     /**
+     * Checks if the passed synchronization hook is already part of this unit of work.
+     *
+     * @param synchronization the hook
+     * @return <tt>true</tt>, if the passed synchronization is part of this unit of work, else <tt>false</tt>
+     */
+    boolean containsSynchronization(Synchronization synchronization);
+
+    /**
+    /**
      * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
      * <p/>
      * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
