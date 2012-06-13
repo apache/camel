@@ -60,13 +60,13 @@ public class MQTTProducerTest extends MQTTBaseTest {
         thread.start();
 
         Producer producer = context.getEndpoint("direct:foo").createProducer();
-        for (int i = 0; i < numberOfMessages; i++){
+        for (int i = 0; i < numberOfMessages; i++) {
             Exchange exchange = producer.createExchange();
             exchange.getIn().setBody("test message " + i);
             producer.process(exchange);
         }
         latch.await(20, TimeUnit.SECONDS);
-        assertTrue("Messages not consumed = " + latch.getCount(),latch.getCount()==0);
+        assertTrue("Messages not consumed = " + latch.getCount(), latch.getCount() == 0);
     }
 
 
@@ -74,7 +74,7 @@ public class MQTTProducerTest extends MQTTBaseTest {
 
         return new RouteBuilder() {
             public void configure() {
-               from("direct:foo").to("mqtt:boo?publishTopicName=" + TEST_TOPIC);
+                from("direct:foo").to("mqtt:boo?publishTopicName=" + TEST_TOPIC);
             }
         };
     }

@@ -29,7 +29,7 @@ import org.junit.Test;
 public class MQTTConsumerTest extends MQTTBaseTest {
 
 
-       @Test
+    @Test
     public void testConsume() throws Exception {
 
         MQTT mqtt = new MQTT();

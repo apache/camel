@@ -37,7 +37,7 @@ public class MQTTConfiguration extends MQTT {
     private int connectWaitInSeconds = 10;
     private int disconnectWaitInSeconds = 5;
     private int sendWaitInSeconds = 5;
-    private boolean byDefaultRetain = false;
+    private boolean byDefaultRetain;
     private QoS qos = QoS.AT_LEAST_ONCE;
 
 
