@@ -27,26 +27,26 @@ import org.apache.camel.support.SynchronizationAdapter;
  */
 public class OnCompletionContainsTest extends ContextTestSupport {
 
-	class SimpleSynchronizationAdapter extends SynchronizationAdapter {
-		private String endPoint;
-		private String body;
+    class SimpleSynchronizationAdapter extends SynchronizationAdapter {
+        private String endPoint;
+        private String body;
 
-		SimpleSynchronizationAdapter(String endPoint, String body) {
-			super();
-			this.endPoint = endPoint;
-			this.body = body;
-		}
-		
-		@Override
-		public void onDone(Exchange exchange) {
-			template.sendBody(endPoint, body);
-		}
+        SimpleSynchronizationAdapter(String endPoint, String body) {
+            super();
+            this.endPoint = endPoint;
+            this.body = body;
+        }
 
-		@Override
-		public String toString() {
-			return body;
-		}
-	}
+        @Override
+        public void onDone(Exchange exchange) {
+            template.sendBody(endPoint, body);
+        }
+
+        @Override
+        public String toString() {
+            return body;
+        }
+    }
 
     public void testOnCompletionContainsTest() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("C", "B", "B", "A", "Hello World");
@@ -64,40 +64,41 @@ public class OnCompletionContainsTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().to("mock:sync");
 
-                from("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-							SynchronizationAdapter adapter = new SimpleSynchronizationAdapter("mock:sync", "A");
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        SynchronizationAdapter adapter = new SimpleSynchronizationAdapter("mock:sync", "A");
+                        exchange.addOnCompletion(adapter);
+
+                        // should not add the adapter again as we already have
+                        // it
+                        if (!exchange.containsOnCompletion(adapter)) {
                             exchange.addOnCompletion(adapter);
-
-							// should not add the adapter again as we already have it
-							if (!exchange.containsOnCompletion(adapter)) {
-								exchange.addOnCompletion(adapter);
-							}
-
-							adapter = new SimpleSynchronizationAdapter("mock:sync", "B");
-                            exchange.addOnCompletion(adapter);
-
-							// now add the B again as we want to test that this also work
-							if (exchange.containsOnCompletion(adapter)) {
-								exchange.addOnCompletion(adapter);
-							}
-
-                            // add a C that is no a SimpleSynchronizationAdapter class
-                            exchange.addOnCompletion(new SynchronizationAdapter() {
-                                @Override
-                                public void onDone(Exchange exchange) {
-                                    template.sendBody("mock:sync", "C");
-                                }
-
-                                @Override
-                                public String toString() {
-                                    return "C";
-                                }
-                            });
                         }
-                    })
-                    .to("mock:result");
+
+                        adapter = new SimpleSynchronizationAdapter("mock:sync", "B");
+                        exchange.addOnCompletion(adapter);
+
+                        // now add the B again as we want to test that this also
+                        // work
+                        if (exchange.containsOnCompletion(adapter)) {
+                            exchange.addOnCompletion(adapter);
+                        }
+
+                        // add a C that is no a SimpleSynchronizationAdapter
+                        // class
+                        exchange.addOnCompletion(new SynchronizationAdapter() {
+                            @Override
+                            public void onDone(Exchange exchange) {
+                                template.sendBody("mock:sync", "C");
+                            }
+
+                            @Override
+                            public String toString() {
+                                return "C";
+                            }
+                        });
+                    }
+                }).to("mock:result");
             }
         };
     }
