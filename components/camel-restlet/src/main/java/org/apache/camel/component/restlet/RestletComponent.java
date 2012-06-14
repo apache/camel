@@ -31,9 +31,11 @@ import org.restlet.Restlet;
 import org.restlet.Server;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Method;
+import org.restlet.data.Parameter;
 import org.restlet.data.Protocol;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.MapVerifier;
+import org.restlet.util.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +50,20 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     private final Map<String, Server> servers = new HashMap<String, Server>();
     private final Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
     private final Component component;
+
+    // options that can be set on the restlet server
+    private Boolean controllerDaemon;
+    private Integer controllerSleepTimeMs;
+    private Integer inboundBufferSize;
+    private Integer minThreads;
+    private Integer maxThreads;
+    private Integer maxConnectionsPerHost;
+    private Integer maxTotalConnections;
+    private Integer outboundBufferSize;
+    private Boolean persistingConnections;
+    private Boolean pipeliningConnections;
+    private Integer threadMaxIdleTimeMs;
+    private Boolean useForwardedForHeader;
 
     public RestletComponent() {
         this.component = new Component();
@@ -178,8 +194,50 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         synchronized (servers) {
             server = servers.get(key);
             if (server == null) {
-                server = component.getServers().add(Protocol.valueOf(endpoint.getProtocol()),
-                                                    endpoint.getPort());
+                server = component.getServers().add(Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+
+                // Add any Restlet server parameters that were included
+                Series<Parameter> params = server.getContext().getParameters();
+
+                if (getControllerDaemon() != null) {
+                    params.add("controllerDaemon", getControllerDaemon().toString());
+                }
+                if (getControllerSleepTimeMs() != null) {
+                    params.add("controllerSleepTimeMs", getControllerSleepTimeMs().toString());
+                }
+                if (getInboundBufferSize() != null) {
+                    params.add("inboundBufferSize", getInboundBufferSize().toString());
+                }
+                if (getMinThreads() != null) {
+                    params.add("minThreads", getMinThreads().toString());
+                }
+                if (getMaxThreads() != null) {
+                    params.add("maxThreads", getMaxThreads().toString());
+                }
+                if (getMaxConnectionsPerHost() != null) {
+                    params.add("maxConnectionsPerHost", getMaxConnectionsPerHost().toString());
+                }
+                if (getMaxTotalConnections() != null) {
+                    params.add("maxTotalConnections", getMaxTotalConnections().toString());
+                }
+                if (getOutboundBufferSize() != null) {
+                    params.add("outboundBufferSize", getOutboundBufferSize().toString());
+                }
+                if (getPersistingConnections() != null) {
+                    params.add("persistingConnections", getPersistingConnections().toString());
+                }
+                if (getPipeliningConnections() != null) {
+                    params.add("pipeliningConnections", getPipeliningConnections().toString());
+                }
+                if (getThreadMaxIdleTimeMs() != null) {
+                    params.add("threadMaxIdleTimeMs", getThreadMaxIdleTimeMs().toString());
+                }
+                if (getUseForwardedForHeader() != null) {
+                    params.add("useForwardedForHeader", getUseForwardedForHeader().toString());
+                }
+                LOG.debug("Setting parameters: {} to server: {}", params, server);
+                server.getContext().setParameters(params);
+
                 servers.put(key, server);
                 LOG.debug("Added server: {}", key);
                 server.start();
@@ -228,4 +286,100 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         }
     }
 
+
+    public Boolean getControllerDaemon() {
+        return controllerDaemon;
+    }
+
+    public void setControllerDaemon(Boolean controllerDaemon) {
+        this.controllerDaemon = controllerDaemon;
+    }
+
+    public Integer getControllerSleepTimeMs() {
+        return controllerSleepTimeMs;
+    }
+
+    public void setControllerSleepTimeMs(Integer controllerSleepTimeMs) {
+        this.controllerSleepTimeMs = controllerSleepTimeMs;
+    }
+
+    public Integer getInboundBufferSize() {
+        return inboundBufferSize;
+    }
+
+    public void setInboundBufferSize(Integer inboundBufferSize) {
+        this.inboundBufferSize = inboundBufferSize;
+    }
+
+    public Integer getMaxConnectionsPerHost() {
+        return maxConnectionsPerHost;
+    }
+
+    public void setMaxConnectionsPerHost(Integer maxConnectionsPerHost) {
+        this.maxConnectionsPerHost = maxConnectionsPerHost;
+    }
+
+    public Integer getMaxThreads() {
+        return maxThreads;
+    }
+
+    public void setMaxThreads(Integer maxThreads) {
+        this.maxThreads = maxThreads;
+    }
+
+    public Integer getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    public void setMaxTotalConnections(Integer maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
+    }
+
+    public Integer getMinThreads() {
+        return minThreads;
+    }
+
+    public void setMinThreads(Integer minThreads) {
+        this.minThreads = minThreads;
+    }
+
+    public Integer getOutboundBufferSize() {
+        return outboundBufferSize;
+    }
+
+    public void setOutboundBufferSize(Integer outboundBufferSize) {
+        this.outboundBufferSize = outboundBufferSize;
+    }
+
+    public Boolean getPersistingConnections() {
+        return persistingConnections;
+    }
+
+    public void setPersistingConnections(Boolean persistingConnections) {
+        this.persistingConnections = persistingConnections;
+    }
+
+    public Boolean getPipeliningConnections() {
+        return pipeliningConnections;
+    }
+
+    public void setPipeliningConnections(Boolean pipeliningConnections) {
+        this.pipeliningConnections = pipeliningConnections;
+    }
+
+    public Integer getThreadMaxIdleTimeMs() {
+        return threadMaxIdleTimeMs;
+    }
+
+    public void setThreadMaxIdleTimeMs(Integer threadMaxIdleTimeMs) {
+        this.threadMaxIdleTimeMs = threadMaxIdleTimeMs;
+    }
+
+    public Boolean getUseForwardedForHeader() {
+        return useForwardedForHeader;
+    }
+
+    public void setUseForwardedForHeader(Boolean useForwardedForHeader) {
+        this.useForwardedForHeader = useForwardedForHeader;
+    }
 }
