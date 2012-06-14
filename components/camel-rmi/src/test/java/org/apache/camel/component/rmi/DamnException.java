@@ -21,6 +21,8 @@ package org.apache.camel.component.rmi;
  */
 public class DamnException extends Exception {
 
+    private static final long serialVersionUID = 1L;
+
     public DamnException(String s) {
         super(s);
     }

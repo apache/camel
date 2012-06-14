@@ -52,12 +52,14 @@ public class PropertiesComponent extends DefaultComponent {
      * The default prefix token.
      * @deprecated Use {@link #DEFAULT_PREFIX_TOKEN} instead.
      */
+    @Deprecated
     public static final String PREFIX_TOKEN = DEFAULT_PREFIX_TOKEN;
     
     /**
      * The default suffix token.
      * @deprecated Use {@link #DEFAULT_SUFFIX_TOKEN} instead.
      */
+    @Deprecated
     public static final String SUFFIX_TOKEN = DEFAULT_SUFFIX_TOKEN;
 
     /**

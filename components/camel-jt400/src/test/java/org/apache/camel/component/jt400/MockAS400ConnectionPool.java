@@ -30,7 +30,6 @@ public class MockAS400ConnectionPool extends AS400ConnectionPool {
     private static final long serialVersionUID = -7473444280370756827L;
 
     public MockAS400ConnectionPool() {
-        super();
         setRunMaintenance(false);
         setThreadUsed(false);
     }

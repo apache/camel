@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.hbase;
 
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.junit.After;
@@ -39,7 +38,7 @@ public class HBaseSpringProducerTest extends HBaseProducerTest {
                 //Ignore if table exists
             }
             applicationContext = createApplicationContext();
-            context = (ModelCamelContext) SpringCamelContext.springCamelContext(applicationContext);
+            context = SpringCamelContext.springCamelContext(applicationContext);
         }
     }
 

@@ -28,11 +28,10 @@ import org.apache.camel.support.SynchronizationAdapter;
 public class OnCompletionContainsTest extends ContextTestSupport {
 
     class SimpleSynchronizationAdapter extends SynchronizationAdapter {
-        private String endPoint;
-        private String body;
+        private final String endPoint;
+        private final String body;
 
         SimpleSynchronizationAdapter(String endPoint, String body) {
-            super();
             this.endPoint = endPoint;
             this.body = body;
         }
@@ -69,8 +68,7 @@ public class OnCompletionContainsTest extends ContextTestSupport {
                         SynchronizationAdapter adapter = new SimpleSynchronizationAdapter("mock:sync", "A");
                         exchange.addOnCompletion(adapter);
 
-                        // should not add the adapter again as we already have
-                        // it
+                        // should not add the adapter again as we already have it
                         if (!exchange.containsOnCompletion(adapter)) {
                             exchange.addOnCompletion(adapter);
                         }
@@ -78,14 +76,12 @@ public class OnCompletionContainsTest extends ContextTestSupport {
                         adapter = new SimpleSynchronizationAdapter("mock:sync", "B");
                         exchange.addOnCompletion(adapter);
 
-                        // now add the B again as we want to test that this also
-                        // work
+                        // now add the B again as we want to test that this also work
                         if (exchange.containsOnCompletion(adapter)) {
                             exchange.addOnCompletion(adapter);
                         }
 
-                        // add a C that is no a SimpleSynchronizationAdapter
-                        // class
+                        // add a C that is no a SimpleSynchronizationAdapter class
                         exchange.addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(Exchange exchange) {
