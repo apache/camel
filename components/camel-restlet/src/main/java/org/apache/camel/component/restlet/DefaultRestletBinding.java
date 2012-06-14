@@ -20,12 +20,14 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
-
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StringSource;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
@@ -42,6 +44,7 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Preference;
 import org.restlet.data.Status;
+import org.restlet.engine.http.header.HeaderConstants;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.InputRepresentation;
 import org.slf4j.Logger;
@@ -155,7 +158,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         } else {
             request.setEntity(body, mediaType);
         }
-        
+
         MediaType acceptedMediaType = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.class);
         if (acceptedMediaType != null) {
             request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
@@ -163,7 +166,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
     }
 
-    public void populateRestletResponseFromExchange(Exchange exchange, Response response) {
+    public void populateRestletResponseFromExchange(Exchange exchange, Response response) throws Exception {
         Message out;
         if (exchange.isFailed()) {
             // 500 for internal server error which can be overridden by response code in header
@@ -201,13 +204,6 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             response.setStatus(Status.valueOf(responseCode));
         }
 
-        for (Map.Entry<String, Object> entry : out.getHeaders().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                response.getAttributes().put(entry.getKey(), entry.getValue());
-                LOG.debug("Populate Restlet response from exchange header: {} value: {}", entry.getKey(), entry.getValue());
-            }
-        }
-
         // set response body according to the message body
         Object body = out.getBody();
         if (body instanceof WrappedFile) {
@@ -236,6 +232,14 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (exchange.getProperty(Exchange.CHARSET_NAME) != null) {
             CharacterSet cs = CharacterSet.valueOf(exchange.getProperty(Exchange.CHARSET_NAME, String.class));
             response.getEntity().setCharacterSet(cs);
+        }
+
+        // set headers at the end, as the entity must be set first
+        for (Map.Entry<String, Object> entry : out.getHeaders().entrySet()) {
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                setResponseHeader(exchange, response, entry.getKey(), entry.getValue());
+                LOG.debug("Populate Restlet HTTP header in response from exchange header: {} value: {}", entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -270,6 +274,62 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void setResponseHeader(Exchange exchange, org.restlet.Message message, String header, Object value) throws NoTypeConversionAvailableException {
+        // put the header first
+        message.getAttributes().put(header, value);
+
+        // special for certain headers
+        if (message.getEntity() != null) {
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_EXPIRES)) {
+                if (value instanceof Calendar) {
+                    message.getEntity().setExpirationDate(((Calendar) value).getTime());
+                } else if (value instanceof Date) {
+                    message.getEntity().setExpirationDate((Date) value);
+                } else {
+                    Date date = exchange.getContext().getTypeConverter().mandatoryConvertTo(Date.class, value);
+                    message.getEntity().setExpirationDate(date);
+                }
+            }
+
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_LAST_MODIFIED)) {
+                if (value instanceof Calendar) {
+                    message.getEntity().setModificationDate(((Calendar) value).getTime());
+                } else if (value instanceof Date) {
+                    message.getEntity().setModificationDate((Date) value);
+                } else {
+                    Date date = exchange.getContext().getTypeConverter().mandatoryConvertTo(Date.class, value);
+                    message.getEntity().setModificationDate(date);
+                }
+            }
+
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_LENGTH)) {
+                if (value instanceof Long) {
+                    message.getEntity().setSize((Long) value);
+                } else if (value instanceof Integer) {
+                    message.getEntity().setSize((Integer) value);
+                } else {
+                    Long num = exchange.getContext().getTypeConverter().mandatoryConvertTo(Long.class, value);
+                    message.getEntity().setSize(num);
+                }
+            }
+
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_TYPE)) {
+                if (value instanceof MediaType) {
+                    message.getEntity().setMediaType((MediaType) value);
+                } else {
+                    String type = value.toString();
+                    MediaType media = MediaType.valueOf(type);
+                    if (media != null) {
+                        message.getEntity().setMediaType(media);
+                    } else {
+                        LOG.debug("Value {} cannot be converted as a MediaType. The value will be ignored.", value);
+                    }
+                }
+            }
+        }
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
