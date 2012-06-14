@@ -17,19 +17,24 @@
 package org.apache.camel.component.cxf.converter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.message.MessageContentsList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,26 +84,17 @@ public final class CxfConverter {
     }
 
     @Converter
-    public static String soapMessageToString(final SOAPMessage soapMessage) {
+    public static String soapMessageToString(final SOAPMessage soapMessage, Exchange exchange) throws SOAPException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            soapMessage.writeTo(baos);
-        } catch (Exception e) {
-            LOG.error("Get the exception when converting the SOAPMessage into String, the exception is " + e);
-        }
-        return baos.toString();
+        soapMessage.writeTo(baos);
+        return baos.toString(IOHelper.getCharsetName(exchange));
     }
     
     @Converter
-    public static InputStream soapMessageToInputStream(final SOAPMessage soapMessage, Exchange exchange) {
+    public static InputStream soapMessageToInputStream(final SOAPMessage soapMessage, Exchange exchange) throws SOAPException, IOException {
         CachedOutputStream cos = new CachedOutputStream(exchange);
-        InputStream in = null;
-        try {
-            soapMessage.writeTo(cos);
-            in = cos.getInputStream();
-        } catch (Exception e) {
-            LOG.error("Get the exception when converting the SOAPMessage into InputStream, the exception is " + e);
-        }
+        soapMessage.writeTo(cos);
+        InputStream in = cos.getInputStream();
         return in;
     }
     
