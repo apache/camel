@@ -31,8 +31,9 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
+
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
@@ -42,8 +43,6 @@ import org.apache.camel.util.ObjectHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * SCP remote file operations
@@ -106,7 +105,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
             try {
                 write(channel, file, exchange.getIn().getMandatoryBody(InputStream.class), cfg);
-            } catch (InvalidPayloadException e) {
+            } catch (CamelExchangeException e) {
                 throw new GenericFileOperationFailedException("Failed extract message body as InputStream", e);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException("Failed to write file " + file, e);
@@ -193,12 +192,20 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         try {
             final JSch jsch = new JSch();
             // get from configuration
-            if (isNotEmpty(config.getCiphers())) {
+            if (ObjectHelper.isNotEmpty(config.getCiphers())) {
                 LOG.debug("Using ciphers: {}", config.getCiphers());
                 Hashtable<String, String> ciphers = new Hashtable<String, String>();
                 ciphers.put("cipher.s2c", config.getCiphers());
                 ciphers.put("cipher.c2s", config.getCiphers());
                 JSch.setConfig(ciphers);
+            }
+            if (ObjectHelper.isNotEmpty(config.getPrivateKeyFile())) {
+                LOG.debug("Using private keyfile: {}", config.getPrivateKeyFile());
+                if (ObjectHelper.isNotEmpty(config.getPrivateKeyFilePassphrase())) {
+                    jsch.addIdentity(config.getPrivateKeyFile(), config.getPrivateKeyFilePassphrase());
+                } else {
+                    jsch.addIdentity(config.getPrivateKeyFile());
+                }
             }
 
             String knownHostsFile = config.getKnownHostsFile();

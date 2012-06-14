@@ -80,4 +80,18 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         // assertFalse("File should not have execute rights: " + file, file.canExecute());
         assertEquals("Bonjour Monde", context.getTypeConverter().convertTo(String.class, file));
     }
+
+    @Test
+    public void testScpProducePrivateKey() throws Exception {
+        Assume.assumeTrue(this.isSetupComplete());
+
+        String uri = getScpUri() + "?username=admin&privateKeyFile=src/test/resources/camel-key.priv&privateKeyFilePassphrase=password&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
+
+        File file = new File(getScpPath() + "/welt.txt").getAbsoluteFile();
+        assertTrue("File should exist: " + file, file.exists());
+        // Mina sshd we use for testing ignores file perms;
+        // assertFalse("File should not have execute rights: " + file, file.canExecute());
+        assertEquals("Hallo Welt", context.getTypeConverter().convertTo(String.class, file));
+    }
 }
