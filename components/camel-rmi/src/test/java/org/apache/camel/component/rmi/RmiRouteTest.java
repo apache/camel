@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,8 +35,13 @@ import org.junit.Test;
  */
 public class RmiRouteTest extends Assert {
 
+    private int port;
+
     protected int getPort() {
-        return 37541;
+        if (port == 0) {
+            port = AvailablePortFinder.getNextAvailable(37502);
+        }
+        return port;
     }
     
     @Test
@@ -73,11 +79,11 @@ public class RmiRouteTest extends Assert {
             // START SNIPPET: route
             // lets add simple route
             public void configure() {
-                from("direct:hello").to("rmi://localhost:37541/bye");
+                from("direct:hello").toF("rmi://localhost:%s/bye", getPort());
 
                 // When exposing an RMI endpoint, the interfaces it exposes must
                 // be configured.
-                RmiEndpoint bye = (RmiEndpoint)endpoint("rmi://localhost:37541/bye");
+                RmiEndpoint bye = (RmiEndpoint)endpoint("rmi://localhost:" + getPort() + "/bye");
                 bye.setRemoteInterfaces(ISay.class);
                 from(bye).to("bean:bye");
             }
