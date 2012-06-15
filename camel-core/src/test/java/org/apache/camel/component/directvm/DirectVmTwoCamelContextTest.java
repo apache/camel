@@ -25,6 +25,8 @@ public class DirectVmTwoCamelContextTest extends AbstractDirectVmTestSupport {
 
     public void testTwoCamelContext() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:result").expectedHeaderReceived("name1", context.getName());
+        getMockEndpoint("mock:result").expectedHeaderReceived("name2", context2.getName());
 
         String out = template2.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
@@ -39,6 +41,7 @@ public class DirectVmTwoCamelContextTest extends AbstractDirectVmTestSupport {
             public void configure() throws Exception {
                 from("direct-vm:foo")
                     .transform(constant("Bye World"))
+                    .setHeader("name1", simple("${camelId}"))
                     .log("Running on Camel ${camelId} on thread ${threadName} with message ${body}")
                     .to("mock:result");
             }
@@ -51,6 +54,7 @@ public class DirectVmTwoCamelContextTest extends AbstractDirectVmTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
+                    .setHeader("name2", simple("${camelId}"))
                     .log("Running on Camel ${camelId} on thread ${threadName} with message ${body}")
                     .to("direct-vm:foo");
             }

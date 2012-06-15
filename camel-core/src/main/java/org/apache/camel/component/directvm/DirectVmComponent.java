@@ -35,7 +35,7 @@ public class DirectVmComponent extends DefaultComponent {
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
     // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
-    private static final ConcurrentMap<String, DirectVmConsumer> consumers = new ConcurrentHashMap<String, DirectVmConsumer>();
+    private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -46,22 +46,22 @@ public class DirectVmComponent extends DefaultComponent {
 
     public DirectVmConsumer getConsumer(DirectVmEndpoint endpoint) {
         String key = getConsumerKey(endpoint.getEndpointUri());
-        return consumers.get(key);
+        return CONSUMERS.get(key);
     }
 
     public void addConsumer(DirectVmEndpoint endpoint, DirectVmConsumer consumer) {
         String key = getConsumerKey(endpoint.getEndpointUri());
-        DirectVmConsumer existing = consumers.putIfAbsent(key, consumer);
+        DirectVmConsumer existing = CONSUMERS.putIfAbsent(key, consumer);
         if (existing != null) {
             String contextId = existing.getEndpoint().getCamelContext().getName();
             throw new IllegalStateException("A consumer " + existing + " already exists from CamelContext: " + contextId + ". Multiple consumers not supported");
         }
-        consumers.put(key, consumer);
+        CONSUMERS.put(key, consumer);
     }
 
     public void removeConsumer(DirectVmEndpoint endpoint, DirectVmConsumer consumer) {
         String key = getConsumerKey(endpoint.getEndpointUri());
-        consumers.remove(key);
+        CONSUMERS.remove(key);
     }
 
     private static String getConsumerKey(String uri) {
@@ -82,7 +82,7 @@ public class DirectVmComponent extends DefaultComponent {
     protected void doStop() throws Exception {
         if (START_COUNTER.decrementAndGet() <= 0) {
             // clear queues when no more direct-vm components in use
-            consumers.clear();
+            CONSUMERS.clear();
         }
     }
 
