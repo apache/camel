@@ -56,7 +56,6 @@ public class DirectVmComponent extends DefaultComponent {
             String contextId = existing.getEndpoint().getCamelContext().getName();
             throw new IllegalStateException("A consumer " + existing + " already exists from CamelContext: " + contextId + ". Multiple consumers not supported");
         }
-        CONSUMERS.put(key, consumer);
     }
 
     public void removeConsumer(DirectVmEndpoint endpoint, DirectVmConsumer consumer) {
@@ -84,6 +83,7 @@ public class DirectVmComponent extends DefaultComponent {
             // clear queues when no more direct-vm components in use
             CONSUMERS.clear();
         }
+        super.doStop();
     }
 
 }
