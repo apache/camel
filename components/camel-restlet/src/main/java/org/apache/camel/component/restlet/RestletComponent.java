@@ -18,6 +18,7 @@ package org.apache.camel.component.restlet;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -188,14 +189,19 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             return result;
         }
     }
+    
+    protected Server createServer(RestletEndpoint endpoint) {
+        return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+    }
 
-    private void addServerIfNecessary(RestletEndpoint endpoint) throws Exception {
+    protected void addServerIfNecessary(RestletEndpoint endpoint) throws Exception {
         String key = buildKey(endpoint);
         Server server;
         synchronized (servers) {
             server = servers.get(key);
             if (server == null) {
-                server = component.getServers().add(Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+                server = createServer(endpoint);
+                component.getServers().add(server);
 
                 // Add any Restlet server parameters that were included
                 Series<Parameter> params = server.getContext().getParameters();
@@ -393,4 +399,5 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     public void setUseForwardedForHeader(Boolean useForwardedForHeader) {
         this.useForwardedForHeader = useForwardedForHeader;
     }
+
 }
