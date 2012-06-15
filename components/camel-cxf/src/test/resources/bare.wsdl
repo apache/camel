@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions name="BareSoapServiceImplService" targetNamespace="http://cxf.component.camel.apache.org/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://cxf.component.camel.apache.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:message name="doSomething">
+  </wsdl:message>
+  <wsdl:message name="doSomethingResponse">
+  </wsdl:message>
+  <wsdl:portType name="BareSoapService">
+    <wsdl:operation name="doSomething">
+      <wsdl:input message="tns:doSomething" name="doSomething">
+      </wsdl:input>
+      <wsdl:output message="tns:doSomethingResponse" name="doSomethingResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BareSoapServiceImplServiceSoapBinding" type="tns:BareSoapService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="doSomething">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="doSomething">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="doSomethingResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BareSoapServiceImplService">
+    <wsdl:port binding="tns:BareSoapServiceImplServiceSoapBinding" name="BareSoapServiceImplPort">
+       <!-- <soap:address location="http://localhost:10000/original/Service"/> -->
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
