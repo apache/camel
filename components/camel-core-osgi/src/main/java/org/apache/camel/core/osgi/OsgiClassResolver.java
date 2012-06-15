@@ -69,7 +69,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
 
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        return bundleContext.getBundle().getEntry(uri);
+        return bundleContext.getBundle().getResource(uri);
     }
 
     protected Class<?> doLoadClass(String name, Bundle loader) {
