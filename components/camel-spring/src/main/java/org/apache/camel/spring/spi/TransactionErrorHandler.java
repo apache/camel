@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.spi;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -56,15 +58,15 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param exceptionPolicyStrategy strategy for onException handling
      * @param transactionTemplate     the transaction template
      * @param retryWhile              retry while
-     * @param executorServiceRef      reference to a {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
+     * @param executorService         the {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
      * @param rollbackLoggingLevel    logging level to use for logging transaction rollback occurred
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, 
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
-            TransactionTemplate transactionTemplate, Predicate retryWhile, String executorServiceRef,
+            TransactionTemplate transactionTemplate, Predicate retryWhile, ScheduledExecutorService executorService,
             LoggingLevel rollbackLoggingLevel) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, retryWhile, executorServiceRef);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, retryWhile, executorService);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
