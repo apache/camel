@@ -103,6 +103,7 @@ public class QuickfixjEngineTest {
         settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, TransportType.VM_PIPE.toString());
         settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, TransportType.VM_PIPE.toString());
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
+        settings.setBool(QuickfixjEngine.SETTING_USE_JMX, false);
         TestSupport.setSessionID(settings, sessionID);
     }
 
@@ -589,7 +590,16 @@ public class QuickfixjEngineTest {
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.quickfixj:*"), null);
-        assertTrue("QFJ mbean should not not registered", names.isEmpty());
+
+        // Try to find the root cause of the failed tests under jdk7 as from time to time the returned Set is not empty!
+        if (!names.isEmpty()) {
+            System.out.println("The JMX objects found for the name 'org.quickfixj:*':");
+            for (ObjectName name : names) {
+                System.out.println("ObjectName => '" + name + "'");
+            }
+        }
+
+        assertTrue("QFJ mbean should not have been registered", names.isEmpty());
     }
 
     private void writeSettings() throws IOException {
