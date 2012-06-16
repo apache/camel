@@ -33,6 +33,19 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class SedaRouteTest extends TestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        // make SEDA testing faster
+        System.setProperty("CamelSedaPollTimeout", "10");
+        super.setUp();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        System.clearProperty("CamelSedaPollTimeout");
+        super.tearDown();
+    }
+
     public void testSedaQueue() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
