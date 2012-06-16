@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -765,6 +766,12 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param errorHandlerBuilder the builder
      */
     void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder);
+
+    /**
+     * Gets the default shared thread pool for error handlers which
+     * leverages this for asynchronous redelivery tasks.
+     */
+    ScheduledExecutorService getErrorHandlerExecutorService();
 
     /**
      * Sets the data formats that can be referenced in the routes.
