@@ -52,8 +52,8 @@ public final class DirectVmProcessor extends DelegateProcessor {
      * @return the exchange to process by this consumer.
      */
     protected Exchange prepareExchange(Exchange exchange) {
-        // send a new copied exchange with new camel context
-        Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext());
+        // send a new copied exchange with new camel context (do not handover completions)
+        Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
         // set the from endpoint
         newExchange.setFromEndpoint(endpoint);
         return newExchange;

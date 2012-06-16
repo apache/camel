@@ -784,19 +784,32 @@ public final class ExchangeHelper {
      * @return a copy with the given camel context
      */
     public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context) {
+        return copyExchangeAndSetCamelContext(exchange, context, true);
+    }
+
+    /**
+     * Copies the exchange but the copy will be tied to the given context
+     *
+     * @param exchange  the source exchange
+     * @param context   the camel context
+     * @param handover  whether to handover on completions from the source to the copy
+     * @return a copy with the given camel context
+     */
+    public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context, boolean handover) {
         DefaultExchange answer = new DefaultExchange(context, exchange.getPattern());
         if (exchange.hasProperties()) {
             answer.setProperties(safeCopy(exchange.getProperties()));
         }
-        // Need to hand over the completion for async invocation
-        exchange.handoverCompletions(answer);
+        if (handover) {
+            // Need to hand over the completion for async invocation
+            exchange.handoverCompletions(answer);
+        }
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {
             answer.setOut(exchange.getOut().copy());
         }
         answer.setException(exchange.getException());
         return answer;
-
     }
 
     private static Map<String, Object> safeCopy(Map<String, Object> properties) {

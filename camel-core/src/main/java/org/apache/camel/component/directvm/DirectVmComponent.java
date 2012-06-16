@@ -33,7 +33,7 @@ public class DirectVmComponent extends DefaultComponent {
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
-    // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
+    // later in case the DirectVmEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
 
