@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -109,6 +110,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
@@ -170,6 +172,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Boolean useBreadcrumb = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
+    private ScheduledExecutorService errorHandlerExecutorService;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
     private Map<String, String> properties = new HashMap<String, String>();
@@ -1211,6 +1214,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    public ScheduledExecutorService getErrorHandlerExecutorService() {
+        return errorHandlerExecutorService;
+    }
+
     public void setProducerServicePool(ServicePool<Endpoint, Producer> producerServicePool) {
         this.producerServicePool = producerServicePool;
     }
@@ -1455,6 +1462,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         addService(packageScanClassResolver);
 
         startServices(components.values());
+
+        // setup default thread pool for error handler
+        if (errorHandlerExecutorService == null || errorHandlerExecutorService.isShutdown()) {
+            errorHandlerExecutorService = getExecutorServiceStrategy().newScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
+        }
 
         // start the route definitions before the routes is started
         startRouteDefinitions(routeDefinitions);

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.TestSupport;
@@ -50,33 +53,12 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
 
         context.stop();
 
-        assertEquals(12, dummy1.getEvents().size());
-        assertEquals(12, dummy2.getEvents().size());
+        List<String> expectedEvents = Arrays.asList("onContextStart", "onServiceAdd", "onServiceAdd", "onServiceAdd",
+                "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onThreadPoolAdd", "onComponentAdd", "onEndpointAdd",
+                "onComponentRemove", "onContextStop");
 
-        assertEquals("onContextStart", dummy1.getEvents().get(0));
-        assertEquals("onContextStart", dummy2.getEvents().get(0));
-        assertEquals("onServiceAdd", dummy1.getEvents().get(1));
-        assertEquals("onServiceAdd", dummy2.getEvents().get(1));
-        assertEquals("onServiceAdd", dummy1.getEvents().get(2));
-        assertEquals("onServiceAdd", dummy2.getEvents().get(2));
-        assertEquals("onServiceAdd", dummy1.getEvents().get(3));
-        assertEquals("onServiceAdd", dummy2.getEvents().get(3));
-        assertEquals("onServiceAdd", dummy1.getEvents().get(4));
-        assertEquals("onServiceAdd", dummy2.getEvents().get(4));
-        assertEquals("onServiceAdd", dummy1.getEvents().get(5));
-        assertEquals("onServiceAdd", dummy2.getEvents().get(5));
-        assertEquals("onServiceAdd", dummy1.getEvents().get(6));
-        assertEquals("onServiceAdd", dummy2.getEvents().get(6));
-        assertEquals("onServiceAdd", dummy1.getEvents().get(7));
-        assertEquals("onServiceAdd", dummy2.getEvents().get(7));
-        assertEquals("onComponentAdd", dummy1.getEvents().get(8));
-        assertEquals("onComponentAdd", dummy2.getEvents().get(8));
-        assertEquals("onEndpointAdd", dummy1.getEvents().get(9));
-        assertEquals("onEndpointAdd", dummy2.getEvents().get(9));
-        assertEquals("onComponentRemove", dummy1.getEvents().get(10));
-        assertEquals("onComponentRemove", dummy2.getEvents().get(10));
-        assertEquals("onContextStop", dummy1.getEvents().get(11));
-        assertEquals("onContextStop", dummy2.getEvents().get(11));
+        assertEquals(expectedEvents, dummy1.getEvents());
+        assertEquals(expectedEvents, dummy2.getEvents());
     }
 
 }

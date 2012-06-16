@@ -51,8 +51,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
 
-    private static ScheduledExecutorService executorService;
-    protected final String executorServiceRef;
+    protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
     protected final Processor deadLetter;
     protected final String deadLetterUri;
@@ -175,7 +174,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
-            String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile, String executorServiceRef) {
+            String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile, ScheduledExecutorService executorService) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
@@ -190,7 +189,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.deadLetterUri = deadLetterUri;
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
         this.retryWhilePolicy = retryWhile;
-        this.executorServiceRef = executorServiceRef;
+        this.executorService = executorService;
     }
 
     public boolean supportTransacted() {
@@ -586,7 +585,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // clear rollback flags
         exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
 
-        // TODO: We may want to store these as state on RedelieryData so we keep them in case end user messes with Exchange
+        // TODO: We may want to store these as state on RedeliveryData so we keep them in case end user messes with Exchange
         // and then put these on the exchange when doing a redelivery / fault processor
 
         // preserve these headers
@@ -1020,17 +1019,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startServices(output, outputAsync, deadLetter);
-        // use a shared scheduler
-        if (executorService == null || executorService.isShutdown()) {
-            // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
-            if (executorServiceRef != null) {
-                executorService = camelContext.getExecutorServiceStrategy().lookupScheduled(this, "ErrorHandlerRedeliveryTask", executorServiceRef);
-                if (executorService == null) {
-                    throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-                }
-            } else {
-                executorService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
-            }
+
+        if (executorService == null) {
+            // use default shared executor service
+            executorService = camelContext.getErrorHandlerExecutorService();
         }
 
         // determine if redeliver is enabled or not
