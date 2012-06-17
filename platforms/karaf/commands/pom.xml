@@ -58,6 +58,13 @@
       <artifactId>org.apache.karaf.util</artifactId>
       <version>${karaf-version}</version>
     </dependency>
+    
+    <!-- Test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+     </dependency>
 
   </dependencies>
 
