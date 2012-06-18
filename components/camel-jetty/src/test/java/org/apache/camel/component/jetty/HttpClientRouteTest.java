@@ -64,9 +64,6 @@ public class HttpClientRouteTest extends BaseJettyTest {
         log.info("Headers: " + headers);
         
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
-        
-        // should get the Content-Length
-        assertNotNull("Should get the content-length", headers.get("Content-Length"));
     }
     
     @Test
