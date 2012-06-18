@@ -490,38 +490,13 @@ public class WebsocketComponent extends DefaultComponent {
         }
     }
 
-    private SslConnector getSslSocketConnector(SSLContextParameters sslContextParameters) {
+    private SslConnector getSslSocketConnector(SSLContextParameters sslContextParameters) throws Exception {
         SslSelectChannelConnector sslSocketConnector = null;
         if (sslContextParameters != null) {
             SslContextFactory sslContextFactory = new WebSocketComponentSslContextFactory();
-            try {
-                sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
-
-                if (sslContextParameters.getCipherSuites() != null) {
-                    String[] ciphers = (String[]) sslContextParameters.getCipherSuites().getCipherSuite().toArray();
-                    sslContextFactory.setIncludeCipherSuites(ciphers);
-                } else {
-                    // Define Cipher suites
-                    String[] ciphers = {"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA", "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA", "Unknown 0x0:0x88", "Unknown 0x0:0x87"
-                            , "TLS_DHE_RSA_WITH_AES_256_CBC_SHA", "TLS_DHE_DSS_WITH_AES_256_CBC_SHA", "TLS_ECDH_RSA_WITH_AES_256_CBC_SHA"
-                            , "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA", "Unknown 0x0:0x84", "TLS_RSA_WITH_AES_256_CBC_SHA", "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA"
-                            , "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA", "TLS_ECDHE_RSA_WITH_RC4_128_SHA", "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
-                            , "Unknown 0x0:0x45", "Unknown 0x0:0x44", "SSL_DHE_DSS_WITH_RC4_128_SHA", "TLS_DHE_RSA_WITH_AES_128_CBC_SHA"
-                            , "TLS_DHE_DSS_WITH_AES_128_CBC_SHA", "TLS_ECDH_RSA_WITH_RC4_128_SHA", "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA"
-                            , "TLS_ECDH_ECDSA_WITH_RC4_128_SHA", "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA", "Unknown 0x0:0x96", "Unknown 0x0:0x41"
-                            , "SSL_RSA_WITH_RC4_128_SHA", "SSL_RSA_WITH_RC4_128_MD5", "TLS_RSA_WITH_AES_128_CBC_SHA", "TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA"
-                            , "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA", "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA", "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA"
-                            , "TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA", "TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA", "SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA"
-                            , "SSL_RSA_WITH_3DES_EDE_CBC_SHA"};
-                    sslContextFactory.setIncludeCipherSuites(ciphers);
-                }
-
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error initiating SSLContext.", e);
-            }
+            sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
             sslSocketConnector = new SslSelectChannelConnector(sslContextFactory);
         } else {
-
             sslSocketConnector = new SslSelectChannelConnector();
             // with default null values, jetty ssl system properties
             // and console will be read by jetty implementation
@@ -532,7 +507,6 @@ public class WebsocketComponent extends DefaultComponent {
             }
 
         }
-
         return sslSocketConnector;
     }
 
