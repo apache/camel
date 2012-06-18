@@ -313,6 +313,11 @@
     <feature version='${project.version}'>camel-ftp</feature>
     <bundle>mvn:org.apache.camel/camel-jsch/${project.version}</bundle>
   </feature>
+  <feature name='camel-guava-eventbus' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-guava-eventbus/${project.version}</bundle>
+  </feature>
   <feature name='camel-guice' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guice/${guice-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${gernimo-annotation-spec-version}</bundle>
