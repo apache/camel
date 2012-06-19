@@ -17,7 +17,6 @@
 package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.EventBus;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
@@ -26,10 +25,10 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
     private final EventBus eventBus;
     private final CamelEventHandler eventHandler;
 
-    public GuavaEventBusConsumer(Endpoint endpoint, Processor processor, EventBus eventBus, Class<?> eventClass) {
+    public GuavaEventBusConsumer(GuavaEventBusEndpoint endpoint, Processor processor, EventBus eventBus, Class<?> eventClass) {
         super(endpoint, processor);
         this.eventBus = eventBus;
-        this.eventHandler = new CamelEventHandler((GuavaEventBusEndpoint)endpoint, processor, eventClass);
+        this.eventHandler = new CamelEventHandler(endpoint, processor, eventClass);
     }
 
     @Override

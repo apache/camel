@@ -17,7 +17,11 @@
 package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.Subscribe;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +34,15 @@ public class CamelEventHandler {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelEventHandler.class);
     private final GuavaEventBusEndpoint eventBusEndpoint;
-    private final Processor consumerProcessor;
+    private final AsyncProcessor processor;
     private final Class<?> eventClass;
 
-    public CamelEventHandler(GuavaEventBusEndpoint eventBusEndpoint, Processor consumerProcessor, Class<?> eventClass) {
+    public CamelEventHandler(GuavaEventBusEndpoint eventBusEndpoint, Processor processor, Class<?> eventClass) {
         ObjectHelper.notNull(eventBusEndpoint, "eventBusEndpoint");
-        ObjectHelper.notNull(consumerProcessor, "consumerProcessor");
+        ObjectHelper.notNull(processor, "processor");
 
         this.eventBusEndpoint = eventBusEndpoint;
-        this.consumerProcessor = consumerProcessor;
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.eventClass = eventClass;
     }
 
@@ -51,8 +55,15 @@ public class CamelEventHandler {
     public void eventReceived(Object event) throws Exception {
         LOG.trace("Received event: {}");
         if (eventClass == null || eventClass.isAssignableFrom(event.getClass())) {
+            final Exchange exchange = eventBusEndpoint.createExchange(event);
             LOG.debug("Processing event: {}", event);
-            consumerProcessor.process(eventBusEndpoint.createExchange(event));
+            // use async processor to support async routing engine
+            processor.process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    // noop
+                }
+            });
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Cannot process event: {} as its class type: {} is not assignable with: {}",
