@@ -1259,14 +1259,7 @@
         <version>${guiceyfruit-version}</version>
       </dependency>
 
-      <!-- optional guava dependencies -->
-      <dependency>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-          <version>${google-guava-version}</version>
-      </dependency>
-
-      <!-- optional castor dependencies -->
+       <!-- optional castor dependencies -->
       <dependency>
         <groupId>org.apache.servicemix.bundles</groupId>
         <artifactId>org.apache.servicemix.bundles.castor</artifactId>
