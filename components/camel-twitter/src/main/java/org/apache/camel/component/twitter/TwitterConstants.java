@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.twitter;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.component.twitter.data.EndpointType;
-import twitter4j.Twitter;
+public final class TwitterConstants {
 
-public interface TwitterEndpoint extends Endpoint {
+    public static final String TWITTER_SEARCH_QUERY = "CamelTwitterSearchQuery";
 
-    Twitter getTwitter();
+    private TwitterConstants() {
+        // utility
+    }
 
-    TwitterConfiguration getProperties();
-
-    EndpointType getEndpointType();
 }

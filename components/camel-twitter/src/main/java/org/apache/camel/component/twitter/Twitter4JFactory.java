@@ -33,6 +33,7 @@ import org.apache.camel.component.twitter.data.StreamingType;
 import org.apache.camel.component.twitter.data.TimelineType;
 import org.apache.camel.component.twitter.data.TrendsType;
 import org.apache.camel.component.twitter.producer.DirectMessageProducer;
+import org.apache.camel.component.twitter.producer.SearchProducer;
 import org.apache.camel.component.twitter.producer.UserProducer;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
@@ -66,13 +67,12 @@ import org.slf4j.LoggerFactory;
 public final class Twitter4JFactory {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(Twitter4JFactory.class);
-    
+
     private Twitter4JFactory() {
         // helper class
     }
 
-    public static Twitter4JConsumer getConsumer(TwitterEndpoint te, String uri)
-        throws IllegalArgumentException {
+    public static Twitter4JConsumer getConsumer(TwitterEndpoint te, String uri) throws IllegalArgumentException {
         String[] uriSplit = splitUri(uri);
 
         if (uriSplit.length > 0) {
@@ -80,8 +80,9 @@ public final class Twitter4JFactory {
             case DIRECTMESSAGE:
                 return new DirectMessageConsumer(te);
             case SEARCH:
-                if (te.getProperties().getKeywords() == null
-                    || te.getProperties().getKeywords().trim().isEmpty()) {
+                boolean hasKeywords = te.getProperties().getKeywords() == null
+                        || te.getProperties().getKeywords().trim().isEmpty();
+                if (hasKeywords) {
                     throw new IllegalArgumentException("Type set to SEARCH but no keywords were provided.");
                 } else {
                     return new SearchConsumer(te);
@@ -108,8 +109,7 @@ public final class Twitter4JFactory {
                     case RETWEETSOFME:
                         return new RetweetsConsumer(te);
                     case USER:
-                        if (te.getProperties().getUser() == null
-                            || te.getProperties().getUser().trim().isEmpty()) {
+                        if (te.getProperties().getUser() == null || te.getProperties().getUser().trim().isEmpty()) {
                             throw new IllegalArgumentException("Fetch type set to USER TIMELINE but no user was set.");
                         } else {
                             return new UserConsumer(te);
@@ -155,7 +155,8 @@ public final class Twitter4JFactory {
             switch (ConsumerType.fromUri(uriSplit[0])) {
             case DIRECTMESSAGE:
                 if (te.getProperties().getUser() == null || te.getProperties().getUser().trim().isEmpty()) {
-                    throw new IllegalArgumentException("Producer type set to DIRECT MESSAGE but no recipient user was set.");
+                    throw new IllegalArgumentException(
+                            "Producer type set to DIRECT MESSAGE but no recipient user was set.");
                 } else {
                     return new DirectMessageProducer(te);
                 }
@@ -169,14 +170,16 @@ public final class Twitter4JFactory {
                     }
                 }
                 break;
+            case SEARCH:
+                return new SearchProducer(te);
             default:
                 break;
             }
-            
+
         }
 
         throw new IllegalArgumentException("Cannot create any producer with uri " + uri
-                                           + ". A producer type was not provided (or an incorrect pairing was used).");
+                + ". A producer type was not provided (or an incorrect pairing was used).");
     }
 
     private static String[] splitUri(String uri) {

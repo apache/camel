@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import twitter4j.StatusUpdate;
 
 /**
@@ -29,7 +27,6 @@ import twitter4j.StatusUpdate;
  */
 public class UserProducer extends DefaultProducer implements Processor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(UserProducer.class);
     private TwitterEndpoint te;
 
     public UserProducer(TwitterEndpoint te) {
@@ -50,16 +47,16 @@ public class UserProducer extends DefaultProducer implements Processor {
 
     private void updateStatus(StatusUpdate status) throws Exception {
         te.getTwitter().updateStatus(status);
-        LOG.debug("Updated status: {}", status);
+        log.debug("Updated status: {}", status);
     }
 
     private void updateStatus(String status) throws Exception {
         if (status.length() > 160) {
-            LOG.warn("Message is longer than 160 characters. Message will be truncated!");
+            log.warn("Message is longer than 160 characters. Message will be truncated!");
             status = status.substring(0, 160);
         }
 
         te.getTwitter().updateStatus(status);
-        LOG.debug("Updated status: {}", status);
+        log.debug("Updated status: {}", status);
     }
 }

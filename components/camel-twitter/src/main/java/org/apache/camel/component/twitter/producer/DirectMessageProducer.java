@@ -21,8 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Produces text as a direct message.
@@ -30,7 +28,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DirectMessageProducer extends DefaultProducer implements Processor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DirectMessageProducer.class);
     private TwitterEndpoint te;
 
     public DirectMessageProducer(TwitterEndpoint te) {
@@ -46,7 +43,7 @@ public class DirectMessageProducer extends DefaultProducer implements Processor 
         if (toUsername.isEmpty()) {
             throw new CamelExchangeException("Username not configured on TwitterEndpoint", exchange);
         } else {
-            LOG.debug("Sending to: {} message: {}", toUsername, text);
+            log.debug("Sending to: {} message: {}", toUsername, text);
             te.getTwitter().sendDirectMessage(toUsername, text);
         }
     }

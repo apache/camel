@@ -35,6 +35,7 @@ public class TwitterConfiguration {
     private String type;
     private String locations;
     private String userIds;
+    private boolean filterOld = true;
     private Twitter twitter;
     private TwitterStream twitterStream;
 
@@ -132,6 +133,14 @@ public class TwitterConfiguration {
 
     public void setUserIds(String userIds) {
         this.userIds = userIds;
+    }
+
+    public boolean isFilterOld() {
+        return filterOld;
+    }
+    
+    public void setFilterOld(boolean filterOld) {
+        this.filterOld = filterOld;
     }
 
     public Twitter getTwitter() {

@@ -22,6 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerEvent;
+import org.apache.camel.component.twitter.data.EndpointType;
 
 import twitter4j.Twitter;
 
@@ -57,5 +58,10 @@ public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpo
 
     public TwitterConfiguration getProperties() {
         return properties;
+    }
+
+    @Override
+    public EndpointType getEndpointType() {
+        return EndpointType.EVENT;
     }
 }
