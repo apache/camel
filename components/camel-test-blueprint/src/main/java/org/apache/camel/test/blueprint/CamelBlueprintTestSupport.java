@@ -39,7 +39,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     public void setUp() throws Exception {
         String symbolicName = getClass().getSimpleName();
         this.bundleContext = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
-                getBundleFilter(), getBundleVersion(), true);
+                true, getBundleFilter(), getBundleVersion());
 
         // must register override properties early in OSGi containers
         Properties extra = useOverridePropertiesWithPropertiesComponent();
