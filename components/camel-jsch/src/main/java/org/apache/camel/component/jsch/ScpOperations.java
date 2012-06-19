@@ -201,11 +201,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             }
             if (ObjectHelper.isNotEmpty(config.getPrivateKeyFile())) {
                 LOG.debug("Using private keyfile: {}", config.getPrivateKeyFile());
-                if (ObjectHelper.isNotEmpty(config.getPrivateKeyFilePassphrase())) {
-                    jsch.addIdentity(config.getPrivateKeyFile(), config.getPrivateKeyFilePassphrase());
-                } else {
-                    jsch.addIdentity(config.getPrivateKeyFile());
-                }
+                String pkfp = config.getPrivateKeyFilePassphrase();
+                jsch.addIdentity(config.getPrivateKeyFile(), ObjectHelper.isNotEmpty(pkfp) ? pkfp : null);
             }
 
             String knownHostsFile = config.getKnownHostsFile();

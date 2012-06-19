@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.jsch;
 
-import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.component.file.remote.RemoteFileProducer;
 
 public class ScpProducer extends RemoteFileProducer<ScpFile> {
 
-    protected ScpProducer(RemoteFileEndpoint<ScpFile> endpoint, RemoteFileOperations<ScpFile> operations) {
+    protected ScpProducer(ScpEndpoint endpoint, RemoteFileOperations<ScpFile> operations) {
         super(endpoint, operations);
     }
 }
