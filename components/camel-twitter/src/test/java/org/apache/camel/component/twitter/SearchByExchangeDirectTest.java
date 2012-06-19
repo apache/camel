@@ -55,7 +55,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
 
     @Test
     public void testSearchTimelineWithDynamicQuery() throws Exception {
-        templateHeader.sendBodyAndHeader(null, TwitterConstants.TWITTER_SEARCH_QUERY, "java");
+        templateHeader.sendBodyAndHeader(null, TwitterConstants.TWITTER_KEYWORDS, "java");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -68,7 +68,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
 
     @Test
     public void testDoubleSearchKeepingOld() throws Exception {
-        templateDouble.sendBodyAndHeader(null, TwitterConstants.TWITTER_SEARCH_QUERY, "java");
+        templateDouble.sendBodyAndHeader(null, TwitterConstants.TWITTER_KEYWORDS, "java");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -81,7 +81,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
         // calls the same query again, expecting to receive the same amount of
         // tweets, because we told this route to not filter old(consumed) tweets
         int total = mock.getReceivedCounter();
-        templateDouble.sendBodyAndHeader(null, TwitterConstants.TWITTER_SEARCH_QUERY, "java");
+        templateDouble.sendBodyAndHeader(null, TwitterConstants.TWITTER_KEYWORDS, "java");
 
         Assert.assertEquals(total, mock.getReceivedCounter());
     }

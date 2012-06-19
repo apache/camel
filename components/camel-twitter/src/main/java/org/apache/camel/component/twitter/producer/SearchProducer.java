@@ -41,7 +41,7 @@ public class SearchProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         // keywords from header take precedence
-        String keywords = exchange.getIn().getHeader(TwitterConstants.TWITTER_SEARCH_QUERY, String.class);
+        String keywords = exchange.getIn().getHeader(TwitterConstants.TWITTER_KEYWORDS, String.class);
         if (keywords == null) {
             keywords = twitterEndpoint.getProperties().getKeywords();
         }

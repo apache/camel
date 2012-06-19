@@ -18,7 +18,7 @@ package org.apache.camel.component.twitter;
 
 public final class TwitterConstants {
 
-    public static final String TWITTER_SEARCH_QUERY = "CamelTwitterSearchQuery";
+    public static final String TWITTER_KEYWORDS = "CamelTwitterKeywords";
 
     private TwitterConstants() {
         // utility
