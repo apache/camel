@@ -298,22 +298,22 @@
     </dependency>
     
     <!-- for http component tests -->
-  	<dependency>
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${httpclient4-version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
-  	</dependency>
+    </dependency>
   	
-  	<!-- for validator tests -->
-  	<dependency>
+    <!-- for validator tests -->
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-validator-test-resources</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0</version>
       <scope>system</scope>
       <systemPath>${basedir}/src/test/lib/camel-validator-test-resources.jar</systemPath>
-     </dependency>
+    </dependency>
 
     <!-- atomikos XA TX manager -->
     <dependency>
