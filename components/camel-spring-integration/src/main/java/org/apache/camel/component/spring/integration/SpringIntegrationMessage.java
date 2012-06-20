@@ -46,6 +46,11 @@ public class SpringIntegrationMessage extends DefaultMessage {
 
     @Override
     public void copyFrom(org.apache.camel.Message that) {
+        if (that == this) {
+            // the same instance so do not need to copy
+            return;
+        }
+
         setMessageId(that.getMessageId());
         setBody(that.getBody());
         getHeaders().putAll(that.getHeaders());
