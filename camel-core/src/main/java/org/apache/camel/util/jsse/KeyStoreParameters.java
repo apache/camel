@@ -21,6 +21,9 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.Security;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +149,7 @@ public class KeyStoreParameters extends JsseParameters {
      *             resource to an input stream
      */
     public KeyStore createKeyStore() throws GeneralSecurityException, IOException {
-        LOG.debug("Creating KeyStore instance from KeyStoreParameters: {}", this);
+        LOG.trace("Creating KeyStore instance from KeyStoreParameters [{}].", this);
 
         String ksType = this.parsePropertyValue(this.type);
         if (ksType == null) {
@@ -164,14 +167,26 @@ public class KeyStoreParameters extends JsseParameters {
         } else {
             ks = KeyStore.getInstance(ksType, this.parsePropertyValue(this.provider));
         }
-
+        
         if (this.resource == null) {
             ks.load(null, ksPassword);
         } else {
             InputStream is = this.resolveResource(this.parsePropertyValue(this.resource));
             ks.load(is, ksPassword);
         }
-
+        
+        if (LOG.isDebugEnabled()) {
+            List<String> aliases = new LinkedList<String>();
+            
+            Enumeration<String> aliasEnum = ks.aliases();
+            while (aliasEnum.hasMoreElements()) {
+                aliases.add(aliasEnum.nextElement());
+            }
+            
+            LOG.debug("KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
+                      new Object[] {ks, this, ks.getProvider(), ks.getType(), aliases});
+        }
+        
         return ks;
     }
 

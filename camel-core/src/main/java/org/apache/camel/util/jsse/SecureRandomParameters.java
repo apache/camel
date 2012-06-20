@@ -65,6 +65,9 @@ public class SecureRandomParameters extends JsseParameters {
         } else {
             secureRandom = SecureRandom.getInstance(this.parsePropertyValue(this.getAlgorithm()));
         }
+        
+        LOG.debug("SecureRandom [{}] is using provider [{}] and algorithm [{}].",
+                  new Object[] {secureRandom, secureRandom.getProvider(), secureRandom.getAlgorithm()});
 
         return secureRandom;
     }
