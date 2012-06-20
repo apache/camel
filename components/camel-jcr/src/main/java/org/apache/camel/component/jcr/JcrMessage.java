@@ -50,6 +50,11 @@ public class JcrMessage extends DefaultMessage {
 
     @Override
     public void copyFrom(org.apache.camel.Message that) {
+        if (that == this) {
+            // the same instance so do not need to copy
+            return;
+        }
+
         // must initialize headers before we set the JmsMessage to avoid Camel
         // populating it before we do the copy
         getHeaders().clear();
