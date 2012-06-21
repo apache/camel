@@ -68,6 +68,20 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
     
+    private static final String LS = System.getProperty("line.separator");
+    
+    private static final String SSL_ENGINE_CIPHER_SUITE_LOG_MSG = createCipherSuiteLogMessage("SSLEngine");
+    
+    private static final String SSL_SOCKET_CIPHER_SUITE_LOG_MSG = createCipherSuiteLogMessage("SSLSocket");
+    
+    private static final String SSL_SERVER_SOCKET_CIPHER_SUITE_LOG_MSG = createCipherSuiteLogMessage("SSLServerSocket");
+    
+    private static final String SSL_ENGINE_PROTOCOL_LOG_MSG = createProtocolLogMessage("SSLEngine");
+    
+    private static final String SSL_SOCKET_PROTOCOL_LOG_MSG = createProtocolLogMessage("SSLSocket");
+    
+    private static final String SSL_SERVER_SOCKET_PROTOCOL_LOG_MSG = createProtocolLogMessage("SSLServerSocket");
+    
     /**
      * The optional explicitly configured cipher suites for this configuration.
      */
@@ -326,20 +340,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
                             !allowPassthrough);
 
-                LOG.debug("Configuring SSLEngine [{}] with "
-                        + "\r\n\t explicitly set cipher suites [{}],"
-                        + "\r\n\t cipher suite patterns [{}],"
-                        + "\r\n\t available cipher suites [{}],"
-                        + "\r\n\t currently enabled cipher suites [{}],"
-                        + "\r\n\t and default cipher suite patterns [{}]."
-                        + "\r\n\t Resulting enabled cipher suites are [{}].",
-                        new Object[] {engine,
-                                      enabledCipherSuites,
-                                      enabledCipherSuitePatterns, 
-                                      engine.getSSLParameters().getCipherSuites(),
-                                      engine.getEnabledCipherSuites(),
-                                      defaultEnabledCipherSuitePatterns,
-                                      filteredCipherSuites});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(SSL_ENGINE_CIPHER_SUITE_LOG_MSG,
+                            new Object[] {engine,
+                                          enabledCipherSuites,
+                                          enabledCipherSuitePatterns, 
+                                          engine.getSSLParameters().getCipherSuites(),
+                                          engine.getEnabledCipherSuites(),
+                                          defaultEnabledCipherSuitePatterns,
+                                          filteredCipherSuites});
+                }
                 
                 engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
 
@@ -349,20 +359,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
                             !allowPassthrough);
                 
-                LOG.debug("Configuring SSLEngine [{}] with "
-                        + "\r\n\t explicitly set protocols [{}],"
-                        + "\r\n\t protocol patterns [{}],"
-                        + "\r\n\t available protocols [{}],"
-                        + "\r\n\t currently enabled protocols [{}],"
-                        + "\r\n\t and default protocol patterns [{}]."
-                        + "\r\n\t Resulting enabled protocols are [{}].",
-                        new Object[] {engine,
-                                      enabledSecureSocketProtocols,
-                                      enabledSecureSocketProtocolsPatterns, 
-                                      engine.getSSLParameters().getProtocols(),
-                                      engine.getEnabledProtocols(),
-                                      defaultEnabledSecureSocketProtocolsPatterns,
-                                      filteredSecureSocketProtocols});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(SSL_ENGINE_PROTOCOL_LOG_MSG,
+                            new Object[] {engine,
+                                          enabledSecureSocketProtocols,
+                                          enabledSecureSocketProtocolsPatterns, 
+                                          engine.getSSLParameters().getProtocols(),
+                                          engine.getEnabledProtocols(),
+                                          defaultEnabledSecureSocketProtocolsPatterns,
+                                          filteredSecureSocketProtocols});
+                }
                 
                 engine.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
                 
@@ -511,21 +517,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             Arrays.asList(socket.getEnabledCipherSuites()),
                             enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
                             !allowPassthrough);
-                
-                LOG.debug("Configuring SSLSocket [{}] with "
-                        + "\r\n\t explicitly set cipher suites [{}],"
-                        + "\r\n\t cipher suite patterns [{}],"
-                        + "\r\n\t available cipher suites [{}],"
-                        + "\r\n\t currently enabled cipher suites [{}],"
-                        + "\r\n\t and default cipher suite patterns [{}]."
-                        + "\r\n\t Resulting enabled cipher suites are [{}].",
-                        new Object[] {socket,
-                                      enabledCipherSuites,
-                                      enabledCipherSuitePatterns, 
-                                      socket.getSSLParameters().getCipherSuites(),
-                                      socket.getEnabledCipherSuites(),
-                                      defaultEnabledCipherSuitePatterns,
-                                      filteredCipherSuites});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(SSL_SOCKET_CIPHER_SUITE_LOG_MSG,
+                            new Object[] {socket,
+                                          enabledCipherSuites,
+                                          enabledCipherSuitePatterns, 
+                                          socket.getSSLParameters().getCipherSuites(),
+                                          socket.getEnabledCipherSuites(),
+                                          defaultEnabledCipherSuitePatterns,
+                                          filteredCipherSuites});
+                }
                  
                 socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
         
@@ -535,20 +536,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
                             !allowPassthrough);
                 
-                LOG.debug("Configuring SSLSocket [{}] with "
-                        + "\r\n\t explicitly set protocols [{}],"
-                        + "\r\n\t protocol patterns [{}],"
-                        + "\r\n\t available protocols [{}],"
-                        + "\r\n\t currently enabled protocols [{}],"
-                        + "\r\n\t and default protocol patterns [{}]."
-                        + "\r\n\t Resulting enabled protocols are [{}].",
-                        new Object[] {socket,
-                                      enabledSecureSocketProtocols,
-                                      enabledSecureSocketProtocolsPatterns, 
-                                      socket.getSSLParameters().getProtocols(),
-                                      socket.getEnabledProtocols(),
-                                      defaultEnabledSecureSocketProtocolsPatterns,
-                                      filteredSecureSocketProtocols});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(SSL_SOCKET_PROTOCOL_LOG_MSG,
+                            new Object[] {socket,
+                                          enabledSecureSocketProtocols,
+                                          enabledSecureSocketProtocolsPatterns, 
+                                          socket.getSSLParameters().getProtocols(),
+                                          socket.getEnabledProtocols(),
+                                          defaultEnabledSecureSocketProtocolsPatterns,
+                                          filteredSecureSocketProtocols});
+                }
                 
                 socket.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
                 return socket;
@@ -620,20 +617,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
                             !allowPassthrough);
                  
-                LOG.debug("Configuring SSLServerSocket [{}] with "
-                        + "\r\n\t explicitly set cipher suites [{}],"
-                        + "\r\n\t cipher suite patterns [{}],"
-                        + "\r\n\t available cipher suites [{}],"
-                        + "\r\n\t currently enabled cipher suites [{}],"
-                        + "\r\n\t and default cipher suite patterns [{}]."
-                        + "\r\n\t Resulting enabled cipher suites are [{}].",
-                        new Object[] {socket,
-                                      enabledCipherSuites,
-                                      enabledCipherSuitePatterns, 
-                                      socket.getSupportedCipherSuites(),
-                                      socket.getEnabledCipherSuites(),
-                                      defaultEnabledCipherSuitePatterns,
-                                      filteredCipherSuites});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(SSL_SERVER_SOCKET_CIPHER_SUITE_LOG_MSG,
+                            new Object[] {socket,
+                                          enabledCipherSuites,
+                                          enabledCipherSuitePatterns, 
+                                          socket.getSupportedCipherSuites(),
+                                          socket.getEnabledCipherSuites(),
+                                          defaultEnabledCipherSuitePatterns,
+                                          filteredCipherSuites});
+                }
                 
                 socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
         
@@ -643,20 +636,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
                             !allowPassthrough);
 
-                LOG.debug("Configuring SSLServerSocket [{}] with "
-                        + "\r\n\t explicitly set protocols [{}],"
-                        + "\r\n\t protocol patterns [{}],"
-                        + "\r\n\t available protocols [{}],"
-                        + "\r\n\t currently enabled protocols [{}],"
-                        + "\r\n\t and default protocol patterns [{}]."
-                        + "\r\n\t Resulting enabled protocols are [{}].",
-                        new Object[] {socket,
-                                      enabledSecureSocketProtocols,
-                                      enabledSecureSocketProtocolsPatterns, 
-                                      socket.getSupportedProtocols(),
-                                      socket.getEnabledProtocols(),
-                                      defaultEnabledSecureSocketProtocolsPatterns,
-                                      filteredSecureSocketProtocols});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(SSL_SERVER_SOCKET_PROTOCOL_LOG_MSG,
+                            new Object[] {socket,
+                                          enabledSecureSocketProtocols,
+                                          enabledSecureSocketProtocolsPatterns, 
+                                          socket.getSupportedProtocols(),
+                                          socket.getEnabledProtocols(),
+                                          defaultEnabledSecureSocketProtocolsPatterns,
+                                          filteredSecureSocketProtocols});
+                }
                 
                 socket.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
                 return socket;
@@ -1113,4 +1102,23 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         }
     }
 
+    private static String createCipherSuiteLogMessage(String entityName) {
+        return "Configuring " + entityName + " [{}] with " + LS
+                + "\t explicitly set cipher suites [{}]," + LS
+                + "\t cipher suite patterns [{}]," + LS
+                + "\t available cipher suites [{}]," + LS
+                + "\t currently enabled cipher suites [{}]," + LS
+                + "\t and default cipher suite patterns [{}]." + LS
+                + "\t Resulting enabled cipher suites are [{}].";
+    }
+    
+    private static String createProtocolLogMessage(String entityName) {
+        return "Configuring " + entityName + " [{}] with " + LS
+                + "\t explicitly set protocols [{}]," + LS
+                + "\t protocol patterns [{}]," + LS
+                + "\t available protocols [{}]," + LS
+                + "\t currently enabled protocols [{}]," + LS
+                + "\t and default protocol patterns [{}]." + LS
+                + "\t Resulting enabled protocols are [{}].";
+    }
 }
