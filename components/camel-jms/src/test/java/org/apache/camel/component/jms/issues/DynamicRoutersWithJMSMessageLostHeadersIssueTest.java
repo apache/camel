@@ -57,12 +57,12 @@ public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends CamelTestS
             public void configure() throws Exception {
                 from("activemq:queue1")
                         .setHeader("HEADER1", constant("header1"))
-                        .dynamicRouter(method(DynamicRouter.class, "dynamicRoute"))
+                        .dynamicRouter(bean(DynamicRouter.class, "dynamicRoute"))
                         .to("mock:checkHeader");
 
                 from("direct:foo")
                         .setHeader("HEADER1", constant("header1"))
-                        .dynamicRouter(method(DynamicRouter.class, "dynamicRoute"))
+                        .dynamicRouter(bean(DynamicRouter.class, "dynamicRoute"))
                         .to("mock:checkHeader");
             }
         };
