@@ -35,8 +35,6 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.message.MessageContentsList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
@@ -46,7 +44,6 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class CxfConverter {
-    private static final Logger LOG = LoggerFactory.getLogger(CxfConverter.class);
 
     private CxfConverter() {
         // Helper class
