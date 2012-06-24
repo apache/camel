@@ -52,6 +52,8 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     private ThreadPoolRejectedPolicy rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns;
     @XmlAttribute(required = true)
     private String threadName;
+    @XmlAttribute
+    private Boolean scheduled;
 
     public ExecutorService getObject() throws Exception {
         int size = CamelContextHelper.parseInteger(getCamelContext(), poolSize);
@@ -81,7 +83,13 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
                 .maxQueueSize(queueSize)
                 .rejectedPolicy(rejectedPolicy)
                 .build();
-        ExecutorService answer = getCamelContext().getExecutorServiceManager().newThreadPool(getId(), getThreadName(), profile);
+
+        ExecutorService answer;
+        if (scheduled != null && scheduled) {
+            answer = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(getId(), getThreadName(), profile);
+        } else {
+            answer = getCamelContext().getExecutorServiceManager().newThreadPool(getId(), getThreadName(), profile);
+        }
         return answer;
     }
 
@@ -145,4 +153,11 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         this.threadName = threadName;
     }
 
+    public Boolean getScheduled() {
+        return scheduled;
+    }
+
+    public void setScheduled(Boolean scheduled) {
+        this.scheduled = scheduled;
+    }
 }
