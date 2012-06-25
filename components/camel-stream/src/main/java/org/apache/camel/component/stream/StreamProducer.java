@@ -115,6 +115,11 @@ public class StreamProducer extends DefaultProducer {
     private synchronized void writeToStream(OutputStream outputStream, Exchange exchange) throws IOException, CamelExchangeException {
         Object body = exchange.getIn().getBody();
 
+        if (body == null) {
+            log.debug("Body is null, cannot write it to the stream.");
+            return;
+        }
+
         // if not a string then try as byte array first
         if (!(body instanceof String)) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);

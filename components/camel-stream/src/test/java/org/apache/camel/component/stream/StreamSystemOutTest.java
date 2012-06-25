@@ -67,6 +67,22 @@ public class StreamSystemOutTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    public void shouldSkipNullBody() {
+        try {
+            // Given
+            System.setOut(new PrintStream(mockOut));
+
+            // When
+            template.sendBody("direct:in", null);
+
+            // Then
+            assertEquals(0, mockOut.toByteArray().length);
+        } finally {
+            System.setOut(stdOut);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
