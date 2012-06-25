@@ -24,12 +24,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.StringSource;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@Ignore("Under JDK 7 requires minimum Spring-WS 2.0.5 to pass. Should be enabled again as soon as the upgrade to Spring-WS 2.0.5 has been done!")
 @ContextConfiguration
 public class SSLContextParametersLocalRouteTest extends AbstractJUnit4SpringContextTests {
 
