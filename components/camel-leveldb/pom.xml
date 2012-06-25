@@ -33,9 +33,6 @@
 
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.fusesource.leveldbjni.*;version="[0,2)"
-        </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.component.leveldb.*</camel.osgi.export.pkg>
     </properties>
 
