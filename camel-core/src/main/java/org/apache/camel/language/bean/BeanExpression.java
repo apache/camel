@@ -19,6 +19,7 @@ package org.apache.camel.language.bean;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
@@ -37,28 +38,41 @@ import org.apache.camel.util.StringHelper;
 
 /**
  * Evaluates an expression using a bean method invocation
- *
- * @version 
  */
 public class BeanExpression implements Expression, Predicate {
-    private Object bean;
-    private String beanName;
-    private Class<?> type;
-    private String method;
+    private final Object bean;
+    private final String beanName;
+    private final Class<?> type;
+    private final String method;
+    private volatile BeanHolder beanHolder;
 
     public BeanExpression(Object bean, String method) {
         this.bean = bean;
         this.method = method;
+        this.beanName = null;
+        this.type = null;
     }
 
     public BeanExpression(String beanName, String method) {
         this.beanName = beanName;
         this.method = method;
+        this.bean = null;
+        this.type = null;
     }
 
     public BeanExpression(Class<?> type, String method) {
         this.type = type;
         this.method = method;
+        this.bean = null;
+        this.beanName = null;
+    }
+
+    public BeanExpression(BeanHolder beanHolder, String method) {
+        this.beanHolder = beanHolder;
+        this.method = method;
+        this.bean = null;
+        this.beanName = null;
+        this.type = null;
     }
 
     @Override
@@ -79,16 +93,10 @@ public class BeanExpression implements Expression, Predicate {
     }
 
     public Object evaluate(Exchange exchange) {
-        // either use registry lookup or a constant bean
-        BeanHolder holder;
-        if (bean != null) {
-            holder = new ConstantBeanHolder(bean, exchange.getContext());
-        } else if (beanName != null) {
-            holder = new RegistryBean(exchange.getContext(), beanName);
-        } else if (type != null) {
-            holder = new ConstantTypeBeanHolder(type, exchange.getContext());
-        } else {
-            throw new IllegalArgumentException("Either bean, beanName or type should be set on " + this);
+
+        // if the bean holder doesn't exist then create it using the context from the exchange
+        if (beanHolder == null) {
+            beanHolder = createBeanHolder(exchange.getContext());
         }
 
         // invoking the bean can either be the easy way or using OGNL
@@ -101,7 +109,7 @@ public class BeanExpression implements Expression, Predicate {
 
         if (OgnlHelper.isValidOgnlExpression(method)) {
             // okay the method is an ognl expression
-            OgnlInvokeProcessor ognl = new OgnlInvokeProcessor(holder, method);
+            OgnlInvokeProcessor ognl = new OgnlInvokeProcessor(beanHolder, method);
             try {
                 ognl.process(exchange);
                 return ognl.getResult();
@@ -110,7 +118,7 @@ public class BeanExpression implements Expression, Predicate {
             }
         } else {
             // regular non ognl invocation
-            InvokeProcessor invoke = new InvokeProcessor(holder, method);
+            InvokeProcessor invoke = new InvokeProcessor(beanHolder, method);
             try {
                 invoke.process(exchange);
                 return invoke.getResult();
@@ -128,6 +136,25 @@ public class BeanExpression implements Expression, Predicate {
     public boolean matches(Exchange exchange) {
         Object value = evaluate(exchange);
         return ObjectHelper.evaluateValuePredicate(value);
+    }
+
+    /**
+     * Optimize to create the bean holder once, so we can reuse it for further
+     * evaluation, which is faster.
+     */
+    private synchronized BeanHolder createBeanHolder(CamelContext context) {
+        // either use registry lookup or a constant bean
+        BeanHolder holder;
+        if (bean != null) {
+            holder = new ConstantBeanHolder(bean, context);
+        } else if (beanName != null) {
+            holder = new RegistryBean(context, beanName);
+        } else if (type != null) {
+            holder = new ConstantTypeBeanHolder(type, context);
+        } else {
+            throw new IllegalArgumentException("Either bean, beanName or type should be set on " + this);
+        }
+        return holder;
     }
 
     /**
