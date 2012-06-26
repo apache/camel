@@ -75,7 +75,7 @@ public class BeanExpressionConcurrentTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo?concurrentConsumers=10").routeId("foo").noAutoStartup()
-                    .transform(method("myBean"))
+                    .transform(bean("myBean"))
                     .to("mock:result");
             }
         };
