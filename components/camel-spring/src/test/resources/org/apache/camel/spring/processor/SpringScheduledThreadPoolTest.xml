@@ -22,13 +22,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="seda:foo"/>
-      <to uri="test:seda:foo"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- define a custom scheduled thread pool -->
+        <threadPool id="myPool" poolSize="5" threadName="myPool" scheduled="true"/>
+
+    </camelContext>
 
 </beans>

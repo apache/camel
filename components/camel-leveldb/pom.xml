@@ -31,6 +31,7 @@
     <name>Camel :: LevelDB</name>
     <description>Camel LevelDB Support</description>
 
+
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.leveldb.*</camel.osgi.export.pkg>
     </properties>

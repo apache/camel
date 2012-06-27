@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -101,6 +102,39 @@ public final class ThreadPoolBuilder {
      */
     public ExecutorService build(Object source, String name) throws Exception {
         return context.getExecutorServiceManager().newThreadPool(source, name, profile);
+    }
+
+    /**
+     * Builds the new scheduled thread pool
+     *
+     * @return the created scheduled thread pool
+     * @throws Exception is thrown if error building the scheduled thread pool
+     */
+    public ScheduledExecutorService buildScheduled() throws Exception {
+        return buildScheduled(null, null);
+    }
+
+    /**
+     * Builds the new scheduled thread pool
+     *
+     * @param name name which is appended to the thread name
+     * @return the created scheduled thread pool
+     * @throws Exception is thrown if error building the scheduled thread pool
+     */
+    public ScheduledExecutorService buildScheduled(String name) throws Exception {
+        return buildScheduled(null, name);
+    }
+
+    /**
+     * Builds the new scheduled thread pool
+     *
+     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name   name which is appended to the thread name
+     * @return the created scheduled thread pool
+     * @throws Exception is thrown if error building the scheduled thread pool
+     */
+    public ScheduledExecutorService buildScheduled(Object source, String name) throws Exception {
+        return context.getExecutorServiceManager().newScheduledThreadPool(source, name, profile);
     }
 
 }

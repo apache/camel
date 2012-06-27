@@ -71,7 +71,7 @@ public class TrustManagersParameters extends JsseParameters {
      */
     public TrustManager[] createTrustManagers() throws GeneralSecurityException, IOException {
         
-        LOG.trace("Creating TrustManager[] from TrustManagersParameters: {}", this);
+        LOG.trace("Creating TrustManager[] from TrustManagersParameters [{}]", this);
 
         TrustManager[] trustManagers = null;
 
@@ -88,9 +88,14 @@ public class TrustManagersParameters extends JsseParameters {
                 tmf = TrustManagerFactory.getInstance(tmfAlgorithm, this.parsePropertyValue(this.getProvider()));
             }
             
+            LOG.debug("TrustManagerFactory [{}] is using provider [{}] and algorithm [{}].",
+                      new Object[] {tmf, tmf.getProvider(), tmf.getAlgorithm()});
+            
             KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
             tmf.init(ks);
             trustManagers = tmf.getTrustManagers();
+            
+            LOG.debug("TrustManager[] [{}], initialized from TrustManagerFactory [{}].", trustManagers, tmf);
         }
         
         return trustManagers;

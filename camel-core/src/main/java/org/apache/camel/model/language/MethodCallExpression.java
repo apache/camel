@@ -28,6 +28,8 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
+import org.apache.camel.component.bean.ConstantBeanHolder;
+import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
@@ -38,7 +40,7 @@ import org.apache.camel.util.OgnlHelper;
  * For expressions and predicates using the
  * <a href="http://camel.apache.org/bean-language.html">bean language</a>
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,11 +70,11 @@ public class MethodCallExpression extends ExpressionDefinition {
         super(beanName);
         this.method = method;
     }
-    
+
     public MethodCallExpression(Object instance) {
         this(instance, null);
     }
-    
+
     public MethodCallExpression(Object instance, String method) {
         super(ObjectHelper.className(instance));
         // must use setter as they have special logic
@@ -83,7 +85,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     public MethodCallExpression(Class<?> type) {
         this(type, null);
     }
-    
+
     public MethodCallExpression(Class<?> type, String method) {
         super(type.getName());
         this.beanType = type;
@@ -162,25 +164,30 @@ public class MethodCallExpression extends ExpressionDefinition {
             }
         }
 
+        BeanHolder holder;
         if (beanType != null) {
             // create a bean if there is a default public no-arg constructor
             if (ObjectHelper.hasDefaultPublicNoArgConstructor(beanType)) {
                 instance = camelContext.getInjector().newInstance(beanType);
-                answer = new BeanExpression(instance, getMethod());
+                holder = new ConstantBeanHolder(instance, camelContext);
             } else {
-                answer = new BeanExpression(beanType, getMethod());
+                holder = new ConstantTypeBeanHolder(beanType, camelContext);
             }
         } else if (instance != null) {
-            answer = new BeanExpression(instance, getMethod());
+            holder = new ConstantBeanHolder(instance, camelContext);
         } else {
             String ref = beanName();
             // if its a ref then check that the ref exists
-            BeanHolder holder = new RegistryBean(camelContext, ref);
+            BeanHolder regHolder = new RegistryBean(camelContext, ref);
             // get the bean which will check that it exists
-            instance = holder.getBean();
-            answer = new BeanExpression(instance, getMethod());
+            instance = regHolder.getBean();
+            holder = new ConstantBeanHolder(instance, camelContext);
         }
 
+        // create answer using the holder
+        answer = new BeanExpression(holder, getMethod());
+
+        // and do sanity check that if a method name was given, that it exists
         validateHasMethod(camelContext, instance, beanType, getMethod());
         return answer;
     }

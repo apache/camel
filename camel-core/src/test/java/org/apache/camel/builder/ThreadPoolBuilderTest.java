@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -124,5 +125,40 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
         assertEquals(true, executor2.isShutdown());
     }
+
+    public void testThreadPoolBuilderScheduled() throws Exception {
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)
+                .buildScheduled();
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
+    }
+
+    public void testThreadPoolBuilderScheduledName() throws Exception {
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)
+                .buildScheduled("myScheduledPool");
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
+    }
+
+
+    public void testThreadPoolBuilderScheduledSourceName() throws Exception {
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)
+                .buildScheduled(this, "myScheduledPool");
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
+    }
+
 
 }

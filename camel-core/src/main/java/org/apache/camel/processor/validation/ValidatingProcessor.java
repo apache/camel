@@ -112,7 +112,7 @@ public class ValidatingProcessor implements Processor {
     // Properties
     // -----------------------------------------------------------------------
 
-    public synchronized Schema getSchema() throws IOException, SAXException {
+    public Schema getSchema() throws IOException, SAXException {
         if (schema == null) {
             schema = createSchema();
         }
@@ -131,7 +131,7 @@ public class ValidatingProcessor implements Processor {
         this.schemaLanguage = schemaLanguage;
     }
 
-    public synchronized Source getSchemaSource() throws IOException {
+    public Source getSchemaSource() throws IOException {
         if (schemaSource == null) {
             schemaSource = createSchemaSource();
         }
@@ -158,7 +158,7 @@ public class ValidatingProcessor implements Processor {
         this.schemaFile = schemaFile;
     }
 
-    public synchronized SchemaFactory getSchemaFactory() {
+    public SchemaFactory getSchemaFactory() {
         if (schemaFactory == null) {
             schemaFactory = createSchemaFactory();
         }

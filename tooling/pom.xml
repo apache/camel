@@ -34,33 +34,34 @@
   <modules>
     <module>maven</module>
     <module>archetypes</module>
+    <module>camel-manual</module>
   </modules>
 
-  <profiles>
-      <profile>
-          <id>build.manual</id>
-          <modules>
-              <module>camel-manual</module>
-          </modules>
-      </profile>
-      <profile>
-          <id>assembly</id>
-          <modules>
-              <module>camel-manual</module>
-          </modules>
-      </profile>
-      <profile>
-          <id>deploy</id>
-          <modules>
-              <module>camel-manual</module>
-          </modules>
-      </profile>
-      <profile>
-          <id>apache-release</id>
-          <modules>
-              <module>camel-manual</module>
-          </modules>
-      </profile>
-  </profiles>
+  <!-- profiles>
+    <profile>
+      <id>build.manual</id>
+      <modules>
+        <module>camel-manual</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>assembly</id>
+      <modules>
+        <module>camel-manual</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>deploy</id>
+      <modules>
+        <module>camel-manual</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>apache-release</id>
+      <modules>
+        <module>camel-manual</module>
+      </modules>
+    </profile>
+  </profiles -->
 
 </project>

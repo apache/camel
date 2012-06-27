@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService, PollingConsumerPollingStrategy {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
-    private ScheduledExecutorService executor;
+    private ScheduledExecutorService scheduledExecutorService;
     private boolean shutdownExecutor;
     private ScheduledFuture<?> future;
 
@@ -60,12 +60,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         super(endpoint, processor);
     }
 
-    public ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService executor) {
+    public ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor);
         // we have been given an existing thread pool, so we should not manage its lifecycle
         // so we should keep shutdownExecutor as false
-        this.executor = executor;
-        ObjectHelper.notNull(executor, "executor");
+        this.scheduledExecutorService = scheduledExecutorService;
+        ObjectHelper.notNull(scheduledExecutorService, "scheduledExecutorService");
     }
 
     /**
@@ -283,6 +283,23 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         return sendEmptyMessageWhenIdle;
     }
 
+    public ScheduledExecutorService getScheduledExecutorService() {
+        return scheduledExecutorService;
+    }
+
+    /**
+     * Sets a custom shared {@link ScheduledExecutorService} to use as thread pool
+     * <p/>
+     * <b>Notice: </b> When using a custom thread pool, then the lifecycle of this thread
+     * pool is not controlled by this consumer (eg this consumer will not start/stop the thread pool
+     * when the consumer is started/stopped etc.)
+     *
+     * @param scheduledExecutorService the custom thread pool to use
+     */
+    public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+        this.scheduledExecutorService = scheduledExecutorService;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -299,15 +316,15 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         super.doStart();
 
         // if no existing executor provided, then create a new thread pool ourselves
-        if (executor == null) {
+        if (scheduledExecutorService == null) {
             // we only need one thread in the pool to schedule this task
-            this.executor = getEndpoint().getCamelContext().getExecutorServiceManager()
+            this.scheduledExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
                     .newScheduledThreadPool(this, getEndpoint().getEndpointUri(), 1);
             // and we should shutdown the thread pool when no longer needed
             this.shutdownExecutor = true;
         }
 
-        ObjectHelper.notNull(executor, "executor", this);
+        ObjectHelper.notNull(scheduledExecutorService, "scheduledExecutorService", this);
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
 
         if (isStartScheduler()) {
@@ -321,13 +338,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
                         new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
             }
-            future = executor.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
+            future = scheduledExecutorService.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
                         new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
             }
-            future = executor.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
+            future = scheduledExecutorService.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
         }
     }
 
@@ -342,9 +359,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     protected void doShutdown() throws Exception {
-        if (shutdownExecutor && executor != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
-            executor = null;
+        if (shutdownExecutor && scheduledExecutorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutorService);
+            scheduledExecutorService = null;
             future = null;
         }
         super.doShutdown();

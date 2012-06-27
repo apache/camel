@@ -126,7 +126,18 @@ public class FilterParameters extends JsseParameters {
 
         public List<Pattern> getExcludes() {
             return excludes;
-        }  
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Patterns [includes=");
+            builder.append(includes);
+            builder.append(", excludes=");
+            builder.append(excludes);
+            builder.append("]");
+            return builder.toString();
+        }
     }
 
     @Override
