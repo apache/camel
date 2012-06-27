@@ -81,14 +81,13 @@
                         <artifactId>maven-jibx-plugin</artifactId>
                         <version>${jibx-version}</version>
                         <configuration>
-                            <bindingDirectory>src/test/resources</bindingDirectory>
-                            <includeSchemaBindings>
-                                <includeSchemaBinding>**/*-jibx.xml</includeSchemaBinding>
-                            </includeSchemaBindings>
+                            <directory>${basedir}/src/test/resources/org/apache/camel/dataformat/jibx/</directory>
+                            <includes>
+                                <include>purchaseOrder-jibx.xml</include>
+                            </includes>
                         </configuration>
                         <executions>
                             <execution>
-                                <phase>process-test-classes</phase>
                                 <goals>
                                     <goal>test-bind</goal>
                                 </goals>
