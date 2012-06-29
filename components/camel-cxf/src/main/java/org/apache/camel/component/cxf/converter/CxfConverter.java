@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.converter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
@@ -37,8 +39,7 @@ import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
@@ -105,14 +106,10 @@ public final class CxfConverter {
     }
 
     @Converter
-    public static String soapMessageToString(final SOAPMessage soapMessage) {
+    public static String soapMessageToString(final SOAPMessage soapMessage, Exchange exchange) throws SOAPException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            soapMessage.writeTo(baos);
-        } catch (Exception e) {
-            LOG.error("Get the exception when converting the SOAPMessage into String, the exception is " + e);
-        }
-        return baos.toString();
+        soapMessage.writeTo(baos);
+        return baos.toString(IOHelper.getCharsetName(exchange));
     }
     
     @Converter
