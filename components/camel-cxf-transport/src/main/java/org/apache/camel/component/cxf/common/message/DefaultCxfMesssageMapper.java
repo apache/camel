@@ -47,13 +47,14 @@ public class DefaultCxfMesssageMapper implements CxfMessageMapper {
             acceptContentTypes = "*/*";
         }
         
-        String enc = getCharacterEncoding(camelMessage); 
+        String enc = getCharacterEncoding(camelMessage);
+        String requestURI = getRequestURI(camelMessage);
         String path = getPath(camelMessage);
         String basePath = getBasePath(camelExchange);
         String verb = getVerb(camelMessage);
         String queryString = getQueryString(camelMessage);
         
-        answer.put(org.apache.cxf.message.Message.REQUEST_URI, path);
+        answer.put(org.apache.cxf.message.Message.REQUEST_URI, requestURI);
         answer.put(org.apache.cxf.message.Message.BASE_PATH, basePath);
         answer.put(org.apache.cxf.message.Message.HTTP_REQUEST_METHOD, verb);
         answer.put(org.apache.cxf.message.Message.PATH_INFO, path);
@@ -113,6 +114,11 @@ public class DefaultCxfMesssageMapper implements CxfMessageMapper {
 
     protected String getPath(org.apache.camel.Message camelMessage) {
         String answer = camelMessage.getHeader(Exchange.HTTP_PATH, String.class);
+        return answer;
+    }
+    
+    protected String getRequestURI(org.apache.camel.Message camelMessage) {
+        String answer = camelMessage.getHeader(Exchange.HTTP_URI, String.class);
         return answer;
     }
     
