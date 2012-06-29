@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Producer} implementation for MINA
  *
- * @version 
+ * @version
  */
 public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
@@ -106,8 +106,17 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     public void process(Exchange exchange) throws Exception {
+        try {
+            doProcess(exchange);
+        } finally {
+            // ensure we always disconnect if configured
+            maybeDisconnectOnDone(exchange);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void doProcess(Exchange exchange) throws Exception {
         if (session == null && !lazySessionCreation) {
             throw new IllegalStateException("Not started yet!");
         }
@@ -175,6 +184,12 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
                     Mina2PayloadHelper.setIn(exchange, handler.getMessage());
                 }
             }
+        }
+    }
+
+    protected void maybeDisconnectOnDone(Exchange exchange) {
+        if (session == null) {
+            return;
         }
 
         // should session be closed after complete?
