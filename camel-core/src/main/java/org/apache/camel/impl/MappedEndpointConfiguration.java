@@ -58,9 +58,11 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
     
     @Override
     public boolean equals(Object other) {
+        if (other == null || !(other instanceof MappedEndpointConfiguration)) {
+            return false;
+        }
         // if all parameters including scheme are the same, the component and uri must be the same too
-        boolean eq = params.equals(((MappedEndpointConfiguration)other).params);
-        return this == other || (this.getClass() == other.getClass() && eq);
+        return this == other || (this.getClass() == other.getClass() && params.equals(((MappedEndpointConfiguration)other).params));
     }
 
     @Override
