@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RoutePolicyCallbackTest extends ContextTestSupport {
 
-    private MyRoutePolicy policy = new MyRoutePolicy();
+    protected MyRoutePolicy policy = new MyRoutePolicy();
 
     public static class MyRoutePolicy extends RoutePolicySupport {
 
@@ -92,7 +92,13 @@ public class RoutePolicyCallbackTest extends ContextTestSupport {
         }
     }
 
+    protected MyRoutePolicy getAndInitMyRoutePolicy() {
+        return policy;
+    }
+
     public void testCallback() throws Exception {
+        policy = getAndInitMyRoutePolicy();
+
         assertTrue(policy.doStart);
         assertTrue(policy.init);
 
