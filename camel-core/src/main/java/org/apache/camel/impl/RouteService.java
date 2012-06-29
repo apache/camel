@@ -170,8 +170,8 @@ public class RouteService extends ChildServiceSupport {
             ServiceHelper.startService(route);
 
             // invoke callbacks on route policy
-            if (routeDefinition.getRoutePolicies() != null) {
-                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
                     routePolicy.onStart(route);
                 }
             }
@@ -219,8 +219,8 @@ public class RouteService extends ChildServiceSupport {
             }
 
             // invoke callbacks on route policy
-            if (routeDefinition.getRoutePolicies() != null) {
-                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
                     routePolicy.onStop(route);
                 }
             }
@@ -261,8 +261,8 @@ public class RouteService extends ChildServiceSupport {
             // see more details in the warmUp method
             ServiceHelper.stopAndShutdownServices(route.getEndpoint());
             // invoke callbacks on route policy
-            if (routeDefinition.getRoutePolicies() != null) {
-                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
                     routePolicy.onRemove(route);
                 }
             }
@@ -292,8 +292,8 @@ public class RouteService extends ChildServiceSupport {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
         for (Route route : routes) {
-            if (routeDefinition.getRoutePolicies() != null) {
-                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
                     routePolicy.onSuspend(route);
                 }
             }
@@ -305,8 +305,8 @@ public class RouteService extends ChildServiceSupport {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
         for (Route route : routes) {
-            if (routeDefinition.getRoutePolicies() != null) {
-                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+            if (route.getRouteContext().getRoutePolicyList() != null) {
+                for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {
                     routePolicy.onResume(route);
                 }
             }
