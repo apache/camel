@@ -73,6 +73,15 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
     }
 
     public void process(Exchange exchange) throws Exception {
+        try {
+            doProcess(exchange);
+        } finally {
+            // ensure we always disconnect if configured
+            maybeDisconnectOnDone(exchange);
+        }
+    }
+
+    protected void doProcess(Exchange exchange) throws Exception {
         if (session == null && !lazySessionCreation) {
             throw new IllegalStateException("Not started yet!");
         }
@@ -140,6 +149,12 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
                     MinaPayloadHelper.setIn(exchange, handler.getMessage());
                 }
             }
+        }
+    }
+
+    protected void maybeDisconnectOnDone(Exchange exchange) {
+        if (session == null) {
+            return;
         }
 
         // should session be closed after complete?
