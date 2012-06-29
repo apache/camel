@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -176,6 +177,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean useBreadcrumb = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
+    private ScheduledExecutorService errorHandlerExecutorService;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
     private Map<String, String> properties = new HashMap<String, String>();
@@ -1268,6 +1270,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    public ScheduledExecutorService getErrorHandlerExecutorService() {
+        return errorHandlerExecutorService;
+    }
+
     public void setProducerServicePool(ServicePool<Endpoint, Producer> producerServicePool) {
         this.producerServicePool = producerServicePool;
     }
@@ -1526,6 +1532,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(packageScanClassResolver);
 
         startServices(components.values());
+
+        // setup default thread pool for error handler
+        if (errorHandlerExecutorService == null || errorHandlerExecutorService.isShutdown()) {
+            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
+        }
 
         // start the route definitions before the routes is started
         startRouteDefinitions(routeDefinitions);

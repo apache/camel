@@ -35,6 +35,19 @@ import org.apache.camel.processor.SendProcessor;
  */
 public class ErrorHandlerTest extends TestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        // make SEDA testing faster
+        System.setProperty("CamelSedaPollTimeout", "10");
+        super.setUp();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        System.clearProperty("CamelSedaPollTimeout");
+        super.tearDown();
+    }
+
     public void testOverloadingTheDefaultErrorHandler() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {

@@ -26,10 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RmiRouteEndpointTest extends RmiRouteTest {
 
-    protected int getPort() {
-        return 37542;
-    }
-
     @Override
     protected RouteBuilder getRouteBuilder(final CamelContext context) {
         return new RouteBuilder() {
@@ -37,7 +33,7 @@ public class RmiRouteEndpointTest extends RmiRouteTest {
             public void configure() throws Exception {
                 RmiEndpoint say = new RmiEndpoint();
                 say.setCamelContext(context);
-                say.setUri(new URI("rmi://localhost:37542/bye"));
+                say.setUri(new URI("rmi://localhost:" + getPort() + "/bye"));
 
                 from("direct:hello").to(say);
 
@@ -46,7 +42,7 @@ public class RmiRouteEndpointTest extends RmiRouteTest {
                 RmiEndpoint bye = new RmiEndpoint();
                 bye.setCamelContext(context);
                 bye.setRemoteInterfaces(ISay.class);
-                bye.setUri(new URI("rmi://localhost:37542/bye"));
+                bye.setUri(new URI("rmi://localhost:" + getPort() + "/bye"));
 
                 from(bye).to("bean:bye");
             }

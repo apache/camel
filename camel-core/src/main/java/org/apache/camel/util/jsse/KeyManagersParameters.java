@@ -81,10 +81,10 @@ public class KeyManagersParameters extends JsseParameters {
      */
     public KeyManager[] createKeyManagers() throws GeneralSecurityException, IOException {
         
-        LOG.debug("Creating KeyManager[] from KeyManagersParameters: {}", this);
+        LOG.trace("Creating KeyManager[] from KeyManagersParameters [{}].", this);
 
         KeyManager[] keyManagers;
-
+        
         String kmfAlgorithm = this.parsePropertyValue(this.getAlgorithm());
         if (kmfAlgorithm == null) {
             kmfAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
@@ -96,7 +96,9 @@ public class KeyManagersParameters extends JsseParameters {
         } else {
             kmf = KeyManagerFactory.getInstance(kmfAlgorithm, this.parsePropertyValue(this.getProvider()));
         }
-
+        
+        LOG.debug("KeyManagerFactory [{}], initialized from [{}], is using provider [{}] and algorithm [{}].",
+                  new Object[] {kmf, this, kmf.getProvider(), kmf.getAlgorithm()});
         
         char[] kmfPassword = null;
         if (this.getKeyPassword() != null) {
@@ -107,6 +109,8 @@ public class KeyManagersParameters extends JsseParameters {
         
         kmf.init(ks, kmfPassword);
         keyManagers = kmf.getKeyManagers();
+        
+        LOG.debug("KeyManager[] [{}], initialized from KeyManagerFactory [{}].", keyManagers, kmf);
         
         return keyManagers;
     }

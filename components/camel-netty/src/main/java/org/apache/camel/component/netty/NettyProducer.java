@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -172,6 +173,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             // allow to reuse channel, on this producer, to avoid creating a new connection
             // for each message being sent
             if (channelFuture == null || channel == null || !channel.isOpen()) {
+                channel = null;
                 channelFuture = openConnection();
                 channel = openChannel(channelFuture);
             }
@@ -285,6 +287,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             // set the pipeline factory, which creates the pipeline for each newly created channels
             clientBootstrap.setPipelineFactory(pipelineFactory);
             answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            LOG.trace("Created new TCP client bootstrap connecting to {}:{}", configuration.getHost(), configuration.getPort());
             return answer;
         } else {
             ConnectionlessBootstrap connectionlessClientBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
@@ -302,17 +305,31 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
             ALL_CHANNELS.add(channel);
             answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            LOG.trace("Created new UDP client bootstrap connecting to {}:{}", configuration.getHost(), configuration.getPort());
             return answer;
         }
     }
 
     private Channel openChannel(ChannelFuture channelFuture) throws Exception {
-        // wait until we got connection
-        channelFuture.awaitUninterruptibly();
+        // wait until until the operation is complete
+        final CountDownLatch latch = new CountDownLatch(1);
+        channelFuture.addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                LOG.debug("Operation complete {}", channelFuture);
+                latch.countDown();
+            }
+        });
+        // blocking for channel to be done
+        LOG.trace("Waiting for operation to complete {}", channelFuture);
+        latch.await();
+
         if (!channelFuture.isSuccess()) {
+            // clear channel as we did not connect
+            channel = null;
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
         }
-        Channel channel = channelFuture.getChannel();
+        channel = channelFuture.getChannel();
         // to keep track of all channels in use
         ALL_CHANNELS.add(channel);
 

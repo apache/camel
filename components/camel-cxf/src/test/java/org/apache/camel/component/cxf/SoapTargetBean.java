@@ -23,11 +23,14 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPMessage;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import org.apache.cxf.helpers.XMLUtils;
+
 public class SoapTargetBean {
-    private static QName sayHi = new QName("http://apache.org/hello_world_soap_http", "sayHi");
-    private static QName greetMe = new QName("http://apache.org/hello_world_soap_http", "greetMe");
+    private static QName sayHi = new QName("http://apache.org/hello_world_soap_http/types", "sayHi");
+    private static QName greetMe = new QName("http://apache.org/hello_world_soap_http/types", "greetMe");
     private SOAPMessage sayHiResponse;
     private SOAPMessage greetMeResponse;
 
@@ -76,4 +79,21 @@ public class SoapTargetBean {
         return response;
     }
 
+    //Simulates a stream based processor or producer (e.g., file EP)
+    public SOAPMessage invokeStream(InputStream in) {
+        SOAPMessage response = null;
+        try {
+            Document doc = XMLUtils.parse(in);
+            if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(), 
+                                           sayHi.getLocalPart()).getLength() == 1) {
+                response = sayHiResponse;
+            } else if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(), 
+                                                  greetMe.getLocalPart()).getLength() == 1) {
+                response = greetMeResponse;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return response;
+    }
 }

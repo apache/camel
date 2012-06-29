@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -34,6 +35,7 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
+@Ignore("Does not work properly")
 public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
     @Test

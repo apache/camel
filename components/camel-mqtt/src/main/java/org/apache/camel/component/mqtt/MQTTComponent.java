@@ -26,9 +26,7 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class MQTTComponent extends DefaultComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
-
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MQTTConfiguration configuration = new MQTTConfiguration();
 
         // and then override from parameters

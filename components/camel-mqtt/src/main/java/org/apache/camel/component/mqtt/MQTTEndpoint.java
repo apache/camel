@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Twitter direct endpoint
+ * MQTT endpoint
  */
 public class MQTTEndpoint extends DefaultEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
@@ -163,7 +163,6 @@ public class MQTTEndpoint extends DefaultEndpoint {
     }
 
     void publish(String topic, byte[] payload, QoS qoS, boolean retain) throws Exception {
-        final Promise promise = new Promise();
         connection.publish(topic, payload, qoS, retain, null);
         /*
         connection.publish(topic, payload, qoS, retain, new Callback<Void>() {

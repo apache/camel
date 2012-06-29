@@ -22,9 +22,8 @@ import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
-import org.jboss.netty.channel.ChannelDownstreamHandler;
+import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
@@ -46,24 +45,40 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
         SslHandler sslHandler = configureServerSSLOnDemand(consumer);
         if (sslHandler != null) {
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline");
-            channelPipeline.addLast("ssl", sslHandler);            
-        }
-        List<ChannelDownstreamHandler> encoders = consumer.getConfiguration().getEncoders();
-        for (int x = 0; x < encoders.size(); x++) {
-            channelPipeline.addLast("encoder-" + x, encoders.get(x));
+            addToPipeline("ssl", channelPipeline, sslHandler);
         }
 
-        List<ChannelUpstreamHandler> decoders = consumer.getConfiguration().getDecoders();
+        List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
+        for (int x = 0; x < encoders.size(); x++) {
+            ChannelHandler encoder = encoders.get(x);
+            if (encoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+            }
+            addToPipeline("encoder-" + x, channelPipeline, encoder);
+        }
+
+        List<ChannelHandler> decoders = consumer.getConfiguration().getDecoders();
         for (int x = 0; x < decoders.size(); x++) {
-            channelPipeline.addLast("decoder-" + x, decoders.get(x));
+            ChannelHandler decoder = decoders.get(x);
+            if (decoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+            }
+            addToPipeline("decoder-" + x, channelPipeline, decoder);
         }
 
         // our handler must be added last
-        channelPipeline.addLast("handler", new ServerChannelHandler(consumer));
+        addToPipeline("handler", channelPipeline, new ServerChannelHandler(consumer));
 
+        LOG.trace("Created ChannelPipeline: {}", channelPipeline);
         return channelPipeline;
     }
-    
+
+    private void addToPipeline(String name, ChannelPipeline pipeline, ChannelHandler handler) {
+        pipeline.addLast(name, handler);
+    }
+
     private SslHandler configureServerSSLOnDemand(NettyConsumer consumer) throws Exception {
         if (!consumer.getConfiguration().isSsl()) {
             return null;

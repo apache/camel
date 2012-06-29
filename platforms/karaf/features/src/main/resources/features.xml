@@ -74,8 +74,13 @@
     <feature version='${project.version}'>camel-spring</feature>
     <feature>jetty</feature>
     <feature version='[2.4,2.7)'>cxf</feature>
-    <!-- Added cxf-specs feature to workaround the karaf feature validate issue -->
     <feature version='[2.4,2.7)'>cxf-specs</feature>
+    <feature version='[2.4,2.7)'>cxf-core</feature>
+    <feature version='[2.4,2.7)'>cxf-jaxrs</feature>
+    <feature version='[2.4,2.7)'>cxf-jaxws</feature>
+    <feature version='[2.4,2.7)'>cxf-databinding-jaxb</feature>
+    <feature version='[2.4,2.7)'>cxf-bindings-soap</feature>
+
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
@@ -313,6 +318,11 @@
     <feature version='${project.version}'>camel-ftp</feature>
     <bundle>mvn:org.apache.camel/camel-jsch/${project.version}</bundle>
   </feature>
+  <feature name='camel-guava-eventbus' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-guava-eventbus/${project.version}</bundle>
+  </feature>
   <feature name='camel-guice' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guice/${guice-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${gernimo-annotation-spec-version}</bundle>
@@ -466,7 +476,7 @@
     <bundle dependency='true'>mvn:org.jibx/jibx-run/${jibx-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
-    <bundle dependency="true">mvn:joda-time/joda-time/${jodatime-bundle-version}</bundle>
+    <bundle dependency="true">mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
   </feature>
@@ -538,7 +548,7 @@
   </feature>
   <feature name='camel-leveldb' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:org.fusesource.leveldbjni/leveldbjni-all/${leveldbjni-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.fusesource.leveldbjni/leveldbjni-all/${leveldbjni-version}$Bundle-Version=${leveldbjni-version}&amp;Export-Package=*;-noimport:=true;version="${leveldbjni-version}"</bundle>
     <bundle dependency='true'>mvn:org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-leveldb/${project.version}</bundle>
   </feature>

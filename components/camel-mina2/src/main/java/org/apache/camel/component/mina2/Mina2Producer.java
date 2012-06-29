@@ -104,8 +104,17 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     public void process(Exchange exchange) throws Exception {
+        try {
+            doProcess(exchange);
+        } finally {
+            // ensure we always disconnect if configured
+            maybeDisconnectOnDone(exchange);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void doProcess(Exchange exchange) throws Exception {
         if (session == null && !lazySessionCreation) {
             throw new IllegalStateException("Not started yet!");
         }

@@ -19,7 +19,6 @@ package org.apache.camel.component.zookeeper;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.zookeeper.operations.AnyOfOperations;
@@ -56,7 +55,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private ExecutorService executor;
 
     public ZooKeeperConsumer(ZooKeeperEndpoint endpoint, Processor processor) {
-        super((Endpoint)endpoint, processor);
+        super(endpoint, processor);
         this.connectionManager = endpoint.getConnectionManager();
         this.configuration = endpoint.getConfiguration();
     }

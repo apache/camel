@@ -17,7 +17,7 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.Endpoint;
-
+import org.apache.camel.component.twitter.data.EndpointType;
 import twitter4j.Twitter;
 
 public interface TwitterEndpoint extends Endpoint {
@@ -25,4 +25,6 @@ public interface TwitterEndpoint extends Endpoint {
     Twitter getTwitter();
 
     TwitterConfiguration getProperties();
+
+    EndpointType getEndpointType();
 }

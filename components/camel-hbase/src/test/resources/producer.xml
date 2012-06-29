@@ -29,7 +29,7 @@
         </route>
         <route>
             <from uri="direct:scan"/>
-            <to uri="hbase://DEFAULTTABLE?operation=CamelHBaseScan&amp;maxResults=2&amp;family=family1&amp;qualifier=column1"/>
+            <to uri="hbase://DEFAULTTABLE?operation=CamelHBaseScan&amp;maxResults=2"/>
         </route>
     </camelContext>
 
@@ -40,4 +40,5 @@
     <bean id="config" factory-method="getConfiguration" factory-bean="utility"/>
 
     <bean id="utility" class="org.apache.hadoop.hbase.HBaseTestingUtility"/>
+
 </beans>

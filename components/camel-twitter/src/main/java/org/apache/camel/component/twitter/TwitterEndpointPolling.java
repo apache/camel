@@ -22,6 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
+import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import twitter4j.Twitter;
 
@@ -66,5 +67,10 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     public TwitterConfiguration getProperties() {
         return properties;
+    }
+
+    @Override
+    public EndpointType getEndpointType() {
+        return EndpointType.POLLING;
     }
 }

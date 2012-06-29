@@ -15,15 +15,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.10-SNAPSHOT</version>
+    <version>2.11-SNAPSHOT</version>
     <relativePath>../../parent</relativePath>
   </parent>
 
@@ -298,22 +297,22 @@
     </dependency>
     
     <!-- for http component tests -->
-  	<dependency>
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${httpclient4-version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
-  	</dependency>
+    </dependency>
   	
-  	<!-- for validator tests -->
-  	<dependency>
+    <!-- for validator tests -->
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-validator-test-resources</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0</version>
       <scope>system</scope>
       <systemPath>${basedir}/src/test/lib/camel-validator-test-resources.jar</systemPath>
-     </dependency>
+    </dependency>
 
     <!-- atomikos XA TX manager -->
     <dependency>

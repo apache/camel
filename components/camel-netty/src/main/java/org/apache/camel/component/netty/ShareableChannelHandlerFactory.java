@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.component.netty;
 
-import org.apache.camel.CamelContext;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.jboss.netty.channel.ChannelHandler;
 
 /**
- * @version
+ * A {@link ChannelHandlerFactory} returning a shareable {@link ChannelHandler}.
  */
-public class SpringTestEndpointTest extends TestEndpointTest {
+public class ShareableChannelHandlerFactory implements ChannelHandlerFactory {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/test/SpringTestEndpointTest.xml");
+    private final ChannelHandler channelHandler;
+
+    public ShareableChannelHandlerFactory(ChannelHandler channelHandler) {
+        this.channelHandler = channelHandler;
     }
 
+    @Override
+    public ChannelHandler newChannelHandler() {
+        return channelHandler;
+    }
 }

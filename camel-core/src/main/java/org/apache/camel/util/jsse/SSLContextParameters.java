@@ -229,7 +229,9 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      */
     public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
         
-        LOG.trace("Creating SSLContext from SSLContextParameters: {}", this);
+        LOG.trace("Creating SSLContext from SSLContextParameters [{}].", this);
+        
+        LOG.info("Available providers: {}.", Security.getProviders());
 
         KeyManager[] keyManagers = this.keyManagers == null ? null : this.keyManagers.createKeyManagers();
         TrustManager[] trustManagers = this.trustManagers == null ? null : this.trustManagers.createTrustManagers();
@@ -243,6 +245,9 @@ public class SSLContextParameters extends BaseSSLContextParameters {
                                              this.parsePropertyValue(this.getProvider()));
         }
         
+        LOG.debug("SSLContext [{}], initialized from [{}], is using provider [{}], protocol [{}], key managers {}, trust managers {}, and secure random [{}].",
+                 new Object[] {context, this, context.getProvider(), context.getProtocol(), keyManagers, trustManagers, secureRandom});
+        
         context.init(keyManagers, trustManagers, secureRandom);
         
         this.configureSSLContext(context);
@@ -254,74 +259,80 @@ public class SSLContextParameters extends BaseSSLContextParameters {
                         this.getSSLEngineConfigurers(context),
                         this.getSSLSocketFactoryConfigurers(context),
                         this.getSSLServerSocketFactoryConfigurers(context)));
-        LOG.debug("Created {}", context);
+
         return context;
     }
     
     @Override
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
-        LOG.trace("Configuring client and server side SSLContext parameters...");
+        LOG.trace("Configuring client and server side SSLContext parameters on SSLContext [{}]...", context);
         super.configureSSLContext(context);
         
         if (this.getClientParameters() != null) {
-            LOG.trace("Overriding client-side SSLContext parameters with configured client parameters.");
+            LOG.trace("Overriding client-side SSLContext parameters on SSLContext [{}] with configured client parameters.",
+                      context);
             this.getClientParameters().configureSSLContext(context);
         }
 
         if (this.getServerParameters() != null) {
-            LOG.trace("Overriding server-side SSLContext parameters with configured server parameters.");
+            LOG.trace("Overriding server-side SSLContext parameters on SSLContext [{}] with configured server parameters.",
+                      context);
             this.getServerParameters().configureSSLContext(context);
         }        
         
-        LOG.trace("Configured client and server side SSLContext parameters.");
+        LOG.trace("Configured client and server side SSLContext parameters on SSLContext [{}].", context);
     }
     
     @Override
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
-        LOG.trace("Collecting client and server side SSLEngine configurers...");
+        LOG.trace("Collecting client and server side SSLEngine configurers on SSLContext [{}]...", context);
         List<Configurer<SSLEngine>> configurers = super.getSSLEngineConfigurers(context);
         
         if (this.getClientParameters() != null) {
-            LOG.trace("Augmenting SSLEngine configurers with configurers from client parameters.");
+            LOG.trace("Augmenting SSLEngine configurers with configurers from client parameters on SSLContext [{}].",
+                      context);
             configurers.addAll(this.getClientParameters().getSSLEngineConfigurers(context));
         }
         
         if (this.getServerParameters() != null) {
-            LOG.trace("Augmenting SSLEngine configurers with configurers from server parameters.");
+            LOG.trace("Augmenting SSLEngine configurers with configurers from server parameters on SSLContext [{}].",
+                      context);
             configurers.addAll(this.getServerParameters().getSSLEngineConfigurers(context));
         }
         
-        LOG.trace("Collected client and server side SSLEngine configurers.");
+        LOG.trace("Collected client and server side SSLEngine configurers on SSLContext [{}].", context);
         
         return configurers;
     }
     
     @Override
     protected List<Configurer<SSLSocketFactory>> getSSLSocketFactoryConfigurers(SSLContext context) {
-        LOG.trace("Collecting SSLSocketFactory configurers...");
+        LOG.trace("Collecting SSLSocketFactory configurers on SSLContext [{}]...", context);
         List<Configurer<SSLSocketFactory>> configurers = super.getSSLSocketFactoryConfigurers(context);
         
         if (this.getClientParameters() != null) {
-            LOG.trace("Augmenting SSLSocketFactory configurers with configurers from client parameters.");
+            LOG.trace("Augmenting SSLSocketFactory configurers with configurers from client parameters on SSLContext [{}].",
+                      context);
             configurers.addAll(this.getClientParameters().getSSLSocketFactoryConfigurers(context));
         }
         
-        LOG.trace("Collected SSLSocketFactory configurers.");
+        LOG.trace("Collected SSLSocketFactory configurers on SSLContext [{}].", context);
         
         return configurers;
     }
 
     @Override
     protected List<Configurer<SSLServerSocketFactory>> getSSLServerSocketFactoryConfigurers(SSLContext context) {
-        LOG.trace("Collecting SSLServerSocketFactory configurers...");
+        LOG.trace("Collecting SSLServerSocketFactory configurers for SSLContext [{}]...", context);
         List<Configurer<SSLServerSocketFactory>> configurers = super.getSSLServerSocketFactoryConfigurers(context);
         
         if (this.getServerParameters() != null) {
-            LOG.trace("Augmenting SSLServerSocketFactory configurers with configurers from server parameters.");
+            LOG.trace("Augmenting SSLServerSocketFactory configurers with configurers from server parameters for SSLContext [{}].",
+                      context);
             configurers.addAll(this.getServerParameters().getSSLServerSocketFactoryConfigurers(context));
         }
         
-        LOG.trace("Collected client and server side SSLServerSocketFactory configurers.");
+        LOG.trace("Collected client and server side SSLServerSocketFactory configurers for SSLContext [{}].", context);
         
         return configurers;
     }

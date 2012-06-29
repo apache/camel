@@ -54,10 +54,6 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected ApplicationContext applicationContext;
     
 
-    public AbstractMongoDbTest() {
-        super();
-    }
-    
     /**
      * Checks whether Mongo is running using the connection URI defined in the mongodb.test.properties file
      * @throws IOException 

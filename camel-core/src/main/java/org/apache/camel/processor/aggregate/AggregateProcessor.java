@@ -408,7 +408,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // add this as in progress before we submit the task
         inProgressCompleteExchanges.add(exchange.getExchangeId());
 
-        // send this exchange
+        // invoke the on completion callback
+        if (aggregationStrategy instanceof CompletionAwareAggregationStrategy) {
+            ((CompletionAwareAggregationStrategy) aggregationStrategy).onCompletion(exchange);
+        }
+
+            // send this exchange
         executorService.submit(new Runnable() {
             public void run() {
                 LOG.debug("Processing aggregated exchange: {}", exchange);

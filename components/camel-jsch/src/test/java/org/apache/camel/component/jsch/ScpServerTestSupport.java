@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Provider;
 import java.security.Provider.Service;
+import java.security.PublicKey;
 import java.security.Security;
+import java.util.Arrays;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -31,10 +33,14 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.sshd.SshServer;
+import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.server.Command;
 import org.apache.sshd.server.PasswordAuthenticator;
+import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.command.ScpCommandFactory;
 import org.apache.sshd.server.session.ServerSession;
+import org.apache.sshd.server.sftp.SftpSubsystem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -116,10 +122,12 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     }
 
 
+    @SuppressWarnings("unchecked")
     protected boolean startSshd() {
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(getPort());
         sshd.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
+        sshd.setSubsystemFactories(Arrays.<NamedFactory<Command>>asList(new SftpSubsystem.Factory()));
         sshd.setCommandFactory(new ScpCommandFactory());
         sshd.setPasswordAuthenticator(new PasswordAuthenticator() {
             @Override
@@ -128,7 +136,12 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
                 return username != null && username.equals(password);
             }
         });
-        
+        sshd.setPublickeyAuthenticator(new PublickeyAuthenticator() {
+            @Override
+            public boolean authenticate(String username, PublicKey key, ServerSession session) {
+                return true;
+            }
+        });
         try {
             sshd.start();
             return true;

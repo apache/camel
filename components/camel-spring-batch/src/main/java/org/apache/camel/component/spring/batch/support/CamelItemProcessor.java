@@ -31,6 +31,7 @@ public class CamelItemProcessor<I, O> implements ItemProcessor<I, O> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public O process(I i) throws Exception {
         return (O) producerTemplate.requestBody(endpointUri, i);
     }

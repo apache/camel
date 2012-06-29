@@ -89,6 +89,36 @@ public class CamelControllerImpl implements CamelController {
         }
         return null;
     }
+    
+    public List<Route> getRoutes(String camelContextName, String filter) {
+        List<Route> routes = null;
+        if (camelContextName != null) {
+            CamelContext context = this.getCamelContext(camelContextName);
+            if (context != null) {
+                for (Route route : context.getRoutes()) {
+                    if (routes == null) {
+                        routes = new ArrayList<Route>();
+                    }
+                    if (route.getId().matches(filter)) {
+                        routes.add(route);
+                    }
+                }
+            }
+        } else {
+            List<CamelContext> camelContexts = this.getCamelContexts();
+            for (CamelContext camelContext : camelContexts) {
+                for (Route route : camelContext.getRoutes()) {
+                    if (routes == null) {
+                        routes = new ArrayList<Route>();
+                    }
+                    if (route.getId().matches(filter)) {
+                        routes.add(route);
+                    }
+                }
+            }
+        }
+        return routes;
+    }
 
     @SuppressWarnings("deprecation")
     public List<RouteDefinition> getRouteDefinitions(String camelContextName) {

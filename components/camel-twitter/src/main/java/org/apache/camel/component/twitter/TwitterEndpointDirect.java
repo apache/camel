@@ -17,11 +17,14 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
+import org.apache.camel.component.twitter.data.EndpointType;
+
 import twitter4j.Twitter;
 
 /**
@@ -59,5 +62,15 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     public TwitterConfiguration getProperties() {
         return properties;
+    }
+
+    @Override
+    public EndpointType getEndpointType() {
+        return EndpointType.DIRECT;
+    }
+
+    @Override
+    public ExchangePattern getExchangePattern() {
+        return ExchangePattern.InOptionalOut;
     }
 }

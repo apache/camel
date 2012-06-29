@@ -31,7 +31,6 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route startupOrder="1">
             <from uri="seda:foo"/>
-            <delay><constant>1000</constant></delay>
             <to uri="file://target/deferred"/>
         </route>
 

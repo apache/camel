@@ -883,7 +883,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     }
                 }
 
-                if (content.size() < elements.size()) {
+                if (elements != null && content.size() < elements.size()) {
                     LOG.warn("Cannot set right payload parameters. Please check the BindingOperation and PayLoadMessage.");
                     throw new IllegalArgumentException(
                         "The PayLoad elements cannot fit with the message parts of the BindingOperation. Please check the BindingOperation and PayLoadMessage.");

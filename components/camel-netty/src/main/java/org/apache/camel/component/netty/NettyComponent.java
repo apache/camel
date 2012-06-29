@@ -48,6 +48,9 @@ public class NettyComponent extends DefaultComponent {
 
         config.parseURI(new URI(remaining), parameters, this);
 
+        // validate config
+        config.validateConfiguration();
+
         NettyEndpoint nettyEndpoint = new NettyEndpoint(remaining, this, config);
         nettyEndpoint.setTimer(getTimer());
         setProperties(nettyEndpoint.getConfiguration(), parameters);

@@ -309,13 +309,18 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
 
-        // other kind of content type
-        InputStream is = null;
+        // prefer streaming
+        InputStream is;
         if (checkChunked(message, exchange)) {
             is = message.getBody(InputStream.class);
+        } else {
+            // try to use input stream first, so we can copy directly
+            is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, message.getBody());
         }
+
         if (is != null) {
             ServletOutputStream os = response.getOutputStream();
+            LOG.trace("Writing direct response from source input stream to servlet output stream");
             try {
                 // copy directly from input stream to output stream
                 IOHelper.copy(is, os);
@@ -323,16 +328,20 @@ public class DefaultHttpBinding implements HttpBinding {
                 IOHelper.close(os, is);
             }
         } else {
-            // not convertable as a stream so try as a String
+            // not convertable as a stream so fallback as a String
             String data = message.getBody(String.class);
             if (data != null) {
+                LOG.debug("Cannot write from source input stream, falling back to using String content. For binary content this can be a problem.");
                 // set content length and encoding before we write data
                 String charset = IOHelper.getCharsetName(exchange, true);
                 final int dataByteLength = data.getBytes(charset).length;
                 response.setCharacterEncoding(charset);
                 response.setContentLength(dataByteLength);
-                response.getWriter().print(data);
-                response.getWriter().flush();
+                try {
+                    response.getWriter().print(data);
+                } finally {
+                    response.getWriter().flush();
+                }
             }
         }
     }

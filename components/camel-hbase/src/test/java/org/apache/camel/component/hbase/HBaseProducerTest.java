@@ -37,16 +37,6 @@ import org.junit.Test;
 
 public class HBaseProducerTest extends CamelHBaseTestSupport {
 
-    protected String[] key = {"1", "2", "3"};
-    protected final String[] body = {"Hello Hbase", "Hi HBase", "Yo HBase"};
-    protected final String[] family = {"family1", "family2", "family3"};
-    protected final String[] column = {"mycolumn1", "mycolumn2", "mycolumn3"};
-    protected final byte[][] families = {DEFAULTFAMILY.getBytes(),
-            family[0].getBytes(),
-            family[1].getBytes(),
-            family[2].getBytes()};
-
-
     @Before
     public void setUp() throws Exception {
         if (systemReady) {
@@ -292,7 +282,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
         }
     }
 
-
     /**
      * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder}
      * to define the routes for testing
@@ -306,7 +295,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
                         .to("hbase://" + DEFAULTTABLE);
 
                 from("direct:scan")
-                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseContats.SCAN + "&maxResults=2&family=family1&qualifier=column1");
+                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseContats.SCAN + "&maxResults=2");
             }
         };
     }

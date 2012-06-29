@@ -187,6 +187,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
     }
 
+    public synchronized boolean containsSynchronization(Synchronization synchronization) {
+        return synchronizations != null && synchronizations.contains(synchronization);
+    }
+
     public void handoverSynchronization(Exchange target) {
         if (synchronizations == null || synchronizations.isEmpty()) {
             return;

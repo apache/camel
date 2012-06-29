@@ -28,7 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
 import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
-import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
 import org.junit.Test;
 
 /**
@@ -47,12 +46,11 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        // the decoders cannot be shared with multiple netty consumers, so we need one for each consumer
-        LengthFieldBasedFrameDecoder lengthDecoder = new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
-        registry.bind("length-decoder", lengthDecoder);
-
-        LengthFieldBasedFrameDecoder lengthDecoder2 = new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
-        registry.bind("length-decoder2", lengthDecoder2);
+        // we can share the decoder between multiple netty consumers, because they have the same configuration
+        // and we use a ChannelHandlerFactory
+        ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+        registry.bind("length-decoder", decoder);
+        registry.bind("length-decoder2", decoder);
 
         return registry;
     }

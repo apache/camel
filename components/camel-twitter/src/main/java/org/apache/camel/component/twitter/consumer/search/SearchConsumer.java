@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.twitter.consumer.search;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Tweet;
@@ -32,6 +34,7 @@ import twitter4j.TwitterException;
  */
 public class SearchConsumer extends Twitter4JConsumer {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(SearchConsumer.class);
     TwitterEndpoint te;
 
     public SearchConsumer(TwitterEndpoint te) {
@@ -41,12 +44,19 @@ public class SearchConsumer extends Twitter4JConsumer {
     public List<Tweet> pollConsume() throws TwitterException {
         String keywords = te.getProperties().getKeywords();
         Query query = new Query(keywords);
-        query.setSinceId(lastId);
+        if (te.getProperties().isFilterOld()) {
+            query.setSinceId(lastId);
+        }
+        LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(query);
     }
 
     public List<Tweet> directConsume() throws TwitterException {
         String keywords = te.getProperties().getKeywords();
+        if (keywords == null || keywords.trim().length() == 0) {
+            return Collections.emptyList();
+        }
+        LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(new Query(keywords));
     }
 
@@ -54,9 +64,13 @@ public class SearchConsumer extends Twitter4JConsumer {
         QueryResult qr = te.getTwitter().search(query);
         List<Tweet> tweets = qr.getTweets();
 
-        for (Tweet t : tweets) {
-            checkLastId(t.getId());
+        if (te.getProperties().isFilterOld()) {
+            for (Tweet t : tweets) {
+                checkLastId(t.getId());
+            }
         }
+
         return tweets;
     }
+
 }

@@ -394,6 +394,16 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    public boolean containsOnCompletion(Synchronization onCompletion) {
+        if (unitOfWork != null) {
+            // if there is an unit of work then the completions is moved there
+            return unitOfWork.containsSynchronization(onCompletion);
+        } else {
+            // check temporary completions if no unit of work yet
+            return onCompletions != null && onCompletions.contains(onCompletion);
+        }
+    }
+
     public void handoverCompletions(Exchange target) {
         if (onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {

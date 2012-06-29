@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.netty.handlers;
 
+import java.net.SocketAddress;
+
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.netty.NettyConstants;
@@ -26,6 +29,8 @@ import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -156,31 +161,56 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
 
             // we got a body to write
             LOG.debug("Writing body: {}", body);
+            ChannelFutureListener listener = new ResponseFutureListener(exchange, messageEvent.getRemoteAddress());
             if (consumer.getConfiguration().isTcp()) {
-                NettyHelper.writeBodySync(messageEvent.getChannel(), null, body, exchange);
+                NettyHelper.writeBodyAsync(messageEvent.getChannel(), null, body, exchange, listener);
             } else {
-                NettyHelper.writeBodySync(messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange);
+                NettyHelper.writeBodyAsync(messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange, listener);
             }
         }
+    }
 
-        // should channel be closed after complete?
-        Boolean close;
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-        } else {
-            close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+    /**
+     * A {@link ChannelFutureListener} that performs the disconnect logic when
+     * sending the response is complete.
+     */
+    private final class ResponseFutureListener implements ChannelFutureListener {
+
+        private final Exchange exchange;
+        private final SocketAddress remoteAddress;
+
+        private ResponseFutureListener(Exchange exchange, SocketAddress remoteAddress) {
+            this.exchange = exchange;
+            this.remoteAddress = remoteAddress;
         }
 
-        // should we disconnect, the header can override the configuration
-        boolean disconnect = consumer.getConfiguration().isDisconnect();
-        if (close != null) {
-            disconnect = close;
-        }
-        if (disconnect) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Closing channel when complete at address: {}", messageEvent.getRemoteAddress());
+        @Override
+        public void operationComplete(ChannelFuture future) throws Exception {
+            // if it was not a success then thrown an exception
+            if (!future.isSuccess()) {
+                Exception e = new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.getCause());
+                consumer.getExceptionHandler().handleException(e);
             }
-            NettyHelper.close(messageEvent.getChannel());
+
+            // should channel be closed after complete?
+            Boolean close;
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+            } else {
+                close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+            }
+
+            // should we disconnect, the header can override the configuration
+            boolean disconnect = consumer.getConfiguration().isDisconnect();
+            if (close != null) {
+                disconnect = close;
+            }
+            if (disconnect) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Closing channel when complete at address: {}", remoteAddress);
+                }
+                NettyHelper.close(future.getChannel());
+            }
         }
     }
 

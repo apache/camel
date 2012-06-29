@@ -29,14 +29,12 @@ import org.junit.Test;
 public class MQTTConsumerTest extends MQTTBaseTest {
 
 
-       @Test
+    @Test
     public void testConsume() throws Exception {
 
         MQTT mqtt = new MQTT();
         BlockingConnection publisherConnection = mqtt.blockingConnection();
         Topic topic = new Topic(TEST_TOPIC, QoS.AT_MOST_ONCE);
-        Topic[] topics = {topic};
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(numberOfMessages);
 

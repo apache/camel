@@ -63,6 +63,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      * @param endpointUri
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
+    @Deprecated
     public JpaEndpoint(String endpointUri) {
         super(endpointUri);
     }
@@ -79,6 +80,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      * @param entityManagerFactory
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
+    @Deprecated
     public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory) {
         super(endpointUri);
         this.entityManagerFactory = entityManagerFactory;
@@ -91,6 +93,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      * @param transactionManager
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
+    @Deprecated
     public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory, PlatformTransactionManager transactionManager) {
         super(endpointUri);
         this.entityManagerFactory = entityManagerFactory;

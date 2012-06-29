@@ -29,15 +29,6 @@ import org.junit.Test;
 
 public class HBaseConsumerTest extends CamelHBaseTestSupport {
 
-    protected Object[] key = {"1", "2", "3"};
-    protected final String[] body = {"Hello Hbase", "Hi HBase", "Yo HBase"};
-    protected final String[] family = {"family1", "family2", "family3"};
-    protected final String[] column = {"mycolumn1", "mycolumn2", "mycolumn3"};
-    protected final byte[][] families = {DEFAULTFAMILY.getBytes(),
-            family[0].getBytes(),
-            family[1].getBytes(),
-            family[2].getBytes()};
-
     @Before
     public void setUp() throws Exception {
         if (systemReady) {

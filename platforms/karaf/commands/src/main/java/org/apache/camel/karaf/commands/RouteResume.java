@@ -16,8 +16,11 @@
  */
 package org.apache.camel.karaf.commands;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
+import org.apache.camel.karaf.commands.internal.RegexUtil;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
@@ -25,10 +28,10 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 /**
  * Command to resume a route.
  */
-@Command(scope = "camel", name = "route-resume", description = "Resume a Camel route.")
+@Command(scope = "camel", name = "route-resume", description = "Resume a Camel route or a group of routes.")
 public class RouteResume extends OsgiCommandSupport {
 
-    @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
+    @Argument(index = 0, name = "route", description = "The Camel route ID or a wildcard expression.", required = true, multiValued = false)
     String route;
 
     @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
@@ -41,13 +44,15 @@ public class RouteResume extends OsgiCommandSupport {
     }
 
     public Object doExecute() throws Exception {
-        Route camelRoute = camelController.getRoute(route, context);
-        if (camelRoute == null) {
-            System.err.println("Camel route " + route + " not found.");
+        List<Route> camelRoutes = camelController.getRoutes(context, RegexUtil.wildcardAsRegex(route));
+        if (camelRoutes == null) {
+            System.err.println("Camel routes using  " + route + " not found.");
             return null;
         }
-        CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
-        camelContext.resumeRoute(route);
+        for (Route camelRoute : camelRoutes) {
+            CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
+            camelContext.resumeRoute(camelRoute.getId());
+        }
         return null;
     }
 

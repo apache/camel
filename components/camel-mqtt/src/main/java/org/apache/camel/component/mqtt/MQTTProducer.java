@@ -32,21 +32,18 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
 
     }
 
-
-
     @Override
     public boolean process(Exchange exchange, AsyncCallback asyncCallback) {
         try {
             doProcess(exchange);
         } catch (Exception e) {
-           exchange.setException(e);
+            exchange.setException(e);
         }
         asyncCallback.done(true);
         return true;
     }
 
-     void doProcess(Exchange exchange) throws Exception {
-
+    void doProcess(Exchange exchange) throws Exception {
         byte[] body = exchange.getIn().getBody(byte[].class);
         if (body != null) {
             MQTTConfiguration configuration = mqttEndpoint.getConfiguration();
@@ -67,8 +64,6 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
                 topicName = topicValue.toString();
             }
             mqttEndpoint.publish(topicName, body, qoS, retain);
-
         }
-
     }
 }

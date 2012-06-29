@@ -42,6 +42,12 @@ public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
             return;
         }
 
+        // and does not work well on windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
+
         getInstalledBundle("CamelBlueprintHdfsTestBundle").start();
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintHdfsTestBundle)", 20000);
 

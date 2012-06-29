@@ -63,12 +63,12 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     
     @Override
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
-        LOG.trace("Configuring server-side SSLContext parameters...");
+        LOG.trace("Configuring server-side SSLContext parameters on SSLContext [{}]...", context);
         if (this.getSessionTimeout() != null) {
-            LOG.debug("Configuring server-side SSLContext session timeout: " + this.getSessionTimeout());
+            LOG.debug("Configuring server-side SSLContext session timeout on SSLContext [{}] to [{}].", context, this.getSessionTimeout());
             this.configureSessionContext(context.getServerSessionContext(), this.getSessionTimeout());
         }
-        LOG.trace("Configured server-side SSLContext parameters.");
+        LOG.trace("Configured server-side SSLContext parameters on SSLContext [{}].", context);   
     }
 
     /**
@@ -97,6 +97,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
                 @Override
                 public SSLEngine configure(SSLEngine engine) {
+                    LOG.info("Configuring client-auth on SSLEngine [{}] to [{}].", engine, clientAuthValue);
                     switch (clientAuthValue) {
                     case NONE:
                         engine.setWantClientAuth(false);
@@ -135,6 +136,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
                 @Override
                 public SSLServerSocket configure(SSLServerSocket socket) {
+                    LOG.info("Configuring client-auth on SSLServerSocket [{}] to [{}].", socket, clientAuthValue);
                     switch (clientAuthValue) {
                     case NONE:
                         socket.setWantClientAuth(false);

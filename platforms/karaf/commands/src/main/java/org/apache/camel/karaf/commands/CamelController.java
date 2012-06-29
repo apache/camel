@@ -49,6 +49,15 @@ public interface CamelController {
      * @return the list of the Camel routes.
      */
     List<Route> getRoutes(String camelContextName);
+    
+    /**
+     * Get all routes filtered by the regex.
+     *
+     * @param camelContextName the Camel context name. If null, all contexts are considered.
+     * @param filter the filter which supports * and ? as wildcards
+     * @return the list of the Camel routes.
+     */
+    List<Route> getRoutes(String camelContextName, String filter);
 
     /**
      * Get all route definitions. If Camel context name is null, all route definitions from all contexts are listed.

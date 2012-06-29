@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>karaf</artifactId>
-    <version>2.10-SNAPSHOT</version>
+    <version>2.11-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -58,6 +58,13 @@
       <artifactId>org.apache.karaf.util</artifactId>
       <version>${karaf-version}</version>
     </dependency>
+    
+    <!-- Test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+     </dependency>
 
   </dependencies>
 
