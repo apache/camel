@@ -18,6 +18,8 @@ package org.apache.camel.impl;
 
 import java.util.Map;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -27,6 +29,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +100,7 @@ public class InterceptSendToEndpoint implements Endpoint {
 
     public Producer createProducer() throws Exception {
         producer = delegate.createProducer();
-        return new Producer() {
+        return new DefaultAsyncProducer(delegate) {
 
             public Endpoint getEndpoint() {
                 return producer.getEndpoint();
@@ -114,7 +118,8 @@ public class InterceptSendToEndpoint implements Endpoint {
                 return producer.createExchange(exchange);
             }
 
-            public void process(Exchange exchange) throws Exception {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
                 // process the detour so we do the detour routing
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", new Object[]{getEndpoint(), detour, exchange});
@@ -122,16 +127,20 @@ public class InterceptSendToEndpoint implements Endpoint {
                 // add header with the real endpoint uri
                 exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
 
+                // detour the exchange using synchronous processing
                 try {
                     detour.process(exchange);
                 } catch (Exception e) {
                     exchange.setException(e);
+                    callback.done(true);
+                    return true;
                 }
 
                 // Decide whether to continue or not; similar logic to the Pipeline
                 // check for error if so we should break out
                 if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpoint(), LOG)) {
-                    return;
+                    callback.done(true);
+                    return true;
                 }
 
                 // determine if we should skip or not
@@ -150,10 +159,15 @@ public class InterceptSendToEndpoint implements Endpoint {
                         exchange.setOut(null);
                     }
 
-                    // route to original destination
-                    producer.process(exchange);
+                    // route to original destination leveraging the asynchronous routing engine
+                    AsyncProcessor async = AsyncProcessorConverterHelper.convert(producer);
+                    return AsyncProcessorHelper.process(async, exchange, callback);
                 } else {
-                    LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpoint(), exchange);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpoint(), exchange);
+                    }
+                    callback.done(true);
+                    return true;
                 }
             }
 

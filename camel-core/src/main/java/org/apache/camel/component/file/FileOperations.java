@@ -275,7 +275,7 @@ public class FileOperations implements GenericFileOperations<File> {
         FileChannel in = new FileInputStream(source).getChannel();
         FileChannel out = null;
         try {
-            out = prepareOutputFileChannel(target, out);
+            out = prepareOutputFileChannel(target);
             LOG.debug("Using FileChannel to write file: {}", target);
             long size = in.size();
             long position = 0;
@@ -293,7 +293,7 @@ public class FileOperations implements GenericFileOperations<File> {
     private void writeFileByStream(InputStream in, File target) throws IOException {
         FileChannel out = null;
         try {
-            out = prepareOutputFileChannel(target, out);
+            out = prepareOutputFileChannel(target);
             LOG.debug("Using InputStream to write file: {}", target);
             int size = endpoint.getBufferSize();
             byte[] buffer = new byte[size];
@@ -331,14 +331,11 @@ public class FileOperations implements GenericFileOperations<File> {
      * Creates and prepares the output file channel. Will position itself in correct position if the file is writable
      * eg. it should append or override any existing content.
      */
-    private FileChannel prepareOutputFileChannel(File target, FileChannel out) throws IOException {
+    private FileChannel prepareOutputFileChannel(File target) throws IOException {
         if (endpoint.getFileExist() == GenericFileExist.Append) {
-            out = new RandomAccessFile(target, "rw").getChannel();
-            out = out.position(out.size());
-        } else {
-            // will override
-            out = new FileOutputStream(target).getChannel();
+            FileChannel out = new RandomAccessFile(target, "rw").getChannel();
+            return out.position(out.size());
         }
-        return out;
+        return new FileOutputStream(target).getChannel();
     }
 }
