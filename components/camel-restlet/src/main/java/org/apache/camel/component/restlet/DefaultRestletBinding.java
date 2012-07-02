@@ -28,7 +28,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.spi.HeaderFilterStrategy;
