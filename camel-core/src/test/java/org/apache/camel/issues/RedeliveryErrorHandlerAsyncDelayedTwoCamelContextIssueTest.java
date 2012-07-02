@@ -75,7 +75,7 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
     }
 
     public static class ProblematicBean {
-        int counter = 0;
+        int counter;
 
         public void doSomething() {
             if (counter++ < 2) {
