@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Endpoint;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.Endpoint;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 
@@ -78,7 +78,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public static interface BareSoapService {
 
-        public void doSomething();
+        void doSomething();
 
     }
 
