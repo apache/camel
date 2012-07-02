@@ -35,7 +35,7 @@ public class StreamSystemOutTest extends CamelTestSupport {
     ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
 
     // START SNIPPET: e1
-     @Test
+    @Test
     public void testStringContent() throws Exception {
         try {
             // Given
