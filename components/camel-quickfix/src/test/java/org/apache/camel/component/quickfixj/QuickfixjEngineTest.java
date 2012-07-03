@@ -590,15 +590,6 @@ public class QuickfixjEngineTest {
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.quickfixj:*"), null);
-
-        // Try to find the root cause of the failed tests under jdk7 as from time to time the returned Set is not empty!
-        if (!names.isEmpty()) {
-            System.out.println("The JMX objects found for the name 'org.quickfixj:*':");
-            for (ObjectName name : names) {
-                System.out.println("ObjectName => '" + name + "'");
-            }
-        }
-
         assertTrue("QFJ mbean should not have been registered", names.isEmpty());
     }
 
