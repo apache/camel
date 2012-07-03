@@ -159,7 +159,7 @@
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.7</version>
+          <version>0.8</version>
         </plugin>
    
         <plugin>
@@ -808,82 +808,6 @@
               </plugins>
           </pluginManagement>
       </build>
-    </profile>
-    <profile>
-      <id>rat</id>
-      <!-- The profile for Apache Release Audit Tool http://incubator.apache.org/rat/ -->
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>rat-maven-plugin</artifactId>
-            <version>1.0-alpha-3</version>
-            <executions>
-              <execution>
-                <phase>verify</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
-              <excludes>
-                <exclude>**/target/**/*</exclude>
-
-                <!-- left around after creating the site -->
-                <exclude>**/cobertura.ser</exclude>
-
-                <!-- left around after some unit tests -->
-                <exclude>**/derby.log</exclude>
-                <exclude>**/camel-ftp/res/**/*</exclude>
-
-                <!-- IDEA files -->
-                <exclude>**/*.iml</exclude>
-                <exclude>**/*.ipr</exclude>
-                <exclude>**/*.iws</exclude>
-
-                <!-- Eclipse files -->
-                <exclude>**/.*</exclude>
-                <exclude>**/eclipse-classes/**/*</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <!--
-            TODO this barfs
-
-            <reporting>
-              <plugins>
-                <plugin>
-                  <groupId>org.codehaus.mojo</groupId>
-                  <artifactId>rat-maven-plugin</artifactId>
-                  <version>1.0-alpha-3</version>
-                </plugin>
-              </plugins>
-            </reporting>
-      -->
-      <repositories>
-        <repository>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots />
-          <id>Codehaus Snapshots</id>
-          <url>http://snapshots.repository.codehaus.org/</url>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots />
-          <id>Codehaus Snapshots</id>
-          <url>http://snapshots.repository.codehaus.org/</url>
-        </pluginRepository>
-      </pluginRepositories>
     </profile>
 
     <profile>
