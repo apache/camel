@@ -62,6 +62,10 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         this.modelsLoader = new AnnotationModelLoader(resolver);
         this.type = type;
 
+        if (LOG.isDebugEnabled()) {
+                LOG.debug("Class name: {}", type.getName());
+        }
+
         initModel();
     }
 
