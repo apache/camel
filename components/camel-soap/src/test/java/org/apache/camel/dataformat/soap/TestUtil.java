@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.camel.util.ObjectHelper;
+
 public final class TestUtil {
     private TestUtil() {
     }
@@ -31,8 +33,19 @@ public final class TestUtil {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     is, "UTF-8"));
             String line;
+            boolean comment = false;
             while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
+
+                // skip comments such as ASF license headers
+                if (line.startsWith("<!--")) {
+                    comment = true;
+                } else if (line.startsWith("-->")) {
+                    comment = false;
+                } else {
+                    if (!comment) {
+                        sb.append(line).append("\n");
+                    }
+                }
             }
             return sb.toString();
         } finally {
