@@ -26,7 +26,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- *                                cd wo
+ *
  */
 public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
 
