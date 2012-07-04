@@ -63,15 +63,11 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
     
     private static final String SOAP_PACKAGE_NAME = Envelope.class.getPackage().getName();
-
     private static final QName FAULT_CODE_SERVER = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Receiver");
-    
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
-    
-    private ElementNameStrategy elementNameStrategy;
+    private static final transient Logger LOG = LoggerFactory.getLogger(SoapJaxbDataFormat.class);
 
+    private ElementNameStrategy elementNameStrategy;
     private String elementNameStrategyRef;
-    
     private boolean ignoreUnmarshalledHeaders;
 
     /**
@@ -82,8 +78,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
 
     /**
      * Initialize with JAXB context path
-     * 
-     * @param contexPath
      */
     public SoapJaxbDataFormat(String contextPath) {
         super(contextPath);
@@ -93,11 +87,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * Initialize the data format. The serviceInterface is necessary to
      * determine the element name and namespace of the element inside the soap
      * body when marshalling
-     * 
-     * @param contextPath
-     *            package for JAXB context
-     * @param serviceInterface
-     *            webservice interface
      */
     public SoapJaxbDataFormat(String contextPath, ElementNameStrategy elementNameStrategy) {
         this(contextPath);
@@ -108,11 +97,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * Initialize the data format. The serviceInterface is necessary to
      * determine the element name and namespace of the element inside the soap
      * body when marshalling
-     * 
-     * @param contextPath
-     *            package for JAXB context
-     * @param elementNameStrategyRef
-     *            webservice interface referenced bean name
      */
     public SoapJaxbDataFormat(String contextPath, String elementNameStrategyRef) {
         this(contextPath);
@@ -220,8 +204,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      *            object to be put into the SOAP body
      * @param soapAction
      *            for name resolution
-     * @param classResolver
-     *            for name resolution
      * @param headerElements
      *            in/out parameter used to capture header content if present
      *            
@@ -275,7 +257,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         for (Object bodyObj : bodyParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
             if (name == null) {
-                log.warn("Could not find QName for class " + bodyObj.getClass().getName());
+                LOG.warn("Could not find QName for class " + bodyObj.getClass().getName());
                 continue;
             } else {
                 bodyElements.add(getElement(bodyObj, name));
@@ -285,7 +267,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         for (Object headerObj : headerParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, headerObj.getClass());
             if (name == null) {
-                log.warn("Could not find QName for class " + headerObj.getClass().getName());
+                LOG.warn("Could not find QName for class " + headerObj.getClass().getName());
                 continue;
             } else {
                 JAXBElement<?> headerElem = getElement(headerObj, name);
@@ -325,7 +307,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * as the detail. The detail object is read from the method getFaultInfo of
      * the throwable if present
      * 
-     * @param exception
+     * @param exception the cause exception
      * @return SOAP fault from given Throwable
      */
     @SuppressWarnings("unchecked")
@@ -336,7 +318,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
                     + " needs to have an WebFault annotation with name and targetNamespace", exception);
         }
         QName name = new QName(webFault.targetNamespace(), webFault.name());
-        Object faultObject = null;
+        Object faultObject;
         try {
             Method method = exception.getClass().getMethod("getFaultInfo");
             faultObject = method.invoke(exception);
