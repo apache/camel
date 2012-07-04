@@ -64,7 +64,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     
     private static final String SOAP_PACKAGE_NAME = Envelope.class.getPackage().getName();
 
-    private static final QName FAULT_CODE_SERVER = new QName("http://www.w3.org/2003/05/soap-envelope", "Receiver");
+    private static final QName FAULT_CODE_SERVER = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Receiver");
     
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     
