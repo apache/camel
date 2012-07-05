@@ -17,6 +17,7 @@
 package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.Expression;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleToken;
 
 /**
@@ -39,11 +40,15 @@ public class DoubleQuoteStart extends BaseSimpleNode implements BlockStart {
 
     @Override
     public Expression createExpression(String expression) {
+        Expression answer = null;
         if (block != null) {
-            return block.createExpression(expression);
-        } else {
-            return null;
+            answer = block.createExpression(expression);
         }
+        if (answer == null) {
+            // there quoted literal is empty
+            answer = ExpressionBuilder.constantExpression("");
+        }
+        return answer;
     }
 
     @Override

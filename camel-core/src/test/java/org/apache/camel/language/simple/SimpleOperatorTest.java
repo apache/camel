@@ -48,6 +48,24 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${body} != null", false);
     }
 
+    public void testEmptyValue() throws Exception {
+        exchange.getIn().setBody("");
+        assertPredicate("${in.body} == null", false);
+        assertPredicate("${body} == null", false);
+
+        exchange.getIn().setBody("");
+        assertPredicate("${in.body} == ''", true);
+        assertPredicate("${body} == \"\"", true);
+
+        exchange.getIn().setBody(" ");
+        assertPredicate("${in.body} == ''", false);
+        assertPredicate("${body} == \"\"", false);
+
+        exchange.getIn().setBody("Value");
+        assertPredicate("${in.body} == ''", false);
+        assertPredicate("${body} == \"\"", false);
+    }
+
     public void testAnd() throws Exception {
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == 123", true);
         assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == 444", false);

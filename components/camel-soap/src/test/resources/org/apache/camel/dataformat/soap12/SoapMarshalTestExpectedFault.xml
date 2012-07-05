@@ -17,10 +17,20 @@
     limitations under the License.
 
 -->
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-	<soap:Body>
-		<ns2:getCustomersByName xmlns:ns2="http://customerservice.example.com/">
-			<name>Smith</name>
-		</ns2:getCustomersByName>
-	</soap:Body>
-</soap:Envelope>
+<ns2:Envelope xmlns:ns2="http://www.w3.org/2003/05/soap-envelope" xmlns:ns3="http://customerservice.example.com/">
+	<ns2:Body>
+		<ns2:Fault>
+			<ns2:Code>
+				<ns2:Value>ns2:Receiver</ns2:Value>
+			</ns2:Code>
+			<ns2:Reason>
+				<ns2:Text xml:lang="en">No customer found</ns2:Text>
+			</ns2:Reason>
+			<ns2:Detail>
+				<ns3:NoSuchCustomer>
+					<customerId>None</customerId>
+				</ns3:NoSuchCustomer>
+			</ns2:Detail>
+		</ns2:Fault>
+	</ns2:Body>
+</ns2:Envelope>

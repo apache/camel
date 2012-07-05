@@ -318,31 +318,67 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the Soap JAXB data format
+     * Uses the Soap 1.1 JAXB data format
      */
     public T soapjaxb() {
         return dataFormat(new SoapJaxbDataFormat());
     }
 
     /**
-     * Uses the Soap JAXB data format
+     * Uses the Soap 1.1 JAXB data format
      */
     public T soapjaxb(String contextPath) {
         return dataFormat(new SoapJaxbDataFormat(contextPath));
     }
 
     /**
-     * Uses the Soap JAXB data format
+     * Uses the Soap 1.1 JAXB data format
      */
     public T soapjaxb(String contextPath, String elementNameStrategyRef) {
         return dataFormat(new SoapJaxbDataFormat(contextPath, elementNameStrategyRef));
     }
 
     /**
-     * Uses the Soap JAXB data format
+     * Uses the Soap 1.1 JAXB data format
      */
     public T soapjaxb(String contextPath, Object elementNameStrategy) {
         return dataFormat(new SoapJaxbDataFormat(contextPath, elementNameStrategy));
+    }
+
+    /**
+     * Uses the Soap 1.2 JAXB data format
+     */
+    public T soapjaxb12() {
+        SoapJaxbDataFormat soap = new SoapJaxbDataFormat();
+        soap.setVersion("1.2");
+        return dataFormat(soap);
+    }
+
+    /**
+     * Uses the Soap 1.2 JAXB data format
+     */
+    public T soapjaxb12(String contextPath) {
+        SoapJaxbDataFormat soap = new SoapJaxbDataFormat(contextPath);
+        soap.setVersion("1.2");
+        return dataFormat(soap);
+    }
+
+    /**
+     * Uses the Soap 1.2 JAXB data format
+     */
+    public T soapjaxb12(String contextPath, String elementNameStrategyRef) {
+        SoapJaxbDataFormat soap = new SoapJaxbDataFormat(contextPath, elementNameStrategyRef);
+        soap.setVersion("1.2");
+        return dataFormat(soap);
+    }
+
+    /**
+     * Uses the Soap JAXB data format
+     */
+    public T soapjaxb12(String contextPath, Object elementNameStrategy) {
+        SoapJaxbDataFormat soap = new SoapJaxbDataFormat(contextPath, elementNameStrategy);
+        soap.setVersion("1.2");
+        return dataFormat(soap);
     }
 
     /**
