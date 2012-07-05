@@ -20,11 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.xml.bind.JAXBContext;
@@ -32,7 +29,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebFault;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -45,30 +41,20 @@ import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.xmlsoap.schemas.soap.envelope.Body;
-import org.xmlsoap.schemas.soap.envelope.Detail;
-import org.xmlsoap.schemas.soap.envelope.Envelope;
-import org.xmlsoap.schemas.soap.envelope.Fault;
-import org.xmlsoap.schemas.soap.envelope.Header;
-import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
-
 /**
- * Marshaling from Objects to SOAP and back by using JAXB. The classes to be
- * processed need to have JAXB annotations. For marshaling a ElementNameStrategy
- * is used to determine how the top level elements in SOAP are named as this can
- * not be extracted from JAXB.
+ * Data format supporting SOAP 1.1 and 1.2.
  */
 public class SoapJaxbDataFormat extends JaxbDataFormat {
 
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
-    
-    private static final String SOAP_PACKAGE_NAME = Envelope.class.getPackage().getName();
-    private static final QName FAULT_CODE_SERVER = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Receiver");
+
     private static final transient Logger LOG = LoggerFactory.getLogger(SoapJaxbDataFormat.class);
 
+    private SoapDataFormatAdapter adapter;
     private ElementNameStrategy elementNameStrategy;
     private String elementNameStrategyRef;
     private boolean ignoreUnmarshalledHeaders;
+    private String version;
 
     /**
      * Remember to set the context path when using this constructor
@@ -92,7 +78,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         this(contextPath);
         this.elementNameStrategy = elementNameStrategy;
     }
-    
+
     /**
      * Initialize the data format. The serviceInterface is necessary to
      * determine the element name and namespace of the element inside the soap
@@ -103,25 +89,16 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         this.elementNameStrategyRef = elementNameStrategyRef;
     }
 
-    public void setElementNameStrategy(Object nameStrategy) {
-        if (nameStrategy instanceof ElementNameStrategy) {
-            this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
+    @Override
+    protected void doStart() throws Exception {
+        if ("1.2".equals(version)) {
+            LOG.debug("Using SOAP 1.2 adapter");
+            adapter = new Soap12DataFormatAdapter(this);
         } else {
-            throw new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
-                    + ElementNameStrategy.class.getName());
+            LOG.debug("Using SOAP 1.1 adapter");
+            adapter = new Soap11DataFormatAdapter(this);
         }
-    }
-    
-    public void setIgnoreUnmarshalledHeaders(boolean ignoreHeaders) {
-        this.ignoreUnmarshalledHeaders = ignoreHeaders;
-    }
-    
-    /**
-     * Indicates whether header content that has been unmarshalled should be placed into a message
-     * header on the exchange
-     */
-    private boolean isIgnoreUnmarshalledHeaders() {
-        return ignoreUnmarshalledHeaders;
+        super.doStart();
     }
 
     protected void checkElementNameStrategy(Exchange exchange) {
@@ -149,7 +126,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * To determine the name of the top level xml elements the elementNameStrategy
      * is used.
      */
-    public void marshal(Exchange exchange, final Object inputObject, OutputStream stream) throws IOException {
+    public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException {
         checkElementNameStrategy(exchange);
 
         String soapAction = getSoapActionFromExchange(exchange);
@@ -160,37 +137,11 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
                 soapAction = webMethod.action();
             }
         }
-                
-        Body body = new Body();
-        Header header = new Header();
 
-        Throwable exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-        if (exception == null) {
-            exception = exchange.getIn().getHeader(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-        }
-        
-        final List<JAXBElement<?>> bodyContent;
-        List<JAXBElement<?>> headerContent = new ArrayList<JAXBElement<?>>();
-        if (exception != null) {
-            bodyContent = new ArrayList<JAXBElement<?>>();
-            bodyContent.add(createFaultFromException(exception));
-        } else {
-            bodyContent = createContentFromObject(inputObject, soapAction, headerContent);
-        }
-       
-        for (JAXBElement<?> elem : bodyContent) {
-            body.getAny().add(elem);
-        }
-        for (JAXBElement<?> elem : headerContent) {
-            header.getAny().add(elem);
-        }
-        Envelope envelope = new Envelope();
-        if (headerContent.size() > 0) {
-            envelope.setHeader(header);
-        }
-        envelope.setBody(body);
-        JAXBElement<Envelope> envelopeEl = new ObjectFactory().createEnvelope(envelope);
-        super.marshal(exchange, envelopeEl, stream);
+        Object envelope = adapter.doMarshal(exchange, inputObject, stream, soapAction);
+
+        // and continue in super
+        super.marshal(exchange, envelope, stream);
     }
 
     /**
@@ -209,7 +160,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      *            
      * @return JAXBElement for the body content
      */
-    private List<JAXBElement<?>> createContentFromObject(final Object inputObject, String soapAction,
+    protected List<JAXBElement<?>> createContentFromObject(final Object inputObject, String soapAction,
                                                          List<JAXBElement<?>> headerElements) {
         List<Object> bodyParts = new ArrayList<Object>();
         List<Object> headerParts = new ArrayList<Object>();
@@ -237,8 +188,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
                         }
                     }
                 } else {
-                    throw new RuntimeCamelException(
-                                                    "The number of bean invocation parameters does not "
+                    throw new RuntimeCamelException("The number of bean invocation parameters does not "
                                                         + "match the number of parameters annotated with @WebParam for the method [ "
                                                         + bi.getMethod().getName() + "].");
                 }
@@ -301,41 +251,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         return new JAXBElement(name, value.getClass(), value);
     }
     
-    
-    /**
-     * Creates a SOAP fault from the exception and populates the message as well
-     * as the detail. The detail object is read from the method getFaultInfo of
-     * the throwable if present
-     * 
-     * @param exception the cause exception
-     * @return SOAP fault from given Throwable
-     */
-    @SuppressWarnings("unchecked")
-    private JAXBElement<Fault> createFaultFromException(final Throwable exception) {
-        WebFault webFault = exception.getClass().getAnnotation(WebFault.class);
-        if (webFault == null || webFault.targetNamespace() == null) {
-            throw new RuntimeException("The exception " + exception.getClass().getName()
-                    + " needs to have an WebFault annotation with name and targetNamespace", exception);
-        }
-        QName name = new QName(webFault.targetNamespace(), webFault.name());
-        Object faultObject;
-        try {
-            Method method = exception.getClass().getMethod("getFaultInfo");
-            faultObject = method.invoke(exception);
-        } catch (Exception e) {
-            throw new RuntimeCamelException("Exception while trying to get fault details", e);
-        }
-        Fault fault = new Fault();
-        fault.setFaultcode(FAULT_CODE_SERVER);
-        fault.setFaultstring(exception.getMessage());
-        Detail detailEl = new ObjectFactory().createDetail();
-        @SuppressWarnings("rawtypes")
-        JAXBElement<?> faultDetailContent = new JAXBElement(name, faultObject.getClass(), faultObject);
-        detailEl.getAny().add(faultDetailContent);
-        fault.setDetail(detailEl);
-        return new ObjectFactory().createFault(fault);
-    }
-
     /**
      * Unmarshal a given SOAP xml stream and return the content of the SOAP body
      */
@@ -359,43 +274,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         
         Object unmarshalledObject = super.unmarshal(exchange, stream);
         Object rootObject = JAXBIntrospector.getValue(unmarshalledObject);
-        if (rootObject.getClass() != Envelope.class) {
-            throw new RuntimeCamelException("Expected Soap Envelope but got " + rootObject.getClass());
-        }
-        Envelope envelope = (Envelope) rootObject;
-        
-        Header header = envelope.getHeader();
-        if (header != null) {
-            List<Object> returnHeaders;
-            List<Object> anyHeaderElements = envelope.getHeader().getAny();
-            if (null != anyHeaderElements && !(isIgnoreUnmarshalledHeaders())) {
-                if (isIgnoreJAXBElement()) {
-                    returnHeaders = new ArrayList<Object>();
-                    for (Object headerEl : anyHeaderElements) {
-                        returnHeaders.add(JAXBIntrospector.getValue(headerEl));
-                    }  
-                } else {
-                    returnHeaders = anyHeaderElements;
-                }
-                exchange.getOut().setHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST, returnHeaders);
-            }
-        }
-        
-        List<Object> anyElement = envelope.getBody().getAny();
-        if (anyElement.size() == 0) {
-            // No parameter so return null
-            return null;
 
-        }
-        Object payloadEl = anyElement.get(0);
-        Object payload = JAXBIntrospector.getValue(payloadEl);
-        if (payload instanceof Fault) {
-            Exception exception = createExceptionFromFault((Fault) payload);
-            exchange.setException(exception);
-            return null;
-        } else {
-            return isIgnoreJAXBElement() ? payload : payloadEl;
-        }
+        return adapter.doUnmarshal(exchange, stream, rootObject);
     }
 
     private String getSoapActionFromExchange(Exchange exchange) {
@@ -414,61 +294,55 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     }
 
     /**
-     * Creates an exception and eventually an embedded bean that contains the
-     * fault detail. The exception class is determined by using the
-     * elementNameStrategy. The qName of the fault detail should match the
-     * WebFault annotation of the Exception class. If no fault detail is set the
-     * a RuntimeCamelException is created.
-     * 
-     * @param fault
-     *            Soap fault
-     * @return created Exception
-     */
-    private Exception createExceptionFromFault(Fault fault) {
-        List<Object> detailList = fault.getDetail().getAny();
-        String message = fault.getFaultstring();
-
-        if (detailList.size() == 0) {
-            return new RuntimeCamelException(message);
-        }
-        JAXBElement<?> detailEl = (JAXBElement<?>) detailList.get(0);
-        Class<? extends Exception> exceptionClass = elementNameStrategy.findExceptionForFaultName(detailEl.getName());
-        Constructor<? extends Exception> messageContructor;
-        Constructor<? extends Exception> constructor;
-
-        try {
-            messageContructor = exceptionClass.getConstructor(String.class);
-            Object detail = JAXBIntrospector.getValue(detailEl);
-            try {
-                constructor = exceptionClass.getConstructor(String.class, detail.getClass());
-                return constructor.newInstance(message, detail);
-            } catch (NoSuchMethodException e) {
-                return messageContructor.newInstance(message);
-            }
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
-    }
-
-    /**
      * Added the generated SOAP package to the JAXB context so Soap datatypes
      * are available
      */
     @Override
     protected JAXBContext createContext() throws JAXBException {
         if (getContextPath() != null) {
-            return JAXBContext.newInstance(SOAP_PACKAGE_NAME + ":" + getContextPath());
+            return JAXBContext.newInstance(adapter.getSoapPackageName() + ":" + getContextPath());
         } else {
             return JAXBContext.newInstance();
         }
     }
 
-    public void setElementNameStrategy(ElementNameStrategy elementNameStrategy) {
-        this.elementNameStrategy = elementNameStrategy;
+    public ElementNameStrategy getElementNameStrategy() {
+        return elementNameStrategy;
     }
-    
-    public void setElementNameStrategyRef(String nameStrategyRef) {
-        this.elementNameStrategyRef = nameStrategyRef;
+
+    public void setElementNameStrategy(Object nameStrategy) {
+        if (nameStrategy == null) {
+            this.elementNameStrategy = null;
+        } else if (nameStrategy instanceof ElementNameStrategy) {
+            this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
+        } else {
+            throw new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
+                    + ElementNameStrategy.class.getName());
+        }
+    }
+
+    public String getElementNameStrategyRef() {
+        return elementNameStrategyRef;
+    }
+
+    public void setElementNameStrategyRef(String elementNameStrategyRef) {
+        this.elementNameStrategyRef = elementNameStrategyRef;
+    }
+
+    public boolean isIgnoreUnmarshalledHeaders() {
+        return ignoreUnmarshalledHeaders;
+    }
+
+    public void setIgnoreUnmarshalledHeaders(boolean ignoreUnmarshalledHeaders) {
+        this.ignoreUnmarshalledHeaders = ignoreUnmarshalledHeaders;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
 }

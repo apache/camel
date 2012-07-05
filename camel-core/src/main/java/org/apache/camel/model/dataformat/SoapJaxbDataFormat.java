@@ -36,7 +36,9 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     private String elementNameStrategyRef;
     @XmlTransient
     private Object elementNameStrategy;
-    
+    @XmlAttribute
+    private String version;
+
     public SoapJaxbDataFormat() {
         super("soapjaxb");
     }
@@ -58,36 +60,46 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         setElementNameStrategy(elementNameStrategy);
     }
 
-
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
-
 
     public String getContextPath() {
         return contextPath;
     }
 
-
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
-
 
     public String getEncoding() {
         return encoding;
     }
 
-
     public void setElementNameStrategyRef(String elementNameStrategyRef) {
         this.elementNameStrategyRef = elementNameStrategyRef;
     }
 
-
     public String getElementNameStrategyRef() {
         return elementNameStrategyRef;
     }
-    
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setElementNameStrategy(Object elementNameStrategy) {
+        this.elementNameStrategy = elementNameStrategy;
+    }
+
+    public Object getElementNameStrategy() {
+        return elementNameStrategy;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         if (elementNameStrategy != null) {
@@ -99,15 +111,10 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         if (encoding != null) {
             setProperty(dataFormat, "encoding", encoding);
         }
+        if (version != null) {
+            setProperty(dataFormat, "version", version);
+        }
         setProperty(dataFormat, "contextPath", contextPath);
     }
 
-
-    public void setElementNameStrategy(Object elementNameStrategy) {
-        this.elementNameStrategy = elementNameStrategy;
-    }
-
-    public Object getElementNameStrategy() {
-        return elementNameStrategy;
-    }
 }
