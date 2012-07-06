@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -506,6 +507,46 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                 }
             }
         });
+    }
+
+    /**
+     * Adds an expectation that the given header values are received by this
+     * endpoint in any order
+     */
+    public void expectedHeaderValuesReceivedInAnyOrder(final String name, final List<?> values) {
+        expectedMessageCount(values.size());
+
+        expects(new Runnable() {
+            public void run() {
+                // these are the expected values to find
+                final Set<Object> actualHeaderValues = new CopyOnWriteArraySet<Object>(values);
+
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    Exchange exchange = getReceivedExchange(i);
+
+                    Object actualValue = exchange.getIn().getHeader(name);
+                    for (Object expectedValue : actualHeaderValues) {
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
+                        // remove any found values
+                        actualHeaderValues.remove(actualValue);
+                    }
+                }
+
+                // should be empty, as we should find all the values
+                assertTrue("Expected " + values.size() + " headers with key[" + name + "], received " + (values.size() - actualHeaderValues.size())
+                        + " headers. Expected header values: " + actualHeaderValues, actualHeaderValues.isEmpty());
+            }
+        });
+    }
+
+    /**
+     * Adds an expectation that the given header values are received by this
+     * endpoint in any order
+     */
+    public void expectedHeaderValuesReceivedInAnyOrder(String name, Object... values) {
+        List<Object> valueList = new ArrayList<Object>();
+        valueList.addAll(Arrays.asList(values));
+        expectedHeaderValuesReceivedInAnyOrder(name, valueList);
     }
 
     /**
