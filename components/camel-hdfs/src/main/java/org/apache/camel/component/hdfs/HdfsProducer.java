@@ -102,7 +102,7 @@ public class HdfsProducer extends DefaultProducer {
         if (idleStrategy != null) {
             scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "HdfsIdleCheck");
             log.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
-            scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy), 1000, config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
+            scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
         }
     }
 
