@@ -430,10 +430,10 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      * @param testClass the test class being executed
      */
     protected void handleMockEndpointsAndSkip(GenericApplicationContext context, Class<?> testClass) throws Exception {
-        if (testClass.isAnnotationPresent(MockEndpoints.class)) {
+        if (testClass.isAnnotationPresent(MockEndpointsAndSkip.class)) {
             
             final String mockEndpoints = testClass.getAnnotation(
-                    MockEndpoints.class).value();
+                    MockEndpointsAndSkip.class).value();
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
                 
                 @Override
