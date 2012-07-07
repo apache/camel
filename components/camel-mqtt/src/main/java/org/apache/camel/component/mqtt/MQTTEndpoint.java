@@ -46,7 +46,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
     private final MQTTConfiguration configuration;
     private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
 
-    public MQTTEndpoint(String uri, org.apache.camel.component.mqtt.MQTTComponent component, MQTTConfiguration properties) {
+    public MQTTEndpoint(String uri, MQTTComponent component, MQTTConfiguration properties) {
         super(uri, component);
         this.configuration = properties;
     }
@@ -66,7 +66,6 @@ public class MQTTEndpoint extends DefaultEndpoint {
     public MQTTConfiguration getConfiguration() {
         return configuration;
     }
-
 
     @Override
     protected void doStart() throws Exception {
@@ -113,7 +112,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
                 });
             }
         });
-        final Promise promise = new Promise();
+        final Promise<Object> promise = new Promise<Object>();
         connection.connect(new Callback<Void>() {
             public void onSuccess(Void value) {
                 String subscribeTopicName = configuration.getSubscribeTopicName();
@@ -147,7 +146,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
     protected void doStop() throws Exception {
         if (connection != null) {
-            final Promise promise = new Promise();
+            final Promise<Void> promise = new Promise<Void>();
             connection.disconnect(new Callback<Void>() {
                 public void onSuccess(Void value) {
                     promise.onSuccess(value);
@@ -164,21 +163,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
     void publish(String topic, byte[] payload, QoS qoS, boolean retain) throws Exception {
         connection.publish(topic, payload, qoS, retain, null);
-        /*
-        connection.publish(topic, payload, qoS, retain, new Callback<Void>() {
-            public void onSuccess(Void value) {
-                promise.onSuccess(value);
-            }
-
-            public void onFailure(Throwable value) {
-                promise.onFailure(value);
-            }
-
-        });
-        promise.await(configuration.getSendWaitInSeconds(), TimeUnit.SECONDS);
-        */
     }
-
 
     void addConsumer(MQTTConsumer consumer) {
         consumers.add(consumer);
