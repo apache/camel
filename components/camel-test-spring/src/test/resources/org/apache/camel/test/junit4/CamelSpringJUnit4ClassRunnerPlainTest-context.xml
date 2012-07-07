@@ -46,6 +46,7 @@
         <simple>Hello ${body}</simple>
       </transform>
       <to uri="log:org.apache.camel.test.junit4.spring" />
+      <to uri="seda:context2.seda"/>
     </route>
   </camelContext>
 

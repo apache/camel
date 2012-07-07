@@ -43,9 +43,9 @@ public class LuceneSearcher {
 
     public void open(File indexDirectory, Analyzer analyzer) throws IOException {
         if (indexDirectory != null) {
-            indexSearcher = new IndexSearcher(IndexReader.open(new NIOFSDirectory(indexDirectory), true));
+            indexSearcher = new IndexSearcher(IndexReader.open(new NIOFSDirectory(indexDirectory)));
         } else {
-            indexSearcher = new IndexSearcher(IndexReader.open(new NIOFSDirectory(new File("./indexDirectory")), true));
+            indexSearcher = new IndexSearcher(IndexReader.open(new NIOFSDirectory(new File("./indexDirectory"))));
         }
         this.analyzer = analyzer;
     }

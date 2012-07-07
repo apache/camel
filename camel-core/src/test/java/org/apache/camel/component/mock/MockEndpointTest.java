@@ -91,6 +91,29 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }       
     
+    public void testExpectsHeadersInAnyOrder() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedHeaderValuesReceivedInAnyOrder("counter", 11, 12, 13, 14, 15);
+
+        sendMessages(15, 12, 14, 13, 11);
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    public void testExpectsHeadersInAnyOrderFail() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedHeaderValuesReceivedInAnyOrder("counter", 11, 12, 7, 14, 15);
+
+        sendMessages(15, 12, 14, 13, 11);
+
+        try {
+            resultEndpoint.assertIsSatisfied();
+            fail("Should fail");
+        } catch (AssertionError e) {
+            assertEquals("mock://result Expected 5 headers with key[counter], received 4 headers. Expected header values: [7]", e.getMessage());
+        }
+    }
+
     public void testNoDuplicateMessagesPass() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectsNoDuplicates(header("counter"));

@@ -48,14 +48,17 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     private String aggregationStrategyRef;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
+    @XmlAttribute
+    private Boolean pollMultiple;
 
     public PollEnrichDefinition() {
     }
 
-    public PollEnrichDefinition(AggregationStrategy aggregationStrategy, String resourceUri, long timeout) {
+    public PollEnrichDefinition(AggregationStrategy aggregationStrategy, String resourceUri, long timeout, Boolean pollMultiple) {
         this.aggregationStrategy = aggregationStrategy;
         this.resourceUri = resourceUri;
         this.timeout = timeout;
+        this.pollMultiple = pollMultiple;
     }
 
     @Override
@@ -93,10 +96,10 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
         PollEnricher enricher;
         if (timeout != null) {
-            enricher = new PollEnricher(null, endpoint.createPollingConsumer(), timeout);
+            enricher = new PollEnricher(null, endpoint.createPollingConsumer(), timeout, pollMultiple);
         } else {
             // if no timeout then we should block, and there use a negative timeout
-            enricher = new PollEnricher(null, endpoint.createPollingConsumer(), -1);
+            enricher = new PollEnricher(null, endpoint.createPollingConsumer(), -1, pollMultiple);
         }
 
         if (aggregationStrategyRef != null) {
@@ -149,5 +152,13 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public Boolean isPollMultiple() {
+        return pollMultiple;
+    }
+
+    public void setPollMultiple(Boolean pollMultiple) {
+        this.pollMultiple = pollMultiple;
     }
 }

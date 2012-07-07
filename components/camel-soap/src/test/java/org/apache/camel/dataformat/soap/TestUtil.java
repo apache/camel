@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 public final class TestUtil {
     private TestUtil() {

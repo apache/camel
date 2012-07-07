@@ -2823,7 +2823,52 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri) {
-        addOutput(new PollEnrichDefinition(null, resourceUri, -1));
+        addOutput(new PollEnrichDefinition(null, resourceUri, -1, false));
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * This method will not wait for data to become available, use the method with an explicit timeout
+     * if you want to wait for data for a period of time from the resourceUri.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param pollMultiple           if enabled will poll for all Exchanges available on the endpoint
+     * @return the builder
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type pollEnrich(String resourceUri, boolean pollMultiple) {
+        addOutput(new PollEnrichDefinition(null, resourceUri, 0, pollMultiple));
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * This method will <tt>block</tt> until data is available, use the method with timeout if you do not
+     * want to risk waiting a long time before data is available from the resourceUri.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param timeout               timeout in millis to wait at most for data to be available.
+     * @param pollMultiple           if enabled will poll for all Exchanges available on the endpoint
+     * @return the builder
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type pollEnrich(String resourceUri, long timeout, boolean pollMultiple) {
+        addOutput(new PollEnrichDefinition(null, resourceUri, timeout, pollMultiple));
         return (Type) this;
     }
 
@@ -2845,7 +2890,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, AggregationStrategy aggregationStrategy) {
-        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, -1));
+        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, -1, false));
         return (Type) this;
     }
 
@@ -2869,7 +2914,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
-        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, timeout));
+        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, timeout, false));
         return (Type) this;
     }
 
@@ -2892,7 +2937,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout) {
-        addOutput(new PollEnrichDefinition(null, resourceUri, timeout));
+        addOutput(new PollEnrichDefinition(null, resourceUri, timeout, false));
         return (Type) this;
     }
 
