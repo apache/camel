@@ -343,7 +343,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             agent.setRegisterAlways(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterAlways()));
             agent.setRegisterNewRoutes(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterNewRoutes()));
 
-            ManagementStrategy managementStrategy = new ManagedManagementStrategy(agent);
+            ManagementStrategy managementStrategy = new ManagedManagementStrategy(getContext(), agent);
             getContext().setManagementStrategy(managementStrategy);
 
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor

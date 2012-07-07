@@ -63,7 +63,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         this.type = type;
 
         if (LOG.isDebugEnabled()) {
-                LOG.debug("Class name: {}", type.getName());
+            LOG.debug("Class name: {}", type.getName());
         }
 
         initModel();

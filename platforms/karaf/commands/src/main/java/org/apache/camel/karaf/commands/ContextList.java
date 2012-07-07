@@ -25,9 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * List the Camel contexts available in the Karaf instance.
  */
@@ -88,7 +85,7 @@ public class ContextList extends OsgiCommandSupport {
                 maxUptimeLen = java.lang.Math.max(maxUptimeLen, uptime == null ? 0 : uptime.length());
             }
 
-            final Map<String, Integer> retval = new Hashtable(3);
+            final Map<String, Integer> retval = new Hashtable<String, Integer>(3);
             retval.put(NAME_COLUMN_LABEL, maxNameLen);
             retval.put(STATUS_COLUMN_LABEL, maxStatusLen);
             retval.put(UPTIME_COLUMN_LABEL, maxUptimeLen);

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.enricher;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -129,7 +128,7 @@ public class PollEnricherTest extends ContextTestSupport {
         template.sendBody("seda:foo5", "msg3");
         template.sendBody("seda:foo5", "msg4");
 
-        List<Exchange> polledExchanges = mock.getExchanges().get(0).getIn().getBody(List.class);
+        List<?> polledExchanges = mock.getExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, polledExchanges.size());
 
         mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo5");
@@ -147,7 +146,7 @@ public class PollEnricherTest extends ContextTestSupport {
 
         Thread.sleep(500);
 
-        List<Exchange> polledExchanges = mock.getExchanges().get(0).getIn().getBody(List.class);
+        List<?> polledExchanges = mock.getExchanges().get(0).getIn().getBody(List.class);
         assertEquals(4, polledExchanges.size());
 
         mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo6");
