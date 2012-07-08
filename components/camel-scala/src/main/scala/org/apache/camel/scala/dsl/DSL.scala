@@ -69,7 +69,8 @@ trait DSL {
 
   def pipeline : SPipelineDefinition
   def policy(policy: Policy) : DSL
-  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) : DSL
+  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = -1) : DSL
+  def pollEnrich(uri: String, timeout: Long, pollMultiple: Boolean) : DSL
   def process(function: Exchange => Unit) : DSL
   def process(processor: Processor) : DSL
 
