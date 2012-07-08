@@ -77,16 +77,15 @@ public class CacheProducer extends DefaultProducer {
     }
 
     private void performCacheOperation(Exchange exchange, String operation, String key) throws Exception {
-        Object element;
 
         if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_ADD)) {
             LOG.debug("Adding an element with key {} into the Cache", key);
-            element = createElementFromBody(exchange, CacheConstants.CACHE_OPERATION_ADD);
-            cache.put(new Element(key, element));
+            Element element = createElementFromBody(key, exchange, CacheConstants.CACHE_OPERATION_ADD);
+            cache.put(element);
         } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_UPDATE)) {
             LOG.debug("Updating an element with key {} into the Cache", key);
-            element = createElementFromBody(exchange, CacheConstants.CACHE_OPERATION_UPDATE);
-            cache.put(new Element(key, element));
+            Element element = createElementFromBody(key, exchange, CacheConstants.CACHE_OPERATION_UPDATE);
+            cache.put(element);
         } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_DELETEALL)) {
             LOG.debug("Deleting All elements from the Cache");
             cache.removeAll();
@@ -119,18 +118,32 @@ public class CacheProducer extends DefaultProducer {
     }
 
 
-    private Object createElementFromBody(Exchange exchange, String cacheOperation) throws NoTypeConversionAvailableException {
-        Object element;
+    private Element createElementFromBody(String key, Exchange exchange, String cacheOperation) throws NoTypeConversionAvailableException {
+        Element element;
         Object body = exchange.getIn().getBody();
         if (body == null) {
             throw new CacheException("Body cannot be null for operation " + cacheOperation);
         } else if (body instanceof Serializable) {
-            element = body;
+            element = new Element(key, body);
         } else {
             InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
             // Read InputStream into a byte[] buffer
-            element = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
+            element = new Element(key, exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, is));
         }
+        // set overrides for the cache expiration and such
+        final Integer ttl = exchange.getIn().getHeader(CacheConstants.CACHE_ELEMENT_EXPIRY_TTL, Integer.class);
+        if (ttl != null) {
+            element.setTimeToLive(ttl);
+        }
+        final Integer idle = exchange.getIn().getHeader(CacheConstants.CACHE_ELEMENT_EXPIRY_IDLE, Integer.class);
+        if (idle != null) {
+            element.setTimeToIdle(idle);
+        }
+        final Boolean flag = exchange.getIn().getHeader(CacheConstants.CACHE_ELEMENT_EXPIRY_ETERNAL, Boolean.class);
+        if (flag != null) {
+            element.setEternal(flag);
+        }
+
         return element;
     }
 

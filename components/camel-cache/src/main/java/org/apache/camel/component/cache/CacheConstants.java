@@ -25,6 +25,10 @@ public interface CacheConstants {
     String CACHE_KEY = CACHE_HEADER_PREFIX + "Key";
     String CACHE_ELEMENT_WAS_FOUND = CACHE_HEADER_PREFIX + "ElementWasFound";
 
+    String CACHE_ELEMENT_EXPIRY_TTL = "TimeToLive";
+    String CACHE_ELEMENT_EXPIRY_IDLE = "TimeToIdle";
+    String CACHE_ELEMENT_EXPIRY_ETERNAL = "Eternal";
+
     String CACHE_OPERATION_URL_ADD = "Add";
     String CACHE_OPERATION_URL_UPDATE = "Update";
     String CACHE_OPERATION_URL_DELETE = "Delete";
