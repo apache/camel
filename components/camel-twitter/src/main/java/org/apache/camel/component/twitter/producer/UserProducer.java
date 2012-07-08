@@ -46,7 +46,7 @@ public class UserProducer extends DefaultProducer implements Processor {
     }
 
     private void updateStatus(StatusUpdate status) throws Exception {
-        te.getTwitter().updateStatus(status);
+        te.getProperties().getTwitter().updateStatus(status);
         log.debug("Updated status: {}", status);
     }
 
@@ -56,7 +56,7 @@ public class UserProducer extends DefaultProducer implements Processor {
             status = status.substring(0, 160);
         }
 
-        te.getTwitter().updateStatus(status);
+        te.getProperties().getTwitter().updateStatus(status);
         log.debug("Updated status: {}", status);
     }
 }

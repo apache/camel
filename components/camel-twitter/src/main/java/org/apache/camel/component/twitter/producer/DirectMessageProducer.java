@@ -44,7 +44,7 @@ public class DirectMessageProducer extends DefaultProducer implements Processor 
             throw new CamelExchangeException("Username not configured on TwitterEndpoint", exchange);
         } else {
             log.debug("Sending to: {} message: {}", toUsername, text);
-            te.getTwitter().sendDirectMessage(toUsername, text);
+            te.getProperties().getTwitter().sendDirectMessage(toUsername, text);
         }
     }
 

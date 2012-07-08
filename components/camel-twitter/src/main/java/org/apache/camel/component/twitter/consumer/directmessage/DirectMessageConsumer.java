@@ -37,7 +37,7 @@ public class DirectMessageConsumer extends Twitter4JConsumer {
     }
 
     public List<DirectMessage> pollConsume() throws TwitterException {
-        List<DirectMessage> list = te.getTwitter().getDirectMessages(new Paging(lastId));
+        List<DirectMessage> list = te.getProperties().getTwitter().getDirectMessages(new Paging(lastId));
         for (DirectMessage dm : list) {
             checkLastId(dm.getId());
         }
@@ -45,6 +45,6 @@ public class DirectMessageConsumer extends Twitter4JConsumer {
     }
 
     public List<DirectMessage> directConsume() throws TwitterException {
-        return te.getTwitter().getDirectMessages();
+        return te.getProperties().getTwitter().getDirectMessages();
     }
 }

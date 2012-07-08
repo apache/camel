@@ -36,6 +36,14 @@ public class TwitterConfiguration {
     private String locations;
     private String userIds;
     private boolean filterOld = true;
+
+    /**
+     * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
+     * This should not be created by an endpoint's doStart(), etc., since
+     * instances of twitter and/or twitterStream can be supplied by the route
+     * itself.  Further, as an example, we don't want to initialize twitter
+     * if we only need twitterStream.
+     */
     private Twitter twitter;
     private TwitterStream twitterStream;
 
@@ -144,6 +152,9 @@ public class TwitterConfiguration {
     }
 
     public Twitter getTwitter() {
+        if (twitter == null) {
+            twitter = new TwitterFactory(getConfiguration()).getInstance();
+        }
         return twitter;
     }
 
@@ -152,21 +163,14 @@ public class TwitterConfiguration {
     }
 
     public TwitterStream getTwitterStream() {
+        if (twitterStream == null) {
+            twitterStream = new TwitterStreamFactory(getConfiguration()).getInstance();
+        }
         return twitterStream;
     }
 
     public void setTwitterStream(TwitterStream twitterStream) {
         this.twitterStream = twitterStream;
-    }
-
-    public Twitter getTwitterInstance() {
-        checkComplete();
-        return getTwitter() != null ? getTwitter() : new TwitterFactory(getConfiguration()).getInstance();
-    }
-
-    public TwitterStream getTwitterStreamInstance() {
-        checkComplete();
-        return getTwitterStream() != null ? getTwitterStream() : new TwitterStreamFactory(getConfiguration()).getInstance();
     }
 }
 

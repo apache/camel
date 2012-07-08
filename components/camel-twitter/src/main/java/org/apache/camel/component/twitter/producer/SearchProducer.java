@@ -31,11 +31,11 @@ import twitter4j.Twitter;
 public class SearchProducer extends DefaultProducer {
 
     private long lastId;
-    private TwitterEndpoint twitterEndpoint;
+    private TwitterEndpoint te;
 
     public SearchProducer(TwitterEndpoint te) {
         super(te);
-        this.twitterEndpoint = te;
+        this.te = te;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class SearchProducer extends DefaultProducer {
         // keywords from header take precedence
         String keywords = exchange.getIn().getHeader(TwitterConstants.TWITTER_KEYWORDS, String.class);
         if (keywords == null) {
-            keywords = twitterEndpoint.getProperties().getKeywords();
+            keywords = te.getProperties().getKeywords();
         }
 
         if (keywords == null) {
@@ -55,7 +55,7 @@ public class SearchProducer extends DefaultProducer {
             query.setSinceId(lastId);
         }
 
-        Twitter twitter = twitterEndpoint.getTwitter();
+        Twitter twitter = te.getProperties().getTwitter();
         log.debug("Searching twitter with keywords: {}", keywords);
         QueryResult results = twitter.search(query);
         List<Tweet> list = results.getTweets();

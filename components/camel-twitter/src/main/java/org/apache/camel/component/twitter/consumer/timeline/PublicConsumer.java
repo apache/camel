@@ -45,6 +45,6 @@ public class PublicConsumer extends Twitter4JConsumer {
     }
 
     private List<Status> getPublicTimeline() throws TwitterException {
-        return te.getTwitter().getPublicTimeline();
+        return te.getProperties().getTwitter().getPublicTimeline();
     }
 }

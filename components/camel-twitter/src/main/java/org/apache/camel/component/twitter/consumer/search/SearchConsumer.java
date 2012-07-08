@@ -61,7 +61,7 @@ public class SearchConsumer extends Twitter4JConsumer {
     }
 
     private List<Tweet> search(Query query) throws TwitterException {
-        QueryResult qr = te.getTwitter().search(query);
+        QueryResult qr = te.getProperties().getTwitter().search(query);
         List<Tweet> tweets = qr.getTweets();
 
         if (te.getProperties().isFilterOld()) {

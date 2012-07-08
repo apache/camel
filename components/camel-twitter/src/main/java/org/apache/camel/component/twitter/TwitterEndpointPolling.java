@@ -24,14 +24,12 @@ import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultPollingEndpoint;
-import twitter4j.Twitter;
 
 /**
  * Twitter polling endpoint
  */
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
 
-    private Twitter twitter;
     private TwitterConfiguration properties;
 
     public TwitterEndpointPolling(String uri, TwitterComponent component, TwitterConfiguration properties) {
@@ -50,15 +48,6 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @Override
     public Producer createProducer() throws Exception {
         return Twitter4JFactory.getProducer(this, getEndpointUri());
-    }
-
-    @Override
-    protected void doStart() {
-        twitter = properties.getTwitterInstance();
-    }
-
-    public Twitter getTwitter() {
-        return twitter;
     }
 
     public boolean isSingleton() {

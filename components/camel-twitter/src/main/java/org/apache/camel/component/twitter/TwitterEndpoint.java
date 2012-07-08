@@ -22,8 +22,6 @@ import twitter4j.Twitter;
 
 public interface TwitterEndpoint extends Endpoint {
 
-    Twitter getTwitter();
-
     TwitterConfiguration getProperties();
 
     EndpointType getEndpointType();

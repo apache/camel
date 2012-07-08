@@ -43,7 +43,7 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
 
     public StreamingConsumer(TwitterEndpoint te) {
         this.te = te;
-        twitterStream = te.getProperties().getTwitterStreamInstance();
+        twitterStream = te.getProperties().getTwitterStream();
         twitterStream.addListener(this);
     }
 
