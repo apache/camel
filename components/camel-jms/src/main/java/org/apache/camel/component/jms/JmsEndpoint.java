@@ -1002,6 +1002,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public boolean isAllowNullBody() {
+        return configuration.isAllowNullBody();
+    }
+
+    @ManagedAttribute
+    public void setAllowNullBody(boolean allowNullBody) {
+        configuration.setAllowNullBody(allowNullBody);
+    }
+
+    @ManagedAttribute
     public String getReplyToType() {
         if (configuration.getReplyToType() != null) {
             return configuration.getReplyToType().name();

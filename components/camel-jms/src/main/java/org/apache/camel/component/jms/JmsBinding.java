@@ -457,11 +457,19 @@ public class JmsBinding {
 
         // create the JmsMessage based on the type
         if (type != null) {
+            if (body == null && (endpoint != null && !endpoint.getConfiguration().isAllowNullBody())) {
+                throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
+            }
             LOG.trace("Using JmsMessageType: {}", type);
             Message answer = createJmsMessageForType(exchange, body, headers, session, context, type);
             // ensure default delivery mode is used by default
             answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
             return answer;
+        }
+
+        // check for null body
+        if (body == null && (endpoint != null && !endpoint.getConfiguration().isAllowNullBody())) {
+            throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
         }
 
         // warn if the body could not be mapped
@@ -497,8 +505,8 @@ public class JmsBinding {
             type = Map;
         } else if (body instanceof Serializable) {
             type = Object;            
-        } else if (exchange.getContext().getTypeConverter().convertTo(File.class, body) != null 
-                || exchange.getContext().getTypeConverter().convertTo(InputStream.class, body) != null) {
+        } else if (exchange.getContext().getTypeConverter().tryConvertTo(File.class, body) != null
+                || exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, body) != null) {
             type = Bytes;
         }
         return type;
@@ -514,33 +522,42 @@ public class JmsBinding {
         switch (type) {
         case Text: {
             TextMessage message = session.createTextMessage();
-            String payload = context.getTypeConverter().convertTo(String.class, exchange, body);
-            message.setText(payload);
+            if (body != null) {
+                String payload = context.getTypeConverter().convertTo(String.class, exchange, body);
+                message.setText(payload);
+            }
             return message;
         }
         case Bytes: {
             BytesMessage message = session.createBytesMessage();
-            byte[] payload = context.getTypeConverter().convertTo(byte[].class, exchange, body);
-            message.writeBytes(payload);
+            if (body != null) {
+                byte[] payload = context.getTypeConverter().convertTo(byte[].class, exchange, body);
+                message.writeBytes(payload);
+            }
             return message;
         }
         case Map: {
             MapMessage message = session.createMapMessage();
-            Map payload = context.getTypeConverter().convertTo(Map.class, exchange, body);
-            populateMapMessage(message, payload, context);
+            if (body != null) {
+                Map<?, ?> payload = context.getTypeConverter().convertTo(Map.class, exchange, body);
+                populateMapMessage(message, payload, context);
+            }
             return message;
         }
         case Object:
-            Serializable payload;
-            try {
-                payload = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
-            } catch (NoTypeConversionAvailableException e) {
-                // cannot convert to serializable then thrown an exception to avoid sending a null message
-                JMSException cause = new MessageFormatException(e.getMessage());
-                cause.initCause(e);
-                throw cause;
+            ObjectMessage message = session.createObjectMessage();
+            if (body != null) {
+                try {
+                    Serializable payload = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
+                    message.setObject(payload);
+                } catch (NoTypeConversionAvailableException e) {
+                    // cannot convert to serializable then thrown an exception to avoid sending a null message
+                    JMSException cause = new MessageFormatException(e.getMessage());
+                    cause.initCause(e);
+                    throw cause;
+                }
             }
-            return session.createObjectMessage(payload);
+            return message;
         default:
             break;
         }

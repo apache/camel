@@ -132,6 +132,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean asyncConsumer;
     // the cacheLevelName of reply manager
     private String replyToCacheLevelName;
+    private boolean allowNullBody = true;
 
     public JmsConfiguration() {
     }
@@ -1252,4 +1253,14 @@ public class JmsConfiguration implements Cloneable {
         return replyToCacheLevelName;
     }
 
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+
+    /**
+     * Whether to allow sending with no doy (eg as null)
+     */
+    public void setAllowNullBody(boolean allowNullBody) {
+        this.allowNullBody = allowNullBody;
+    }
 }
