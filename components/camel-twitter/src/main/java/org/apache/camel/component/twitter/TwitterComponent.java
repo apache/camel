@@ -27,23 +27,11 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class TwitterComponent extends DefaultComponent {
 
-    private String consumerKey;
-    private String consumerSecret;
-    private String accessToken;
-    private String accessTokenSecret;
-
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-        throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         TwitterConfiguration properties = new TwitterConfiguration();
 
-        // set options from component
-        properties.setConsumerKey(consumerKey);
-        properties.setConsumerSecret(consumerSecret);
-        properties.setAccessToken(accessToken);
-        properties.setAccessTokenSecret(accessTokenSecret);
-
-        // and then override from parameters
+        // Automatically sets all our properties.
         setProperties(properties, parameters);
 
         TwitterEndpoint endpoint;
@@ -59,37 +47,5 @@ public class TwitterComponent extends DefaultComponent {
             break;
         }
         return endpoint;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getAccessTokenSecret() {
-        return accessTokenSecret;
-    }
-
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
-    }
-
-    public String getConsumerKey() {
-        return consumerKey;
-    }
-
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
     }
 }

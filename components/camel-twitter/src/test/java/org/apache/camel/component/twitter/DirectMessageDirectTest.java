@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DirectMessageDirectTest extends CamelTwitterTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(DirectMessageDirectTest.class);
-    
+
 
     @Test
     public void testReadDirectMessage() throws Exception {
@@ -49,7 +49,7 @@ public class DirectMessageDirectTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("twitter://directmessage?type=direct&" + getUriTokens())
-                    .transform(body().convertToString()).to("mock:result");
+                        .transform(body().convertToString()).to("mock:result");
             }
         };
     }

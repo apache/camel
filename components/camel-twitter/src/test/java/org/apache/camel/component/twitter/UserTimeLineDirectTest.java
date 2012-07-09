@@ -48,7 +48,7 @@ public class UserTimeLineDirectTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("twitter://timeline/user?type=direct&user=brettemeyer&" + getUriTokens())
-                    .transform(body().convertToString()).to("mock:result");
+                        .transform(body().convertToString()).to("mock:result");
             }
         };
     }

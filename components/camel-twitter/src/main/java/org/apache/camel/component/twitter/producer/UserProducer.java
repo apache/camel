@@ -17,23 +17,20 @@
 package org.apache.camel.component.twitter.producer;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+
 import twitter4j.StatusUpdate;
 
 /**
  * Produces text as a status update.
  */
-public class UserProducer extends DefaultProducer implements Processor {
-
-    private TwitterEndpoint te;
+public class UserProducer extends Twitter4JProducer {
 
     public UserProducer(TwitterEndpoint te) {
         super(te);
-        this.te = te;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // update user's status
         Object in = exchange.getIn().getBody();

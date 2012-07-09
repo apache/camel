@@ -30,15 +30,13 @@ import twitter4j.TwitterException;
 
 /**
  * Consumes search requests
- * 
  */
 public class SearchConsumer extends Twitter4JConsumer {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(SearchConsumer.class);
-    TwitterEndpoint te;
 
     public SearchConsumer(TwitterEndpoint te) {
-        this.te = te;
+        super(te);
     }
 
     public List<Tweet> pollConsume() throws TwitterException {

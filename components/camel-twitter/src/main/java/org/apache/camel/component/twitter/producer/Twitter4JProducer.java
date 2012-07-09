@@ -14,10 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.consumer;
+package org.apache.camel.component.twitter.producer;
 
-import org.apache.camel.Consumer;
+import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.impl.DefaultProducer;
 
-public interface TwitterConsumer extends Consumer {
+/**
+ * Abstracts common producer capabilities.
+ */
+public abstract class Twitter4JProducer extends DefaultProducer {
 
+    /**
+     * Instance of TwitterEndpoint.
+     */
+    protected TwitterEndpoint te;
+
+    protected Twitter4JProducer(TwitterEndpoint te) {
+        super(te);
+        this.te = te;
+    }
 }

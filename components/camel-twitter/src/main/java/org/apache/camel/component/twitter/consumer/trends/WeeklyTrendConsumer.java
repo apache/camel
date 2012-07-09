@@ -14,34 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.consumer.timeline;
+package org.apache.camel.component.twitter.consumer.trends;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-
-import twitter4j.Status;
+import twitter4j.Trends;
 import twitter4j.TwitterException;
 
 /**
  * Consumes the public timeline
  */
-public class PublicConsumer extends Twitter4JConsumer {
+public class WeeklyTrendConsumer extends Twitter4JConsumer {
 
-    public PublicConsumer(TwitterEndpoint te) {
+    public WeeklyTrendConsumer(TwitterEndpoint te) {
         super(te);
     }
 
-    public List<Status> pollConsume() throws TwitterException {
-        return getPublicTimeline();
+    /* (non-Javadoc)
+     * @see org.apache.camel.component.twitter.consumer.Twitter4JConsumer#pollConsume()
+     */
+    public List<Trends> pollConsume() throws TwitterException {
+        return getTrends();
     }
 
-    public List<Status> directConsume() throws TwitterException {
-        return getPublicTimeline();
+    /* (non-Javadoc)
+     * @see org.apache.camel.component.twitter.consumer.Twitter4JConsumer#directConsume()
+     */
+    public List<Trends> directConsume() throws TwitterException {
+        return getTrends();
     }
 
-    private List<Status> getPublicTimeline() throws TwitterException {
-        return te.getProperties().getTwitter().getPublicTimeline();
+    /**
+     * @return
+     * @throws TwitterException
+     */
+    private List<Trends> getTrends() throws TwitterException {
+        Date date = te.getProperties().parseDate();
+        if (date != null) {
+            return te.getProperties().getTwitter().getWeeklyTrends(
+                    date, false);
+        } else {
+            return te.getProperties().getTwitter().getWeeklyTrends();
+        }
     }
 }

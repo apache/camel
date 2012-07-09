@@ -43,12 +43,12 @@ public class HomeTimeLinePollingTest extends CamelTwitterTestSupport {
             }
         }
     }
-   
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("twitter://timeline/home?type=polling&" + getUriTokens())
-                    .transform(body().convertToString()).to("mock:result");
+                        .transform(body().convertToString()).to("mock:result");
             }
         };
     }

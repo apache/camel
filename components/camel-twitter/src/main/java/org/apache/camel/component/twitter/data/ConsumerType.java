@@ -19,7 +19,7 @@ package org.apache.camel.component.twitter.data;
 
 public enum ConsumerType {
 
-    TIMELINE, SEARCH, USER, TRENDS, USERLIST, DIRECTMESSAGE, STREAMING, UNKNOWN;
+    TIMELINE, SEARCH, TRENDS, DIRECTMESSAGE, STREAMING, UNKNOWN;
 
     public static ConsumerType fromUri(String uri) {
         for (ConsumerType consumerType : ConsumerType.values()) {

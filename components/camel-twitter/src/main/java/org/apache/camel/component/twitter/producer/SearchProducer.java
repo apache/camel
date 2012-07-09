@@ -22,20 +22,18 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
 
-public class SearchProducer extends DefaultProducer {
+public class SearchProducer extends Twitter4JProducer {
 
     private long lastId;
-    private TwitterEndpoint te;
 
     public SearchProducer(TwitterEndpoint te) {
         super(te);
-        this.te = te;
     }
 
     @Override

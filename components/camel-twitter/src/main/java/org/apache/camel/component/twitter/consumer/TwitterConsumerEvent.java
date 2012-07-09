@@ -24,11 +24,11 @@ import org.apache.camel.component.twitter.consumer.streaming.StreamingConsumer;
 
 import twitter4j.Status;
 
-public class TwitterConsumerEvent extends DirectConsumer implements TwitterConsumer, TweeterStatusListener {
+public class TwitterConsumerEvent extends DirectConsumer implements TweeterStatusListener {
     private Twitter4JConsumer twitter4jConsumer;
 
     public TwitterConsumerEvent(TwitterEndpoint endpoint, Processor processor,
-                                 Twitter4JConsumer twitter4jConsumer) {
+                                Twitter4JConsumer twitter4jConsumer) {
         super(endpoint, processor);
 
         this.twitter4jConsumer = twitter4jConsumer;
@@ -38,7 +38,7 @@ public class TwitterConsumerEvent extends DirectConsumer implements TwitterConsu
     protected void doStart() throws Exception {
         super.doStart();
         if (twitter4jConsumer instanceof StreamingConsumer) {
-            ((StreamingConsumer)twitter4jConsumer).registerTweetListener(this);
+            ((StreamingConsumer) twitter4jConsumer).registerTweetListener(this);
         }
     }
 
@@ -46,7 +46,7 @@ public class TwitterConsumerEvent extends DirectConsumer implements TwitterConsu
     protected void doStop() throws Exception {
         super.doStop();
         if (twitter4jConsumer instanceof StreamingConsumer) {
-            ((StreamingConsumer)twitter4jConsumer).unregisterTweetListener(this);
+            ((StreamingConsumer) twitter4jConsumer).unregisterTweetListener(this);
         }
     }
 
