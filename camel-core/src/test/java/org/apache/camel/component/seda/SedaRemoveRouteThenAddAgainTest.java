@@ -25,17 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-
-            @Override
-            public void configure() throws Exception {
-                from("seda:in").id("sedaToMock").to("mock:out");
-            }
-        };
-    }
-
     public void testRemoveRouteAndThenAddAgain() throws Exception {
         MockEndpoint out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);
@@ -61,4 +50,15 @@ public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
 
         out.assertIsSatisfied();
     }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:in").routeId("sedaToMock").to("mock:out");
+            }
+        };
+    }
+
 }
