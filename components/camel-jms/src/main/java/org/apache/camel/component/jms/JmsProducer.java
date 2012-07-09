@@ -181,20 +181,23 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
+                Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
 
                 // get the reply to destination to be used from the reply manager
                 Destination replyTo = replyManager.getReplyTo();
                 if (replyTo == null) {
                     throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
                 }
-                JmsMessageHelper.setJMSReplyTo(message, replyTo);
-                replyManager.setReplyToSelectorHeader(in, message);
+                LOG.debug("Using JMSReplyTo destination: {}", replyTo);
+                JmsMessageHelper.setJMSReplyTo(answer, replyTo);
+                replyManager.setReplyToSelectorHeader(in, answer);
 
-                String correlationId = determineCorrelationId(message, provisionalCorrelationId);
+                String correlationId = determineCorrelationId(answer, provisionalCorrelationId);
                 replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, endpoint.getRequestTimeout());
+                LOG.debug("Using JMSCorrelationID: {}", correlationId);
 
-                return message;
+                LOG.trace("Created javax.jms.Message: {}", answer);
+                return answer;
             }
         };
 
@@ -301,13 +304,19 @@ public class JmsProducer extends DefaultAsyncProducer {
                 // and if needed create the destination using the session if needed to
                 if (jmsReplyTo != null && jmsReplyTo instanceof String) {
                     // must normalize the destination name
-                    String replyTo = normalizeDestinationName((String) jmsReplyTo);
+                    String before = (String) jmsReplyTo;
+                    String replyTo = normalizeDestinationName(before);
                     // we need to null it as we use the String to resolve it as a Destination instance
                     jmsReplyTo = null;
+                    LOG.trace("Normalized JMSReplyTo destination name {} -> {}", before, replyTo);
 
                     // try using destination resolver to lookup the destination
                     if (endpoint.getDestinationResolver() != null) {
                         jmsReplyTo = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, endpoint.isPubSubDomain());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> ",
+                                    new Object[]{replyTo, endpoint.getDestinationResolver(), endpoint.isPubSubDomain(), jmsReplyTo});
+                        }
                     }
                     if (jmsReplyTo == null) {
                         // okay then fallback and create the queue
@@ -331,9 +340,11 @@ public class JmsProducer extends DefaultAsyncProducer {
                     JmsMessageHelper.setJMSReplyTo(answer, replyTo);
                 } else {
                     // do not use JMSReplyTo
+                    log.trace("Not using JMSReplyTo");
                     JmsMessageHelper.setJMSReplyTo(answer, null);
                 }
 
+                LOG.trace("Created javax.jms.Message: {}", answer);
                 return answer;
             }
         };
