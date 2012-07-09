@@ -18,21 +18,15 @@ package org.apache.camel.component.twitter.producer;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.impl.DefaultProducer;
 
 /**
  * Produces text as a direct message.
- * 
  */
-public class DirectMessageProducer extends DefaultProducer implements Processor {
-
-    private TwitterEndpoint te;
+public class DirectMessageProducer extends Twitter4JProducer {
 
     public DirectMessageProducer(TwitterEndpoint te) {
         super(te);
-        this.te = te;
     }
 
     public void process(Exchange exchange) throws Exception {

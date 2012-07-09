@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 /**
  * consumes tweets
  */
-public class PublicTimeLineDirectTest extends CamelTwitterTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PublicTimeLineDirectTest.class);
+public class WeeklyTrendPollingTest extends CamelTwitterTestSupport {
+    private static final transient Logger LOG = LoggerFactory.getLogger(WeeklyTrendPollingTest.class);
 
     @Test
-    public void testReadPublicTimeline() throws Exception {
+    public void testDailyTrendPoll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.assertIsSatisfied();
@@ -47,7 +47,9 @@ public class PublicTimeLineDirectTest extends CamelTwitterTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("twitter://timeline/public?type=direct&" + getUriTokens())
+                // DO NOT test with 'date='.  Twitter only allows dates up to
+                // a certain limit, so we can't have that as a long-term test.
+                from("twitter://trends/weekly?type=polling&" + getUriTokens())
                         .transform(body().convertToString()).to("mock:result");
             }
         };

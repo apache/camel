@@ -27,14 +27,11 @@ import twitter4j.TwitterException;
 
 /**
  * Consumes the user's home timeline.
- * 
  */
 public class HomeConsumer extends Twitter4JConsumer {
 
-    TwitterEndpoint te;
-
     public HomeConsumer(TwitterEndpoint te) {
-        this.te = te;
+        super(te);
     }
 
     public List<Status> pollConsume() throws TwitterException {

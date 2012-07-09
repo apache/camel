@@ -26,9 +26,8 @@ import org.apache.camel.component.twitter.TwitterEndpoint;
 
 /**
  * Camel DirectConsumer implementation.
- * 
  */
-public class TwitterConsumerDirect extends DirectConsumer implements TwitterConsumer {
+public class TwitterConsumerDirect extends DirectConsumer {
 
     private Twitter4JConsumer twitter4jConsumer;
 

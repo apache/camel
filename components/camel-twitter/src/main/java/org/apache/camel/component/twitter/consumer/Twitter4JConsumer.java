@@ -19,22 +19,46 @@ package org.apache.camel.component.twitter.consumer;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.camel.component.twitter.TwitterEndpoint;
+
 import twitter4j.TwitterException;
 
 
 public abstract class Twitter4JConsumer {
-    
+
+    /**
+     * Instance of TwitterEndpoint.
+     */
+    protected TwitterEndpoint te;
+
+    /**
+     * The last tweet ID received.
+     */
     protected long lastId = 1;
-    
-    // Can't assume that the end of the list will be the most recent ID.
-    // The Twitter API sometimes returns them slightly out of order.
+
+    protected Twitter4JConsumer(TwitterEndpoint te) {
+        this.te = te;
+    }
+
+    /**
+     * Can't assume that the end of the list will be the most recent ID.
+     * The Twitter API sometimes returns them slightly out of order.
+     */
     protected void checkLastId(long newId) {
         if (newId > lastId) {
             lastId = newId;
         }
     }
 
+    /**
+     * Called by polling consumers during each poll.  It needs to be separate
+     * from directConsume() since, as an example, streaming API polling allows
+     * tweets to build up between polls.
+     */
     public abstract List<? extends Serializable> pollConsume() throws TwitterException;
 
+    /**
+     * Called by direct consumers.
+     */
     public abstract List<? extends Serializable> directConsume() throws TwitterException;
 }

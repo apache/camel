@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.twitter;
 
+/**
+ * Defines common constants
+ */
 public final class TwitterConstants {
 
     public static final String TWITTER_KEYWORDS = "CamelTwitterKeywords";

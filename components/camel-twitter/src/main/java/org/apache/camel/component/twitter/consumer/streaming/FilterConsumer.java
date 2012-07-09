@@ -22,7 +22,6 @@ import twitter4j.FilterQuery;
 
 /**
  * Consumes the filter stream
- *
  */
 public class FilterConsumer extends StreamingConsumer {
 
@@ -49,7 +48,7 @@ public class FilterConsumer extends StreamingConsumer {
         if (keywords != null && keywords.length() > 0) {
             filterQuery.track(keywords.split(","));
         }
-        
+
         String userIds = te.getProperties().getUserIds();
         if (userIds != null) {
             String[] stringUserIds = userIds.split(",");
@@ -59,7 +58,7 @@ public class FilterConsumer extends StreamingConsumer {
             }
             filterQuery.follow(longUserIds);
         }
-        
+
         if (allLocationsString == null && keywords == null && userIds == null) {
             throw new IllegalArgumentException("At least one filter parameter is required");
         }

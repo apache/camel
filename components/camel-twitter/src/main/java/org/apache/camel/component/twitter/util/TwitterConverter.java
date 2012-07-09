@@ -22,11 +22,12 @@ import org.apache.camel.Converter;
 
 import twitter4j.DirectMessage;
 import twitter4j.Status;
+import twitter4j.Trend;
+import twitter4j.Trends;
 import twitter4j.Tweet;
 
 /**
  * Utility for converting between Twitter4J and camel-twitter data layers.
- * 
  */
 @Converter
 public final class TwitterConverter {
@@ -56,6 +57,27 @@ public final class TwitterConverter {
         StringBuilder s = new StringBuilder();
         s.append(dm.getCreatedAt()).append(" (").append(dm.getSenderScreenName()).append(") ");
         s.append(dm.getText());
+        return s.toString();
+    }
+
+    @Converter
+    public static String toString(Trend trend) throws ParseException {
+        return trend.getName();
+    }
+
+    @Converter
+    public static String toString(Trends trends) throws ParseException {
+        StringBuilder s = new StringBuilder();
+        s.append("(" + trends.getTrendAt().toString() + ") ");
+        boolean first = true;
+        for (Trend trend : trends.getTrends()) {
+            if (first) {
+                first = false;
+            } else {
+                s.append(",");
+            }
+            s.append(toString(trend));
+        }
         return s.toString();
     }
 }

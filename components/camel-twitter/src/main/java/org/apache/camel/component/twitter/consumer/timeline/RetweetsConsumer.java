@@ -27,14 +27,11 @@ import twitter4j.TwitterException;
 
 /**
  * Consumes a user's tweets that have been retweeted
- * 
  */
 public class RetweetsConsumer extends Twitter4JConsumer {
 
-    TwitterEndpoint te;
-
     public RetweetsConsumer(TwitterEndpoint te) {
-        this.te = te;
+        super(te);
     }
 
     public List<Status> pollConsume() throws TwitterException {

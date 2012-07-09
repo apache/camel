@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DirectMessagePollingTest extends CamelTwitterTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(DirectMessagePollingTest.class);
-    
 
     @Test
     public void testReadDirectMessage() throws Exception {

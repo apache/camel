@@ -24,9 +24,9 @@ import org.junit.Test;
 
 public class UriConfigurationTest extends Assert {
     private CamelContext context = new DefaultCamelContext();
-    
+
     private CamelTwitterTestSupport support = new CamelTwitterTestSupport();
-    
+
     @Test
     public void testBasicAuthentication() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter:todo/todo?" + support.getUriTokens());

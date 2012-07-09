@@ -57,6 +57,6 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
 
     protected String getUriTokens() {
         return "consumerKey=" + consumerKey + "&consumerSecret=" + consumerSecret + "&accessToken="
-               + accessToken + "&accessTokenSecret=" + accessTokenSecret;
+                + accessToken + "&accessTokenSecret=" + accessTokenSecret;
     }
 }

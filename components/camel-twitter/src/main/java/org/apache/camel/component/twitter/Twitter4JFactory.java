@@ -28,6 +28,8 @@ import org.apache.camel.component.twitter.consumer.timeline.MentionsConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.PublicConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.RetweetsConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.UserConsumer;
+import org.apache.camel.component.twitter.consumer.trends.DailyTrendConsumer;
+import org.apache.camel.component.twitter.consumer.trends.WeeklyTrendConsumer;
 import org.apache.camel.component.twitter.data.ConsumerType;
 import org.apache.camel.component.twitter.data.StreamingType;
 import org.apache.camel.component.twitter.data.TimelineType;
@@ -41,28 +43,27 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Maps the endpoint URI to the respective Twitter4J consumer or producer.
- * 
+ * <p/>
  * URI STRUCTURE:
- * 
+ * <p/>
  * timeline/
- *              public
- *              home
- *              friends
- *              user (ALSO A PRODUCER)
- *              mentions
- *              retweetsofme
+ * public
+ * home
+ * friends
+ * user (ALSO A PRODUCER)
+ * mentions
+ * retweetsofme
  * user/
- *              search users (DIRECT ONLY)
- *              user suggestions (DIRECT ONLY)
+ * search users (DIRECT ONLY)
+ * user suggestions (DIRECT ONLY)
  * trends/
- *              daily
- *              weekly
+ * daily
+ * weekly
  * userlist
  * directmessage (ALSO A PRODUCER)
  * streaming/
- *              filter (POLLING ONLY)
- *              sample (POLLING ONLY)
- * 
+ * filter (POLLING ONLY)
+ * sample (POLLING ONLY)
  */
 public final class Twitter4JFactory {
 
@@ -123,21 +124,13 @@ public final class Twitter4JFactory {
                 if (uriSplit.length > 1) {
                     switch (TrendsType.fromUri(uriSplit[1])) {
                     case DAILY:
-                        // TODO
-                        break;
+                        return new DailyTrendConsumer(te);
                     case WEEKLY:
-                        // TODO
-                        break;
+                        return new WeeklyTrendConsumer(te);
                     default:
                         break;
                     }
                 }
-                break;
-            case USER:
-                // TODO
-                break;
-            case USERLIST:
-                // TODO
                 break;
             default:
                 break;

@@ -30,10 +30,8 @@ import twitter4j.TwitterException;
  */
 public class DirectMessageConsumer extends Twitter4JConsumer {
 
-    TwitterEndpoint te;
-
     public DirectMessageConsumer(TwitterEndpoint te) {
-        this.te = te;
+        super(te);
     }
 
     public List<DirectMessage> pollConsume() throws TwitterException {
