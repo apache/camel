@@ -24,14 +24,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.IOHelper;
 
 public class HdfsProducer extends DefaultProducer {
 
     private final HdfsConfiguration config;
     private final StringBuilder hdfsPath;
     private final AtomicBoolean idle = new AtomicBoolean(false);
-    private ScheduledExecutorService scheduler;
-    private HdfsOutputStream ostream;
+    private volatile ScheduledExecutorService scheduler;
+    private volatile HdfsOutputStream ostream;
     private long splitNum;
 
     public static final class SplitStrategy {
@@ -84,13 +85,18 @@ public class HdfsProducer extends DefaultProducer {
     }
 
     @Override
+    public HdfsEndpoint getEndpoint() {
+        return (HdfsEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
-        StringBuilder actualPath = new StringBuilder(hdfsPath);
-        if (config.getSplitStrategies().size() > 0) {
-            actualPath = newFileName();
+
+        // setup hdfs if configured to do on startup
+        if (getEndpoint().getConfig().isConnectOnStartup()) {
+            ostream = setupHdfs(true);
         }
-        ostream = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
 
         SplitStrategy idleStrategy = null;
         for (SplitStrategy strategy : config.getSplitStrategies()) {
@@ -106,6 +112,38 @@ public class HdfsProducer extends DefaultProducer {
         }
     }
 
+    private synchronized HdfsOutputStream setupHdfs(boolean onStartup) throws Exception {
+        if (ostream != null) {
+            return ostream;
+        }
+
+        StringBuilder actualPath = new StringBuilder(hdfsPath);
+        if (config.getSplitStrategies().size() > 0) {
+            actualPath = newFileName();
+        }
+
+        // if we are starting up then log at info level, and if runtime then log at debug level to not flood the log
+        if (onStartup) {
+            log.info("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", new Object[]{config.getHostName(), config.getPort(), actualPath.toString()});
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", new Object[]{config.getHostName(), config.getPort(), actualPath.toString()});
+            }
+        }
+
+        HdfsOutputStream answer = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
+
+        if (onStartup) {
+            log.info("Connected to hdfs file-system {}:{}/{}", new Object[]{config.getHostName(), config.getPort(), actualPath.toString()});
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Connected to hdfs file-system {}:{}/{}", new Object[]{config.getHostName(), config.getPort(), actualPath.toString()});
+            }
+        }
+
+        return answer;
+    }
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -113,13 +151,21 @@ public class HdfsProducer extends DefaultProducer {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduler);
             scheduler = null;
         }
-        ostream.close();
+        if (ostream != null) {
+            IOHelper.close(ostream, "output stream", log);
+            ostream = null;
+        }
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         Object key = exchange.getIn().getHeader(HdfsHeader.KEY.name());
+
+        // must have ostream
+        if (ostream == null) {
+            ostream = setupHdfs(false);
+        }
 
         boolean split = false;
         List<SplitStrategy> strategies = config.getSplitStrategies();
@@ -128,16 +174,15 @@ public class HdfsProducer extends DefaultProducer {
         }
 
         if (split) {
-            ostream.close();
+            if (ostream != null) {
+                IOHelper.close(ostream, "output stream", log);
+            }
             StringBuilder actualPath = newFileName();
             ostream = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
         }
+
         ostream.append(key, body, exchange.getContext().getTypeConverter());
         idle.set(false);
-    }
-
-    public HdfsOutputStream getOstream() {
-        return ostream;
     }
 
     private StringBuilder newFileName() {
@@ -145,10 +190,6 @@ public class HdfsProducer extends DefaultProducer {
         actualPath.append(splitNum);
         splitNum++;
         return actualPath;
-    }
-
-    public final AtomicBoolean isIdle() {
-        return idle;
     }
 
     /**
@@ -164,6 +205,11 @@ public class HdfsProducer extends DefaultProducer {
 
         @Override
         public void run() {
+            // only run if ostream has been created
+            if (ostream == null) {
+                return;
+            }
+
             HdfsProducer.this.log.trace("IdleCheck running");
 
             if (System.currentTimeMillis() - ostream.getLastAccess() > strategy.value && !idle.get() && !ostream.isBusy().get()) {

@@ -24,7 +24,7 @@ import javax.xml.ws.Holder;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 
-public class HdfsInputStream {
+public class HdfsInputStream implements Closeable {
 
     private HdfsFileType fileType;
     private String actualPath;
@@ -51,6 +51,7 @@ public class HdfsInputStream {
         return ret;
     }
 
+    @Override
     public final void close() throws IOException {
         if (opened) {
             IOUtils.closeStream(in);
