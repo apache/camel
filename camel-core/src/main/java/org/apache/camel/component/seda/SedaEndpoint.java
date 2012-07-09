@@ -84,7 +84,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public Producer createProducer() throws Exception {
-        return new SedaProducer(this, getQueue(), getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull());
+        return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
