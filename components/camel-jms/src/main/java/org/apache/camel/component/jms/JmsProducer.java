@@ -314,7 +314,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                     if (endpoint.getDestinationResolver() != null) {
                         jmsReplyTo = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, endpoint.isPubSubDomain());
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> ",
+                            LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> {}",
                                     new Object[]{replyTo, endpoint.getDestinationResolver(), endpoint.isPubSubDomain(), jmsReplyTo});
                         }
                     }
