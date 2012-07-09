@@ -31,6 +31,8 @@ public class HdfsInfo {
 
     public HdfsInfo(String hdfsPath) throws IOException {
         this.conf = new Configuration();
+        // this will connect to the hadoop hdfs file system, and in case of no connection
+        // then the hardcoded timeout in hadoop is 45 x 20 sec = 15 minutes
         this.fileSystem = FileSystem.get(URI.create(hdfsPath), conf);
         this.path = new Path(hdfsPath);
     }
