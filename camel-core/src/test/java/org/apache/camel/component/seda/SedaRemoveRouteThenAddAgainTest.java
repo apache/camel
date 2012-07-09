@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version
  */
-public class SedaRemoveRouteThenAddItAgainTest extends ContextTestSupport {
+public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -36,23 +36,28 @@ public class SedaRemoveRouteThenAddItAgainTest extends ContextTestSupport {
         };
     }
 
-    public void testRemoveRouteAndThenAddItAgain() throws Exception {
+    public void testRemoveRouteAndThenAddAgain() throws Exception {
         MockEndpoint out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);
+        out.expectedBodiesReceived("before removing the route");
 
-        template.sendBody("seda:in", "Test Message");
+        template.sendBody("seda:in", "before removing the route");
 
         out.assertIsSatisfied();
 
         out.reset();
 
+        // now stop & remove the route
         context.stopRoute("sedaToMock");
         context.removeRoute("sedaToMock");
+
+        // and then add it back again
         context.addRoutes(createRouteBuilder());
 
         out.expectedMessageCount(1);
+        out.expectedBodiesReceived("after removing the route");
 
-        template.sendBody("seda:in", "Test Message");
+        template.sendBody("seda:in", "after removing the route");
 
         out.assertIsSatisfied();
     }
