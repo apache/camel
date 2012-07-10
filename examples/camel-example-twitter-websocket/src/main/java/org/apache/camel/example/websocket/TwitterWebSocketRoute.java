@@ -98,13 +98,6 @@ public class TwitterWebSocketRoute extends RouteBuilder {
         // we can serve static resources from the classpath: or file: system
         wc.setStaticResources("classpath:.");
 
-        // setup Twitter component
-        TwitterComponent tc = getContext().getComponent("twitter", TwitterComponent.class);
-        tc.setAccessToken(accessToken);
-        tc.setAccessTokenSecret(accessTokenSecret);
-        tc.setConsumerKey(consumerKey);
-        tc.setConsumerSecret(consumerSecret);
-
         // poll twitter search for new tweets
         fromF("twitter://search?type=polling&delay=%s&keywords=%s", delay, searchTerm)
             // and push tweets to all web socket subscribers on camel-tweet
