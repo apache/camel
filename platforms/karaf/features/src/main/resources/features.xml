@@ -63,9 +63,9 @@
   <feature name='camel-cxf' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
     <feature>jetty</feature>
-    <feature version='[2.4,2.7)'>cxf</feature>
+    <feature version='${cxf-version-range}'>cxf</feature>
     <!-- Added cxf-specs feature to workaround the karaf feature validate issue -->
-    <feature version='[2.4,2.7)'>cxf-specs</feature>
+    <feature version='${cxf-version-range}'>cxf-specs</feature>
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
