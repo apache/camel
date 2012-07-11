@@ -207,7 +207,7 @@
     <camel.osgi.import.defaults>
       org.springframework.*;version="[3,4)",
       org.apache.commons.logging.*;version="[1.1,2)",
-      org.apache.cxf.*;version="[2.4,2.7)",
+      org.apache.cxf.*;version="[2.4,2.8)",
       org.apache.qpid.*;version="[0.14,1)",
       org.apache.abdera.*;version="[0.4,2)",
       org.apache.commons.httpclient.*;version="[3.1,4.0)",
