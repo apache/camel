@@ -63,6 +63,7 @@
     <commons-pool-version>1.6</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
     <cxf-version>2.6.1</cxf-version>
+    <cxf-version-range>[2.4,2.8)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <derby-version>10.8.2.2</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
@@ -207,7 +208,7 @@
     <camel.osgi.import.defaults>
       org.springframework.*;version="[3,4)",
       org.apache.commons.logging.*;version="[1.1,2)",
-      org.apache.cxf.*;version="[2.4,2.8)",
+      org.apache.cxf.*;version="${cxf-version-range}",
       org.apache.qpid.*;version="[0.14,1)",
       org.apache.abdera.*;version="[0.4,2)",
       org.apache.commons.httpclient.*;version="[3.1,4.0)",
