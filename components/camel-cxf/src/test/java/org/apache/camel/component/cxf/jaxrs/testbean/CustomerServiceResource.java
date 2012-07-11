@@ -22,27 +22,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-/**
- *
- * @version
- */
+
 // START SNIPPET: example
 @Path("/customerservice/")
-public class CustomerServiceResource {
-
-    public CustomerServiceResource() {
-    }
+public interface CustomerServiceResource {
 
     @GET
     @Path("/customers/{id}/")
-    public Customer getCustomer(@PathParam("id") String id) {
-        return null;
-    }
+    public Customer getCustomer(@PathParam("id") String id);
 
     @PUT
     @Path("/customers/")
-    public Response updateCustomer(Customer customer) {
-        return null;
-    }
+    public Response updateCustomer(Customer customer);
 }
 // END SNIPPET: example
