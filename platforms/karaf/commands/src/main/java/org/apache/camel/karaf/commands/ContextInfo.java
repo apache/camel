@@ -124,7 +124,7 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mProperties\u001B[0m"));
         for (String property : camelContext.getProperties().keySet()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + property + " = " + camelContext.getProperties().get(property)));
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + property + " = " + camelContext.getProperty(property)));
         }
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mComponents\u001B[0m"));

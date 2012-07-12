@@ -61,8 +61,8 @@ public class CachedOutputStream extends OutputStream {
     }
 
     public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {
-        String hold = exchange.getContext().getProperties().get(THRESHOLD);
-        String dir = exchange.getContext().getProperties().get(TEMP_DIR);
+        String hold = exchange.getContext().getProperty(THRESHOLD);
+        String dir = exchange.getContext().getProperty(TEMP_DIR);
         if (hold != null) {
             this.threshold = exchange.getContext().getTypeConverter().convertTo(Long.class, hold);
         }

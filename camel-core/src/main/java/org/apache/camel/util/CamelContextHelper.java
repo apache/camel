@@ -174,7 +174,7 @@ public final class CamelContextHelper {
      */
     public static int getMaximumCachePoolSize(CamelContext camelContext) throws IllegalArgumentException {
         if (camelContext != null) {
-            String s = camelContext.getProperties().get(Exchange.MAXIMUM_CACHE_POOL_SIZE);
+            String s = camelContext.getProperty(Exchange.MAXIMUM_CACHE_POOL_SIZE);
             if (s != null) {
                 try {
                     // we cannot use Camel type converters as they may not be ready this early
@@ -205,7 +205,7 @@ public final class CamelContextHelper {
      */
     public static int getMaximumEndpointCacheSize(CamelContext camelContext) throws IllegalArgumentException {
         if (camelContext != null) {
-            String s = camelContext.getProperties().get(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE);
+            String s = camelContext.getProperty(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE);
             if (s != null) {
                 // we cannot use Camel type converters as they may not be ready this early
                 try {
