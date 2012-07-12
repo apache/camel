@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BatchConsumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -185,6 +186,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      */
     protected void processEmptyMessage() throws Exception {
         Exchange exchange = getEndpoint().createExchange();
+
+        if (this instanceof BatchConsumer) {
+            // enrich exchange, so we send an empty message with the batch details
+            exchange.setProperty(Exchange.BATCH_INDEX, 0);
+            exchange.setProperty(Exchange.BATCH_SIZE, 1);
+            exchange.setProperty(Exchange.BATCH_COMPLETE, true);
+        }
+
         log.debug("Sending empty message as there were no messages from polling: {}", this.getEndpoint());
         getProcessor().process(exchange);
     }
