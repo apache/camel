@@ -29,10 +29,10 @@ public interface CustomerServiceResource {
 
     @GET
     @Path("/customers/{id}/")
-    public Customer getCustomer(@PathParam("id") String id);
+    Customer getCustomer(@PathParam("id") String id);
 
     @PUT
     @Path("/customers/")
-    public Response updateCustomer(Customer customer);
+    Response updateCustomer(Customer customer);
 }
 // END SNIPPET: example

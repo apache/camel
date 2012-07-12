@@ -75,7 +75,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
     @WebService
     @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-    public static interface BareSoapService {
+    public interface BareSoapService {
         void doSomething();
     }
 

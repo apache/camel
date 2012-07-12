@@ -25,27 +25,24 @@ import org.apache.cxf.jaxrs.utils.ResourceUtils;
 // This class only return the sub class instance
 public class SubResourceClassInvocationHandler implements InvocationHandler {
 
-	@Override
-	public Object invoke(Object proxy, Method method, Object[] parameters)
-			throws Throwable {
-		Object result = null;
-		Class<?> returnType = method.getReturnType();
-		System.out.println("returnType class " + returnType);
-		if (!returnType.isAssignableFrom(Void.class)) {
-			// create a instance to return
-			if (returnType.isInterface()) {
-				// create a new proxy for it
-				result =  Proxy.newProxyInstance(
-					    returnType.getClassLoader(),
-					    new Class[]{returnType},
-					    new SubResourceClassInvocationHandler());
-			} else {
-				// get the constructor and create a new instance
-				Constructor<?> c = ResourceUtils.findResourceConstructor(returnType, true);
-				result =  c.newInstance(new Object[]{});
-			}
-		}
-		return result;
-	}
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] parameters) throws Throwable {
+        Object result = null;
+        Class<?> returnType = method.getReturnType();
+        System.out.println("returnType class " + returnType);
+        if (!returnType.isAssignableFrom(Void.class)) {
+            // create a instance to return
+            if (returnType.isInterface()) {
+                // create a new proxy for it
+                result = Proxy.newProxyInstance(returnType.getClassLoader(), new Class[] {returnType},
+                                                new SubResourceClassInvocationHandler());
+            } else {
+                // get the constructor and create a new instance
+                Constructor<?> c = ResourceUtils.findResourceConstructor(returnType, true);
+                result = c.newInstance(new Object[] {});
+            }
+        }
+        return result;
+    }
 
 }

@@ -41,10 +41,8 @@ public class CamelResourceProvider implements ResourceProvider {
             result = provider.getInstance(m);
         } else {
             // create the instance with the invoker
-        	result = Proxy.newProxyInstance(
-				    clazz.getClassLoader(),
-				    new Class[]{clazz},
-				    new SubResourceClassInvocationHandler());
+            result = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz},
+                                            new SubResourceClassInvocationHandler());
         }
         return result;
     }
