@@ -141,8 +141,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getResourceClasses() != null) {
             List<Class<?>> res = CastUtils.cast(getResourceClasses());
             // setup the resource providers
-            for(Class<?>clazz : res) {
-            	sfb.setResourceProvider(clazz, new CamelResourceProvider(clazz));
+            for (Class<?> clazz : res) {
+                sfb.setResourceProvider(clazz, new CamelResourceProvider(clazz));
             }
             sfb.setResourceClasses(res);
         }
