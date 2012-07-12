@@ -31,10 +31,12 @@ public class SshConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         String command = endpoint.getPollCommand();
-        byte[] result = endpoint.sendExecCommand(command);
+        SshResult result = endpoint.sendExecCommand(command);
 
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(result);
+        exchange.getIn().setBody(result.getStdout());
+        exchange.getIn().setHeader(SshResult.EXIT_VALUE, result.getExitValue());
+        exchange.getIn().setHeader(SshResult.STDERR, result.getStderr());
 
         try {
             // send message to next processor in the route

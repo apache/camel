@@ -75,8 +75,8 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         return false;
     }
 
-    public byte[] sendExecCommand(String command) throws Exception {
-        byte[] result = null;
+    public SshResult sendExecCommand(String command) throws Exception {
+        SshResult result = null;
 
         if (getConfiguration() == null) {
             throw new IllegalStateException("Configuration must be set");
@@ -133,12 +133,14 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
         ByteArrayOutputStream err = new ByteArrayOutputStream();
         channel.setErr(err);
-
         OpenFuture openFuture = channel.open();
         openFuture.await(getTimeout());
         if (openFuture.isOpened()) {
             channel.waitFor(ClientChannel.CLOSED, 0);
-            result = out.toByteArray();
+            result = new SshResult(command, channel.getExitStatus(), 
+                                       new ByteArrayInputStream(out.toByteArray()),
+                                       new ByteArrayInputStream(err.toByteArray()));
+            
         }
 
         return result;
