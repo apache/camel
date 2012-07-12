@@ -481,32 +481,32 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     public void expectedHeaderReceived(final String name, final Object value) {
         if (expectedHeaderValues == null) {
             expectedHeaderValues = new CaseInsensitiveMap();
-        }
-        expectedHeaderValues.put(name, value);
+            // we just wants to expects to be called once
+            expects(new Runnable() {
+                public void run() {
+                    for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                        Exchange exchange = getReceivedExchange(i);
+                        for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
+                            String key = entry.getKey();
+                            Object expectedValue = entry.getValue();
 
-        expects(new Runnable() {
-            public void run() {
-                for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                    Exchange exchange = getReceivedExchange(i);
-                    for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
-                        String key = entry.getKey();
-                        Object expectedValue = entry.getValue();
+                            // we accept that an expectedValue of null also means that the header may be absent
+                            if (expectedValue != null) {
+                                assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
+                                boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
+                                assertTrue("No header with name " + key + " found for message: " + i, hasKey);
+                            }
 
-                        // we accept that an expectedValue of null also means that the header may be absent
-                        if (expectedValue != null) {
-                            assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
-                            boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
-                            assertTrue("No header with name " + key + " found for message: " + i, hasKey);
+                            Object actualValue = exchange.getIn().getHeader(key);
+                            actualValue = extractActualValue(exchange, actualValue, expectedValue);
+
+                            assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
                         }
-
-                        Object actualValue = exchange.getIn().getHeader(key);
-                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
-
-                        assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
                     }
                 }
-            }
-        });
+            });
+        }
+        expectedHeaderValues.put(name, value);
     }
 
     /**
