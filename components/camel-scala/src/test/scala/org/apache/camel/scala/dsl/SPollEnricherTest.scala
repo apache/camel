@@ -40,16 +40,5 @@ class SPollEnricherTest extends PollEnricherTest with RouteBuilderSupport {
     }
 
     "direct:enricher-test-4" pollEnrich("seda:foo4", strategy)
-
-    "seda:enricher-test-5" ==> {
-      pollEnrich("seda:foo5", -1, pollMultiple = true)
-      to("mock:mock")
-    }
-
-    "seda:enricher-test-6" ==> {
-      pollEnrich("seda:foo6", 200, pollMultiple = true)
-      to("mock:mock")
-    }
-
   }
 }

@@ -156,8 +156,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def otherwise = stack.top.otherwise
 
   def pipeline = stack.top.pipeline
-  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = -1) = stack.top.pollEnrich(uri, strategy, timeout)
-  def pollEnrich(uri: String, timeout: Long, pollMultiple: Boolean) = stack.top.pollEnrich(uri, timeout, pollMultiple)
+  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) = stack.top.pollEnrich(uri, strategy, timeout)
   def policy(policy: Policy) = stack.top.policy(policy)
   def process(function: Exchange => Unit) = stack.top.process(function)
   def process(processor: Processor) = stack.top.process(processor)

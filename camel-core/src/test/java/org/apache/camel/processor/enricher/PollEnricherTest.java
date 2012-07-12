@@ -118,41 +118,6 @@ public class PollEnricherTest extends ContextTestSupport {
         assertNull(exchange.getException());
     }
 
-    public void testPollEnrichMultipleDefaultNoWait() throws InterruptedException {
-
-        mock.expectedMessageCount(1);
-        template.sendBody("seda:foo5", "msg1");
-        template.sendBody("seda:foo5", "msg2");
-        template.sendBody("seda:enricher-test-5", "test");
-        Thread.sleep(100);
-        template.sendBody("seda:foo5", "msg3");
-        template.sendBody("seda:foo5", "msg4");
-
-        List<?> polledExchanges = mock.getExchanges().get(0).getIn().getBody(List.class);
-        assertEquals(2, polledExchanges.size());
-
-        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo5");
-        mock.assertIsSatisfied(0);
-    }
-
-    public void testPollEnrichMultipleExplicitTimeout() throws InterruptedException {
-
-        mock.expectedMessageCount(1);
-        template.sendBody("seda:foo6", "msg1");
-        template.sendBody("seda:foo6", "msg2");
-        template.sendBody("seda:enricher-test-6", "test");
-        template.sendBody("seda:foo6", "msg3");
-        template.sendBody("seda:foo6", "msg4");
-
-        Thread.sleep(500);
-
-        List<?> polledExchanges = mock.getExchanges().get(0).getIn().getBody(List.class);
-        assertEquals(4, polledExchanges.size());
-
-        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo6");
-        mock.assertIsSatisfied(0);
-    }
-
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -178,18 +143,6 @@ public class PollEnricherTest extends ContextTestSupport {
 
                 from("direct:enricher-test-4")
                     .pollEnrich("seda:foo4", aggregationStrategy);
-
-                // -------------------------------------------------------------
-                //  Poll Multiple routes
-                // -------------------------------------------------------------
-
-                from("seda:enricher-test-5")
-                    .pollEnrich("seda:foo5", true)
-                    .to("mock:mock");
-
-                from("seda:enricher-test-6")
-                    .pollEnrich("seda:foo6", 200, true)
-                    .to("mock:mock");
             }
         };
     }
