@@ -29,7 +29,6 @@ public class SubResourceClassInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] parameters) throws Throwable {
         Object result = null;
         Class<?> returnType = method.getReturnType();
-        System.out.println("returnType class " + returnType);
         if (!returnType.isAssignableFrom(Void.class)) {
             // create a instance to return
             if (returnType.isInterface()) {
