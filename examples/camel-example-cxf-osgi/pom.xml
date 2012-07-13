@@ -115,8 +115,6 @@
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Export-Package>org.apache.camel.example.reportincident*</Export-Package>
 						<Import-Package>
-							META-INF.cxf,
-							META-INF.cxf.osgi,
 							org.apache.cxf,
 							org.apache.cxf.binding,
 							org.apache.cxf.binding.corba,
