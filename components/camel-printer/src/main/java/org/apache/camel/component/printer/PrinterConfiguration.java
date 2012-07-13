@@ -40,6 +40,7 @@ public class PrinterConfiguration {
     private String sides;
     private Sides internalSides;
     private boolean sendToPrinter = true;
+    private String mediaTray;
 
     public PrinterConfiguration() {
     }
@@ -81,6 +82,10 @@ public class PrinterConfiguration {
             if (!(Boolean.valueOf((String) printSettings.get("sendToPrinter")))) {
                 setSendToPrinter(false);
             }
+        }
+
+        if (printSettings.containsKey("mediaTray")) {
+            setMediaTray((String) printSettings.get("mediaTray"));
         }
     }
 
@@ -294,4 +299,11 @@ public class PrinterConfiguration {
         this.sendToPrinter = sendToPrinter;
     }
 
+    public String getMediaTray() {
+        return mediaTray;
+    }
+
+    public void setMediaTray(String mediaTray) {
+        this.mediaTray = mediaTray;
+    }
 }
