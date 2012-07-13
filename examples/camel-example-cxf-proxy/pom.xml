@@ -35,9 +35,6 @@
     <camel.osgi.export.pkg>
       org.apache.camel.example.*
     </camel.osgi.export.pkg>
-    <camel.osgi.import.additional>
-      META-INF.cxf
-    </camel.osgi.import.additional>
     <camel.osgi.private.pkg>
       org.apache.camel.example.reportincident
     </camel.osgi.private.pkg>
