@@ -150,6 +150,18 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     }
 
     /**
+     * Sets the rejectOld flag to throw an error when a message older than the last delivered message is processed
+     * @return the builder
+     */
+    public ResequenceDefinition rejectOld() {
+        if (streamConfig == null) {
+            throw new IllegalStateException("rejectOld() only supported for stream resequencer");
+        }
+        streamConfig.setRejectOld(true);
+        return this;
+    }
+
+    /**
      * Sets the in batch size for number of exchanges received
      * @param batchSize  the batch size
      * @return the builder
@@ -368,6 +380,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), processor, comparator);
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());
+        resequencer.setRejectOld(config.getRejectOld());
         if (config.getIgnoreInvalidExchanges() != null) {
             resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
         }

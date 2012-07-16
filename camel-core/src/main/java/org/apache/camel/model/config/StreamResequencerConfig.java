@@ -19,6 +19,7 @@ package org.apache.camel.model.config;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -41,6 +42,8 @@ public class StreamResequencerConfig extends ResequencerConfig {
     private Boolean ignoreInvalidExchanges;
     @XmlTransient
     private ExpressionResultComparator comparator;
+    @XmlElement
+    private Boolean rejectOld;
 
     /**
      * Creates a new {@link StreamResequencerConfig} instance using default
@@ -123,5 +126,13 @@ public class StreamResequencerConfig extends ResequencerConfig {
     public void setComparator(ExpressionResultComparator comparator) {
         this.comparator = comparator;
     }
-    
+
+    public void setRejectOld(boolean value) {
+        this.rejectOld = value;
+    }
+
+    public Boolean getRejectOld() {
+        return rejectOld;
+    }
+
 }

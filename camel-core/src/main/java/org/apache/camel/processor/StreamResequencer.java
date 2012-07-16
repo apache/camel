@@ -141,6 +141,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         return ignoreInvalidExchanges;
     }
 
+    public void setRejectOld(Boolean rejectOld) {
+        engine.setRejectOld(rejectOld);
+    }
+
     /**
      * Sets whether to ignore invalid exchanges which cannot be used by this stream resequencer.
      * <p/>

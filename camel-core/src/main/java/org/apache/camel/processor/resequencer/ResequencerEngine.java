@@ -87,6 +87,11 @@ public class ResequencerEngine<E> {
     private SequenceSender<E> sequenceSender;
 
     /**
+     * Indicates whether an error should be thrown if message older (based on Comparator) than the last delivered message is received.
+     */
+    private Boolean rejectOld;
+
+    /**
      * Creates a new resequencer instance with a default timeout of 2000
      * milliseconds.
      *
@@ -134,6 +139,14 @@ public class ResequencerEngine<E> {
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public Boolean getRejectOld() {
+        return rejectOld;
+    }
+
+    public void setRejectOld(Boolean rejectOld) {
+        this.rejectOld = rejectOld;
     }
 
     /**
@@ -209,6 +222,9 @@ public class ResequencerEngine<E> {
             // nothing to schedule
         } else if (sequence.predecessor(element) != null) {
             // nothing to schedule
+        } else if (rejectOld != null && rejectOld.booleanValue() && beforeLastDelivered(element)) {
+            throw new MessageRejectedException("rejecting message [" + element.getObject()
+                    + "], it should have been sent before the last delivered message [" + lastDelivered.getObject() + "]");
         } else {
             element.schedule(defineTimeout());
         }
@@ -277,6 +293,22 @@ public class ResequencerEngine<E> {
             return false;
         }
         if (sequence.comparator().successor(element, lastDelivered)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Retuns <code>true</code> if the given element is before the last delivered element.
+     *
+     * @param element an element.
+     * @return <code>true</code> if the given element is before the last delivered element.
+     */
+    private boolean beforeLastDelivered(Element<E> element) {
+        if (lastDelivered == null) {
+            return false;
+        }
+        if (sequence.comparator().compare(element, lastDelivered) < 0) {
             return true;
         }
         return false;
