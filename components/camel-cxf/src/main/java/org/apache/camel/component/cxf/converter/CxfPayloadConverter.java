@@ -90,6 +90,16 @@ public final class CxfPayloadConverter {
         }
         return null;
     }
+    
+    @Converter
+    public static <T> Source cxfPayLoadToSource(CxfPayload<T> payload, Exchange exchange) {
+        List<Source> payloadBody = payload.getBodySources();
+        
+        if (payloadBody.size() > 0) {
+            return payloadBody.get(0);
+        }
+        return null;
+    }
 
     @SuppressWarnings("unchecked")
     @FallbackConverter
@@ -130,6 +140,14 @@ public final class CxfPayloadConverter {
         }
         // Convert a CxfPayload into something else
         if (CxfPayload.class.isAssignableFrom(value.getClass())) {
+            CxfPayload<?> payload = (CxfPayload<?>) value;
+            
+            if (payload.getBodySources().size() == 1) {
+                TypeConverter tc = registry.lookup(type, Source.class);
+                if (tc != null) {
+                    return tc.convertTo(type, payload.getBodySources().get(0));
+                }                
+            }
             TypeConverter tc = registry.lookup(type, NodeList.class);
             if (tc != null) {
                 return tc.convertTo(type, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));

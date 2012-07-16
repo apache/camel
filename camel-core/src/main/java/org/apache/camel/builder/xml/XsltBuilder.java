@@ -47,6 +47,7 @@ import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.jaxp.XmlErrorListener;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -424,8 +425,10 @@ public class XsltBuilder implements Processor {
             return false;
         } else if (body instanceof Node) {
             return false;
+        } else if (exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass()) != null) {
+            //there is a direct and hopefully optimized converter to Source 
+            return false;
         }
-
         // yes an input stream is needed
         return true;
     }
@@ -446,9 +449,15 @@ public class XsltBuilder implements Processor {
         if (body instanceof Source) {
             return (Source) body;
         }
-
         Source source = null;
-        if (isAllowStAX()) {
+        if (body != null) {
+            TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass());
+            if (tc != null) {
+                source = tc.convertTo(Source.class, body);
+            }
+        }
+
+        if (source == null && isAllowStAX()) {
             source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
         }
         if (source == null) {
