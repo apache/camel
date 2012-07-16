@@ -23,6 +23,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
@@ -69,6 +72,7 @@ public class XsltBuilder implements Processor {
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
     private Templates template;
+    private volatile BlockingQueue<Transformer> transformers;
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
     private URIResolver uriResolver;
@@ -97,7 +101,7 @@ public class XsltBuilder implements Processor {
             exchange.addOnCompletion(new XsltBuilderOnCompletion(fileName));
         }
 
-        Transformer transformer = getTemplate().newTransformer();
+        Transformer transformer = getTransformer();
         configureTransformer(transformer, exchange);
         transformer.setErrorListener(new DefaultTransformErrorHandler());
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
@@ -124,6 +128,7 @@ public class XsltBuilder implements Processor {
             LOG.trace("Transform complete with result {}", result);
             resultHandler.setBody(out);
         } finally {
+            releaseTransformer(transformer);
             // IOHelper can handle if is is null
             IOHelper.close(is);
         }
@@ -238,6 +243,16 @@ public class XsltBuilder implements Processor {
         setAllowStAX(true);
         return this;
     }
+    
+    
+    public XsltBuilder transformerCacheSize(int numberToCache) {
+        if (numberToCache > 0) {
+            transformers = new ArrayBlockingQueue<Transformer>(numberToCache);
+        } else {
+            transformers = null;
+        }
+        return this;
+    }
 
     // Properties
     // -------------------------------------------------------------------------
@@ -252,6 +267,9 @@ public class XsltBuilder implements Processor {
 
     public void setTemplate(Templates template) {
         this.template = template;
+        if (transformers != null) {
+            transformers.clear();
+        }
     }
     
     public Templates getTemplate() {
@@ -365,6 +383,23 @@ public class XsltBuilder implements Processor {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+    private void releaseTransformer(Transformer transformer) {
+        if (transformers != null) {
+            transformer.reset();
+            transformers.offer(transformer);
+        }
+    }
+
+    private Transformer getTransformer() throws TransformerConfigurationException {
+        Transformer t = null; 
+        if (transformers != null) {
+            t = transformers.poll();
+        }
+        if (t == null) {
+            t = getTemplate().newTransformer();
+        }
+        return t;
+    }
 
     /**
      * Checks whether we need an {@link InputStream} to access the message body.
