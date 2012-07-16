@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
@@ -88,6 +89,7 @@ import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.staxutils.StaxSource;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -916,6 +918,19 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     }
                 }
                 return r.getLocalName();
+            } else if (source instanceof StreamSource) {
+                //flip to stax so we can get the name
+                XMLStreamReader reader = StaxUtils.createXMLStreamReader(source);
+                StaxSource src2 = new StaxSource(reader);
+                sources.set(i, src2);
+                if (reader.getEventType() == XMLStreamReader.START_DOCUMENT) {
+                    try {
+                        reader.nextTag();
+                    } catch (XMLStreamException e) {
+                        //ignore
+                    }
+                }
+                return reader.getLocalName();
             }
             return null;
         }
