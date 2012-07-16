@@ -132,16 +132,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes"})
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
         // address
         if (getAddress() != null) {
             sfb.setAddress(getAddress());
         }
         if (getResourceClasses() != null) {
-            List<Class<?>> res = CastUtils.cast(getResourceClasses());
+            List<Class> res = CastUtils.cast(getResourceClasses());
             // setup the resource providers
-            for (Class<?> clazz : res) {
+            for (Class clazz : res) {
                 sfb.setResourceProvider(clazz, new CamelResourceProvider(clazz));
             }
             sfb.setResourceClasses(res);
