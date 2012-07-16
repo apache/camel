@@ -145,6 +145,9 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
                 log.debug("Using shared queue: " + endpoint.getReplyTo() + " with dynamic message selector as reply listener: " + answer);
             }
+            // shared is not as fast as temporary or exclusive, so log this so the end user may be aware of this
+            log.warn("{} is using a shared reply queue, which is not as fast as alternatives."
+                    + " See more detail at the section 'Request-reply over JMS' at http://camel.apache.org/jms", endpoint);
         } else if (ReplyToType.Exclusive == type) {
             answer = new ExclusivePersistentQueueMessageListenerContainer();
             // must use cache level consumer for exclusive as there is no message selector
