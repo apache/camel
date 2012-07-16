@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Source;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -65,6 +67,14 @@ public final class CxfPayloadConverter {
         }
         return new CxfPayload<T>(headers, body);
     }
+    
+    @Converter
+    public static <T> CxfPayload<T> sourceToCxfPayload(Source src, Exchange exchange) {
+        List<T> headers = new ArrayList<T>();
+        List<Source> body = new ArrayList<Source>();
+        body.add(src);
+        return new CxfPayload<T>(headers, body, null);
+    }
 
     @Converter
     public static <T> NodeList cxfPayloadToNodeList(CxfPayload<T> payload, Exchange exchange) {
@@ -87,6 +97,13 @@ public final class CxfPayloadConverter {
         // use fallback type converter, so we can probably convert into
         // CxfPayloads from other types
         if (type.isAssignableFrom(CxfPayload.class)) {
+            if (!value.getClass().isArray()) {
+                TypeConverter tc = registry.lookup(Source.class, value.getClass());
+                if (tc != null) {
+                    Source src = tc.convertTo(Source.class, exchange, value);
+                    return (T) sourceToCxfPayload(src, exchange);
+                }                
+            }
             TypeConverter tc = registry.lookup(NodeList.class, value.getClass());
             if (tc != null) {
                 NodeList nodeList = tc.convertTo(NodeList.class, exchange, value);
