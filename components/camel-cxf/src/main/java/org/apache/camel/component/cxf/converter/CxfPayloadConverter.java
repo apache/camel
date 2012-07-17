@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
@@ -34,6 +35,7 @@ import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.cxf.staxutils.StaxUtils;
 
 @Converter
 public final class CxfPayloadConverter {
@@ -144,6 +146,17 @@ public final class CxfPayloadConverter {
             CxfPayload<?> payload = (CxfPayload<?>) value;
             
             if (payload.getBodySources().size() == 1) {
+                if (type.isAssignableFrom(Document.class)) {
+                    Source s = payload.getBodySources().get(0);
+                    Document d;
+                    try {
+                        d = StaxUtils.read(s);
+                    } catch (XMLStreamException e) {
+                        throw new RuntimeException(e);
+                    }
+                    payload.getBodySources().set(0, new DOMSource(d.getDocumentElement()));
+                    return type.cast(d);
+                }
                 TypeConverter tc = registry.lookup(type, Source.class);
                 if (tc != null) {
                     T t = tc.convertTo(type, payload.getBodySources().get(0));
