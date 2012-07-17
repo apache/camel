@@ -25,54 +25,52 @@ import org.apache.camel.processor.resequencer.MessageRejectedException;
  */
 public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
 
-    public void testInSequenceAfterTimeout() throws Exception {
+    public void testInSequenceAfterCapacityReached() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A", "B", "C", "E");
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
-        Thread.sleep(1100);
         template.sendBodyAndHeader("direct:start", "E", "seqno", 5);
 
         assertMockEndpointsSatisfied();
     }
 
-    public void testDuplicateAfterTimeout() throws Exception {
+    public void testDuplicateAfterCapacityReached() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A", "B", "C");
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
-        Thread.sleep(1100);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
 
         assertMockEndpointsSatisfied();
     }
 
-    public void testOutOfSequenceAfterTimeoutSimple() throws Exception {
+    public void testOutOfSequenceAfterCapacityReachedSimple() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
         getMockEndpoint("mock:error").expectedBodiesReceived("A");
 
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
-        Thread.sleep(1100);
         template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
 
         assertMockEndpointsSatisfied();
     }
 
-    public void testOutOfSequenceAfterTimeoutComplex() throws Exception {
+    
+    public void testOutOfSequenceAfterCapacityReachedComplex() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A", "D", "E", "F");
         getMockEndpoint("mock:error").expectedBodiesReceived("B", "C");
 
+        template.sendBodyAndHeader("direct:start", "E", "seqno", 5);
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
         template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
-        Thread.sleep(1100);
+
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
-        template.sendBodyAndHeader("direct:start", "E", "seqno", 5);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "F", "seqno", 6);
 
@@ -86,9 +84,9 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
             public void configure() throws Exception {
 
                 from("direct:start")
-                        .onException(MessageRejectedException.class).handled(true).to("mock:error").end()
-                        .resequence(header("seqno")).stream().timeout(1000).rejectOld()
-                        .to("mock:result");
+                    .onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true).to("mock:error").end()
+                    .resequence(header("seqno")).stream().capacity(3).rejectOld()
+                    .to("mock:result");
             }
         };
     }

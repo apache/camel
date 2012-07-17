@@ -206,6 +206,12 @@ public class ResequencerEngine<E> {
             throw new IllegalArgumentException("Element cannot be used in comparator: " + sequence.comparator());
         }
 
+        // validate the exchange shouldn't be 'rejected' (if applicable)
+        if (rejectOld != null && rejectOld.booleanValue() && beforeLastDelivered(element)) {
+            throw new MessageRejectedException("rejecting message [" + element.getObject()
+                    + "], it should have been sent before the last delivered message [" + lastDelivered.getObject() + "]");
+        }
+
         // add element to sequence in proper order
         sequence.add(element);
 
@@ -222,10 +228,6 @@ public class ResequencerEngine<E> {
             // nothing to schedule
         } else if (sequence.predecessor(element) != null) {
             // nothing to schedule
-        } else if (rejectOld != null && rejectOld.booleanValue() && beforeLastDelivered(element)) {
-            sequence.remove(element);
-            throw new MessageRejectedException("rejecting message [" + element.getObject()
-                    + "], it should have been sent before the last delivered message [" + lastDelivered.getObject() + "]");
         } else {
             element.schedule(defineTimeout());
         }
