@@ -51,20 +51,7 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testOutOfSequenceAfterTimeout() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("A", "C", "D");
-        getMockEndpoint("mock:error").expectedBodiesReceived("B");
-
-        template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
-        template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
-        template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
-        Thread.sleep(1100);
-        template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    public void testOutOfSequenceAfterTimeout2() throws Exception {
+    public void testOutOfSequenceAfterTimeoutSimple() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
         getMockEndpoint("mock:error").expectedBodiesReceived("A");
 
@@ -73,6 +60,21 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
         Thread.sleep(1100);
         template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testOutOfSequenceAfterTimeoutComplex() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("A", "D", "E", "F");
+        getMockEndpoint("mock:error").expectedBodiesReceived("B", "C");
+
+        template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
+        template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
+        Thread.sleep(1100);
+        template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
+        template.sendBodyAndHeader("direct:start", "E", "seqno", 5);
+        template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
+        template.sendBodyAndHeader("direct:start", "F", "seqno", 6);
 
         assertMockEndpointsSatisfied();
     }

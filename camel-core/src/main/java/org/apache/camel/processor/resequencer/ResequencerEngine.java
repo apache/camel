@@ -223,6 +223,7 @@ public class ResequencerEngine<E> {
         } else if (sequence.predecessor(element) != null) {
             // nothing to schedule
         } else if (rejectOld != null && rejectOld.booleanValue() && beforeLastDelivered(element)) {
+            sequence.remove(element);
             throw new MessageRejectedException("rejecting message [" + element.getObject()
                     + "], it should have been sent before the last delivered message [" + lastDelivered.getObject() + "]");
         } else {
