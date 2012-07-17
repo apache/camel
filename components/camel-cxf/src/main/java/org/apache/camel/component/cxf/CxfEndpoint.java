@@ -33,7 +33,9 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
@@ -902,35 +904,37 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         private String findName(List<Source> sources, int i) {
             Source source = sources.get(i);
+            XMLStreamReader r = null;
             if (source instanceof DOMSource) {
-                return ((Element)((DOMSource)source).getNode()).getLocalName();
+                Node nd = ((DOMSource)source).getNode();
+                if (nd instanceof Document) {
+                    nd = ((Document)nd).getDocumentElement();
+                }
+                return ((Element)nd).getLocalName();
             } else if (source instanceof StaxSource) {
                 StaxSource s = (StaxSource)source;
-                return s.getXMLStreamReader().getLocalName();
+                r = s.getXMLStreamReader();
             } else if (source instanceof StAXSource) {
                 StAXSource s = (StAXSource)source;
-                XMLStreamReader r = s.getXMLStreamReader();
-                if (r.getEventType() != XMLStreamReader.START_ELEMENT) {
-                    try {
-                        r.nextTag();
-                    } catch (XMLStreamException e) {
-                        //ignore
-                    }
-                }
-                return r.getLocalName();
+                r = s.getXMLStreamReader();
             } else if (source instanceof StreamSource) {
                 //flip to stax so we can get the name
-                XMLStreamReader reader = StaxUtils.createXMLStreamReader(source);
-                StaxSource src2 = new StaxSource(reader);
+                r = StaxUtils.createXMLStreamReader(source);
+                StaxSource src2 = new StaxSource(r);
                 sources.set(i, src2);
-                if (reader.getEventType() == XMLStreamReader.START_DOCUMENT) {
-                    try {
-                        reader.nextTag();
-                    } catch (XMLStreamException e) {
-                        //ignore
+            }
+            if (r != null) {
+                try {
+                    if (r.getEventType() == XMLStreamReader.START_DOCUMENT) {
+                        r.next();
                     }
+                    if (r.getEventType() != XMLStreamReader.START_ELEMENT) {
+                        r.nextTag();
+                    }
+                } catch (XMLStreamException e) {
+                    //ignore
                 }
-                return reader.getLocalName();
+                return r.getLocalName();
             }
             return null;
         }
