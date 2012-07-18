@@ -18,6 +18,7 @@ package org.apache.camel.component.cdi;
 
 import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.util.ReflectionInjector;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
 
 /**
@@ -29,6 +30,10 @@ public class CdiInjector implements Injector {
      * Fallback injector used when there is bean of given type registered in CDI.
      */
     private Injector injector;
+
+    public CdiInjector() {
+        this(new ReflectionInjector());
+    }
 
     public CdiInjector(Injector parent) {
         this.injector = parent;

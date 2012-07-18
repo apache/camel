@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.cdi;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.Registry;
 
 /**
  * CDI {@link org.apache.camel.CamelContext} class.
@@ -24,8 +30,26 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class CdiCamelContext extends DefaultCamelContext {
 
     public CdiCamelContext() {
-        setRegistry(new CdiBeanRegistry());
+        super(new CdiBeanRegistry());
         setInjector(new CdiInjector(getInjector()));
+    }
+
+    @Inject
+    public void setRegistry(Instance<Registry> instance) {
+        if (isSingular(instance)) {
+            setRegistry(instance.get());
+        }
+    }
+
+    @Inject
+    public void setInjector(Instance<Injector> instance) {
+        if (isSingular(instance)) {
+            setInjector(instance.get());
+        }
+    }
+
+    private <T> boolean isSingular(Instance<T> instance) {
+        return !instance.isUnsatisfied() && !instance.isAmbiguous();
     }
 
 }

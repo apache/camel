@@ -18,11 +18,10 @@ package org.apache.camel.cdi;
 
 import java.util.logging.LogManager;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.cdi.CdiCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
+import org.apache.deltaspike.core.api.provider.BeanProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,7 +29,7 @@ import org.junit.BeforeClass;
 /**
  * Base class for cdi tests.
  */
-public abstract class CamelCdiTestContainer extends CamelTestSupport {
+public abstract class CdiTestSupport extends TestSupport {
 
     private CdiContainer cdiContainer;
 
@@ -51,19 +50,13 @@ public abstract class CamelCdiTestContainer extends CamelTestSupport {
         cdiContainer = CdiContainerLoader.getCdiContainer();
         cdiContainer.boot();
 
-        super.setUp();
+        BeanProvider.injectFields(this);
     }
 
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
-        context.stop();
         cdiContainer.shutdown();
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return new CdiCamelContext();
-    }
 }
 
