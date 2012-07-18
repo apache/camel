@@ -24,10 +24,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.bean.Alphabet;
+import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
-import org.jsmpp.bean.GeneralDataCoding;
-import org.jsmpp.bean.MessageClass;
 import org.jsmpp.bean.MessageMode;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -69,7 +68,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
                         submitSm.getValidityPeriod(),
                         new RegisteredDelivery(submitSm.getRegisteredDelivery()),
                         submitSm.getReplaceIfPresent(),
-                        new GeneralDataCoding(submitSm.getDataCoding()),
+                        DataCoding.newInstance(submitSm.getDataCoding()),
                         (byte) 0,
                         submitSm.getShortMessage(),
                         submitSm.getOptionalParametes());
@@ -100,8 +99,6 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         SmppSplitter splitter = createSplitter(exchange);
         byte[][] segments = splitter.split(shortMessage);
 
-        template.setDataCoding(new GeneralDataCoding(false, true, MessageClass.CLASS1, determinedAlphabet).value());
-        
         // multipart message
         if (segments.length > 1) {
             template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
@@ -120,6 +117,12 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
     protected SubmitSm createSubmitSmTemplate(Exchange exchange) {
         Message in = exchange.getIn();
         SubmitSm submitSm = new SubmitSm();
+
+        if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
+            submitSm.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, Byte.class));
+        } else {
+            submitSm.setDataCoding(config.getDataCoding());
+        }
 
         if (in.getHeaders().containsKey(SmppConstants.DEST_ADDR)) {
             submitSm.setDestAddress(in.getHeader(SmppConstants.DEST_ADDR, String.class));

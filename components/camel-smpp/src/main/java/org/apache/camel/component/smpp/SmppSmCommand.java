@@ -35,11 +35,9 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     protected byte getProvidedAlphabet(Exchange exchange) {
         Message in = exchange.getIn();
 
-        byte alphabet = SmppConstants.UNKNOWN_ALPHABET;
+        byte alphabet = config.getAlphabet();
         if (in.getHeaders().containsKey(SmppConstants.ALPHABET)) {
             alphabet = in.getHeader(SmppConstants.ALPHABET, Byte.class);
-        } else {
-            alphabet = config.getAlphabet();
         }
 
         return alphabet;
