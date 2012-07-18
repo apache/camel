@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.cdi.internal;
 
+import java.lang.reflect.Method;
+
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
+import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 
 /**
  * Set of camel specific hooks for CDI.
@@ -37,6 +42,24 @@ public class CamelExtension implements Extension {
      * Context instance.
      */
     private CamelContext camelContext;
+
+    /**
+     * Process camel context aware bean definitions.
+     * 
+     * @param process Annotated type.
+     * @throws Exception In case of exceptions.
+     */
+    protected void contextAwareness(@Observes ProcessAnnotatedType<CamelContextAware> process) throws Exception {
+        AnnotatedType<CamelContextAware> annotatedType = process.getAnnotatedType();
+        Class<CamelContextAware> javaClass = annotatedType.getJavaClass();
+        if (CamelContextAware.class.isAssignableFrom(javaClass)) {
+            Method method = javaClass.getMethod("setCamelContext", CamelContext.class);
+            AnnotatedTypeBuilder<CamelContextAware> builder = new AnnotatedTypeBuilder<CamelContextAware>()
+                .readFromType(javaClass)
+                .addToMethod(method, new InjectLiteral());
+            process.setAnnotatedType(builder.create());
+        }
+    }
 
     /**
      * Disable creation of default CamelContext bean and rely on context created
