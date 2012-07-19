@@ -167,6 +167,7 @@ public class SmppConfigurationTest {
                 + "port=2775, "
                 + "systemId=smppclient, "
                 + "systemType=cp, "
+                + "dataCoding=0, "
                 + "alphabet=0, "
                 + "encoding=ISO-8859-1, "
                 + "transactionTimer=10000, "

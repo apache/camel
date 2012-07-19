@@ -38,7 +38,7 @@ public class SmppConfiguration implements Cloneable {
     private String systemId = "smppclient";
     private String password = "password";
     private String systemType = "cp";
-    // TODO: document deleting of dataCoding
+    private byte dataCoding = (byte) 0;
     private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
     private String encoding = "ISO-8859-1";
     private Integer enquireLinkTimer = 5000;
@@ -114,6 +114,14 @@ public class SmppConfiguration implements Cloneable {
 
     public String getPassword() {
         return password;
+    }
+    
+    public byte getDataCoding() {
+        return dataCoding;
+    }
+
+    public void setDataCoding(byte dataCoding) {
+        this.alphabet = dataCoding;
     }
     
     public byte getAlphabet() {
@@ -345,6 +353,7 @@ public class SmppConfiguration implements Cloneable {
             + ", port=" + port 
             + ", systemId=" + systemId 
             + ", systemType=" + systemType
+            + ", dataCoding=" + dataCoding
             + ", alphabet=" + alphabet
             + ", encoding=" + encoding
             + ", transactionTimer=" + transactionTimer
