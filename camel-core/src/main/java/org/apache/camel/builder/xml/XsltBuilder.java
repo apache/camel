@@ -417,7 +417,9 @@ public class XsltBuilder implements Processor {
             return false;
         }
 
-        if (body instanceof Source) {
+        if (body instanceof InputStream) {
+            return true;
+        } else if (body instanceof Source) {
             return false;
         } else if (body instanceof String) {
             return false;
@@ -450,6 +452,9 @@ public class XsltBuilder implements Processor {
             return (Source) body;
         }
         Source source = null;
+        if (body instanceof InputStream) {
+            return new StreamSource((InputStream)body);
+        }
         if (body != null) {
             TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass());
             if (tc != null) {
