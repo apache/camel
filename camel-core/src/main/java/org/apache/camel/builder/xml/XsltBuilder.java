@@ -23,6 +23,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
@@ -44,6 +47,7 @@ import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.jaxp.XmlErrorListener;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -69,6 +73,7 @@ public class XsltBuilder implements Processor {
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
     private Templates template;
+    private volatile BlockingQueue<Transformer> transformers;
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
     private URIResolver uriResolver;
@@ -97,7 +102,7 @@ public class XsltBuilder implements Processor {
             exchange.addOnCompletion(new XsltBuilderOnCompletion(fileName));
         }
 
-        Transformer transformer = getTemplate().newTransformer();
+        Transformer transformer = getTransformer();
         configureTransformer(transformer, exchange);
         transformer.setErrorListener(new DefaultTransformErrorHandler());
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
@@ -124,6 +129,7 @@ public class XsltBuilder implements Processor {
             LOG.trace("Transform complete with result {}", result);
             resultHandler.setBody(out);
         } finally {
+            releaseTransformer(transformer);
             // IOHelper can handle if is is null
             IOHelper.close(is);
         }
@@ -238,6 +244,16 @@ public class XsltBuilder implements Processor {
         setAllowStAX(true);
         return this;
     }
+    
+    
+    public XsltBuilder transformerCacheSize(int numberToCache) {
+        if (numberToCache > 0) {
+            transformers = new ArrayBlockingQueue<Transformer>(numberToCache);
+        } else {
+            transformers = null;
+        }
+        return this;
+    }
 
     // Properties
     // -------------------------------------------------------------------------
@@ -252,6 +268,9 @@ public class XsltBuilder implements Processor {
 
     public void setTemplate(Templates template) {
         this.template = template;
+        if (transformers != null) {
+            transformers.clear();
+        }
     }
     
     public Templates getTemplate() {
@@ -365,6 +384,23 @@ public class XsltBuilder implements Processor {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+    private void releaseTransformer(Transformer transformer) {
+        if (transformers != null) {
+            transformer.reset();
+            transformers.offer(transformer);
+        }
+    }
+
+    private Transformer getTransformer() throws TransformerConfigurationException {
+        Transformer t = null; 
+        if (transformers != null) {
+            t = transformers.poll();
+        }
+        if (t == null) {
+            t = getTemplate().newTransformer();
+        }
+        return t;
+    }
 
     /**
      * Checks whether we need an {@link InputStream} to access the message body.
@@ -381,7 +417,9 @@ public class XsltBuilder implements Processor {
             return false;
         }
 
-        if (body instanceof Source) {
+        if (body instanceof InputStream) {
+            return true;
+        } else if (body instanceof Source) {
             return false;
         } else if (body instanceof String) {
             return false;
@@ -389,8 +427,10 @@ public class XsltBuilder implements Processor {
             return false;
         } else if (body instanceof Node) {
             return false;
+        } else if (exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass()) != null) {
+            //there is a direct and hopefully optimized converter to Source 
+            return false;
         }
-
         // yes an input stream is needed
         return true;
     }
@@ -411,9 +451,18 @@ public class XsltBuilder implements Processor {
         if (body instanceof Source) {
             return (Source) body;
         }
-
         Source source = null;
-        if (isAllowStAX()) {
+        if (body instanceof InputStream) {
+            return new StreamSource((InputStream)body);
+        }
+        if (body != null) {
+            TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass());
+            if (tc != null) {
+                source = tc.convertTo(Source.class, body);
+            }
+        }
+
+        if (source == null && isAllowStAX()) {
             source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
         }
         if (source == null) {

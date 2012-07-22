@@ -360,16 +360,8 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setDestinationResolver(destinationResolver);
     }
 
-    public ReplyToType getReplyToType() {
-        return getConfiguration().getReplyToType();
-    }
-
     public void setReplyToType(ReplyToType replyToType) {
         getConfiguration().setReplyToType(replyToType);
-    }
-
-    public boolean isPreserveMessageQos() {
-        return getConfiguration().isPreserveMessageQos();
     }
 
     public void setPreserveMessageQos(boolean preserveMessageQos) {
@@ -377,11 +369,11 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     }
 
     public void setAsyncConsumer(boolean asyncConsumer) {
-        configuration.setAsyncConsumer(asyncConsumer);
+        getConfiguration().setAsyncConsumer(asyncConsumer);
     }
 
-    public boolean isAsyncConsumer() {
-        return configuration.isAsyncConsumer();
+    public void setAllowNullBody(boolean allowNullBody) {
+        getConfiguration().setAllowNullBody(allowNullBody);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

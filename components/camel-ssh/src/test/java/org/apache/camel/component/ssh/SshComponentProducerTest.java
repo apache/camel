@@ -30,6 +30,8 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(msg);
+        mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
+        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test\n");
 
         template.sendBody("direct:ssh", msg);
 

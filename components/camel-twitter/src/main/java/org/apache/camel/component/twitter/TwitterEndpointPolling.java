@@ -20,18 +20,15 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultPollingEndpoint;
-import twitter4j.Twitter;
 
 /**
  * Twitter polling endpoint
  */
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
 
-    private Twitter twitter;
     private TwitterConfiguration properties;
 
     public TwitterEndpointPolling(String uri, TwitterComponent component, TwitterConfiguration properties) {
@@ -42,7 +39,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
-        TwitterConsumer tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
+        Consumer tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
         configureConsumer(tc);
         return tc;
     }
@@ -50,15 +47,6 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @Override
     public Producer createProducer() throws Exception {
         return Twitter4JFactory.getProducer(this, getEndpointUri());
-    }
-
-    @Override
-    protected void doStart() {
-        twitter = properties.getTwitterInstance();
-    }
-
-    public Twitter getTwitter() {
-        return twitter;
     }
 
     public boolean isSingleton() {

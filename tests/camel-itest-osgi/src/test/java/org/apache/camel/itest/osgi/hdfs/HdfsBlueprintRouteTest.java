@@ -33,20 +33,18 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
 public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
-    //Hadoop doesn't run on IBM JDK
-    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
-    
+
     @Test
     public void testWriteAndReadString() throws Exception {
-        if (SKIP) {
+        if (isJavaVendor("IBM")) {
+            // Hadoop doesn't run on IBM JDK
             return;
         }
 
-        // and does not work well on windows
         if (isPlatform("windows")) {
+            // and does not work well on windows
             return;
         }
-
 
         getInstalledBundle("CamelBlueprintHdfsTestBundle").start();
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintHdfsTestBundle)", 20000);

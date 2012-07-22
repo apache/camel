@@ -14,31 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.data;
+package org.apache.camel.component.cmis;
 
-public class GeoLocation {
-
-    private double latitude;
-    private double longitude;
-
-    public GeoLocation(twitter4j.GeoLocation geoLocation) {
-        this.latitude = geoLocation.getLatitude();
-        this.longitude = geoLocation.getLongitude();
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
+public interface CamelCMISConstants {
+    String CMIS_DOCUMENT = "cmis:document";
+    String CMIS_FOLDER = "cmis:folder";
+    String CMIS_FOLDER_PATH = "CamelCMISFolderPath";
+    String CMIS_MIME_TYPE = "CamelCMISMimeType";
+    String CAMEL_CMIS_RESULT_COUNT = "CamelCMISResultCount";
+    String CAMEL_CMIS_RETRIEVE_CONTENT = "CamelCMISRetrieveContent";
+    String CAMEL_CMIS_READ_SIZE = "CamelCMISReadSize";
+    String CAMEL_CMIS_CONTENT_STREAM = "CamelCMISContent";
 }

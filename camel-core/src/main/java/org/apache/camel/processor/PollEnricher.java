@@ -16,9 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
@@ -50,7 +47,6 @@ public class PollEnricher extends ServiceSupport implements Processor {
     private AggregationStrategy aggregationStrategy;
     private PollingConsumer consumer;
     private long timeout;
-    private Boolean pollMultiple;
 
     /**
      * Creates a new {@link PollEnricher}. The default aggregation strategy is to
@@ -61,7 +57,7 @@ public class PollEnricher extends ServiceSupport implements Processor {
      * @param consumer consumer to resource endpoint.
      */
     public PollEnricher(PollingConsumer consumer) {
-        this(defaultAggregationStrategy(), consumer, 0, false);
+        this(defaultAggregationStrategy(), consumer, 0);
     }
 
     /**
@@ -75,21 +71,6 @@ public class PollEnricher extends ServiceSupport implements Processor {
         this.aggregationStrategy = aggregationStrategy;
         this.consumer = consumer;
         this.timeout = timeout;
-    }
-
-    /**
-     * Creates a new {@link PollEnricher}.
-     *
-     * @param aggregationStrategy  aggregation strategy to aggregate input data and additional data.
-     * @param consumer consumer to resource endpoint.
-     * @param timeout timeout in millis
-     * @param pollMultiple enabled building a List of multiple exchanges
-     */
-    public PollEnricher(AggregationStrategy aggregationStrategy, PollingConsumer consumer, long timeout, Boolean pollMultiple) {
-        this.aggregationStrategy = aggregationStrategy;
-        this.consumer = consumer;
-        this.timeout = timeout;
-        this.pollMultiple = pollMultiple;
     }
 
     /**
@@ -119,10 +100,6 @@ public class PollEnricher extends ServiceSupport implements Processor {
         this.timeout = timeout;
     }
 
-    public void setPollMultiple(Boolean value) {
-        this.pollMultiple = value;
-    }
-    
     /**
      * Enriches the input data (<code>exchange</code>) by first obtaining
      * additional data from an endpoint represented by an endpoint
@@ -136,70 +113,47 @@ public class PollEnricher extends ServiceSupport implements Processor {
      * @param exchange input data.
      */
     public void process(Exchange exchange) throws Exception {
-
         preCheckPoll(exchange);
 
-        if (pollMultiple != null && pollMultiple) {
-
-            List<Exchange> exchangeList = new ArrayList<Exchange>();
-            Exchange receivedExchange;
-            while (true) {
-                if (timeout == 0) {
-                    LOG.debug("Polling Consumer receiveNoWait: {}", consumer);
-                    receivedExchange = consumer.receiveNoWait();
-                } else {
-                    LOG.debug("Polling Consumer receive with timeout: {} ms. {}", timeout, consumer);
-                    receivedExchange = consumer.receive(timeout);
-                }
-
-                if (receivedExchange == null) {
-                    break;
-                }
-                exchangeList.add(receivedExchange);
-            }
-            exchange.getIn().setBody(exchangeList);
+        Exchange resourceExchange;
+        if (timeout < 0) {
+            LOG.debug("Consumer receive: {}", consumer);
+            resourceExchange = consumer.receive();
+        } else if (timeout == 0) {
+            LOG.debug("Consumer receiveNoWait: {}", consumer);
+            resourceExchange = consumer.receiveNoWait();
         } else {
-        
-            Exchange resourceExchange;
-            if (timeout < 0) {
-                LOG.debug("Consumer receive: {}", consumer);
-                resourceExchange = consumer.receive();
-            } else if (timeout == 0) {
-                LOG.debug("Consumer receiveNoWait: {}", consumer);
-                resourceExchange = consumer.receiveNoWait();
-            } else {
-                LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
-                resourceExchange = consumer.receive(timeout);
-            }
-    
-            if (resourceExchange == null) {
-                LOG.debug("Consumer received no exchange");
-            } else {
-                LOG.debug("Consumer received: {}", resourceExchange);
-            }
+            LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+            resourceExchange = consumer.receive(timeout);
+        }
 
-            if (resourceExchange != null && resourceExchange.isFailed()) {
-                // copy resource exchange onto original exchange (preserving pattern)
-                copyResultsPreservePattern(exchange, resourceExchange);
-            } else {
-                prepareResult(exchange);
-    
-                // prepare the exchanges for aggregation
-                ExchangeHelper.prepareAggregation(exchange, resourceExchange);
-                // must catch any exception from aggregation
-                Exchange aggregatedExchange;
-                try {
-                    aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
-                } catch (Throwable e) {
-                    throw new CamelExchangeException("Error occurred during aggregation", exchange, e);
-                }
-                if (aggregatedExchange != null) {
-                    // copy aggregation result onto original exchange (preserving pattern)
-                    copyResultsPreservePattern(exchange, aggregatedExchange);
-                    // handover any synchronization
-                    if (resourceExchange != null) {
-                        resourceExchange.handoverCompletions(exchange);
-                    }
+        if (resourceExchange == null) {
+            LOG.debug("Consumer received no exchange");
+        } else {
+            LOG.debug("Consumer received: {}", resourceExchange);
+        }
+
+        if (resourceExchange != null && resourceExchange.isFailed()) {
+            // copy resource exchange onto original exchange (preserving pattern)
+            copyResultsPreservePattern(exchange, resourceExchange);
+        } else {
+            prepareResult(exchange);
+
+            // prepare the exchanges for aggregation
+            ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+            // must catch any exception from aggregation
+            Exchange aggregatedExchange;
+            try {
+                aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+            } catch (Throwable e) {
+                throw new CamelExchangeException("Error occurred during aggregation", exchange, e);
+            }
+            if (aggregatedExchange != null) {
+                // copy aggregation result onto original exchange (preserving pattern)
+                copyResultsPreservePattern(exchange, aggregatedExchange);
+                // handover any synchronization
+                if (resourceExchange != null) {
+                    resourceExchange.handoverCompletions(exchange);
                 }
             }
         }

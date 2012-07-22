@@ -38,6 +38,7 @@
     <module>camel-partial-classpath-test</module>
     <module>camel-typeconverterscan-test</module>
     <module>camel-itest-osgi</module>
+    <module>camel-itest-performance</module>
   </modules>
 
   <profiles>

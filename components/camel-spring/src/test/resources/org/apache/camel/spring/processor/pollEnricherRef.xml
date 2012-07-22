@@ -28,8 +28,6 @@
         <endpoint id="foo2" uri="seda:foo2"/>
         <endpoint id="foo3" uri="seda:foo3"/>
         <endpoint id="foo4" uri="seda:foo4"/>
-        <endpoint id="foo5" uri="seda:foo5"/>
-        <endpoint id="foo6" uri="seda:foo6"/>
 
         <!-- START SNIPPET: e1 -->
         <route>
@@ -56,19 +54,6 @@
             <pollEnrich ref="foo4" strategyRef="sampleAggregator"/>
             <to uri="mock:mock"/>
         </route>
-
-        <route>
-            <from uri="seda:enricher-test-5"/>
-            <pollEnrich ref="foo5" pollMultiple="true"/>
-            <to uri="mock:mock"/>
-        </route>
-
-        <route>
-            <from uri="seda:enricher-test-6"/>
-            <pollEnrich ref="foo6" timeout="200" pollMultiple="true"/>
-            <to uri="mock:mock"/>
-        </route>
-
     </camelContext>
 
     <bean id="sampleAggregator" class="org.apache.camel.processor.enricher.SampleAggregator"/>

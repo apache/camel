@@ -25,14 +25,11 @@ import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
 import org.apache.camel.component.twitter.data.EndpointType;
 
-import twitter4j.Twitter;
-
 /**
  * Twitter direct endpoint
  */
 public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
 
-    private Twitter twitter;
     private TwitterConfiguration properties;
 
     public TwitterEndpointDirect(String uri, TwitterComponent component, TwitterConfiguration properties) {
@@ -49,15 +46,6 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     @Override
     public Producer createProducer() throws Exception {
         return Twitter4JFactory.getProducer(this, getEndpointUri());
-    }
-
-    @Override
-    protected void doStart() {
-        twitter = properties.getTwitterInstance();
-    }
-
-    public Twitter getTwitter() {
-        return twitter;
     }
 
     public TwitterConfiguration getProperties() {

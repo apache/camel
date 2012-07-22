@@ -26,14 +26,11 @@ import twitter4j.TwitterException;
 
 /**
  * Consumes the public timeline
- * 
  */
 public class PublicConsumer extends Twitter4JConsumer {
 
-    TwitterEndpoint te;
-
     public PublicConsumer(TwitterEndpoint te) {
-        this.te = te;
+        super(te);
     }
 
     public List<Status> pollConsume() throws TwitterException {
@@ -45,6 +42,6 @@ public class PublicConsumer extends Twitter4JConsumer {
     }
 
     private List<Status> getPublicTimeline() throws TwitterException {
-        return te.getTwitter().getPublicTimeline();
+        return te.getProperties().getTwitter().getPublicTimeline();
     }
 }

@@ -48,19 +48,6 @@
             <pollEnrich uri="seda:foo4" strategyRef="sampleAggregator"/>
             <to uri="mock:mock"/>
         </route>
-
-        <route>
-            <from uri="seda:enricher-test-5"/>
-            <pollEnrich uri="seda:foo5" pollMultiple="true"/>
-            <to uri="mock:mock"/>
-        </route>
-
-        <route>
-            <from uri="seda:enricher-test-6"/>
-            <pollEnrich uri="seda:foo6" timeout="200" pollMultiple="true"/>
-            <to uri="mock:mock"/>
-        </route>
-
     </camelContext>
 
     <bean id="sampleAggregator" class="org.apache.camel.processor.enricher.SampleAggregator"/>

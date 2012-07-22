@@ -48,7 +48,7 @@ public class PublicTimeLineDirectTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("twitter://timeline/public?type=direct&" + getUriTokens())
-                    .transform(body().convertToString()).to("mock:result");
+                        .transform(body().convertToString()).to("mock:result");
             }
         };
     }

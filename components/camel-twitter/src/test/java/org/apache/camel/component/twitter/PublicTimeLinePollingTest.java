@@ -48,7 +48,7 @@ public class PublicTimeLinePollingTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("twitter://timeline/public?type=polling&" + getUriTokens())
-                    .transform(body().convertToString()).to("mock:result");
+                        .transform(body().convertToString()).to("mock:result");
             }
         };
     }

@@ -30,14 +30,12 @@ import twitter4j.TwitterException;
  */
 public class MentionsConsumer extends Twitter4JConsumer {
 
-    TwitterEndpoint te;
-
     public MentionsConsumer(TwitterEndpoint te) {
-        this.te = te;
+        super(te);
     }
 
     public List<Status> pollConsume() throws TwitterException {
-        List<Status> list = te.getTwitter().getMentions(new Paging(lastId));
+        List<Status> list = te.getProperties().getTwitter().getMentions(new Paging(lastId));
         for (Status s : list) {
             checkLastId(s.getId());
         }
@@ -45,6 +43,6 @@ public class MentionsConsumer extends Twitter4JConsumer {
     }
 
     public List<Status> directConsume() throws TwitterException {
-        return te.getTwitter().getMentions();
+        return te.getProperties().getTwitter().getMentions();
     }
 }

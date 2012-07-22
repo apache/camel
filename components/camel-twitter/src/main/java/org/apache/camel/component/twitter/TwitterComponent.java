@@ -32,8 +32,7 @@ public class TwitterComponent extends DefaultComponent {
     private String accessToken;
     private String accessTokenSecret;
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-        throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         TwitterConfiguration properties = new TwitterConfiguration();
 

@@ -838,6 +838,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Map<String, String> getProperties();
 
     /**
+     * Gets the property value that can be referenced in the camel context
+     *
+     * @return the string value of property
+     * 
+     */
+    String getProperty(String name);
+    
+    /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
      *
      * @return the default factory finder

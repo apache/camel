@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HomeTimeLineDirectTest extends CamelTwitterTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(HomeTimeLineDirectTest.class);
-    
+
 
     @Test
     public void testReadHomeTimeLine() throws Exception {
@@ -49,7 +49,7 @@ public class HomeTimeLineDirectTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("twitter://timeline/home?type=direct&" + getUriTokens())
-                    .transform(body().convertToString()).to("mock:result");
+                        .transform(body().convertToString()).to("mock:result");
             }
         };
     }

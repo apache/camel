@@ -20,7 +20,9 @@ package org.apache.camel.component.cache;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
+import net.sf.ehcache.Element;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -30,9 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-
 import org.junit.Test;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,6 +130,66 @@ public class CacheProducerTest extends CamelTestSupport {
         context.start();
         LOG.debug("------------Beginning CacheProducer Add Test---------------");
         sendOriginalFile();
+    }
+
+    @Test
+    public void testAddingDataElementEternal() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD)).
+                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
+                        setHeader(CacheConstants.CACHE_ELEMENT_EXPIRY_ETERNAL, constant(Boolean.TRUE)).
+                        to("cache://TestCache1");
+            }
+        });
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        sendOriginalFile();
+        Element element = fetchElement("Ralph_Waldo_Emerson");
+        assertTrue(element.isEternal());
+    }
+
+    @Test
+    public void testAddingDataElementIdle() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD)).
+                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
+                        setHeader(CacheConstants.CACHE_ELEMENT_EXPIRY_IDLE, constant(24)).
+                        to("cache://TestCache1");
+            }
+        });
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        sendOriginalFile();
+        Element element = fetchElement("Ralph_Waldo_Emerson");
+        assertEquals(24, element.getTimeToIdle());
+    }
+
+    @Test
+    public void testAddingDataElementTimeToLive() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD)).
+                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
+                        setHeader(CacheConstants.CACHE_ELEMENT_EXPIRY_TTL, constant(42)).
+                        to("cache://TestCache1");
+            }
+        });
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        sendOriginalFile();
+        Element element = fetchElement("Ralph_Waldo_Emerson");
+        assertEquals(42, element.getTimeToLive());
+    }
+
+    private Element fetchElement(String key) {
+        CacheEndpoint ep = context.getEndpoint("cache://TestCache1", CacheEndpoint.class);
+        Cache cache = ep.getCacheManagerFactory().getInstance().getCache("TestCache1");
+        return cache.get(key);
     }
 
     @Test

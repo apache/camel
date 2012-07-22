@@ -27,9 +27,8 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
  * Provides a scheduled polling consumer
- * 
  */
-public class TwitterConsumerPolling extends ScheduledPollConsumer implements TwitterConsumer {
+public class TwitterConsumerPolling extends ScheduledPollConsumer {
 
     private Twitter4JConsumer twitter4jConsumer;
 

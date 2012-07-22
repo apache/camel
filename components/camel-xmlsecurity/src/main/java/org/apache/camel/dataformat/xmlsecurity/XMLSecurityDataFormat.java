@@ -268,29 +268,29 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         Map<String, String> contextProps = context.getProperties();
                
         if (this.recipientKeyAlias == null) {
-            recipientKeyAlias = contextProps.get(XML_ENC_RECIPIENT_ALIAS);
+            recipientKeyAlias = context.getProperty(XML_ENC_RECIPIENT_ALIAS);
         }
 
         if (this.trustStore == null && contextProps.containsKey(XML_ENC_TRUST_STORE_URL)) {
             trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            URL trustStoreUrl = new URL(contextProps.get(XML_ENC_TRUST_STORE_URL));
+            URL trustStoreUrl = new URL(context.getProperty(XML_ENC_TRUST_STORE_URL));
             if (trustStorePassword == null) {
-                trustStorePassword = contextProps.get(XML_ENC_TRUST_STORE_PASSWORD);
+                trustStorePassword = context.getProperty(XML_ENC_TRUST_STORE_PASSWORD);
             }
             trustStore.load(trustStoreUrl.openStream(), trustStorePassword.toCharArray());
         }
         
         if (this.keyStore == null && contextProps.containsKey(XML_ENC_KEY_STORE_URL)) {
             keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            URL keyStoreUrl = new URL(contextProps.get(XML_ENC_KEY_STORE_URL));
+            URL keyStoreUrl = new URL(context.getProperty(XML_ENC_KEY_STORE_URL));
             if (keyStorePassword == null) {
-                keyStorePassword = contextProps.get(XML_ENC_KEY_STORE_PASSWORD);
+                keyStorePassword = context.getProperty(XML_ENC_KEY_STORE_PASSWORD);
             }
             keyStore.load(keyStoreUrl.openStream(), keyStorePassword.toCharArray());    
         }
         
         if (context.getProperties().containsKey(XML_ENC_KEY_STORE_ALIAS) && this.recipientKeyAlias == null) {
-            recipientKeyAlias = contextProps.get(XML_ENC_KEY_STORE_ALIAS);
+            recipientKeyAlias = context.getProperty(XML_ENC_KEY_STORE_ALIAS);
         }
     }
     

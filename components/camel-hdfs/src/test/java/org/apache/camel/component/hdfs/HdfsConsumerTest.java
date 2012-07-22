@@ -17,10 +17,7 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.File;
-import java.util.List;
 
-import junit.framework.Assert;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -50,12 +47,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
     //Hadoop doesn't run on IBM JDK
     private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
 
-
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 
     @Before
     public void setUp() throws Exception {
@@ -82,15 +77,16 @@ public class HdfsConsumerTest extends CamelTestSupport {
         }
         out.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(2);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
             }
         });
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-
-        resultEndpoint.expectedMessageCount(2);
         context.start();
+
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -141,19 +137,17 @@ public class HdfsConsumerTest extends CamelTestSupport {
         writer.sync();
         writer.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.message(0).body(byte.class).isEqualTo(3);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
 
-        resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(Byte.class) == value);
-        }
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -175,6 +169,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
         writer.sync();
         writer.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.toUri() + "??fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
@@ -182,8 +179,6 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -204,6 +199,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
         writer.sync();
         writer.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.toUri() + "??fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
@@ -211,8 +209,6 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -234,6 +230,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
         writer.sync();
         writer.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
@@ -241,8 +240,6 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -264,6 +261,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
         writer.sync();
         writer.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
@@ -271,8 +271,6 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -294,6 +292,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
         writer.sync();
         writer.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
@@ -301,8 +302,6 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -324,6 +323,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
         writer.sync();
         writer.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
@@ -331,8 +333,6 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -356,6 +356,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
         writer.append(valueWritable);
         writer.close();
 
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs:///" + file.getParent().toUri() + "?fileSystemType=LOCAL&fileType=ARRAY_FILE&initialDelay=0").to("mock:result");
@@ -363,8 +366,6 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 

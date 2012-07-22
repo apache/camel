@@ -27,18 +27,15 @@ import twitter4j.TwitterException;
 
 /**
  * Consumes the user's home timeline.
- * 
  */
 public class HomeConsumer extends Twitter4JConsumer {
 
-    TwitterEndpoint te;
-
     public HomeConsumer(TwitterEndpoint te) {
-        this.te = te;
+        super(te);
     }
 
     public List<Status> pollConsume() throws TwitterException {
-        List<Status> list = te.getTwitter().getHomeTimeline(new Paging(lastId));
+        List<Status> list = te.getProperties().getTwitter().getHomeTimeline(new Paging(lastId));
         for (Status s : list) {
             checkLastId(s.getId());
         }
@@ -46,6 +43,6 @@ public class HomeConsumer extends Twitter4JConsumer {
     }
 
     public List<Status> directConsume() throws TwitterException {
-        return te.getTwitter().getHomeTimeline();
+        return te.getProperties().getTwitter().getHomeTimeline();
     }
 }

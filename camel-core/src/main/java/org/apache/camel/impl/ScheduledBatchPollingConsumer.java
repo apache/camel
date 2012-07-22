@@ -20,6 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.BatchConsumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.spi.ShutdownAware;
@@ -111,5 +112,16 @@ public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsume
 
         // we are shutting down so only continue if we are configured to complete all tasks
         return ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask;
+    }
+
+    @Override
+    protected void processEmptyMessage() throws Exception {
+        Exchange exchange = getEndpoint().createExchange();
+        // enrich exchange, so we send an empty message with the batch details
+        exchange.setProperty(Exchange.BATCH_INDEX, 0);
+        exchange.setProperty(Exchange.BATCH_SIZE, 1);
+        exchange.setProperty(Exchange.BATCH_COMPLETE, true);
+        log.debug("Sending empty message as there were no messages from polling: {}", this.getEndpoint());
+        getProcessor().process(exchange);
     }
 }

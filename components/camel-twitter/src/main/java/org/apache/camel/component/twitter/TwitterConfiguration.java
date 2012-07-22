@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.twitter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -25,20 +29,69 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterConfiguration {
 
+    /**
+     * OAuth
+     */
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
-    private String user;
-    private String keywords;
-    private int delay = 60;
+
+    /**
+     * Defines the Twitter API endpoint.
+     */
     private String type;
+
+    /**
+     * Polling delay.
+     */
+    private int delay = 60;
+
+    /**
+     * Username -- used for searching, etc.
+     */
+    private String user;
+
+    /**
+     * Keywords used for search and filters.
+     */
+    private String keywords;
+
+    /**
+     * Lon/Lat bounding boxes used for filtering.
+     */
     private String locations;
+
+    /**
+     * List of userIds used for searching, etc.
+     */
     private String userIds;
+
+    /**
+     * Filter out old tweets that have been previously polled.
+     */
     private boolean filterOld = true;
+
+    /**
+     * Used for time-based endpoints (trends, etc.)
+     */
+    private String date;
+    private Date parsedDate;
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    /**
+     * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
+     * This should not be created by an endpoint's doStart(), etc., since
+     * instances of twitter and/or twitterStream can be supplied by the route
+     * itself.  Further, as an example, we don't want to initialize twitter
+     * if we only need twitterStream.
+     */
     private Twitter twitter;
     private TwitterStream twitterStream;
 
+    /**
+     * Ensures required fields are available.
+     */
     public void checkComplete() {
         if (twitter == null && twitterStream == null
                 && (consumerKey.isEmpty() || consumerSecret.isEmpty() || accessToken.isEmpty() || accessTokenSecret.isEmpty())) {
@@ -46,6 +99,11 @@ public class TwitterConfiguration {
         }
     }
 
+    /**
+     * Builds a Twitter4J Configuration using the OAuth params.
+     *
+     * @return Configuration
+     */
     public Configuration getConfiguration() {
         ConfigurationBuilder confBuilder = new ConfigurationBuilder();
         confBuilder.setOAuthConsumerKey(consumerKey);
@@ -138,12 +196,15 @@ public class TwitterConfiguration {
     public boolean isFilterOld() {
         return filterOld;
     }
-    
+
     public void setFilterOld(boolean filterOld) {
         this.filterOld = filterOld;
     }
 
     public Twitter getTwitter() {
+        if (twitter == null) {
+            twitter = new TwitterFactory(getConfiguration()).getInstance();
+        }
         return twitter;
     }
 
@@ -152,6 +213,9 @@ public class TwitterConfiguration {
     }
 
     public TwitterStream getTwitterStream() {
+        if (twitterStream == null) {
+            twitterStream = new TwitterStreamFactory(getConfiguration()).getInstance();
+        }
         return twitterStream;
     }
 
@@ -159,14 +223,21 @@ public class TwitterConfiguration {
         this.twitterStream = twitterStream;
     }
 
-    public Twitter getTwitterInstance() {
-        checkComplete();
-        return getTwitter() != null ? getTwitter() : new TwitterFactory(getConfiguration()).getInstance();
+    public String getDate() {
+        return date;
     }
 
-    public TwitterStream getTwitterStreamInstance() {
-        checkComplete();
-        return getTwitterStream() != null ? getTwitterStream() : new TwitterStreamFactory(getConfiguration()).getInstance();
+    public Date parseDate() {
+        return parsedDate;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+        try {
+            parsedDate = sdf.parse(date);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("date must be in yyyy-mm-dd format!");
+        }
     }
 }
 

@@ -41,9 +41,9 @@ public class SearchEventTest extends CamelTwitterTestSupport {
     @Test
     public void testSearchTimeline() throws Exception {
         resultEndpoint.expectedMinimumMessageCount(1);
-        Status status = (Status)Proxy.newProxyInstance(getClass().getClassLoader(),
-                                                              new Class[] {Status.class},
-                                                              new TwitterHandler()); 
+        Status status = (Status) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class[]{Status.class},
+                new TwitterHandler());
 
         listener.onStatus(status);
         //"#cameltest tweet");
@@ -54,16 +54,16 @@ public class SearchEventTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("twitter://streaming/filter?type=event&twitterStream=#twitterStream&keywords=#cameltest")
-                    .transform(body().convertToString()).to("mock:result");
+                        .transform(body().convertToString()).to("mock:result");
             }
         };
     }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        twitterStream = (TwitterStream)Proxy.newProxyInstance(getClass().getClassLoader(),
-                                               new Class[] {TwitterStream.class},
-                                               new TwitterHandler()); 
+        twitterStream = (TwitterStream) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class[]{TwitterStream.class},
+                new TwitterHandler());
         JndiRegistry registry = super.createRegistry();
         registry.bind("twitterStream", twitterStream);
         return registry;
@@ -73,15 +73,15 @@ public class SearchEventTest extends CamelTwitterTestSupport {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             //mock some methods
             if ("addListener".equals(method.getName())) {
-                listener = (StatusListener)args[0];
+                listener = (StatusListener) args[0];
             } else if ("toString".equals(method.getName())) {
                 return this.toString();
             } else if ("getText".equals(method.getName())) {
                 return "#cameltest tweet";
             } else if ("getUser".equals(method.getName())) {
                 return Proxy.newProxyInstance(getClass().getClassLoader(),
-                                              new Class[] {twitter4j.User.class},
-                                              new TwitterHandler());
+                        new Class[]{twitter4j.User.class},
+                        new TwitterHandler());
             }
             return null;
         }

@@ -27,18 +27,15 @@ import twitter4j.TwitterException;
 
 /**
  * Consumes a user's tweets that have been retweeted
- * 
  */
 public class RetweetsConsumer extends Twitter4JConsumer {
 
-    TwitterEndpoint te;
-
     public RetweetsConsumer(TwitterEndpoint te) {
-        this.te = te;
+        super(te);
     }
 
     public List<Status> pollConsume() throws TwitterException {
-        List<Status> list = te.getTwitter().getRetweetsOfMe(new Paging(lastId));
+        List<Status> list = te.getProperties().getTwitter().getRetweetsOfMe(new Paging(lastId));
         for (Status s : list) {
             checkLastId(s.getId());
         }
@@ -46,6 +43,6 @@ public class RetweetsConsumer extends Twitter4JConsumer {
     }
 
     public List<Status> directConsume() throws TwitterException {
-        return te.getTwitter().getRetweetsOfMe();
+        return te.getProperties().getTwitter().getRetweetsOfMe();
     }
 }

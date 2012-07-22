@@ -26,7 +26,7 @@ import org.apache.camel.cdi.store.ShoppingBean;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class RegistryLookupAndInjectorTest extends CamelCdiTestContainer {
+public class RegistryLookupAndInjectorTest extends CdiContextTestSupport {
 
     private MockEndpoint resultEndpoint;
 

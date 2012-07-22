@@ -50,6 +50,7 @@ public class HdfsConfiguration {
     private int chunkSize = HdfsConstants.DEFAULT_BUFFERSIZE;
     private int checkIdleInterval = HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL;
     private List<HdfsProducer.SplitStrategy> splitStrategies;
+    private boolean connectOnStartup = true;
 
     public HdfsConfiguration() {
     }
@@ -182,6 +183,9 @@ public class HdfsConfiguration {
             throw new IllegalArgumentException("Unrecognized Cache protocol: " + protocol + " for uri: " + uri);
         }
         hostName = uri.getHost();
+        if (hostName == null) {
+            hostName = "localhost";
+        }
         port = uri.getPort() == -1 ? HdfsConstants.DEFAULT_PORT : uri.getPort();
         path = uri.getPath();
         Map<String, Object> hdfsSettings = URISupport.parseParameters(uri);
@@ -388,5 +392,13 @@ public class HdfsConfiguration {
 
     public void setSplitStrategy(String splitStrategy) {
         // noop
+    }
+
+    public boolean isConnectOnStartup() {
+        return connectOnStartup;
+    }
+
+    public void setConnectOnStartup(boolean connectOnStartup) {
+        this.connectOnStartup = connectOnStartup;
     }
 }

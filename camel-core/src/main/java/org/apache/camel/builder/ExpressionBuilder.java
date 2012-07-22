@@ -593,7 +593,7 @@ public final class ExpressionBuilder {
     public static Expression camelContextPropertyExpression(final String propertyName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getContext().getProperties().get(propertyName);
+                return exchange.getContext().getProperty(propertyName);
             }
 
             @Override

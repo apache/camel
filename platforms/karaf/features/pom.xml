@@ -43,6 +43,7 @@
       <bcel-bundle-version>5.2_4</bcel-bundle-version>
       <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
       <cglib-version>2.1_3_7</cglib-version>
+      <cmis-bundle-version>0.7.0</cmis-bundle-version>
       <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
       <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
       <commons-csv-version>1.0-r706900_3</commons-csv-version>

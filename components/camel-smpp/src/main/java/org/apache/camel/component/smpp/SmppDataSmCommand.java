@@ -18,9 +18,9 @@ package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.ESMClass;
-import org.jsmpp.bean.GeneralDataCoding;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
@@ -51,7 +51,7 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
                     dataSm.getDestAddress(),
                     new ESMClass(dataSm.getEsmClass()),
                     new RegisteredDelivery(dataSm.getRegisteredDelivery()),
-                    new GeneralDataCoding(dataSm.getDataCoding()));
+                    DataCoding.newInstance(dataSm.getDataCoding()));
         } catch (Exception e) {
             throw new SmppException(e);
         }
@@ -66,6 +66,12 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
     protected DataSm createDataSm(Exchange exchange) {
         Message in = exchange.getIn();
         DataSm dataSm = new DataSm();
+
+        if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
+            dataSm.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, Byte.class));
+        } else {
+            dataSm.setDataCoding(config.getDataCoding());
+        }
 
         if (in.getHeaders().containsKey(SmppConstants.DEST_ADDR)) {
             dataSm.setDestAddress(in.getHeader(SmppConstants.DEST_ADDR, String.class));

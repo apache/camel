@@ -105,9 +105,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         HttpClient answer = new HttpClient(getClientParams());
 
         // configure http proxy from camelContext
-        if (ObjectHelper.isNotEmpty(getCamelContext().getProperties().get("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperties().get("http.proxyPort"))) {
-            String host = getCamelContext().getProperties().get("http.proxyHost");
-            int port = Integer.parseInt(getCamelContext().getProperties().get("http.proxyPort"));
+        if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
+            String host = getCamelContext().getProperty("http.proxyHost");
+            int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
             LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
             answer.getHostConfiguration().setProxy(host, port);
         }

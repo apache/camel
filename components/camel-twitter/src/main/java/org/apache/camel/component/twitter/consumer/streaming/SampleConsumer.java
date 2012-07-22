@@ -20,7 +20,6 @@ import org.apache.camel.component.twitter.TwitterEndpoint;
 
 /**
  * Consumes the sample stream
- * 
  */
 public class SampleConsumer extends StreamingConsumer {
 

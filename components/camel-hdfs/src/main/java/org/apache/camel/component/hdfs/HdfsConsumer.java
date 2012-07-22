@@ -17,16 +17,15 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
@@ -37,23 +36,56 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private final HdfsConfiguration config;
     private final StringBuilder hdfsPath;
     private final Processor processor;
-    private AtomicBoolean idle = new AtomicBoolean(false);
     private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
-    private HdfsInputStream istream;
+    private volatile HdfsInputStream istream;
 
-    public HdfsConsumer(DefaultEndpoint endpoint, Processor processor, HdfsConfiguration config) {
+    public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration config) {
         super(endpoint, processor);
         this.config = config;
         this.hdfsPath = config.getFileSystemType().getHdfsPath(config);
         this.processor = processor;
+
+        setInitialDelay(config.getInitialDelay());
+        setDelay(config.getDelay());
+        setUseFixedDelay(true);
+    }
+
+    @Override
+    public HdfsEndpoint getEndpoint() {
+        return (HdfsEndpoint) super.getEndpoint();
     }
 
     @Override
     protected void doStart() throws Exception {
-        super.setInitialDelay(config.getInitialDelay());
-        super.setDelay(config.getDelay());
-        super.setUseFixedDelay(false);
         super.doStart();
+
+        if (config.isConnectOnStartup()) {
+            // setup hdfs if configured to do on startup
+            setupHdfs(true);
+        }
+    }
+
+    private HdfsInfo setupHdfs(boolean onStartup) throws Exception {
+        // if we are starting up then log at info level, and if runtime then log at debug level to not flood the log
+        if (onStartup) {
+            log.info("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", new Object[]{config.getHostName(), config.getPort(), hdfsPath.toString()});
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", new Object[]{config.getHostName(), config.getPort(), hdfsPath.toString()});
+            }
+        }
+
+        // hadoop will cache the connection by default so its faster to get in the poll method
+        HdfsInfo answer = new HdfsInfo(this.hdfsPath.toString());
+
+        if (onStartup) {
+            log.info("Connected to hdfs file-system {}:{}/{}", new Object[]{config.getHostName(), config.getPort(), hdfsPath.toString()});
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Connected to hdfs file-system {}:{}/{}", new Object[]{config.getHostName(), config.getPort(), hdfsPath.toString()});
+            }
+        }
+        return answer;
     }
 
     @Override
@@ -66,17 +98,13 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
 
         int numMessages = 0;
 
-        HdfsInfo info = new HdfsInfo(this.hdfsPath.toString());
+        HdfsInfo info = setupHdfs(false);
         FileStatus fileStatuses[];
         if (info.getFileSystem().isFile(info.getPath())) {
             fileStatuses = info.getFileSystem().globStatus(info.getPath());
         } else {
             Path pattern = info.getPath().suffix("/" + this.config.getPattern());
             fileStatuses = info.getFileSystem().globStatus(pattern, new ExcludePathFilter());
-        }
-
-        if (fileStatuses.length > 0) {
-            this.idle.set(false);
         }
 
         for (int i = 0; i < fileStatuses.length; ++i) {
@@ -91,24 +119,39 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                 this.rwlock.writeLock().unlock();
             }
 
-            Holder<Object> key = new Holder<Object>();
-            Holder<Object> value = new Holder<Object>();
-            while (this.istream.next(key, value) != 0) {
-                Exchange exchange = this.getEndpoint().createExchange();
-                Message message = new DefaultMessage();
-                message.setHeader(Exchange.FILE_NAME, StringUtils
-                        .substringAfterLast(status.getPath().toString(), "/"));
-                if (key.value != null) {
-                    message.setHeader(HdfsHeader.KEY.name(), key.value);
+            try {
+                Holder<Object> key = new Holder<Object>();
+                Holder<Object> value = new Holder<Object>();
+                while (this.istream.next(key, value) != 0) {
+                    Exchange exchange = this.getEndpoint().createExchange();
+                    Message message = new DefaultMessage();
+                    String fileName = StringUtils.substringAfterLast(status.getPath().toString(), "/");
+                    message.setHeader(Exchange.FILE_NAME, fileName);
+                    if (key.value != null) {
+                        message.setHeader(HdfsHeader.KEY.name(), key.value);
+                    }
+                    message.setBody(value.value);
+                    exchange.setIn(message);
+
+                    log.debug("Processing file {}", fileName);
+                    try {
+                        processor.process(exchange);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    }
+
+                    // in case of unhandled exceptions then let the exception handler handle them
+                    if (exchange.getException() != null) {
+                        getExceptionHandler().handleException(exchange.getException());
+                    }
+
+                    numMessages++;
                 }
-                message.setBody(value.value);
-                exchange.setIn(message);
-                this.processor.process(exchange);
-                numMessages++;
+            } finally {
+                IOHelper.close(istream, "input stream", log);
             }
-            this.istream.close();
         }
-        this.idle.set(true);
+
         return numMessages;
     }
 
@@ -120,19 +163,6 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             }
         }
         return false;
-    }
-
-    public HdfsInputStream getIstream() {
-        try {
-            rwlock.readLock().lock();
-            return istream;
-        } finally {
-            rwlock.readLock().unlock();
-        }
-    }
-
-    public AtomicBoolean isIdle() {
-        return idle;
     }
 
 }

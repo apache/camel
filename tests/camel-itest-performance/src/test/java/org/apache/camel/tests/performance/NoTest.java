@@ -14,10 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.consumer;
+package org.apache.camel.tests.performance;
 
-import org.apache.camel.Consumer;
+import org.apache.camel.test.junit4.TestSupport;
+import org.junit.Test;
 
-public interface TwitterConsumer extends Consumer {
 
+public class NoTest extends TestSupport {
+
+    @Test
+    public void testNothing() throws Exception {
+    }
 }

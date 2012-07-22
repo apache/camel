@@ -26,13 +26,13 @@ import org.apache.camel.TypeConverter;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 
-public class HdfsOutputStream {
+public class HdfsOutputStream implements Closeable {
 
     private HdfsFileType fileType;
     private String actualPath;
     private String suffixedPath;
     private Closeable out;
-    private boolean opened;
+    private volatile boolean opened;
     private final AtomicLong numOfWrittenBytes = new AtomicLong(0L);
     private final AtomicLong numOfWrittenMessages = new AtomicLong(0L);
     private final AtomicLong lastAccess = new AtomicLong(Long.MAX_VALUE);
@@ -69,6 +69,7 @@ public class HdfsOutputStream {
         return ret;
     }
 
+    @Override
     public void close() throws IOException {
         if (opened) {
             IOUtils.closeStream(out);

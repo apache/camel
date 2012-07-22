@@ -22,20 +22,18 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
 
-public class SearchProducer extends DefaultProducer {
+public class SearchProducer extends Twitter4JProducer {
 
     private long lastId;
-    private TwitterEndpoint twitterEndpoint;
 
     public SearchProducer(TwitterEndpoint te) {
         super(te);
-        this.twitterEndpoint = te;
     }
 
     @Override
@@ -43,7 +41,7 @@ public class SearchProducer extends DefaultProducer {
         // keywords from header take precedence
         String keywords = exchange.getIn().getHeader(TwitterConstants.TWITTER_KEYWORDS, String.class);
         if (keywords == null) {
-            keywords = twitterEndpoint.getProperties().getKeywords();
+            keywords = te.getProperties().getKeywords();
         }
 
         if (keywords == null) {
@@ -55,7 +53,7 @@ public class SearchProducer extends DefaultProducer {
             query.setSinceId(lastId);
         }
 
-        Twitter twitter = twitterEndpoint.getTwitter();
+        Twitter twitter = te.getProperties().getTwitter();
         log.debug("Searching twitter with keywords: {}", keywords);
         QueryResult results = twitter.search(query);
         List<Tweet> list = results.getTweets();

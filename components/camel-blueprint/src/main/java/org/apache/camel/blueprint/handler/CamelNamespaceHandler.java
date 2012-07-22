@@ -181,7 +181,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         CamelContextFactoryBean ccfb = (CamelContextFactoryBean) value;
         ccfb.setImplicitId(implicitId);
-        
+
+        // The properties component is always used / created by the CamelContextFactoryBean
+        // so we need to ensure that the resolver is ready to use
+        ComponentMetadata propertiesComponentResolver = getComponentResolverReference(context, "properties");
+
         MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
         factory.setId(".camelBlueprint.passThrough." + contextId);
         factory.setObject(new PassThroughCallable<Object>(value));
@@ -194,6 +198,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setDestroyMethod("destroy");
         factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
         factory2.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
+        factory2.addDependsOn(propertiesComponentResolver.getId());
         context.getComponentDefinitionRegistry().registerComponentDefinition(factory2);
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
@@ -514,6 +519,96 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return r;
     }
 
+    private static ComponentMetadata getDataformatResolverReference(ParserContext context, String dataformat) {
+        ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
+        ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.dataformatResolver." + dataformat);
+        if (cm == null) {
+            MutableReferenceMetadata svc = context.createMetadata(MutableReferenceMetadata.class);
+            svc.setId(".camelBlueprint.dataformatResolver." + dataformat);
+            svc.setFilter("(dataformat=" + dataformat + ")");
+            svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(dataformat) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
+            try {
+                // Try to set the runtime interface (only with aries blueprint > 0.1
+                svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, DataFormatResolver.class);
+            } catch (Throwable t) {
+                // Check if the bundle can see the class
+                try {
+                    PassThroughMetadata ptm = (PassThroughMetadata) componentDefinitionRegistry.getComponentDefinition("blueprintBundle");
+                    Bundle b = (Bundle) ptm.getObject();
+                    if (b.loadClass(DataFormatResolver.class.getName()) != DataFormatResolver.class) {
+                        throw new UnsupportedOperationException();
+                    }
+                    svc.setInterface(DataFormatResolver.class.getName());
+                } catch (Throwable t2) {
+                    throw new UnsupportedOperationException();
+                }
+            }
+            componentDefinitionRegistry.registerComponentDefinition(svc);
+            cm = svc;
+        }
+        return cm;
+    }
+
+    private static ComponentMetadata getLanguageResolverReference(ParserContext context, String language) {
+        ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
+        ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.languageResolver." + language);
+        if (cm == null) {
+            MutableReferenceMetadata svc = context.createMetadata(MutableReferenceMetadata.class);
+            svc.setId(".camelBlueprint.languageResolver." + language);
+            svc.setFilter("(language=" + language + ")");
+            svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(language) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
+            try {
+                // Try to set the runtime interface (only with aries blueprint > 0.1
+                svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, LanguageResolver.class);
+            } catch (Throwable t) {
+                // Check if the bundle can see the class
+                try {
+                    PassThroughMetadata ptm = (PassThroughMetadata) componentDefinitionRegistry.getComponentDefinition("blueprintBundle");
+                    Bundle b = (Bundle) ptm.getObject();
+                    if (b.loadClass(LanguageResolver.class.getName()) != LanguageResolver.class) {
+                        throw new UnsupportedOperationException();
+                    }
+                    svc.setInterface(LanguageResolver.class.getName());
+                } catch (Throwable t2) {
+                    throw new UnsupportedOperationException();
+                }
+            }
+            componentDefinitionRegistry.registerComponentDefinition(svc);
+            cm = svc;
+        }
+        return cm;
+    }
+
+    private static ComponentMetadata getComponentResolverReference(ParserContext context, String component) {
+        ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
+        ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.componentResolver." + component);
+        if (cm == null) {
+            MutableReferenceMetadata svc = context.createMetadata(MutableReferenceMetadata.class);
+            svc.setId(".camelBlueprint.componentResolver." + component);
+            svc.setFilter("(component=" + component + ")");
+            svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(component) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
+            try {
+                // Try to set the runtime interface (only with aries blueprint > 0.1
+                svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, ComponentResolver.class);
+            } catch (Throwable t) {
+                // Check if the bundle can see the class
+                try {
+                    PassThroughMetadata ptm = (PassThroughMetadata) componentDefinitionRegistry.getComponentDefinition("blueprintBundle");
+                    Bundle b = (Bundle) ptm.getObject();
+                    if (b.loadClass(ComponentResolver.class.getName()) != ComponentResolver.class) {
+                        throw new UnsupportedOperationException();
+                    }
+                    svc.setInterface(ComponentResolver.class.getName());
+                } catch (Throwable t2) {
+                    throw new UnsupportedOperationException();
+                }
+            }
+            componentDefinitionRegistry.registerComponentDefinition(svc);
+            cm = svc;
+        }
+        return cm;
+    }
+
     public static class PassThroughCallable<T> implements Callable<T> {
 
         private T value;
@@ -678,92 +773,21 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             Set<String> components = new HashSet<String>();
             Set<String> languages = new HashSet<String>();
             Set<String> dataformats = new HashSet<String>();
-            Set<String> dependsOn = new HashSet<String>();
             for (RouteDefinition rd : camelContext.getRouteDefinitions()) {
                 findInputComponents(rd.getInputs(), components, languages, dataformats);
                 findOutputComponents(rd.getOutputs(), components, languages, dataformats);
             }
+            // We can only add service references to resolvers, but we can't make the factory depends on those
+            // because the factory has already been instantiated
             try {
                 for (String component : components) {
-                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.componentResolver." + component);
-                    if (cm == null) {
-                        MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
-                        svc.setId(".camelBlueprint.componentResolver." + component);
-                        svc.setFilter("(component=" + component + ")");
-                        svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(component) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
-                        try {
-                            // Try to set the runtime interface (only with aries blueprint > 0.1
-                            svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, ComponentResolver.class);
-                        } catch (Throwable t) {
-                            // Check if the bundle can see the class
-                            try {
-                                PassThroughMetadata ptm = (PassThroughMetadata) componentDefinitionRegistry.getComponentDefinition("blueprintBundle");
-                                Bundle b = (Bundle) ptm.getObject();
-                                if (b.loadClass(ComponentResolver.class.getName()) != ComponentResolver.class) {
-                                    throw new UnsupportedOperationException();
-                                }
-                                svc.setInterface(ComponentResolver.class.getName());
-                            } catch (Throwable t2) {
-                                throw new UnsupportedOperationException();
-                            }
-                        }
-                        componentDefinitionRegistry.registerComponentDefinition(svc);
-                        dependsOn.add(svc.getId());
-                    }
+                    getComponentResolverReference(context, component);
                 }
                 for (String language : languages) {
-                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.languageResolver." + language);
-                    if (cm == null) {
-                        MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
-                        svc.setId(".camelBlueprint.languageResolver." + language);
-                        svc.setFilter("(language=" + language + ")");
-                        svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(language) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
-                        try {
-                            // Try to set the runtime interface (only with aries blueprint > 0.1
-                            svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, LanguageResolver.class);
-                        } catch (Throwable t) {
-                            // Check if the bundle can see the class
-                            try {
-                                PassThroughMetadata ptm = (PassThroughMetadata) componentDefinitionRegistry.getComponentDefinition("blueprintBundle");
-                                Bundle b = (Bundle) ptm.getObject();
-                                if (b.loadClass(LanguageResolver.class.getName()) != LanguageResolver.class) {
-                                    throw new UnsupportedOperationException();
-                                }
-                                svc.setInterface(LanguageResolver.class.getName());
-                            } catch (Throwable t2) {
-                                throw new UnsupportedOperationException();
-                            }
-                        }
-                        componentDefinitionRegistry.registerComponentDefinition(svc);
-                        dependsOn.add(svc.getId());
-                    }
+                    getLanguageResolverReference(context, language);
                 }
                 for (String dataformat : dataformats) {
-                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.dataformatResolver." + dataformat);
-                    if (cm == null) {
-                        MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
-                        svc.setId(".camelBlueprint.dataformatResolver." + dataformat);
-                        svc.setFilter("(dataformat=" + dataformat + ")");
-                        svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(dataformat) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
-                        try {
-                            // Try to set the runtime interface (only with aries blueprint > 0.1
-                            svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, DataFormatResolver.class);
-                        } catch (Throwable t) {
-                            // Check if the bundle can see the class
-                            try {
-                                PassThroughMetadata ptm = (PassThroughMetadata) componentDefinitionRegistry.getComponentDefinition("blueprintBundle");
-                                Bundle b = (Bundle) ptm.getObject();
-                                if (b.loadClass(DataFormatResolver.class.getName()) != DataFormatResolver.class) {
-                                    throw new UnsupportedOperationException();
-                                }
-                                svc.setInterface(DataFormatResolver.class.getName());
-                            } catch (Throwable t2) {
-                                throw new UnsupportedOperationException();
-                            }
-                        }
-                        componentDefinitionRegistry.registerComponentDefinition(svc);
-                        dependsOn.add(svc.getId());
-                    }
+                    getDataformatResolverReference(context, dataformat);
                 }
             } catch (UnsupportedOperationException e) {
                 LOG.warn("Unable to add dependencies on to camel components OSGi services.  "
@@ -773,10 +797,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 dataformats.clear();
             }
 
-        }
-
-        public <T extends org.osgi.service.blueprint.reflect.Metadata> T createMetadata(java.lang.Class<T> tClass) {
-            return context.createMetadata(tClass);
         }
 
         private void findInputComponents(List<FromDefinition> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {

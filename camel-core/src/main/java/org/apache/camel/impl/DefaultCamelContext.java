@@ -2481,4 +2481,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return new ActiveMQUuidGenerator();
         }
     }
+
+    @Override
+    public String getProperty(String name) {
+        String value = getProperties().get(name);
+        if (ObjectHelper.isNotEmpty(value)) {
+            try {
+                value = resolvePropertyPlaceholders(value);
+            } catch (Exception ex) {
+                // throw CamelRutimeException
+                throw new RuntimeCamelException(ex);
+            }
+        }
+        return value;
+    }
 }

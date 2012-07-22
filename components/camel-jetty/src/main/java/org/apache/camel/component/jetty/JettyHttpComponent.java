@@ -383,8 +383,8 @@ public class JettyHttpComponent extends HttpComponent {
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
         filterHolder.setInitParameter("deleteFiles", "true");
-        if (ObjectHelper.isNotEmpty(camelContext.getProperties().get(TMP_DIR))) {
-            File file = new File(camelContext.getProperties().get(TMP_DIR));
+        if (ObjectHelper.isNotEmpty(camelContext.getProperty(TMP_DIR))) {
+            File file = new File(camelContext.getProperty(TMP_DIR));
             if (!file.isDirectory()) {
                 throw new RuntimeCamelException(
                         "The temp file directory of camel-jetty is not exists, please recheck it with directory name :"
