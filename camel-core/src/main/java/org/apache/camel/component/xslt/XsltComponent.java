@@ -110,6 +110,9 @@ public class XsltComponent extends DefaultComponent {
         }
         String output = getAndRemoveParameter(parameters, "output", String.class);
         configureOutput(xslt, output);
+        
+        Integer cs = getAndRemoveParameter(parameters, "transformerCacheSize", Integer.class, Integer.valueOf(0));
+        xslt.transformerCacheSize(cs);
 
         // default to use the cache option from the component if the endpoint did not have the contentCache parameter
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);

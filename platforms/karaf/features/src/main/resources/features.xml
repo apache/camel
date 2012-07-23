@@ -104,6 +104,13 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.castor/${castor-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-castor/${project.version}</bundle>
   </feature>
+  <!-- camel-cmis doesn't work yet -->
+  <!--feature name='camel-cmis' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${cxf-version-range}'>cxf-specs</feature>
+    <bundle dependency='true'>mvn:org.apache.chemistry.opencmis/chemistry-opencmis-osgi-client/${cmis-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-cmis/${project.version}</bundle>
+  </feature-->
   <feature name='camel-crypto' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>

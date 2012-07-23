@@ -283,6 +283,27 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testOGNLHeaderEmptyTest() throws Exception {
+        exchange.getIn().setHeader("beer", "");
+        assertPredicate("${header.beer} == ''", true);
+        assertPredicate("${header.beer} == \"\"", true);
+        assertPredicate("${header.beer} == ' '", false);
+        assertPredicate("${header.beer} == \" \"", false);
+
+        exchange.getIn().setHeader("beer", " ");
+        assertPredicate("${header.beer} == ''", false);
+        assertPredicate("${header.beer} == \"\"", false);
+        assertPredicate("${header.beer} == ' '", true);
+        assertPredicate("${header.beer} == \" \"", true);
+
+        assertPredicate("${header.beer.toString().trim()} == ''", true);
+        assertPredicate("${header.beer.toString().trim()} == \"\"", true);
+
+        exchange.getIn().setHeader("beer", "   ");
+        assertPredicate("${header.beer.trim()} == ''", true);
+        assertPredicate("${header.beer.trim()} == \"\"", true);
+    }
+
     public void testDateExpressions() throws Exception {
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);

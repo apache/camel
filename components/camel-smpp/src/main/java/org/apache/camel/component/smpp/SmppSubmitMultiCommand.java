@@ -31,8 +31,6 @@ import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
-import org.jsmpp.bean.GeneralDataCoding;
-import org.jsmpp.bean.MessageClass;
 import org.jsmpp.bean.MessageMode;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -74,7 +72,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
                         submitMulti.getValidityPeriod(),
                         new RegisteredDelivery(submitMulti.getRegisteredDelivery()),
                         new ReplaceIfPresentFlag(submitMulti.getReplaceIfPresentFlag()),
-                        new GeneralDataCoding(submitMulti.getDataCoding()),
+                        DataCoding.newInstance(submitMulti.getDataCoding()),
                         submitMulti.getSmDefaultMsgId(),
                         submitMulti.getShortMessage(),
                         new OptionalParameter[0]);
@@ -129,9 +127,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
 
         byte[][] segments = splitter.split(body.getBytes(charset));
 
-        DataCoding dataCoding = new GeneralDataCoding(false, true, MessageClass.CLASS1, determinedAlphabet);
         ESMClass esmClass;
-
         // multipart message
         if (segments.length > 1) {
             esmClass = new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI);
@@ -145,7 +141,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         for (int i = 0; i < segments.length; i++) {
             SubmitMulti submitMulti = SmppUtils.copySubmitMulti(template);
             submitMulti.setEsmClass(esmClass.value());
-            submitMulti.setDataCoding(dataCoding.value());
+            submitMulti.setDataCoding(template.getDataCoding());
             submitMulti.setShortMessage(segments[i]);
             submitMulties[i] = submitMulti;
         }
@@ -157,6 +153,12 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
     protected SubmitMulti createSubmitMultiTemplate(Exchange exchange) {
         Message in = exchange.getIn();
         SubmitMulti submitMulti = new SubmitMulti();
+
+        if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
+            submitMulti.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, Byte.class));
+        } else {
+            submitMulti.setDataCoding(config.getDataCoding());
+        }
 
         byte destAddrTon;
         if (in.getHeaders().containsKey(SmppConstants.DEST_ADDR_TON)) {

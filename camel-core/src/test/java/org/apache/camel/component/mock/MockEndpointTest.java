@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mock;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -643,6 +645,22 @@ public class MockEndpointTest extends ContextTestSupport {
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("foo", 123);
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+
+        mock.assertIsSatisfied();
+    }
+    
+    public void testSetMultipleExpectedHeaders4() throws Exception {
+        // to test the header value with Stream which can only be consumed once
+        InputStream is = new ByteArrayInputStream("Test".getBytes());
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("foo", 123);
+        mock.expectedHeaderReceived("bar", "Test");
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 123);
+        map.put("bar", is);
         template.sendBodyAndHeaders("direct:a", "Hello World", map);
 
         mock.assertIsSatisfied();

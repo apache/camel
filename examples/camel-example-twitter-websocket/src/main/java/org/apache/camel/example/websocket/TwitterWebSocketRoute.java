@@ -18,6 +18,7 @@ package org.apache.camel.example.websocket;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.websocket.WebsocketComponent;
+import org.apache.camel.component.twitter.TwitterComponent;
 
 /**
  * A Camel route that updates from twitter all tweets using having the search term.
@@ -96,6 +97,13 @@ public class TwitterWebSocketRoute extends RouteBuilder {
         wc.setPort(port);
         // we can serve static resources from the classpath: or file: system
         wc.setStaticResources("classpath:.");
+
+        // setup Twitter component
+        TwitterComponent tc = getContext().getComponent("twitter", TwitterComponent.class);
+        tc.setAccessToken(accessToken);
+        tc.setAccessTokenSecret(accessTokenSecret);
+        tc.setConsumerKey(consumerKey);
+        tc.setConsumerSecret(consumerSecret);
 
         // poll twitter search for new tweets
         fromF("twitter://search?type=polling&delay=%s&keywords=%s", delay, searchTerm)

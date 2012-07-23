@@ -62,6 +62,14 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     }
 
     /**
+     * Return the system bundle context
+     * @return
+     */
+    protected BundleContext getBundleContext() {
+        return bundleContext;
+    }
+
+    /**
      * Gets the bundle descriptor from the classpath.
      * <p/>
      * Return the location(s) of the bundle descriptors from the classpath.
