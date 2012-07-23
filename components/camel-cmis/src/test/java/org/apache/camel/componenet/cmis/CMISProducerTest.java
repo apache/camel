@@ -132,7 +132,6 @@ public class CMISProducerTest extends CMISTestSupport {
         Producer producer = endpoint.createProducer();
 
         Exchange exchange = createExchangeWithInBody("Some content to be store");
-        exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_MIME_TYPE, "text/plain; charset=UTF-8");
         exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.txt");
         producer.process(exchange);
     }

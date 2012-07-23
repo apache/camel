@@ -65,11 +65,11 @@ public class CMISProducer extends DefaultProducer {
             String mimeType = getMimeType(message);
             byte[] buf = getBodyData(message);
             ContentStream contentStream = cmisSessionFacade.createContentStream(fileName, buf, mimeType);
-            return storeDocument(parentFolder, cmisProperties, contentStream, cmisSessionFacade);
+            return storeDocument(parentFolder, cmisProperties, contentStream);
         } else if (isFolder(message)) {
             return storeFolder(parentFolder, cmisProperties);
         } else {  //other types
-            return storeDocument(parentFolder, cmisProperties, null, cmisSessionFacade);
+            return storeDocument(parentFolder, cmisProperties, null);
         }
     }
 
@@ -110,22 +110,22 @@ public class CMISProducer extends DefaultProducer {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         }
-        LOG.debug("Creating folder with properties: {0}", cmisProperties);
+        LOG.debug("Creating folder with properties: {}", cmisProperties);
         return parentFolder.createFolder(cmisProperties);
     }
 
     private Document storeDocument(Folder parentFolder, Map<String, Object> cmisProperties,
-                                   ContentStream contentStream, CMISSessionFacade cmisSessionFacade) {
+                                   ContentStream contentStream) {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         }
 
         VersioningState versioningState = VersioningState.NONE;
-        if (this.cmisSessionFacade
+        if (cmisSessionFacade
                 .isObjectTypeVersionable((String)cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
             versioningState = VersioningState.MAJOR;
         }
-        LOG.debug("Creating document with properties: {0}", cmisProperties);
+        LOG.debug("Creating document with properties: {}", cmisProperties);
         return parentFolder.createDocument(cmisProperties, contentStream, versioningState);
     }
 
