@@ -37,6 +37,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
         assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
+        assertNull(endpoint.getConfiguration().getPrefix());
     }
     
     @Test
@@ -57,6 +58,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
         assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
+        assertNull(endpoint.getConfiguration().getPrefix());
     }
 
     @Test
@@ -65,7 +67,8 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?amazonS3Endpoint=sns.eu-west-1.amazonaws.com"
                 + "&accessKey=xxx&secretKey=yyy&region=us-west-1&deleteAfterRead=false&maxMessagesPerPoll=1&policy=%7B%22Version%22%3A%222008-10-17%22,%22Id%22%3A%22Policy4324355464%22,"
                 + "%22Statement%22%3A%5B%7B%22Sid%22%3A%22Stmt456464646477%22,%22Action%22%3A%5B%22s3%3AGetObject%22%5D,%22Effect%22%3A%22Allow%22,"
-                + "%22Resource%22%3A%5B%22arn%3Aaws%3As3%3A%3A%3Amybucket/some/path/*%22%5D,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D%7D%5D%7D&storageClass=REDUCED_REDUNDANCY");
+                + "%22Resource%22%3A%5B%22arn%3Aaws%3As3%3A%3A%3Amybucket/some/path/*%22%5D,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D%7D%5D%7D&storageClass=REDUCED_REDUNDANCY"
+                + "&prefix=confidential");
         
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -78,6 +81,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("{\"Version\":\"2008-10-17\",\"Id\":\"Policy4324355464\",\"Statement\":[{\"Sid\":\"Stmt456464646477\",\"Action\":[\"s3:GetObject\"],\"Effect\":\"Allow\",\"Resource\":"
                 + "[\"arn:aws:s3:::mybucket/some/path/*\"],\"Principal\":{\"AWS\":[\"*\"]}}]}", endpoint.getConfiguration().getPolicy());
         assertEquals("REDUCED_REDUNDANCY", endpoint.getConfiguration().getStorageClass());
+        assertEquals("confidential", endpoint.getConfiguration().getPrefix());
     }
     
     @Test(expected = IllegalArgumentException.class)
