@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -693,15 +692,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         expects(new Runnable() {
             public void run() {
-                Set<Object> actualBodyValuesSet = new HashSet<Object>(actualBodyValues);
+                List<Object> actualBodyValuesSet = new ArrayList<Object>(actualBodyValues);
                 for (int i = 0; i < expectedBodyValues.size(); i++) {
                     Exchange exchange = getReceivedExchange(i);
                     assertTrue("No exchange received for counter: " + i, exchange != null);
 
                     Object expectedBody = expectedBodyValues.get(i);
-                    assertTrue("Message with body " + expectedBody
-                            + " was expected but not found in " + actualBodyValuesSet,
-                            actualBodyValuesSet.remove(expectedBody));
+                    assertTrue("Message with body " + expectedBody + " was expected but not found in " + actualBodyValuesSet, actualBodyValuesSet.remove(expectedBody));
                 }
             }
         });
@@ -1156,7 +1153,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             }
             performAssertions(exchange, copy);
         } catch (Throwable e) {
-            // must catch java.lang.Throwable as AssertionException extends java.lang.Error
+            // must catch java.lang.Throwable as AssertionError extends java.lang.Error
             failures.add(e);
         } finally {
             // make sure latch is counted down to avoid test hanging forever
