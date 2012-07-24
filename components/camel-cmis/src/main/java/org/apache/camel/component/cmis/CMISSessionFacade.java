@@ -92,7 +92,7 @@ public class CMISSessionFacade {
         ItemIterable<QueryResult> itemIterable = executeQuery(query);
         while (!finished) {
             ItemIterable<QueryResult> currentPage = itemIterable.skipTo(count).getPage();
-            LOG.debug("Processing page {0}", pageNumber);
+            LOG.debug("Processing page {}", pageNumber);
             for (QueryResult item : currentPage) {
                 Map<String, Object> properties = CMISHelper.propertyDataToMap(item.getProperties());
                 Object objectTypeId = item.getPropertyValueById(PropertyIds.OBJECT_TYPE_ID);
@@ -125,7 +125,7 @@ public class CMISSessionFacade {
         boolean finished = false;
         while (!finished) {
             ItemIterable<QueryResult> currentPage = itemIterable.skipTo(count).getPage();
-            LOG.debug("Processing page {0}", pageNumber);
+            LOG.debug("Processing page {}", pageNumber);
             for (QueryResult item : currentPage) {
                 Map<String, Object> properties = CMISHelper.propertyDataToMap(item.getProperties());
                 if (retrieveContent) {
