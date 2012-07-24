@@ -311,9 +311,9 @@ public class PrinterPrintTest extends CamelTestSupport {
         DocPrintJob docPrintJob = mock(DocPrintJob.class);
         when(psDefault.createPrintJob()).thenReturn(docPrintJob);
         MediaTray[] trays = new MediaTray[]{
-                MediaTray.TOP,
-                MediaTray.MIDDLE,
-                MediaTray.BOTTOM
+            MediaTray.TOP,
+            MediaTray.MIDDLE,
+            MediaTray.BOTTOM
         };
         when(psDefault.getSupportedAttributeValues(Media.class, null, null)).thenReturn(trays);
         PrintServiceLookup.registerServiceProvider(psLookup);
