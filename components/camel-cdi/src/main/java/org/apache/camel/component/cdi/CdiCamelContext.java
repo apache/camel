@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cdi;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 

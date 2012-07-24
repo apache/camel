@@ -36,7 +36,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.feature.LoggingFeature;
-import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.slf4j.Logger;
@@ -133,14 +132,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
         // address
         if (getAddress() != null) {
             sfb.setAddress(getAddress());
         }
         if (getResourceClasses() != null) {
-            List<Class<?>> res = CastUtils.cast(getResourceClasses());
+            List<Class<?>> res = getResourceClasses();
             // setup the resource providers
             for (Class<?> clazz : res) {
                 sfb.setResourceProvider(clazz, new CamelResourceProvider(clazz));
