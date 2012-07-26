@@ -38,11 +38,11 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.StopWatch;
 
 public class PerformanceTestComponent extends DefaultComponent {
-    static public final String HEADER_THREADS = "CamelPerfThreads";
-    static public final String HEADER_ITERATIONS = "CamelPerfIterations";
+    public static final String HEADER_THREADS = "CamelPerfThreads";
+    public static final String HEADER_ITERATIONS = "CamelPerfIterations";
     
-    static private final int DEFAULT_THREADS = 8;
-    static private final int DEFAULT_ITERATIONS = 100;
+    private static final int DEFAULT_THREADS = 8;
+    private static final int DEFAULT_ITERATIONS = 100;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
