@@ -24,7 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
-import org.apache.camel.util.CastUtils;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -33,10 +32,10 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
-    protected static ThreadLocal<AbstractApplicationContext> threadAppContext
-        = new ThreadLocal<AbstractApplicationContext>();
+    protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<AbstractApplicationContext>();
     protected static Object lock = new Object();
     protected static AbstractApplicationContext applicationContext;
+
     protected abstract AbstractApplicationContext createApplicationContext();
 
     @Override
@@ -128,7 +127,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         routeExcludingContext.refresh();
 
         ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
-        List<Class<?>> excluded = CastUtils.cast(Arrays.asList(excludeRoutes()));
+        List<Class<?>> excluded = Arrays.asList(excludeRoutes());
         excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
 
         return routeExcludingContext;

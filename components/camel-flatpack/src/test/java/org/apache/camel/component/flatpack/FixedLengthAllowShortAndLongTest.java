@@ -23,7 +23,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ public class FixedLengthAllowShortAndLongTest extends AbstractJUnit4SpringContex
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             assertEquals("counter", in.getHeader("camelFlatpackCounter"), counter);
-            Map<String, String> body = CastUtils.cast(in.getBody(Map.class));
+            Map<?, ?> body = in.getBody(Map.class);
             assertNotNull("Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()), body);
             assertEquals("FIRSTNAME", expectedFirstName[counter], body.get("FIRSTNAME"));
             LOG.info("Result: " + counter + " = " + body);

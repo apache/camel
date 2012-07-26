@@ -23,7 +23,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -55,7 +54,7 @@ public class DelimitedWithNoDescriptorTest extends AbstractJUnit4SpringContextTe
         List<Exchange> list = results.getReceivedExchanges();
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
-            Map<String, String> body = CastUtils.cast(in.getBody(Map.class));
+            Map<?, ?> body = in.getBody(Map.class);
             assertNotNull("Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()), body);
             assertEquals("NAME", expectedItemDesc[counter], body.get("NAME"));
             LOG.info("Result: " + counter + " = " + body);
