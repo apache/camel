@@ -58,7 +58,7 @@ public class PerformanceTestComponent extends DefaultComponent {
             : header.equals(HEADER_ITERATIONS) ? DEFAULT_ITERATIONS : 0;
     }
 
-    private final class PerformanceTestEndpoint extends DefaultEndpoint {
+    private static final class PerformanceTestEndpoint extends DefaultEndpoint {
         private PerformanceTestConsumer consumer;
 
         public PerformanceTestEndpoint(String uri, Component component) {
@@ -91,13 +91,13 @@ public class PerformanceTestComponent extends DefaultComponent {
         }
     }
     
-    private final class PerformanceTestConsumer extends DefaultConsumer {
+    private static final class PerformanceTestConsumer extends DefaultConsumer {
         public PerformanceTestConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);
         }
     }
 
-    private final class PerformanceTestProducer extends DefaultProducer implements AsyncProcessor {
+    private static final class PerformanceTestProducer extends DefaultProducer implements AsyncProcessor {
         public PerformanceTestProducer(Endpoint endpoint) {
             super(endpoint);
         }
