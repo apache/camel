@@ -28,7 +28,6 @@ import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
-import org.apache.camel.util.CastUtils;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -102,7 +101,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         routeExcludingContext.refresh();
 
         ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
-        List<Class<?>> excluded = CastUtils.cast(Arrays.asList(excludeRoutes()));
+        List<Class<?>> excluded = Arrays.asList(excludeRoutes());
         excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
 
         return routeExcludingContext;

@@ -34,7 +34,6 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
 import org.apache.camel.test.spring.CamelSpringTestHelper.DoToSpringCamelContextsStrategy;
-import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -241,7 +240,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 routeExcludingContext.refresh();
                 
                 ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
-                List<Class<?>> excluded = CastUtils.cast(Arrays.asList(excludedClasses));
+                List<Class<?>> excluded = Arrays.asList(excludedClasses);
                 excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
             } else {
                 if (LOG.isDebugEnabled()) {

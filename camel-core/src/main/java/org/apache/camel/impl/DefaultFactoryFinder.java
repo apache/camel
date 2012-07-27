@@ -116,7 +116,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
 
     private List<Class<?>> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         Class<?> type = findClass(key, propertyPrefix);
-        return CastUtils.cast(Collections.singletonList(type));
+        return Collections.<Class<?>>singletonList(type);
     }
 
     private Class<?> newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException, IOException {
