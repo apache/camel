@@ -27,7 +27,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
 
     @Test
-    public void testSendToTwoEmbeddedBrokers() throws Exception {
+    public void sendToTwoEmbeddedBrokers() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 

@@ -35,7 +35,7 @@
    </camelContext>
 
    <bean id="activemq1" class="org.apache.activemq.camel.component.ActiveMQComponent">
-      <property name="brokerURL" value="vm://myBroker" />
+      <property name="brokerURL" value="vm://myBroker1" />
    </bean>
 
    <bean id="activemq2" class="org.apache.activemq.camel.component.ActiveMQComponent">
