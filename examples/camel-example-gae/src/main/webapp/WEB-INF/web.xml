@@ -55,14 +55,14 @@
       <role-name>*</role-name>
     </auth-constraint>
   </security-constraint>
-  <!--security-constraint>
+  <security-constraint>
     <web-resource-collection>
       <url-pattern>/worker/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
     </auth-constraint>
-  </security-constraint-->
+  </security-constraint>
 
 </web-app>
 
