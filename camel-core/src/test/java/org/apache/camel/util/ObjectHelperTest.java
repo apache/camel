@@ -141,7 +141,7 @@ public class ObjectHelperTest extends TestCase {
 
     public void testCreateIteratorAllowEmpty() {
         String s = "a,b,,c";
-        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ",", true));
+        Iterator<?> it = ObjectHelper.createIterator(s, ",", true);
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("", it.next());
@@ -150,7 +150,7 @@ public class ObjectHelperTest extends TestCase {
 
     public void testCreateIteratorWithStringAndCommaSeparator() {
         String s = "a,b,c";
-        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
+        Iterator<?> it = ObjectHelper.createIterator(s, ",");
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
@@ -158,14 +158,14 @@ public class ObjectHelperTest extends TestCase {
 
     public void testCreateIteratorWithStringAndCommaSeparatorEmptyString() {
         String s = "";
-        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ",", true));
+        Iterator<?> it = ObjectHelper.createIterator(s, ",", true);
         assertEquals("", it.next());
         assertFalse(it.hasNext());
     }
 
     public void testCreateIteratorWithStringAndSemiColonSeparator() {
         String s = "a;b;c";
-        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ";"));
+        Iterator<?> it = ObjectHelper.createIterator(s, ";");
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
@@ -173,13 +173,13 @@ public class ObjectHelperTest extends TestCase {
 
     public void testCreateIteratorWithStringAndCommaInParanthesesSeparator() {
         String s = "bean:foo?method=bar('A','B','C')";
-        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
+        Iterator<?> it = ObjectHelper.createIterator(s, ",");
         assertEquals("bean:foo?method=bar('A','B','C')", it.next());
     }
 
     public void testCreateIteratorWithStringAndCommaInParanthesesSeparatorTwo() {
         String s = "bean:foo?method=bar('A','B','C'),bean:bar?method=cool('A','Hello,World')";
-        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
+        Iterator<?> it = ObjectHelper.createIterator(s, ",");
         assertEquals("bean:foo?method=bar('A','B','C')", it.next());
         assertEquals("bean:bar?method=cool('A','Hello,World')", it.next());
     }
@@ -277,7 +277,7 @@ public class ObjectHelperTest extends TestCase {
         Message msg = new DefaultMessage();
         msg.setBody("a,b,c");
 
-        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(msg));
+        Iterator<?> it = ObjectHelper.createIterator(msg);
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
@@ -310,7 +310,7 @@ public class ObjectHelperTest extends TestCase {
                 return data.iterator();
             }
         };
-        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(itb));
+        Iterator<?> it = ObjectHelper.createIterator(itb);
         assertEquals("A", it.next());
         assertEquals("B", it.next());
         assertEquals("C", it.next());

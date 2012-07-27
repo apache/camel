@@ -520,14 +520,14 @@ public final class ObjectHelper {
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
-            return CastUtils.cast(new Iterator<Node>() {
+            return new Iterator<Object>() {
                 int idx = -1;
 
                 public boolean hasNext() {
                     return (idx + 1) < nodeList.getLength();
                 }
 
-                public Node next() {
+                public Object next() {
                     idx++;
                     return nodeList.item(idx);
                 }
@@ -535,7 +535,7 @@ public final class ObjectHelper {
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
-            });
+            };
         } else if (value instanceof String) {
             final String s = (String) value;
 
@@ -563,14 +563,14 @@ public final class ObjectHelper {
                 return CastUtils.cast(scanner);
             } else {
                 // use a plain iterator that returns the value as is as there are only a single value
-                return CastUtils.cast(new Iterator<String>() {
+                return new Iterator<Object>() {
                     int idx = -1;
 
                     public boolean hasNext() {
                         return idx + 1 == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
                     }
 
-                    public String next() {
+                    public Object next() {
                         idx++;
                         return s;
                     }
@@ -578,7 +578,7 @@ public final class ObjectHelper {
                     public void remove() {
                         throw new UnsupportedOperationException();
                     }
-                });
+                };
             }
         } else {
             return Collections.singletonList(value).iterator();
