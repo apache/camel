@@ -18,7 +18,6 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ResequenceStreamRejectOldExchangesTest;
-import org.apache.camel.processor.ResequencerTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
@@ -26,7 +25,9 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  * @version
  */
 public class SpringResequenceStreamRejectOldExchangesTest extends ResequenceStreamRejectOldExchangesTest {
+
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/resequencerRejectOld.xml");
     }
+
 }

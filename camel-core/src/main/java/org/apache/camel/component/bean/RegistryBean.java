@@ -58,7 +58,7 @@ public class RegistryBean implements BeanHolder {
         return new ConstantBeanHolder(getBean(), getBeanInfo());
     }
 
-    public Object getBean() throws NoSuchBeanException {
+    public synchronized Object getBean() throws NoSuchBeanException {
         Object value = lookupBean();
         if (value == null) {
             // maybe its a class

@@ -86,25 +86,18 @@ public class PrinterProducer extends DefaultProducer {
     }
     
     private MediaTray resolveMediaTray(String tray) {
-        Media med[] = (Media[]) getPrintService().getSupportedAttributeValues(Media.class, null, null);
+        Media medias[] = (Media[]) getPrintService().getSupportedAttributeValues(Media.class, null, null);
         
-        if (med == null) {
+        if (medias == null) {
             return null;
         } else {
-            MediaTray foundTray = null;
-            
-            for (int i = 0; foundTray == null && i < med.length; i++) {
-                Media media = med[i];
-                
+            for (Media media : medias) {
                 if (media instanceof MediaTray) {
                     MediaTray mediaTray = (MediaTray) media;
-                    
                     String trayName = mediaTray.toString().trim();
-                    
                     if (trayName.contains(" ")) {
                         trayName = trayName.replace(' ', '_');
                     }
-                    
                     if (trayName.equals(tray)) {
                         return mediaTray;
                     }

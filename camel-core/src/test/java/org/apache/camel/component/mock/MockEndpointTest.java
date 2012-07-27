@@ -92,7 +92,16 @@ public class MockEndpointTest extends ContextTestSupport {
 
         resultEndpoint.assertIsSatisfied();
     }       
-    
+
+    public void testExpectsBodiesInAnyOrderWithDuplicates() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedBodiesReceivedInAnyOrder(listOfMessages(11, 15, 12, 12, 13, 14, 15, 15));
+
+        sendMessages(15, 15, 12, 14, 13, 12, 15, 11);
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
     public void testExpectsHeadersInAnyOrder() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedHeaderValuesReceivedInAnyOrder("counter", 11, 12, 13, 14, 15);

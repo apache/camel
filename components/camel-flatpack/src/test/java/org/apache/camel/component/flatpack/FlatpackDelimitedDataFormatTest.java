@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.CastUtils;
 import org.junit.Test;
 
 /**
@@ -48,7 +47,7 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
 
         DataSetList list = mock.getExchanges().get(0).getIn().getBody(DataSetList.class);
         assertEquals(4, list.size());
-        Map<String, String> row = CastUtils.cast(list.get(0));
+        Map<?, ?> row = list.get(0);
         assertEquals("SOME VALVE", row.get("ITEM_DESC"));
     }
 

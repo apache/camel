@@ -21,14 +21,21 @@
          xsi:schemaLocation="
            http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
+         
+  <!-- tell Spring where it should load the XML file -->
+  <context-param>
+       <param-name>contextConfigLocation</param-name>
+       <param-value>classpath:context.xml</param-value>
+  </context-param>
+
+  <!-- spring context listener which loads the XML file -->
+  <listener>
+      <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
 
   <servlet>
     <servlet-name>CamelServlet</servlet-name>
     <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>context.xml</param-value>
-    </init-param>
   </servlet>
 
   <servlet-mapping>
@@ -48,14 +55,14 @@
       <role-name>*</role-name>
     </auth-constraint>
   </security-constraint>
-  <security-constraint>
+  <!--security-constraint>
     <web-resource-collection>
       <url-pattern>/worker/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
     </auth-constraint>
-  </security-constraint>
+  </security-constraint-->
 
 </web-app>
 

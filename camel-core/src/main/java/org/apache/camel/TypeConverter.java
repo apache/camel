@@ -78,7 +78,7 @@ public interface TypeConverter {
     <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException, NoTypeConversionAvailableException;
 
     /**
-     * Tries to converts the value to the specified type,
+     * Tries to convert the value to the specified type,
      * returning <tt>null</tt> if not possible to convert.
      * <p/>
      * This method will <b>not</b> throw an exception if an exception occurred during conversion.
@@ -90,7 +90,7 @@ public interface TypeConverter {
     <T> T tryConvertTo(Class<T> type, Object value);
 
     /**
-     * Tries to converts the value to the specified type in the context of an exchange,
+     * Tries to convert the value to the specified type in the context of an exchange,
      * returning <tt>null</tt> if not possible to convert.
      * <p/>
      * This method will <b>not</b> throw an exception if an exception occurred during conversion.
