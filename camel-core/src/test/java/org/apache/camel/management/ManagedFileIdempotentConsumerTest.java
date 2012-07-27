@@ -29,7 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
 
 /**
@@ -45,7 +44,7 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // services
-        Set<ObjectName> names = CastUtils.cast(mbeanServer.queryNames(new ObjectName("org.apache.camel" + ":type=services,*"), null));
+        Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.apache.camel" + ":type=services,*"), null);
         ObjectName on = null;
         for (ObjectName name : names) {
             if (name.toString().contains("FileIdempotentRepository")) {
