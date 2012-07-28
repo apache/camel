@@ -38,8 +38,7 @@ public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] {"classpath:org/apache/camel/component/jms/activemq/brokers.xml",
-                                                                "classpath:org/apache/camel/component/jms/activemq/camelBrokersClient.xml"});
+        return new ClassPathXmlApplicationContext("classpath:org/apache/camel/component/jms/activemq/twoActiveMQBrokers.xml");
     }
 
 }

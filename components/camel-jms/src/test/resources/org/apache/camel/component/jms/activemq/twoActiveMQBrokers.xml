@@ -35,11 +35,19 @@
    </camelContext>
 
    <bean id="activemq1" class="org.apache.activemq.camel.component.ActiveMQComponent">
-      <property name="brokerURL" value="vm://myBroker1" />
+      <property name="connectionFactory">
+         <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="vm://firstBroker?broker.persistent=false&amp;broker.useJmx=false" />
+         </bean>
+      </property>
    </bean>
 
    <bean id="activemq2" class="org.apache.activemq.camel.component.ActiveMQComponent">
-      <property name="brokerURL" value="vm://myBroker2" />
+      <property name="connectionFactory">
+         <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="vm://secondBroker?broker.persistent=false&amp;broker.useJmx=false" />
+         </bean>
+      </property>
    </bean>
 
 </beans>
