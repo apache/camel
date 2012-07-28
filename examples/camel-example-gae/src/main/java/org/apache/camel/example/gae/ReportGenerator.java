@@ -16,6 +16,8 @@
  */
 package org.apache.camel.example.gae;
 
+import java.util.logging.Logger;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
@@ -23,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 public class ReportGenerator implements Processor {
+    private static final Logger LOGGER = Logger.getLogger(RequestProcessor.class.getName());
 
     public void process(Exchange exchange) throws Exception {
         ReportData data = exchange.getIn().getBody(ReportData.class);
@@ -41,10 +44,13 @@ public class ReportGenerator implements Processor {
             temp = "<error retrieving current temperature>";
         }
         
-        exchange.getIn().setBody(new StringBuilder()
+        String result = new StringBuilder()
             .append("\n").append("Weather report for:  ").append(city)
             .append("\n").append("Current condition:   ").append(cond)
-            .append("\n").append("Current temperature: ").append(temp).append(" (Celsius)").toString());
+            .append("\n").append("Current temperature: ").append(temp).append(" (Celsius)").toString();
+        
+        LOGGER.info("Get the result" + result);
+        exchange.getIn().setBody(result);
     }
 
 }
