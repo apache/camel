@@ -38,11 +38,11 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.StopWatch;
 
 public class PerformanceTestComponent extends DefaultComponent {
-    static public final String HEADER_THREADS = "CamelPerfThreads";
-    static public final String HEADER_ITERATIONS = "CamelPerfIterations";
+    public static final String HEADER_THREADS = "CamelPerfThreads";
+    public static final String HEADER_ITERATIONS = "CamelPerfIterations";
     
-    static private final int DEFAULT_THREADS = 8;
-    static private final int DEFAULT_ITERATIONS = 100;
+    private static final int DEFAULT_THREADS = 8;
+    private static final int DEFAULT_ITERATIONS = 100;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -58,7 +58,7 @@ public class PerformanceTestComponent extends DefaultComponent {
             : header.equals(HEADER_ITERATIONS) ? DEFAULT_ITERATIONS : 0;
     }
 
-    private final class PerformanceTestEndpoint extends DefaultEndpoint {
+    private static final class PerformanceTestEndpoint extends DefaultEndpoint {
         private PerformanceTestConsumer consumer;
 
         public PerformanceTestEndpoint(String uri, Component component) {
@@ -91,13 +91,13 @@ public class PerformanceTestComponent extends DefaultComponent {
         }
     }
     
-    private final class PerformanceTestConsumer extends DefaultConsumer {
+    private static final class PerformanceTestConsumer extends DefaultConsumer {
         public PerformanceTestConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);
         }
     }
 
-    private final class PerformanceTestProducer extends DefaultProducer implements AsyncProcessor {
+    private static final class PerformanceTestProducer extends DefaultProducer implements AsyncProcessor {
         public PerformanceTestProducer(Endpoint endpoint) {
             super(endpoint);
         }

@@ -25,6 +25,8 @@ import javax.print.PrintServiceLookup;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.Media;
+import javax.print.attribute.standard.MediaTray;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -70,7 +72,39 @@ public class PrinterProducer extends DefaultProducer {
         printRequestAttributeSet.add(config.getMediaSizeName());
         printRequestAttributeSet.add(config.getInternalSides());
         
+        if (config.getMediaTray() != null) {
+            MediaTray mediaTray = resolveMediaTray(config.getMediaTray());
+        
+            if (mediaTray == null) {
+                throw new PrintException("mediatray not found " + config.getMediaTray());
+            }
+            
+            printRequestAttributeSet.add(mediaTray);
+        }
+        
         return printRequestAttributeSet;
+    }
+    
+    private MediaTray resolveMediaTray(String tray) {
+        Media medias[] = (Media[]) getPrintService().getSupportedAttributeValues(Media.class, null, null);
+        
+        if (medias == null) {
+            return null;
+        } else {
+            for (Media media : medias) {
+                if (media instanceof MediaTray) {
+                    MediaTray mediaTray = (MediaTray) media;
+                    String trayName = mediaTray.toString().trim();
+                    if (trayName.contains(" ")) {
+                        trayName = trayName.replace(' ', '_');
+                    }
+                    if (trayName.equals(tray)) {
+                        return mediaTray;
+                    }
+                }
+            }
+            return null;
+        }
     }
     
     private PrintService assignPrintService() throws PrintException {

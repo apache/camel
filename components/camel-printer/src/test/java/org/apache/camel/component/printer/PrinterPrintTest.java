@@ -25,7 +25,12 @@ import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import javax.print.attribute.Attribute;
 import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Media;
+import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.MediaTray;
+import javax.print.attribute.standard.Sides;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -271,6 +276,29 @@ public class PrinterPrintTest extends CamelTestSupport {
         context.stop();
         assertMockEndpointsSatisfied();
     }
+
+    @Test
+    public void printToMiddleTray() throws Exception {
+        PrinterEndpoint endpoint = new PrinterEndpoint();
+        PrinterConfiguration configuration = new PrinterConfiguration();
+        configuration.setHostname("localhost");
+        configuration.setPort(631);
+        configuration.setPrintername("DefaultPrinter");
+        configuration.setMediaSizeName(MediaSizeName.ISO_A4);
+        configuration.setInternalSides(Sides.ONE_SIDED);
+        configuration.setMediaTray("middle");
+
+        PrinterProducer producer = new PrinterProducer(endpoint, configuration);
+        producer.start();
+        PrinterOperations printerOperations = producer.getPrinterOperations();
+        PrintRequestAttributeSet attributeSet = printerOperations.getPrintRequestAttributeSet();
+
+        Attribute attribute = attributeSet.get(javax.print.attribute.standard.Media.class);
+        assertNotNull(attribute);
+        assertTrue(attribute instanceof MediaTray);
+        MediaTray mediaTray = (MediaTray) attribute;
+        assertEquals("middle", mediaTray.toString());
+    }
     
     protected void setupJavaPrint() {
         // "install" another default printer
@@ -282,6 +310,12 @@ public class PrinterPrintTest extends CamelTestSupport {
         when(psLookup.getDefaultPrintService()).thenReturn(psDefault);
         DocPrintJob docPrintJob = mock(DocPrintJob.class);
         when(psDefault.createPrintJob()).thenReturn(docPrintJob);
+        MediaTray[] trays = new MediaTray[]{
+            MediaTray.TOP,
+            MediaTray.MIDDLE,
+            MediaTray.BOTTOM
+        };
+        when(psDefault.getSupportedAttributeValues(Media.class, null, null)).thenReturn(trays);
         PrintServiceLookup.registerServiceProvider(psLookup);
     }
 }

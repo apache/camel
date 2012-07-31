@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.CastUtils;
 
 /**
  * @version 
@@ -52,7 +51,7 @@ public class RmiComponent extends DefaultComponent {
         }
 
         if (!classes.isEmpty()) {
-            List<Class<?>> interfaces = CastUtils.cast(classes);
+            List<Class<?>> interfaces = classes;
             rmi.setRemoteInterfaces(interfaces);
         }
 

@@ -117,7 +117,6 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -1700,7 +1699,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     private void shutdownServices(Collection<?> services, boolean reverse) {
-        Collection<Object> list = CastUtils.cast(services);
+        Collection<?> list = services;
         if (reverse) {
             List<Object> reverseList = new ArrayList<Object>(services);
             Collections.reverse(reverseList);

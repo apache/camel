@@ -51,7 +51,7 @@ public class CMISConsumer extends ScheduledPollConsumer {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeaders(properties);
         exchange.getIn().setBody(inputStream);
-        LOG.debug("Polling node : {0}", properties.get("cmis:name"));
+        LOG.debug("Polling node : {}", properties.get("cmis:name"));
         getProcessor().process(exchange);
         return 1;
     }

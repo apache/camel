@@ -57,7 +57,7 @@ public class RecursiveTreeWalker {
         ItemIterable<CmisObject> itemIterable = folder.getChildren(operationContext);
         while (!finished) {
             ItemIterable<CmisObject> currentPage = itemIterable.skipTo(count).getPage();
-            LOG.debug("Processing page {0}", pageNumber);
+            LOG.debug("Processing page {}", pageNumber);
             for (CmisObject child : currentPage) {
                 if (CMISHelper.isFolder(child)) {
                     Folder childFolder = (Folder)child;

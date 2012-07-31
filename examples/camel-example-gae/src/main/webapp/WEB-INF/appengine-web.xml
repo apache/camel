@@ -22,6 +22,8 @@
     <static-files>
         <exclude path="/index.html" />
     </static-files>
+    
+    <threadsafe>true</threadsafe>
 
 	<system-properties>
 		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>

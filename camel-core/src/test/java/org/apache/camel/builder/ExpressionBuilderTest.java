@@ -30,7 +30,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.util.CastUtils;
 
 import static org.apache.camel.builder.ExpressionBuilder.*;
 import static org.apache.camel.builder.PredicateBuilder.contains;
@@ -101,7 +100,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = camelContextPropertyExpression("CamelTestKey");
         assertExpression(expression, exchange, "CamelTestValue");        
         expression = camelContextPropertiesExpression();
-        Map<String, String> properties = CastUtils.cast(expression.evaluate(exchange, Map.class));
+        Map<?, ?> properties = expression.evaluate(exchange, Map.class);
         assertEquals("Get a wrong properties size", properties.size(), 1);
     }
 

@@ -84,7 +84,7 @@ public class IBatisConsumer extends ScheduledBatchPollingConsumer {
         // poll data from the database
         IBatisEndpoint endpoint = getEndpoint();
         LOG.trace("Polling: {}", endpoint);
-        List<Object> data = CastUtils.cast(endpoint.getProcessingStrategy().poll(this, getEndpoint()));
+        List<Object> data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
 
         // create a list of exchange objects with the data
         Queue<DataHolder> answer = new LinkedList<DataHolder>();

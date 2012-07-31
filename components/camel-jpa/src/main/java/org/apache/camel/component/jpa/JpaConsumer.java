@@ -80,7 +80,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 configureParameters(query);
                 LOG.trace("Created query {}", query);
 
-                List<Object> results = CastUtils.cast(query.getResultList());
+                List<?> results = query.getResultList();
                 LOG.trace("Got result list from query {}", results);
 
                 for (Object result : results) {

@@ -16,12 +16,18 @@
  */
 package org.apache.camel.example.gae;
 
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.Document;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.gae.mail.GMailBinding;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+
 
 public class TutorialRouteBuilder extends RouteBuilder {
 
@@ -49,10 +55,30 @@ public class TutorialRouteBuilder extends RouteBuilder {
         return new AggregationStrategy() {
             public Exchange aggregate(Exchange reportExchange, Exchange weatherExchange) {
                 ReportData reportData = reportExchange.getIn().getBody(ReportData.class);
-                reportData.setWeather(weatherExchange.getIn().getBody(Document.class));
+                reportData.setWeather(toDocument(weatherExchange.getIn().getBody(InputStream.class)));
                 return reportExchange;
             }
         };
+    }
+    
+    // As GAE have trouble to load the  javax.xml.transform.stax.StAXSource which is used the XmlConverter
+    // Now we just do the transformation ourself.
+    private static DocumentBuilderFactory createDocumentBuilderFactory() {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
+        return factory;
+    }
+    
+    private static Document toDocument(InputStream stream) {
+        DocumentBuilderFactory factory = createDocumentBuilderFactory();
+        try {
+            Document doc =  factory.newDocumentBuilder().parse(stream);
+            return doc;
+        } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
     }
     
 }

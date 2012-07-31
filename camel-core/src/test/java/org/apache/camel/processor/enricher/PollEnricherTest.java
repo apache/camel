@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.enricher;
 
-import java.util.List;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

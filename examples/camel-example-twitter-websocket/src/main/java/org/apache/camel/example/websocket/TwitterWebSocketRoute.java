@@ -17,8 +17,8 @@
 package org.apache.camel.example.websocket;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.camel.component.twitter.TwitterComponent;
+import org.apache.camel.component.websocket.WebsocketComponent;
 
 /**
  * A Camel route that updates from twitter all tweets using having the search term.

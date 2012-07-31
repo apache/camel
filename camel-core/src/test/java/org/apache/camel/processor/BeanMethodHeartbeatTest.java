@@ -28,7 +28,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.CastUtils;
 
 /**
  * This test shows we can poll a bean for a method and send the POJO over some transport
@@ -50,7 +49,7 @@ public class BeanMethodHeartbeatTest extends ContextTestSupport {
         Exchange exchange = list.get(0);
         log.debug("In: " + exchange.getIn());
         log.debug("Out: " + exchange.getOut());
-        Map<String, Object> map = CastUtils.cast(assertIsInstanceOf(Map.class, exchange.getIn().getBody()));
+        Map<?, ?> map = assertIsInstanceOf(Map.class, exchange.getIn().getBody());
         log.debug("Received: " + map);
     }
 
