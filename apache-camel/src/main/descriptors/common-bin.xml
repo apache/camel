@@ -60,6 +60,7 @@
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ejb</include>
+        <include>org.apache.camel:camel-elasticsearch</include>
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-flatpack</include>

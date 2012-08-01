@@ -58,6 +58,7 @@
       <commons-lang-version-xmljson>2.5</commons-lang-version-xmljson>
       <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
+      <elasticsearch-bundle-version>0.19.8_1-SNAPSHOT</elasticsearch-bundle-version>
       <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
       <fastinfoset-version>1.2.7_4</fastinfoset-version>
       <features.file>features.xml</features.file>
@@ -66,6 +67,7 @@
       <felix-framework-version>2.0.5</felix-framework-version>
       <fop-bundle-version>1.0_2</fop-bundle-version>
       <freemarker-bundle-version>2.3.19_1</freemarker-bundle-version>
+      <google-guava-bundle-version>11_1</google-guava-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>

@@ -286,6 +286,19 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dozer/${project.version}</bundle>
   </feature>
+  <feature name="camel-elasticsearch" version="${project.version}" resolver="(obr)" start-level="50">
+    <feature>http</feature>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guava/${google-guava-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.protobuf-java/${protobuf-java-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency="true">mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency="true">mvn:org.codehaus.jackson/jackson-smile/${jackson-version}</bundle>
+    <bundle dependency="true">mvn:joda-time/joda-time/${jodatime-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mvel/${mvel-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene/${lucene-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch/${elasticsearch-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-elasticsearch/${project.version}</bundle>
+  </feature>
   <feature name='camel-eventadmin' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>eventadmin</feature>
     <feature version='${project.version}'>camel-core</feature>

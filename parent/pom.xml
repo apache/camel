@@ -71,6 +71,7 @@
     <dozer-version>5.3.2</dozer-version>
     <easymock-version>3.0</easymock-version>
     <ehcache-bundle-version>2.5.2_1</ehcache-bundle-version>
+    <elasticsearch-version>0.19.8</elasticsearch-version>
     <flatpack-version>3.2.0_2</flatpack-version>
     <fop-version>1.0</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
@@ -397,6 +398,11 @@
          <groupId>org.apache.camel</groupId>
 	     <artifactId>camel-ejb</artifactId>
 	     <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-elasticsearch</artifactId>
+         <version>${project.version}</version>
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
