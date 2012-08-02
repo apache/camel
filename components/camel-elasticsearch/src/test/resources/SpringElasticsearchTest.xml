@@ -7,7 +7,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:index" />
-            <to uri="elasticsearch://local?indexName=twitter&amp;indexType=tweet"/>
+            <to uri="elasticsearch://local?operation=INDEX&amp;indexName=twitter&amp;indexType=tweet"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

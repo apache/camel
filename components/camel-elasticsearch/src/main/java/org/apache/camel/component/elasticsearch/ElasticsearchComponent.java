@@ -28,21 +28,16 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class ElasticsearchComponent extends DefaultComponent {
 
-    private ElasticsearchConfiguration config;
-
     public ElasticsearchComponent() {
         super();
-        config = new ElasticsearchConfiguration();
     }
 
     public ElasticsearchComponent(CamelContext context) {
         super(context);
-        config = new ElasticsearchConfiguration();
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        config.parseURI(new URI(uri), parameters, this);
-        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config);
+        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, parameters);
         setProperties(endpoint, parameters);
         return endpoint;
     }

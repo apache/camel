@@ -29,6 +29,10 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 public class ElasticsearchConfiguration {
 
+    public static final String PARAM_OPERATION = "operation";
+    public static final String OPERATION_INDEX = "INDEX";
+    public static final String OPERATION_GET_BY_ID = "GET_BY_ID";
+    public static final String PARAM_INDEX_ID = "indexId";
     public static final String PARAM_DATA = "data";
     public static final String PARAM_INDEX_NAME = "indexName";
     public static final String PARAM_INDEX_TYPE = "indexType";
@@ -44,16 +48,10 @@ public class ElasticsearchConfiguration {
     private String indexType;
     private boolean local;
     private Boolean data;
+    private String operation;
 
-    public ElasticsearchConfiguration() {
-    }
+    public ElasticsearchConfiguration(URI uri, Map<String, Object> parameters) throws Exception {
 
-    public ElasticsearchConfiguration(URI uri) throws Exception {
-        this();
-        this.uri = uri;
-    }
-
-    public void parseURI(URI uri, Map<String, Object> parameters, ElasticsearchComponent component) throws Exception {
         String protocol = uri.getScheme();
 
         if (!protocol.equalsIgnoreCase(PROTOCOL)) {
@@ -86,6 +84,7 @@ public class ElasticsearchConfiguration {
 
         indexName = (String)parameters.remove(PARAM_INDEX_NAME);
         indexType = (String)parameters.remove(PARAM_INDEX_TYPE);
+        operation = (String)parameters.remove(PARAM_OPERATION);
     }
 
     protected Boolean toBoolean(Object string) {
@@ -178,4 +177,11 @@ public class ElasticsearchConfiguration {
         this.data = data;
     }
 
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getOperation() {
+        return this.operation;
+    }
 }

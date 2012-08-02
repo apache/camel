@@ -56,6 +56,7 @@ public class SpringElasticsearchTest extends AbstractJUnit4SpringContextTests {
             }
         }, new HashMap() {
             {
+                put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
                 put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
                 put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
             }

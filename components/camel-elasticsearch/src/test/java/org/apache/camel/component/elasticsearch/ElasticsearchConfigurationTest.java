@@ -31,53 +31,52 @@ public class ElasticsearchConfigurationTest {
 
     @Test
     public void localNode() throws Exception {
-        ElasticsearchConfiguration conf = new ElasticsearchConfiguration();
-        URI uri = new URI("elasticsearch://local?indexName=twitter&indexType=tweet");
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
-        conf.parseURI(uri, parameters, null);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertTrue(conf.isLocal());
         assertEquals("twitter", conf.getIndexName());
         assertEquals("tweet", conf.getIndexType());
+        assertEquals("INDEX", conf.getOperation());
         assertTrue(conf.isData());
         assertNull(conf.getClusterName());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void localNonDataNodeThrowsIllegalArgumentException() throws Exception {
-        ElasticsearchConfiguration conf = new ElasticsearchConfiguration();
-        URI uri = new URI("elasticsearch://local?indexName=twitter&indexType=tweet&data=false");
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&data=false");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
-        conf.parseURI(uri, parameters, null);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
     }
 
     @Test
     public void localConfDefaultsToDataNode() throws Exception {
-        ElasticsearchConfiguration conf = new ElasticsearchConfiguration();
-        URI uri = new URI("elasticsearch://local?indexName=twitter&indexType=tweet");
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
-        conf.parseURI(uri, parameters, null);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertEquals("INDEX", conf.getOperation());
         assertTrue(conf.isLocal());
         assertTrue(conf.isData());
     }
 
     @Test
     public void clusterConfDefaultsToNonDataNode() throws Exception {
-        ElasticsearchConfiguration conf = new ElasticsearchConfiguration();
-        URI uri = new URI("elasticsearch://clustername?indexName=twitter&indexType=tweet");
+        URI uri = new URI("elasticsearch://clustername?operation=INDEX&indexName=twitter&indexType=tweet");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
-        conf.parseURI(uri, parameters, null);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertEquals("clustername", conf.getClusterName());
+        assertEquals("INDEX", conf.getOperation());
         assertFalse(conf.isLocal());
         assertFalse(conf.isData());
     }
 
     @Test
     public void localDataNode() throws Exception {
-        ElasticsearchConfiguration conf = new ElasticsearchConfiguration();
-        URI uri = new URI("elasticsearch://local?indexName=twitter&indexType=tweet&data=true");
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&data=true");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
-        conf.parseURI(uri, parameters, null);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertTrue(conf.isLocal());
+        assertEquals("INDEX", conf.getOperation());
         assertEquals("twitter", conf.getIndexName());
         assertEquals("tweet", conf.getIndexType());
         assertTrue(conf.isData());

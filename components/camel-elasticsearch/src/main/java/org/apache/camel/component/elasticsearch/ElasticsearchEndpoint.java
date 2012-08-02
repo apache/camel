@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -37,9 +40,9 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     private Client client;
     private ElasticsearchConfiguration config;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config) {
+    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, Map<String, Object> parameters) throws Exception {
         super(uri, component);
-        this.config = config;
+        this.config = new ElasticsearchConfiguration(new URI(uri), parameters);
     }
 
     public Producer createProducer() throws Exception {
@@ -89,6 +92,10 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     public ElasticsearchConfiguration getConfig() {
         return config;
+    }
+
+    public void setOperation(String operation) {
+        config.setOperation(operation);
     }
 
 }
