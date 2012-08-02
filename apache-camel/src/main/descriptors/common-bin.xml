@@ -130,6 +130,7 @@
         <include>org.apache.camel:camel-servlet</include>
         <include>org.apache.camel:camel-shiro</include>
         <include>org.apache.camel:camel-sip</include>
+        <include>org.apache.camel:camel-sjms</include>
         <include>org.apache.camel:camel-smpp</include>
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
