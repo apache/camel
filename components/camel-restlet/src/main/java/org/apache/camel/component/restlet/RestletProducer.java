@@ -130,9 +130,7 @@ public class RestletProducer extends DefaultAsyncProducer {
 
         String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (query != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Adding query: " + query + " to uri: " + uri);
-            }
+            LOG.trace("Adding query: {} to uri: {}", query, uri);
             uri = addQueryToUri(uri, query);
         }
 
@@ -145,7 +143,7 @@ public class RestletProducer extends DefaultAsyncProducer {
             return uri;
         }
 
-        StringBuffer answer = new StringBuffer();
+        StringBuilder answer = new StringBuilder();
 
         int index = uri.indexOf('?');
         if (index < 0) {
@@ -204,8 +202,10 @@ public class RestletProducer extends DefaultAsyncProducer {
         if (response instanceof Response) {
 
             for (Map.Entry<String, Object> entry : ((Response) response).getAttributes().entrySet()) {
-                LOG.trace("Parse external header {}={}", entry.getKey(), entry.getValue());
-                answer.put(entry.getKey(), entry.getValue().toString());
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                LOG.trace("Parse external header {}={}", key, value);
+                answer.put(key, value.toString());
             }
         }
 

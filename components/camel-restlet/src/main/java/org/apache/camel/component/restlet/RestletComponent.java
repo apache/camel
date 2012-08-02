@@ -280,10 +280,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
                 LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
             }
         } else {
-            router.addRoute(endpoint.getRestletMethod(), target);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, endpoint.getRestletMethod());
-            }
+            Method method = endpoint.getRestletMethod();
+            router.addRoute(method, target);
+            LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
         }
 
         if (!router.hasBeenAttached()) {
