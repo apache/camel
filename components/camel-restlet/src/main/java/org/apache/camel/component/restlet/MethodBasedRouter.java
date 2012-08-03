@@ -46,13 +46,14 @@ class MethodBasedRouter extends Restlet {
     
     @Override
     public void handle(Request request, Response response) {
-        LOG.debug("MethodRouter ({}) received request method: {}", uriPattern, request.getMethod());
+        Method method = request.getMethod();
+        LOG.debug("MethodRouter ({}) received request method: {}", uriPattern, method);
         
-        Restlet target = routes.get(request.getMethod());
+        Restlet target = routes.get(method);
         if (target != null) {
             target.handle(request, response);
         } else {
-            LOG.debug("No route for request method: {}", request.getMethod());
+            LOG.debug("No route for request method: {}", method);
             response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
         }
     }

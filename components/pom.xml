@@ -74,6 +74,7 @@
     <module>camel-dozer</module>
     <module>camel-eclipse</module>
     <module>camel-ejb</module>
+    <module>camel-elasticsearch</module>
     <module>camel-eventadmin</module>
     <module>camel-exec</module>
     <module>camel-flatpack</module>
@@ -81,7 +82,7 @@
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
     <module>camel-gae</module>
-	<module>camel-gson</module>
+    <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
     <module>camel-hawtdb</module>
@@ -140,6 +141,7 @@
     <module>camel-sip</module>
     <module>camel-smpp</module>
     <module>camel-snmp</module>
+    <module>camel-sjms</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
     <module>camel-spring-batch</module>
