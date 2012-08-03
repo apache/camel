@@ -32,7 +32,6 @@ import javax.jms.TextMessage;
 
 /**
  *
- * @author sully6768
  */
 public class MyInOutTestConsumer implements MessageListener {
     private static int ackMode;

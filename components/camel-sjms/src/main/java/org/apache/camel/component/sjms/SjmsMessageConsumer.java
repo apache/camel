@@ -26,7 +26,6 @@ import org.apache.camel.component.sjms.pool.SessionPool;
 /**
  * TODO Add Class documentation for SjmsMessageConsumer
  *
- * @author sully6768
  */
 public interface SjmsMessageConsumer extends MessageListener {
     void handleMessage(Message message);

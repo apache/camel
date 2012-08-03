@@ -31,7 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Base SjmsProducer class.
  *
- * @author sully6768
  */
 public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
@@ -39,7 +38,6 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
     /**
      * The {@link MessageProducerResources} pool for all {@link SjmsProducer} classes.
      *
-     * @author sully6768
      */
     protected class MessageProducerPool extends ObjectPool<MessageProducerResources> {
 

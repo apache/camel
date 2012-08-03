@@ -21,7 +21,6 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * TODO Add Class documentation for IllegalHeaderException
  *
- * @author sully6768
  */
 public class IllegalHeaderException extends RuntimeCamelException {
 

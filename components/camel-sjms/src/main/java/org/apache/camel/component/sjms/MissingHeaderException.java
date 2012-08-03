@@ -21,7 +21,6 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * TODO Add Class documentation for MissingHeaderException
  *
- * @author sully6768
  */
 public class MissingHeaderException extends RuntimeCamelException {
 
