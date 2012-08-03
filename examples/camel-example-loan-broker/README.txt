@@ -2,7 +2,7 @@ Loan Broker Example
 ====================
 
 This example shows how to use Camel to implement the EIP's loan broker example,
-from the EIP book (http://www.eaipatterns.com/SystemManagementExample.html).
+from the EIP book (http://www.enterpriseintegrationpatterns.com/SystemManagementExample.html).
 
 The example has two versions (JMS queues, and web services),
 that uses a different transport for exchanging messages between
