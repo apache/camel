@@ -77,6 +77,10 @@ public class MyBatisProducer extends DefaultProducer {
             }
 
             doProcessResult(exchange, result);
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
         } finally {
             session.close();
         }
@@ -97,6 +101,10 @@ public class MyBatisProducer extends DefaultProducer {
             }
 
             doProcessResult(exchange, result);
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
         } finally {
             session.close();
         }
@@ -122,12 +130,13 @@ public class MyBatisProducer extends DefaultProducer {
                 result = session.insert(statement);
                 doProcessResult(exchange, result);
             }
+
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
         } finally {
-            try {
-                session.commit();
-            } finally {
-                session.close();                
-            }
+            session.close();
         }
     }
 
@@ -147,12 +156,13 @@ public class MyBatisProducer extends DefaultProducer {
                 result = session.insert(statement);
                 doProcessResult(exchange, result);
             }
+
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
         } finally {
-            try {
-                session.commit();
-            } finally {
-                session.close();                
-            }
+            session.close();
         }
     }
 
@@ -176,12 +186,13 @@ public class MyBatisProducer extends DefaultProducer {
                 result = session.update(statement);
                 doProcessResult(exchange, result);
             }
+
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
         } finally {
-            try {
-                session.commit();
-            } finally {
-                session.close();                
-            }
+            session.close();
         }
     }
 
@@ -205,12 +216,13 @@ public class MyBatisProducer extends DefaultProducer {
                 result = session.delete(statement);
                 doProcessResult(exchange, result);
             }
+
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
         } finally {
-            try {
-                session.commit();
-            } finally {
-                session.close();                
-            }
+            session.close();
         }
     }
 
