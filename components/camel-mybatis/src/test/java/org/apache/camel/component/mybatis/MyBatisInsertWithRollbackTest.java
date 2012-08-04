@@ -33,6 +33,10 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
         template.sendBody("direct:start", null);
 
         assertMockEndpointsSatisfied();
+
+        // there should be still 2 rows
+        Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
+        assertEquals("There should be 2 rows", 2, rows.intValue());
     }
 
     @Override
