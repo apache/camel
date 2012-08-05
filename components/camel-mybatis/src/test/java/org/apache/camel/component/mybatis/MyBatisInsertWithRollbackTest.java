@@ -44,7 +44,7 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(PersistenceException.class).handled(true)
+                onException(Exception.class).handled(true)
                     .to("mock:rollback");
 
                 from("direct:start")
