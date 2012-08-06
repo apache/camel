@@ -24,7 +24,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,185 +43,138 @@ public class MyBatisProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        switch (endpoint.getStatementType()) {
-        case SelectOne:
-            doSelectOne(exchange); break;
-        case SelectList:
-            doSelectList(exchange); break;
-        case Insert:
-            doInsert(exchange); break;
-        case InsertList:
-            doInsertList(exchange); break;
-        case Update:
-            doUpdate(exchange); break;
-        case Delete:
-            doDelete(exchange); break;
-        default:
-            throw new IllegalArgumentException("Unsupported statementType: " + endpoint.getStatementType());
+        SqlSession session = endpoint.getSqlSessionFactory().openSession();
+
+        try {
+            switch (endpoint.getStatementType()) {
+            case SelectOne:
+                doSelectOne(exchange, session);
+                break;
+            case SelectList:
+                doSelectList(exchange, session);
+                break;
+            case Insert:
+                doInsert(exchange, session);
+                break;
+            case InsertList:
+                doInsertList(exchange, session);
+                break;
+            case Update:
+                doUpdate(exchange, session);
+                break;
+            case Delete:
+                doDelete(exchange, session);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported statementType: " + endpoint.getStatementType());
+            }
+
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
+        } finally {
+            session.close();
         }
     }
 
-    private void doSelectOne(Exchange exchange) throws Exception {
-        SqlSessionFactory client = endpoint.getSqlSessionFactory();
-        SqlSession session = client.openSession();
-        try {
-            Object result;
-            Object in = exchange.getIn().getBody();
-            if (in != null) {
-                LOG.trace("SelectOne: {} using statement: {}", in, statement);
-                result = session.selectOne(statement, in);
-            } else {
-                LOG.trace("SelectOne using statement: {}", statement);
-                result = session.selectOne(statement);
-            }
+    private void doSelectOne(Exchange exchange, SqlSession session) throws Exception {
+        Object result;
+        Object in = exchange.getIn().getBody();
+        if (in != null) {
+            LOG.trace("SelectOne: {} using statement: {}", in, statement);
+            result = session.selectOne(statement, in);
+        } else {
+            LOG.trace("SelectOne using statement: {}", statement);
+            result = session.selectOne(statement);
+        }
 
+        doProcessResult(exchange, result);
+    }
+
+    private void doSelectList(Exchange exchange, SqlSession session) throws Exception {
+        Object result;
+        Object in = exchange.getIn().getBody();
+        if (in != null) {
+            LOG.trace("SelectList: {} using statement: {}", in, statement);
+            result = session.selectList(statement, in);
+        } else {
+            LOG.trace("SelectList using statement: {}", statement);
+            result = session.selectList(statement);
+        }
+
+        doProcessResult(exchange, result);
+    }
+
+    private void doInsert(Exchange exchange, SqlSession session) throws Exception {
+        Object result;
+        Object in = exchange.getIn().getBody();
+        if (in != null) {
+            // lets handle arrays or collections of objects
+            Iterator<?> iter = ObjectHelper.createIterator(in);
+            while (iter.hasNext()) {
+                Object value = iter.next();
+                LOG.trace("Inserting: {} using statement: {}", value, statement);
+                result = session.insert(statement, value);
+                doProcessResult(exchange, result);
+            }
+        } else {
+            LOG.trace("Inserting using statement: {}", statement);
+            result = session.insert(statement);
             doProcessResult(exchange, result);
-            session.commit();
-        } catch (Exception e) {
-            session.rollback();
-            throw e;
-        } finally {
-            session.close();
         }
     }
 
-    private void doSelectList(Exchange exchange) throws Exception {
-        SqlSessionFactory client = endpoint.getSqlSessionFactory();
-        SqlSession session = client.openSession();
-        try {
-            Object result;
-            Object in = exchange.getIn().getBody();
-            if (in != null) {
-                LOG.trace("SelectList: {} using statement: {}", in, statement);
-                result = session.selectList(statement, in);
-            } else {
-                LOG.trace("SelectList using statement: {}", statement);
-                result = session.selectList(statement);
-            }
-
+    private void doInsertList(Exchange exchange, SqlSession session) throws Exception {
+        Object result;
+        Object in = exchange.getIn().getBody();
+        if (in != null) {
+            // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
+            LOG.trace("Inserting: {} using statement: {}", in, statement);
+            result = session.insert(statement, in);
             doProcessResult(exchange, result);
-            session.commit();
-        } catch (Exception e) {
-            session.rollback();
-            throw e;
-        } finally {
-            session.close();
+        } else {
+            LOG.trace("Inserting using statement: {}", statement);
+            result = session.insert(statement);
+            doProcessResult(exchange, result);
         }
     }
 
-    private void doInsert(Exchange exchange) throws Exception {
-        SqlSessionFactory client = endpoint.getSqlSessionFactory();
-        SqlSession session = client.openSession();
-        try {
-            Object result;
-            Object in = exchange.getIn().getBody();
-            if (in != null) {
-                // lets handle arrays or collections of objects
-                Iterator<?> iter = ObjectHelper.createIterator(in);
-                while (iter.hasNext()) {
-                    Object value = iter.next();
-                    LOG.trace("Inserting: {} using statement: {}", value, statement);
-                    result = session.insert(statement, value);
-                    doProcessResult(exchange, result);
-                }
-            } else {
-                LOG.trace("Inserting using statement: {}", statement);
-                result = session.insert(statement);
+    private void doUpdate(Exchange exchange, SqlSession session) throws Exception {
+        Object result;
+        Object in = exchange.getIn().getBody();
+        if (in != null) {
+            // lets handle arrays or collections of objects
+            Iterator<?> iter = ObjectHelper.createIterator(in);
+            while (iter.hasNext()) {
+                Object value = iter.next();
+                LOG.trace("Updating: {} using statement: {}", value, statement);
+                result = session.update(statement, value);
                 doProcessResult(exchange, result);
             }
-
-            session.commit();
-        } catch (Exception e) {
-            session.rollback();
-            throw e;
-        } finally {
-            session.close();
+        } else {
+            LOG.trace("Updating using statement: {}", statement);
+            result = session.update(statement);
+            doProcessResult(exchange, result);
         }
     }
 
-    private void doInsertList(Exchange exchange) throws Exception {
-        SqlSessionFactory client = endpoint.getSqlSessionFactory();
-        SqlSession session = client.openSession();
-        try {
-            Object result;
-            Object in = exchange.getIn().getBody();
-            if (in != null) {
-                // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
-                LOG.trace("Inserting: {} using statement: {}", in, statement);
-                result = session.insert(statement, in);
-                doProcessResult(exchange, result);
-            } else {
-                LOG.trace("Inserting using statement: {}", statement);
-                result = session.insert(statement);
+    private void doDelete(Exchange exchange, SqlSession session) throws Exception {
+        Object result;
+        Object in = exchange.getIn().getBody();
+        if (in != null) {
+            // lets handle arrays or collections of objects
+            Iterator<?> iter = ObjectHelper.createIterator(in);
+            while (iter.hasNext()) {
+                Object value = iter.next();
+                LOG.trace("Deleting: {} using statement: {}", value, statement);
+                result = session.delete(statement, value);
                 doProcessResult(exchange, result);
             }
-
-            session.commit();
-        } catch (Exception e) {
-            session.rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
-    }
-
-    private void doUpdate(Exchange exchange) throws Exception {
-        SqlSessionFactory client = endpoint.getSqlSessionFactory();
-        SqlSession session = client.openSession();
-        try {
-            Object result;
-            Object in = exchange.getIn().getBody();
-            if (in != null) {
-                // lets handle arrays or collections of objects
-                Iterator<?> iter = ObjectHelper.createIterator(in);
-                while (iter.hasNext()) {
-                    Object value = iter.next();
-                    LOG.trace("Updating: {} using statement: {}", value, statement);
-                    result = session.update(statement, value);
-                    doProcessResult(exchange, result);
-                }
-            } else {
-                LOG.trace("Updating using statement: {}", statement);
-                result = session.update(statement);
-                doProcessResult(exchange, result);
-            }
-
-            session.commit();
-        } catch (Exception e) {
-            session.rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
-    }
-
-    private void doDelete(Exchange exchange) throws Exception {
-        SqlSessionFactory client = endpoint.getSqlSessionFactory();
-        SqlSession session = client.openSession();
-        try {
-            Object result;
-            Object in = exchange.getIn().getBody();
-            if (in != null) {
-                // lets handle arrays or collections of objects
-                Iterator<?> iter = ObjectHelper.createIterator(in);
-                while (iter.hasNext()) {
-                    Object value = iter.next();
-                    LOG.trace("Deleting: {} using statement: {}", value, statement);
-                    result = session.delete(statement, value);
-                    doProcessResult(exchange, result);
-                }
-            } else {
-                LOG.trace("Deleting using statement: {}", statement);
-                result = session.delete(statement);
-                doProcessResult(exchange, result);
-            }
-
-            session.commit();
-        } catch (Exception e) {
-            session.rollback();
-            throw e;
-        } finally {
-            session.close();
+        } else {
+            LOG.trace("Deleting using statement: {}", statement);
+            result = session.delete(statement);
+            doProcessResult(exchange, result);
         }
     }
 
