@@ -44,7 +44,6 @@ public class MyBatisProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         SqlSession session = endpoint.getSqlSessionFactory().openSession();
-
         try {
             switch (endpoint.getStatementType()) {
             case SelectOne:
@@ -68,12 +67,14 @@ public class MyBatisProducer extends DefaultProducer {
             default:
                 throw new IllegalArgumentException("Unsupported statementType: " + endpoint.getStatementType());
             }
-
+            // flush the batch statements and commit the database connection
             session.commit();
         } catch (Exception e) {
+            // discard the pending batch statements and roll the database connection back
             session.rollback();
             throw e;
         } finally {
+            // and finally close the session as we're done
             session.close();
         }
     }
