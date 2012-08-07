@@ -25,10 +25,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.springframework.data.neo4j.rest.SpringRestGraphDatabase;
 
+@Ignore("This test need to start the neo4j server first")
 public class RestNeo4jProducerCreateNodeIntegrationTest extends CamelTestSupport {
    
     @Produce(uri = "direct:start")

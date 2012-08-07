@@ -24,12 +24,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.springframework.data.neo4j.rest.SpringRestGraphDatabase;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 
+@Ignore("This test need to start the neo4j server first")
 public class RestNeo4jProducerCreateRelationshipIntegrationTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start")
@@ -37,9 +39,7 @@ public class RestNeo4jProducerCreateRelationshipIntegrationTest extends CamelTes
 
     private final String neo4jEndpoint = "neo4j:http://localhost:7474/db/data/";
 
-    private final Neo4jTemplate neo = new Neo4jTemplate(
-                                                        new SpringRestGraphDatabase(
-                                                                                    "http://localhost:7474/db/data/"));
+    private final Neo4jTemplate neo = new Neo4jTemplate(new SpringRestGraphDatabase("http://localhost:7474/db/data/"));
 
     @EndpointInject(uri = "mock:end")
     private MockEndpoint end;
