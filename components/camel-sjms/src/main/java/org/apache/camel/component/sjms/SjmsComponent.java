@@ -23,12 +23,12 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.sjms.pool.DefaultConnectionResource;
+import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
+import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +45,9 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
     private Integer maxConnections = 1;
 
     /*
-     * @see org.apache.camel.impl.DefaultComponent#createEndpoint(java.lang.String, java.lang.String, java.util.Map)
-     *
+     * @see
+     * org.apache.camel.impl.DefaultComponent#createEndpoint(java.lang.String,
+     * java.lang.String, java.util.Map)
      * @param uri The value passed into our call to create an endpoint
      * @param remaining
      * @param parameters
@@ -54,8 +55,7 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
      * @throws Exception
      */
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining,
-            Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validateMepAndReplyTo(parameters);
         uri = normalizeUri(uri);
         SjmsEndpoint endpoint = new SjmsEndpoint(uri, this);
@@ -115,11 +115,7 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
             if (!parameters.get("exchangePattern").equals(ExchangePattern.InOut.toString())) {
                 String namedReplyTo = (String)parameters.get("namedReplyTo");
                 ExchangePattern mep = ExchangePattern.valueOf((String)parameters.get("exchangePattern"));
-                throw new CamelException(
-                                         "Setting parameter namedReplyTo="
-                                             + namedReplyTo
-                                             + " requires a MEP of type InOut.  Parameter exchangePattern is set to "
-                                             + mep);
+                throw new CamelException("Setting parameter namedReplyTo=" + namedReplyTo + " requires a MEP of type InOut.  Parameter exchangePattern is set to " + mep);
             }
         }
     }
@@ -130,22 +126,21 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
 
         LOGGER.debug("Verify ConnectionResource");
         if (getConnectionResource() == null) {
-            LOGGER.debug("No ConnectionResource provided.  Initialize the DefaultConnectionResource.");
+            LOGGER.debug("No ConnectionResource provided.  Initialize the ConnectionFactoryResource.");
             // We always use a connection pool, even for a pool of 1
-            DefaultConnectionResource connections = new DefaultConnectionResource(getMaxConnections(),
-                                                                                  getConnectionFactory());
+            ConnectionFactoryResource connections = new ConnectionFactoryResource(getMaxConnections(), getConnectionFactory());
             connections.fillPool();
             setConnectionResource(connections);
-        } else if (getConnectionResource() instanceof DefaultConnectionResource) {
-            ((DefaultConnectionResource)getConnectionResource()).fillPool();
+        } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
+            ((ConnectionFactoryResource)getConnectionResource()).fillPool();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (getConnectionResource() != null) {
-            if (getConnectionResource() instanceof DefaultConnectionResource) {
-                ((DefaultConnectionResource)getConnectionResource()).drainPool();
+            if (getConnectionResource() instanceof ConnectionFactoryResource) {
+                ((ConnectionFactoryResource)getConnectionResource()).drainPool();
             }
         }
         super.doStop();
@@ -155,8 +150,8 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
      * Sets the ConnectionFactory value of connectionFactory for this instance
      * of SjmsComponent.
      * 
-     * @param connectionFactory
-     *            Sets ConnectionFactory, default is TODO add default
+     * @param connectionFactory Sets ConnectionFactory, default is TODO add
+     *            default
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;

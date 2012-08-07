@@ -21,7 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.component.sjms.pool.DefaultConnectionResource;
+import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
@@ -62,9 +62,9 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(BROKER_URI);
-        DefaultConnectionResource connectionResource = new DefaultConnectionResource();
+        ConnectionFactoryResource connectionResource = new ConnectionFactoryResource();
         connectionResource.setConnectionFactory(connectionFactory);
-        connectionResource.setConnectionId(CONNECTION_ID);
+        connectionResource.setClientId(CONNECTION_ID);
         CamelContext camelContext = super.createCamelContext();
         SjmsComponent component = new SjmsComponent();
         component.setConnectionResource(connectionResource);

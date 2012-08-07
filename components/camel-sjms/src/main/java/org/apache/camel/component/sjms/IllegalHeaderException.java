@@ -19,55 +19,37 @@ package org.apache.camel.component.sjms;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * TODO Add Class documentation for IllegalHeaderException
- *
+ * IllegalHeaderException is thrown if a header is detected that doesn't meet
+ * the JMS standard.
  */
 public class IllegalHeaderException extends RuntimeCamelException {
 
     /**
-     * 
-     */
-    private static final long serialVersionUID = 1084936154059689378L;
-
-    /**
-     * TODO Add Constructor Javadoc
-     *
      */
     public IllegalHeaderException() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**
-     * TODO Add Constructor Javadoc
-     *
      * @param message
      * @param cause
      */
     public IllegalHeaderException(String message, Throwable cause) {
         super(message, cause);
-        // TODO Auto-generated constructor stub
     }
 
     /**
-     * TODO Add Constructor Javadoc
-     *
      * @param message
      */
     public IllegalHeaderException(String message) {
         super(message);
-        // TODO Auto-generated constructor stub
     }
 
     /**
-     * TODO Add Constructor Javadoc
-     *
      * @param cause
      */
     public IllegalHeaderException(Throwable cause) {
         super(cause);
-        // TODO Auto-generated constructor stub
     }
 
-    
 }

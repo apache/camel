@@ -28,7 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.SjmsConsumer;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
-import org.apache.camel.component.sjms.pool.ObjectPool;
+import org.apache.camel.component.sjms.jms.ObjectPool;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 
 /**

@@ -31,13 +31,14 @@
 
     <artifactId>camel-sjms</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Simple JMS</name>
+    <name>Camel :: SJMS</name>
     <description>A pure Java JMS Camel Component</description>
 
 
     <properties>
         <camel.osgi.export.pkg>
-            org.apache.camel.component.sjms
+            org.apache.camel.component.sjms,
+            org.apache.camel.component.sjms.jms
         </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.sjms.*,
@@ -46,8 +47,6 @@
         </camel.osgi.import.pkg>
         <camel.osgi.private.pkg>
             org.apache.camel.component.sjms.consumer,
-            org.apache.camel.component.sjms.jms,
-            org.apache.camel.component.sjms.pool,
             org.apache.camel.component.sjms.producer,
             org.apache.camel.component.sjms.tx
         </camel.osgi.private.pkg>

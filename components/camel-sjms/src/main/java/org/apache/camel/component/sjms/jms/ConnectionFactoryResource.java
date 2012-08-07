@@ -14,29 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.pool;
+package org.apache.camel.component.sjms.jms;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 
-import org.apache.camel.component.sjms.ConnectionResource;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * TODO Add Class documentation for DefaultConnectionResource
- * 
+ * The default {@link ConnectionResource} implementation for the SJMSComponent.
  */
-public class DefaultConnectionResource extends ObjectPool<Connection> implements ConnectionResource {
+public class ConnectionFactoryResource extends ObjectPool<Connection> implements ConnectionResource {
     private ConnectionFactory connectionFactory;
     private String username;
     private String password;
-    private String connectionId;
+    private String clientId;
 
     /**
-     * TODO Add Constructor Javadoc
-     *
+     * Default Constructor
      */
-    public DefaultConnectionResource() {
+    public ConnectionFactoryResource() {
         super();
     }
 
@@ -46,19 +43,17 @@ public class DefaultConnectionResource extends ObjectPool<Connection> implements
      * @param poolSize
      * @param connectionFactory
      */
-    public DefaultConnectionResource(int poolSize, ConnectionFactory connectionFactory) {
+    public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory) {
         this(poolSize, connectionFactory, null, null);
     }
 
     /**
-     * TODO Add Constructor Javadoc
-     * 
      * @param poolSize
      * @param connectionFactory
      * @param username
      * @param password
      */
-    public DefaultConnectionResource(int poolSize, ConnectionFactory connectionFactory, String username, String password) {
+    public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password) {
         super(poolSize);
         this.connectionFactory = connectionFactory;
         this.username = username;
@@ -66,31 +61,29 @@ public class DefaultConnectionResource extends ObjectPool<Connection> implements
     }
 
     /**
-     * TODO Add Constructor Javadoc
-     * 
      * @param poolSize
      * @param connectionFactory
      * @param username
      * @param password
      */
-    public DefaultConnectionResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId) {
+    public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId) {
         super(poolSize);
         this.connectionFactory = connectionFactory;
         this.username = username;
         this.password = password;
-        this.connectionId = connectionId;
+        this.clientId = connectionId;
     }
-    
+
     @Override
     public Connection borrowConnection() throws Exception {
         return this.borrowObject();
     }
-    
+
     @Override
     public Connection borrowConnection(long timeout) throws Exception {
         return this.borrowObject(timeout);
     }
-    
+
     @Override
     public void returnConnection(Connection connection) throws Exception {
         returnObject(connection);
@@ -107,14 +100,14 @@ public class DefaultConnectionResource extends ObjectPool<Connection> implements
             }
         }
         if (connection != null) {
-            if (ObjectHelper.isNotEmpty(getConnectionId())) {
-                connection.setClientID(getConnectionId());
+            if (ObjectHelper.isNotEmpty(getClientId())) {
+                connection.setClientID(getClientId());
             }
             connection.start();
         }
         return connection;
     }
-    
+
     @Override
     protected void destroyObject(Connection connection) throws Exception {
         if (connection != null) {
@@ -148,11 +141,11 @@ public class DefaultConnectionResource extends ObjectPool<Connection> implements
         this.password = password;
     }
 
-    public String getConnectionId() {
-        return connectionId;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setConnectionId(String connectionId) {
-        this.connectionId = connectionId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }

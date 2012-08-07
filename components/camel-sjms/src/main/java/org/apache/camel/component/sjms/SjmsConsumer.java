@@ -21,7 +21,8 @@ import java.util.UUID;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.component.sjms.pool.SessionPool;
+import org.apache.camel.component.sjms.jms.ConnectionResource;
+import org.apache.camel.component.sjms.jms.SessionPool;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
