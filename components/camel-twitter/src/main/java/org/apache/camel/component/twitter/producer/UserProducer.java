@@ -19,6 +19,7 @@ package org.apache.camel.component.twitter.producer;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 
+import twitter4j.Status;
 import twitter4j.StatusUpdate;
 
 /**
@@ -34,26 +35,42 @@ public class UserProducer extends Twitter4JProducer {
     public void process(Exchange exchange) throws Exception {
         // update user's status
         Object in = exchange.getIn().getBody();
+        Status response;
         if (in instanceof StatusUpdate) {
-            updateStatus((StatusUpdate) in);
+            response = updateStatus((StatusUpdate) in);
         } else {
             String s = exchange.getIn().getMandatoryBody(String.class);
-            updateStatus(s);
+            response = updateStatus(s);
+        }
+
+        /*
+         * Support the InOut exchange pattern in order to provide access to
+         * the unique identifier for the published tweet which is returned in the response
+         * by the Twitter REST API: https://dev.twitter.com/docs/api/1/post/statuses/update
+         */
+        if (exchange.getPattern().isOutCapable()) {
+            // here we just copy the header of in message to the out message
+            exchange.getOut().copyFrom(exchange.getIn());
+            exchange.getOut().setBody(response);
         }
     }
 
-    private void updateStatus(StatusUpdate status) throws Exception {
-        te.getProperties().getTwitter().updateStatus(status);
+    private Status updateStatus(StatusUpdate status) throws Exception {
+        Status reponse = te.getProperties().getTwitter().updateStatus(status);
         log.debug("Updated status: {}", status);
+        log.debug("Status id: {}", reponse.getId());
+        return reponse;
     }
 
-    private void updateStatus(String status) throws Exception {
+    private Status updateStatus(String status) throws Exception {
         if (status.length() > 160) {
             log.warn("Message is longer than 160 characters. Message will be truncated!");
             status = status.substring(0, 160);
         }
 
-        te.getProperties().getTwitter().updateStatus(status);
+        Status response = te.getProperties().getTwitter().updateStatus(status);
         log.debug("Updated status: {}", status);
+        log.debug("Status id: {}", response.getId());
+        return response;
     }
 }
