@@ -122,6 +122,7 @@
     <module>camel-mvel</module>
     <module>camel-mybatis</module>
     <module>camel-nagios</module>
+    <module>camel-neo4j</module>
     <module>camel-netty</module>
     <module>camel-ognl</module>
     <module>camel-paxlogging</module>
