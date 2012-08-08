@@ -23,6 +23,7 @@ import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.elasticsearch.action.ListenableActionFuture;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
@@ -59,6 +60,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             addToIndex(client, exchange);
         } else if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_GET_BY_ID)) {
             getById(client, exchange);
+        } else if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_DELETE)) {
+            deleteById(client, exchange);
         } else {
             throw new IllegalArgumentException(ElasticsearchConfiguration.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
@@ -79,6 +82,24 @@ public class ElasticsearchProducer extends DefaultProducer {
         String indexId = exchange.getIn().getBody(String.class);
 
         GetResponse response = client.prepareGet(indexName, indexType, indexId).execute().actionGet();
+        exchange.getIn().setBody(response);
+    }
+
+    public void deleteById(Client client, Exchange exchange) {
+
+        String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
+        if (indexName == null) {
+            indexName = endpoint.getConfig().getIndexName();
+        }
+
+        String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
+        if (indexType == null) {
+            indexType = endpoint.getConfig().getIndexType();
+        }
+
+        String indexId = exchange.getIn().getBody(String.class);
+
+        DeleteResponse response = client.prepareDelete(indexName, indexType, indexId).execute().actionGet();
         exchange.getIn().setBody(response);
     }
 
