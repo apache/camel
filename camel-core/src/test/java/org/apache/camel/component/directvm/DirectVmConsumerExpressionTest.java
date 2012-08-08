@@ -32,6 +32,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
 
     private CamelContext context2;
     private CamelContext context3;
+    private CamelContext context4;
 
     @Override
     @Before
@@ -40,9 +41,11 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
 
         context2 = new DefaultCamelContext();
         context3 = new DefaultCamelContext();
+        context4 = new DefaultCamelContext();
 
         ServiceHelper.startServices(context2);
         ServiceHelper.startServices(context3);
+        ServiceHelper.startServices(context4);
 
         // add routes after CamelContext has been started
         RouteBuilder routeBuilder = createRouteBuilderCamelContext2();
@@ -54,12 +57,17 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         if (routeBuilder != null) {
             context3.addRoutes(routeBuilder);
         }
+        
+        routeBuilder = createRouteBuilderCamelContext4();
+        if (routeBuilder != null) {
+            context4.addRoutes(routeBuilder);
+        }
     }
 
     @Override
     @After
     protected void tearDown() throws Exception {
-        ServiceHelper.stopServices(context2, context3);
+        ServiceHelper.stopServices(context2, context3, context4);
         super.tearDown();
     }
 
@@ -69,11 +77,15 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
 
         MockEndpoint result3 = context3.getEndpoint("mock:result3", MockEndpoint.class);
         result3.expectedBodiesReceived("Hello World");
+        
+        MockEndpoint result4 = context4.getEndpoint("mock:result4", MockEndpoint.class);
+        result4.expectedMessageCount(0);
 
         template.sendBody("direct:start", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context2);
         MockEndpoint.assertIsSatisfied(context3);
+        MockEndpoint.assertIsSatisfied(context4);
     }
 
     @Override
@@ -107,4 +119,13 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         };
     }
 
+    private RouteBuilder createRouteBuilderCamelContext4() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct-vm:parent/child/ctx4")
+                    .to("mock:result4");
+            }
+        };
+    }
 }
