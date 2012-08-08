@@ -77,6 +77,10 @@ public class DefaultCxfMessageMapperTest extends Assert {
         EasyMock.expectLastCall().andReturn("GET");
         camelMessage.getHeader(Exchange.HTTP_QUERY, String.class);
         EasyMock.expectLastCall().andReturn("");
+        camelMessage.getHeader(Exchange.HTTP_SERVLET_REQUEST);
+        EasyMock.expectLastCall().andReturn(null);
+        camelMessage.getHeader(Exchange.HTTP_SERVLET_RESPONSE);
+        EasyMock.expectLastCall().andReturn(null);
 
         camelMessage.getBody(InputStream.class);
         EasyMock.expectLastCall().andReturn(

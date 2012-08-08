@@ -32,7 +32,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCxfMesssageMapper implements CxfMessageMapper {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfMesssageMapper.class);
-
+    private static final String CXF_HTTP_REQUEST = "HTTP.REQUEST";
+    private static final String CXF_HTTP_RESPONSE = "HTTP.RESPONSE";
+    
     public Message createCxfMessageFromCamelExchange(Exchange camelExchange, 
             HeaderFilterStrategy headerFilterStrategy) {
         
@@ -63,6 +65,10 @@ public class DefaultCxfMesssageMapper implements CxfMessageMapper {
         answer.put(org.apache.cxf.message.Message.ENCODING, enc);
         answer.put(org.apache.cxf.message.Message.QUERY_STRING, queryString);
         
+        Object request = camelMessage.getHeader(Exchange.HTTP_SERVLET_REQUEST);
+        answer.put(CXF_HTTP_REQUEST, request);
+        Object response = camelMessage.getHeader(Exchange.HTTP_SERVLET_RESPONSE);
+        answer.put(CXF_HTTP_RESPONSE, response);
         // TODO propagate security context
         
         LOG.trace("Processing {}, requestContentType = {}, acceptContentTypes = {}, encoding = {}, path = {}, basePath = {}, verb = {}",
