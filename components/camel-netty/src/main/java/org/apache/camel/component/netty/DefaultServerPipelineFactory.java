@@ -90,6 +90,7 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
             SSLContext context = consumer.getConfiguration().getSslContextParameters().createSSLContext();
             SSLEngine engine = context.createSSLEngine();
             engine.setUseClientMode(false);
+            engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
             return new SslHandler(engine);
         } else {
             SSLEngineFactory sslEngineFactory = new SSLEngineFactory(
@@ -99,6 +100,8 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
                 consumer.getConfiguration().getTrustStoreFile(), 
                 consumer.getConfiguration().getPassphrase().toCharArray());
             SSLEngine sslEngine = sslEngineFactory.createServerSSLEngine();
+            sslEngine.setUseClientMode(false);
+            sslEngine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
             return new SslHandler(sslEngine);
         }
     }
