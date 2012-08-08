@@ -302,12 +302,23 @@ public class HttpProducer extends DefaultProducer {
     private static InputStream doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
         // As httpclient is using a AutoCloseInputStream, it will be closed when the connection is closed
         // we need to cache the stream for it.
+        CachedOutputStream cos = null;
         try {
             // This CachedOutputStream will not be closed when the exchange is onCompletion
-            CachedOutputStream cos = new CachedOutputStream(exchange, false);
+            cos = new CachedOutputStream(exchange, false);
             IOHelper.copy(is, cos);
             // When the InputStream is closed, the CachedOutputStream will be closed
             return cos.getWrappedInputStream();
+        } catch (IOException ex) {
+            // try to close the CachedOutputStream when we get the IOException
+            if (cos != null) {
+                try { 
+                    cos.close(); 
+                } catch (IOException ignore) { 
+                    //do nothing here
+                }
+            }
+            throw ex;
         } finally {
             IOHelper.close(is, "Extracting response body", LOG);
         }
