@@ -21,7 +21,8 @@ import java.util.concurrent.Exchanger;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.apache.camel.component.sjms.pool.SessionPool;
+import org.apache.camel.component.sjms.jms.ConnectionResource;
+import org.apache.camel.component.sjms.jms.SessionPool;
 
 /**
  * TODO Add Class documentation for SjmsMessageConsumer

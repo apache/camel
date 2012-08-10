@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.pool;
+package org.apache.camel.component.sjms.jms;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
@@ -22,8 +22,6 @@ import javax.jms.Session;
 import javax.jms.XASession;
 import javax.transaction.xa.XAResource;
 
-import org.apache.camel.component.sjms.ConnectionResource;
-import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
 
 /**
  * TODO Add Class documentation for SessionPool
@@ -135,7 +133,7 @@ public class SessionPool extends ObjectPool<Session> {
     }
 
     /**
-     * Gets the DefaultConnectionResource value of connectionResource for this instance of SessionPool.
+     * Gets the ConnectionFactoryResource value of connectionResource for this instance of SessionPool.
      *
      * @return the connectionResource
      */

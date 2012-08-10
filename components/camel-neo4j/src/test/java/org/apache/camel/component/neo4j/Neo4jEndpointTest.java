@@ -14,20 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms;
 
-import javax.jms.Connection;
+package org.apache.camel.component.neo4j;
 
-/**
- * TODO Add Class documentation for ConnectionResource
- *
- */
-public interface ConnectionResource {
+import java.net.URISyntaxException;
 
-    Connection borrowConnection() throws Exception;
+import org.junit.Test;
 
-    Connection borrowConnection(long timeout) throws Exception;
+import static org.junit.Assert.assertTrue;
 
-    void returnConnection(Connection connection) throws Exception;
+public class Neo4jEndpointTest {
 
+    @Test
+    public void assertSingleton() throws URISyntaxException {
+        Neo4jEndpoint endpoint = new Neo4jEndpoint("neo4j:http://localhost/db", "http://localhost/db", new Neo4jComponent());
+        assertTrue(endpoint.isSingleton());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testConsumerUnsupported() throws Exception {
+        new Neo4jEndpoint("ignored", "http://localhost:80/db", new Neo4jComponent()).createConsumer(null);
+    }
 }

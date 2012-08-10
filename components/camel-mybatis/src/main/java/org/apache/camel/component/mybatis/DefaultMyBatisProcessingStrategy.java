@@ -28,14 +28,16 @@ public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrate
 
     public void commit(MyBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception {
         SqlSession session = endpoint.getSqlSessionFactory().openSession();
-
         String[] statements = consumeStatements.split(",");
         try {
             for (String statement : statements) {
                 session.update(statement.trim(), data);
             }
-        } finally {
             session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
+        } finally {
             session.close();
         }
     }
@@ -43,7 +45,12 @@ public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrate
     public List<?> poll(MyBatisConsumer consumer, MyBatisEndpoint endpoint) throws Exception {
         SqlSession session = endpoint.getSqlSessionFactory().openSession();
         try {
-            return session.selectList(endpoint.getStatement(), null);
+            List<Object> objects = session.selectList(endpoint.getStatement(), null);
+            session.commit();
+            return objects;
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
         } finally {
             session.close();
         }

@@ -32,6 +32,7 @@ public class ElasticsearchConfiguration {
     public static final String PARAM_OPERATION = "operation";
     public static final String OPERATION_INDEX = "INDEX";
     public static final String OPERATION_GET_BY_ID = "GET_BY_ID";
+    public static final String OPERATION_DELETE = "DELETE";
     public static final String PARAM_INDEX_ID = "indexId";
     public static final String PARAM_DATA = "data";
     public static final String PARAM_INDEX_NAME = "indexName";

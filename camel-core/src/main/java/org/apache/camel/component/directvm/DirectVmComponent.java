@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.directvm;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -36,6 +38,19 @@ public class DirectVmComponent extends DefaultComponent {
     // later in case the DirectVmEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
+
+    /**
+     * Gets all the consumer endpoints.
+     *
+     * @return consumer endpoints
+     */
+    public static Collection<Endpoint> getConsumerEndpoints() {
+        Collection<Endpoint> endpoints = new ArrayList<Endpoint>(CONSUMERS.size());
+        for (DirectVmConsumer consumer : CONSUMERS.values()) {
+            endpoints.add(consumer.getEndpoint());
+        }
+        return endpoints;
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

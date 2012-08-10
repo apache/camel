@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -50,7 +51,7 @@ public class FileComponent extends GenericFileComponent<File> {
         result.setFile(file);
 
         GenericFileConfiguration config = new GenericFileConfiguration();
-        config.setDirectory(file.getPath());
+        config.setDirectory(FileUtil.isAbsolute(file) ? file.getAbsolutePath() : file.getPath());
         result.setConfiguration(config);
 
         return result;

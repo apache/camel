@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.pool;
+package org.apache.camel.component.sjms.jms;
 
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.ActiveMQSession;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,16 +29,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * TODO Add Class documentation for DefaultConnectionResourceTest
- * 
+ * TODO Add Class documentation for ConnectionFactoryResourceTest
  */
 public class SessionPoolTest {
     private ActiveMQConnectionFactory connectionFactory;
 
     @Before
     public void setup() {
-        connectionFactory = new ActiveMQConnectionFactory(
-                "vm://broker?broker.persistent=false");
+        connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false");
     }
 
     @After
@@ -49,14 +46,13 @@ public class SessionPoolTest {
 
     /**
      * Test method for
-     * {@link org.apache.camel.component.sjms.pool.SessionPoolTest#createObject()}
-     * .
+     * {@link org.apache.camel.component.sjms.jms.SessionPoolTest#createObject()}
      * 
      * @throws Exception
      */
     @Test
     public void testCreateObject() throws Exception {
-        DefaultConnectionResource connections = new DefaultConnectionResource(1, connectionFactory);
+        ConnectionFactoryResource connections = new ConnectionFactoryResource(1, connectionFactory);
         connections.fillPool();
         SessionPool sessions = new SessionPool(1, connections);
         sessions.fillPool();
@@ -69,22 +65,22 @@ public class SessionPoolTest {
 
     /**
      * Test method for
-     * {@link org.apache.camel.component.sjms.pool.ObjectPool#borrowObject()}.
+     * {@link org.apache.camel.component.sjms.jms.ObjectPool#borrowObject()}.
      * 
      * @throws Exception
      */
     @Test
     public void testBorrowObject() throws Exception {
-        DefaultConnectionResource connections = new DefaultConnectionResource(1, connectionFactory);
+        ConnectionFactoryResource connections = new ConnectionFactoryResource(1, connectionFactory);
         connections.fillPool();
         SessionPool sessions = new SessionPool(1, connections);
         sessions.fillPool();
         assertNotNull(sessions);
-        ActiveMQSession session = (ActiveMQSession) sessions.borrowObject();
+        ActiveMQSession session = (ActiveMQSession)sessions.borrowObject();
         assertNotNull(session);
         assertTrue(!session.isClosed());
 
-        ActiveMQSession session2 = (ActiveMQSession) sessions.borrowObject();
+        ActiveMQSession session2 = (ActiveMQSession)sessions.borrowObject();
         assertNull(session2);
         sessions.drainPool();
         connections.drainPool();
@@ -92,27 +88,27 @@ public class SessionPoolTest {
 
     /**
      * Test method for
-     * {@link org.apache.camel.component.sjms.pool.ObjectPool#returnObject(java.lang.Object)}
+     * {@link org.apache.camel.component.sjms.jms.ObjectPool#returnObject(java.lang.Object)}
      * .
      * 
      * @throws Exception
      */
     @Test
     public void testReturnObject() throws Exception {
-        DefaultConnectionResource connections = new DefaultConnectionResource(1, connectionFactory);
+        ConnectionFactoryResource connections = new ConnectionFactoryResource(1, connectionFactory);
         connections.fillPool();
         SessionPool sessions = new SessionPool(1, connections);
         sessions.fillPool();
         assertNotNull(sessions);
-        ActiveMQSession session = (ActiveMQSession) sessions.borrowObject();
+        ActiveMQSession session = (ActiveMQSession)sessions.borrowObject();
         assertNotNull(session);
         assertTrue(!session.isClosed());
 
-        ActiveMQSession session2 = (ActiveMQSession) sessions.borrowObject();
+        ActiveMQSession session2 = (ActiveMQSession)sessions.borrowObject();
         assertNull(session2);
 
         sessions.returnObject(session);
-        session2 = (ActiveMQSession) sessions.borrowObject();
+        session2 = (ActiveMQSession)sessions.borrowObject();
         assertNotNull(session2);
 
         sessions.drainPool();

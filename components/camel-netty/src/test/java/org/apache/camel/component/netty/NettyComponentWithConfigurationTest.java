@@ -25,7 +25,7 @@ import org.junit.Test;
 public class NettyComponentWithConfigurationTest extends CamelTestSupport {
 
     @Test
-    public void testMinaComponentWithConfiguration() throws Exception {
+    public void testNettyComponentWithConfiguration() throws Exception {
         NettyComponent comp = context.getComponent("netty", NettyComponent.class);
 
         NettyConfiguration cfg = new NettyConfiguration();
@@ -34,7 +34,7 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         assertSame(cfg, comp.getConfiguration());
 
         NettyEndpoint e1 = (NettyEndpoint) comp.createEndpoint("netty://tcp://localhost:4455");
-        NettyEndpoint e2 = (NettyEndpoint) comp.createEndpoint("netty://tcp://localhost:5566?sync=false");
+        NettyEndpoint e2 = (NettyEndpoint) comp.createEndpoint("netty://tcp://localhost:5566?sync=false&needClientAuth=true");
 
         // should not be same
         assertNotSame(e1, e2);
@@ -47,7 +47,9 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         e2.getConfiguration().setPort(5566);
 
         assertEquals(true, e1.getConfiguration().isSync());
+        assertEquals(false, e1.getConfiguration().isNeedClientAuth());
         assertEquals(false, e2.getConfiguration().isSync());
+        assertEquals(true, e2.getConfiguration().isNeedClientAuth());
         assertEquals(4455, e1.getConfiguration().getPort());
         assertEquals(5566, e2.getConfiguration().getPort());
     }
