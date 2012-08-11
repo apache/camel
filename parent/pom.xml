@@ -167,7 +167,7 @@
     <scala-maven-plugin-version>3.0.2</scala-maven-plugin-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
     <shiro-version>1.2.0</shiro-version>
-    <slf4j-api-version>1.6.1</slf4j-api-version>
+    <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.6.6</slf4j-version>
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
