@@ -49,6 +49,7 @@ public class CMISProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         CmisObject cmisObject = createNode(exchange);
+        LOG.debug("Created node with id: {}", cmisObject.getId());
         exchange.getOut().setBody(cmisObject.getId());
     }
 

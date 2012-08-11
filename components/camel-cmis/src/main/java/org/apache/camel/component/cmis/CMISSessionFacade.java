@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -117,9 +118,11 @@ public class CMISSessionFacade {
     }
 
     //some duplication
-    public List<Map<String, Object>> retrieveResult(boolean retrieveContent, int readSize,
+    public List<Map<String, Object>> retrieveResult(Boolean retrieveContent, Integer readSize,
                                                     ItemIterable<QueryResult> itemIterable) {
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        boolean queryForContent = retrieveContent != null ? retrieveContent : readContent;
+        int documentsToRead = readSize != null ? readSize : readCount;
         int count = 0;
         int pageNumber = 0;
         boolean finished = false;
@@ -128,14 +131,14 @@ public class CMISSessionFacade {
             LOG.debug("Processing page {}", pageNumber);
             for (QueryResult item : currentPage) {
                 Map<String, Object> properties = CMISHelper.propertyDataToMap(item.getProperties());
-                if (retrieveContent) {
+                if (queryForContent) {
                     InputStream inputStream = getContentStreamFor(item);
                     properties.put(CamelCMISConstants.CAMEL_CMIS_CONTENT_STREAM, inputStream);
                 }
 
                 result.add(properties);
                 count++;
-                if (count == readSize) {
+                if (count == documentsToRead) {
                     finished = true;
                     break;
                 }
@@ -156,7 +159,9 @@ public class CMISSessionFacade {
 
     public Document getDocument(QueryResult queryResult) {
         if (CamelCMISConstants.CMIS_DOCUMENT
-                .equals(queryResult.getPropertyValueById(PropertyIds.OBJECT_TYPE_ID))) {
+                .equals(queryResult.getPropertyValueById(PropertyIds.OBJECT_TYPE_ID)) ||
+                CamelCMISConstants.CMIS_DOCUMENT
+                                .equals(queryResult.getPropertyValueById(PropertyIds.BASE_TYPE_ID))) {
             String objectId = (String)queryResult.getPropertyById(PropertyIds.OBJECT_ID).getFirstValue();
             ObjectIdImpl objectIdImpl = new ObjectIdImpl(objectId);
             return (org.apache.chemistry.opencmis.client.api.Document)session.getObject(objectIdImpl);
@@ -177,7 +182,11 @@ public class CMISSessionFacade {
     }
 
     public boolean isObjectTypeVersionable(String objectType) {
-        return ((DocumentType)session.getTypeDefinition(objectType)).isVersionable();
+        if (CamelCMISConstants.CMIS_DOCUMENT.equals(objectType)) {
+            ObjectType typeDefinition = session.getTypeDefinition(objectType);
+            return ((DocumentType)typeDefinition).isVersionable();
+        }
+        return false;
     }
 
     public ContentStream createContentStream(String fileName, byte[] buf, String mimeType) throws Exception {

@@ -43,11 +43,18 @@ public class CMISQueryProducer extends DefaultProducer {
 
     private List<Map<String, Object>> executeQuery(Exchange exchange) throws Exception {
         String query = exchange.getIn().getMandatoryBody(String.class);
-        boolean retrieveContent = exchange.getIn().getHeader(CamelCMISConstants.CAMEL_CMIS_RETRIEVE_CONTENT,
-                false, Boolean.class);
-        int readSize = exchange.getIn().getHeader(CamelCMISConstants.CAMEL_CMIS_READ_SIZE, 0, Integer.class);
+        Boolean retrieveContent = getRetrieveContent(exchange);
+        Integer readSize = getReadSize(exchange);
 
         ItemIterable<QueryResult> itemIterable = cmisSessionFacade.executeQuery(query);
         return cmisSessionFacade.retrieveResult(retrieveContent, readSize, itemIterable);
+    }
+
+    private Integer getReadSize(Exchange exchange) {
+        return exchange.getIn().getHeader(CamelCMISConstants.CAMEL_CMIS_READ_SIZE, Integer.class);
+    }
+
+    private Boolean getRetrieveContent(Exchange exchange) {
+        return exchange.getIn().getHeader(CamelCMISConstants.CAMEL_CMIS_RETRIEVE_CONTENT, Boolean.class);
     }
 }
