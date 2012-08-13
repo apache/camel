@@ -26,15 +26,10 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.cxf.message.MessageContentsList;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -76,33 +71,6 @@ public class ConverterTest extends Assert {
         result = CxfConverter.toInputStream(response, exchange);
         assertTrue("We should get the inputStream here ", result instanceof ByteArrayInputStream);
         EasyMock.verify(response);
-    }
-    
-    @Test
-    public void testFallbackConverter() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        Exchange exchange = new DefaultExchange(context);
-        MessageContentsList list = new MessageContentsList();
-        NodeListWrapper nl = new NodeListWrapper(new ArrayList<Element>());
-        list.add(nl);
-        exchange.getIn().setBody(list);
-        Node node = exchange.getIn().getBody(Node.class);
-        assertNull(node);
-        
-        File file = new File("src/test/resources/org/apache/camel/component/cxf/converter/test.xml");
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(true);
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(file);
-        document.getDocumentElement().normalize();
-        List<Element> elements = new ArrayList<Element>();
-        elements.add(document.getDocumentElement());
-        nl = new NodeListWrapper(elements);
-        list.clear();
-        list.add(nl);
-        exchange.getIn().setBody(list);
-        node = exchange.getIn().getBody(Node.class);
-        assertNotNull(node);
     }
 
 }
