@@ -59,7 +59,6 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
                 from(getFromEndpointUri()).process(new Processor() {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
-                        // Get the parameter list
                         Node node = in.getBody(Node.class);
                         assertNotNull(node);
                         XmlConverter xmlConverter = new XmlConverter();
@@ -80,7 +79,7 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
         assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
         try {
-            response = template.requestBody(simpleEndpointAddress, null, String.class);
+            template.requestBody(simpleEndpointAddress, null, String.class);
             fail("Excpetion to get exception here");
         } catch (Exception ex) {
             // do nothing here
