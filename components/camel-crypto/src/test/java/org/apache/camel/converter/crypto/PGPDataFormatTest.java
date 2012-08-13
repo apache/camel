@@ -22,6 +22,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
+    
+    protected String getKeyFileName() {
+        return "org/apache/camel/component/crypto/pubring.gpg";
+    }
+    
+    protected String getKeyFileNameSec() {
+        return "org/apache/camel/component/crypto/secring.gpg";
+    }
 
     @Test
     public void testEncryption() throws Exception {
@@ -43,9 +51,9 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
             public void configure() throws Exception {
                 // START SNIPPET: pgp-format
                 // Public Key FileName
-                String keyFileName = "org/apache/camel/component/crypto/pubring.gpg";
+                String keyFileName = getKeyFileName();
                 // Private Key FileName
-                String keyFileNameSec = "org/apache/camel/component/crypto/secring.gpg";
+                String keyFileNameSec = getKeyFileNameSec();
                 // Keyring Userid Used to Encrypt
                 String keyUserid = "sdude@nowhere.net";
                 // Private key password

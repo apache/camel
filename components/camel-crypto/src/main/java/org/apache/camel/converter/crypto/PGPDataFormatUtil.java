@@ -36,9 +36,11 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKey;
-import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.PGPObjectFactory;
+import org.bouncycastle.openpgp.PGPEncryptedDataList;
+import org.bouncycastle.openpgp.PGPPublicKeyEncryptedData;
 
 public final class PGPDataFormatUtil {
 
@@ -83,42 +85,42 @@ public final class PGPDataFormatUtil {
         return null;
     }
 
-    public static PGPPrivateKey findPrivateKey(CamelContext context, String filename, String userid, String passphrase) throws IOException,
-            PGPException, NoSuchProviderException {
+    public static PGPPrivateKey findPrivateKey(CamelContext context, String keychainFilename, InputStream encryptedInput, String passphrase)
+            throws IOException, PGPException, NoSuchProviderException {
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), filename);
+        InputStream keyChainInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), keychainFilename);
 
-        PGPPrivateKey privKey;
+        PGPPrivateKey privKey = null;
         try {
-            privKey = findPrivateKey(context, is, userid, passphrase);
+            privKey = findPrivateKey(context, keyChainInputStream, encryptedInput, passphrase);
         } finally {
-            IOHelper.close(is);
+            IOHelper.close(keyChainInputStream);
         }
         return privKey;
     }
 
     @SuppressWarnings("unchecked")
-    public static PGPPrivateKey findPrivateKey(CamelContext context, InputStream input, String userid, String passphrase) throws IOException,
+    public static PGPPrivateKey findPrivateKey(CamelContext context, InputStream keyringInput, InputStream encryptedInput, String passphrase) throws IOException,
             PGPException, NoSuchProviderException {
-        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input));
-
-        Iterator<PGPSecretKeyRing> keyRingIter = pgpSec.getKeyRings();
-        while (keyRingIter.hasNext()) {
-            PGPSecretKeyRing keyRing = keyRingIter.next();
-
-            Iterator<PGPSecretKey> keyIter = keyRing.getSecretKeys();
-            while (keyIter.hasNext()) {
-                PGPSecretKey key = keyIter.next();
-                for (Iterator<String> iterator = key.getUserIDs(); iterator.hasNext();) {
-                    String userId = iterator.next();
-                    if (key.isSigningKey() && userId.contains(userid)) {
-                        return key.extractPrivateKey(passphrase.toCharArray(), "BC");
-                    }
-                }
-            }
+        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyringInput));
+        PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(encryptedInput));
+        PGPEncryptedDataList enc;
+        Object o = factory.nextObject();
+        if (o instanceof PGPEncryptedDataList) {
+            enc = (PGPEncryptedDataList) o;
+        } else {
+            enc = (PGPEncryptedDataList) factory.nextObject();
         }
-
-        return null;
+        encryptedInput.reset(); // nextObject() method reads from the InputStream, so rewind it!
+        Iterator encryptedDataObjects = enc.getEncryptedDataObjects();
+        PGPPrivateKey privateKey = null;
+        PGPPublicKeyEncryptedData encryptedData;
+        while (privateKey == null && encryptedDataObjects.hasNext()) {
+            encryptedData = (PGPPublicKeyEncryptedData) encryptedDataObjects.next();
+            PGPSecretKey pgpSecKey = pgpSec.getSecretKey(encryptedData.getKeyID());
+            privateKey = pgpSecKey.extractPrivateKey(passphrase.toCharArray(), "BC");
+        }
+        return privateKey;
     }
 
     public static byte[] compress(byte[] clearData, String fileName, int algorithm) throws IOException {
