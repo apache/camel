@@ -127,7 +127,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     public void setFile(File file) {
         this.file = file;
         // update configuration as well
-        getConfiguration().setDirectory(file.getPath());
+        getConfiguration().setDirectory(FileUtil.isAbsolute(file) ? file.getAbsolutePath() : file.getPath());
     }
 
     @Override
