@@ -193,6 +193,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (sslContextParameters == null) {
             sslContextParameters = getSslContextParameters();
         }
+        String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         
         boolean secure = HttpHelper.isSecureConnection(uri);
 
@@ -232,6 +233,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         if (httpClientConfigurer != null) {
             endpoint.setHttpClientConfigurer(httpClientConfigurer);
+        }
+        if (httpMethodRestrict != null) {
+            endpoint.setHttpMethodRestrict(httpMethodRestrict);
         }
         endpoint.setHttpContext(getHttpContext());
         if (httpContext != null) {

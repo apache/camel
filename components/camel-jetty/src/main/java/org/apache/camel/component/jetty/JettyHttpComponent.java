@@ -148,6 +148,7 @@ public class JettyHttpComponent extends HttpComponent {
         List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filtersRef", Filter.class);
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
+        String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         
         
@@ -262,6 +263,10 @@ public class JettyHttpComponent extends HttpComponent {
         }
         if (useContinuation != null) {
             endpoint.setUseContinuation(useContinuation);
+        }
+
+        if (httpMethodRestrict != null) {
+            endpoint.setHttpMethodRestrict(httpMethodRestrict);
         }
         
         if (sslContextParameters == null) {

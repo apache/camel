@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
@@ -54,6 +56,25 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         assertEquals("Get a wrong message header", "/helloworld", response.getHeaderField("PATH"));
         assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
         client.setExceptionsThrownOnErrorStatus(false);
+    }
+    
+    @Test
+    public void testHttpRestricMethod() throws Exception {
+        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testHttpMethodRestrict", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        ServletUnitClient client = newClient();
+        WebResponse response = client.getResponse(req);
+        assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
+        assertEquals("The response body is wrong", POST_DATA, response.getText());
+        
+        // Send other web method request
+        req = new GetMethodWebRequest(CONTEXT_URL + "/services/testHttpMethodRestrict");
+        try {
+            response = client.getResponse(req);
+            fail("Expect the exception here");
+        } catch (Exception ex) {
+            HttpException httpException = (HttpException)ex;
+            assertEquals("Get a wrong response code", 405, httpException.getResponseCode());
+        }
     }
 
     @Test
@@ -129,6 +150,13 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 }
             });
             // END SNIPPET: route
+            
+            from("servlet:///testHttpMethodRestrict?httpMethodRestrict=POST").process(new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    String request = exchange.getIn().getBody(String.class);
+                    exchange.getOut().setBody(request);
+                }
+            });
 
             from("servlet:///testConverter?matchOnUriPrefix=true")
                     .convertBodyTo(String.class)
