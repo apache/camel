@@ -160,7 +160,7 @@ public class FileOperations implements GenericFileOperations<File> {
         ObjectHelper.notNull(endpoint, "endpoint");
 
         File file = new File(fileName);
-
+        
         // if an existing file already exists what should we do?
         if (file.exists()) {
             if (endpoint.getFileExist() == GenericFileExist.Ignore) {
@@ -169,6 +169,21 @@ public class FileOperations implements GenericFileOperations<File> {
                 return true;
             } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
                 throw new GenericFileOperationFailedException("File already exist: " + file + ". Cannot write new file.");
+            } 
+        }
+        
+        // Do an explicit test for a null body and decide what to do
+        if (exchange.getIn().getBody() == null) {
+            if (endpoint.isAllowNullBody()) {
+                LOG.trace("The in message of exchange body was null.");
+                try {
+                    writeFileEmptyBody(file);
+                    return true;
+                } catch (IOException e) {
+                    throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
+                }
+            } else {
+                throw new GenericFileOperationFailedException("Cannot write null body to file.");
             }
         }
 
@@ -324,6 +339,25 @@ public class FileOperations implements GenericFileOperations<File> {
         } finally {
             IOHelper.close(in, target.getName(), LOG);
             IOHelper.close(out, target.getName(), LOG);
+        }
+    }
+    
+    /**
+     * Creates a new file if the file doesn't exist.
+     * If the endpoint's existing file logic is set to 'Override' then the target file will be truncated
+     */
+    private void writeFileEmptyBody(File target) throws IOException {
+        if (!target.exists()) {
+            target.createNewFile();
+        } else if (endpoint.getFileExist() == GenericFileExist.Override) {
+            LOG.trace("Truncating file as it already exists and endpoint set to Override file.");
+            FileChannel out = new FileOutputStream(target).getChannel();
+            try {
+                out.truncate(0);
+            } finally {
+                IOHelper.force(out, target.getName(), LOG);
+                IOHelper.close(out, target.getName(), LOG);
+            }
         }
     }
 
