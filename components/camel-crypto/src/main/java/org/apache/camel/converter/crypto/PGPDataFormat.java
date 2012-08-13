@@ -91,7 +91,7 @@ public class PGPDataFormat implements DataFormat {
             return null;
         }
 
-        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), keyFileName, keyUserid, password);
+        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), keyFileName, encryptedStream, password);
         if (key == null) {
             throw new IllegalArgumentException("Private key is null, cannot proceed");
         }
