@@ -169,8 +169,15 @@ public final class CxfPayloadConverter {
                 }                
             }
             TypeConverter tc = registry.lookup(type, NodeList.class);
-            if (tc != null) {
-                return tc.convertTo(type, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));
+            if (tc != null) { 
+                Object result = tc.convertTo(type, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));
+                if (result == null) {
+                    // no we could not do it currently, and we just abort the convert here
+                    return (T) Void.TYPE;
+                } else {
+                    return (T) result;
+                }
+                
             }
             // we cannot convert a node list, so we try the first item from the
             // node list
