@@ -59,10 +59,7 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
                 from(getFromEndpointUri()).process(new Processor() {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
-                        System.out.println(in.getBody().getClass());
-                        // Get the parameter list
                         Node node = in.getBody(Node.class);
-                        System.out.println("node is " + node);
                         assertNotNull(node);
                         XmlConverter xmlConverter = new XmlConverter();
                         // Put the result back
