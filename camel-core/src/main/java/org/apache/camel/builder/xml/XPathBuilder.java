@@ -92,8 +92,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
     private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
-    private final ThreadLocal<MessageVariableResolver> variableResolver = new ThreadLocal<MessageVariableResolver>();
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
+    private final MessageVariableResolver variableResolver = new MessageVariableResolver(exchange);
     private XPathFactory xpathFactory;
     private Class<?> documentType = Document.class;
     // For some reason the default expression of "a/b" on a document such as
@@ -133,19 +133,23 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     public boolean matches(Exchange exchange) {
-        // add on completion so the thread locals is removed when exchange is done
-        exchange.addOnCompletion(new XPathBuilderOnCompletion());
-
-        Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
-        return exchange.getContext().getTypeConverter().convertTo(Boolean.class, booleanResult);
+        try {
+            Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
+            return exchange.getContext().getTypeConverter().convertTo(Boolean.class, booleanResult);
+        } finally {
+            // remove the thread local after usage
+            this.exchange.remove();
+        }
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        // add on completion so the thread locals is removed when exchange is done
-        exchange.addOnCompletion(new XPathBuilderOnCompletion());
-
-        Object result = evaluate(exchange);
-        return exchange.getContext().getTypeConverter().convertTo(type, result);
+        try {
+            Object result = evaluate(exchange);
+            return exchange.getContext().getTypeConverter().convertTo(type, result);
+        } finally {
+            // remove the thread local after usage
+            this.exchange.remove();
+        }
     }
 
     /**
@@ -165,8 +169,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         try {
             return matches(dummy);
         } finally {
-            // remove the dummy from the thread local after usage
-            variableResolver.remove();
+            // remove the thread local after usage
             exchange.remove();
         }
     }
@@ -189,8 +192,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         try {
             return evaluate(dummy, type);
         } finally {
-            // remove the dummy from the thread local after usage
-            variableResolver.remove();
+            // remove the thread local after usage
             exchange.remove();
         }
     }
@@ -213,9 +215,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         try {
             return evaluate(dummy, String.class);
         } finally {
-            // remove the dummy from the thread local after usage
-            variableResolver.remove();
-            exchange.remove();
+            // remove the thread local after usage
+            this.exchange.remove();
         }
     }
 
@@ -1006,12 +1007,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     private MessageVariableResolver getVariableResolver() {
-        MessageVariableResolver resolver = variableResolver.get();
-        if (resolver == null) {
-            resolver = new MessageVariableResolver(exchange);
-            variableResolver.set(resolver);
-        }
-        return resolver;
+        return variableResolver;
     }
 
     public void start() throws Exception {
@@ -1049,35 +1045,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
             defaultXPathFactory = XPathFactory.newInstance();
             LOG.info("Created default XPathFactory {}", defaultXPathFactory);
-        }
-    }
-
-    /**
-     * On completion class which cleanup thread local resources
-     */
-    private final class XPathBuilderOnCompletion extends SynchronizationAdapter {
-
-        @Override
-        public void onDone(Exchange exchange) {
-            // when the exchange is done, then cleanup thread locals if they are still
-            // pointing to this exchange that was done
-            if (exchange.equals(XPathBuilder.this.exchange.get())) {
-                // cleanup thread locals after usage
-                XPathBuilder.this.variableResolver.remove();
-                XPathBuilder.this.exchange.remove();
-            }
-        }
-
-        @Override
-        public boolean allowHandover() {
-            // this completion should not be handed over, as we want to execute it
-            // on current thread as the thread locals is bound the current thread
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "XPathBuilderOnCompletion";
         }
     }
 
