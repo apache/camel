@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -45,6 +47,17 @@ public class ConsumersResource {
 
     public List<Consumer> getConsumers() {
         return getDTO().getConsumers();
+    }
+
+    @Path("{name}/status")
+    public ConsumerResource getConsumerStatus(@PathParam("name") String name) {
+        for(Consumer consumer : getConsumers()) {
+            if(consumer.getName().equals(name)) {
+                return new ConsumerResource(consumer, camelConnection);
+            }
+        }
+
+        return null;
     }
 
 }
