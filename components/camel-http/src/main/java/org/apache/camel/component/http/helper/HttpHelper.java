@@ -185,7 +185,7 @@ public final class HttpHelper {
                         }
                     }
                     baseURI = new URI(baseURIString);
-                    String basePath = baseURI.getRawPath();
+                    String basePath = baseURI.getPath();
                     if (path.startsWith(basePath)) {
                         path = path.substring(basePath.length());
                         if (path.startsWith("/")) {
