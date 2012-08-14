@@ -93,7 +93,7 @@
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <hadoop-version>1.0.3</hadoop-version>
     <hamcrest-version>1.1</hamcrest-version>
-    <hapi-version>1.2</hapi-version>
+    <hapi-version>2.0</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.11</hawtdispatch-version>

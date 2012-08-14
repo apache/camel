@@ -18,6 +18,10 @@ package org.apache.camel.component.hl7;
 
 import java.nio.charset.Charset;
 
+import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
+
 class HL7MLLPConfig {
 
     private Charset charset = Charset.defaultCharset();
@@ -30,8 +34,8 @@ class HL7MLLPConfig {
     private char endByte1 = 0x1c; // 28 decimal
 
     private char endByte2 = 0x0d; // 13 decimal
-
-    private boolean validate = true;
+    
+    private Parser parser = new PipeParser();
 
     public Charset getCharset() {
         return charset;
@@ -72,12 +76,22 @@ class HL7MLLPConfig {
     public void setEndByte2(char endByte2) {
         this.endByte2 = endByte2;
     }
+    
+    public Parser getParser() {
+        return parser;
+    }
+
+    public void setParser(Parser parser) {
+        this.parser = parser;
+    }
 
     public boolean isValidate() {
-        return validate;
+        return parser.getValidationContext() instanceof NoValidation;
     }
 
     public void setValidate(boolean validate) {
-        this.validate = validate;
+        if (!validate) {
+            parser.setValidationContext(new NoValidation());
+        }
     }
 }

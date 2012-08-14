@@ -46,6 +46,7 @@
             <artifactId>hapi-base</artifactId>
             <version>${hapi-version}</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
@@ -60,6 +61,18 @@
 	            </exclusion>
 	        </exclusions>
 	    </dependency>
+	    -->
+        <dependency>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-core</artifactId>
+            <version>${mina2-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>	    
 
         <!-- testing -->
         <dependency>
@@ -81,7 +94,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mina</artifactId>
+            <artifactId>camel-mina2</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -18,8 +18,9 @@ package org.apache.camel.component.hl7;
 
 import java.nio.charset.CharsetEncoder;
 import ca.uhn.hl7v2.model.Message;
-import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.common.IoSession;
+
+import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ class HL7MLLPEncoder implements ProtocolEncoder {
         // convert to string
         String body;
         if (message instanceof Message) {
-            body = HL7Converter.encode((Message)message, config.isValidate());
+            body = HL7Converter.encode((Message)message, config.getParser());
         } else if (message instanceof String) {
             body = (String)message;
         } else if (message instanceof byte[]) {
@@ -71,13 +72,13 @@ class HL7MLLPEncoder implements ProtocolEncoder {
                                                + message.getClass().getCanonicalName());
         }
 
-        // replace \n with \r as HL7 uses 0x0d = \r as segment termninators
+        // replace \n with \r as HL7 uses 0x0d = \r as segment terminators
         if (config.isConvertLFtoCR()) {
             body = body.replace('\n', '\r');
         }
 
         // put the data into the byte buffer
-        ByteBuffer buf = ByteBuffer.allocate(body.length() + 3).setAutoExpand(true);
+        IoBuffer buf = IoBuffer.allocate(body.length() + 3).setAutoExpand(true);
         buf.put((byte)config.getStartByte());
         buf.putString(body, encoder);
         buf.put((byte)config.getEndByte1());
@@ -85,9 +86,7 @@ class HL7MLLPEncoder implements ProtocolEncoder {
 
         // flip the buffer so we can use it to write to the out stream
         buf.flip();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Encoding HL7 from {} to byte stream", message.getClass().getCanonicalName());
-        }
+        LOG.debug("Encoding HL7 from {} to byte stream", message.getClass().getCanonicalName());
         out.write(buf);
     }
 

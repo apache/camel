@@ -64,7 +64,7 @@ public class HL7RouteTest extends CamelTestSupport {
         in.append("\n");
         in.append(line2);
 
-        String out = (String) template.requestBody("mina:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
+        String out = (String) template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);
@@ -87,7 +87,7 @@ public class HL7RouteTest extends CamelTestSupport {
         in.append("\n");
         in.append(line2);
 
-        String out = (String) template.requestBody("mina:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
+        String out = (String) template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123", lines[0]);
         assertEquals("PID|||123456||Doe^John", lines[1]);
@@ -109,7 +109,7 @@ public class HL7RouteTest extends CamelTestSupport {
         in.append("\n");
         in.append(line2);
 
-        template.requestBody("mina:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
+        template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
 
         assertMockEndpointsSatisfied();
     }
@@ -121,7 +121,7 @@ public class HL7RouteTest extends CamelTestSupport {
                 // START SNIPPET: e1
                 DataFormat hl7 = new HL7DataFormat();
                 // we setup or HL7 listener on port 8888 (using the hl7codec) and in sync mode so we can return a response
-                from("mina:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec")
+                from("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec")
                     // we use the HL7 data format to unmarshal from HL7 stream to the HAPI Message model
                     // this ensures that the camel message has been enriched with hl7 specific headers to
                     // make the routing much easier (see below)
@@ -213,7 +213,7 @@ public class HL7RouteTest extends CamelTestSupport {
         pid.getPatientName(0).getGivenName().setValue("John");
         pid.getPatientIdentifierList(0).getID().setValue("123456");
 
-        return adt.getMessage();
+        return adt;
     }
 
 }

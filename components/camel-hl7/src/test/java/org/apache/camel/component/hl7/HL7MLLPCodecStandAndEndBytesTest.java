@@ -53,7 +53,7 @@ public class HL7MLLPCodecStandAndEndBytesTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec")
+                from("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             Message input = exchange.getIn().getBody(Message.class);
@@ -81,7 +81,7 @@ public class HL7MLLPCodecStandAndEndBytesTest extends CamelTestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = (String)template.requestBody("mina:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
+        String out = (String)template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);
@@ -109,7 +109,7 @@ public class HL7MLLPCodecStandAndEndBytesTest extends CamelTestSupport {
         QRD qrd = adr.getQRD();
         qrd.getQueryDateTime().getTimeOfAnEvent().setValue("20080805120000");
 
-        return adr.getMessage();
+        return adr;
     }
 
 }

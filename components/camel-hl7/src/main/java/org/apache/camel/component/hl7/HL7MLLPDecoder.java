@@ -19,8 +19,8 @@ package org.apache.camel.component.hl7;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetDecoder;
 
-import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
     }
 
     @Override
-    protected boolean doDecode(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) {
+    protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) {
 
         // Scan the buffer of start and/or end bytes
         boolean foundEnd = scan(session, in);
@@ -59,7 +59,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         return foundEnd;
     }
 
-    private void writeString(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) {
+    private void writeString(IoSession session, IoBuffer in, ProtocolDecoderOutput out) {
         DecoderState state = decoderState(session);
         if (state.posStart == 0) {
             LOG.warn("No start byte found, reading from beginning of data");
@@ -68,10 +68,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         in.position(state.posStart);
         try {
             String body = in.getString(state.length(), charsetDecoder(session));
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Decoded HL7 from byte stream of length {} to String of length {}", state.length(), body.length());
-            }
+            LOG.debug("Decoded HL7 from byte stream of length {} to String of length {}", state.length(), body.length());
             out.write(body);
             // Avoid redelivery of scanned message
             state.reset();
@@ -97,23 +94,21 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
      * @return <code>true</code> if the end bytes were found, <code>false</code>
      *         otherwise
      */
-    private boolean scan(IoSession session, ByteBuffer in) {
+    private boolean scan(IoSession session, IoBuffer in) {
         DecoderState state = decoderState(session);
         // Start scanning where we left
         in.position(state.current);
-        LOG.debug("Start scanning buffer at position " + in.position());
+        LOG.debug("Start scanning buffer at position {}", in.position());
         while (in.hasRemaining()) {
             byte b = in.get();
             // Check start byte
             if (b == config.getStartByte()) {
                 if (state.posStart > 0 || state.waitingForEndByte2) {
-                    LOG.warn("Ignoring message start at position " + in.position() + " before previous message has ended.");
+                    LOG.warn("Ignoring message start at position {} before previous message has ended.", in.position());
                 } else {
                     state.posStart = in.position();
                     state.waitingForEndByte2 = false;
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Message starts at position {}", state.posStart);
-                    }
+                    LOG.debug("Message starts at position {}", state.posStart);
                 }
             }
             // Check end byte1 
@@ -121,7 +116,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                 if (!state.waitingForEndByte2 && state.posStart > 0) {
                     state.waitingForEndByte2 = true;
                 } else {
-                    LOG.warn("Ignoring unexpected 1st end byte " + b + ". Expected 2nd endpoint  " + config.getEndByte2());
+                    LOG.warn("Ignoring unexpected 1st end byte {}. Expected 2nd endpoint {}", b, config.getEndByte2());
                 }
             }
             // Check end byte2 
@@ -129,9 +124,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                 state.posEnd = in.position() - 2; // use -2 to skip these
                                                   // last 2 end markers
                 state.waitingForEndByte2 = false;
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Message ends at position {}", state.posEnd);
-                }
+                LOG.debug("Message ends at position {}", state.posEnd);
                 break;
             }
         }
