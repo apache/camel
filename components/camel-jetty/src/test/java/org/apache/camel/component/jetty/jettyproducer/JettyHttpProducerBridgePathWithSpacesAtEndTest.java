@@ -40,6 +40,10 @@ public class JettyHttpProducerBridgePathWithSpacesAtEndTest extends BaseJettyTes
 
         String reply = template.requestBody("jetty:http://0.0.0.0:" + port1 + "/foo ", "World", String.class);
         assertEquals("Bye World", reply);
+
+        // and with more spaces
+        String reply2 = template.requestBody("jetty:http://0.0.0.0:" + port1 + "/foo /bar baz", "Camel", String.class);
+        assertEquals("Bye Camel", reply2);
     }
 
     @Override
