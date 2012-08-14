@@ -38,6 +38,7 @@ import org.apache.camel.component.http4.HttpMethods;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.http.HttpVersion;
 import org.apache.http.ProtocolException;
 
@@ -208,6 +209,10 @@ public final class HttpHelper {
                 uri = uri.concat(path);
             }
         }
+
+        // ensure uri is encoded to be valid
+        uri = UnsafeUriCharactersEncoder.encode(uri);
+
         return uri;
     }
 
