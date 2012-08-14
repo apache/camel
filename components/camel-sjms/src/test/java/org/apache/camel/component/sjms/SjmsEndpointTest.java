@@ -139,6 +139,15 @@ public class SjmsEndpointTest extends CamelTestSupport {
         context.getEndpoint("sjms:queue:test?namedReplyTo=reply.to.queue&exchangePattern=" + ExchangePattern.InOnly);
     }
 
+    @Test
+    public void testDestinationName() throws Exception {
+        Endpoint endpoint = context.getEndpoint("sjms:queue:test?synchronous=true");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof SjmsEndpoint);
+        SjmsEndpoint qe = (SjmsEndpoint) endpoint;
+        assertTrue(qe.getDestinationName().equals("test"));
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

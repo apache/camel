@@ -129,8 +129,11 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     }
 
     public String getDestinationName() {
-        return getEndpointUri()
-                .substring(getEndpointUri().lastIndexOf(":") + 1);
+        String answer = getEndpointUri().substring(getEndpointUri().lastIndexOf(":") + 1);
+        if (answer.indexOf("?") > -1) {
+            answer = answer.substring(0, answer.lastIndexOf("?"));
+        }
+        return answer;
     }
 
     public SjmsComponent getSjmsComponent() {
