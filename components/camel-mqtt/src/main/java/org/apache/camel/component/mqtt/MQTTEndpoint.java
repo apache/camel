@@ -85,7 +85,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
                 if (!consumers.isEmpty()) {
                     Exchange exchange = createExchange();
-                    exchange.getIn().setBody(body.getData());
+                    exchange.getIn().setBody(body.toByteArray());
                     exchange.setProperty(configuration.getMqttTopicPropertyName(), topic.toString());
                     for (MQTTConsumer consumer : consumers) {
                         try {
