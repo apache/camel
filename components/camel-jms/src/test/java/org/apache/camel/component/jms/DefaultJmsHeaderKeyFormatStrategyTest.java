@@ -37,7 +37,7 @@ public class DefaultJmsHeaderKeyFormatStrategyTest extends Assert {
     }
 
     @Test
-    public void testDeccodeValidKeys() {
+    public void testDecodeValidKeys() {
         assertEquals("foo", strategy.decodeKey("foo"));
         assertEquals("foo123bar", strategy.decodeKey("foo123bar"));
         assertEquals("CamelFileName", strategy.decodeKey("CamelFileName"));
