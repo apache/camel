@@ -14,12 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.web.management;
+package org.apache.camel.web.connectors.jmx;
 
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+
+import org.apache.camel.web.connectors.CamelConnection;
+import org.apache.camel.web.connectors.CamelDataBean;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +44,8 @@ public class CamelJmxConnection implements CamelConnection {
     }
 
     protected MBeanInfo getMBeanInfo(ObjectInstance objInstance) throws IntrospectionException, InstanceNotFoundException, IOException, ReflectionException {
-        MBeanInfo mBeanInfo = connection.getMBeanInfo(objInstance.getObjectName());
+        //TODO Caching MBeanInfo
+    	MBeanInfo mBeanInfo = connection.getMBeanInfo(objInstance.getObjectName());
         return mBeanInfo;
     }
 
@@ -56,8 +61,8 @@ public class CamelJmxConnection implements CamelConnection {
         return beans.isEmpty() ? null : beans.iterator().next();
     }
 
-    public CamelManagedBean getCamelBean(String type, String name) {
-        CamelManagedBean bean;
+    public CamelDataBean getCamelBean(String type, String name) {
+        CamelDataBean bean;
         try {
             ObjectInstance instance = getObjectInstance(type, name);
             MBeanInfo info = getMBeanInfo(instance);
@@ -69,13 +74,13 @@ public class CamelJmxConnection implements CamelConnection {
         return bean;
     }
 
-    public List<CamelManagedBean> getCamelBeans(String type) {
-        List<CamelManagedBean> endpoints = new ArrayList<CamelManagedBean>();
+    public List<CamelDataBean> getCamelBeans(String type) {
+        List<CamelDataBean> endpoints = new ArrayList<CamelDataBean>();
         try {
             Set<ObjectInstance> beans = getObjectInstances(type);
             for (ObjectInstance instance : beans) {
                 MBeanInfo info = getMBeanInfo(instance);
-                CamelManagedBean endpoint = new CamelBeanFactory().build(instance, connection, info);
+                CamelDataBean endpoint = new CamelBeanFactory().build(instance, connection, info);
                 endpoints.add(endpoint);
             }
         } catch (Exception e) {
@@ -99,10 +104,10 @@ public class CamelJmxConnection implements CamelConnection {
 
     private class CamelBeanFactory {
 
-        public CamelManagedBean build(ObjectInstance instance, MBeanServerConnection connection, MBeanInfo info)
+        public CamelDataBean build(ObjectInstance instance, MBeanServerConnection connection, MBeanInfo info)
                 throws InstanceNotFoundException, IOException, ReflectionException {
 
-            CamelManagedBean c = new CamelManagedBean();
+            CamelDataBean c = new CamelDataBean();
             String name = instance.getObjectName().getKeyProperty("name");
             if (name.endsWith("\""))
                 name = name.substring(0, name.length() - 1);

@@ -17,3 +17,7 @@
 Camel
 EndpointLink
 Endpoints
+Consumers
+Consumer
+ThreadPool
+ThreadPools

@@ -1,8 +1,9 @@
 package org.apache.camel.web.resources;
 
 import com.sun.jersey.api.view.ImplicitProduces;
-import org.apache.camel.web.management.CamelConnection;
-import org.apache.camel.web.management.CamelManagedBean;
+
+import org.apache.camel.web.connectors.CamelConnection;
+import org.apache.camel.web.connectors.CamelDataBean;
 import org.apache.camel.web.model.Consumer;
 import org.apache.camel.web.model.Consumers;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class ConsumersResource {
             LOG.debug("Retrieving consumers.");
         }
 
-        List<CamelManagedBean> consumersCamelBeans = camelConnection.getCamelBeans("consumers");
+        List<CamelDataBean> consumersCamelBeans = camelConnection.getCamelBeans("consumers");
         Consumers consumers = new Consumers();
         consumers.load(consumersCamelBeans);
         return consumers;
@@ -51,13 +52,16 @@ public class ConsumersResource {
 
     @Path("{name}/status")
     public ConsumerResource getConsumerStatus(@PathParam("name") String name) {
-        for(Consumer consumer : getConsumers()) {
-            if(consumer.getName().equals(name)) {
-                return new ConsumerResource(consumer, camelConnection);
-            }
+    	CamelDataBean consumerBean = camelConnection.getCamelBean("consumers", name);
+    	
+        if (consumerBean != null) {
+        	Consumer consumer = new Consumer();
+        	consumer.load(consumerBean);
+            return new ConsumerResource(consumer, camelConnection);
+        } else {
+            LOG.warn("No consumer found for name: " + name);
+            return null;
         }
-
-        return null;
     }
 
 }

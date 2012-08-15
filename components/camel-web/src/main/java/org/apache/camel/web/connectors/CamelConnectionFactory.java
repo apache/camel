@@ -14,9 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.web.management;
+package org.apache.camel.web.connectors;
 
 import java.io.IOException;
+
+import org.apache.camel.web.connectors.jmx.CamelJmxConnection;
 
 /**
  *

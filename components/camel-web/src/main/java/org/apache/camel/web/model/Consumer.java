@@ -1,6 +1,6 @@
 package org.apache.camel.web.model;
 
-import org.apache.camel.web.management.CamelManagedBean;
+import org.apache.camel.web.connectors.CamelDataBean;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,11 +8,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * Consumer
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Consumer {
+	
+	public static final String PROPERTY_STATUS = "State";
+	public static final String PROPERTY_ENDPOINT_URI = "EndpointUri";
+	public static final String PROPERTY_ROUTE_ID = "RouteId";
 
     @XmlAttribute
     private String name;
@@ -25,12 +29,12 @@ public class Consumer {
 
     private String routeId;
 
-    public void load(CamelManagedBean bean) {
+    public void load(CamelDataBean bean) {
         name = bean.getName();
         description = bean.getDescription();
-        status = (String) bean.getProperty("State");
-        endpointUri = (String) bean.getProperty("EndpointUri");
-        routeId = (String) bean.getProperty("RouteId");
+        status = (String) bean.getProperty(PROPERTY_STATUS);
+        endpointUri = (String) bean.getProperty(PROPERTY_ENDPOINT_URI);
+        routeId = (String) bean.getProperty(PROPERTY_ROUTE_ID);
     }
 
     public String getName() {
@@ -72,7 +76,7 @@ public class Consumer {
     public void setRouteId(String routeId) {
         this.routeId = routeId;
     }
-
+    
     public boolean isStartable() {
         if(!status.equals("Started"))
             return true;

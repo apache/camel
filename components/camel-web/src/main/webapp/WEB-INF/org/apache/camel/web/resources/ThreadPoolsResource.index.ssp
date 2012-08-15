@@ -14,45 +14,37 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>
-<%@ import val it: ConsumersResource %>
+<%@ import val it: ThreadPoolsResource %>
 
-#{ attributes("title") = "Consumers"}#
+#{ attributes("title") = "Thread Pools"}#
 
-<h2>Consumers</h2>
+<h2>Thread Pools</h2>
 
 <table>
   <tr>
-    <th>Consumer</th>
-    <th colspan="2">Status</th>
-    <th>Endpoint URI</th>
-    <th>Route ID</th>
+    <th>Thread Pool</th>
+    <th>Core pool size</th>
+    <th>Pool size</th>
+    <th>Maximum pool size</th>
+    <th>Task count</th>
   </tr>
 <ul>
-  #for(i <- it.getConsumers)
+  #for(i <- it.getThreadPools)
   <tr>
     <td>
-      ${i.getName}
-    </td>
-    <td class="${i.getStatus}">
-      ${i.getStatus}
+      <a class='endpoint' href='${uri("/threadpools/" + i.getName)}'>${i.getName}</a>
     </td>
     <td>
-      <form action='${uri("/consumers/" + i.getName + "/status")}' method="POST" name="setStatus">
-        #if(i.isStartable)
-          <input type="hidden" name="status" value="start">
-          <input type="submit" value="Start">
-        #end
-        #if(i.isStoppable)
-          <input type="hidden" name="status" value="stop">
-          <input type="submit" value="Stop">
-        #end
-      </form>
+      ${i.getCorePoolSize}
     </td>
     <td>
-      ${i.getEndpointUri}
+      ${i.getPoolSize}
     </td>
     <td>
-      ${i.getRouteId}
+      ${i.getMaximumPoolSize}
+    </td>
+    <td>
+      ${i.getTaskCount}
     </td>
   </tr>
   #end

@@ -17,36 +17,15 @@
 package org.apache.camel.web.resources;
 
 import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.api.view.Viewable;
-import org.apache.camel.ServiceStatus;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.view.RouteDotGenerator;
-import org.apache.camel.web.management.CamelConnection;
+import org.apache.camel.web.connectors.CamelConnection;
 import org.apache.camel.web.model.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.List;
-
 
 /**
  * A single Camel Consumer.

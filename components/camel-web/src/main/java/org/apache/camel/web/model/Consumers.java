@@ -1,6 +1,6 @@
 package org.apache.camel.web.model;
 
-import org.apache.camel.web.management.CamelManagedBean;
+import org.apache.camel.web.connectors.CamelDataBean;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,13 +32,13 @@ public class Consumers {
         this.consumers = consumers;
     }
 
-    public void load(List<CamelManagedBean> managedBeans) {
-        for(CamelManagedBean managedBean : managedBeans) {
+    public void load(List<CamelDataBean> managedBeans) {
+        for(CamelDataBean managedBean : managedBeans) {
             addConsumer(createConsumer(managedBean));
         }
     }
 
-    protected Consumer createConsumer(CamelManagedBean bean) {
+    protected Consumer createConsumer(CamelDataBean bean) {
         Consumer consumer = new Consumer();
         consumer.load(bean);
         return consumer;

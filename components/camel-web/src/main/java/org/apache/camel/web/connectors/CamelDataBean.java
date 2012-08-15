@@ -1,12 +1,12 @@
-package org.apache.camel.web.management;
+package org.apache.camel.web.connectors;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Camel Managed Bean representation
  */
-public class CamelManagedBean {
+public class CamelDataBean {
 
     private final Map<String, Object> properties = new HashMap<String, Object>();
 

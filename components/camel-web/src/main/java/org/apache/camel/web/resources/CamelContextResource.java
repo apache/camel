@@ -31,8 +31,8 @@ import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.web.management.CamelConnection;
-import org.apache.camel.web.management.CamelConnectionFactory;
+import org.apache.camel.web.connectors.CamelConnection;
+import org.apache.camel.web.connectors.CamelConnectionFactory;
 import org.apache.camel.web.model.Camel;
 
 /**
@@ -137,6 +137,20 @@ public class CamelContextResource {
             throw new RuntimeException(e);
         }
         return new ConsumersResource(camelConnection);
+    }
+    
+    /**
+     * Returns the active thread pools
+     */
+    @Path("threadpools")
+    public ThreadPoolsResource geThreadPoolsResource() {
+        CamelConnection camelConnection = null;
+        try {
+            camelConnection = CamelConnectionFactory.getInstance().getJmxConnection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new ThreadPoolsResource(camelConnection);
     }
 
     /**
