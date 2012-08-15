@@ -23,7 +23,6 @@ import org.apache.hadoop.hbase.filter.SkipFilter;
 
 public class ModelAwareSkipFilter extends SkipFilter implements ModelAwareFilter<SkipFilter> {
 
-
     public ModelAwareSkipFilter() {
     }
 
@@ -33,9 +32,6 @@ public class ModelAwareSkipFilter extends SkipFilter implements ModelAwareFilter
 
     /**
      * Applies the message to {@link org.apache.hadoop.hbase.filter.Filter} to context.
-     *
-     * @param context
-     * @param rowModel
      */
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {
@@ -44,12 +40,8 @@ public class ModelAwareSkipFilter extends SkipFilter implements ModelAwareFilter
         }
     }
 
-
     /**
      * Wraps an existing {@link SkipFilter} filter into a {@link ModelAwareSkipFilter}.
-     *
-     * @param filter
-     * @return
      */
     public ModelAwareSkipFilter wrap(SkipFilter filter) {
         return new ModelAwareSkipFilter(filter.getFilter());

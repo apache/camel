@@ -14,40 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hbase.mapping;
 
 import org.apache.camel.Message;
 import org.apache.camel.component.hbase.model.HBaseData;
 
 /**
- * A  {@link org.apache.camel.component.hbase.mapping.CellMappingStrategy} implementation.
+ * A {@link org.apache.camel.component.hbase.mapping.CellMappingStrategy} implementation.
  * It distinguishes between multiple cell, by reading headers with index suffix.
  * <p/>
  * In case of multiple headers:
- * <p>First header is expected to have no suffix</p>.
- * <p>Suffixes start from number 2</p>.
- * <p>Suffixes need to be sequential</p>.
+ * <ul>
+ * <li>First header is expected to have no suffix</li>
+ * <li>Suffixes start from number 2</li>
+ * <li>Suffixes need to be sequential</li>
+ * </ul>
  */
 public class BodyMappingStrategy implements CellMappingStrategy {
 
     /**
      * Resolves the cells that the {@link org.apache.camel.Exchange} refers to.
-     *
-     * @param message
-     * @return
      */
     @Override
     public HBaseData resolveModel(Message message) {
         return message.getBody(HBaseData.class);
     }
 
-
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
-     *
-     * @param message
-     * @param data
      */
     public void applyGetResults(Message message, HBaseData data) {
         if (data == null) {
@@ -56,12 +50,8 @@ public class BodyMappingStrategy implements CellMappingStrategy {
         message.setBody(data);
     }
 
-
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
-     *
-     * @param message
-     * @param data
      */
     public void applyScanResults(Message message, HBaseData data) {
         if (data == null) {

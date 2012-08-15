@@ -29,18 +29,10 @@ public class HBaseRow implements Cloneable {
     private Class<?> rowType = String.class;
     private Set<HBaseCell> cells;
 
-    /**
-     * Constructor
-     */
     public HBaseRow() {
-        cells = new LinkedHashSet<HBaseCell>();
+        this(new LinkedHashSet<HBaseCell>());
     }
 
-    /**
-     * Constructor
-     *
-     * @param cells
-     */
     public HBaseRow(Set<HBaseCell> cells) {
         this.cells = cells;
     }
@@ -69,7 +61,6 @@ public class HBaseRow implements Cloneable {
     public void setCells(Set<HBaseCell> cells) {
         this.cells = cells;
     }
-
 
     public boolean isEmpty() {
         return cells.isEmpty();

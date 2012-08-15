@@ -24,8 +24,6 @@ public interface ModelAwareFilter<T extends Filter> extends Filter {
 
     /**
      * Applies the message to {@link Filter} to context.
-     * @param context
-     * @param rowModel
      */
     void apply(CamelContext context, HBaseRow rowModel);
 }

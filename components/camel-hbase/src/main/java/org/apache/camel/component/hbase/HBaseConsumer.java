@@ -51,7 +51,6 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(HBaseConsumer.class);
 
     private String tableName;
-
     private final HBaseEndpoint endpoint;
     private HTablePool tablePool;
     private HBaseRow rowModel;
@@ -64,12 +63,10 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
         this.rowModel = endpoint.getRowModel();
     }
 
-
     @Override
     protected int poll() throws Exception {
-        HTableInterface table = null;
+        HTableInterface table = tablePool.getTable(tableName);
         try {
-            table = tablePool.getTable(tableName);
             shutdownRunningTask = null;
             pendingExchanges = 0;
 
@@ -154,7 +151,6 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-
             LOG.trace("Processing exchange [{}]...", exchange);
             getProcessor().process(exchange);
             if (exchange.getException() != null) {
@@ -171,9 +167,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Delegates to the {@link HBaseRemoveHandler }.
-     *
-     * @param row
+     * Delegates to the {@link HBaseRemoveHandler}.
      */
     private void remove(byte[] row) throws IOException {
         HTableInterface table = null;
@@ -181,10 +175,11 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             table = tablePool.getTable(tableName);
             endpoint.getRemoveHandler().remove(table, row);
         } finally {
-            table.close();
+            if (table != null) {
+                table.close();
+            }
         }
     }
-
 
     public HBaseRow getRowModel() {
         return rowModel;

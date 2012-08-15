@@ -62,9 +62,6 @@ public class ModelAwareFilterList extends FilterList implements ModelAwareFilter
 
     /**
      * Applies the message to {@link org.apache.hadoop.hbase.filter.Filter} to context.
-     *
-     * @param context
-     * @param rowModel
      */
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {
@@ -77,8 +74,6 @@ public class ModelAwareFilterList extends FilterList implements ModelAwareFilter
 
     /**
      * Wraps an existing {@link FilterList} filter into a {@link ModelAwareFilterList}.
-     * @param filter
-     * @return
      */
     public ModelAwareFilterList wrap(FilterList filter) {
         return new ModelAwareFilterList(filter.getOperator(), filter.getFilters());

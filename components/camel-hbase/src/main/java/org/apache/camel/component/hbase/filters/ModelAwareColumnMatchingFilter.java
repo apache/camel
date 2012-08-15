@@ -36,13 +36,8 @@ public class ModelAwareColumnMatchingFilter extends FilterList implements ModelA
     public ModelAwareColumnMatchingFilter() {
     }
 
-
-
     /**
      * Applies the message to {@link org.apache.hadoop.hbase.filter.Filter} to context.
-     *
-     * @param context
-     * @param rowModel
      */
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {
