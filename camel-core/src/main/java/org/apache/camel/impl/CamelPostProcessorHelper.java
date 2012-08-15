@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * A helper class for Camel based injector or post processing hooks which can be reused by
  * both the <a href="http://camel.apache.org/spring.html">Spring</a>,
  * <a href="http://camel.apache.org/guice.html">Guice</a> and
- * <a href="http://camel.apache.org/blueprint.html">Blueprint</a>support.
+ * <a href="http://camel.apache.org/blueprint.html">Blueprint</a> support.
  *
  * @version 
  */
