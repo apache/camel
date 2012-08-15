@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hbase;
 
-import java.net.URI;
 import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hbase.model.HBaseCell;
@@ -51,8 +50,7 @@ public class HBaseComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        URI endpointUri = new URI(uri);
-        String tableName = endpointUri.getHost();
+        String tableName = remaining;
 
         HBaseEndpoint endpoint = new HBaseEndpoint(uri, this, tablePool, tableName);
         HBaseRow parameterRowModel = createRowModel(parameters);
@@ -63,12 +61,8 @@ public class HBaseComponent extends DefaultComponent {
         return endpoint;
     }
 
-
     /**
      * Creates an {@link HBaseRow} model from the specified endpoint parameters.
-     *
-     * @param parameters
-     * @return
      */
     public HBaseRow createRowModel(Map<String, Object> parameters) {
         HBaseRow rowModel = new HBaseRow();
@@ -90,12 +84,10 @@ public class HBaseComponent extends DefaultComponent {
                     rowModel.setRowType(getCamelContext().getClassResolver().resolveClass(valueType));
                 }
             }
-
             rowModel.getCells().add(cellModel);
         }
         return rowModel;
     }
-
 
     public Configuration getConfiguration() {
         return configuration;

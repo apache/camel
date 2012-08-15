@@ -32,9 +32,6 @@ public class ModelAwareWhileMatchFilter extends WhileMatchFilter implements Mode
 
     /**
      * Applies the message to {@link org.apache.hadoop.hbase.filter.Filter} to context.
-     *
-     * @param context
-     * @param rowModel
      */
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {
@@ -45,9 +42,6 @@ public class ModelAwareWhileMatchFilter extends WhileMatchFilter implements Mode
 
     /**
      * Wraps an existing {@link WhileMatchFilter} filter into a {@link ModelAwareWhileMatchFilter}.
-     *
-     * @param filter
-     * @return
      */
     public ModelAwareWhileMatchFilter wrap(WhileMatchFilter filter) {
         return new ModelAwareWhileMatchFilter(filter.getFilter());

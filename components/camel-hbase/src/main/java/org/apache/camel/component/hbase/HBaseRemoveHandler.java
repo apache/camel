@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hbase;
 
 import org.apache.hadoop.hbase.client.HTableInterface;
 
 public interface HBaseRemoveHandler {
+
     /**
      * 'Removes' a row from the table.
      * The removal is not necessarily physical remove.
      * The implementation decides how a row can be considered as removed.
-     * @param table
-     * @param row
      */
     void remove(HTableInterface table, byte[] row);
 }

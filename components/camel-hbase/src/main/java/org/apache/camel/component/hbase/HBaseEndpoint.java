@@ -34,32 +34,29 @@ import org.apache.hadoop.hbase.filter.Filter;
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;
-    private String tableName;
+    private final String tableName;
+    private final HTablePool tablePool;
     private HBaseAdmin admin;
-    private HTablePool tablePool;
 
     //Operation properties.
     private int maxResults = 100;
     private List<Filter> filters;
     private String operation;
     private boolean remove = true;
-
     private String mappingStrategyName;
     private String mappingStrategyClassName;
     private CellMappingStrategyFactory cellMappingStrategyFactory = new CellMappingStrategyFactory();
     private HBaseRemoveHandler removeHandler = new HBaseDeleteHandler();
     private HBaseRow rowModel;
-
     private int maxMessagesPerPoll;
-
-
-    public HBaseEndpoint() {
-    }
 
     public HBaseEndpoint(String uri, HBaseComponent component, HTablePool tablePool, String tableName) {
         super(uri, component);
         this.tableName = tableName;
         this.tablePool = tablePool;
+        if (this.tableName == null) {
+            throw new IllegalArgumentException("Table name can not be null");
+        }
     }
 
     public Producer createProducer() throws Exception {
@@ -71,7 +68,6 @@ public class HBaseEndpoint extends DefaultEndpoint {
         consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
         return consumer;
     }
-
 
     public boolean isSingleton() {
         return true;
@@ -148,7 +144,6 @@ public class HBaseEndpoint extends DefaultEndpoint {
     public void setRowModel(HBaseRow rowModel) {
         this.rowModel = rowModel;
     }
-
 
     public boolean isRemove() {
         return remove;

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hbase.mapping;
 
 import java.util.LinkedHashMap;
@@ -27,24 +26,21 @@ import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseData;
 import org.apache.camel.component.hbase.model.HBaseRow;
 
-
 /**
  * A default {@link CellMappingStrategy} implementation.
  * It distinguishes between multiple cell, by reading headers with index suffix.
  * <p/>
  * In case of multiple headers:
- * <p>First header is expected to have no suffix</p>.
- * <p>Suffixes start from number 2</p>.
- * <p>Suffixes need to be sequential</p>.
+ * <ul>
+ * <li>First header is expected to have no suffix</li>
+ * <li>Suffixes start from number 2</li>
+ * <li>Suffixes need to be sequential</li>
+ * </ul>
  */
 public class HeaderMappingStrategy implements CellMappingStrategy {
 
     /**
      * Resolves the cell that the {@link Exchange} refers to.
-     *
-     * @param message
-     * @param index
-     * @return
      */
     private HBaseRow resolveRow(Message message, int index) {
         HBaseRow hRow = new HBaseRow();
@@ -79,9 +75,6 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
 
     /**
      * Resolves the cells that the {@link org.apache.camel.Exchange} refers to.
-     *
-     * @param message
-     * @return
      */
     @Override
     public HBaseData resolveModel(Message message) {
@@ -106,12 +99,8 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
         return data;
     }
 
-
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
-     *
-     * @param message
-     * @param hRows
      */
     public void applyGetResults(Message message, HBaseData data) {
         int index = 1;
@@ -132,8 +121,6 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
 
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
-     *
-     * @param message
      */
     public void applyScanResults(Message message, HBaseData data) {
         int index = 1;
@@ -148,7 +135,6 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
                 message.setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(index), cell.getFamily());
                 message.setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(index), cell.getQualifier());
                 message.setHeader(HbaseAttribute.HBASE_VALUE.asHeader(index), cell.getValue());
-
             }
             index++;
         }
@@ -156,11 +142,6 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
 
     /**
      * Searches a list of cells and returns the value, if family/column matches with the specified.
-     *
-     * @param family
-     * @param qualifier
-     * @param cells
-     * @return
      */
     private Object getValueForColumn(Set<HBaseCell> cells, String family, String qualifier) {
         if (cells != null) {

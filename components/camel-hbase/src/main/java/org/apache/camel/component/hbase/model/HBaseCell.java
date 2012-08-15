@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hbase.model;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -49,7 +48,6 @@ public class HBaseCell {
     public void setQualifier(String qualifier) {
         this.qualifier = qualifier;
     }
-
 
     public Object getValue() {
         return value;
