@@ -32,6 +32,10 @@
 	<description>Camel HBase component</description>
 
     <properties>
+		<camel.osgi.import.before.defaults>
+			org.apache.hadoop.conf;version="[1,2)",
+			org.apache.hadoop.hbase.*;version="[0.9,1)"
+		</camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.component.hbase.*</camel.osgi.export.pkg>
     </properties>
 
