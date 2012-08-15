@@ -32,12 +32,11 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.springframework.data.neo4j.support.DelegatingGraphDatabase;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 
-import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-
 
 public class Neo4jProducerTest {
 
@@ -89,15 +88,14 @@ public class Neo4jProducerTest {
         when(msg.getBody()).thenReturn(new HashMap<String, Object>());
         Node node = mock(Node.class);
         when(node.getId()).thenReturn(14L);
-        when(template.createNode(anyMap())).thenReturn(node);
+        when(template.createNode(anyMapOf(String.class, Object.class))).thenReturn(node);
         producer.process(exchange);
-        verify(template).createNode(anyMap());
+        verify(template).createNode(anyMapOf(String.class, Object.class));
         verify(msg).setHeader(Neo4jEndpoint.HEADER_NODE_ID, 14L);
     }
 
     @Test
     public void testCreateRelationshipWithBasicBody() throws Exception {
-
         when(msg.getHeader(Neo4jEndpoint.HEADER_OPERATION)).thenReturn(Neo4jOperation.CREATE_RELATIONSHIP);
 
         Node start = mock(Node.class);
@@ -120,15 +118,14 @@ public class Neo4jProducerTest {
 
     @Test
     public void testCreateRelationshipWithSpringBody() throws Exception {
-
         when(msg.getHeader(Neo4jEndpoint.HEADER_OPERATION)).thenReturn(Neo4jOperation.CREATE_RELATIONSHIP);
 
         Object start = new Object();
         Object end = new Object();
-        Class entityClass = String.class;
+        Class<Relationship> entityClass = Relationship.class;
         String type = "friendswith";
 
-        SpringDataRelationship spring = new SpringDataRelationship(start, end, entityClass, type, true);
+        SpringDataRelationship<Relationship> spring = new SpringDataRelationship<Relationship>(start, end, entityClass, type, true);
         when(msg.getBody()).thenReturn(spring);
 
         Relationship r = mock(Relationship.class);
@@ -149,7 +146,6 @@ public class Neo4jProducerTest {
 
     @Test
     public void testRemoveNodeBasicBody() throws Exception {
-
         Node node = mock(Node.class);
         when(node.getId()).thenReturn(14L);
 
@@ -162,7 +158,6 @@ public class Neo4jProducerTest {
 
     @Test
     public void testRemoveNodeById() throws Exception {
-
         Node node = mock(Node.class);
         when(template.getNode(44L)).thenReturn(node);
 
@@ -175,7 +170,6 @@ public class Neo4jProducerTest {
 
     @Test
     public void testRemoveRelationshipByBasic() throws Exception {
-
         Relationship r = mock(Relationship.class);
 
         when(msg.getHeader(Neo4jEndpoint.HEADER_OPERATION)).thenReturn(Neo4jOperation.REMOVE_RELATIONSHIP);
@@ -187,7 +181,6 @@ public class Neo4jProducerTest {
 
     @Test
     public void testRemoveRelationshipById() throws Exception {
-
         Relationship r = mock(Relationship.class);
         when(template.getRelationship(51L)).thenReturn(r);
 
@@ -200,13 +193,12 @@ public class Neo4jProducerTest {
 
     @Test
     public void testRemoveRelationshipBySpringData() throws Exception {
-
         Object start = new Object();
         Object end = new Object();
-        Class entityClass = String.class;
+        Class<String> entityClass = String.class;
         String type = "friendswith";
 
-        SpringDataRelationship spring = new SpringDataRelationship(start, end, entityClass, type, true);
+        SpringDataRelationship<String> spring = new SpringDataRelationship<String>(start, end, entityClass, type, true);
 
         when(msg.getHeader(Neo4jEndpoint.HEADER_OPERATION)).thenReturn(Neo4jOperation.REMOVE_RELATIONSHIP);
         when(msg.getBody()).thenReturn(spring);

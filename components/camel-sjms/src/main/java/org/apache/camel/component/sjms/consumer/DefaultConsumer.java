@@ -96,7 +96,6 @@ public class DefaultConsumer extends SjmsConsumer {
          * @param messageProducer
          */
         public MessageConsumerResources(MessageConsumer messageConsumer) {
-            super();
             this.session = null;
             this.messageConsumer = messageConsumer;
         }
@@ -109,7 +108,6 @@ public class DefaultConsumer extends SjmsConsumer {
          */
         public MessageConsumerResources(Session session,
                 MessageConsumer messageConsumer) {
-            super();
             this.session = session;
             this.messageConsumer = messageConsumer;
         }

@@ -99,7 +99,6 @@ public final class PGPDataFormatUtil {
         return privKey;
     }
 
-    @SuppressWarnings("unchecked")
     public static PGPPrivateKey findPrivateKey(CamelContext context, InputStream keyringInput, InputStream encryptedInput, String passphrase) throws IOException,
             PGPException, NoSuchProviderException {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyringInput));
@@ -112,7 +111,7 @@ public final class PGPDataFormatUtil {
             enc = (PGPEncryptedDataList) factory.nextObject();
         }
         encryptedInput.reset(); // nextObject() method reads from the InputStream, so rewind it!
-        Iterator encryptedDataObjects = enc.getEncryptedDataObjects();
+        Iterator<?> encryptedDataObjects = enc.getEncryptedDataObjects();
         PGPPrivateKey privateKey = null;
         PGPPublicKeyEncryptedData encryptedData;
         while (privateKey == null && encryptedDataObjects.hasNext()) {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +28,6 @@ import org.apache.camel.impl.DefaultComponent;
 public class ElasticsearchComponent extends DefaultComponent {
 
     public ElasticsearchComponent() {
-        super();
     }
 
     public ElasticsearchComponent(CamelContext context) {

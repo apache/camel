@@ -63,7 +63,6 @@ public abstract class DefaultMessageHandler implements MessageListener {
     }
 
     public DefaultMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
-        super();
         this.synchronization = synchronization;
         this.endpoint = endpoint;
         this.executor = executor;

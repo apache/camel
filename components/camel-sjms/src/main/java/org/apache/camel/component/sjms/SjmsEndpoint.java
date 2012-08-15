@@ -60,7 +60,6 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     
 
     public SjmsEndpoint() {
-        super();
     }
 
     public SjmsEndpoint(String uri, Component component) {

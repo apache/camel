@@ -56,7 +56,6 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;

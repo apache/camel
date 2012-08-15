@@ -46,7 +46,7 @@ public class ElasticsearchConfigurationTest {
     public void localNonDataNodeThrowsIllegalArgumentException() throws Exception {
         URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&data=false");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
-        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        new ElasticsearchConfiguration(uri, parameters);
     }
 
     @Test

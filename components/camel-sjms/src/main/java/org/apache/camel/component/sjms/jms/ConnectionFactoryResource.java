@@ -34,7 +34,6 @@ public class ConnectionFactoryResource extends ObjectPool<Connection> implements
      * Default Constructor
      */
     public ConnectionFactoryResource() {
-        super();
     }
 
     /**

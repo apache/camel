@@ -129,10 +129,6 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
     protected class MyMessageListener implements MessageListener {
         private MessageProducer mp;
 
-        public MyMessageListener() {
-            super();
-        }
-
         @Override
         public void onMessage(Message message) {
             try {

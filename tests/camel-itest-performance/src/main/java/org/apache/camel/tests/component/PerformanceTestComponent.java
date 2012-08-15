@@ -35,7 +35,6 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.StopWatch;
 
 public class PerformanceTestComponent extends DefaultComponent {
     public static final String HEADER_THREADS = "CamelPerfThreads";

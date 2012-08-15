@@ -30,11 +30,9 @@ public class AckExpression extends ExpressionAdapter {
     private int errorCode = HL7Exception.APPLICATION_INTERNAL_ERROR;
 
     public AckExpression() {
-        super();
     }
 
     public AckExpression(AckCode acknowledgementCode) {
-        super();
         this.acknowledgementCode = acknowledgementCode;
     }
 

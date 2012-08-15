@@ -31,23 +31,15 @@ public class Neo4jProducer extends DefaultProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jProducer.class);
 
-    private final Neo4jEndpoint endpoint;
-
-    private final GraphDatabase graphDatabase;
-
     private final Neo4jTemplate template;
 
     public Neo4jProducer(Neo4jEndpoint endpoint, GraphDatabase graphDatabase) {
         super(endpoint);
-        this.endpoint = endpoint;
-        this.graphDatabase = graphDatabase;
         this.template = new Neo4jTemplate(graphDatabase);
     }
 
     public Neo4jProducer(Neo4jEndpoint endpoint, GraphDatabase graphDatabase, Neo4jTemplate template) {
         super(endpoint);
-        this.endpoint = endpoint;
-        this.graphDatabase = graphDatabase;
         this.template = template;
     }
 
