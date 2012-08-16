@@ -127,6 +127,10 @@ public final class SftpProcessStrategyFactory {
                 if (minLength != null) {
                     readLockStrategy.setMinLength(minLength);
                 }
+                Boolean fastExistsCheck = (Boolean) params.get("fastExistsCheck");
+                if (fastExistsCheck != null) {
+                    readLockStrategy.setFastExistsCheck(fastExistsCheck);
+                }
                 return readLockStrategy;
             }
         }
