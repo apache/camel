@@ -226,7 +226,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     }
 
     public String getPath() {
-        return httpUri.getPath();
+        //if the path is empty, we just return the default path here
+        return httpUri.getPath().length() == 0 ? "/" : httpUri.getPath();
     }
 
     public int getPort() {
