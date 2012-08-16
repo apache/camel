@@ -145,12 +145,12 @@ public class LuceneIndexer {
     private void openIndexWriter() throws IOException {
         IndexWriterConfig indexWriterConfig;
         if (!indexCreated) {
-            indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, getAnalyzer()).setOpenMode(OpenMode.CREATE);            
+            indexWriterConfig = new IndexWriterConfig(Version.LUCENE_36, getAnalyzer()).setOpenMode(OpenMode.CREATE);            
             indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
             indexCreated = true;
             return;
         }
-        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, getAnalyzer()).setOpenMode(OpenMode.APPEND);            
+        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_36, getAnalyzer()).setOpenMode(OpenMode.APPEND);            
         indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
     }
 

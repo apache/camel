@@ -55,7 +55,7 @@ public class LuceneSearcher {
     }
     
     public Hits search(String searchPhrase, int maxNumberOfHits) throws Exception {
-        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_35);
+        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_36);
     }
 
     public Hits search(String searchPhrase, int maxNumberOfHits, Version luenceVersion) throws Exception {
