@@ -35,51 +35,47 @@ import org.slf4j.LoggerFactory;
  */
 public class XsltCustomizeURIResolverTest extends ContextTestSupport {
 
-	private static final transient Logger LOG = LoggerFactory
-			.getLogger(XsltCustomizeURIResolverTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XsltCustomizeURIResolverTest.class);
 
-	private final String EXPECTED_XML_CONSTANT = "<data>FOO DATA</data>";
+    private static final String EXPECTED_XML_CONSTANT = "<data>FOO DATA</data>";
 
-	public void testXsltCustomURIResolverDirectInRouteUri() throws Exception {
-		MockEndpoint mock = getMockEndpoint("mock:resultURIResolverDirect");
-		mock.expectedMessageCount(1);
+    public void testXsltCustomURIResolverDirectInRouteUri() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:resultURIResolverDirect");
+        mock.expectedMessageCount(1);
 
-		mock.message(0).body().contains(EXPECTED_XML_CONSTANT);
+        mock.message(0).body().contains(EXPECTED_XML_CONSTANT);
 
-		assertMockEndpointsSatisfied();
-	}
+        assertMockEndpointsSatisfied();
+    }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("file:src/test/data/?fileName=staff.xml&noop=true")
-						.to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
-						.to("mock:resultURIResolverDirect");
-			}
-		};
-	}
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("file:src/test/data/?fileName=staff.xml&noop=true")
+                    .to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
+                    .to("mock:resultURIResolverDirect");
+            }
+        };
+    }
 
-	private URIResolver getCustomURIResolver() {
-		return new URIResolver() {
+    private URIResolver getCustomURIResolver() {
+        return new URIResolver() {
 
-			@Override
-			public Source resolve(String href, String base)
-					throws TransformerException {
-				Source constantResult = new StreamSource(
-						new ByteArrayInputStream(
-								EXPECTED_XML_CONSTANT.getBytes()));
-				return constantResult;
-			}
-		};
-	}
+            @Override
+            public Source resolve(String href, String base) throws TransformerException {
+                Source constantResult = new StreamSource(new ByteArrayInputStream(EXPECTED_XML_CONSTANT.getBytes()));
+                return constantResult;
+            }
+        };
+    }
 
-	@Override
-	protected JndiRegistry createRegistry() throws Exception {
-		JndiRegistry registry = super.createRegistry();
-		URIResolver customURIResolver = getCustomURIResolver();
-		registry.bind("customURIResolver", customURIResolver);
-		return registry;
-	}
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        URIResolver customURIResolver = getCustomURIResolver();
+        registry.bind("customURIResolver", customURIResolver);
+        return registry;
+    }
 }
