@@ -33,6 +33,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     private long timeout;
     private long checkInterval = 5000;
     private long minLength = 1;
+    private boolean fastExistsCheck;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<FTPFile> tGenericFileOperations, GenericFileEndpoint<FTPFile> tGenericFileEndpoint) throws Exception {
@@ -61,7 +62,18 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
             long newLastModified = 0;
             long newLength = 0;
-            List<FTPFile> files = operations.listFiles(file.getParent());
+            List<FTPFile> files;
+            if (fastExistsCheck) {
+                // use the absolute file path to only pickup the file we want to check, this avoids expensive
+                // list operations if we have a lot of files in the directory
+                LOG.trace("Using fast exists to update file information for {}", file);
+                files = operations.listFiles(file.getAbsoluteFilePath());
+            } else {
+                LOG.trace("Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.", file);
+                // fast option not enabled, so list the directory and filter the file name
+                files = operations.listFiles(file.getParent());
+            }
+            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (FTPFile f : files) {
                 if (f.getName().equals(file.getFileName())) {
                     newLastModified = f.getTimestamp().getTimeInMillis();
@@ -129,5 +141,13 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
     public void setMinLength(long minLength) {
         this.minLength = minLength;
+    }
+
+    public boolean isFastExistsCheck() {
+        return fastExistsCheck;
+    }
+
+    public void setFastExistsCheck(boolean fastExistsCheck) {
+        this.fastExistsCheck = fastExistsCheck;
     }
 }

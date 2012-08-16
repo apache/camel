@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
@@ -107,6 +109,13 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         RemoteFileConfiguration config = getConfiguration();
         ObjectHelper.notEmpty(config.getHost(), "host");
         ObjectHelper.notEmpty(config.getProtocol(), "protocol");
+    }
+
+    @Override
+    protected Map<String, Object> getParamsAsMap() {
+        Map<String, Object> map = super.getParamsAsMap();
+        map.put("fastExistsCheck", fastExistsCheck);
+        return map;
     }
 
     /**

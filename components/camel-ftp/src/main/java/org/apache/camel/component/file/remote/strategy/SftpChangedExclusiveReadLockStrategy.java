@@ -25,6 +25,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.StopWatch;
+import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     private long timeout;
     private long checkInterval = 5000;
     private long minLength = 1;
+    private boolean fastExistsCheck;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<ChannelSftp.LsEntry> tGenericFileOperations, GenericFileEndpoint<ChannelSftp.LsEntry> tGenericFileEndpoint) throws Exception {
@@ -61,7 +63,18 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
             long newLastModified = 0;
             long newLength = 0;
-            List<ChannelSftp.LsEntry> files = operations.listFiles(file.getParent());
+            List<ChannelSftp.LsEntry> files;
+            if (fastExistsCheck) {
+                // use the absolute file path to only pickup the file we want to check, this avoids expensive
+                // list operations if we have a lot of files in the directory
+                LOG.trace("Using fast exists to update file information for {}", file);
+                files = operations.listFiles(file.getAbsoluteFilePath());
+            } else {
+                LOG.trace("Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.", file);
+                // fast option not enabled, so list the directory and filter the file name
+                files = operations.listFiles(file.getParent());
+            }
+            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (ChannelSftp.LsEntry f : files) {
                 if (f.getFilename().equals(file.getFileName())) {
                     newLastModified = f.getAttrs().getMTime();
@@ -129,5 +142,13 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
     public void setMinLength(long minLength) {
         this.minLength = minLength;
+    }
+
+    public boolean isFastExistsCheck() {
+        return fastExistsCheck;
+    }
+
+    public void setFastExistsCheck(boolean fastExistsCheck) {
+        this.fastExistsCheck = fastExistsCheck;
     }
 }
