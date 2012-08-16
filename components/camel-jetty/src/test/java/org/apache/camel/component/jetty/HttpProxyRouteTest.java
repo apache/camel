@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -31,20 +32,34 @@ public class HttpProxyRouteTest extends BaseJettyTest {
 
         StopWatch watch = new StopWatch();
         for (int i = 0; i < size; i++) {
-            String out = template.requestBody("http://localhost:{{port}}/hello?foo=" + i, null, String.class);
+            String out = template.requestBody("http://localhost:{{port}}?foo=" + i, null, String.class);
             assertEquals("Bye " + i, out);
         }
 
         log.info("Time taken: " + TimeUtils.printDuration(watch.taken()));
     }
+    
+    @Test
+    public void testHttpProxyWithDifferentPath() throws Exception {
+        String out = template.requestBody("http://localhost:{{port}}/proxy", null, String.class);
+        assertEquals("/otherEndpoint", out);
+        
+        out = template.requestBody("http://localhost:{{port}}/proxy/path", null, String.class);
+        assertEquals("/otherEndpoint/path", out);
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty://http://localhost:{{port}}/hello")
+                from("jetty://http://localhost:{{port}}")
                     .to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                
+                from("jetty://http://localhost:{{port}}/proxy?matchOnUriPrefix=true")
+                    .to("http://localhost:{{port}}/otherEndpoint?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:{{port}}/bye").transform(header("foo").prepend("Bye "));
+                
+                from("jetty://http://localhost:{{port}}/otherEndpoint?matchOnUriPrefix=true").transform(header(Exchange.HTTP_PATH));
             }
         };
     }    
