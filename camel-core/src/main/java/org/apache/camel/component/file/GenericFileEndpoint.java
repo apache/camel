@@ -97,6 +97,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     protected boolean keepLastModified;
     protected String doneFileName;
+    protected boolean allowNullBody;
 
     public GenericFileEndpoint() {
     }
@@ -625,6 +626,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.keepLastModified = keepLastModified;
     }
 
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+    
+    public void setAllowNullBody(boolean allowNullBody) {
+        this.allowNullBody = allowNullBody;
+    }
+    
     /**
      * Configures the given message with the file which sets the body to the
      * file object.
