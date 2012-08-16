@@ -32,6 +32,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     private static final transient Logger LOG = LoggerFactory.getLogger(SftpChangedExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 5000;
+    private long minLength = 1;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<ChannelSftp.LsEntry> tGenericFileOperations, GenericFileEndpoint<ChannelSftp.LsEntry> tGenericFileEndpoint) throws Exception {
@@ -71,8 +72,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             LOG.trace("Previous last modified: " + lastModified + ", new last modified: " + newLastModified);
             LOG.trace("Previous length: " + length + ", new length: " + newLength);
 
-            if (newLastModified == lastModified && newLength == length && length != 0) {
-                // We consider that zero-length files are files in progress on some FTP servers
+            if (length >= minLength && (newLastModified == lastModified && newLength == length)) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -123,4 +123,11 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
         this.checkInterval = checkInterval;
     }
 
+    public long getMinLength() {
+        return minLength;
+    }
+
+    public void setMinLength(long minLength) {
+        this.minLength = minLength;
+    }
 }

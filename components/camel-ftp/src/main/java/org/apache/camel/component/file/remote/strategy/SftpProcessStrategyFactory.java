@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.strategy;
 
 import java.util.Map;
 
+import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
@@ -35,7 +36,7 @@ public final class SftpProcessStrategyFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public static <LsEntry> GenericFileProcessStrategy<LsEntry> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
+    public static GenericFileProcessStrategy<ChannelSftp.LsEntry> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
         Expression moveExpression = (Expression) params.get("move");
@@ -46,52 +47,52 @@ public final class SftpProcessStrategyFactory {
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
         if (isDelete) {
-            GenericFileDeleteProcessStrategy<LsEntry> strategy = new GenericFileDeleteProcessStrategy<LsEntry>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<LsEntry>) getExclusiveReadLockStrategy(params));
+            GenericFileDeleteProcessStrategy<ChannelSftp.LsEntry> strategy = new GenericFileDeleteProcessStrategy<ChannelSftp.LsEntry>();
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) getExclusiveReadLockStrategy(params));
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer<LsEntry> renamer = new GenericFileExpressionRenamer<LsEntry>();
+                GenericFileExpressionRenamer<ChannelSftp.LsEntry> renamer = new GenericFileExpressionRenamer<ChannelSftp.LsEntry>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer<LsEntry> renamer = new GenericFileExpressionRenamer<LsEntry>();
+                GenericFileExpressionRenamer<ChannelSftp.LsEntry> renamer = new GenericFileExpressionRenamer<ChannelSftp.LsEntry>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             return strategy;
         } else if (isMove || isNoop) {
-            GenericFileRenameProcessStrategy<LsEntry> strategy = new GenericFileRenameProcessStrategy<LsEntry>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<LsEntry>) getExclusiveReadLockStrategy(params));
+            GenericFileRenameProcessStrategy<ChannelSftp.LsEntry> strategy = new GenericFileRenameProcessStrategy<ChannelSftp.LsEntry>();
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) getExclusiveReadLockStrategy(params));
             if (!isNoop && moveExpression != null) {
                 // move on commit is only possible if not noop
-                GenericFileExpressionRenamer<LsEntry> renamer = new GenericFileExpressionRenamer<LsEntry>();
+                GenericFileExpressionRenamer<ChannelSftp.LsEntry> renamer = new GenericFileExpressionRenamer<ChannelSftp.LsEntry>();
                 renamer.setExpression(moveExpression);
                 strategy.setCommitRenamer(renamer);
             }
             // both move and noop supports pre move
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer<LsEntry> renamer = new GenericFileExpressionRenamer<LsEntry>();
+                GenericFileExpressionRenamer<ChannelSftp.LsEntry> renamer = new GenericFileExpressionRenamer<ChannelSftp.LsEntry>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             // both move and noop supports pre move
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer<LsEntry> renamer = new GenericFileExpressionRenamer<LsEntry>();
+                GenericFileExpressionRenamer<ChannelSftp.LsEntry> renamer = new GenericFileExpressionRenamer<ChannelSftp.LsEntry>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             return strategy;
         } else {
             // default strategy will do nothing
-            GenericFileNoOpProcessStrategy<LsEntry> strategy = new GenericFileNoOpProcessStrategy<LsEntry>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<LsEntry>) getExclusiveReadLockStrategy(params));
+            GenericFileNoOpProcessStrategy<ChannelSftp.LsEntry> strategy = new GenericFileNoOpProcessStrategy<ChannelSftp.LsEntry>();
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) getExclusiveReadLockStrategy(params));
             return strategy;
         }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <LsEntry> GenericFileExclusiveReadLockStrategy<LsEntry> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<LsEntry> strategy = (GenericFileExclusiveReadLockStrategy<LsEntry>) params.get("exclusiveReadLockStrategy");
+    private static GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry> getExclusiveReadLockStrategy(Map<String, Object> params) {
+        GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry> strategy = (GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -102,7 +103,7 @@ public final class SftpProcessStrategyFactory {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy<LsEntry> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<LsEntry>();
+                GenericFileRenameExclusiveReadLockStrategy<ChannelSftp.LsEntry> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<ChannelSftp.LsEntry>();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
@@ -113,7 +114,7 @@ public final class SftpProcessStrategyFactory {
                 }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy readLockStrategy = new SftpChangedExclusiveReadLockStrategy();
+                SftpChangedExclusiveReadLockStrategy readLockStrategy = new SftpChangedExclusiveReadLockStrategy();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
@@ -121,6 +122,10 @@ public final class SftpProcessStrategyFactory {
                 Long checkInterval = (Long) params.get("readLockCheckInterval");
                 if (checkInterval != null) {
                     readLockStrategy.setCheckInterval(checkInterval);
+                }
+                Long minLength = (Long) params.get("readLockMinLength");
+                if (minLength != null) {
+                    readLockStrategy.setMinLength(minLength);
                 }
                 return readLockStrategy;
             }

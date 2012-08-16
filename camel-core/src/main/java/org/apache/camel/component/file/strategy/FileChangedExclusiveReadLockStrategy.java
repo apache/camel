@@ -33,6 +33,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     private static final transient Logger LOG = LoggerFactory.getLogger(FileChangedExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 1000;
+    private long minLength = 1;
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call super
@@ -66,8 +67,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
             LOG.trace("Previous length: {}, new length: {}", length, newLength);
 
-            if (newLastModified == lastModified && newLength == length && length != 0) {
-                // We consider that zero-length files are files in progress
+            if (length >= minLength && (newLastModified == lastModified && newLength == length)) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -113,4 +113,11 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
         this.checkInterval = checkInterval;
     }
 
+    public long getMinLength() {
+        return minLength;
+    }
+
+    public void setMinLength(long minLength) {
+        this.minLength = minLength;
+    }
 }

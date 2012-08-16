@@ -113,7 +113,7 @@ public final class FtpProcessStrategyFactory {
                 }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy<FTPFile> readLockStrategy = new FtpChangedExclusiveReadLockStrategy();
+                FtpChangedExclusiveReadLockStrategy readLockStrategy = new FtpChangedExclusiveReadLockStrategy();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
@@ -121,6 +121,10 @@ public final class FtpProcessStrategyFactory {
                 Long checkInterval = (Long) params.get("readLockCheckInterval");
                 if (checkInterval != null) {
                     readLockStrategy.setCheckInterval(checkInterval);
+                }
+                Long minLength = (Long) params.get("readLockMinLength");
+                if (minLength != null) {
+                    readLockStrategy.setMinLength(minLength);
                 }
                 return readLockStrategy;
             }
