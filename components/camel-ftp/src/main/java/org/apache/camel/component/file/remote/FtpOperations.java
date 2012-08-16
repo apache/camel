@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -498,8 +499,20 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         InputStream is = null;
+        if (exchange.getIn().getBody() == null) {
+            // Do an explicit test for a null body and decide what to do
+            if (endpoint.isAllowNullBody()) {
+                log.trace("Writing empty file.");
+                is = new ByteArrayInputStream(new byte[]{});
+            } else {
+                throw new GenericFileOperationFailedException("Cannot write null body to file: " + name);
+            }
+        }
+
         try {
-            is = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (is == null) {
+                is = exchange.getIn().getMandatoryBody(InputStream.class);
+            }
             if (endpoint.getFileExist() == GenericFileExist.Append) {
                 log.trace("Client appendFile: {}", targetName);
                 return client.appendFile(targetName, is);
