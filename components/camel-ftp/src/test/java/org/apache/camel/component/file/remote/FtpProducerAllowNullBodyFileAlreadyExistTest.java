@@ -14,62 +14,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.component.file.remote;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * Unit tests to ensure that when the option allowNullBody is set to true then
- * If the fileExist option is set to Append the file's contents will not be modified
- * If the fileExist option is set to Override the file's contents will be empty
- */
-public class FileProducerAllowNullBodyFileAlreadyExistsTest extends ContextTestSupport {
+public class FtpProducerAllowNullBodyFileAlreadyExistTest extends FtpServerTestSupport {
 
-    @Override
-    protected void setUp() throws Exception {
-        deleteDirectory("target/allow");
-        super.setUp();
-        template.sendBodyAndHeader("file://target/allow", "Hello world", Exchange.FILE_NAME, "hello.txt");
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/allow?password=admin";
     }
 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        template.sendBodyAndHeader(getFtpUrl(), "Hello world", Exchange.FILE_NAME, "hello.txt");
+    }
+
+    @Test
     public void testFileExistAppendAllowNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:appendTypeAppendResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/allow/hello.txt", "Hello world");
+        mock.expectedFileExists(FTP_ROOT_DIR + "/allow/hello.txt", "Hello world");
 
         template.sendBody("direct:appendTypeAppend", null);
 
         assertMockEndpointsSatisfied();
     }
-    
+
+    @Test
     public void testFileExistOverrideAllowNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:appendTypeOverrideResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/allow/hello.txt", "");
+        mock.expectedFileExists(FTP_ROOT_DIR + "/allow/hello.txt", "");
 
         template.sendBody("direct:appendTypeOverride", null);
 
         assertMockEndpointsSatisfied();
     }
-    
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:appendTypeAppend")
-                    .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                    .to("file://target/allow?allowNullBody=true&fileExist=Append")
-                    .to("mock:appendTypeAppendResult");
-                
+                        .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                        .to(getFtpUrl() + "&allowNullBody=true&fileExist=Append")
+                        .to("mock:appendTypeAppendResult");
+
                 from("direct:appendTypeOverride")
-                     .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                     .to("file://target/allow?allowNullBody=true&fileExist=Override")
-                     .to("mock:appendTypeOverrideResult");
+                        .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                        .to(getFtpUrl() + "&allowNullBody=true&fileExist=Override")
+                        .to("mock:appendTypeOverrideResult");
             }
         };
     }
+
 }

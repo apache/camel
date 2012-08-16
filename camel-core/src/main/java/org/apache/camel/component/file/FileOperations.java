@@ -175,7 +175,7 @@ public class FileOperations implements GenericFileOperations<File> {
         // Do an explicit test for a null body and decide what to do
         if (exchange.getIn().getBody() == null) {
             if (endpoint.isAllowNullBody()) {
-                LOG.trace("The in message of exchange body was null.");
+                LOG.trace("Writing empty file.");
                 try {
                     writeFileEmptyBody(file);
                     return true;
@@ -183,7 +183,7 @@ public class FileOperations implements GenericFileOperations<File> {
                     throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
                 }
             } else {
-                throw new GenericFileOperationFailedException("Cannot write null body to file.");
+                throw new GenericFileOperationFailedException("Cannot write null body to file: " + file);
             }
         }
 
@@ -348,9 +348,10 @@ public class FileOperations implements GenericFileOperations<File> {
      */
     private void writeFileEmptyBody(File target) throws IOException {
         if (!target.exists()) {
+            LOG.debug("Creating new empty file: {}", target);
             target.createNewFile();
         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
-            LOG.trace("Truncating file as it already exists and endpoint set to Override file.");
+            LOG.debug("Truncating existing file: {}", target);
             FileChannel out = new FileOutputStream(target).getChannel();
             try {
                 out.truncate(0);

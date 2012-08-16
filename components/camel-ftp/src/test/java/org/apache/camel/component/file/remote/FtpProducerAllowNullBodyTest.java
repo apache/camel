@@ -14,40 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.junit.Test;
 
-/**
- * Unit tests to ensure that 
- * When the allowNullBody option is set to true it will create an empty file and not throw an exception
- * When the allowNullBody option is set to false it will throw an exception of "Cannot write null body to file."
- */
-public class FileProducerAllowNullBodyTest extends ContextTestSupport {
+public class FtpProducerAllowNullBodyTest extends FtpServerTestSupport {
 
-    @Override
-    protected void setUp() throws Exception {
-        deleteDirectory("target/allow");
-        super.setUp();
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/allownull?password=admin&fileName=allowNullBody.txt";
     }
 
+    @Test
     public void testAllowNullBodyTrue() throws Exception {
-        template.sendBody("file://target/allow?allowNullBody=true&fileName=allowNullBody.txt", null);
-        assertFileExists("./target/allow/allowNullBody.txt");
+        template.sendBody(getFtpUrl() + "&allowNullBody=true", null);
+
+        assertFileExists(FTP_ROOT_DIR + "/allownull/allowNullBody.txt");
     }
-    
+
+    @Test
     public void testAllowNullBodyFalse() throws Exception {
         try {
-            template.sendBody("file://target/allow?fileName=allowNullBody.txt", null);
+            template.sendBody(getFtpUrl() + "&allowNullBody=false", null);
             fail("Should have thrown a GenericFileOperationFailedException");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
         }
-        
-        assertFalse("allowNullBody set to false with null body should not create a new file", new File("./target/allow/allowNullBody.txt").exists());
+
+        assertFalse("allowNullBody set to false with null body should not create a new file", new File(FTP_ROOT_DIR + "/allownull/allowNullBody.txt").exists());
     }
+
 }
