@@ -28,19 +28,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
+import org.bouncycastle.openpgp.PGPEncryptedDataList;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPLiteralData;
 import org.bouncycastle.openpgp.PGPLiteralDataGenerator;
+import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPPublicKeyEncryptedData;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKey;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
-import org.bouncycastle.openpgp.PGPObjectFactory;
-import org.bouncycastle.openpgp.PGPEncryptedDataList;
-import org.bouncycastle.openpgp.PGPPublicKeyEncryptedData;
 
 public final class PGPDataFormatUtil {
 
@@ -86,7 +86,7 @@ public final class PGPDataFormatUtil {
     }
 
     public static PGPPrivateKey findPrivateKey(CamelContext context, String keychainFilename, InputStream encryptedInput, String passphrase)
-            throws IOException, PGPException, NoSuchProviderException {
+        throws IOException, PGPException, NoSuchProviderException {
 
         InputStream keyChainInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), keychainFilename);
 
