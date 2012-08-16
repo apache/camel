@@ -93,6 +93,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String readLock = "none";
     protected long readLockCheckInterval = 1000;
     protected long readLockTimeout = 10000;
+    protected long readLockMinLength = 1;
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     protected boolean keepLastModified;
     protected String doneFileName;
@@ -509,6 +510,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockTimeout = readLockTimeout;
     }
 
+    public long getReadLockMinLength() {
+        return readLockMinLength;
+    }
+
+    public void setReadLockMinLength(long readLockMinLength) {
+        this.readLockMinLength = readLockMinLength;
+    }
+
     public int getBufferSize() {
         return bufferSize;
     }
@@ -715,6 +724,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (readLockTimeout > 0) {
             params.put("readLockTimeout", readLockTimeout);
         }
+        params.put("readLockMinLength", readLockMinLength);
 
         return params;
     }
