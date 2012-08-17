@@ -17,12 +17,10 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 
 /**
  * @version 
  */
-@Ignore("Disabled due CI servers fails on full build running with these tests")
 public class SftpSimpleConsumeAbsoluteNotStepwiseTest extends SftpSimpleConsumeAbsoluteTest {
 
     @Override
@@ -30,7 +28,8 @@ public class SftpSimpleConsumeAbsoluteNotStepwiseTest extends SftpSimpleConsumeA
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&stepwise=false")
+                // we must remember to use // slash because of the url separator
+                from("sftp://localhost:" + getPort() + "//" + createAbsolutePath() + "?username=admin&password=admin&delay=10s&disconnect=true&stepwise=false")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
