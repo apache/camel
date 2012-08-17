@@ -40,5 +40,6 @@ import java.lang.annotation.Target;
 public @interface EndpointInject {
     String uri() default "";
     String ref() default "";
+    String property() default "";
     String context() default "";
 }
