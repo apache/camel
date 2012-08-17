@@ -19,13 +19,11 @@ package org.apache.camel.component.file.remote.sftp;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
-@Ignore("Disabled due CI servers fails on full build running with these tests")
 public class SftpSimpleConsumeTest extends SftpServerTestSupport {
 
     @Test
@@ -53,7 +51,7 @@ public class SftpSimpleConsumeTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/?username=admin&password=admin&delay=10s&disconnect=true")
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

@@ -17,13 +17,11 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import org.apache.camel.Exchange;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
-@Ignore("Disabled due CI servers fails on full build running with these tests")
 public class SftpConsumeTemplateTest extends SftpServerTestSupport {
 
     @Override

@@ -20,13 +20,11 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.FileUtil;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
-@Ignore("Disabled due CI servers fails on full build running with these tests")
 public class SftpProduceTempFileTest extends SftpServerTestSupport {
 
     @Override

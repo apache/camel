@@ -19,14 +19,22 @@ package org.apache.camel.component.file.remote.sftp;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
-@Ignore("Disabled due CI servers fails on full build running with these tests")
 public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
+
+    protected static String createAbsolutePath() {
+        String answer = System.getProperty("user.dir") + "/" + FTP_ROOT_DIR + "/tmp/mytemp";
+
+        if (isPlatform("windows")) {
+            answer = answer.replace('\\', '/');
+        }
+
+        return answer;
+    }
 
     @Test
     public void testSftpSimpleConsumeAbsolute() throws Exception {
@@ -36,13 +44,12 @@ public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
 
         String expected = "Hello World";
 
-        // FTP Server does not support absolute path, so lets simulate it
-        String path = FTP_ROOT_DIR + "/tmp/mytemp";
-        template.sendBodyAndHeader("file:" + path, expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:" + createAbsolutePath(), expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
+        mock.expectedBodiesReceived(expected);
+        mock.expectedHeaderReceived(Exchange.FILE_NAME_ONLY, "hello.txt");
 
         context.startRoute("foo");
 
@@ -54,7 +61,8 @@ public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true")
+                // we must remember to use // slash because of the url separator
+                from("sftp://localhost:" + getPort() + "//" + createAbsolutePath()  + "?username=admin&password=admin&delay=10s&disconnect=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
