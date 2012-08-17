@@ -60,7 +60,12 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             NoSuchAlgorithmException nsae = ObjectHelper.getException(NoSuchAlgorithmException.class, e);
             if (nsae != null) {
                 canTest = false;
-                log.warn("SunX509 is not avail on this platform [{0}] Testing is skipped! Real cause: {1}", System.getProperty("os.name"), nsae.getMessage());
+
+                // warn both through console as well as log that we can not run the test
+                String name = System.getProperty("os.name");
+                String message = nsae.getMessage();
+                System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + message);
+                log.warn("SunX509 is not avail on this platform [{0}] Testing is skipped! Real cause: {1}", name, message);
             } else {
                 // some other error then throw it so the test can fail
                 throw e;
