@@ -17,9 +17,6 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
-import java.security.Provider.Service;
-import java.security.Security;
 import java.util.Arrays;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
@@ -47,27 +44,10 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     @Before
     public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
+        super.setUp();
 
-        
-        
-        canTest = false;
-        for (Provider p : Security.getProviders()) {
-            for (Service s : p.getServices()) {
-                if ("SunX509".equalsIgnoreCase(s.getAlgorithm())) {
-                    canTest = true;
-                }
-            }
-        }
-        if (!canTest) {
-            String name = System.getProperty("java.vendor");
-            System.out.println("SunX509 is not avail on this jdk [" + name + "] Testing is skipped!");
-            return;
-        }
-        canTest = false;
-        
+        canTest = true;
         try {
-            super.setUp();
-
             sshd = SshServer.setUpDefaultServer();
             sshd.setPort(getPort());
             sshd.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
@@ -75,21 +55,17 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             sshd.setCommandFactory(new ScpCommandFactory());
             sshd.setPasswordAuthenticator(new MyPasswordAuthenticator());
             sshd.start();
-
         } catch (Exception e) {
             // ignore if algorithm is not on the OS
             NoSuchAlgorithmException nsae = ObjectHelper.getException(NoSuchAlgorithmException.class, e);
             if (nsae != null) {
                 canTest = false;
-                String name = System.getProperty("os.name");
-                System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + nsae.getMessage());
+                log.warn("SunX509 is not avail on this platform [{0}] Testing is skipped! Real cause: {1}", System.getProperty("os.name"), nsae.getMessage());
             } else {
                 // some other error then throw it so the test can fail
                 throw e;
             }
         }
-
-        canTest = true;
     }
 
     @Override

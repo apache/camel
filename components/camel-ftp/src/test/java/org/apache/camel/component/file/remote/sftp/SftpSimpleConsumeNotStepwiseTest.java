@@ -17,12 +17,10 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 
 /**
  * @version 
  */
-@Ignore("Disabled due CI servers fails on full build running with these tests")
 public class SftpSimpleConsumeNotStepwiseTest extends SftpSimpleConsumeTest {
 
     @Override
@@ -30,7 +28,7 @@ public class SftpSimpleConsumeNotStepwiseTest extends SftpSimpleConsumeTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/?username=admin&password=admin&delay=10s&disconnect=true&stepwise=false")
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&stepwise=false")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
