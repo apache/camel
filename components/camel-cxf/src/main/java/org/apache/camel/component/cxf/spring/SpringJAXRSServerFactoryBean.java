@@ -22,7 +22,6 @@ import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
@@ -34,7 +33,7 @@ import org.springframework.context.ApplicationContextAware;
 public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean implements
     ApplicationContextAware, BeanIdAware {
     private String beanId;
-    private boolean loggingFeatureEnabled;
+    private LoggingFeature loggingFeature;
     private int loggingSizeLimit;
     
     public SpringJAXRSServerFactoryBean() {
@@ -73,30 +72,39 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean impleme
     }
     
     public boolean isLoggingFeatureEnabled() {
-        return loggingFeatureEnabled;
+        return loggingFeature != null;
     }
 
     public void setLoggingFeatureEnabled(boolean loggingFeatureEnabled) {
-        this.loggingFeatureEnabled = loggingFeatureEnabled;
+        if (loggingFeature != null) {
+            getFeatures().remove(loggingFeature);
+            loggingFeature = null;
+        }
+        if (loggingFeatureEnabled) {
+            if (getLoggingSizeLimit() > 0) {
+                loggingFeature = new LoggingFeature(getLoggingSizeLimit());
+            } else {
+                loggingFeature = new LoggingFeature();
+            }
+            getFeatures().add(loggingFeature);
+        }
+        
     }
-
+    
     public int getLoggingSizeLimit() {
         return loggingSizeLimit;
     }
 
     public void setLoggingSizeLimit(int loggingSizeLimit) {
         this.loggingSizeLimit = loggingSizeLimit;
-    }
-    
-    public List<AbstractFeature> getFeatures() {
-        List<AbstractFeature> answer = super.getFeatures();
-        if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
-                answer.add(new LoggingFeature(getLoggingSizeLimit()));
+        if (loggingFeature != null) {
+            getFeatures().remove(loggingFeature);
+            if (loggingSizeLimit > 0) {
+                loggingFeature = new LoggingFeature(loggingSizeLimit);
             } else {
-                answer.add(new LoggingFeature());
+                loggingFeature = new LoggingFeature();
             }
+            getFeatures().add(loggingFeature);
         }
-        return answer;
-    }
+    }   
 }

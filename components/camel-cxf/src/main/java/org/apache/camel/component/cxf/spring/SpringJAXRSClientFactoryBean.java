@@ -22,7 +22,6 @@ import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.version.Version;
@@ -33,18 +32,30 @@ import org.springframework.context.ApplicationContextAware;
 public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
     implements ApplicationContextAware, BeanIdAware {
     private String beanId;
-    private boolean loggingFeatureEnabled;
     private int loggingSizeLimit;
+    private LoggingFeature loggingFeature;
 
     public SpringJAXRSClientFactoryBean() {
     }
     
     public boolean isLoggingFeatureEnabled() {
-        return loggingFeatureEnabled;
+        return loggingFeature != null;
     }
 
     public void setLoggingFeatureEnabled(boolean loggingFeatureEnabled) {
-        this.loggingFeatureEnabled = loggingFeatureEnabled;
+        if (loggingFeature != null) {
+            getFeatures().remove(loggingFeature);
+            loggingFeature = null;
+        }
+        if (loggingFeatureEnabled) {
+            if (getLoggingSizeLimit() > 0) {
+                loggingFeature = new LoggingFeature(getLoggingSizeLimit());
+            } else {
+                loggingFeature = new LoggingFeature();
+            }
+            getFeatures().add(loggingFeature);
+        }
+        
     }
 
     public int getLoggingSizeLimit() {
@@ -53,7 +64,18 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
 
     public void setLoggingSizeLimit(int loggingSizeLimit) {
         this.loggingSizeLimit = loggingSizeLimit;
+        if (loggingFeature != null) {
+            getFeatures().remove(loggingFeature);
+            if (loggingSizeLimit > 0) {
+                loggingFeature = new LoggingFeature(loggingSizeLimit);
+            } else {
+                loggingFeature = new LoggingFeature();
+            }
+            getFeatures().add(loggingFeature);
+        }
     }
+
+    
     
     @SuppressWarnings("deprecation")
     @Override
@@ -82,17 +104,5 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
     // add this mothod for testing
     List<String> getSchemaLocations() {
         return schemaLocations;
-    }
-    
-    public List<AbstractFeature> getFeatures() {
-        List<AbstractFeature> answer = super.getFeatures();
-        if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
-                answer.add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                answer.add(new LoggingFeature());
-            }
-        }
-        return answer;
     }
 }
