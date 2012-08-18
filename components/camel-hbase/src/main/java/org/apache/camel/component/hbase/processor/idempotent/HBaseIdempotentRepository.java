@@ -48,7 +48,6 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
         this.table = new HTable(configuration, tableName);
     }
 
-
     @Override
     public boolean add(Object o) {
         try {
@@ -106,12 +105,12 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     protected void doStart() throws Exception {
-
+        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
-
+        // noop
     }
 
     private byte[] toBytes(Object obj) {

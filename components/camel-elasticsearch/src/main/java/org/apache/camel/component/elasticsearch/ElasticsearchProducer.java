@@ -27,7 +27,6 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.support.replication.ReplicationType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
@@ -125,6 +124,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         exchange.getIn().setBody(response.getId());
     }
 
+    @SuppressWarnings("unchecked")
     private boolean setIndexRequestSource(Message msg, IndexRequestBuilder builder) {
         Object body = null;
         boolean converted = false;
@@ -142,7 +142,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             if (body instanceof byte[]) {
                 builder.setSource((byte[])body);
             } else if (body instanceof Map) {
-                builder.setSource((Map<String, Object>)body);
+                builder.setSource((Map<String, Object>) body);
             } else if (body instanceof String) {
                 builder.setSource((String)body);
             } else if (body instanceof XContentBuilder) {

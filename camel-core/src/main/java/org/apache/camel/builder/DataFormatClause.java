@@ -186,6 +186,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         hl7.setValidate(validate);
         return dataFormat(hl7);
     }
+    
+    /**
+     * Uses the HL7 data format
+     */
+    public T hl7(Object parser) {
+        HL7DataFormat hl7 = new HL7DataFormat();
+        hl7.setParser(parser);
+        return dataFormat(hl7);
+    }    
 
     /**
      * Uses the PGP data format

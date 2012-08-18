@@ -182,6 +182,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Map<String, String> properties = new HashMap<String, String>();
     private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
     private FactoryFinder defaultFactoryFinder;
+    private PropertiesComponent propertiesComponent;
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<String, RouteService>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<String, RouteService>();
@@ -294,6 +295,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onComponentAdd(componentName, component);
             }
+
+            // keep reference to properties component up to date
+            if (component instanceof PropertiesComponent && "properties".equals(componentName)) {
+                propertiesComponent = (PropertiesComponent) component;
+            }
         }
     }
 
@@ -344,6 +350,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 for (LifecycleStrategy strategy : lifecycleStrategies) {
                     strategy.onComponentRemove(componentName, answer);
                 }
+            }
+            // keep reference to properties component up to date
+            if (answer != null && "properties".equals(componentName)) {
+                propertiesComponent = null;
             }
             return answer;
         }
@@ -1530,6 +1540,26 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
 
+        // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
+        // due we use properties component for property placeholder resolution at runtime
+        Component existing = hasComponent("properties");
+        if (existing == null) {
+            // no existing properties component so lookup and add as component if possible
+            propertiesComponent = getRegistry().lookup("properties", PropertiesComponent.class);
+            if (propertiesComponent != null) {
+                addComponent("properties", propertiesComponent);
+            }
+        } else {
+            // store reference to the existing properties component
+            if (existing instanceof PropertiesComponent) {
+                propertiesComponent = (PropertiesComponent) existing;
+            } else {
+                // properties component must be expected type
+                throw new IllegalArgumentException("Found properties component of type: " + existing.getClass() + " instead of expected: " + PropertiesComponent.class);
+            }
+        }
+
+        // start components
         startServices(components.values());
 
         // setup default thread pool for error handler
@@ -1984,7 +2014,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                     Endpoint existing = existingRoute.getEndpoint();
                     ServiceStatus status = getRouteStatus(existingRoute.getId());
-                    if (status != null && status.isStarted() || status.isStarting()) {
+                    if (status != null && (status.isStarted() || status.isStarting())) {
                         existingEndpoints.add(existing);
                     }
                 }
@@ -2169,24 +2199,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
     
     /**
-     * Looks up the properties component if one may be resolved or has already been created.
-     * Returns {@code null} if one was not created or is not in the registry.
+     * Gets the properties component in use.
+     * Returns {@code null} if no properties component is in use.
      */
     protected PropertiesComponent getPropertiesComponent() {
-        Component component = hasComponent("properties");
-        if (component == null) {
-            // then fallback to lookup the component
-            component = getRegistry().lookup("properties", Component.class);
-        }
-        
-        PropertiesComponent pc = null;
-        // Ensure that we don't create one if one is not really available.
-        if (component != null) {
-            // force component to be created and registered as a component
-            pc = getComponent("properties", PropertiesComponent.class);
-        }
-        
-        return pc;
+        return propertiesComponent;
     }
 
     public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {

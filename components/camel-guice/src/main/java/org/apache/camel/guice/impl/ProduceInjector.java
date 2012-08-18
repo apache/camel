@@ -49,8 +49,9 @@ public class ProduceInjector extends CamelPostProcessorHelper implements Annotat
         String injectionPointName = field.getName();
         String endpointRef = inject.ref();
         String uri = inject.uri();
+        String property = inject.property();
 
-        return getInjectionValue(type, uri, endpointRef, injectionPointName, null, null);
+        return getInjectionValue(type, uri, endpointRef, property, injectionPointName, null, null);
     }
 
     public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass, int index) {
@@ -59,8 +60,9 @@ public class ProduceInjector extends CamelPostProcessorHelper implements Annotat
         String injectionPointName = ObjectHelper.getPropertyName(method);
         String endpointRef = inject.ref();
         String uri = inject.uri();
+        String property = inject.property();
 
-        return getInjectionValue(type, uri, endpointRef, injectionPointName, null, null);
+        return getInjectionValue(type, uri, endpointRef, property, injectionPointName, null, null);
     }
 
 }

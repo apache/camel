@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hbase;
 
 import java.io.ByteArrayInputStream;
@@ -49,7 +48,6 @@ public final class HBaseHelper {
         }
         return name;
     }
-
 
     public static byte[] toBytes(Object obj) {
         if (obj instanceof byte[]) {

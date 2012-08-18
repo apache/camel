@@ -70,6 +70,7 @@ public class ServletComponent extends HttpComponent {
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
+        String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
@@ -99,6 +100,9 @@ public class ServletComponent extends HttpComponent {
         }
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
+        }
+        if (httpMethodRestrict != null) {
+            endpoint.setHttpMethodRestrict(httpMethodRestrict);
         }
 
         setProperties(endpoint, parameters);

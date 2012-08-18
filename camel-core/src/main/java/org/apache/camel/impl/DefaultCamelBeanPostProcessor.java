@@ -167,19 +167,22 @@ public class DefaultCamelBeanPostProcessor {
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
                 if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
-                    injectField(field, endpointInject.uri(), endpointInject.ref(), bean, beanName);
+                    injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), bean, beanName);
                 }
 
                 Produce produce = field.getAnnotation(Produce.class);
                 if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
-                    injectField(field, produce.uri(), produce.ref(), bean, beanName);
+                    injectField(field, produce.uri(), produce.ref(), produce.property(), bean, beanName);
                 }
             }
         });
     }
 
-    protected void injectField(Field field, String endpointUri, String endpointRef, Object bean, String beanName) {
-        ReflectionHelper.setField(field, bean, getPostProcessorHelper().getInjectionValue(field.getType(), endpointUri, endpointRef, field.getName(), bean, beanName));
+    protected void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
+                               Object bean, String beanName) {
+        ReflectionHelper.setField(field, bean,
+                getPostProcessorHelper().getInjectionValue(field.getType(), endpointUri, endpointRef, endpointProperty,
+                        field.getName(), bean, beanName));
     }
 
     protected void injectMethods(final Object bean, final String beanName) {
@@ -194,23 +197,24 @@ public class DefaultCamelBeanPostProcessor {
     protected void setterInjection(Method method, Object bean, String beanName) {
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
-            setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref());
+            setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref(), endpointInject.property());
         }
 
         Produce produce = method.getAnnotation(Produce.class);
         if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
-            setterInjection(method, bean, beanName, produce.uri(), produce.ref());
+            setterInjection(method, bean, beanName, produce.uri(), produce.ref(), produce.property());
         }
     }
 
-    protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef) {
+    protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef, String endpointProperty) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
                 LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
             } else {
                 String propertyName = ObjectHelper.getPropertyName(method);
-                Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, propertyName, bean, beanName);
+                Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty,
+                        propertyName, bean, beanName);
                 ObjectHelper.invokeMethod(method, bean, value);
             }
         }

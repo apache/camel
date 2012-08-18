@@ -63,8 +63,15 @@ public class CamelContinuationServlet extends CamelServlet {
             return;
         }
 
+        if (consumer.getEndpoint().getHttpMethodRestrict() != null 
+            && !consumer.getEndpoint().getHttpMethodRestrict().equals(request.getMethod())) {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return;
+        }
+
         if ("TRACE".equals(request.getMethod()) && !consumer.isTraceEnabled()) {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return;
         }
         
         final Exchange result = (Exchange) request.getAttribute(EXCHANGE_ATTRIBUTE_NAME);

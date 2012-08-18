@@ -132,7 +132,7 @@ public final class FileProcessStrategyFactory {
                 }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy<File> readLockStrategy = new FileChangedExclusiveReadLockStrategy();
+                FileChangedExclusiveReadLockStrategy readLockStrategy = new FileChangedExclusiveReadLockStrategy();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
@@ -140,6 +140,10 @@ public final class FileProcessStrategyFactory {
                 Long checkInterval = (Long) params.get("readLockCheckInterval");
                 if (checkInterval != null) {
                     readLockStrategy.setCheckInterval(checkInterval);
+                }
+                Long minLength = (Long) params.get("readLockMinLength");
+                if (minLength != null) {
+                    readLockStrategy.setMinLength(minLength);
                 }
                 return readLockStrategy;
             } else if ("markerFile".equals(readLock)) {

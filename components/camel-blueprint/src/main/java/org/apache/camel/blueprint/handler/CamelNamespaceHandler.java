@@ -663,20 +663,20 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 for (Field field : fields) {
                     EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
                     if (endpointInject != null && matchContext(endpointInject.context())) {
-                        injectField(field, endpointInject.uri(), endpointInject.ref(), bean, beanName);
+                        injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), bean, beanName);
                     }
 
                     Produce produce = field.getAnnotation(Produce.class);
                     if (produce != null && matchContext(produce.context())) {
-                        injectField(field, produce.uri(), produce.ref(), bean, beanName);
+                        injectField(field, produce.uri(), produce.ref(), produce.property(), bean, beanName);
                     }
                 }
                 clazz = clazz.getSuperclass();
             } while (clazz != null && clazz != Object.class);
         }
 
-        protected void injectField(Field field, String endpointUri, String endpointRef, Object bean, String beanName) {
-            setField(field, bean, getInjectionValue(field.getType(), endpointUri, endpointRef, field.getName(), bean, beanName));
+        protected void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty, Object bean, String beanName) {
+            setField(field, bean, getInjectionValue(field.getType(), endpointUri, endpointRef, endpointProperty, field.getName(), bean, beanName));
         }
 
         protected static void setField(Field field, Object instance, Object value) {
@@ -712,23 +712,23 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         protected void setterInjection(Method method, Object bean, String beanName) {
             EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
             if (endpointInject != null && matchContext(endpointInject.context())) {
-                setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref());
+                setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref(), endpointInject.property());
             }
 
             Produce produce = method.getAnnotation(Produce.class);
             if (produce != null && matchContext(produce.context())) {
-                setterInjection(method, bean, beanName, produce.uri(), produce.ref());
+                setterInjection(method, bean, beanName, produce.uri(), produce.ref(), produce.property());
             }
         }
 
-        protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef) {
+        protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef, String endpointProperty) {
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes != null) {
                 if (parameterTypes.length != 1) {
                     LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
                 } else {
                     String propertyName = ObjectHelper.getPropertyName(method);
-                    Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointRef, propertyName, bean, beanName);
+                    Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty, propertyName, bean, beanName);
                     ObjectHelper.invokeMethod(method, bean, value);
                 }
             }

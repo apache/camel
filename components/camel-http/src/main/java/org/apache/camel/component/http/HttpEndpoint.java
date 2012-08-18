@@ -60,6 +60,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private String authMethodPriority;
     private boolean transferException;
     private boolean traceEnabled;
+    private String httpMethodRestrict;
 
     public HttpEndpoint() {
     }
@@ -207,7 +208,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     }
 
     public String getPath() {
-        return httpUri.getPath();
+        //if the path is empty, we just return the default path here
+        return httpUri.getPath().length() == 0 ? "/" : httpUri.getPath();
     }
 
     public int getPort() {
@@ -327,5 +329,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setTraceEnabled(boolean traceEnabled) {
         this.traceEnabled = traceEnabled;
+    }
+
+    public String getHttpMethodRestrict() {
+        return httpMethodRestrict;
+    }
+
+    public void setHttpMethodRestrict(String httpMethodRestrict) {
+        this.httpMethodRestrict = httpMethodRestrict;
     }
 }

@@ -42,6 +42,26 @@ public class BeanWithXPathInjectionTest extends ContextTestSupport {
         assertEquals("bean foo: " + myBean, "bar", myBean.foo);
     }
 
+    public void testSendTwoMessages() throws Exception {
+        // 1st message
+        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
+                              + "<foo>bar</foo></env:Body></env:Envelope>";
+
+        template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");
+
+        assertEquals("bean body: " + myBean, expectedBody, myBean.body);
+        assertEquals("bean foo: " + myBean, "bar", myBean.foo);
+
+        // 2nd message
+        String expectedBody2 = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
+                + "<foo>baz</foo></env:Body></env:Envelope>";
+
+        template.sendBodyAndHeader("direct:in", expectedBody2, "foo", "baz");
+
+        assertEquals("bean body: " + myBean, expectedBody2, myBean.body);
+        assertEquals("bean foo: " + myBean, "baz", myBean.foo);
+    }
+
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();

@@ -30,6 +30,7 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.ahc.AhcEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  *
@@ -135,7 +136,7 @@ public final class AhcHelper {
                         }
                     }
                     baseURI = new URI(baseURIString);
-                    String basePath = baseURI.getRawPath();
+                    String basePath = baseURI.getPath();
                     if (path.startsWith(basePath)) {
                         path = path.substring(basePath.length());
                         if (path.startsWith("/")) {
@@ -157,6 +158,10 @@ public final class AhcHelper {
                 uri = uri.concat(path);
             }
         }
+
+        // ensure uri is encoded to be valid
+        uri = UnsafeUriCharactersEncoder.encode(uri);
+
         return uri;
     }
 }

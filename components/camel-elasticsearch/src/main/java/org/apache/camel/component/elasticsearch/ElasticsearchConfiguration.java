@@ -22,8 +22,6 @@ import java.util.Map;
 
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
@@ -38,7 +36,6 @@ public class ElasticsearchConfiguration {
     public static final String PARAM_INDEX_NAME = "indexName";
     public static final String PARAM_INDEX_TYPE = "indexType";
     public static final String PROTOCOL = "elasticsearch";
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchConfiguration.class);
     private static final String LOCAL_NAME = "local";
 
     private URI uri;

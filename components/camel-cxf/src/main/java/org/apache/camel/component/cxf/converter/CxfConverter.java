@@ -142,7 +142,8 @@ public final class CxfConverter {
         // CXF-WS MessageContentsList class
         if (MessageContentsList.class.isAssignableFrom(value.getClass())) {
             MessageContentsList list = (MessageContentsList)value;
-
+            
+            // try to turn the first array element into the object that we want
             for (Object embedded : list) {
                 if (embedded != null) {
                     if (type.isInstance(embedded)) {
@@ -150,7 +151,12 @@ public final class CxfConverter {
                     } else {
                         TypeConverter tc = registry.lookup(type, embedded.getClass());
                         if (tc != null) {
-                            return tc.convertTo(type, exchange, embedded);
+                            Object result = tc.convertTo(type, exchange, embedded);
+                            if (result != null) {
+                                return (T)result;
+                            }
+                            // there is no suitable result will be return
+                            break;
                         }
                     }
                 }

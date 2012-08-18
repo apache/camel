@@ -148,6 +148,7 @@ public class JettyHttpComponent extends HttpComponent {
         List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filtersRef", Filter.class);
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
+        String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         
         
@@ -198,7 +199,6 @@ public class JettyHttpComponent extends HttpComponent {
         URI endpointUri = URISupport.createRemainingURI(addressUri, httpClientParameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
-     
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
         setEndpointHeaderFilterStrategy(endpoint);
@@ -262,6 +262,10 @@ public class JettyHttpComponent extends HttpComponent {
         }
         if (useContinuation != null) {
             endpoint.setUseContinuation(useContinuation);
+        }
+
+        if (httpMethodRestrict != null) {
+            endpoint.setHttpMethodRestrict(httpMethodRestrict);
         }
         
         if (sslContextParameters == null) {

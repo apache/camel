@@ -180,7 +180,6 @@ public class InOutMessageHandler extends DefaultMessageHandler {
         private MessageProducer localProducer;
 
         public MessageHanderAsyncCallback(Exchange exchange, MessageProducer localProducer) {
-            super();
             this.exchange = exchange;
             this.localProducer = localProducer;
         }

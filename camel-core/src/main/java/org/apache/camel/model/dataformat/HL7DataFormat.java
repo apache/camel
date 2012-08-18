@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
@@ -34,6 +35,8 @@ import org.apache.camel.spi.DataFormat;
 public class HL7DataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean validate;
+    @XmlTransient
+    private Object parser;
 
     public HL7DataFormat() {
         super("hl7");
@@ -52,8 +55,19 @@ public class HL7DataFormat extends DataFormatDefinition {
         this.validate = validate;
     }
 
+    public Object getParser() {
+        return parser;
+    }
+
+    public void setParser(Object parser) {
+        this.parser = parser;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
+        if (getParser() != null) {
+            setProperty(dataFormat, "parser", getParser());
+        }
         setProperty(dataFormat, "validate", isValidate());
     }
 

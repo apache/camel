@@ -35,7 +35,7 @@ public class LuceneConfiguration {
     private File indexDirectory;
     private Analyzer analyzer;
     private int maxHits;
-    private Version luceneVersion = Version.LUCENE_35; 
+    private Version luceneVersion = Version.LUCENE_36; 
 
     public LuceneConfiguration() {
     }

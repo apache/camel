@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -672,11 +673,25 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
 
         InputStream is = null;
+        if (exchange.getIn().getBody() == null) {
+            // Do an explicit test for a null body and decide what to do
+            if (endpoint.isAllowNullBody()) {
+                LOG.trace("Writing empty file.");
+                is = new ByteArrayInputStream(new byte[]{});
+            } else {
+                throw new GenericFileOperationFailedException("Cannot write null body to file: " + name);
+            }
+        }
+
         try {
-            is = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (is == null) {
+                is = exchange.getIn().getMandatoryBody(InputStream.class);
+            }
             if (endpoint.getFileExist() == GenericFileExist.Append) {
+                LOG.trace("Client appendFile: {}", targetName);
                 channel.put(is, targetName, ChannelSftp.APPEND);
             } else {
+                LOG.trace("Client storeFile: {}", targetName);
                 // override is default
                 channel.put(is, targetName);
             }

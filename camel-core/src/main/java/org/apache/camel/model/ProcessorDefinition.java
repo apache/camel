@@ -1130,8 +1130,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ThreadsDefinition threads(int poolSize) {
-        ThreadsDefinition answer = threads();
+        ThreadsDefinition answer = new ThreadsDefinition();
         answer.setPoolSize(poolSize);
+        addOutput(answer);
         return answer;
     }
 
@@ -1143,9 +1144,27 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ThreadsDefinition threads(int poolSize, int maxPoolSize) {
-        ThreadsDefinition answer = threads();
+        ThreadsDefinition answer = new ThreadsDefinition();
         answer.setPoolSize(poolSize);
         answer.setMaxPoolSize(maxPoolSize);
+        addOutput(answer);
+        return answer;
+    }
+    
+    /**
+     * Continues processing the {@link org.apache.camel.Exchange} using asynchronous routing engine.
+     *
+     * @param poolSize    the core pool size
+     * @param maxPoolSize the maximum pool size
+     * @param threadName the thread pool name
+     * @return the builder
+     */
+    public ThreadsDefinition threads(int poolSize, int maxPoolSize, String threadName) {
+        ThreadsDefinition answer = new ThreadsDefinition();
+        answer.setPoolSize(poolSize);
+        answer.setMaxPoolSize(maxPoolSize);
+        answer.setThreadName(threadName);
+        addOutput(answer);
         return answer;
     }
 

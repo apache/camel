@@ -171,7 +171,6 @@ public class ObjectPoolTest {
     class TestPool extends ObjectPool<MyPooledObject> {
 
         public TestPool() {
-            super();
         }
 
         public TestPool(int poolSize) {

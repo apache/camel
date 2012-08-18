@@ -18,16 +18,19 @@ package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HL7ValidateTest extends CamelTestSupport {
+
+    private HL7DataFormat hl7;
 
     @Test
     public void testUnmarshalFailed() throws Exception {
@@ -46,6 +49,7 @@ public class HL7ValidateTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+        
 
     @Test
     public void testUnmarshalOk() throws Exception {
@@ -57,13 +61,29 @@ public class HL7ValidateTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    @Test
+    public void testUnmarshalOkCustom() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:unmarshal");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        template.sendBody("direct:unmarshalOkCustom", body);
+
+        assertMockEndpointsSatisfied();
+    }    
 
     protected RouteBuilder createRouteBuilder() throws Exception {
+        Parser p = new PipeParser();
+        p.setValidationContext(new NoValidation());
+        hl7 = new HL7DataFormat();
+        hl7.setParser(p);
+        
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:unmarshalFailed").unmarshal().hl7().to("mock:unmarshal");
-
                 from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
+                from("direct:unmarshalOkCustom").unmarshal(hl7).to("mock:unmarshal");
             }
         };
     }

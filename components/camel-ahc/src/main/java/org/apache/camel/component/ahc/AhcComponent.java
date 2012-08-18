@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 import org.slf4j.Logger;
@@ -84,8 +85,9 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
             
             endpoint.setClientConfig(builder.build());
         }
-        
-        // restructure uri to be based on the parameters left as we don't want to include the Camel internal options
+
+        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
+        addressUri = UnsafeUriCharactersEncoder.encode(addressUri);
         URI httpUri = URISupport.createRemainingURI(new URI(addressUri), parameters);
         endpoint.setHttpUri(httpUri);
         

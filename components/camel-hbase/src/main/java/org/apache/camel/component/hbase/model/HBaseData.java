@@ -25,7 +25,6 @@ public class HBaseData {
 
     private List<HBaseRow> rows = new LinkedList<HBaseRow>();
 
-
     public HBaseData() {
     }
 

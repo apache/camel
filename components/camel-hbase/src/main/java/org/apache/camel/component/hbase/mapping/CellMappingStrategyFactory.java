@@ -47,7 +47,7 @@ public class CellMappingStrategyFactory {
         }
 
         if (strategy == null && message.getHeader(STRATEGY_CLASS_NAME) != null) {
-            strategy = loadStrategyfromClassName(message.getHeader(STRATEGY_CLASS_NAME, String.class));
+            strategy = loadStrategyFromClassName(message.getHeader(STRATEGY_CLASS_NAME, String.class));
         }
 
         if (strategy != null) {
@@ -58,8 +58,8 @@ public class CellMappingStrategyFactory {
         return DEFAULT_STRATIGIES.get(HEADER);
     }
 
-
-    private CellMappingStrategy loadStrategyfromClassName(String strategyClassName) {
+    private CellMappingStrategy loadStrategyFromClassName(String strategyClassName) {
+        // TODO: We ought to use ClassResolver from CamelContext API
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader != null) {
             try {

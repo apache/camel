@@ -20,7 +20,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
+
 import org.apache.camel.Converter;
 
 /**
@@ -35,31 +35,22 @@ public final class HL7Converter {
 
     @Converter
     public static String toString(Message message) throws HL7Exception {
-        return encode(message, true);
+        return encode(message, new PipeParser());
     }
 
     @Converter
     public static Message toMessage(String body) throws HL7Exception {
-        return parse(body, true);
+        return parse(body, new PipeParser());
     }
-
-    static Message parse(String body, boolean validate) throws HL7Exception {
+    
+    static Message parse(String body, Parser parser) throws HL7Exception {
         // replace \n with \r as HL7 uses 0x0d = \r as segment terminators and HAPI only parses with \r
         body = body.replace('\n', '\r');
-
-        Parser parser = new PipeParser();
-        if (!validate) {
-            parser.setValidationContext(new NoValidation());
-        }
         return parser.parse(body);
-    }
-
-    static String encode(Message message, boolean validate) throws HL7Exception {
-        Parser parser = new PipeParser();
-        if (!validate) {
-            parser.setValidationContext(new NoValidation());
-        }
+    }    
+    
+    static String encode(Message message, Parser parser) throws HL7Exception {
         return parser.encode(message);
-    }
+    }    
 
 }

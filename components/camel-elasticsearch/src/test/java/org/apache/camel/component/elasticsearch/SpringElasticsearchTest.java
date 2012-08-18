@@ -17,6 +17,8 @@
 package org.apache.camel.component.elasticsearch;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -39,29 +41,27 @@ public class SpringElasticsearchTest extends AbstractJUnit4SpringContextTests {
 
         mock.expectedMinimumMessageCount(1);
 
-        producer.sendBody(new HashMap<String, String>() {
-            {
-                put("content", "test");
-            }
-        });
+        Map<String, String> body = new HashMap<String, String>();
+        body.put("content", "test");
+        producer.sendBody(body);
+
         mock.assertIsSatisfied();
     }
 
     @Test
     public void testSendBodyAndHeaders() throws Exception {
         mock.expectedMinimumMessageCount(1);
-        producer.sendBodyAndHeaders(new HashMap<String, String>() {
-            {
-                put("content", "test");
-            }
-        }, new HashMap() {
-            {
-                put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-                put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-                put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
-            }
-        }
-        );
+
+        Map<String, String> body = new HashMap<String, String>();
+        body.put("content", "test");
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+
+        producer.sendBodyAndHeaders(body, headers);
+
         mock.assertIsSatisfied();
     }
 }

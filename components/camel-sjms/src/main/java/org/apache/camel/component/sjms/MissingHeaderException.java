@@ -27,14 +27,13 @@ public class MissingHeaderException extends RuntimeCamelException {
     /**
      * 
      */
-    private static final long serialVersionUID = -6184009502090347023L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * TODO Add Constructor Javadoc
      *
      */
     public MissingHeaderException() {
-        super();
         // TODO Auto-generated constructor stub
     }
 

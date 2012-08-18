@@ -32,6 +32,8 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     private static final transient Logger LOG = LoggerFactory.getLogger(FtpChangedExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 5000;
+    private long minLength = 1;
+    private boolean fastExistsCheck;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<FTPFile> tGenericFileOperations, GenericFileEndpoint<FTPFile> tGenericFileEndpoint) throws Exception {
@@ -60,7 +62,18 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
             long newLastModified = 0;
             long newLength = 0;
-            List<FTPFile> files = operations.listFiles(file.getParent());
+            List<FTPFile> files;
+            if (fastExistsCheck) {
+                // use the absolute file path to only pickup the file we want to check, this avoids expensive
+                // list operations if we have a lot of files in the directory
+                LOG.trace("Using fast exists to update file information for {}", file);
+                files = operations.listFiles(file.getAbsoluteFilePath());
+            } else {
+                LOG.trace("Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.", file);
+                // fast option not enabled, so list the directory and filter the file name
+                files = operations.listFiles(file.getParent());
+            }
+            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (FTPFile f : files) {
                 if (f.getName().equals(file.getFileName())) {
                     newLastModified = f.getTimestamp().getTimeInMillis();
@@ -71,8 +84,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
             LOG.trace("Previous last modified: " + lastModified + ", new last modified: " + newLastModified);
             LOG.trace("Previous length: " + length + ", new length: " + newLength);
 
-            if (newLastModified == lastModified && newLength == length && length != 0) {
-                // We consider that zero-length files are files in progress on some FTP servers
+            if (length >= minLength && (newLastModified == lastModified && newLength == length)) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -123,4 +135,19 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
         this.checkInterval = checkInterval;
     }
 
+    public long getMinLength() {
+        return minLength;
+    }
+
+    public void setMinLength(long minLength) {
+        this.minLength = minLength;
+    }
+
+    public boolean isFastExistsCheck() {
+        return fastExistsCheck;
+    }
+
+    public void setFastExistsCheck(boolean fastExistsCheck) {
+        this.fastExistsCheck = fastExistsCheck;
+    }
 }

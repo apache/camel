@@ -213,6 +213,14 @@ public final class IntrospectionSupport {
         return method.invoke(target);
     }
 
+    public static Object getOrElseProperty(Object target, String property, Object defaultValue) {
+        try {
+            return getProperty(target, property);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
     public static Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
         if (isPropertyIsGetter(type, propertyName)) {
             return type.getMethod("is" + ObjectHelper.capitalize(propertyName));

@@ -88,7 +88,6 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
          * @param messageProducer
          */
         public MessageProducerResources(Session session, MessageProducer messageProducer) {
-            super();
             this.session = session;
             this.messageProducer = messageProducer;
         }

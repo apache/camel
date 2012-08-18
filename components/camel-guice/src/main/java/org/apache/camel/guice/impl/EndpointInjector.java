@@ -46,8 +46,9 @@ public class EndpointInjector extends CamelPostProcessorHelper implements
         String injectionPointName = field.getName();
         String uri = inject.uri();
         String endpointRef = inject.ref();
+        String property = inject.property();
 
-        return getInjectionValue(type, uri, endpointRef, injectionPointName, null, null);
+        return getInjectionValue(type, uri, endpointRef, property, injectionPointName, null, null);
     }
 
     public Object provide(EndpointInject inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass, int index) {
@@ -56,8 +57,9 @@ public class EndpointInjector extends CamelPostProcessorHelper implements
         String injectionPointName = ObjectHelper.getPropertyName(method);
         String endpointRef = inject.ref();
         String uri = inject.uri();
+        String property = inject.property();
 
-        return getInjectionValue(type, uri, endpointRef, injectionPointName, null, null);
+        return getInjectionValue(type, uri, endpointRef, property, injectionPointName, null, null);
     }
 
     public boolean isNullParameterAllowed(EndpointInject endpointInject, Method method, Class<?> aClass, int index) {
