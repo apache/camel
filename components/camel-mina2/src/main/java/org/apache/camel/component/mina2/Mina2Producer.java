@@ -70,6 +70,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     private long timeout;
     private SocketAddress address;
     private IoConnector connector;
+    private boolean sync;
     private CamelLogger noReplyLogger;
     private Mina2Configuration configuration;
     private IoSessionConfig connectorConfig;
@@ -80,6 +81,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         this.configuration = endpoint.getConfiguration();
         this.lazySessionCreation = configuration.isLazySessionCreation();
         this.timeout = configuration.getTimeout();
+        this.sync = configuration.isSync();
         this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
 
         String protocol = configuration.getProtocol();
@@ -138,6 +140,14 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             body = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
         }
 
+        // if sync is true then we should also wait for a response (synchronous mode)
+        if (sync) {
+            // only initialize latch if we should get a response
+            latch = new CountDownLatch(1);
+            // reset handler if we expect a response
+            ResponseHandler handler = (ResponseHandler) session.getHandler();
+            handler.reset();
+        }
 
         // log what we are writing
         if (LOG.isDebugEnabled()) {
@@ -151,14 +161,43 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         // write the body
         Mina2Helper.writeBody(session, body, exchange);
 
+        if (sync) {
+            // wait for response, consider timeout
+            LOG.debug("Waiting for response using timeout {} millis.", timeout);
+            boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
+            if (!done) {
+                throw new ExchangeTimedOutException(exchange, timeout);
+            }
+
+            // did we get a response
+            ResponseHandler handler = (ResponseHandler) session.getHandler();
+            if (handler.getCause() != null) {
+                throw new CamelExchangeException("Error occurred in ResponseHandler", exchange, handler.getCause());
+            } else if (!handler.isMessageReceived()) {
+                // no message received
+                throw new ExchangeTimedOutException(exchange, timeout);
+            } else {
+                // set the result on either IN or OUT on the original exchange depending on its pattern
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    Mina2PayloadHelper.setOut(exchange, handler.getMessage());
+                } else {
+                    Mina2PayloadHelper.setIn(exchange, handler.getMessage());
+                }
+            }
+        }
+    }
+
+    protected void maybeDisconnectOnDone(Exchange exchange) {
+        if (session == null) {
+            return;
+        }
+
         // should session be closed after complete?
         Boolean close;
         if (ExchangeHelper.isOutCapable(exchange)) {
-            close = exchange.getOut().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE,
-                                                Boolean.class);
+            close = exchange.getOut().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
         } else {
-            close = exchange.getIn().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE,
-                                               Boolean.class);
+            close = exchange.getIn().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
         }
 
         // should we disconnect, the header can override the configuration
@@ -219,11 +258,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             connector.getSessionConfig().setAll(connectorConfig);
         }
 
-        if (configuration.getIoHandler() != null) {
-            connector.setHandler(configuration.getIoHandler());
-        } else {
-            connector.setHandler(new ResponseHandler());
-        }
+        connector.setHandler(new ResponseHandler());
         ConnectFuture future = connector.connect(address);
         future.awaitUninterruptibly();
         session = future.getSession();
@@ -315,8 +350,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         List<IoFilter> filters = configuration.getFilters();
 
         if (transferExchange) {
-            throw new IllegalArgumentException(
-                "transferExchange=true is not supported for datagram protocol");
+            throw new IllegalArgumentException("transferExchange=true is not supported for datagram protocol");
         }
 
         address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
@@ -401,8 +435,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         return Charset.forName(encoding);
     }
 
-    private void appendIoFiltersToChain(List<IoFilter> filters,
-                                        DefaultIoFilterChainBuilder filterChain) {
+    private void appendIoFiltersToChain(List<IoFilter> filters, DefaultIoFilterChainBuilder filterChain) {
         if (filters != null && filters.size() > 0) {
             for (IoFilter ioFilter : filters) {
                 filterChain.addLast(ioFilter.getClass().getCanonicalName(), ioFilter);
@@ -443,6 +476,13 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
+            if (sync && !messageReceived) {
+                // sync=true (InOut mode) so we expected a message as reply but did not get one before the session is closed
+                LOG.debug("Session closed but no message received from address: {}", address);
+                // session was closed but no message received. This could be because the remote server had an internal error
+                // and could not return a response. We should count down to stop waiting for a response
+                countDown();
+            }
         }
 
         @Override

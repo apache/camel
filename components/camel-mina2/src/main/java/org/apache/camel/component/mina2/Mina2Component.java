@@ -87,7 +87,12 @@ public class Mina2Component extends DefaultComponent {
             throw new IllegalArgumentException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
         }
 
-        endpoint.setExchangePattern(ExchangePattern.InOut);
+        // set sync or async mode after endpoint is created
+        if (config.isSync()) {
+            endpoint.setExchangePattern(ExchangePattern.InOut);
+        } else {
+            endpoint.setExchangePattern(ExchangePattern.InOnly);
+        }
 
         return endpoint;
     }

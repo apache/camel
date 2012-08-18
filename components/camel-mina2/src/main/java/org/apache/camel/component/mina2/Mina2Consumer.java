@@ -31,7 +31,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
-import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.service.IoService;
@@ -54,7 +53,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
  *
- * @version
+ * @version 
  */
 public class Mina2Consumer extends DefaultConsumer {
 
@@ -299,43 +298,6 @@ public class Mina2Consumer extends DefaultConsumer {
      */
     private final class ReceiveHandler extends IoHandlerAdapter {
 
-        private Exchange exchange;
-
-        @Override
-        public void sessionCreated(IoSession session) throws Exception {
-            log.debug("-----------SESSION CREATED");
-            exchange = getEndpoint().createExchange(session);
-            exchange.setProperty(Mina2Constants.MINA2_SESSION_CREATED, Boolean.TRUE);
-            getProcessor().process(exchange);
-        }
-
-        @Override
-        public void sessionOpened(IoSession session) throws Exception {
-            log.debug("-----------SESSION OPENED");
-            exchange.setProperty(Mina2Constants.MINA2_SESSION_OPENED, Boolean.TRUE);
-            exchange.removeProperty(Mina2Constants.MINA2_SESSION_CREATED);
-            getProcessor().process(exchange);
-        }
-
-        @Override
-        public void sessionClosed(IoSession session) throws Exception {
-            log.debug("-----------SESSION CLOSED");
-            exchange.setProperty(Mina2Constants.MINA2_SESSION_CLOSED, Boolean.TRUE);
-            exchange.removeProperty(Mina2Constants.MINA2_SESSION_OPENED);
-            getProcessor().process(exchange);
-        }
-
-        @Override
-        public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-            log.debug("-----------SESSION IDLE");
-            exchange.setProperty(Mina2Constants.MINA2_SESSION_IDLE, Boolean.TRUE);
-            getProcessor().process(exchange);
-        }
-
-        @Override
-        public void messageSent(IoSession session, Object message) throws Exception {
-        }
-
         @Override
         public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
             // close invalid session
@@ -350,7 +312,6 @@ public class Mina2Consumer extends DefaultConsumer {
 
         @Override
         public void messageReceived(IoSession session, Object object) throws Exception {
-            Mina2PayloadHelper.setIn(exchange, object);
             // log what we received
             if (LOG.isDebugEnabled()) {
                 Object in = object;
@@ -361,10 +322,10 @@ public class Mina2Consumer extends DefaultConsumer {
                 LOG.debug("Received body: {}", in);
             }
 
+            Exchange exchange = getEndpoint().createExchange(session, object);
             //Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().
-                    getConfiguration().getCharsetName()));
+                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
             }
 
             try {
@@ -401,11 +362,9 @@ public class Mina2Consumer extends DefaultConsumer {
             // should session be closed after complete?
             Boolean close;
             if (ExchangeHelper.isOutCapable(exchange)) {
-                close = exchange.getOut().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE,
-                                                    Boolean.class);
+                close = exchange.getOut().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
             } else {
-                close = exchange.getIn().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE,
-                                                   Boolean.class);
+                close = exchange.getIn().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
             }
 
             // should we disconnect, the header can override the configuration
