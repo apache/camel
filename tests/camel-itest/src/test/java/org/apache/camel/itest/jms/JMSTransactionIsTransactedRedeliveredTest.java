@@ -16,12 +16,10 @@
  */
 package org.apache.camel.itest.jms;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
@@ -51,24 +49,16 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         return true;
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        // as we make use of placeholders for the Jetty port we should add PropertiesComponent beforehand
-        // so that the port can properly be resolved
-        CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent());
-        return context;
-    }
-
     @Test
     public void testTransactionSuccess() throws Exception {
+        context.start();
+
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(AssertionError.class).to("log:error", "mock:error");
             }
         });
-        context.start();
 
         // there should be no assertion errors
         MockEndpoint error = getMockEndpoint("mock:error");
