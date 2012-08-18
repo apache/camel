@@ -52,6 +52,9 @@ public class FtpReconnectAttemptServerStoppedTest extends FtpServerTestSupport {
         // resume the server so we can connect
         ftpServer.resume();
 
+        // wait a bit so that the server resumes properly
+        Thread.sleep(3000);
+
         assertMockEndpointsSatisfied();
     }
 
