@@ -29,7 +29,7 @@
 
     <camel:export id="echo" camelContextId="camel" serviceInterface="org.apache.camel.spring.remoting.Echo" serviceRef="echoService" uri="direct:echo"/>
     
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
        
     </camelContext>
 
