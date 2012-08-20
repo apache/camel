@@ -51,14 +51,13 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
     @Test
     public void testTransactionSuccess() throws Exception {
-        context.start();
-
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(AssertionError.class).to("log:error", "mock:error");
             }
         });
+        context.start();
 
         // there should be no assertion errors
         MockEndpoint error = getMockEndpoint("mock:error");
