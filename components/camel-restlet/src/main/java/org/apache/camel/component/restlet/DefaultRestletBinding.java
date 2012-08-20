@@ -66,8 +66,10 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // extract headers from restlet
         for (Map.Entry<String, Object> entry : request.getAttributes().entrySet()) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                inMessage.setHeader(entry.getKey(), entry.getValue());
-                LOG.debug("Populate exchange from Restlet request header: {} value: {}", entry.getKey(), entry.getValue());
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                inMessage.setHeader(key, value);
+                LOG.debug("Populate exchange from Restlet request header: {} value: {}", key, value);
             }
         }
 
@@ -91,13 +93,15 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (request.getEntity().getMediaType() != null && request.getEntity().getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
             Form form = new Form(request.getEntity());
             for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
-                if (entry.getValue() == null) {
-                    inMessage.setBody(entry.getKey());
-                    LOG.debug("Populate exchange from Restlet request body: {}", entry.getValue());
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (value == null) {
+                    inMessage.setBody(key);
+                    LOG.debug("Populate exchange from Restlet request body: {}", key);
                 } else {
-                    if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                        inMessage.setHeader(entry.getKey(), entry.getValue());
-                        LOG.debug("Populate exchange from Restlet request user header: {} value: {}", entry.getKey(), entry.getValue());
+                    if (!headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
+                        inMessage.setHeader(key, value);
+                        LOG.debug("Populate exchange from Restlet request user header: {} value: {}", key, value);
                     }
                 }
             }
@@ -132,21 +136,23 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
 
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
                 // Use forms only for GET and POST/x-www-form-urlencoded
                 if (request.getMethod() == Method.GET || (request.getMethod() == Method.POST && mediaType == MediaType.APPLICATION_WWW_FORM)) {
-                    if (entry.getKey().startsWith("org.restlet.")) {
+                    if (key.startsWith("org.restlet.")) {
                         // put the org.restlet headers in attributes
-                        request.getAttributes().put(entry.getKey(), entry.getValue());
+                        request.getAttributes().put(key, value);
                     } else {
                         // put the user stuff in the form
-                        form.add(entry.getKey(), entry.getValue().toString());
+                        form.add(key, value.toString());
                     }
                 } else {
                     // For non-form post put all the headers in attributes
-                    request.getAttributes().put(entry.getKey(), entry.getValue());
+                    request.getAttributes().put(key, value);
                 }
-                LOG.debug("Populate Restlet request from exchange header: {} value: {}", entry.getKey(), entry.getValue());
+                LOG.debug("Populate Restlet request from exchange header: {} value: {}", key, value);
             }
         }
 
@@ -236,18 +242,22 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
         // set headers at the end, as the entity must be set first
         for (Map.Entry<String, Object> entry : out.getHeaders().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                setResponseHeader(exchange, response, entry.getKey(), entry.getValue());
-                LOG.debug("Populate Restlet HTTP header in response from exchange header: {} value: {}", entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                setResponseHeader(exchange, response, key, value);
+                LOG.debug("Populate Restlet HTTP header in response from exchange header: {} value: {}", key, value);
             }
         }
     }
 
     public void populateExchangeFromRestletResponse(Exchange exchange, Response response) throws Exception {
         for (Map.Entry<String, Object> entry : response.getAttributes().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                exchange.getOut().setHeader(entry.getKey(), entry.getValue());
-                LOG.debug("Populate exchange from Restlet response header: {} value: {}", entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
+                exchange.getOut().setHeader(key, value);
+                LOG.debug("Populate exchange from Restlet response header: {} value: {}", key, value);
             }
         }
 
