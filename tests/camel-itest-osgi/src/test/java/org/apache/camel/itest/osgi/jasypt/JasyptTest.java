@@ -46,14 +46,11 @@ public class JasyptTest extends OSGiIntegrationTestSupport {
         // and set the master password
         jasypt.setPassword("secret");
 
-        // create the properties component
-        PropertiesComponent pc = new PropertiesComponent();
+        // configure the properties component
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setLocation("classpath:org/apache/camel/itest/osgi/jasypt/myproperties.properties");
         // and use the jasypt properties parser so we can decrypt values
         pc.setPropertiesParser(jasypt);
-
-        // add properties component to camel context
-        context.addComponent("properties", pc);
 
         return new RouteBuilder() {
             public void configure() {

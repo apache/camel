@@ -37,12 +37,9 @@ public class PropertiesRouteTest extends OSGiIntegrationTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        // create the properties component
-        PropertiesComponent pc = new PropertiesComponent();
+        // configure the properties component
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setLocation("classpath:org/apache/camel/itest/osgi/core/properties/myproperties.properties");
-
-        // add properties component to camel context
-        context.addComponent("properties", pc);
 
         return new RouteBuilder() {
             public void configure() {
