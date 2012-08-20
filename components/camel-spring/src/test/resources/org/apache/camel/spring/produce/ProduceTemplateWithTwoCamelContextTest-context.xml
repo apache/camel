@@ -15,22 +15,27 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- START SNIPPET: example -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+  <template id="camelTemplate" camelContextId="camelContext2" xmlns="http://camel.apache.org/schema/spring"/>
+  
+  <camelContext id="camelContext1" xmlns="http://camel.apache.org/schema/spring"/>
 
-    <bean id="echoService" class="org.apache.camel.spring.remoting.EchoService"/>
-
-    <bean id="myPojo" class="org.apache.camel.spring.remoting.EchoPojo"/>
-
-    <camel:export id="echo" camelContextId="camel" serviceInterface="org.apache.camel.spring.remoting.Echo" serviceRef="echoService" uri="direct:echo"/>
-    
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-       
-    </camelContext>
+  <camelContext id="camelContext2" xmlns="http://camel.apache.org/schema/spring">
+  	<route>
+  	   <from uri="direct:start"/>
+  	   <to uri="mock:result"/>
+  	</route>
+  </camelContext>
+  
+ 
 
 </beans>
+<!-- END SNIPPET: example -->

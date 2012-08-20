@@ -23,6 +23,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -46,14 +47,13 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
     @Override
     public void afterPropertiesSet() {
         if (endpoint == null) {
-            if (camelContext == null && camelContextId != null) {
+            if (ObjectHelper.isNotEmpty(camelContextId)) {
                 camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
             }
-
             if (camelContext == null) {
                 throw new IllegalArgumentException("camelContext or camelContextId must be specified");
             }
-
+            
             if (getServiceUrl() == null && getServiceRef() == null) {
                 throw new IllegalArgumentException("serviceUrl or serviceRef must be specified.");
             }
