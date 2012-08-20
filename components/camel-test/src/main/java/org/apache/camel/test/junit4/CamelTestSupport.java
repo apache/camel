@@ -277,15 +277,14 @@ public abstract class CamelTestSupport extends TestSupport {
             context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
 
-        // configure properties component
+        // configure properties component (mandatory for testing)
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         Properties extra = useOverridePropertiesWithPropertiesComponent();
         if (extra != null && !extra.isEmpty()) {
-            PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
             pc.setOverrideProperties(extra);
         }
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
         if (ignore != null) {
-            PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
             pc.setIgnoreMissingLocation(ignore);
         }
 
