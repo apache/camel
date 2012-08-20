@@ -23,7 +23,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
         <!-- create a proxy that will route to the direct:start endpoint when invoked -->
         <proxy id="myProxySender"

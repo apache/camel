@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.util.ObjectHelper;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType implements CamelContextAware {
@@ -47,13 +48,8 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     }
 
     public void afterPropertiesSet() throws Exception {
-    }
-
-    public void destroy() throws Exception {
-    }
-
-    public CamelContext getCamelContext() {
-        if (camelContext == null && camelContextId != null) {
+        // Always try to resolved the camel context by using the camelContextId
+        if (ObjectHelper.isNotEmpty(camelContextId)) {
             camelContext = getCamelContextWithId(camelContextId);
             if (camelContext == null) {
                 throw new IllegalStateException("Cannot find CamelContext with id: " + camelContextId);
@@ -62,6 +58,12 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
         if (camelContext == null) {
             camelContext = discoverDefaultCamelContext();
         }
+    }
+
+    public void destroy() throws Exception {
+    }
+
+    public CamelContext getCamelContext() {
         return camelContext;
     }
 
