@@ -37,7 +37,6 @@
     <module>camel-itest</module>
     <module>camel-partial-classpath-test</module>
     <module>camel-typeconverterscan-test</module>
-    <module>camel-itest-osgi</module>
     <module>camel-itest-performance</module>
   </modules>
 
@@ -47,6 +46,7 @@
       <id>osgi.test</id>
       <modules>
         <module>camel-itest-karaf</module>
+        <module>camel-itest-osgi</module>
       </modules>
     </profile>
   </profiles>
