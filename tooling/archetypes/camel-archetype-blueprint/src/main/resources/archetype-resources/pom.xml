@@ -104,13 +104,7 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.surefire</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin-version}</version>
-      </plugin>
-
-      <!-- to run the example using mvn camel:run -->
+       <!-- to run the example using mvn camel:run -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
