@@ -75,6 +75,7 @@ public class NettyConfiguration implements Cloneable {
     private ClientPipelineFactory clientPipelineFactory;
     private ServerPipelineFactory serverPipelineFactory;
     private SSLContextParameters sslContextParameters;
+    private boolean needClientAuth;
     
     /**
      * Returns a copy of this configuration
@@ -368,6 +369,14 @@ public class NettyConfiguration implements Cloneable {
 
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
+    }
+
+    public boolean isNeedClientAuth() {
+        return needClientAuth;
+    }
+
+    public void setNeedClientAuth(boolean needClientAuth) {
+        this.needClientAuth = needClientAuth;
     }
 
     public long getReceiveBufferSize() {
