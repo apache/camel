@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,12 +102,12 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                     augmentedKey = augmentedKey + propertySuffix;
                 }
 
-                String part = createPlaceholderPart(augmentedKey, properties, replaced);
+                String part = createPlaceholderPart(augmentedKey, properties, replaced, prefixToken, suffixToken);
                 
                 // Note: Only fallback to unaugmented when the original key was actually augmented
                 if (part == null && fallbackToUnaugmentedProperty && (propertyPrefix != null || propertySuffix != null)) {
                     log.debug("Property wth key [{}] not found, attempting with unaugmented key: {}", augmentedKey, key);
-                    part = createPlaceholderPart(key, properties, replaced);
+                    part = createPlaceholderPart(key, properties, replaced, prefixToken, suffixToken);
                 }
                 
                 if (part == null) {
@@ -146,12 +147,28 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
         }
         return idx;
     }
+    
+    private boolean isNestProperty(String uri, String prefixToken, String suffixToken) {
+        if (ObjectHelper.isNotEmpty(uri)) {
+            uri = uri.trim();
+            if (uri.startsWith(prefixToken) && uri.endsWith(suffixToken)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private String takeOffNestTokes(String uri, String prefixToken, String suffixToken) {
+        int start = prefixToken.length(); 
+        int end = uri.length() - suffixToken.length();
+        return uri.substring(start, end); 
+    }
 
     private String createConstantPart(String uri, int start, int end) {
         return uri.substring(start, end);
     }
 
-    private String createPlaceholderPart(String key, Properties properties, List<String> replaced) {
+    private String createPlaceholderPart(String key, Properties properties, List<String> replaced, String prefixToken, String suffixToken) {
         // keep track of which parts we have replaced
         replaced.add(key);
         
@@ -160,6 +177,25 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             log.debug("Found a JVM system property: {} with value: {} to be used.", key, propertyValue);
         } else if (properties != null) {
             propertyValue = properties.getProperty(key);
+        }
+        
+        // we need to check if the propertyValue is nested
+        // we need to check if there is cycle dependency of the nested properties
+        List<String> visited = new ArrayList<String>();
+        while (isNestProperty(propertyValue, prefixToken, suffixToken)) {
+            visited.add(key);
+            // need to take off the token first
+            String value = takeOffNestTokes(propertyValue, prefixToken, suffixToken);
+            key = parseUri(value, properties, prefixToken, suffixToken);
+            if (visited.contains(key)) {
+                throw new IllegalArgumentException("Circular reference detected with key [" + key + "] from text: " + propertyValue);
+            }
+            propertyValue = System.getProperty(key);
+            if (propertyValue != null) {
+                log.debug("Found a JVM system property: {} with value: {} to be used.", key, propertyValue);
+            } else if (properties != null) {
+                propertyValue = properties.getProperty(key);
+            }
         }
 
         return parseProperty(key, propertyValue, properties);
