@@ -693,6 +693,27 @@ public class XmlConverter {
         toResult(source, result);
         return result.getNode();
     }
+    
+    /**
+     * Convert a NodeList consisting of just 1 node to a DOM Node.
+     * @param nl the NodeList
+     * @return the DOM Node
+     */
+    @Converter
+    public Node toDOMNodeFromSingleNodeList(NodeList nl) {
+        return nl.getLength() == 1 ? nl.item(0) : null;
+    }
+    
+    /**
+     * Convert a NodeList consisting of just 1 node to a DOM Document.
+     * Cannot convert NodeList with length > 1 because they require a root node.
+     * @param nl the NodeList
+     * @return the DOM Document
+     */
+    @Converter
+    public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
+        return nl.getLength() == 1 ? toDOMDocument(nl.item(0)) : null;
+    }
 
     /**
      * Converts the given TRaX Source into a W3C DOM node
