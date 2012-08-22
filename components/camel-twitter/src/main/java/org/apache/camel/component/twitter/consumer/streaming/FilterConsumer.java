@@ -19,6 +19,7 @@ package org.apache.camel.component.twitter.consumer.streaming;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 
 import twitter4j.FilterQuery;
+import twitter4j.TwitterException;
 
 /**
  * Consumes the filter stream
@@ -27,6 +28,9 @@ public class FilterConsumer extends StreamingConsumer {
 
     public FilterConsumer(TwitterEndpoint te) {
         super(te);
+    }
+
+    protected void startStreaming() {
         twitterStream.filter(createFilter(te));
     }
 

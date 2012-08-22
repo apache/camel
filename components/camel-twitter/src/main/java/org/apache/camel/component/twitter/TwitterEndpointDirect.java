@@ -61,4 +61,11 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     public ExchangePattern getExchangePattern() {
         return ExchangePattern.InOptionalOut;
     }
+
+    @Override
+    public void shutdown() throws Exception {
+        super.shutdown();
+        properties.getTwitter().shutdown();
+    }
+    
 }
