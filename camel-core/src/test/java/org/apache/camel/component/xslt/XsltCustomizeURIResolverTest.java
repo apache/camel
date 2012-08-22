@@ -27,59 +27,49 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class XsltCustomizeURIResolverTest extends ContextTestSupport {
+    private static final String EXPECTED_XML_CONSTANT = "<data>FOO DATA</data>";
 
-	private static final transient Logger LOG = LoggerFactory
-			.getLogger(XsltCustomizeURIResolverTest.class);
+    public void testXsltCustomURIResolverDirectInRouteUri() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:resultURIResolverDirect");
+        mock.expectedMessageCount(1);
 
-	private final String EXPECTED_XML_CONSTANT = "<data>FOO DATA</data>";
+        mock.message(0).body().contains(EXPECTED_XML_CONSTANT);
 
-	public void testXsltCustomURIResolverDirectInRouteUri() throws Exception {
-		MockEndpoint mock = getMockEndpoint("mock:resultURIResolverDirect");
-		mock.expectedMessageCount(1);
+        assertMockEndpointsSatisfied();
+    }
 
-		mock.message(0).body().contains(EXPECTED_XML_CONSTANT);
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("file:src/test/data/?fileName=staff.xml&noop=true")
+                    .to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
+                    .to("mock:resultURIResolverDirect");
+            }
+        };
+    }
 
-		assertMockEndpointsSatisfied();
-	}
+    private URIResolver getCustomURIResolver() {
+        return new URIResolver() {
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("file:src/test/data/?fileName=staff.xml&noop=true")
-						.to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
-						.to("mock:resultURIResolverDirect");
-			}
-		};
-	}
+            @Override
+            public Source resolve(String href, String base) throws TransformerException {
+                return new StreamSource(new ByteArrayInputStream(EXPECTED_XML_CONSTANT.getBytes()));
+            }
+        };
+    }
 
-	private URIResolver getCustomURIResolver() {
-		return new URIResolver() {
-
-			@Override
-			public Source resolve(String href, String base)
-					throws TransformerException {
-				Source constantResult = new StreamSource(
-						new ByteArrayInputStream(
-								EXPECTED_XML_CONSTANT.getBytes()));
-				return constantResult;
-			}
-		};
-	}
-
-	@Override
-	protected JndiRegistry createRegistry() throws Exception {
-		JndiRegistry registry = super.createRegistry();
-		URIResolver customURIResolver = getCustomURIResolver();
-		registry.bind("customURIResolver", customURIResolver);
-		return registry;
-	}
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        URIResolver customURIResolver = getCustomURIResolver();
+        registry.bind("customURIResolver", customURIResolver);
+        return registry;
+    }
 }
