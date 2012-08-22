@@ -27,11 +27,13 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
-    private static final String ROUTER_ADDRESS = "http://localhost:9001/SoapContext/SoapPort";
+    private static final String ROUTER_ADDRESS = "http://localhost:{{routerPort}}/SoapContext/SoapPort";
 
     @Test
     public void testClientInvocation() throws MalformedURLException {
-        Client client = new Client(ROUTER_ADDRESS + "?wsdl");
+        String address = ROUTER_ADDRESS.replace("{{routerPort}}", System.getProperty("routerPort"));
+        
+        Client client = new Client(address + "?wsdl");
         Greeter proxy = client.getProxy();
 
         String resp;

@@ -21,9 +21,13 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-
+       
+  <!-- Enable bridge between Camel Property Placeholder and Spring Property placeholder so we can use system properties
+       to dynamically set the port number for unit testing the example.  -->
+  <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer"/>
+       
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
+  
   <bean id="roundRobinRef" class="org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer"/>
 
   <bean class="org.apache.camel.component.cxf.transport.CamelTransportFactory" lazy-init="false">
@@ -38,7 +42,7 @@
 
   <camelContext id="dest_context" xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="jetty:http://localhost:9091/GreeterContext/GreeterPort"/>
+      <from uri="jetty:http://localhost:{{port}}/GreeterContext/GreeterPort"/>
       <loadBalance ref="roundRobinRef">
         <to uri="direct:EndpointA"/>
         <to uri="direct:EndpointB"/>

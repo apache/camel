@@ -24,22 +24,28 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStoreImpl;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class CamelRouterBuilder extends RouteBuilder {
-    private static final String SOAP_ENDPOINT_URI = "cxf://http://localhost:9006/soap"
+    private static final String SOAP_ENDPOINT_URI = "cxf://http://localhost:{{soapEndpointPort}}/soap"
         + "?serviceClass=org.apache.camel.example.cxf.jaxrs.resources.BookStore";
-    private static final String REST_ENDPOINT_URI = "cxfrs://http://localhost:9002/rest"
+    private static final String REST_ENDPOINT_URI = "cxfrs://http://localhost:{{restEndpointPort}}/rest"
         + "?resourceClasses=org.apache.camel.example.cxf.jaxrs.resources.BookStoreImpl";
     
     /**
      * Allow this route to be run as an application
      */
     public static void main(String[] args) throws Exception {
+        System.setProperty("soapEndpointPort", "9006");
+        System.setProperty("restEndpointPort", "9002");
+                
         CamelContext context = new DefaultCamelContext();
+        PropertiesComponent pc = new PropertiesComponent();
+        context.addComponent("properties", pc);
         context.start();
         context.addRoutes(new CamelRouterBuilder());
         Thread.sleep(1000);

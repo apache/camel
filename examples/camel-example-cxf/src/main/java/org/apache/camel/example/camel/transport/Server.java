@@ -27,6 +27,10 @@ public class Server {
     Endpoint endpointB;
 
     public void prepare() throws Exception {
+        // Set a system property used to configure the server.  The examples all run on port 9091; 
+        // however, the unit tests must run on a dynamic port.  As such, we make the port configurable
+        // in the Spring context.
+        System.setProperty("port", "9001");
         // setup the Camel context for the Camel transport
         // START SNIPPET: e1
         SpringBusFactory bf = new SpringBusFactory();

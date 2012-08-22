@@ -23,6 +23,10 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+  <!-- Enable bridge between Camel Property Placeholder and Spring Property placeholder so we can use system properties
+       to dynamically set the port number for unit testing the example.  -->
+  <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer"/>
+    
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
   <camel:camelContext id="cxfrs_context">

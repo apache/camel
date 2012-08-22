@@ -23,6 +23,10 @@ public class Server {
     AbstractApplicationContext applicationContext;
 
     public void start() throws Exception {
+        // Set a system property used to configure the server.  The example runs on port 9000; 
+        // however, the unit tests must run on a dynamic port.  As such, we make the port configurable
+        // in the Spring context.
+        System.setProperty("port", "9000");
         // Setup the Camel context using Spring
         applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/CamelCXFProviderRouteConfig.xml");
     }

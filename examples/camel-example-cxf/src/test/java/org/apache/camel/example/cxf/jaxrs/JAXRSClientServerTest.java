@@ -19,13 +19,21 @@ package org.apache.camel.example.cxf.jaxrs;
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.cxf.BusFactory;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JAXRSClientServerTest extends CamelSpringTestSupport {
+    
+    @BeforeClass
+    public static void setupPorts() {
+        System.setProperty("soapEndpointPort", String.valueOf(AvailablePortFinder.getNextAvailable()));
+        System.setProperty("restEndpointPort", String.valueOf(AvailablePortFinder.getNextAvailable()));
+    }
     
     @Test
     public void testJAXWSClient() throws BookNotFoundFault {

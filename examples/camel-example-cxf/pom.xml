@@ -28,7 +28,6 @@
     </parent>
 
     <artifactId>camel-example-cxf</artifactId>
-    <packaging>bundle</packaging>
     <name>Camel :: Example :: CXF</name>
     <description>An example which demonstrates the use of the Camel CXF component</description>
 
@@ -146,6 +145,11 @@
             <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <!-- Not test scope because we need to use the port finder utility in the actual example code. -->
+        </dependency>
 
     </dependencies>
 
@@ -216,33 +220,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-artifacts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>target/classes/features.xml</file>
-                                    <type>xml</type>
-                                    <classifier>features</classifier>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-
-            <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
-                <version>${cxf-version}</version>
                 <executions>
                     <execution>
                         <id>generate-sources</id>

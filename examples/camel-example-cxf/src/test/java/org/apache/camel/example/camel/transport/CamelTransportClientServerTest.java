@@ -18,6 +18,7 @@ package org.apache.camel.example.camel.transport;
 
 import java.net.MalformedURLException;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;
@@ -30,10 +31,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelTransportClientServerTest extends Assert {
     static AbstractApplicationContext context;
+    static int port;
     
     @BeforeClass
     public static void startUpServer() throws Exception {
         if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+            port = AvailablePortFinder.getNextAvailable();
+            System.setProperty("port", String.valueOf(port));
             context = new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CamelTransportSpringConfig.xml"});
         } else {
             System.out.println("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
@@ -49,7 +53,7 @@ public class CamelTransportClientServerTest extends Assert {
     
     @Test
     public void testClientInvocation() throws MalformedURLException {
-        Client client = new Client("http://localhost:9091/GreeterContext/GreeterPort");
+        Client client = new Client("http://localhost:" + port + "/GreeterContext/GreeterPort");
         Greeter port = client.getProxy();
         
         assertNotNull("The proxy should not be null", port);
