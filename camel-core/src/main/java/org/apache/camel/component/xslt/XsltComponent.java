@@ -27,6 +27,7 @@ import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,19 +99,6 @@ public class XsltComponent extends DefaultComponent {
             xslt.getConverter().setTransformerFactory(factory);
         }
 
-        // lookup custom resolver to use
-        URIResolver resolver = resolveAndRemoveReferenceParameter(parameters, "uriResolver", URIResolver.class);
-        if (resolver == null) {
-            // not in endpoint then use component specific resolver
-            resolver = getUriResolver();
-        }
-        if (resolver == null) {
-            // fallback to use a Camel specific resolver
-            resolver = new XsltUriResolver(getCamelContext().getClassResolver(), remaining);
-        }
-        // set resolver before input stream as resolver is used when loading the input stream
-        xslt.setUriResolver(resolver);
-
         ResultHandlerFactory resultHandlerFactory = resolveAndRemoveReferenceParameter(parameters, "resultHandlerFactory", ResultHandlerFactory.class);
         if (resultHandlerFactory != null) {
             xslt.setResultHandlerFactory(resultHandlerFactory);
@@ -126,10 +114,23 @@ public class XsltComponent extends DefaultComponent {
         Integer cs = getAndRemoveParameter(parameters, "transformerCacheSize", Integer.class, Integer.valueOf(0));
         xslt.transformerCacheSize(cs);
 
-        configureXslt(xslt, uri, remaining, parameters);
-
         // default to use the cache option from the component if the endpoint did not have the contentCache parameter
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
+
+        // lookup custom resolver to use
+        URIResolver resolver = resolveAndRemoveReferenceParameter(parameters, "uriResolver", URIResolver.class);
+        if (resolver == null) {
+            // not in endpoint then use component specific resolver
+            resolver = getUriResolver();
+        }
+        if (resolver == null) {
+            // fallback to use a Camel specific resolver
+            resolver = new XsltUriResolver(getCamelContext().getClassResolver(), remaining);
+        }
+        // set resolver before input stream as resolver is used when loading the input stream
+        xslt.setUriResolver(resolver);
+        
+        configureXslt(xslt, uri, remaining, parameters);
 
         return new XsltEndpoint(uri, this, xslt, resourceUri, cache);
     }
