@@ -98,6 +98,13 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix options");
         }
 
+        // ensure fileExist and moveExisting is configured correctly if in use
+        if (getFileExist() == GenericFileExist.Move && getMoveExisting() == null) {
+            throw new IllegalArgumentException("You must configure moveExisting option when fileExist=Move");
+        } else if (getMoveExisting() != null && getFileExist() != GenericFileExist.Move) {
+            throw new IllegalArgumentException("You must configure fileExist=Move when moveExisting has been set");
+        }
+
         return new GenericFileProducer<File>(this, operations);
     }
 
