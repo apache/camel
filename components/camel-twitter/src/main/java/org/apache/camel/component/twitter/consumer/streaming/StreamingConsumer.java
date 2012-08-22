@@ -33,7 +33,7 @@ import twitter4j.TwitterStream;
 /**
  * Super class providing consuming capabilities for the streaming API.
  */
-public class StreamingConsumer extends Twitter4JConsumer implements StatusListener {
+public abstract class StreamingConsumer extends Twitter4JConsumer implements StatusListener {
     protected final TwitterStream twitterStream;
     private final List<Status> receivedStatuses = new ArrayList<Status>();
     private volatile boolean clear;
@@ -41,7 +41,7 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
 
     public StreamingConsumer(TwitterEndpoint te) {
         super(te);
-        twitterStream = te.getProperties().getTwitterStream();
+        twitterStream = te.getProperties().createTwitterStream();
         twitterStream.addListener(this);
     }
 
@@ -94,5 +94,15 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
     public void unregisterTweetListener(TweeterStatusListener tweeterStatusListener) {
         this.tweeterStatusListener = null;
     }
+
+    public void doStart() {
+        startStreaming();
+    }
+
+    public void doStop() {
+        twitterStream.shutdown();
+    }
+
+    protected abstract void startStreaming();
 
 }

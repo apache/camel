@@ -39,6 +39,7 @@ public class TwitterConsumerEvent extends DirectConsumer implements TweeterStatu
         super.doStart();
         if (twitter4jConsumer instanceof StreamingConsumer) {
             ((StreamingConsumer) twitter4jConsumer).registerTweetListener(this);
+            ((StreamingConsumer) twitter4jConsumer).doStart();
         }
     }
 
@@ -47,6 +48,7 @@ public class TwitterConsumerEvent extends DirectConsumer implements TweeterStatu
         super.doStop();
         if (twitter4jConsumer instanceof StreamingConsumer) {
             ((StreamingConsumer) twitter4jConsumer).unregisterTweetListener(this);
+            ((StreamingConsumer) twitter4jConsumer).doStop();
         }
     }
 

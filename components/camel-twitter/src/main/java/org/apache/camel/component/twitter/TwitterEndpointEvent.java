@@ -52,4 +52,19 @@ public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpo
     public EndpointType getEndpointType() {
         return EndpointType.EVENT;
     }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (properties.getTwitterStream() != null) {
+            properties.getTwitterStream().shutdown();
+        }
+    }
+
+    @Override
+    public void shutdown() throws Exception {
+        super.shutdown();
+        properties.getTwitter().shutdown();
+    }
+
 }

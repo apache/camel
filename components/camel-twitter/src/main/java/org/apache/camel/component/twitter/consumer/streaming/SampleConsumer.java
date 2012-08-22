@@ -25,6 +25,9 @@ public class SampleConsumer extends StreamingConsumer {
 
     public SampleConsumer(TwitterEndpoint te) {
         super(te);
+    }
+
+    protected void startStreaming() {
         twitterStream.sample();
     }
 }
