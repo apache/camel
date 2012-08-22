@@ -16,9 +16,9 @@
  */
 package org.apache.camel.management;
 
-import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -50,7 +50,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class DefaultManagementStrategy implements ManagementStrategy, CamelContextAware {
 
-    private List<EventNotifier> eventNotifiers = new ArrayList<EventNotifier>();
+    private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<EventNotifier>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
