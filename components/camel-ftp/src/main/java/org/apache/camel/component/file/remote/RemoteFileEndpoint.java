@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
@@ -69,6 +70,14 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     @Override
     public GenericFileProducer<T> createProducer() throws Exception {
         afterPropertiesSet();
+
+        // ensure fileExist and moveExisting is configured correctly if in use
+        if (getFileExist() == GenericFileExist.Move && getMoveExisting() == null) {
+            throw new IllegalArgumentException("You must configure moveExisting option when fileExist=Move");
+        } else if (getMoveExisting() != null && getFileExist() != GenericFileExist.Move) {
+            throw new IllegalArgumentException("You must configure fileExist=Move when moveExisting has been set");
+        }
+
         return buildProducer();
     }
 
