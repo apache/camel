@@ -23,6 +23,8 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -159,7 +161,27 @@ public final class CxfPayloadConverter {
                 }
                 TypeConverter tc = registry.lookup(type, Source.class);
                 if (tc != null) {
-                    T t = tc.convertTo(type, payload.getBodySources().get(0));
+                    Source s = payload.getBodySources().get(0);
+                    if (type.isInstance(s)) {
+                        return type.cast(s);
+                    }
+                    if ((s instanceof StreamSource
+                        || s instanceof SAXSource) 
+                        && !type.isAssignableFrom(Document.class)
+                        && !type.isAssignableFrom(Source.class)) {
+                        //non-reproducible sources, we need to convert to DOMSource first
+                        //or the payload will get wiped out
+                        Document d;
+                        try {
+                            d = StaxUtils.read(s);
+                        } catch (XMLStreamException e) {
+                            throw new RuntimeException(e);
+                        }
+                        s = new DOMSource(d.getDocumentElement());
+                        payload.getBodySources().set(0, s);
+                    }
+                    
+                    T t = tc.convertTo(type, s);
                     if (t instanceof Document) {
                         payload.getBodySources().set(0, new DOMSource(((Document)t).getDocumentElement()));
                     } else if (t instanceof Source) {
