@@ -57,6 +57,7 @@
           <xsd:attribute name="serviceName" type="xsd:string" />
           <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean"/>
           <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
+          <xsd:attribute name="skipFaultLogging" type="xsd:boolean" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
@@ -94,6 +95,7 @@
           <xsd:attribute name="staticSubresourceResolution" type="xsd:boolean" />
           <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean"/>
           <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
+          <xsd:attribute name="skipFaultLogging" type="xsd:boolean" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
@@ -130,6 +132,7 @@
           <xsd:attribute name="password" type="xsd:string"/>
           <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean"/>
           <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
+          <xsd:attribute name="skipFaultLogging" type="xsd:boolean" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>

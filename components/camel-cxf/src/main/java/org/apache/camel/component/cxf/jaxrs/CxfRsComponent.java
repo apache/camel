@@ -68,6 +68,8 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
                 copy.putAll(bean.getProperties());     
                 setProperties(answer, copy);      
             }
+            // setup the skipFaultLogging
+           
             
         } else {
             // endpoint URI does not specify a bean

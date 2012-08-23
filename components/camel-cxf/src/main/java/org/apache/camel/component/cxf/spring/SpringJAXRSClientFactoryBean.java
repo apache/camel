@@ -16,14 +16,17 @@
  */
 package org.apache.camel.component.cxf.spring;
 
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
+import org.apache.cxf.logging.FaultListener;
 import org.apache.cxf.version.Version;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -101,8 +104,17 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
         beanId = id;            
     }
     
-    // add this mothod for testing
+    // add this method for testing
     List<String> getSchemaLocations() {
         return schemaLocations;
+    }
+   
+    public void setSkipFaultLogging(boolean skipFaultLogging) {
+        if (skipFaultLogging) {
+            if (this.getProperties() == null) {
+                this.setProperties(new HashMap<String, Object>());
+            }
+            this.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+        }
     }
 }

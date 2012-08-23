@@ -45,12 +45,12 @@
   <!-- Defined the server endpoint to create the cxf-rs consumer --> 
   <cxf:rsServer id="rsServer" address="http://localhost:${CXFTestSupport.port1}/CxfRsRouterTest/route"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" 
-    loggingFeatureEnabled="true" loggingSizeLimit="20"/>
+    loggingFeatureEnabled="true" loggingSizeLimit="20" skipFaultLogging="true"/>
 
   <!-- Defined the client endpoint to create the cxf-rs consumer -->
   <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port2}/CxfRsRouterTest/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
-    loggingFeatureEnabled="true" />
+    loggingFeatureEnabled="true" skipFaultLogging="true"/>
   
   <!-- The camel route context -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
