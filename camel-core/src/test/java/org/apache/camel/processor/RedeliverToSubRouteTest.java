@@ -60,19 +60,25 @@ public class RedeliverToSubRouteTest extends ContextTestSupport {
                     // disable error handler, so the entire route can be retried in case of redelivery
                     .errorHandler(noErrorHandler())
                     .to("mock:b")
-                    .process(new Processor() {
-                        private int counter;
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // use a processor to simulate error in the first 2 calls
-                            if (counter++ < 2) {
-                                throw new IOException("Forced");
-                            }
-                            exchange.getIn().setBody("Bye World");
-                        }
-                    });
+                    .process(new MyProcessor());
                 // END SNIPPET: e1
             }
         };
     }
+
+    // START SNIPPET: e2
+    public static class MyProcessor implements Processor {
+
+        private int counter;
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            // use a processor to simulate error in the first 2 calls
+            if (counter++ < 2) {
+                throw new IOException("Forced");
+            }
+            exchange.getIn().setBody("Bye World");
+        }
+    }
+    // END SNIPPET: e2
 }
