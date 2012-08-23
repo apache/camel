@@ -16,17 +16,17 @@
     limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: e1 -->
+	<!-- START SNIPPET: e1 -->
 	<!-- this is the processor that will fail the first 2 attempts -->
 	<bean id="myProcessor" class="org.apache.camel.processor.RedeliverToSubRouteTest.MyProcessor"/>
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
 		<!-- setup no error handler with an id, we refer to from the 2nd route -->
 		<errorHandler id="noErrorHandler" type="NoErrorHandler"/>
@@ -39,21 +39,21 @@
 		</onException>
 
 		<!-- 1st route, no need to setup error handler, as it will use the default error handler -->
-        <route>
-            <from uri="direct:start"/>
+		<route>
+			<from uri="direct:start"/>
 			<to uri="mock:a"/>
 			<to uri="direct:sub"/>
-            <to uri="mock:c"/>
-        </route>
+			<to uri="mock:c"/>
+		</route>
 
 		<!-- disable error handler on this route, so the entire route can be redelivered
 		     when called from the 1st route -->
-        <route errorHandlerRef="noErrorHandler">
-            <from uri="direct:sub"/>
+		<route errorHandlerRef="noErrorHandler">
+			<from uri="direct:sub"/>
 			<to uri="mock:b"/>
 			<process ref="myProcessor"/>
-        </route>
-    </camelContext>
-    <!-- END SNIPPET: e1 -->
+		</route>
+	</camelContext>
+	<!-- END SNIPPET: e1 -->
 
 </beans>
