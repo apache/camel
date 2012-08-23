@@ -24,13 +24,11 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Element;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.staxutils.StaxUtils;
 
 
@@ -140,7 +138,6 @@ public class CxfPayload<T> {
      *   large amounts of memory.
      */
     public String toString() {
-        XmlConverter converter = new XmlConverter();
         StringBuilder buf = new StringBuilder();
         buf.append(getClass().getName());
         buf.append(" headers: " + headers);
@@ -150,10 +147,10 @@ public class CxfPayload<T> {
         } else {
             buf.append("body: [ ");
             for (Element src : getBody()) {
-                String elementString = "";
+                String elementString;
                 try {
-                    elementString = converter.toString(src, null);
-                } catch (TransformerException e) {
+                    elementString = StaxUtils.toString(src);
+                } catch (XMLStreamException e) {
                     elementString = src.toString();
                 }
                 buf.append("[" + elementString + "]");
