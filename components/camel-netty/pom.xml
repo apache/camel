@@ -37,17 +37,6 @@
 		</camel.osgi.export.pkg>
 	</properties>
 	
-	<!-- disabled jboss repo, as its only used when testing a new netty upgrade directly from jboss
-	<repositories>
-	    <repository>
-	        <id>jboss</id>
-	        <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-	        <snapshots>
-	            <enabled>false</enabled>
-	        </snapshots>
-	    </repository>
-	</repositories> -->
-
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
