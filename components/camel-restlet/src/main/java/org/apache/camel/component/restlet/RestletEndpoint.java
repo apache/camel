@@ -185,6 +185,24 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
+    
+    // Update the endpointUri with the restlet method information
+    protected void updateEndpointUri() {
+        String endpointUri = getEndpointUri();
+        StringBuffer methods = new StringBuffer();
+        if (getRestletMethods() != null && getRestletMethods().length > 0) {
+            for (Method method : getRestletMethods()) {
+                methods = methods.append(method.getName()).append(',');
+            }
+        } else {
+            Method method = getRestletMethod();
+            methods = methods.append(method.getName());
+        }
+        if (methods != null) {
+            endpointUri = endpointUri + "?restletMethods=" + methods.toString();
+            setEndpointUri(endpointUri);
+        }
+    }
 
     @Override
     protected void doStart() throws Exception {
