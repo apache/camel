@@ -39,7 +39,8 @@
         org.springframework.*;version="[3,4)",
         *
     </camel.osgi.import>
-    <junit-version>4.8.1</junit-version>
+    <!-- The test module has the dependency of Spring 3.1.1, but the module can run with Spring 3.0.x out of box -->
+    <spring-version>3.1.1.RELEASE</spring-version>
   </properties>
   
   <dependencies>
@@ -58,6 +59,11 @@
       </exclusions>      
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.cglib</artifactId>
       <version>2.1_3_6</version>
@@ -67,13 +73,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring-version}</version>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>javax.annotation</groupId>
