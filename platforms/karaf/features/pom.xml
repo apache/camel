@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>karaf</artifactId>
-        <version>2.9.3-SNAPSHOT</version>
+        <version>2.9.3</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -253,6 +253,17 @@
               <id>google.script.repo</id>
               <name>Google Script Engine Deploy Repository </name>
               <url>http://scriptengines.googlecode.com/svn/m2-repo/</url>
+              <releases>
+                <enabled>true</enabled>
+              </releases>
+              <snapshots>
+                <enabled>false</enabled>
+              </snapshots>
+            </repository>
+            <repository>
+              <id>apache.staging</id>
+              <name>Apache Staging Repository </name>
+              <url>https://repository.apache.org/content/groups/staging</url>
               <releases>
                 <enabled>true</enabled>
               </releases>
