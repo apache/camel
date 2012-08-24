@@ -82,6 +82,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         RestletEndpoint result = new RestletEndpoint(this, remaining);
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
+        // set the endpoint uri according to the parameter
+        result.updateEndpointUri();
 
         // construct URI so we can use it to get the splitted information
         URI u = new URI(remaining);
