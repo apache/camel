@@ -193,8 +193,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         initialize(exchange);
 
         StringWriter buffer = new StringWriter();
-        SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
-        for (Item item = iter.next(); item != null; item = iter.next()) {
+        SequenceIterator<Item<?>> iter = getExpression().iterator(createDynamicContext(exchange));
+        for (Item<?> item = iter.next(); item != null; item = iter.next()) {
             buffer.append(item.getStringValueCS());
         }
 
@@ -455,7 +455,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
         Message in = exchange.getIn();
 
-        Item item = in.getBody(Item.class);
+        Item<?> item = in.getBody(Item.class);
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
         } else {
