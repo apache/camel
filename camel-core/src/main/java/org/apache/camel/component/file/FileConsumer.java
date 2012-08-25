@@ -139,7 +139,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         // compute the file path as relative to the starting directory
         File path;
         String endpointNormalized = FileUtil.normalizePath(endpointPath);
-        if (file.getPath().startsWith(endpointNormalized)) {
+        if (file.getPath().startsWith(endpointNormalized + File.separator)) {
             // skip duplicate endpoint path
             path = new File(ObjectHelper.after(file.getPath(), endpointNormalized + File.separator));
         } else {
