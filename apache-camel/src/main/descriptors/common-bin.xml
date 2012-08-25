@@ -52,6 +52,7 @@
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-cometd</include>
         <include>org.apache.camel:camel-context</include>
+        <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-crypto</include>
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
