@@ -170,14 +170,11 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
      * Delegates to the {@link HBaseRemoveHandler}.
      */
     private void remove(byte[] row) throws IOException {
-        HTableInterface table = null;
+        HTableInterface table = tablePool.getTable(tableName);
         try {
-            table = tablePool.getTable(tableName);
             endpoint.getRemoveHandler().remove(table, row);
         } finally {
-            if (table != null) {
-                table.close();
-            }
+            table.close();
         }
     }
 

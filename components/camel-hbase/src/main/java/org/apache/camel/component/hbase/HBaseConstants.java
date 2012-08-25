@@ -16,19 +16,15 @@
  */
 package org.apache.camel.component.hbase;
 
-@Deprecated
-public final class HBaseContats {
+public interface HBaseConstants {
 
-    public static final String OPERATION = "CamelHBaseOperation";
+    String OPERATION = "CamelHBaseOperation";
 
-    public static final String PUT = "CamelHBasePut";
-    public static final String GET = "CamelHBaseGet";
-    public static final String SCAN = "CamelHBaseScan";
-    public static final String DELETE = "CamelHBaseDelete";
+    String PUT = "CamelHBasePut";
+    String GET = "CamelHBaseGet";
+    String SCAN = "CamelHBaseScan";
+    String DELETE = "CamelHBaseDelete";
 
-    public static final String HBASE_MAX_SCAN_RESULTS = "CamelHBaseMaxScanResults";
+    String HBASE_MAX_SCAN_RESULTS = "CamelHBaseMaxScanResults";
 
-    private HBaseContats() {
-        //Utility Class
-    }
 }

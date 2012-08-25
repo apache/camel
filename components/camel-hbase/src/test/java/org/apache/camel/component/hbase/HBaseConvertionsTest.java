@@ -78,7 +78,7 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
             headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(3), column[0]);
             headers.put(HbaseAttribute.HBASE_VALUE.asHeader(3), body[2]);
 
-            headers.put(HBaseContats.OPERATION, HBaseContats.PUT);
+            headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
 
             template.sendBodyAndHeaders("direct:start", null, headers);
 
@@ -122,7 +122,7 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
                         .to("hbase://" + DEFAULTTABLE);
 
                 from("direct:scan")
-                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseContats.SCAN + "&maxResults=2&family=family1&qualifier=column1");
+                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&family=family1&qualifier=column1");
             }
         };
     }

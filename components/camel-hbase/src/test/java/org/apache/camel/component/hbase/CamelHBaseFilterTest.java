@@ -95,7 +95,7 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
                 from("direct:start")
                         .to("hbase://" + DEFAULTTABLE);
                 from("direct:scan")
-                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseContats.SCAN + "&maxResults=2&filters=#myFilters");
+                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&filters=#myFilters");
             }
         };
     }

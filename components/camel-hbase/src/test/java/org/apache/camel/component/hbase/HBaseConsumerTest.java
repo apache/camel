@@ -69,7 +69,7 @@ public class HBaseConsumerTest extends CamelHBaseTestSupport {
             headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(3), column[0]);
             headers.put(HbaseAttribute.HBASE_VALUE.asHeader(3), body[2]);
 
-            headers.put(HBaseContats.OPERATION, HBaseContats.PUT);
+            headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
 
             template.sendBodyAndHeaders("direct:start", null, headers);
 
