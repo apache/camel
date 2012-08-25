@@ -27,12 +27,12 @@ public class FileConsumeRootDirManualTest extends ContextTestSupport {
     }
 
     // manual test
-	public void xxxTestPollRootDirectory() throws Exception {
+    public void xxxTestPollRootDirectory() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-		mock.expectedMinimumMessageCount(2);
+        mock.expectedMinimumMessageCount(2);
 
-		assertMockEndpointsSatisfied();
-	}
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -46,4 +46,3 @@ public class FileConsumeRootDirManualTest extends ContextTestSupport {
         };
     }
 }
-
