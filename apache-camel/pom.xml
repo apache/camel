@@ -364,11 +364,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-netty</artifactId>
+      <artifactId>camel-nagios</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-nagios</artifactId>
+      <artifactId>camel-neo4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-netty</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
