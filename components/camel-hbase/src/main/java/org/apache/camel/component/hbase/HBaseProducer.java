@@ -61,12 +61,11 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
 
 
     public void process(Exchange exchange) throws Exception {
-        HTableInterface table = null;
+        HTableInterface table = tablePool.getTable(tableName.getBytes());
         try {
-            table = tablePool.getTable(tableName.getBytes());
 
             updateHeaders(exchange);
-            String operation = (String) exchange.getIn().getHeader(HBaseContats.OPERATION);
+            String operation = (String) exchange.getIn().getHeader(HBaseConstants.OPERATION);
             CellMappingStrategy mappingStrategy = endpoint.getCellMappingStrategyFactory().getStrategy(exchange.getIn());
 
             HBaseData data = mappingStrategy.resolveModel(exchange.getIn());
@@ -78,14 +77,14 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
 
             for (HBaseRow hRow : data.getRows()) {
                 hRow.apply(rowModel);
-                if (HBaseContats.PUT.equals(operation)) {
+                if (HBaseConstants.PUT.equals(operation)) {
                     putOperations.add(createPut(hRow));
-                } else if (HBaseContats.GET.equals(operation)) {
+                } else if (HBaseConstants.GET.equals(operation)) {
                     HBaseRow getResultRow = getCells(table, hRow);
                     getOperationResult.add(getResultRow);
-                } else if (HBaseContats.DELETE.equals(operation)) {
+                } else if (HBaseConstants.DELETE.equals(operation)) {
                     deleteOperations.add(createDeleteRow(hRow));
-                } else if (HBaseContats.SCAN.equals(operation)) {
+                } else if (HBaseConstants.SCAN.equals(operation)) {
                     scanOperationResult = scanCells(table, hRow, endpoint.getFilters());
                 }
             }
@@ -254,8 +253,8 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
      */
     private void updateHeaders(Exchange exchange) {
         if (exchange != null && exchange.getIn() != null) {
-            if (endpoint.getMaxResults() != 0 && exchange.getIn().getHeader(HBaseContats.HBASE_MAX_SCAN_RESULTS) == null) {
-                exchange.getIn().setHeader(HBaseContats.HBASE_MAX_SCAN_RESULTS, endpoint.getMaxResults());
+            if (endpoint.getMaxResults() != 0 && exchange.getIn().getHeader(HBaseConstants.HBASE_MAX_SCAN_RESULTS) == null) {
+                exchange.getIn().setHeader(HBaseConstants.HBASE_MAX_SCAN_RESULTS, endpoint.getMaxResults());
             }
             if (endpoint.getMappingStrategyName() != null && exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY) == null) {
                 exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, endpoint.getMappingStrategyName());
@@ -265,10 +264,10 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME, endpoint.getMappingStrategyClassName());
             }
 
-            if (endpoint.getOperation() != null && exchange.getIn().getHeader(HBaseContats.OPERATION) == null) {
-                exchange.getIn().setHeader(HBaseContats.OPERATION, endpoint.getOperation());
-            } else if (endpoint.getOperation() == null && exchange.getIn().getHeader(HBaseContats.OPERATION) == null) {
-                exchange.getIn().setHeader(HBaseContats.OPERATION, HBaseContats.PUT);
+            if (endpoint.getOperation() != null && exchange.getIn().getHeader(HBaseConstants.OPERATION) == null) {
+                exchange.getIn().setHeader(HBaseConstants.OPERATION, endpoint.getOperation());
+            } else if (endpoint.getOperation() == null && exchange.getIn().getHeader(HBaseConstants.OPERATION) == null) {
+                exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.PUT);
             }
         }
     }

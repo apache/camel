@@ -66,7 +66,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
             headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);
             headers.put(HbaseAttribute.HBASE_VALUE.asHeader(), body[0]);
-            headers.put(HBaseContats.OPERATION, HBaseContats.PUT);
+            headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
             template.sendBodyAndHeaders("direct:start", null, headers);
 
             Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
@@ -91,7 +91,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             exchange.getIn().setHeader(HbaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
             exchange.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
             exchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);
-            exchange.getIn().setHeader(HBaseContats.OPERATION, HBaseContats.GET);
+            exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
             Exchange resp = template.send(endpoint, exchange);
             assertEquals(body[0], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader()));
         }
@@ -118,7 +118,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(3), column[0]);
             headers.put(HbaseAttribute.HBASE_VALUE.asHeader(3), body[2]);
 
-            headers.put(HBaseContats.OPERATION, HBaseContats.PUT);
+            headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
 
             template.sendBodyAndHeaders("direct:start", null, headers);
 
@@ -163,7 +163,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             exchange.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(2), family[0]);
             exchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(2), column[0]);
 
-            exchange.getIn().setHeader(HBaseContats.OPERATION, HBaseContats.GET);
+            exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
             Exchange resp = template.send(endpoint, exchange);
             assertEquals(body[0], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader()));
             assertEquals(body[1], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(2)));
@@ -186,7 +186,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(2), column[1]);
             headers.put(HbaseAttribute.HBASE_VALUE.asHeader(2), body[1]);
 
-            headers.put(HBaseContats.OPERATION, HBaseContats.PUT);
+            headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
 
             template.sendBodyAndHeaders("direct:start", null, headers);
 
@@ -225,7 +225,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             exchange.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(2), family[1]);
             exchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(2), column[1]);
 
-            exchange.getIn().setHeader(HBaseContats.OPERATION, HBaseContats.GET);
+            exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
             Exchange resp = template.send(endpoint, exchange);
             assertEquals(body[0], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader()));
             assertEquals(body[1], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(2)));
@@ -242,7 +242,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
 
             Exchange exchange1 = endpoint.createExchange(ExchangePattern.InOnly);
             exchange1.getIn().setHeader(HbaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
-            exchange1.getIn().setHeader(HBaseContats.OPERATION, HBaseContats.DELETE);
+            exchange1.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.DELETE);
             template.send(endpoint, exchange1);
 
             Exchange exchange2 = endpoint.createExchange(ExchangePattern.InOut);
@@ -253,7 +253,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             exchange2.getIn().setHeader(HbaseAttribute.HBASE_ROW_ID.asHeader(2), key[1]);
             exchange2.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(2), family[0]);
             exchange2.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(2), column[0]);
-            exchange2.getIn().setHeader(HBaseContats.OPERATION, HBaseContats.GET);
+            exchange2.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
             Exchange resp = template.send(endpoint, exchange2);
             assertEquals(null, resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader()));
             assertEquals(body[1], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(2)));
@@ -294,7 +294,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
                         .to("hbase://" + DEFAULTTABLE);
 
                 from("direct:scan")
-                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseContats.SCAN + "&maxResults=2");
+                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2");
             }
         };
     }
