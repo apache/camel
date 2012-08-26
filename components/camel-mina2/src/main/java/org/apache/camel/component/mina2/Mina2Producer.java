@@ -46,6 +46,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.filter.executor.UnorderedThreadPoolExecutor;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
@@ -298,8 +299,11 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         // connector config
         connectorConfig = connector.getSessionConfig();
 
-        // using the unordered thread pool is fine as we dont need ordered invocation in our response handler
-        workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        if (configuration.isOrderedThreadPoolExecutor()) {
+            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        } else {
+            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        }
         connector.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             connector.getFilterChain().addLast("logger", new LoggingFilter());
@@ -357,8 +361,11 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
         connector = new NioDatagramConnector(processorCount);
 
-        // using the unordered thread pool is fine as we dont need ordered invocation in our response handler
-        workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        if (configuration.isOrderedThreadPoolExecutor()) {
+            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        } else {
+            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        }
         connectorConfig = connector.getSessionConfig();
         connector.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
