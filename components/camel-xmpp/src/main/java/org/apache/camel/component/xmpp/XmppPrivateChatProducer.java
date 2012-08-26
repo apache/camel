@@ -37,7 +37,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     private final XmppEndpoint endpoint;
     private XMPPConnection connection;
     private final String participant;
-
+    
     public XmppPrivateChatProducer(XmppEndpoint endpoint, String participant) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -62,21 +62,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         }
 
         ChatManager chatManager = connection.getChatManager();
-
-        LOG.trace("Looking for existing chat instance with thread ID {}", endpoint.getChatId());
-        Chat chat = chatManager.getThreadChat(endpoint.getChatId());
-        if (chat == null) {
-            LOG.trace("Creating new chat instance with thread ID {}", endpoint.getChatId());
-            chat = chatManager.createChat(getParticipant(), endpoint.getChatId(), new MessageListener() {
-                public void processMessage(Chat chat, Message message) {
-                    // not here to do conversation
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Received and discarding message from {} : {}", getParticipant(), message.getBody());
-                    }
-                }
-            });
-        }
-
+        Chat chat = getOrCreateChat(chatManager);
         Message message = null;
         try {
             message = new Message();
@@ -97,6 +83,28 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             throw new RuntimeExchangeException("Cannot send XMPP message to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
+    }
+
+    private synchronized Chat getOrCreateChat(ChatManager chatManager) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Looking for existing chat instance with thread ID {}", endpoint.getChatId());
+        }
+        Chat chat = chatManager.getThreadChat(endpoint.getChatId());
+        if (chat == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Creating new chat instance with thread ID {}", endpoint.getChatId());
+            }
+            chat = chatManager.createChat(getParticipant(), endpoint.getChatId(), new MessageListener() {
+                public void processMessage(Chat chat, Message message) {
+                    // not here to do conversation
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Received and discarding message from {} : {}"
+                                , getParticipant(), message.getBody());
+                    }
+                }
+            });
+        }
+        return chat;
     }
     
     @Override
