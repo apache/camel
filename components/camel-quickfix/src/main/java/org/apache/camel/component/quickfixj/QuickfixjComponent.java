@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
 import quickfix.SessionSettings;
 
-public class QuickfixjComponent extends DefaultComponent {
+public class QuickfixjComponent extends DefaultComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
 
     private final Object engineInstancesLock = new Object();
@@ -77,26 +79,23 @@ public class QuickfixjComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        synchronized (engineInstancesLock) {
-            for (QuickfixjEngine engine : engines.values()) {
-                startQuickfixjEngine(engine);
-            }
-        }
-    }
-
-    private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
-        LOG.info("Starting QuickFIX/J engine: uri=", engine.getUri());
-        engine.start();
+        // we defer starting quickfix engines till the onCamelContextStarted callback
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        // stop engines when stopping component
         synchronized (engineInstancesLock) {
             for (QuickfixjEngine engine : engines.values()) {
                 engine.stop();
             }
         }
+        super.doStop();
+    }
+
+    private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
+        LOG.info("Starting QuickFIX/J engine: {}", engine.getUri());
+        engine.start();
     }
 
     // Test Support
@@ -128,4 +127,13 @@ public class QuickfixjComponent extends DefaultComponent {
         this.configurations = configurations;
     }
 
+    @Override
+    public void onCamelContextStarted(CamelContext camelContext, boolean alreadyStarted) throws Exception {
+        // only start quickfix engines when CamelContext have finished starting
+        synchronized (engineInstancesLock) {
+            for (QuickfixjEngine engine : engines.values()) {
+                startQuickfixjEngine(engine);
+            }
+        }
+    }
 }

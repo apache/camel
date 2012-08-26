@@ -26,6 +26,7 @@ import java.net.URLClassLoader;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -76,6 +77,7 @@ public class QuickfixjComponentTest {
     private SessionID sessionID;
     private SessionSettings settings;
     private QuickfixjComponent component;
+    private CamelContext camelContext;
     private MessageFactory engineMessageFactory;
     private MessageStoreFactory engineMessageStoreFactory;
     private LogFactory engineLogFactory;
@@ -118,9 +120,10 @@ public class QuickfixjComponentTest {
     }
     
     private void setUpComponent(boolean injectQfjPlugins) throws IOException, MalformedURLException, NoSuchMethodException {
-        DefaultCamelContext camelContext = new DefaultCamelContext();
+        camelContext = new DefaultCamelContext();
         component = new QuickfixjComponent();
         component.setCamelContext(camelContext);
+        camelContext.addComponent("quickfix", component);
         
         if (injectQfjPlugins) {
             engineMessageFactory = new DefaultMessageFactory();
@@ -143,6 +146,9 @@ public class QuickfixjComponentTest {
         Thread.currentThread().setContextClassLoader(contextClassLoader);   
         if (component != null) {
             component.stop();
+        }
+        if (camelContext != null) {
+            camelContext.stop();
         }
     }
 
@@ -168,8 +174,9 @@ public class QuickfixjComponentTest {
         assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(sessionID));
-        
-        component.start();
+
+        // will start the component
+        camelContext.start();
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         
         // Move these too an endpoint testcase if one exists
@@ -186,7 +193,8 @@ public class QuickfixjComponentTest {
 
         writeSettings();
 
-        component.start();
+        // will start the component
+        camelContext.start();
 
         Endpoint e1 = component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
         assertThat(component.getEngines().size(), is(1));
@@ -229,9 +237,10 @@ public class QuickfixjComponentTest {
 
         // Endpoint automatically starts the consumer
         assertThat(((StatefulService)consumer).isStarted(), is(true));
-        
-        component.start();
-        
+
+        // will start the component
+        camelContext.start();
+
         assertTrue("Session not created", latch.await(5000, TimeUnit.MILLISECONDS));
         
         component.stop();
@@ -283,8 +292,9 @@ public class QuickfixjComponentTest {
         });
         ServiceHelper.startService(consumer);
 
-        component.start();
-        
+        // will start the component
+        camelContext.start();
+
         assertTrue("Session not created", logonLatch.await(5000, TimeUnit.MILLISECONDS));
        
         Endpoint producerEndpoint = component.createEndpoint(getEndpointUri(settingsFile.getName(), acceptorSessionID));
