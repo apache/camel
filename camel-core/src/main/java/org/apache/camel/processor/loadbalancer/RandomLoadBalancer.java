@@ -17,6 +17,7 @@
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
+import java.util.Random;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,14 +29,20 @@ import org.apache.camel.Processor;
  */
 public class RandomLoadBalancer extends QueueLoadBalancer {
 
+    private static final Random random = new Random();
+
     protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
         int size = processors.size();
-        while (true) {
-            int index = (int) Math.round(Math.random() * size);
-            if (index < size) {
-                return processors.get(index);
-            }
+        if (size == 0) {
+            return null;
+        } else if (size == 1) {
+            // there is only 1
+            return processors.get(0);
         }
+
+        // pick a random
+        int index = random.nextInt(size);
+        return processors.get(index);
     }
 
     public String toString() {
