@@ -40,6 +40,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.filter.executor.UnorderedThreadPoolExecutor;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
@@ -144,8 +145,11 @@ public class Mina2Consumer extends DefaultConsumer {
         ((NioSocketAcceptor) acceptor).setReuseAddress(true);
         acceptor.setCloseOnDeactivation(true);
 
-        // using the unordered thread pool is fine as we dont need ordered invocation in our response handler
-        workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        if (configuration.isOrderedThreadPoolExecutor()) {
+            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        } else {
+            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        }
         acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
