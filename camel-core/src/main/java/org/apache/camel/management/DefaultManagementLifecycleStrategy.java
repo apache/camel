@@ -854,10 +854,13 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
-            boolean enabled = camelContext.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
-            if (enabled) {
-                LOG.info("StatisticsLevel at {} so enabling load performance statistics", camelContext.getManagementStrategy().getStatisticsLevel());
+            // we are disabled either if configured explicit, or if level is off
+            boolean disabled = camelContext.getManagementStrategy().isLoadStatisticsEnabled() == false
+                    || camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.Off;
+            if (!disabled) {
+                LOG.info("Load performance statistics enabled.");
                 // we have to defer creating this until CamelContext has been started
+                // (the thread pool will be shutdown automatic by CamelContext when its stopped)
                 ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ManagementLoadTask");
                 timerListenerManager.setExecutorService(executorService);
                 // must use 1 sec interval as the load statistics is based on 1 sec calculations

@@ -218,6 +218,20 @@ public interface ManagementStrategy extends Service {
     boolean isOnlyManageProcessorWithCustomId();
 
     /**
+     * Sets whether load statistics is enabled.
+     *
+     * @param flag <tt>true</tt> to enable load statistics
+     */
+    void setLoadStatisticsEnabled(boolean flag);
+
+    /**
+     * Gets whether load statistics is enabled
+     *
+     * @return <tt>true</tt> if enabled
+     */
+    boolean isLoadStatisticsEnabled();
+
+    /**
      * Sets the statistics level
      * <p/>
      * Default is {@link org.apache.camel.ManagementStatisticsLevel#All}

@@ -353,6 +353,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             boolean onlyId = agent.getOnlyRegisterProcessorWithCustomId() != null && agent.getOnlyRegisterProcessorWithCustomId();
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(onlyId);
             getContext().getManagementStrategy().setStatisticsLevel(camelJMXAgent.getStatisticsLevel());
+
+            Boolean loadStatisticsEnabled = CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getLoadStatisticsEnabled());
+            if (loadStatisticsEnabled != null) {
+                getContext().getManagementStrategy().setLoadStatisticsEnabled(loadStatisticsEnabled);
+            }
         }
     }
 

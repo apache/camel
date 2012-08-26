@@ -105,6 +105,12 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     @XmlAttribute(required = false)
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
 
+    /**
+     * A flag that indicates whether Load statistics is enabled
+     */
+    @XmlAttribute(required = false)
+    private String loadStatisticsEnabled;
+
     public String getDisabled() {
         return disabled;
     }
@@ -201,6 +207,14 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.registerNewRoutes = registerNewRoutes;
     }
 
+    public String getLoadStatisticsEnabled() {
+        return loadStatisticsEnabled;
+    }
+
+    public void setLoadStatisticsEnabled(String loadStatisticsEnabled) {
+        this.loadStatisticsEnabled = loadStatisticsEnabled;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -226,6 +240,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (statisticsLevel != null) {
             sb.append(", statisticsLevel=").append(statisticsLevel);
+        }
+        if (loadStatisticsEnabled != null) {
+            sb.append(", loadStatisticsEnabled=").append(loadStatisticsEnabled);
         }
         if (registerAlways != null) {
             sb.append(", registerAlways=").append(registerAlways);

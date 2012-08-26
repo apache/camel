@@ -57,6 +57,7 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
     private boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
+    private boolean loadStatisticsEnabled = true;
     private CamelContext camelContext;
 
     public DefaultManagementStrategy() {
@@ -187,6 +188,14 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
 
     public ManagementStatisticsLevel getStatisticsLevel() {
         return statisticsLevel;
+    }
+
+    public boolean isLoadStatisticsEnabled() {
+        return loadStatisticsEnabled;
+    }
+
+    public void setLoadStatisticsEnabled(boolean loadStatisticsEnabled) {
+        this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
     public void start() throws Exception {
