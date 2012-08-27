@@ -93,6 +93,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private boolean stripsAllWhiteSpace = true;
     private ModuleURIResolver moduleURIResolver;
     private boolean allowStAX;
+    private String headerName;
 
     @Override
     public String toString() {
@@ -193,8 +194,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         initialize(exchange);
 
         StringWriter buffer = new StringWriter();
-        SequenceIterator<Item<?>> iter = getExpression().iterator(createDynamicContext(exchange));
-        for (Item<?> item = iter.next(); item != null; item = iter.next()) {
+        SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
+        for (Item item = iter.next(); item != null; item = iter.next()) {
             buffer.append(item.getStringValueCS());
         }
 
@@ -429,6 +430,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         this.stripsAllWhiteSpace = stripsAllWhiteSpace;
     }
 
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
     public boolean isAllowStAX() {
         return allowStAX;
     }
@@ -454,12 +463,21 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         DynamicQueryContext dynamicQueryContext = new DynamicQueryContext(config);
 
         Message in = exchange.getIn();
-
-        Item<?> item = in.getBody(Item.class);
+        Item item = null;
+        if (ObjectHelper.isNotEmpty(getHeaderName())) {
+            item = in.getHeader(getHeaderName(), Item.class);
+        } else {
+            item = in.getBody(Item.class);
+        }
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
         } else {
-            Object body = in.getBody();
+            Object body = null;
+            if (ObjectHelper.isNotEmpty(getHeaderName())) {
+                body = in.getHeader(getHeaderName());
+            } else {
+                body = in.getBody();
+            }
 
             // the underlying input stream, which we need to close to avoid locking files or other resources
             InputStream is = null;
@@ -467,7 +485,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                 Source source;
                 // only convert to input stream if really needed
                 if (isInputStreamNeeded(exchange)) {
-                    is = exchange.getIn().getBody(InputStream.class);
+                    if (ObjectHelper.isNotEmpty(getHeaderName())) {
+                        is = exchange.getIn().getHeader(getHeaderName(), InputStream.class);
+                    } else {
+                        is = exchange.getIn().getBody(InputStream.class);
+                    }
                     source = getSource(exchange, is);
                 } else {
                     source = getSource(exchange, body);
