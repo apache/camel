@@ -89,8 +89,9 @@ public class TimerConsumer extends DefaultConsumer {
      * Whether the timer task is allow to run or not
      */
     protected boolean isTaskRunAllowed() {
-        // only allow running the timer task if we can run and are not suspended
-        return isRunAllowed() && !isSuspended();
+        // only allow running the timer task if we can run and are not suspended,
+        // and CamelContext must have been fully started
+        return endpoint.getCamelContext().getStatus().isStarted() && isRunAllowed() && !isSuspended();
     }
 
     protected void configureTask(TimerTask task, Timer timer) {
@@ -132,12 +133,12 @@ public class TimerConsumer extends DefaultConsumer {
         LOG.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
         try {
             getProcessor().process(exchange);
-
-            // log exception if an exception occurred and was not handled
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
         } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        // handle any thrown exception
+        if (exchange.getException() != null) {
             getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
         }
     }
