@@ -39,7 +39,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private String timerName;
     private Date time;
     private long period = 1000;
-    private long delay;
+    private long delay = 1000;
     private boolean fixedRate;
     private boolean daemon = true;
     private Timer timer;
