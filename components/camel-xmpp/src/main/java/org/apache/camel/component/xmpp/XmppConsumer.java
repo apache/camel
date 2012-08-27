@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.URISupport;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
@@ -26,6 +29,7 @@ import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.ToContainsFilter;
@@ -49,6 +53,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     private Chat privateChat;
     private ChatManager chatManager;
     private XMPPConnection connection;
+    private ScheduledExecutorService scheduledExecutor;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -57,7 +62,18 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
     @Override
     protected void doStart() throws Exception {
-        connection = endpoint.createConnection();
+        try {
+            connection = endpoint.createConnection();
+        } catch (XMPPException e) {
+            if (endpoint.isTestConnectionOnStartup()) {
+                throw new RuntimeException("Could not connect to XMPP server.", e);
+            }  else {
+                LOG.warn(XmppEndpoint.getXmppExceptionLogMessage(e));
+                scheduleDelayedStart();
+                return;
+            }
+        }
+
         chatManager = connection.getChatManager();
         chatManager.addChatListener(this);
 
@@ -93,7 +109,57 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             }
         }
 
+        this.startRobustConnectionMonitor();
         super.doStart();
+    }
+
+    protected void scheduleDelayedStart() throws Exception {
+        Runnable startRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    doStart();
+                } catch (Exception e) {
+                    LOG.error(e.getMessage());
+                }
+            }
+        };
+        LOG.info("Delaying XMPP consumer startup for endpoint {}. Trying again in {} seconds.",
+                URISupport.sanitizeUri(endpoint.getEndpointUri()), endpoint.getConnectionPollDelay());
+        getExecutor().schedule(startRunnable, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+    }
+
+    private void startRobustConnectionMonitor() throws Exception {
+        Runnable connectionCheckRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    checkConnection();
+                } catch (Exception e) {
+                    LOG.error(e.getMessage());
+                }
+            }
+        };
+        // background thread to detect and repair lost connections
+        getExecutor().scheduleAtFixedRate(connectionCheckRunnable, endpoint.getConnectionPollDelay(),
+                endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+    }
+
+    private void checkConnection() throws Exception {
+        if (!connection.isConnected()) {
+            LOG.info("Attempting to reconnect to: {}", XmppEndpoint.getConnectionMessage(connection));
+            try {
+                connection.connect();
+            } catch (XMPPException e) {
+                LOG.warn(XmppEndpoint.getXmppExceptionLogMessage(e));
+            }
+        }
+    }
+    private ScheduledExecutorService getExecutor() {
+        if (this.scheduledExecutor == null) {
+            scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "connectionPoll");
+        }
+        return scheduledExecutor;
     }
 
     @Override
@@ -109,6 +175,10 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         }
         if (connection != null && connection.isConnected()) {
             connection.disconnect();
+        }
+        if (scheduledExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
+            scheduledExecutor = null;
         }
     }
 

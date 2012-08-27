@@ -36,6 +36,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String nickname;
     private String serviceName;
     private XMPPConnection connection;
+    private boolean testConnectionOnStartup = true;
+    private int connectionPollDelay = 10;
 
     public XmppEndpoint() {
     }
@@ -112,7 +115,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         exchange.setIn(new XmppMessage(message));
         return exchange;
     }
-    
+
     @Override
     protected String createEndpointUri() {
         return "xmpp://" + host + ":" + port + "/" + getParticipant() + "?serviceName=" + serviceName;
@@ -122,20 +125,22 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return true;
     }
 
-    public XMPPConnection createConnection() throws XMPPException {
+    public synchronized XMPPConnection createConnection() throws XMPPException {
 
-        if (connection != null) {
+        if (connection != null && connection.isConnected()) {
             return connection;
         }
 
-        if (port > 0) {
-            if (getServiceName() == null) {
-                connection = new XMPPConnection(new ConnectionConfiguration(host, port));
+        if (connection == null) {
+            if (port > 0) {
+                if (getServiceName() == null) {
+                    connection = new XMPPConnection(new ConnectionConfiguration(host, port));
+                } else {
+                    connection = new XMPPConnection(new ConnectionConfiguration(host, port, serviceName));
+                }
             } else {
-                connection = new XMPPConnection(new ConnectionConfiguration(host, port, serviceName));
+                connection = new XMPPConnection(host);
             }
-        } else {
-            connection = new XMPPConnection(host);
         }
 
         connection.connect();
@@ -183,7 +188,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
         return connection;
     }
-
     /*
      * If there is no "@" symbol in the room, find the chat service JID and
      * return fully qualified JID for the room as room@conference.server.domain
@@ -206,8 +210,27 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return room + "@" + chatServer;
     }
 
+    public String getConnectionDescription() {
+        return host + ":" + port + "/" + serviceName;
+    }
+
     public static String getConnectionMessage(XMPPConnection connection) {
         return connection.getHost() + ":" + connection.getPort() + "/" + connection.getServiceName();
+    }
+
+    public static String getXmppExceptionLogMessage(XMPPException e) {
+        XMPPError xmppError = e.getXMPPError();
+        Throwable t = e.getWrappedThrowable();
+        StringBuffer strBuff = new StringBuffer();
+        if (xmppError != null) {
+            strBuff.append("[ ").append(xmppError.getCode()).append(" ] ")
+                .append(xmppError.getCondition()).append(" : ")
+                .append(xmppError.getMessage());
+        }
+        if (t != null) {
+            strBuff.append(" ( ").append(e.getWrappedThrowable().getMessage()).append(" )");
+        }
+        return strBuff.toString();
     }
 
     public String getChatId() {
@@ -319,13 +342,29 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public String getServiceName() {
         return serviceName;
     }    
-    
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isTestConnectionOnStartup() {
+        return testConnectionOnStartup;
+    }
+
+    public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
+        this.testConnectionOnStartup = testConnectionOnStartup;
+    }
+
+    public int getConnectionPollDelay() {
+        return connectionPollDelay;
+    }
+
+    public void setConnectionPollDelay(int connectionPollDelay) {
+        this.connectionPollDelay = connectionPollDelay;
     }
 
     // Implementation methods
