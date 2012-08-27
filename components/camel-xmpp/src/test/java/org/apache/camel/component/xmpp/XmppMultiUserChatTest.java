@@ -19,7 +19,6 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -32,15 +31,14 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
     protected String body1 = "the first message";
     protected String body2 = "the second message";
 
-    @Ignore
     @Test
     public void testXmppChat() throws Exception {
-        // TODO: requires online against jabber. Test this manually
         consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
         consumerEndpoint.expectedBodiesReceived(body1, body2);
 
         //will send chat messages to the room
         template.sendBody("direct:toProducer", body1);
+        Thread.sleep(50);
         template.sendBody("direct:toProducer", body2);
 
         consumerEndpoint.assertIsSatisfied();
@@ -60,11 +58,17 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
     }
 
     protected String getProducerUri() {
-        return "xmpp://jabber.org:5222?room=camel-test&user=camel_producer@jabber.org&password=secret&serviceName=jabber.org";
+
+        // the nickname paramenter is necessary in these URLs because the '@' in the user name can not be parsed by
+        // vysper during chat room message routing.
+
+        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+            + "/?room=camel-test@conference.apache.camel&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
     }
     
     protected String getConsumerUri() {
-        return "xmpp://jabber.org:5222?room=camel-test&user=camel_consumer@jabber.org&password=secret&serviceName=jabber.org";
+        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+            + "/?room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
     }
 
 }

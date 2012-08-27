@@ -19,7 +19,6 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -32,10 +31,8 @@ public class XmppRouteChatTest extends CamelTestSupport {
     protected String body1 = "the first message";
     protected String body2 = "the second message";
 
-    @Ignore
     @Test
     public void testXmppChat() throws Exception {
-        // TODO: requires online against jabber. Test this manually
         consumerEndpoint = context.getEndpoint("mock:out1", MockEndpoint.class);
         producerEndpoint = context.getEndpoint("mock:out2", MockEndpoint.class);
 
@@ -44,9 +41,11 @@ public class XmppRouteChatTest extends CamelTestSupport {
 
         //will send chat messages to the consumer
         template.sendBody("direct:toConsumer", body1);
+        Thread.sleep(50);
         template.sendBody("direct:toConsumer", body2);
         
         template.sendBody("direct:toProducer", body1);
+        Thread.sleep(50);
         template.sendBody("direct:toProducer", body2);
 
         consumerEndpoint.assertIsSatisfied();
@@ -74,11 +73,12 @@ public class XmppRouteChatTest extends CamelTestSupport {
     }
 
     protected String getProducerUri() {
-        return "xmpp://jabber.org:5222/camel_consumer@jabber.org?user=camel_producer&password=secret&serviceName=jabber.org";
+        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+            + "/camel_consumer@apache.camel?user=camel_producer&password=secret&serviceName=apache.camel";
     }
     
     protected String getConsumerUri() {
-        return "xmpp://jabber.org:5222/camel_producer@jabber.org?user=camel_consumer&password=secret&serviceName=jabber.org";
+        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+            + "/camel_producer@apache.camel?user=camel_consumer&password=secret&serviceName=apache.camel";
     }
-
 }

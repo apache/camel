@@ -36,7 +36,6 @@
   </properties>
 
   <dependencies>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -46,7 +45,6 @@
       <artifactId>camel-test</artifactId>     
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.igniterealtime.smack</groupId>
       <artifactId>smack</artifactId>
@@ -57,7 +55,6 @@
       <artifactId>smackx</artifactId>
       <version>${smack-version}</version>
     </dependency>
- 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -68,6 +65,24 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.vysper</groupId>
+      <artifactId>vysper-core</artifactId>
+      <version>${vysper-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.vysper.extensions</groupId>
+      <artifactId>xep0045-muc</artifactId>
+      <version>${vysper-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-core</artifactId>
+      <version>${mina2-version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -76,16 +91,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-          <systemProperties>
-            <property>
-              <name>xmpp.enable</name>
-              <value>${xmpp.enable}</value>
-            </property>
-            <property>
-              <name>xmpp.server</name>
-              <value>${xmpp.url}</value>
-            </property>
-          </systemProperties>
         </configuration>
       </plugin>
     </plugins>

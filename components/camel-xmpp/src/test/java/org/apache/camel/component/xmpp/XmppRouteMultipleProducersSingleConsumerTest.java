@@ -19,7 +19,6 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -29,7 +28,6 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
     protected MockEndpoint goodEndpoint;
     protected MockEndpoint badEndpoint;
 
-    @Ignore
     @Test
     public void testProducerGetsEverything() throws Exception {
 
@@ -53,8 +51,6 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
         return new RouteBuilder() {
             public void configure() throws Exception {
 
-                //getContext().setTracing(true);
-
                 from("direct:toProducer1")
                     .to(getProducer1Uri());
 
@@ -74,15 +70,18 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
     }
 
     protected String getProducer1Uri() {
-        return "xmpp://jabber.org:5222/camel_consumer@jabber.org?user=camel_producer&password=secret&serviceName=jabber.org";
+        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+            + "/camel_consumer@apache.camel?user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getProducer2Uri() {
-        return "xmpp://jabber.org:5222/camel_consumer@jabber.org?user=camel_producer1&password=secret&serviceName=jabber.org";
+        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+            + "/camel_consumer@apache.camel?user=camel_producer1&password=secret&serviceName=apache.camel";
     }
     
     protected String getConsumerUri() {
-        return "xmpp://jabber.org:5222/camel_producer@jabber.org?user=camel_consumer&password=secret&serviceName=jabber.org";
+        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+            + "/camel_producer@apache.camel?user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 
 }
