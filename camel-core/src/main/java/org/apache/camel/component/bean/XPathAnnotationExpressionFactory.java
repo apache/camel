@@ -78,7 +78,7 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
     protected String getHeaderName(Annotation annotation) {
         String headerValue = null;
         try {
-            headerValue = (String)getAnnotationObjectValue(annotation, "header");
+            headerValue = (String)getAnnotationObjectValue(annotation, "headerName");
         } catch (Exception e) {
             // Do Nothing
         }

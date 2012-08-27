@@ -38,7 +38,7 @@ public @interface XPath {
     /**
      * @return The XPath which will be applied
      */
-	String value();
+    String value();
 
     NamespacePrefix[] namespaces() default {
     @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
@@ -48,7 +48,7 @@ public @interface XPath {
     
     /**
      * @return The name of the header we want to apply the XPath expression to.
-     * 			If this is empty then the XPath expression will be applied to the body instead.
+     *  If this is empty then the XPath expression will be applied to the body instead.
      */
-    String header() default "";
+    String headerName() default "";
 }
