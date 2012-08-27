@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -48,28 +47,41 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
             for (NamespacePrefix namespacePrefix : namespaces) {
                 builder = builder.namespace(namespacePrefix.prefix(), namespacePrefix.uri());
             }
-
         }
+
+        // Set the header name that we want the XPathBuilder to apply the XPath expression to
+        String headerName = getHeaderName(annotation);
+        if (ObjectHelper.isNotEmpty(headerName)) {
+            builder.setHeaderName(headerName);
+        }
+        
         return builder;
     }
 
     protected Class<?> getResultType(Annotation annotation) {
-        try {
-            Method method = annotation.getClass().getMethod("resultType");
-            Object value = ObjectHelper.invokeMethod(method, annotation);
-            return (Class<?>) value;
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Cannot determine the annotation: " + annotation + " as it does not have an resultType() method", e);
-        }
+        return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
     }
-
+    
     protected NamespacePrefix[] getExpressionNameSpacePrefix(Annotation annotation) {
+        return (NamespacePrefix[]) getAnnotationObjectValue(annotation, "namespaces");
+    }
+    
+    /**
+     * Extracts the value of the header method in the Annotation. For backwards
+     * compatibility this method will return null if the annotation's method is
+     * not found.
+     * 
+     * @return If the annotation has the method 'header' then the name of the
+     *         header we want to apply the XPath expression to. Otherwise null
+     *         will be returned
+     */
+    protected String getHeaderName(Annotation annotation) {
+        String headerValue = null;
         try {
-            Method method = annotation.getClass().getMethod("namespaces");
-            Object value = ObjectHelper.invokeMethod(method, annotation);
-            return (NamespacePrefix[]) value;
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Cannot determine the annotation: " + annotation + " as it does not have an namespaces() method", e);
+            headerValue = (String)getAnnotationObjectValue(annotation, "header");
+        } catch (Exception e) {
+            // Do Nothing
         }
+        return headerValue;
     }
 }

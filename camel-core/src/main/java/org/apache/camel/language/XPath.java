@@ -35,11 +35,20 @@ import org.apache.camel.component.bean.XPathAnnotationExpressionFactory;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "xpath", factory = XPathAnnotationExpressionFactory.class)
 public @interface XPath {
-    String value();
+    /**
+     * @return The XPath which will be applied
+     */
+	String value();
 
     NamespacePrefix[] namespaces() default {
     @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
     @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")};
     
     Class<?> resultType() default Object.class;
+    
+    /**
+     * @return The name of the header we want to apply the XPath expression to.
+     * 			If this is empty then the XPath expression will be applied to the body instead.
+     */
+    String header() default "";
 }

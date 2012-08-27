@@ -112,14 +112,32 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private XPathFunction propertiesFunction;
     private XPathFunction simpleFunction;
 
+    /**
+     * The name of the header we want to apply the XPath expression to, which when set will cause
+     * the xpath to be evaluated on the required header, otherwise it will be applied to the body
+     */
+    private String headerName;
+
+    /**
+     * @param text The XPath expression
+     */
     public XPathBuilder(String text) {
         this.text = text;
     }
 
+    /**
+     * @param text The XPath expression
+     * @return A new XPathBuilder object
+     */
     public static XPathBuilder xpath(String text) {
         return new XPathBuilder(text);
     }
 
+    /**
+     * @param text The XPath expression
+     * @param resultType The result type that the XPath expression will return.
+     * @return A new XPathBuilder object
+     */
     public static XPathBuilder xpath(String text, Class<?> resultType) {
         XPathBuilder builder = new XPathBuilder(text);
         builder.setResultType(resultType);
@@ -449,6 +467,14 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         this.resultQName = resultQName;
     }
 
+    public String getHeaderName() {
+        return headerName;
+    }
+    
+    public void setHeaderName(String headerName) { 
+        this.headerName = headerName;
+    }
+    
     public DefaultNamespaceContext getNamespaceContext() {
         if (namespaceContext == null) {
             try {
@@ -781,14 +807,29 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         InputStream is = null;
         try {
             Object document;
-            // only convert to input stream if really needed
-            if (isInputStreamNeeded(exchange)) {
-                is = exchange.getIn().getBody(InputStream.class);
-                document = getDocument(exchange, is);
+           
+            // Check if we need to apply the XPath expression to a header
+            if (ObjectHelper.isNotEmpty(getHeaderName())) {         
+                String headerName = getHeaderName();
+                // only convert to input stream if really needed
+                if (isInputStreamNeeded(exchange, headerName)) {
+                    is = exchange.getIn().getHeader(headerName, InputStream.class);
+                    document = getDocument(exchange, is);
+                } else {
+                    Object headerObject = exchange.getIn().getHeader(getHeaderName());
+                    document = getDocument(exchange, headerObject);
+                }
             } else {
-                Object body = exchange.getIn().getBody();
-                document = getDocument(exchange, body);
+                // only convert to input stream if really needed
+                if (isInputStreamNeeded(exchange)) {
+                    is = exchange.getIn().getBody(InputStream.class);
+                    document = getDocument(exchange, is);
+                } else {
+                    Object body = exchange.getIn().getBody();
+                    document = getDocument(exchange, body);
+                }
             }
+                    
             if (resultQName != null) {
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource) document;
@@ -922,14 +963,41 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      */
     protected boolean isInputStreamNeeded(Exchange exchange) {
         Object body = exchange.getIn().getBody();
-        if (body == null) {
+        return isInputStreamNeededForObject(exchange, body);
+    }
+    
+    /**
+     * Checks whether we need an {@link InputStream} to access the message header.
+     * <p/>
+     * Depending on the content in the message header, we may not need to convert
+     * to {@link InputStream}.
+     *
+     * @param exchange the current exchange
+     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
+     */
+    protected boolean isInputStreamNeeded(Exchange exchange, String headerName) {
+        Object header = exchange.getIn().getHeader(headerName);
+        return isInputStreamNeededForObject(exchange, header);
+    }
+
+    /**
+     * Checks whether we need an {@link InputStream} to access this object
+     * <p/>
+     * Depending on the content in the object, we may not need to convert
+     * to {@link InputStream}.
+     *
+     * @param exchange the current exchange
+     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
+     */
+    protected boolean isInputStreamNeededForObject(Exchange exchange, Object obj) {
+        if (obj == null) {
             return false;
         }
 
-        if (body instanceof WrappedFile) {
-            body = ((WrappedFile<?>) body).getFile();
+        if (obj instanceof WrappedFile) {
+            obj = ((WrappedFile<?>) obj).getFile();
         }
-        if (body instanceof File) {
+        if (obj instanceof File) {
             // input stream is needed for File to avoid locking the file in case of errors etc
             return true;
         }
@@ -937,7 +1005,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         // input stream is not needed otherwise
         return false;
     }
-
+    
     /**
      * Strategy method to extract the document from the exchange.
      */
