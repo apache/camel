@@ -185,9 +185,14 @@ public final class StringHelper {
             throw new IllegalArgumentException("to cannot be null");
         }
 
+        // fast check if there is any from at all
+        if (!input.contains(from)) {
+            return input;
+        }
+
         final int len = from.length();
         final int max = input.length();
-        StringBuilder sb = new StringBuilder(input.length());
+        StringBuilder sb = new StringBuilder(max);
         for (int i = 0; i < max;) {
             if (i + len <= max) {
                 String token = input.substring(i, i + len);
