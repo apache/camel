@@ -163,12 +163,15 @@ public final class StringHelper {
     }
 
     /**
-     * Replaces all the chars in the given input string
+     * Replaces all the from tokens in the given input string.
+     * <p/>
+     * This implementation is not recursive, not does it check for tokens in the replacement string.
      *
      * @param input  the input string
-     * @param from   the from char
-     * @param to     the replacement string
-     * @return the string
+     * @param from   the from string, must <b>not</b> be <tt>null</tt> or empty
+     * @param to     the replacement string, must <b>not</b> be empty
+     * @return the replaced string, or the input string if no replacement was needed
+     * @throws IllegalArgumentException if the input arguments is invalid
      */
     public static String replaceAll(String input, String from, String to) {
         if (ObjectHelper.isEmpty(input)) {
