@@ -120,7 +120,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                 try {
                     doStart();
                 } catch (Exception e) {
-                    LOG.error(e.getMessage());
+                    LOG.warn("Ignoring an exception caught in the startup connection poller thread.", e);
                 }
             }
         };
@@ -136,7 +136,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                 try {
                     checkConnection();
                 } catch (Exception e) {
-                    LOG.error(e.getMessage());
+                    LOG.warn("Ignoring an exception caught in the connection poller thread.", e);
                 }
             }
         };
