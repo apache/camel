@@ -118,7 +118,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     public void testUseHeaderXpathExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -127,7 +127,10 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
                     to("mock:result");
             }
         });
+
         template.sendBody("direct:start", "<personFile>ABC</personFile>");
+
+        assertMockEndpointsSatisfied();
     }
 
     public void testUseBodyExpression() throws Exception {
