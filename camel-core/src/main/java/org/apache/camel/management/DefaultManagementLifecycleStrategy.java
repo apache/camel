@@ -855,7 +855,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             // we are disabled either if configured explicit, or if level is off
-            boolean disabled = camelContext.getManagementStrategy().isLoadStatisticsEnabled() == false
+            boolean disabled = !camelContext.getManagementStrategy().isLoadStatisticsEnabled()
                     || camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.Off;
             if (!disabled) {
                 LOG.info("Load performance statistics enabled.");

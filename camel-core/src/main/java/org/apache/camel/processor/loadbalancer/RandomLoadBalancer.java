@@ -29,7 +29,7 @@ import org.apache.camel.Processor;
  */
 public class RandomLoadBalancer extends QueueLoadBalancer {
 
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
 
     protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
         int size = processors.size();
@@ -41,7 +41,7 @@ public class RandomLoadBalancer extends QueueLoadBalancer {
         }
 
         // pick a random
-        int index = random.nextInt(size);
+        int index = RANDOM.nextInt(size);
         return processors.get(index);
     }
 
