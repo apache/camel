@@ -118,6 +118,17 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    public void testUseHeaderXpathExpression() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:start").
+                    setHeader("foo").xpath("/personFile/text()").
+                    to("mock:result");
+            }
+        });
+        template.sendBody("direct:start", "<personFile>ABC</personFile>");
+    }
 
     public void testUseBodyExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
