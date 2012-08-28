@@ -162,4 +162,46 @@ public final class StringHelper {
         return false;
     }
 
+    /**
+     * Replaces all the chars in the given input string
+     *
+     * @param input  the input string
+     * @param from   the from char
+     * @param to     the replacement string
+     * @return the string
+     */
+    public static String replaceAll(String input, String from, String to) {
+        if (ObjectHelper.isEmpty(input)) {
+            return input;
+        }
+        if (ObjectHelper.isEmpty(from)) {
+            throw new IllegalArgumentException("From cannot be empty");
+        }
+        if (to == null) {
+            // to can be empty, so only check for null
+            throw new IllegalArgumentException("to cannot be null");
+        }
+
+        final int len = from.length();
+        final int max = input.length();
+        StringBuilder sb = new StringBuilder(input.length());
+        for (int i = 0; i < max;) {
+            if (i + len <= max) {
+                String token = input.substring(i, i + len);
+                if (from.equals(token)) {
+                    sb.append(to);
+                    // fast forward
+                    i = i + len;
+                    continue;
+                }
+            }
+
+            // append single char
+            sb.append(input.charAt(i));
+            // forward to next
+            i++;
+        }
+        return sb.toString();
+    }
+
 }
