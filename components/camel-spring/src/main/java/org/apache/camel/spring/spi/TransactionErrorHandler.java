@@ -195,6 +195,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                     }
 
                     // throw runtime exception to force rollback (which works best to rollback with Spring transaction manager)
+                    if (log.isTraceEnabled()) {
+                        log.trace("Throwing runtime exception to force transaction to rollback on {}", transactionTemplate.getName());
+                    }
                     throw rce;
                 }
             }
