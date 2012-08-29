@@ -162,7 +162,7 @@
     <qpid-version>0.16</qpid-version>
     <quartz-version>1.8.5</quartz-version>
     <quickfix-version>1.5.2-bd</quickfix-version>
-    <restlet-version>2.0.14</restlet-version>
+    <restlet-version>2.0.15</restlet-version>
     <rome-version>1.0</rome-version>
     <saxon-version>9.4.0.1</saxon-version>
     <scala-version>2.9.1</scala-version>
