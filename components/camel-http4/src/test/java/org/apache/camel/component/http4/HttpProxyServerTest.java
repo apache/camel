@@ -42,7 +42,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.localserver.LocalTestServer;
 import org.apache.http.protocol.BasicHttpProcessor;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
@@ -225,10 +224,10 @@ public class HttpProxyServerTest extends BaseHttpTest {
                 String authscheme = auth.substring(0, i);
                 if (authscheme.equalsIgnoreCase("basic")) {
                     String s = auth.substring(i + 1).trim();
-                    byte[] credsRaw = s.getBytes(HTTP.ASCII);
+                    byte[] credsRaw = s.getBytes("ASCII");
                     BinaryDecoder codec = new Base64();
                     try {
-                        String creds = new String(codec.decode(credsRaw), HTTP.ASCII);
+                        String creds = new String(codec.decode(credsRaw), "ASCII");
                         context.setAttribute("proxy-creds", creds);
                     } catch (DecoderException ex) {
                         throw new ProtocolException("Malformed BASIC credentials");

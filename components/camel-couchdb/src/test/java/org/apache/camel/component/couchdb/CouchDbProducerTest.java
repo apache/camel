@@ -60,6 +60,7 @@ public class CouchDbProducerTest {
         when(exchange.getIn()).thenReturn(msg);
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = InvalidPayloadException.class)
     public void testBodyMandatory() throws Exception {
         when(msg.getMandatoryBody()).thenThrow(InvalidPayloadException.class);
@@ -87,6 +88,7 @@ public class CouchDbProducerTest {
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_REV, rev);
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = InvalidPayloadException.class)
     public void testNullSaveResponseThrowsError() throws Exception {
         when(exchange.getIn().getMandatoryBody()).thenThrow(InvalidPayloadException.class);
@@ -97,11 +99,11 @@ public class CouchDbProducerTest {
     @Test
     public void testStringBodyIsConvertedToJsonTree() throws Exception {
         when(msg.getMandatoryBody()).thenReturn("{ \"name\" : \"coldplay\" }");
-        when(client.save(anyObject())).thenAnswer(new Answer() {
+        when(client.save(anyObject())).thenAnswer(new Answer<Response>() {
 
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                assertTrue(invocation.getArguments()[0].getClass() + " but wanted " + JsonObject.class,
+            public Response answer(InvocationOnMock invocation) throws Throwable {
+                assertTrue(invocation.getArguments()[0].getClass() + " but wanted " + JsonElement.class,
                         invocation.getArguments()[0] instanceof JsonElement);
                 return new Response();
             }

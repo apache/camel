@@ -34,7 +34,6 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
-import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -139,7 +138,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         // must set soTimeout after connect
         if (endpoint instanceof FtpEndpoint) {
-            FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+            FtpEndpoint<?> ftpEndpoint = (FtpEndpoint<?>) endpoint;
             if (ftpEndpoint.getSoTimeout() > 0) {
                 log.trace("Using SoTimeout=" + ftpEndpoint.getSoTimeout());
                 try {

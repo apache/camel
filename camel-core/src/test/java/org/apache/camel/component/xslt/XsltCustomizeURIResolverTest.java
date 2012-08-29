@@ -27,15 +27,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class XsltCustomizeURIResolverTest extends ContextTestSupport {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(XsltCustomizeURIResolverTest.class);
 
     private static final String EXPECTED_XML_CONSTANT = "<data>FOO DATA</data>";
 

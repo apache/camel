@@ -52,6 +52,7 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
@@ -424,7 +425,7 @@ public class HttpProducer extends DefaultProducer {
                         // file based (could potentially also be a FTP file etc)
                         File file = in.getBody(File.class);
                         if (file != null) {
-                            answer = new FileEntity(file, contentType);
+                            answer = new FileEntity(file, ContentType.parse(contentType));
                         }
                     } else if (data instanceof String) {
                         // be a bit careful with String as any type can most likely be converted to String

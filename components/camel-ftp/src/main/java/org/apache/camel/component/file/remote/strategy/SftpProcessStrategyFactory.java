@@ -35,7 +35,6 @@ public final class SftpProcessStrategyFactory {
     private SftpProcessStrategyFactory() {
     }
 
-    @SuppressWarnings("unchecked")
     public static GenericFileProcessStrategy<ChannelSftp.LsEntry> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
@@ -48,7 +47,7 @@ public final class SftpProcessStrategyFactory {
 
         if (isDelete) {
             GenericFileDeleteProcessStrategy<ChannelSftp.LsEntry> strategy = new GenericFileDeleteProcessStrategy<ChannelSftp.LsEntry>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (preMoveExpression != null) {
                 GenericFileExpressionRenamer<ChannelSftp.LsEntry> renamer = new GenericFileExpressionRenamer<ChannelSftp.LsEntry>();
                 renamer.setExpression(preMoveExpression);
@@ -62,7 +61,7 @@ public final class SftpProcessStrategyFactory {
             return strategy;
         } else if (isMove || isNoop) {
             GenericFileRenameProcessStrategy<ChannelSftp.LsEntry> strategy = new GenericFileRenameProcessStrategy<ChannelSftp.LsEntry>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (!isNoop && moveExpression != null) {
                 // move on commit is only possible if not noop
                 GenericFileExpressionRenamer<ChannelSftp.LsEntry> renamer = new GenericFileExpressionRenamer<ChannelSftp.LsEntry>();
@@ -90,7 +89,7 @@ public final class SftpProcessStrategyFactory {
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry> getExclusiveReadLockStrategy(Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry> strategy = (GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {

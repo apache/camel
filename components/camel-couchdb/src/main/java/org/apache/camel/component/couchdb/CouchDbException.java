@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 
 public class CouchDbException extends CamelExchangeException {
 
+    private static final long serialVersionUID = 1L;
+
     public CouchDbException(String message, Exchange exchange) {
         super(message, exchange);
     }
