@@ -318,17 +318,17 @@
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions</artifactId>
-      <version>${atomikos-trascations-version}</version>
+      <version>${atomikos-transactions-version}</version>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
-      <version>${atomikos-trascations-version}</version>
+      <version>${atomikos-transactions-version}</version>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jms</artifactId>
-      <version>${atomikos-trascations-version}</version>
+      <version>${atomikos-transactions-version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.jms</groupId>
@@ -339,7 +339,7 @@
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jdbc</artifactId>
-      <version>${atomikos-trascations-version}</version>
+      <version>${atomikos-transactions-version}</version>
     </dependency>
   </dependencies>
 
