@@ -1394,7 +1394,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // if the context was configured with auto startup = false, and we are already started,
         // then we may need to start the routes on the 2nd start call
         if (firstStartDone && !isAutoStartup() && isStarted()) {
-            // invoke this logic to warmup the routes and if possible also start the routes
+            // invoke this logic to warm up the routes and if possible also start the routes
             doStartOrResumeRoutes(routeServices, true, true, false, true);
         }
 
