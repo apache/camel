@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.builder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultExchange;
 
-public class ExchangeBuilder {
+public final class ExchangeBuilder {
     private CamelContext context;
     private ExchangePattern pattern;
     private Object body;
@@ -36,35 +36,67 @@ public class ExchangeBuilder {
         this.context = context;
     }
 
+    /**
+     * Create the exchange by setting the camel context
+     * @param context the camel context 
+     * @return exchange builder
+     */
     public static ExchangeBuilder anExchange(CamelContext context) {
         return new ExchangeBuilder(context);
     }
 
+    /**
+     * Set the in message body on the exchange
+     * @param body
+     * @return exchange builder
+     */
     public ExchangeBuilder withBody(Object body) {
         this.body = body;
         return this;
     }
 
+    /**
+     * Set the message header of the in message on the exchange
+     * @param key the key of the header
+     * @param value the value of the header
+     * @return exchange builder
+     */
     public ExchangeBuilder withHeader(String key, Object value) {
         headers.put(key, value);
         return this;
     }
 
+    /**
+     * Set the message exchange pattern on the exchange
+     * @param pattern exchange pattern
+     * @return exchange builder
+     */
     public ExchangeBuilder withPattern(ExchangePattern pattern) {
         this.pattern = pattern;
         return this;
     }
     
+    /**
+     * Set the exchange property
+     * @param pattern exchange pattern
+     * @return exchange builder
+     */
     public ExchangeBuilder withProperty(String key, Object value) {
         properties.put(key, value);
         return this;
     }
 
+    /**
+     * Build up the exchange from the exchange builder
+     * @return exchange 
+     */
     public Exchange build() {
         Exchange exchange = new DefaultExchange(context);
         Message message = exchange.getIn();
         message.setBody(body);
-        message.setHeaders(headers);
+        if (headers.size() > 0) {
+            message.setHeaders(headers);
+        }
         // setup the properties on the exchange
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             exchange.setProperty(entry.getKey(), entry.getValue());
