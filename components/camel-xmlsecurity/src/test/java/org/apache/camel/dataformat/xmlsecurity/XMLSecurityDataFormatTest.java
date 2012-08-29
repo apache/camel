@@ -302,6 +302,27 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         });
         xmlsecTestHelper.testDecryption(context);
     }
+    
+    @Test
+    public void testFullPayloadAsymmetricKeyDecryptionWithKeyPassword() throws Exception {
+                      
+        final KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
+        
+        final KeyStoreParameters ksParameters = new KeyStoreParameters();
+        ksParameters.setPassword("password");
+        ksParameters.setResource("recipient-with-key-pass.ks");
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                    .marshal().secureXML("", true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters).to("mock:encrypted")
+                    .unmarshal().secureXML("", true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, ksParameters, "keyPassword").to("mock:decrypted");
+            }
+        });
+        xmlsecTestHelper.testDecryption(context);
+    }    
 
     @Test
     public void testPartialPayloadAsymmetricKeyDecryption() throws Exception {

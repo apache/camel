@@ -53,6 +53,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private String recipientKeyAlias;
     @XmlAttribute
     private String keyOrTrustStoreParametersId;
+    @XmlAttribute
+    private String keyPassword;
     
     @XmlTransient
     private KeyStoreParameters keyOrTrustStoreParameters;
@@ -133,6 +135,26 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
     }
+
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
+        this.setKeyPassword(keyPassword);
+    }
+
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
+        String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        this.setKeyPassword(keyPassword);
+    }
     
     /**
      * @deprecated  use {{@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, String)} or 
@@ -167,6 +189,29 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setNamespaces(namespaces);
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
     }
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+        this.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
+        this.setKeyPassword(keyPassword);
+    }
+
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+        this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        this.setKeyPassword(keyPassword);
+    }
+        
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
@@ -202,6 +247,9 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         }
         if (namespaces != null) {
             setProperty(dataFormat, "namespaces", this.namespaces);
+        }
+        if (keyPassword != null) {
+            setProperty(dataFormat, "keyPassword", this.getKeyPassword());
         }
     }
 
@@ -267,7 +315,14 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     
     private void setKeyOrTrustStoreParameters(KeyStoreParameters keyOrTrustStoreParameters) {
         this.keyOrTrustStoreParameters = keyOrTrustStoreParameters;
-        
+    }
+    
+    private String getKeyPassword() {
+        return this.keyPassword;
+    }
+    
+    private void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
     }
 
     @Override
