@@ -32,9 +32,6 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.runtime.ObjectIdImpl;
-import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
-import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -66,9 +63,9 @@ public class CMISSessionFacade {
         parameter.put(SessionParameter.PASSWORD, this.password);
         if (this.repositoryId != null) {
             parameter.put(SessionParameter.REPOSITORY_ID, this.repositoryId);
-            this.session = SessionFactoryImpl.newInstance().createSession(parameter);
+            this.session = SessionFactoryLocator.getSessionFactory().createSession(parameter);
         } else {
-            this.session = SessionFactoryImpl.newInstance().getRepositories(parameter).get(0).createSession();
+            this.session = SessionFactoryLocator.getSessionFactory().getRepositories(parameter).get(0).createSession();
         }
     }
 
@@ -152,7 +149,7 @@ public class CMISSessionFacade {
     }
 
     public ItemIterable<QueryResult> executeQuery(String query) {
-        OperationContext operationContext = new OperationContextImpl();
+        OperationContext operationContext = session.createOperationContext();
         operationContext.setMaxItemsPerPage(pageSize);
         return session.query(query, false, operationContext);
     }
@@ -161,8 +158,7 @@ public class CMISSessionFacade {
         if (CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.OBJECT_TYPE_ID))
             || CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.BASE_TYPE_ID))) {
             String objectId = (String)queryResult.getPropertyById(PropertyIds.OBJECT_ID).getFirstValue();
-            ObjectIdImpl objectIdImpl = new ObjectIdImpl(objectId);
-            return (org.apache.chemistry.opencmis.client.api.Document)session.getObject(objectIdImpl);
+            return (org.apache.chemistry.opencmis.client.api.Document)session.getObject(objectId);
         }
         return null;
     }
@@ -190,6 +186,10 @@ public class CMISSessionFacade {
     public ContentStream createContentStream(String fileName, byte[] buf, String mimeType) throws Exception {
         return buf != null ? session.getObjectFactory()
                 .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf)) : null;
+    }
+    
+    public OperationContext createOperationContext() {
+        return session.createOperationContext();
     }
 
     public void setUsername(String username) {

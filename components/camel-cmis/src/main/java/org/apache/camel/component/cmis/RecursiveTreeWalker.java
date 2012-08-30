@@ -48,7 +48,8 @@ public class RecursiveTreeWalker {
     int processFolderRecursively(Folder folder) throws Exception {
         processFolderNode(folder);
 
-        OperationContext operationContext = new OperationContextImpl();
+        
+        OperationContext operationContext = cmisConsumer.createOperationContext();
         operationContext.setMaxItemsPerPage(pageSize);
 
         int count = 0;
