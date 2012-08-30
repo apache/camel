@@ -39,44 +39,38 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsProducer;
-import org.apache.camel.component.sjms.jms.JmsMessageHelper;
+import org.apache.camel.component.sjms.jms.JmsMessageExchangeHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.jms.ObjectPool;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO Add Class documentation for InOutProducer
- *
+ * A Camel Producer that provides the InOut Exchange pattern.
  */
 public class InOutProducer extends SjmsProducer {
 
     /**
      * We use the {@link ReadWriteLock} to manage the {@link TreeMap} in place
      * of a {@link ConcurrentMap} because due to significant performance gains.
-     * 
      * TODO Externalize the Exchanger Map to a store object
      */
     private static Map<String, Exchanger<Object>> exchangerMap = new TreeMap<String, Exchanger<Object>>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
-    
-    
+
     /**
-     * A pool of {@link MessageConsumerResource} objects that are the
-     * reply consumers.
-     * 
-     * TODO Add Class documentation for MessageProducerPool
+     * A pool of {@link MessageConsumerResource} objects that are the reply
+     * consumers. 
+     * TODO Add Class documentation for MessageProducerPool 
      * TODO Externalize
-     *
      */
     protected class MessageConsumerPool extends ObjectPool<MessageConsumerResource> {
 
         /**
          * TODO Add Constructor Javadoc
-         *
+         * 
          * @param poolSize
          */
         public MessageConsumerPool(int poolSize) {
@@ -112,32 +106,32 @@ public class InOutProducer extends SjmsProducer {
                     } catch (Exception e) {
                         ObjectHelper.wrapRuntimeCamelException(e);
                     }
-                    
+
                 }
             });
             MessageConsumerResource mcm = new MessageConsumerResource(session, messageConsumer, replyToDestination);
             return mcm;
         }
-        
+
         @Override
         protected void destroyObject(MessageConsumerResource model) throws Exception {
             if (model.getMessageConsumer() != null) {
                 model.getMessageConsumer().close();
             }
-            
+
             if (model.getSession() != null) {
                 if (model.getSession().getTransacted()) {
                     try {
                         model.getSession().rollback();
                     } catch (Exception e) {
-                        // Do nothing.  Just make sure we are cleaned up
+                        // Do nothing. Just make sure we are cleaned up
                     }
                 }
                 model.getSession().close();
             }
         }
     }
-    
+
     /**
      * TODO Add Class documentation for MessageConsumerResource
      */
@@ -153,6 +147,7 @@ public class InOutProducer extends SjmsProducer {
          * @param messageConsumer
          */
         public MessageConsumerResource(Session session, MessageConsumer messageConsumer, Destination replyToDestination) {
+            super();
             this.session = session;
             this.messageConsumer = messageConsumer;
             this.replyToDestination = replyToDestination;
@@ -161,7 +156,7 @@ public class InOutProducer extends SjmsProducer {
         public Session getSession() {
             return session;
         }
-        
+
         public MessageConsumer getMessageConsumer() {
             return messageConsumer;
         }
@@ -171,30 +166,6 @@ public class InOutProducer extends SjmsProducer {
         }
     }
 
-    protected class InOutResponseContainer {
-        private final Exchange exchange;
-        private final AsyncCallback callback;
-
-        /**
-         * 
-         * @param exchange
-         * @param callback
-         */
-        public InOutResponseContainer(Exchange exchange, AsyncCallback callback) {
-            this.exchange = exchange;
-            this.callback = callback;
-        }
-
-        public Exchange getExchange() {
-            return exchange;
-        }
-
-        public AsyncCallback getCallback() {
-            return callback;
-        }
-    }
-    
-    
     protected class InternalTempDestinationListener implements MessageListener {
         private final Logger tempLogger = LoggerFactory.getLogger(InternalTempDestinationListener.class);
         private Exchanger<Object> exchanger;
@@ -205,6 +176,7 @@ public class InOutProducer extends SjmsProducer {
          * @param exchanger
          */
         public InternalTempDestinationListener(Exchanger<Object> exchanger) {
+            super();
             this.exchanger = exchanger;
         }
 
@@ -222,24 +194,20 @@ public class InOutProducer extends SjmsProducer {
 
         }
     }
-    
+
     private MessageConsumerPool consumers;
-    
+
     public InOutProducer(SjmsEndpoint endpoint) {
         super(endpoint);
         endpoint.getConsumerCount();
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {
-            if (log.isDebugEnabled()) {
-                log.debug("No reply to destination is defined.  Using temporary destinations.");
-            }
+            log.debug("No reply to destination is defined.  Using temporary destinations.");
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Using {} as the reply to destination.", getNamedReplyTo());
-            }
+            log.debug("Using {} as the reply to destination.", getNamedReplyTo());
         }
         if (getConsumers() == null) {
             setConsumers(new MessageConsumerPool(getConsumerCount()));
@@ -247,7 +215,7 @@ public class InOutProducer extends SjmsProducer {
         }
         super.doStart();
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -256,7 +224,7 @@ public class InOutProducer extends SjmsProducer {
             setConsumers(null);
         }
     }
-    
+
     @Override
     public MessageProducerResources doCreateProducerModel() throws Exception {
         Connection conn = getConnectionResource().borrowConnection();
@@ -275,13 +243,13 @@ public class InOutProducer extends SjmsProducer {
         getConnectionResource().returnConnection(conn);
         return new MessageProducerResources(session, messageProducer);
     }
-    
-    /** 
-     * TODO Add override javadoc
-     * TODO time out is actually double as it waits for the producer and then waits for the response.  Use an atomiclong to manage the countdown
-     *
-     * @see org.apache.camel.component.sjms.SjmsProducer#sendMessage(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)
-     *
+
+    /**
+     * TODO time out is actually double as it waits for the producer and then
+     * waits for the response. Use an atomic long to manage the countdown
+     * 
+     * @see org.apache.camel.component.sjms.SjmsProducer#sendMessage(org.apache.camel.Exchange,
+     *      org.apache.camel.AsyncCallback)
      * @param exchange
      * @param callback
      * @throws Exception
@@ -292,7 +260,6 @@ public class InOutProducer extends SjmsProducer {
             MessageProducerResources producer = null;
             try {
                 producer = getProducers().borrowObject(getResponseTimeOut());
-                // producer = getProducers().borrowObject();
             } catch (Exception e1) {
                 log.warn("The producer pool is exhausted.  Consider setting producerCount to a higher value or disable the fixed size of the pool by setting fixedResourcePool=false.");
                 exchange.setException(new Exception("Producer Resource Pool is exhausted"));
@@ -300,11 +267,11 @@ public class InOutProducer extends SjmsProducer {
             if (producer != null) {
 
                 if (isEndpointTransacted()) {
-                    exchange.getUnitOfWork()
-                        .addSynchronization(new SessionTransactionSynchronization(producer.getSession()));
+                    exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
                 }
 
-                Message request = JmsMessageHelper.createMessage(exchange, producer.getSession());
+                Message request = JmsMessageExchangeHelper.createMessage(exchange, producer.getSession());
+                
                 // TODO just set the correlation id don't get it from the
                 // message
                 String correlationId = null;
@@ -315,7 +282,7 @@ public class InOutProducer extends SjmsProducer {
                 }
                 Object responseObject = null;
                 Exchanger<Object> messageExchanger = new Exchanger<Object>();
-                JmsMessageHelper.setCorrelationId(request, correlationId);
+                JmsMessageExchangeHelper.setCorrelationId(request, correlationId);
                 try {
                     lock.writeLock().lock();
                     exchangerMap.put(correlationId, messageExchanger);
@@ -324,7 +291,7 @@ public class InOutProducer extends SjmsProducer {
                 }
 
                 MessageConsumerResource consumer = consumers.borrowObject(getResponseTimeOut());
-                JmsMessageHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
+                JmsMessageExchangeHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
                 consumers.returnObject(consumer);
                 producer.getMessageProducer().send(request);
 
@@ -335,8 +302,7 @@ public class InOutProducer extends SjmsProducer {
                 }
 
                 try {
-                    responseObject = messageExchanger.exchange(null, getResponseTimeOut(),
-                                                               TimeUnit.MILLISECONDS);
+                    responseObject = messageExchanger.exchange(null, getResponseTimeOut(), TimeUnit.MILLISECONDS);
 
                     try {
                         lock.writeLock().lock();
@@ -357,7 +323,7 @@ public class InOutProducer extends SjmsProducer {
                         exchange.setException((Throwable)responseObject);
                     } else if (responseObject instanceof Message) {
                         Message response = (Message)responseObject;
-                        JmsMessageHelper.populateExchange(response, exchange, true);
+                        JmsMessageExchangeHelper.populateExchange(response, exchange, true);
                     } else {
                         exchange.setException(new CamelException("Unknown response type: " + responseObject));
                     }

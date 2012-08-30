@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.sjms;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 
 import javax.jms.MessageProducer;
@@ -31,14 +35,12 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base SjmsProducer class.
- *
  */
-public abstract class SjmsProducer extends DefaultAsyncProducer  {
+public abstract class SjmsProducer extends DefaultAsyncProducer {
 
-    
     /**
-     * The {@link MessageProducerResources} pool for all {@link SjmsProducer} classes.
-     *
+     * The {@link MessageProducerResources} pool for all {@link SjmsProducer}
+     * classes.
      */
     protected class MessageProducerPool extends ObjectPool<MessageProducerResources> {
 
@@ -50,7 +52,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
         protected MessageProducerResources createObject() throws Exception {
             return doCreateProducerModel();
         }
-        
+
         @Override
         protected void destroyObject(MessageProducerResources model) throws Exception {
             if (model.getMessageProducer() != null) {
@@ -73,23 +75,25 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
             }
         }
     }
-    
+
     /**
-     * The {@link MessageProducer} resources for all {@link SjmsProducer} classes. 
+     * The {@link MessageProducer} resources for all {@link SjmsProducer}
+     * classes.
      */
     protected class MessageProducerResources {
         private final Session session;
         private final MessageProducer messageProducer;
+        private final TransactionCommitStrategy commitStrategy;
 
-        /**
-         * TODO Add Constructor Javadoc
-         * 
-         * @param session
-         * @param messageProducer
-         */
         public MessageProducerResources(Session session, MessageProducer messageProducer) {
+            this(session, messageProducer, null);
+        }
+
+        public MessageProducerResources(Session session, MessageProducer messageProducer, TransactionCommitStrategy commitStrategy) {
+            super();
             this.session = session;
             this.messageProducer = messageProducer;
+            this.commitStrategy = commitStrategy;
         }
 
         /**
@@ -111,8 +115,18 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
         public MessageProducer getMessageProducer() {
             return messageProducer;
         }
+
+        /**
+         * Gets the TransactionCommitStrategy value of commitStrategy for this
+         * instance of SjmsProducer.MessageProducerResources.
+         * 
+         * @return the commitStrategy
+         */
+        public TransactionCommitStrategy getCommitStrategy() {
+            return commitStrategy;
+        }
     }
-    
+
     private MessageProducerPool producers;
     private final ExecutorService executor;
 
@@ -135,24 +149,29 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
         super.doStop();
         if (getProducers() != null) {
             getProducers().drainPool();
-            setProducers(null);   
+            setProducers(null);
         }
     }
-    
+
     public abstract MessageProducerResources doCreateProducerModel() throws Exception;
-    
+
     public abstract void sendMessage(Exchange exchange, final AsyncCallback callback) throws Exception;
-    
+
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        if (log.isDebugEnabled()) {
-            log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
+        log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
+        
+        Object body = exchange.getIn().getBody();
+        if (body != null) {
+            if (body instanceof InputStream) {
+                byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, body);
+                exchange.getIn().setBody(bytes);
+            }
         }
+        
         try {
             if (!isSynchronous()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
-                }
+                log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
                 getExecutor().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -164,37 +183,70 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
                     }
                 });
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("  Sending message synchronously: {}", exchange.getIn().getBody());
-                }
+                log.debug("  Sending message synchronously: {}", exchange.getIn().getBody());
                 sendMessage(exchange, callback);
             }
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - FAILED");
-            }
-            if (log.isTraceEnabled()) {
-                log.trace("Exception: " + e.getLocalizedMessage(), e);
-            }
+            log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - FAILED");
+            log.trace("Exception: " + e.getLocalizedMessage(), e);
             exchange.setException(e);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - SUCCESS");
-        }
+        log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - SUCCESS");
+        
         return isSynchronous();
     }
+    
+    public static byte[] getBytes(InputStream is) throws IOException {
+        int len;
+        int size = 1024;
+        byte[] buf;
+
+        if (is instanceof ByteArrayInputStream) {
+            size = is.available();
+            buf = new byte[size];
+            len = is.read(buf, 0, size);
+        } else {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            buf = new byte[size];
+            while ((len = is.read(buf, 0, size)) != -1) {
+                bos.write(buf, 0, len);
+            }
+            buf = bos.toByteArray();
+        }
+        return buf;
+    }
+    
+//    public static byte[] getBytesFromStream(InputStream is) throws IOException {
+//        BufferedInputStream bis = new BufferedInputStream(is);
+//        bis.available();
+//
+//        // Create the byte array to hold the data
+//        byte[] bytes = new byte[(int)bis.available()];
+//
+//        // Read in the bytes
+//        int offset = 0;
+//        int numRead = 0;
+//        while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+//            offset += numRead;
+//        }
+//
+//        // Close the input stream and return bytes
+//        is.close();
+//        return bytes;
+//    }
+    
 
     protected SjmsEndpoint getSjmsEndpoint() {
         return (SjmsEndpoint)this.getEndpoint();
     }
-    
+
     protected ConnectionResource getConnectionResource() {
         return getSjmsEndpoint().getConnectionResource();
     }
-    
+
     /**
      * Gets the acknowledgment mode for this instance of DestinationProducer.
-     *
+     * 
      * @return int
      */
     public int getAcknowledgeMode() {
@@ -203,8 +255,8 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
     /**
      * Gets the synchronous value for this instance of DestinationProducer.
-     *
-     * @return true if synchronous, otherwise false 
+     * 
+     * @return true if synchronous, otherwise false
      */
     public boolean isSynchronous() {
         return getSjmsEndpoint().isSynchronous();
@@ -212,7 +264,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
     /**
      * Gets the replyTo for this instance of DestinationProducer.
-     *
+     * 
      * @return String
      */
     public String getReplyTo() {
@@ -221,7 +273,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
     /**
      * Gets the destinationName for this instance of DestinationProducer.
-     *
+     * 
      * @return String
      */
     public String getDestinationName() {
@@ -230,7 +282,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
     /**
      * Sets the producer pool for this instance of SjmsProducer.
-     *
+     * 
      * @param producers A MessageProducerPool
      */
     public void setProducers(MessageProducerPool producers) {
@@ -238,8 +290,9 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
     }
 
     /**
-     * Gets the MessageProducerPool value of producers for this instance of SjmsProducer.
-     *
+     * Gets the MessageProducerPool value of producers for this instance of
+     * SjmsProducer.
+     * 
      * @return the producers
      */
     public MessageProducerPool getProducers() {
@@ -275,7 +328,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
     /**
      * Gets the producerCount for this instance of SjmsProducer.
-     *
+     * 
      * @return int
      */
     public int getProducerCount() {
@@ -284,7 +337,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
     /**
      * Gets consumerCount for this instance of SjmsProducer.
-     *
+     * 
      * @return int
      */
     public int getConsumerCount() {
@@ -293,7 +346,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
     /**
      * Gets the executor for this instance of SjmsProducer.
-     *
+     * 
      * @return ExecutorService
      */
     public ExecutorService getExecutor() {
@@ -302,30 +355,38 @@ public abstract class SjmsProducer extends DefaultAsyncProducer  {
 
     /**
      * Gets the ttl for this instance of SjmsProducer.
-     *
+     * 
      * @return long
      */
     public long getTtl() {
-        return  getSjmsEndpoint().getTtl();
+        return getSjmsEndpoint().getTtl();
     }
 
     /**
      * Gets the boolean value of persistent for this instance of SjmsProducer.
-     *
+     * 
      * @return true if persistent, otherwise false
      */
     public boolean isPersistent() {
-        return  getSjmsEndpoint().isPersistent();
+        return getSjmsEndpoint().isPersistent();
     }
-
 
     /**
      * Gets responseTimeOut for this instance of SjmsProducer.
-     *
+     * 
      * @return long
      */
     public long getResponseTimeOut() {
         return getSjmsEndpoint().getResponseTimeOut();
+    }
+
+    /**
+     * Gets commitStrategy for this instance of SjmsProducer.
+     * 
+     * @return TransactionCommitStrategy
+     */
+    public TransactionCommitStrategy getCommitStrategy() {
+        return getSjmsEndpoint().getCommitStrategy();
     }
 
 }

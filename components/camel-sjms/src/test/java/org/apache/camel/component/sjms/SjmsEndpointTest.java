@@ -26,7 +26,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SjmsEndpointTest extends CamelTestSupport {
-    
+
     @Override
     protected boolean useJmx() {
         return true;
@@ -37,7 +37,7 @@ public class SjmsEndpointTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("sjms:test");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint sjms = (SjmsEndpoint) endpoint;
+        SjmsEndpoint sjms = (SjmsEndpoint)endpoint;
         assertEquals(sjms.getEndpointUri(), "sjms://queue:test");
         assertEquals(sjms.createExchange().getPattern(), ExchangePattern.InOnly);
     }
@@ -60,7 +60,7 @@ public class SjmsEndpointTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("sjms:queue:test?transacted=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint qe = (SjmsEndpoint) endpoint;
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
         assertTrue(qe.isTransacted());
     }
 
@@ -69,7 +69,7 @@ public class SjmsEndpointTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("sjms:queue:test?synchronous=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint qe = (SjmsEndpoint) endpoint;
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
         assertTrue(qe.isSynchronous());
     }
 
@@ -79,7 +79,7 @@ public class SjmsEndpointTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("sjms:queue:test?namedReplyTo=" + namedReplyTo);
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint qe = (SjmsEndpoint) endpoint;
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
         assertEquals(qe.getNamedReplyTo(), namedReplyTo);
         assertEquals(qe.createExchange().getPattern(), ExchangePattern.InOut);
     }
@@ -87,10 +87,10 @@ public class SjmsEndpointTest extends CamelTestSupport {
     @Test
     public void testDefaultExchangePattern() throws Exception {
         try {
-            SjmsEndpoint sjms = (SjmsEndpoint) context.getEndpoint("sjms:queue:test");
+            SjmsEndpoint sjms = (SjmsEndpoint)context.getEndpoint("sjms:queue:test");
             assertNotNull(sjms);
             assertEquals(ExchangePattern.InOnly, sjms.getExchangePattern());
-//            assertTrue(sjms.createExchange().getPattern().equals(ExchangePattern.InOnly));
+            // assertTrue(sjms.createExchange().getPattern().equals(ExchangePattern.InOnly));
         } catch (Exception e) {
             fail("Exception thrown: " + e.getLocalizedMessage());
         }
@@ -129,7 +129,7 @@ public class SjmsEndpointTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("sjms:queue:test?namedReplyTo=" + namedReplyTo + "&exchangePattern=" + ExchangePattern.InOut);
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint qe = (SjmsEndpoint) endpoint;
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
         assertEquals(qe.getNamedReplyTo(), namedReplyTo);
         assertEquals(qe.createExchange().getPattern(), ExchangePattern.InOut);
     }
@@ -144,15 +144,14 @@ public class SjmsEndpointTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("sjms:queue:test?synchronous=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint qe = (SjmsEndpoint) endpoint;
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
         assertTrue(qe.getDestinationName().equals("test"));
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                "vm://broker?broker.persistent=false&broker.useJmx=false");
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
         component.setMaxConnections(3);
         component.setConnectionFactory(connectionFactory);

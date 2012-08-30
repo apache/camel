@@ -117,6 +117,7 @@ public class InOutQueueProducerTest extends JmsTestSupport {
          * @param response
          */
         public MyMessageListener(String request, String response) {
+            super();
             this.requestText = request;
             this.responseText = response;
         }

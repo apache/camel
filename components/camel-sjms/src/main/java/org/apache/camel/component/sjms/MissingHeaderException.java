@@ -20,26 +20,25 @@ import org.apache.camel.RuntimeCamelException;
 
 /**
  * TODO Add Class documentation for MissingHeaderException
- *
  */
 public class MissingHeaderException extends RuntimeCamelException {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6184009502090347023L;
 
     /**
      * TODO Add Constructor Javadoc
-     *
      */
     public MissingHeaderException() {
+        super();
         // TODO Auto-generated constructor stub
     }
 
     /**
      * TODO Add Constructor Javadoc
-     *
+     * 
      * @param message
      * @param cause
      */
@@ -50,7 +49,7 @@ public class MissingHeaderException extends RuntimeCamelException {
 
     /**
      * TODO Add Constructor Javadoc
-     *
+     * 
      * @param message
      */
     public MissingHeaderException(String message) {
@@ -60,7 +59,7 @@ public class MissingHeaderException extends RuntimeCamelException {
 
     /**
      * TODO Add Constructor Javadoc
-     *
+     * 
      * @param cause
      */
     public MissingHeaderException(Throwable cause) {
@@ -68,5 +67,4 @@ public class MissingHeaderException extends RuntimeCamelException {
         // TODO Auto-generated constructor stub
     }
 
-    
 }

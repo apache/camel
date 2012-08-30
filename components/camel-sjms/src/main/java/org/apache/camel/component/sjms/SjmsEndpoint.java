@@ -31,17 +31,14 @@ import org.apache.camel.component.sjms.producer.InOnlyProducer;
 import org.apache.camel.component.sjms.producer.InOutProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * TODO Add Class documentation for SjmsEndpoint
- *
  */
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    protected final transient Logger logger = LoggerFactory
-            .getLogger(getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private SessionPool sessions;
     private boolean synchronous = true;
@@ -57,9 +54,11 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private String durableSubscriptionId;
     private long responseTimeOut = 5000;
     private String messageSelector;
-    
+    private int transactionBatchCount = -1;
+    private TransactionCommitStrategy commitStrategy;
 
     public SjmsEndpoint() {
+        super();
     }
 
     public SjmsEndpoint(String uri, Component component) {
@@ -68,31 +67,31 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
             setTopic(false);
         } else if (getEndpointUri().indexOf("://topic:") > -1) {
             setTopic(true);
-        }  else {
+        } else {
             throw new RuntimeCamelException("Endpoint URI unsupported: " + uri);
         }
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        
+
         //
-        // TODO since we only need a session pool for one use case, find a better way
+        // TODO since we only need a session pool for one use case, find a
+        // better way
         //
         // We only create a session pool when we are not transacted.
         // Transacted listeners or producers need to be paired with the
         // Session that created them.
-        if (!isTransacted()) {
+        if (!isTransacted() && getExchangePattern().equals(ExchangePattern.InOnly)) {
             sessions = new SessionPool(getSessionCount(), getConnectionResource());
-            
+
             // TODO fix the string hack
-            sessions.setAcknowledgeMode(SessionAcknowledgementType
-                    .valueOf(getAcknowledgementMode() + ""));
+            sessions.setAcknowledgeMode(SessionAcknowledgementType.valueOf(getAcknowledgementMode() + ""));
             getSessions().fillPool();
         }
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         if (getSessions() != null) {
@@ -116,12 +115,12 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     public Consumer createConsumer(Processor processor) throws Exception {
         return new DefaultConsumer(this, processor);
     }
-    
+
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;
     }
-    
+
     @Override
     public boolean isSingleton() {
         return true;
@@ -136,7 +135,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     }
 
     public SjmsComponent getSjmsComponent() {
-        return (SjmsComponent) this.getComponent();
+        return (SjmsComponent)this.getComponent();
     }
 
     public ConnectionResource getConnectionResource() {
@@ -261,5 +260,21 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     public String getMessageSelector() {
         return messageSelector;
+    }
+
+    public TransactionCommitStrategy getCommitStrategy() {
+        return commitStrategy;
+    }
+
+    public void setCommitStrategy(TransactionCommitStrategy commitStrategy) {
+        this.commitStrategy = commitStrategy;
+    }
+
+    public int getTransactionBatchCount() {
+        return transactionBatchCount;
+    }
+
+    public void setTransactionBatchCount(int transactionBatchCount) {
+        this.transactionBatchCount = transactionBatchCount;
     }
 }

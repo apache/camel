@@ -97,15 +97,15 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
             executor.execute(worker);
         }
         while (context.getInflightRepository().size() > 0) {
-
+            Thread.sleep(100);
         }
         executor.shutdown();
         while (!executor.isTerminated()) {
-            //
+            Thread.sleep(100);
         }
     }
 
-    /*
+    /**
      * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
      * 
      * @return
@@ -128,6 +128,10 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
 
     protected class MyMessageListener implements MessageListener {
         private MessageProducer mp;
+
+        public MyMessageListener() {
+            super();
+        }
 
         @Override
         public void onMessage(Message message) {

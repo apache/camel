@@ -26,11 +26,13 @@ import org.apache.camel.component.sjms.jms.SessionPool;
 
 /**
  * TODO Add Class documentation for SjmsMessageConsumer
- *
  */
 public interface SjmsMessageConsumer extends MessageListener {
     void handleMessage(Message message);
+
     SjmsMessageConsumer createMessageConsumer(ConnectionResource connectionResource, String destinationName) throws Exception;
+
     SjmsMessageConsumer createMessageConsumerListener(SessionPool sessionPool, String destinationName, Exchanger<Object> exchanger) throws Exception;
+
     void destroyMessageConsumer() throws Exception;
 }

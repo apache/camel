@@ -27,14 +27,13 @@ import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * TODO Add Class documentation for SjmsConsumer
- *
  */
 public class SjmsConsumer extends DefaultConsumer {
 
     public SjmsConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
-    
+
     /**
      * @return
      */
@@ -49,16 +48,20 @@ public class SjmsConsumer extends DefaultConsumer {
     protected SjmsEndpoint getSjmsEndpoint() {
         return (SjmsEndpoint)this.getEndpoint();
     }
-    
+
     protected ConnectionResource getConnectionResource() {
         return getSjmsEndpoint().getConnectionResource();
     }
-    
+
     protected SessionPool getSessionPool() {
         return getSjmsEndpoint().getSessions();
     }
 
-    public boolean isEndpointTransacted() {
+    public int getAcknowledgementMode() {
+        return getSjmsEndpoint().getAcknowledgementMode().intValue();
+    }
+
+    public boolean isTransacted() {
         return getSjmsEndpoint().isTransacted();
     }
 
@@ -73,7 +76,7 @@ public class SjmsConsumer extends DefaultConsumer {
     public int getConsumerCount() {
         return getSjmsEndpoint().getConsumerCount();
     }
-    
+
     public boolean isTopic() {
         return getSjmsEndpoint().isTopic();
     }
@@ -84,5 +87,13 @@ public class SjmsConsumer extends DefaultConsumer {
 
     public String getDurableSubscriptionId() {
         return getSjmsEndpoint().getDurableSubscriptionId();
+    }
+
+    public TransactionCommitStrategy getCommitStrategy() {
+        return getSjmsEndpoint().getCommitStrategy();
+    }
+
+    public int getTransactionBatchCount() {
+        return getSjmsEndpoint().getTransactionBatchCount();
     }
 }

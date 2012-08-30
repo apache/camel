@@ -21,31 +21,41 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.sjms.TransactionCommitStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
- * TODO Add Class documentation for DefaultMessageHandler
+ * An InOnly {@link DefaultMessageHandler}
  * 
  */
 public class InOnlyMessageHandler extends DefaultMessageHandler {
 
     /**
-     * 
      * @param endpoint
-     * @param processor
+     * @param executor
      */
     public InOnlyMessageHandler(Endpoint endpoint, ExecutorService executor) {
-        this(endpoint, executor, null);
+        super(endpoint, executor);
     }
 
     /**
-     * 
-     * @param stopped
+     * @param endpoint
+     * @param executor
      * @param synchronization
      */
     public InOnlyMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
         super(endpoint, executor, synchronization);
+    }
+
+    /**
+     * @param endpoint
+     * @param executor
+     * @param commitStrategy
+     * @param rollbackStrategy
+     */
+    public InOnlyMessageHandler(Endpoint endpoint, ExecutorService executor, TransactionCommitStrategy commitStrategy) {
+        super(endpoint, executor, commitStrategy);
     }
 
     /**
@@ -61,6 +71,7 @@ public class InOnlyMessageHandler extends DefaultMessageHandler {
         } else {
             NoOpAsyncCallback callback = new NoOpAsyncCallback();
             if (isTransacted() || isSynchronous()) {
+                //SessionTransactionAsyncCallback callback = new SessionTransactionAsyncCallback(exchange, getSession(), getCommitStrategy());
                 // must process synchronous if transacted or configured to
                 // do so
                 if (log.isDebugEnabled()) {
@@ -75,11 +86,10 @@ public class InOnlyMessageHandler extends DefaultMessageHandler {
                 }
             } else {
                 // process asynchronous using the async routing engine
-                if (log.isDebugEnabled()) {
-                    log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
-                }
-                boolean sync = AsyncProcessorHelper.process(getProcessor(),
-                        exchange, callback);
+                log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
+                boolean sync = false;
+
+                sync = AsyncProcessorHelper.process(getProcessor(), exchange, callback);
                 if (!sync) {
                     // will be done async so return now
                     return;
@@ -87,7 +97,7 @@ public class InOnlyMessageHandler extends DefaultMessageHandler {
             }
         }
     }
-    
+
     @Override
     public void close() {
         // no-op

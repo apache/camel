@@ -23,7 +23,7 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class JmsSelectorTest extends JmsTestSupport {
 
@@ -46,12 +46,12 @@ public class JmsSelectorTest extends JmsTestSupport {
 
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("sjms:test.a").to("sjms:test.b");
-                from("sjms:test.b?messageSelector=cheese='y'").to("mock:result");
+                from("sjms:test.a").to("log:test-before?showAll=true").to("sjms:test.b");
+                from("sjms:test.b?messageSelector=cheese='y'").to("log:test-after?showAll=true").to("mock:result");
             }
         };
     }

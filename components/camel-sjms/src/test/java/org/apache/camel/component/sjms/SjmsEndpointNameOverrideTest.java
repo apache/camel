@@ -28,7 +28,7 @@ import org.junit.Test;
 public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
 
     private static final String BEAN_NAME = "not-sjms";
-    
+
     @Override
     protected boolean useJmx() {
         return true;
@@ -39,7 +39,7 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint(BEAN_NAME + ":test");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint sjms = (SjmsEndpoint) endpoint;
+        SjmsEndpoint sjms = (SjmsEndpoint)endpoint;
         assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://queue:test");
         assertEquals(sjms.createExchange().getPattern(), ExchangePattern.InOnly);
     }
@@ -68,8 +68,7 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                "vm://broker?broker.persistent=false&broker.useJmx=false");
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
         component.setMaxConnections(1);
         component.setConnectionFactory(connectionFactory);

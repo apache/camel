@@ -27,21 +27,22 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.SjmsConsumer;
 import org.apache.camel.component.sjms.SjmsEndpoint;
+import org.apache.camel.component.sjms.TransactionCommitStrategy;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.jms.ObjectPool;
+import org.apache.camel.component.sjms.tx.BatchTransactionCommitStrategy;
+import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 
 /**
  * A non-transacted queue consumer for a given JMS Destination
- * 
  */
 public class DefaultConsumer extends SjmsConsumer {
-    
+
     protected MessageConsumerPool consumers;
     private final ExecutorService executor;
 
-    protected class MessageConsumerPool extends
-            ObjectPool<MessageConsumerResources> {
+    protected class MessageConsumerPool extends ObjectPool<MessageConsumerResources> {
 
         public MessageConsumerPool() {
             super(getConsumerCount());
@@ -50,9 +51,7 @@ public class DefaultConsumer extends SjmsConsumer {
         @Override
         protected MessageConsumerResources createObject() throws Exception {
             MessageConsumerResources model = null;
-            if (isEndpointTransacted()
-                    || getSjmsEndpoint().getExchangePattern().equals(
-                            ExchangePattern.InOut)) {
+            if (isTransacted() || getSjmsEndpoint().getExchangePattern().equals(ExchangePattern.InOut)) {
                 model = createConsumerWithDedicatedSession();
             } else {
                 model = createConsumerListener();
@@ -61,8 +60,7 @@ public class DefaultConsumer extends SjmsConsumer {
         }
 
         @Override
-        protected void destroyObject(MessageConsumerResources model)
-            throws Exception {
+        protected void destroyObject(MessageConsumerResources model) throws Exception {
             if (model != null) {
                 if (model.getMessageConsumer() != null) {
                     if (model.getMessageConsumer().getMessageListener() != null) {
@@ -90,24 +88,20 @@ public class DefaultConsumer extends SjmsConsumer {
         private final MessageConsumer messageConsumer;
 
         /**
-         * TODO Add Constructor Javadoc
-         * 
-         * @param session
          * @param messageProducer
          */
         public MessageConsumerResources(MessageConsumer messageConsumer) {
+            super();
             this.session = null;
             this.messageConsumer = messageConsumer;
         }
 
         /**
-         * TODO Add Constructor Javadoc
-         * 
          * @param session
          * @param messageProducer
          */
-        public MessageConsumerResources(Session session,
-                MessageConsumer messageConsumer) {
+        public MessageConsumerResources(Session session, MessageConsumer messageConsumer) {
+            super();
             this.session = session;
             this.messageConsumer = messageConsumer;
         }
@@ -135,8 +129,7 @@ public class DefaultConsumer extends SjmsConsumer {
 
     public DefaultConsumer(SjmsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.executor = endpoint.getCamelContext().getExecutorServiceManager()
-                .newDefaultThreadPool(this, "SjmsConsumer");
+        this.executor = endpoint.getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
     }
 
     @Override
@@ -170,7 +163,7 @@ public class DefaultConsumer extends SjmsConsumer {
     private MessageConsumerResources createConsumerWithDedicatedSession() throws Exception {
         Connection conn = getConnectionResource().borrowConnection();
         Session session = null;
-        if (isEndpointTransacted()) {
+        if (isTransacted()) {
             session = conn.createSession(true, Session.SESSION_TRANSACTED);
         } else {
             session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -205,26 +198,30 @@ public class DefaultConsumer extends SjmsConsumer {
     /**
      * Helper factory method used to create a MessageListener based on the MEP
      * 
-     * @param session
-     *            a session is only required if we are a transacted consumer
+     * @param session a session is only required if we are a transacted consumer
      * @return
      */
     protected MessageListener createMessageHandler(Session session) {
+        
+        TransactionCommitStrategy commitStrategy = null;
+        if (this.getCommitStrategy() != null) {
+            commitStrategy = this.getCommitStrategy();
+        } else if (this.getTransactionBatchCount() > 0) {
+            commitStrategy = new BatchTransactionCommitStrategy(this.getTransactionBatchCount());
+        } else {
+            commitStrategy = new DefaultTransactionCommitStrategy();
+        }
+        
         DefaultMessageHandler messageHandler = null;
-        if (getSjmsEndpoint().getExchangePattern().equals(
-                ExchangePattern.InOnly)) {
-            if (isEndpointTransacted()) {
-                messageHandler = new InOnlyMessageHandler(getEndpoint(),
-                        executor,
-                        new SessionTransactionSynchronization(session));
+        if (getSjmsEndpoint().getExchangePattern().equals(ExchangePattern.InOnly)) {
+            if (isTransacted()) {
+                messageHandler = new InOnlyMessageHandler(getEndpoint(), executor, new SessionTransactionSynchronization(session, commitStrategy));
             } else {
                 messageHandler = new InOnlyMessageHandler(getEndpoint(), executor);
             }
         } else {
-            if (isEndpointTransacted()) {
-                messageHandler = new InOutMessageHandler(getEndpoint(),
-                        executor,
-                        new SessionTransactionSynchronization(session));
+            if (isTransacted()) {
+                messageHandler = new InOutMessageHandler(getEndpoint(), executor, new SessionTransactionSynchronization(session, commitStrategy));
             } else {
                 messageHandler = new InOutMessageHandler(getEndpoint(), executor);
             }
@@ -232,7 +229,7 @@ public class DefaultConsumer extends SjmsConsumer {
         messageHandler.setSession(session);
         messageHandler.setProcessor(getAsyncProcessor());
         messageHandler.setSynchronous(isSynchronous());
-        messageHandler.setTransacted(isEndpointTransacted());
+        messageHandler.setTransacted(isTransacted());
         messageHandler.setTopic(isTopic());
         return messageHandler;
     }

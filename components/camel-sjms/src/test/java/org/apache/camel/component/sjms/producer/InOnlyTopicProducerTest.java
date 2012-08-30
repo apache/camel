@@ -65,7 +65,7 @@ public class InOnlyTopicProducerTest extends JmsTestSupport {
 
     }
 
-    /*
+    /**
      * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
      *
      * @return

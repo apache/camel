@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.consumer;
+package org.apache.camel.component.sjms.tx;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
@@ -84,7 +84,7 @@ public class TransactedInOnlyTopicConsumerTest extends CamelTestSupport {
                             logger.info("Begin processing Exchange ID: {}", exchange.getExchangeId());
                             if (!exchange.getIn().getHeader(JmsMessageHeaderType.JMSRedelivered.toString(), String.class).equalsIgnoreCase("true")) {
                                 logger.info("Exchange does not have a retry message.  Set the exception and allow the retry.");
-                                exchange.setException(new RuntimeCamelException("Creating Failure"));
+                                exchange.getOut().setFault(true);
                             } else {
                                 logger.info("Exchange has retry header.  Continue processing the message.");
                             }

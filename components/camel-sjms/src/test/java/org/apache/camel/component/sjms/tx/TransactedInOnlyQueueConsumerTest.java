@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.consumer;
+package org.apache.camel.component.sjms.tx;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -26,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.JmsMessageHeaderType;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,8 +63,7 @@ public class TransactedInOnlyQueueConsumerTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                "vm://broker?broker.persistent=false&broker.useJmx=true");
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
@@ -86,7 +83,7 @@ public class TransactedInOnlyQueueConsumerTest extends CamelTestSupport {
                             logger.info("Begin processing Exchange ID: {}", exchange.getExchangeId());
                             if (!exchange.getIn().getHeader(JmsMessageHeaderType.JMSRedelivered.toString(), String.class).equalsIgnoreCase("true")) {
                                 logger.info("Exchange does not have a retry message.  Set the exception and allow the retry.");
-                                exchange.setException(new CamelException("Creating Failure"));
+                                exchange.getOut().setFault(true);
                             } else {
                                 logger.info("Exchange has retry header.  Continue processing the message.");
                             }

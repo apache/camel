@@ -24,19 +24,19 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 
 import org.junit.Test;
 
-public class JmsSelectorOptionTest extends JmsTestSupport  {
+public class JmsSelectorOptionTest extends JmsTestSupport {
 
     @Test
     public void testJmsMessageWithSelector() throws Exception {
         MockEndpoint endpointA = getMockEndpoint("mock:a");
         MockEndpoint endpointB = getMockEndpoint("mock:b");
         MockEndpoint endpointC = getMockEndpoint("mock:c");
-        
+
         endpointA.expectedBodiesReceivedInAnyOrder("A blue car!", "A blue car, again!");
         endpointA.expectedHeaderReceived("color", "blue");
         endpointB.expectedHeaderReceived("color", "red");
         endpointB.expectedBodiesReceived("A red car!");
-        
+
         endpointC.expectedBodiesReceived("Message1", "Message2");
         endpointC.expectedMessageCount(2);
 
@@ -48,7 +48,7 @@ public class JmsSelectorOptionTest extends JmsTestSupport  {
         template.sendBodyAndHeader("sjms:queue:hello", "Message2", "SIZE_NUMBER", 1600);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testConsumerTemplate() throws Exception {
         template.sendBodyAndHeader("sjms:queue:consumer", "Message1", "SIZE_NUMBER", 1505);
@@ -70,7 +70,7 @@ public class JmsSelectorOptionTest extends JmsTestSupport  {
         }
 
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

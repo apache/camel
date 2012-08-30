@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
+import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -43,8 +44,9 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
     private KeyFormatStrategy keyFormatStrategy;
     private Integer maxConnections = 1;
+    private TransactionCommitStrategy commitStrategy = new DefaultTransactionCommitStrategy();
 
-    /*
+    /**
      * @see
      * org.apache.camel.impl.DefaultComponent#createEndpoint(java.lang.String,
      * java.lang.String, java.util.Map)
@@ -199,5 +201,26 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
 
     public KeyFormatStrategy getKeyFormatStrategy() {
         return keyFormatStrategy;
+    }
+
+    /**
+     * Gets the TransactionCommitStrategy value of commitStrategy for this
+     * instance of SjmsComponent.
+     * 
+     * @return the commitStrategy
+     */
+    public TransactionCommitStrategy getCommitStrategy() {
+        return commitStrategy;
+    }
+
+    /**
+     * Sets the TransactionCommitStrategy value of commitStrategy for this
+     * instance of SjmsComponent.
+     * 
+     * @param commitStrategy Sets TransactionCommitStrategy, default is TODO add
+     *            default
+     */
+    public void setCommitStrategy(TransactionCommitStrategy commitStrategy) {
+        this.commitStrategy = commitStrategy;
     }
 }

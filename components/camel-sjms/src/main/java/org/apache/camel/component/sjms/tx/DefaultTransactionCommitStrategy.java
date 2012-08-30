@@ -14,45 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms;
+package org.apache.camel.component.sjms.tx;
 
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.sjms.TransactionCommitStrategy;
 
 /**
- * IllegalHeaderException is thrown if a header is detected that doesn't meet
- * the JMS standard.
+ * The default commit strategy for all transaction.
+ * 
  */
-public class IllegalHeaderException extends RuntimeCamelException {
-
-   
-    private static final long serialVersionUID = 3136304415267471091L;
+public class DefaultTransactionCommitStrategy implements TransactionCommitStrategy {
 
     /**
+     * @see org.apache.camel.component.sjms.TransactionCommitStrategy#commit(org.apache.camel.Exchange)
+     *
+     * @param exchange
+     * @return
+     * @throws Exception
      */
-    public IllegalHeaderException() {
-        super();
+    @Override
+    public boolean commit(Exchange exchange) throws Exception {
+        return true;
     }
 
     /**
-     * @param message
-     * @param cause
+     * @see org.apache.camel.component.sjms.TransactionCommitStrategy#rollback(org.apache.camel.Exchange)
+     *
+     * @param exchange
+     * @return
+     * @throws Exception
      */
-    public IllegalHeaderException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public boolean rollback(Exchange exchange) throws Exception {
+        return true;
     }
-
-    /**
-     * @param message
-     */
-    public IllegalHeaderException(String message) {
-        super(message);
-    }
-
-    /**
-     * @param cause
-     */
-    public IllegalHeaderException(Throwable cause) {
-        super(cause);
-    }
-
 }
