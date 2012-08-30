@@ -317,11 +317,11 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.keyOrTrustStoreParameters = keyOrTrustStoreParameters;
     }
     
-    private String getKeyPassword() {
+    public String getKeyPassword() {
         return this.keyPassword;
     }
     
-    private void setKeyPassword(String keyPassword) {
+    public void setKeyPassword(String keyPassword) {
         this.keyPassword = keyPassword;
     }
 
