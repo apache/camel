@@ -28,16 +28,9 @@ COMPLIST=( "camel-spring:spring"
   "camel-spring-integration:spring/integration"
   "camel-spring-security:spring-security"
   "camel-blueprint:blueprint" )
-DIST_DIR="/www/www.apache.org/dist"
 SITE_DIR="${DOWNLOAD}/websites/production/camel"
 WEBSITE_URL="https://svn.apache.org/repos/infra/websites/production/camel/content"
 
-if [ ! -d "${DIST_DIR}/camel/apache-camel" ]
-then
- echo "Apache Camel distro repository not present on this box"
- echo "Use this script on people.apache.org to publish release"
- exit 1
-fi
 
 if [ -z "${VERSION}" -o ! -d "${DOWNLOAD}" ]
 then
