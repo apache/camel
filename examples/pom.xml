@@ -31,6 +31,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>camel-example-activemq-tomcat</module>
     <module>camel-example-aggregate</module>
     <module>camel-example-bam</module>
     <module>camel-example-cafe</module>
