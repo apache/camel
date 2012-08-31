@@ -45,11 +45,14 @@ public class XPathExpression extends NamespaceAwareExpression {
     private String objectModel;
     @XmlAttribute(name = "logNamespaces")
     private Boolean logNamespaces;
-
+    @XmlAttribute(name = "headerName")
+    private String headerName;
+    
     @XmlTransient
     private Class<?> resultType;
     @XmlTransient
     private XPathFactory xpathFactory;
+    
 
     public XPathExpression() {
     }
@@ -121,6 +124,14 @@ public class XPathExpression extends NamespaceAwareExpression {
     public boolean isLogNamespaces() {
         return logNamespaces != null && logNamespaces;
     }
+    
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
@@ -158,6 +169,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (isLogNamespaces()) {
             ObjectHelper.cast(XPathBuilder.class, expression).setLogNamespaces(true);
         }
+        if (ObjectHelper.isNotEmpty(getHeaderName())) {
+            ObjectHelper.cast(XPathBuilder.class, expression).setHeaderName(getHeaderName());
+        }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configureExpression(camelContext, expression);
 
@@ -179,6 +193,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         }
         if (isLogNamespaces()) {
             ObjectHelper.cast(XPathBuilder.class, predicate).setLogNamespaces(true);
+        }
+        if (ObjectHelper.isNotEmpty(getHeaderName())) {
+            ObjectHelper.cast(XPathBuilder.class, predicate).setHeaderName(getHeaderName());
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configurePredicate(camelContext, predicate);

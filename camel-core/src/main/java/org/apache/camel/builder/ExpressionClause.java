@@ -580,6 +580,19 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     public T xpath(String text) {
         return delegate.xpath(text);
     }
+    
+
+    /**
+     * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
+     * expression</a> on the supplied header name's contents
+     * 
+     * @param text the expression to be evaluated
+     * @param headerName the name of the header to apply the expression to
+     * @return the builder to continue processing the DSL
+     */
+    public T xpath(String text, String headerName) {
+        return delegate.xpath(text, headerName);
+    }
 
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
@@ -592,7 +605,21 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     public T xpath(String text, Class<?> resultType) {
         return delegate.xpath(text, resultType);
     }
-
+    
+    /**
+     * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
+     * expression</a> with the specified result type on the supplied
+     * header name's contents
+     * 
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @param headerName the name of the header to apply the expression to
+     * @return the builder to continue processing the DSL
+     */
+    public T xpath(String text, Class<?> resultType, String headerName) {
+        return delegate.xpath(text, resultType, headerName);
+    }
+    
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> with the specified result type and set of namespace
@@ -607,6 +634,22 @@ public class ExpressionClause<T> extends ExpressionDefinition {
         return delegate.xpath(text, resultType, namespaces);
     }
 
+    /**
+     * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
+     * expression</a> with the specified result type and set of namespace
+     * prefixes and URIs on the supplied header name's contents
+     * 
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @param headerName the name of the header to apply the expression to
+     * @param namespaces the namespace prefix and URIs to use
+     * 
+     * @return the builder to continue processing the DSL
+     */
+    public T xpath(String text, Class<?> resultType, Namespaces namespaces, String headerName) {
+        return delegate.xpath(text, resultType, namespaces, headerName);
+    }
+    
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a> with the specified result type and set of namespace
@@ -655,6 +698,19 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     public T xquery(String text) {
         return delegate.xquery(text);
     }
+    
+    /**
+     * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
+     * expression</a> on the supplied header name's contents
+     * 
+     * @param text the expression to be evaluated
+     * @param headerName the name of the header to apply the expression to
+     * @return the builder to continue processing the DSL
+     */
+    public T xquery(String text, String headerName) {
+        return delegate.xquery(text, headerName);
+    }
+
 
     /**
      * Evaluates an <a
@@ -668,7 +724,22 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     public T xquery(String text, Class<?> resultType) {
         return delegate.xquery(text, resultType);
     }
-
+    
+    /**
+     * Evaluates an <a
+     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
+     * with the specified result type
+     * 
+     * @param text the expression to be evaluated
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @param headerName the name of the header to apply the expression to
+     * @return the builder to continue processing the DSL
+     */
+    public T xquery(String text, Class<?> resultType, String headerName) {
+        return delegate.xquery(text, resultType, headerName);
+    }
+    
     /**
      * Evaluates an <a
      * href="http://camel.apache.org/xquery.html">XQuery expression</a>
@@ -682,7 +753,22 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     public T xquery(String text, Class<?> resultType, Namespaces namespaces) {
         return delegate.xquery(text, resultType, namespaces);
     }
-
+    
+    /**
+     * Evaluates an <a
+     * href="http://camel.apache.org/xquery.html">XQuery expression</a>
+     * with the specified result type
+     * 
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @param headerName the name of the header to apply the expression to
+     * @param namespaces the namespace prefix and URIs to use
+     * 
+     * @return the builder to continue processing the DSL
+     */
+    public T xquery(String text, Class<?> resultType, Namespaces namespaces, String headerName) {
+        return delegate.xquery(text, resultType, namespaces, headerName);
+    }
     /**
      * Evaluates an <a
      * href="http://camel.apache.org/xquery.html">XQuery expression</a>
