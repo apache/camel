@@ -19,6 +19,7 @@ package org.apache.camel.component.quickfixj;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -62,7 +63,10 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                         engine = new QuickfixjEngine(uri, remaining, forcedShutdown, messageStoreFactory, logFactory, messageFactory);
                     }
                     engines.put(remaining, engine);
-                    if (isStarted()) {
+
+                    // only start engine if CamelContext is already started, otherwise the engines gets started
+                    // automatic later when CamelContext has been started using the StartupListener
+                    if (getCamelContext().getStatus().isStarted()) {
                         startQuickfixjEngine(engine);
                     }
                 }
@@ -91,6 +95,14 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
             }
         }
         super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // cleanup when shutting down
+        engines.clear();
+        endpoints.clear();
+        super.doShutdown();
     }
 
     private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
