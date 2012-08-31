@@ -18,26 +18,42 @@
 package org.apache.camel.cdi.support;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.component.cdi.Mock;
 import org.apache.camel.component.mock.MockEndpoint;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class MockEndpointInjectedBean {
 
     /*
 
-    TODO disabled - see the TODO in MockEndpointInjectTest.java
+    TODO - cannot currently figure out how to be able to inject both Endpoint and MockEndpoint
+    using a @Produces plugin with a single method without using explicit qualifier annotations
+    to separate the two scenarios which is a bit ugly.
+
+    See discussion here:
+    https://issues.apache.org/jira/browse/CAMEL-5553
+
+    Ideally it would be nice to be able to do this:
 
     @Inject
     @EndpointInject(uri = "mock:blah")
     private MockEndpoint endpoint;
 
-    public MockEndpoint getEndpoint() {
-        return endpoint;
+    */
+
+    @Inject @Mock
+    private MockEndpoint foo;
+
+    @Inject @Mock @EndpointInject(uri = "mock:something")
+    private MockEndpoint bar;
+
+    public MockEndpoint getBar() {
+        return bar;
     }
 
-    public void setEndpoint(MockEndpoint endpoint) {
-        this.endpoint = endpoint;
+    public MockEndpoint getFoo() {
+        return foo;
     }
-    */
 }

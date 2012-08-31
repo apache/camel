@@ -18,30 +18,31 @@ package org.apache.camel.cdi;
 
 import org.apache.camel.cdi.support.EndpointInjectedBean;
 import org.apache.camel.cdi.support.MockEndpointInjectedBean;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 /**
- * Test endpoint injection
+ * Test mock endpoint injection
  */
 public class MockEndpointInjectTest extends CdiTestSupport {
-
 
     @Inject
     private MockEndpointInjectedBean bean;
 
-    @Ignore
+    @Test
     public void shouldInjectMockEndpoint() {
         assertNotNull(bean);
-        /*
-        TODO
-        assertNotNull("Could not find injected endpoint!", bean.getEndpoint());
+        MockEndpoint foo = bean.getFoo();
+        MockEndpoint bar = bean.getBar();
+        assertNotNull("Could not find injected foo endpoint!", foo);
+        assertNotNull("Could not find injected bar endpoint!", bar);
 
-        cannot currently figure out how to be able to inject both Endpoint and MockEndpoint using a @Produces
-        plugin without using explicit qualifier annotations to separate the two scenarios which is a bit ugly
-        */
+        assertEquals("foo URI", "mock://foo", foo.getEndpointUri());
+        assertEquals("bar URI", "mock://something", bar.getEndpointUri());
     }
 
 }

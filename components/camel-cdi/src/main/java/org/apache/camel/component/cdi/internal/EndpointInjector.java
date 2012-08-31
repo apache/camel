@@ -20,6 +20,8 @@ package org.apache.camel.component.cdi.internal;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.component.cdi.Mock;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 import javax.enterprise.inject.Produces;
@@ -35,19 +37,24 @@ public class EndpointInjector {
     private CamelContext camelContext;
 
 
-/*
     @Produces
-    public Endpoint createEndpoint(InjectionPoint point) {
-        return createEndpoint(point, Endpoint.class);
-    }
-
-    // Note that there does not appear to be a way in CDI to say we can inject
-    // all types from Endpoint onwards so lets make it easy to also inject mock endpoints too
-    @Produces
+    @Mock
     protected MockEndpoint createMockEndpoint(InjectionPoint point) {
-        return createEndpoint(point, MockEndpoint.class);
+        String url = "";
+        String name = "";
+        EndpointInject annotation = point.getAnnotated().getAnnotation(EndpointInject.class);
+        if (annotation != null) {
+            url = annotation.uri();
+            name = annotation.ref();
+        }
+        if (ObjectHelper.isEmpty(name)) {
+            name = point.getMember().getName();
+        }
+        if (ObjectHelper.isEmpty(url)) {
+            url = "mock:" + name;
+        }
+        return camelContext.getEndpoint(url, MockEndpoint.class);
     }
-*/
 
     @Produces
     public Endpoint createEndpoint(InjectionPoint point) {
@@ -56,20 +63,17 @@ public class EndpointInjector {
         if (pointType instanceof Class<?>) {
             endpointType = (Class<? extends Endpoint>) pointType;
         }
-
         EndpointInject annotation = point.getAnnotated().getAnnotation(EndpointInject.class);
         if (annotation != null) {
-            if (annotation != null) {
-                String uri = annotation.uri();
-                if (ObjectHelper.isNotEmpty(uri)) {
-                    return camelContext.getEndpoint(uri, endpointType);
-                }
-                String ref = annotation.ref();
-                if (ObjectHelper.isNotEmpty(ref)) {
-                    return camelContext.getEndpoint("ref:" + ref, endpointType);
-                }
+            String uri = annotation.uri();
+            if (ObjectHelper.isNotEmpty(uri)) {
+                return camelContext.getEndpoint(uri, endpointType);
+            }
+            String ref = annotation.ref();
+            if (ObjectHelper.isNotEmpty(ref)) {
+                return camelContext.getEndpoint("ref:" + ref, endpointType);
             }
         }
-        return null;
+        throw new IllegalArgumentException("Could not create instance of Endpoint for the given injection point " + point);
     }
 }
