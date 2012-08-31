@@ -166,8 +166,8 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // set the MEP to InOptionalOut as we might not be able to send a reply
-                from(getQueueEndpointName()).setExchangePattern(ExchangePattern.InOptionalOut).process(new Processor() {
+                // set the MEP to InOnly as we might not be able to send a reply
+                from(getQueueEndpointName()).setExchangePattern(ExchangePattern.InOnly).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         assertEquals("Hello World", in.getBody());
