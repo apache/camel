@@ -852,7 +852,11 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
                 }
             }
         } catch (XPathExpressionException e) {
-            throw new InvalidXPathExpression(getText(), e);
+            String message = getText();
+            if (ObjectHelper.isNotEmpty(getHeaderName())) {
+                message = message + " with headerName " + getHeaderName();
+            }
+            throw new InvalidXPathExpression(message, e);
         } finally {
             // IOHelper can handle if is is null
             IOHelper.close(is);
