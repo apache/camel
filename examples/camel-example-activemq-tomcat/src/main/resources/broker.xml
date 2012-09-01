@@ -16,6 +16,8 @@
     limitations under the License.
 -->
 
+<!-- START SNIPPET: e1 -->
+<!-- this is a spring XML file where we have ActiveMQ Broker embedded -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:broker="http://activemq.apache.org/schema/core"
@@ -26,17 +28,20 @@
 	<!-- create an ActiveMQ broker -->
 	<!-- do not use the shutdown hook as it would cause the broker to shutdown when you press ctrl + c,
 	     instead we will let Spring shutdown the broker -->
-
 	<!-- notice this is a basic AMQ broker configuration, for production usage there is many more
 	     options you may need to configure accordingly to your needs -->
-	<broker:broker id="broker" brokerName="myBroker" useShutdownHook="false" useJmx="true"
-				   persistent="true" dataDirectory="activemq-data">
-		<broker:transportConnectors>
+	<broker id="broker" brokerName="myBroker" useShutdownHook="false" useJmx="true"
+				   persistent="true" dataDirectory="activemq-data"
+				   xmlns="http://activemq.apache.org/schema/core">
+
+		<transportConnectors>
 			<!-- vm transport for intra-jvm communication -->
-			<broker:transportConnector name="vm" uri="vm://myBroker"/>
+			<transportConnector name="vm" uri="vm://myBroker"/>
 			<!-- tcp for external communication -->
-			<broker:transportConnector name="tcp" uri="tcp://0.0.0.0:61616"/>
-		</broker:transportConnectors>
-	</broker:broker>
+			<transportConnector name="tcp" uri="tcp://0.0.0.0:61616"/>
+		</transportConnectors>
+
+	</broker>
 
 </beans>
+<!-- END SNIPPET: e1 -->

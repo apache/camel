@@ -16,6 +16,8 @@
     limitations under the License.
 -->
 
+<!-- START SNIPPET: e1 -->
+<!-- this is a spring XML file where we have Camel embedded -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
@@ -23,8 +25,10 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+
+	<!-- Here we define Camel, notice the namespace it uses -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-	  <!-- feed inbox queue once per second -->
+	  <!-- Camel route to feed the ActiveMQ inbox queue once per second -->
 	  <route>
 		  <from uri="timer:foo?period=1s"/>
 		  <transform>
@@ -33,7 +37,7 @@
 		  <to uri="activemq:queue:inbox"/>
 	  </route>
 
-	  <!-- route from inbox to outbox queue -->
+	  <!-- Camel route to move messages from the ActiveMQ inbox to its outbox queue -->
 	  <route>
 		  <from uri="activemq:queue:inbox"/>
 		  <log message="Routing message from inbox to outbox queue with data ${body}"/>
@@ -42,10 +46,12 @@
 
   </camelContext>
 
-	<!-- create a Camel ActiveMQ component to use -->
+	<!-- create a Camel ActiveMQ component to use, using the Spring bean style -->
 	<!-- we use the vm protocol to communicate intra-jvm which is much faster than tcp -->
-	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="broker">
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+		<!-- vm://myBroker is the vm protocol, and myBroker is the broker name -->
 		<property name="brokerURL" value="vm://myBroker?create=false&amp;waitForStart=5000"/>
 	</bean>
 
 </beans>
+<!-- END SNIPPET: e1 -->

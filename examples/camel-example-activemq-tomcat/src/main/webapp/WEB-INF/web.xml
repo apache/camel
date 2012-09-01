@@ -16,13 +16,15 @@
     limitations under the License.
 -->
 
+<!-- START SNIPPET: e1 -->
+<!-- this is a standard web.xml file, where we use Spring Web to boot our application -->
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 	<display-name>My Web Application</display-name>
 
-	<!-- location of spring xml files -->
+	<!-- location of spring XML files -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -31,9 +33,10 @@
 		</param-value>
 	</context-param>
 
-	<!-- the listener that kick-starts Spring -->
+	<!-- the listener that kick-starts Spring, which loads the XML files and start our application -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
 </web-app>
+<!-- START SNIPPET: e1 -->
