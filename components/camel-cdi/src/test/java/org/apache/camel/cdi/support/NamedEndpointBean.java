@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,28 +17,18 @@
  */
 package org.apache.camel.cdi.support;
 
-import javax.inject.Inject;
+import javax.enterprise.inject.Produces;
+import javax.inject.Named;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.cdi.Uri;
+import org.apache.camel.component.mock.MockComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  */
-public class EndpointUriPropertyInjectedBean {
-
-    @EndpointInject(property = "injectUri")
-    private Endpoint endpoint;
-
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public String getInjectUri() {
-        return "mock:injectedByProperty";
+public class NamedEndpointBean {
+    @Produces @Named("myNamedEndpoint")
+    public Endpoint createEndpoint() {
+        return new MockEndpoint("mock:nameInjected", new MockComponent());
     }
 }

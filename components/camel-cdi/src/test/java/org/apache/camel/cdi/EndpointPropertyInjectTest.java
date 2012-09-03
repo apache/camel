@@ -32,8 +32,7 @@ public class EndpointPropertyInjectTest extends CdiTestSupport {
     @Inject
     private EndpointUriPropertyInjectedBean bean;
 
-    // TODO not supported yet!
-    @Ignore
+    @Test
     public void shouldInjectEndpointByProperty() {
         assertNotNull(bean);
         Endpoint endpoint = bean.getEndpoint();

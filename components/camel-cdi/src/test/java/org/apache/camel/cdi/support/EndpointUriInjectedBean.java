@@ -29,11 +29,22 @@ public class EndpointUriInjectedBean {
     @Inject @Uri("mock:uriInjected")
     private Endpoint endpoint;
 
+    @Inject @Uri("mock:anotherEndpoint")
+    private Endpoint endpoint2;
+
     public Endpoint getEndpoint() {
         return endpoint;
     }
 
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
+    }
+
+    public Endpoint getEndpoint2() {
+        return endpoint2;
+    }
+
+    public void setEndpoint2(Endpoint endpoint2) {
+        this.endpoint2 = endpoint2;
     }
 }

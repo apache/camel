@@ -14,30 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cdi.support;
+package org.apache.camel.cdi;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.cdi.Uri;
+import org.apache.camel.cdi.support.EndpointInjectedBean;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
+ * Test endpoint injection by @Named
  */
-public class EndpointUriPropertyInjectedBean {
+public class EndpointNamedInjectTest extends CdiTestSupport {
 
-    @EndpointInject(property = "injectUri")
+    @Inject @Named("myNamedEndpoint")
     private Endpoint endpoint;
 
-    public Endpoint getEndpoint() {
-        return endpoint;
+    @Test
+    public void shouldInjectEndpoint() {
+        assertNotNull("Could not find injected endpoint!", endpoint);
+        assertEquals("Endpoint URI", "mock:nameInjected", endpoint.getEndpointUri());
     }
 
-    public void setEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public String getInjectUri() {
-        return "mock:injectedByProperty";
-    }
 }

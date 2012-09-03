@@ -32,7 +32,7 @@ public class ConsumeTest extends CdiTestSupport {
     @Inject @Mock
     private MockEndpoint result;
 
-    @Inject @Produce(uri = "seda:start")
+    @Inject @Uri("seda:start")
     private ProducerTemplate producer;
 
     @Consume(uri = "seda:start")

@@ -25,7 +25,6 @@ import org.apache.camel.EndpointInject;
  */
 public class EndpointInjectedBean {
 
-    @Inject
     @EndpointInject(uri = "mock:blah")
     private Endpoint endpoint;
 

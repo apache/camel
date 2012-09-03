@@ -39,6 +39,10 @@ public class EndpointUriInjectTest extends CdiTestSupport {
         assertNotNull("Could not find injected endpoint!", endpoint);
         assertTrue("Endpoint should be a MockEndpoint but was " + endpoint, endpoint instanceof MockEndpoint);
         assertEquals("Endpoint URI", "mock://uriInjected", endpoint.getEndpointUri());
+
+        Endpoint endpoint2 = bean.getEndpoint2();
+        assertNotNull("Could not find injected endpoint2!", endpoint2);
+        assertEquals("Endpoint URI", "mock://anotherEndpoint", endpoint2.getEndpointUri());
     }
 
 }
