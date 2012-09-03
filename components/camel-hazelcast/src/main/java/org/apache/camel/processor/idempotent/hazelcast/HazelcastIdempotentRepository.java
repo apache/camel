@@ -24,7 +24,7 @@ import org.apache.camel.support.ServiceSupport;
 public class HazelcastIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
 
     private String repositoryName;
-    private IMap<String, Object> repo;
+    private IMap<String, Boolean> repo;
     private HazelcastInstance hazelcastInstance;
     
     public HazelcastIdempotentRepository(HazelcastInstance hazelcastInstance) {
@@ -48,22 +48,21 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
 
     @Override
     public boolean add(String key) {
-        if (this.contains(key)) {
-            return false;
-        } else {
-            this.repo.put(key, false);
-            return true;
+
+        Boolean found = this.repo.get(key);
+        if (found == null) {
+            Boolean returned = this.repo.putIfAbsent(key, false);
+            if (returned == null) {
+                return true;
+            }
         }
+        return false;
+
     }
 
     @Override
     public boolean confirm(String key) {
-        if (this.contains(key)) {
-            this.repo.put(key, true);
-            return true;
-        } else {
-            return false;
-        }
+        return this.repo.replace(key, false, true);
     }
 
     @Override
