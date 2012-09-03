@@ -37,13 +37,13 @@ public class InjectCamelAnnotationsTest extends CdiContextTestSupport {
     @EndpointInject(uri="mock:result")
     MockEndpoint mockResultEndpoint;
 
-    @Produce(uri = "mock:result")
+    @Produce(uri = "direct:inject")
     ProducerTemplate myProducer;
 
     @Test
     public void beanShouldBeInjected() throws InterruptedException {
         mockResultEndpoint.expectedMessageCount(1);
-        myProducer.sendBody("direct:inject", "hello");
+        myProducer.sendBody("hello");
 
         assertMockEndpointsSatisfied();
 
