@@ -16,14 +16,11 @@
  */
 package org.apache.camel.cdi;
 
-import org.apache.camel.cdi.support.EndpointInjectedBean;
+import javax.inject.Inject;
+
 import org.apache.camel.cdi.support.MockEndpointInjectedBean;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 
 /**
  * Test mock endpoint injection
