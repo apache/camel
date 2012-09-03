@@ -36,6 +36,10 @@ public class ProduceInjectTest extends CdiTestSupport {
         ProducerTemplate producer = bean.getProducer();
         assertNotNull("Could not find injected producer!", producer);
         assertEquals("producer default URI", "mock://foo", producer.getDefaultEndpoint().getEndpointUri());
+
+        ProducerTemplate producer2 = bean.getProducer2();
+        assertNotNull("Could not find injected producer2!", producer2);
+        assertEquals("producer2 default URI", "mock://bar", producer2.getDefaultEndpoint().getEndpointUri());
     }
 
 }

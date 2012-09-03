@@ -18,38 +18,28 @@ package org.apache.camel.cdi;
 
 import javax.inject.Inject;
 
-import org.apache.camel.Consume;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Endpoint;
+import org.apache.camel.cdi.support.EndpointUriPropertyInjectedBean;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Test consume annotation
+ * Test endpoint injection using a dynamic property expression
  */
-public class ConsumeTest extends CdiTestSupport {
+public class EndpointPropertyInjectTest extends CdiTestSupport {
 
-    @Inject @Mock
-    private MockEndpoint result;
+    @Inject
+    private EndpointUriPropertyInjectedBean bean;
 
-    @Inject @Produce(uri = "seda:start")
-    private ProducerTemplate producer;
-
-    @Consume(uri = "seda:start")
-    public void onStart(String body) {
-        producer.sendBody("mock:result", "Hello " + body + "!");
-    }
-
-    @Test
-    public void consumeAnnotation() throws Exception {
-        assertNotNull("Could not inject producer", producer);
-        assertNotNull("Could not inject mock endpoint", result);
-
-        result.expectedBodiesReceived("Hello world!");
-
-        producer.sendBody("world");
-
-        result.assertIsSatisfied();
+    // TODO not supported yet!
+    @Ignore
+    public void shouldInjectEndpointByProperty() {
+        assertNotNull(bean);
+        Endpoint endpoint = bean.getEndpoint();
+        assertNotNull("Could not find injected endpoint!", endpoint);
+        assertTrue("Endpoint should be a MockEndpoint but was " + endpoint, endpoint instanceof MockEndpoint);
+        assertEquals("Endpoint URI", "mock://injectedByProperty", endpoint.getEndpointUri());
     }
 
 }

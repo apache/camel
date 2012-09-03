@@ -14,27 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cdi.support;
+package org.apache.camel.cdi;
 
 import javax.inject.Inject;
 
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.cdi.Uri;
+import org.apache.camel.Endpoint;
+import org.apache.camel.cdi.support.EndpointInjectedBean;
+import org.apache.camel.cdi.support.EndpointUriInjectedBean;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-public class ProduceInjectedBean {
+/**
+ * Test endpoint injection
+ */
+public class EndpointUriInjectTest extends CdiTestSupport {
 
-    @Produce(uri = "mock:foo")
-    private ProducerTemplate producer;
+    @Inject
+    private EndpointUriInjectedBean bean;
 
-    @Inject @Uri("mock:bar")
-    private ProducerTemplate producer2;
-
-    public ProducerTemplate getProducer() {
-        return producer;
+    @Test
+    public void shouldInjectEndpoint() {
+        assertNotNull(bean);
+        Endpoint endpoint = bean.getEndpoint();
+        assertNotNull("Could not find injected endpoint!", endpoint);
+        assertTrue("Endpoint should be a MockEndpoint but was " + endpoint, endpoint instanceof MockEndpoint);
+        assertEquals("Endpoint URI", "mock://uriInjected", endpoint.getEndpointUri());
     }
 
-    public ProducerTemplate getProducer2() {
-        return producer2;
-    }
 }

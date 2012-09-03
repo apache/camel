@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cdi;
+package org.apache.camel.cdi;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
-
 /**
- * A qualifier for injecting instances of {@link org.apache.camel.component.mock.MockEndpoint} into a bean.
+ * An injection annotation to define the <a href="http://camel.apache.org/uris.html">Camel URI</a> used
+ * to reference the underlying <a href="http://camel.apache.org/endpoint.html">Camel Endpoint</a>
  */
-@Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
-public @interface Mock {
+public @interface Uri {
+
+    /**
+     * Returns the <a href="http://camel.apache.org/uris.html">Camel URI</a> of the endpoint
+     */
+    String value();
 }

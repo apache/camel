@@ -19,7 +19,7 @@ package org.apache.camel.cdi.support;
 import javax.inject.Inject;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.component.cdi.Mock;
+import org.apache.camel.cdi.Mock;
 import org.apache.camel.component.mock.MockEndpoint;
 
 public class MockEndpointInjectedBean {

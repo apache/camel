@@ -14,27 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cdi.support;
+package org.apache.camel.cdi;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.inject.Inject;
+import javax.inject.Qualifier;
 
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.cdi.Uri;
-
-public class ProduceInjectedBean {
-
-    @Produce(uri = "mock:foo")
-    private ProducerTemplate producer;
-
-    @Inject @Uri("mock:bar")
-    private ProducerTemplate producer2;
-
-    public ProducerTemplate getProducer() {
-        return producer;
-    }
-
-    public ProducerTemplate getProducer2() {
-        return producer2;
-    }
+/**
+ * A qualifier for injecting instances of {@link org.apache.camel.component.mock.MockEndpoint} into a bean.
+ */
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+public @interface Mock {
 }

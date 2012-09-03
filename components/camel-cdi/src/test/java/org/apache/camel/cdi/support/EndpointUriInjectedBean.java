@@ -18,23 +18,22 @@ package org.apache.camel.cdi.support;
 
 import javax.inject.Inject;
 
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.cdi.Uri;
 
-public class ProduceInjectedBean {
+/**
+ */
+public class EndpointUriInjectedBean {
 
-    @Produce(uri = "mock:foo")
-    private ProducerTemplate producer;
+    @Inject @Uri("mock:uriInjected")
+    private Endpoint endpoint;
 
-    @Inject @Uri("mock:bar")
-    private ProducerTemplate producer2;
-
-    public ProducerTemplate getProducer() {
-        return producer;
+    public Endpoint getEndpoint() {
+        return endpoint;
     }
 
-    public ProducerTemplate getProducer2() {
-        return producer2;
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
     }
 }

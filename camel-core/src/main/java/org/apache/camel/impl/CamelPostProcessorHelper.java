@@ -132,7 +132,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         return new UnitOfWorkProcessor(answer);
     }
 
-    protected Endpoint getEndpointInjection(Object bean, String uri, String name, String propertyName,
+    public Endpoint getEndpointInjection(Object bean, String uri, String name, String propertyName,
                                             String injectionPointName, boolean mandatory) {
         if (ObjectHelper.isEmpty(uri) && ObjectHelper.isEmpty(name)) {
             // if no uri or ref, then fallback and try the endpoint property

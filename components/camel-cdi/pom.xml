@@ -43,6 +43,7 @@
           *
       </camel.osgi.import>
       <camel.osgi.export.pkg>
+          org.apache.camel.cdi.*;${camel.osgi.version},
           org.apache.camel.component.cdi.*;${camel.osgi.version}
       </camel.osgi.export.pkg>
   </properties>
