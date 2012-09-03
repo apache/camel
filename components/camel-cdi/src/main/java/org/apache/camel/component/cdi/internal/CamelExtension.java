@@ -18,10 +18,9 @@ package org.apache.camel.component.cdi.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -31,16 +30,18 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessBean;
+import javax.enterprise.inject.spi.ProcessInjectionTarget;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.component.cdi.CdiCamelContext;
-import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
@@ -56,6 +57,7 @@ public class CamelExtension implements Extension {
      * Context instance.
      */
     private CamelContext camelContext;
+    private DefaultCamelBeanPostProcessor postProcessor;
 
     private Map<Bean<?>, BeanAdapter> beanAdapters = new HashMap<Bean<?>, BeanAdapter>();
 
@@ -65,7 +67,8 @@ public class CamelExtension implements Extension {
      * @param process Annotated type.
      * @throws Exception In case of exceptions.
      */
-    protected void contextAwareness(@Observes ProcessAnnotatedType<CamelContextAware> process) throws Exception {
+    protected void contextAwareness(@Observes ProcessAnnotatedType<CamelContextAware> process)
+            throws Exception {
         AnnotatedType<CamelContextAware> annotatedType = process.getAnnotatedType();
         Class<CamelContextAware> javaClass = annotatedType.getJavaClass();
         if (CamelContextAware.class.isAssignableFrom(javaClass)) {
@@ -94,7 +97,8 @@ public class CamelExtension implements Extension {
      * @param manager Bean manager.
      */
     protected void registerManagedCamelContext(@Observes AfterBeanDiscovery abd, BeanManager manager) {
-        abd.addBean(new CamelContextBean(manager.createInjectionTarget(manager.createAnnotatedType(CdiCamelContext.class))));
+        abd.addBean(new CamelContextBean(
+                manager.createInjectionTarget(manager.createAnnotatedType(CdiCamelContext.class))));
     }
 
     /**
@@ -119,6 +123,9 @@ public class CamelExtension implements Extension {
         }
     }
 
+    /**
+     * Lets detect all beans annotated with @Consume
+     */
     public void detectConsumeBeans(@Observes ProcessBean<?> event) {
         final Bean<?> bean = event.getBean();
         ReflectionHelper.doWithMethods(bean.getBeanClass(), new ReflectionHelper.MethodCallback() {
@@ -129,51 +136,111 @@ public class CamelExtension implements Extension {
                     BeanAdapter beanAdapter = getBeanAdapter(bean);
                     beanAdapter.addConsumeMethod(method);
                 }
-                Produce produce = method.getAnnotation(Produce.class);
-                if (produce != null) {
-                    BeanAdapter beanAdapter = getBeanAdapter(bean);
-                    beanAdapter.addProduceMethod(method);
-                }
-            }
-        });
-        ReflectionHelper.doWithFields(bean.getBeanClass(), new ReflectionHelper.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                Produce produce = field.getAnnotation(Produce.class);
-                if (produce != null && !injectAnnotatedField(field)) {
-                    BeanAdapter beanAdapter = getBeanAdapter(bean);
-                    beanAdapter.addProduceField(field);
-                }
             }
         });
     }
 
     /**
-     * Returns true if this field is annotated with @Inject
+     * Lets force the CDI container to create all beans annotated with @Consume so that the consumer becomes active
      */
-    protected static boolean injectAnnotatedField(Field field) {
-        return field.getAnnotation(Inject.class) != null;
-    }
-
-    public void initializeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
+    public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        DefaultCamelBeanPostProcessor postProcessor = new DefaultCamelBeanPostProcessor(getCamelContext());
-        Collection<BeanAdapter> adapters = beanAdapters.values();
-        for (BeanAdapter adapter : adapters) {
-            Bean<?> bean = adapter.getBean();
+        Set<Map.Entry<Bean<?>, BeanAdapter>> entries = beanAdapters.entrySet();
+        for (Map.Entry<Bean<?>, BeanAdapter> entry : entries) {
+            Bean<?> bean = entry.getKey();
+            BeanAdapter adapter = entry.getValue();
             CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
 
             Object reference = beanManager.getReference(bean, Object.class, creationalContext);
-            String beanName = bean.getName();
-
-            adapter.initialiseBean(postProcessor, reference, beanName);
         }
+    }
+
+
+    /**
+     * Lets perform injection of all beans which use Camel annotations
+     */
+    public void onInjectionTarget(@Observes ProcessInjectionTarget event) {
+        final InjectionTarget injectionTarget = event.getInjectionTarget();
+        final Class beanClass = event.getAnnotatedType().getJavaClass();
+        // TODO this is a bit of a hack - what should the bean name be?
+        final String beanName = event.getInjectionTarget().toString();
+        final BeanAdapter adapter = createBeanAdapter(beanClass);
+        if (!adapter.isEmpty()) {
+            DelegateInjectionTarget newTarget = new DelegateInjectionTarget(injectionTarget) {
+
+                @Override
+                public void postConstruct(Object instance) {
+                    super.postConstruct(instance);
+
+                    // now lets do the post instruct to inject our Camel injections
+                    adapter.inject(getPostProcessor(), instance, beanName);
+                }
+            };
+            event.setInjectionTarget(newTarget);
+        }
+    }
+
+    /**
+     * Perform injection on an existing bean such as a test case which is created directly by a testing framework.
+     *
+     * This is because BeanProvider.injectFields() does not invoke the onInjectionTarget() method so the injection
+     * of @Produce / @EndpointInject and processing of the @Consume annotations are not performed.
+     */
+    public void inject(Object bean) {
+        final BeanAdapter adapter = createBeanAdapter(bean.getClass());
+        if (!adapter.isEmpty()) {
+            // TODO this is a bit of a hack - what should the bean name be?
+            final String beanName = bean.toString();
+            adapter.inject(getPostProcessor(), bean, beanName);
+        }
+    }
+
+    private BeanAdapter createBeanAdapter(Class beanClass) {
+        final BeanAdapter adapter = new BeanAdapter();
+        ReflectionHelper.doWithFields(beanClass, new ReflectionHelper.FieldCallback() {
+            @Override
+            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+                Produce produce = field.getAnnotation(Produce.class);
+                if (produce != null && !injectAnnotatedField(field)) {
+                    adapter.addProduceField(field);
+                }
+                EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+                if (endpointInject != null) {
+                    adapter.addEndpointField(field);
+                }
+            }
+        });
+        ReflectionHelper.doWithMethods(beanClass, new ReflectionHelper.MethodCallback() {
+            @Override
+            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                Consume consume = method.getAnnotation(Consume.class);
+                if (consume != null) {
+                    adapter.addConsumeMethod(method);
+                }
+                Produce produce = method.getAnnotation(Produce.class);
+                if (produce != null) {
+                    adapter.addProduceMethod(method);
+                }
+                EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
+                if (endpointInject != null) {
+                    adapter.addEndpointMethod(method);
+                }
+            }
+        });
+        return adapter;
+    }
+
+    protected DefaultCamelBeanPostProcessor getPostProcessor() {
+        if (postProcessor == null) {
+            postProcessor = new DefaultCamelBeanPostProcessor(getCamelContext());
+        }
+        return postProcessor;
     }
 
     protected BeanAdapter getBeanAdapter(Bean<?> bean) {
         BeanAdapter beanAdapter = beanAdapters.get(bean);
         if (beanAdapter == null) {
-            beanAdapter = new BeanAdapter(bean);
+            beanAdapter = new BeanAdapter();
             beanAdapters.put(bean, beanAdapter);
         }
         return beanAdapter;
@@ -184,5 +251,13 @@ public class CamelExtension implements Extension {
             camelContext = BeanProvider.getContextualReference(CamelContext.class);
         }
         return camelContext;
+    }
+
+
+    /**
+     * Returns true if this field is annotated with @Inject
+     */
+    protected static boolean injectAnnotatedField(Field field) {
+        return field.getAnnotation(Inject.class) != null;
     }
 }

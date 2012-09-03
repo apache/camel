@@ -117,9 +117,6 @@
   <profiles>
     <profile>
       <id>owb</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <dependencies>
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -149,6 +146,10 @@
 
     <profile>
       <id>weld</id>
+        <!-- active by default as the overriding of InvocationTarget is currently broken in owb which breaks ProduceInjectTest -->
+        <activation>
+          <activeByDefault>true</activeByDefault>
+        </activation>
       <dependencies>
         <dependency>
           <groupId>org.apache.deltaspike.cdictrl</groupId>

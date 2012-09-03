@@ -18,24 +18,31 @@ package org.apache.camel.cdi;
 
 import javax.inject.Inject;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.cdi.support.CamelEndpointInjectedBean;
 import org.apache.camel.cdi.support.ProduceInjectedBean;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * Test endpoint injection
+ * Test endpoint injection using vanilla camel annotations without the use of @Inject
  */
-public class ProduceInjectTest extends CdiTestSupport {
+public class CamelEndpointInjectTest extends CdiTestSupport {
 
     @Inject
-    private ProduceInjectedBean bean;
+    private CamelEndpointInjectedBean bean;
 
     @Test
     public void shouldInjectEndpoint() {
         assertNotNull(bean);
-        ProducerTemplate producer = bean.getProducer();
-        assertNotNull("Could not find injected producer!", producer);
-        assertEquals("producer default URI", "mock://foo", producer.getDefaultEndpoint().getEndpointUri());
+        Endpoint endpoint = bean.getEndpoint();
+        assertNotNull("Could not find injected endpoint!", endpoint);
+        assertEquals("endpoint URI", "direct://inject", endpoint.getEndpointUri());
+
+        MockEndpoint mockEndpoint = bean.getMockEndpoint();
+        assertNotNull("Could not find injected mock endpoint!", mockEndpoint);
+        assertEquals("mock endpoint URI", "mock://result", mockEndpoint.getEndpointUri());
     }
 
 }

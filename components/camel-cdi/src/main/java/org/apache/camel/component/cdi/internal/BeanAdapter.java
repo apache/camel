@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.inject.spi.Bean;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
@@ -31,29 +32,18 @@ import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
  * Contains the bean and the consume methods
  */
 public class BeanAdapter {
-    private final Bean<?> bean;
     private final List<Method> consumeMethods = new ArrayList<Method>();
     private final List<Method> produceMethods = new ArrayList<Method>();
+    private final List<Method> endpointMethods = new ArrayList<Method>();
     private final List<Field> produceFields = new ArrayList<Field>();
+    private final List<Field> endpointFields = new ArrayList<Field>();
 
-    public BeanAdapter(Bean<?> bean) {
-        this.bean = bean;
-    }
-
-    public Bean<?> getBean() {
-        return bean;
-    }
-
-    public List<Method> getConsumeMethods() {
-        return consumeMethods;
-    }
-
-    public List<Method> getProduceMethods() {
-        return produceMethods;
-    }
-
-    public List<Field> getProduceFields() {
-        return produceFields;
+    /**
+     * Returns true if this adapter is empty (i.e. has no custom adapter code)
+     */
+    public boolean isEmpty() {
+        return consumeMethods.isEmpty() && produceMethods.isEmpty() && produceFields.isEmpty() &&
+                endpointMethods.isEmpty() && endpointFields.isEmpty();
     }
 
     public void addConsumeMethod(Method method) {
@@ -68,30 +58,52 @@ public class BeanAdapter {
         produceFields.add(field);
     }
 
+    public void addEndpointField(Field field) {
+        endpointFields.add(field);
+    }
+
+    public void addEndpointMethod(Method method) {
+        endpointMethods.add(method);
+    }
+
     /**
-     * Perform processing of the various @Consume, @Produce methods on the given bean reference
+     * Perform injections
      */
-    public void initialiseBean(DefaultCamelBeanPostProcessor postProcessor, Object reference,
-                               String beanName) {
+    public void inject(DefaultCamelBeanPostProcessor postProcessor, Object reference,
+                                String beanName) {
         CamelPostProcessorHelper postProcessorHelper = postProcessor.getPostProcessorHelper();
         for (Method method : consumeMethods) {
             postProcessorHelper.consumerInjection(method, reference, beanName);
         }
         for (Method method : produceMethods) {
-            Produce produce = method.getAnnotation(Produce.class);
-            if (produce != null && postProcessorHelper.matchContext(produce.context())) {
-                postProcessor.setterInjection(method, bean, beanName, produce.uri(), produce.ref(),
-                        produce.property());
+            Produce annotation = method.getAnnotation(Produce.class);
+            if (annotation != null && postProcessorHelper.matchContext(annotation.context())) {
+                postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
+                        annotation.property());
+
+            }
+        }
+        for (Method method : endpointMethods) {
+            EndpointInject annotation = method.getAnnotation(EndpointInject.class);
+            if (annotation != null && postProcessorHelper.matchContext(annotation.context())) {
+                postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
+                        annotation.property());
 
             }
         }
         for (Field field : produceFields) {
-            Produce produce = field.getAnnotation(Produce.class);
-            if (produce != null && postProcessorHelper.matchContext(produce.context())) {
-                postProcessor.injectField(field, produce.uri(), produce.ref(),
-                        produce.property(), reference, beanName);
+            Produce annotation = field.getAnnotation(Produce.class);
+            if (annotation != null && postProcessorHelper.matchContext(annotation.context())) {
+                postProcessor.injectField(field, annotation.uri(), annotation.ref(),
+                        annotation.property(), reference, beanName);
+            }
+        }
+        for (Field field : endpointFields) {
+            EndpointInject annotation = field.getAnnotation(EndpointInject.class);
+            if (annotation != null && postProcessorHelper.matchContext(annotation.context())) {
+                postProcessor.injectField(field, annotation.uri(), annotation.ref(),
+                        annotation.property(), reference, beanName);
             }
         }
     }
-
 }

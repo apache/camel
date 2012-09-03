@@ -19,6 +19,7 @@ package org.apache.camel.cdi;
 import java.util.logging.LogManager;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.cdi.internal.CamelExtension;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
@@ -70,12 +71,9 @@ public abstract class CdiContextTestSupport extends CamelTestSupport {
 
     @Override
     protected void applyCamelPostProcessor() throws Exception {
-        // lets do nothing and let CDI do all the injection on this
-
-        // TODO as a workaround until we support backwards compatible injection
-        // on @Produce / @EndpointInject without the use of @Inject
-        // lets keep the old behaviour
-        super.applyCamelPostProcessor();
+        // lets perform any custom camel injection on the test case object
+        CamelExtension camelExtension = BeanProvider.getContextualReference(CamelExtension.class);
+        camelExtension.inject(this);
     }
 }
 

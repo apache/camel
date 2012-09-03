@@ -16,16 +16,18 @@
  */
 package org.apache.camel.cdi;
 
-import org.apache.camel.*;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.store.Item;
-import org.apache.camel.cdi.store.ShoppingBean;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
-
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.store.Item;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class InjectCamelAnnotationsTest extends CdiContextTestSupport {
 
@@ -33,19 +35,19 @@ public class InjectCamelAnnotationsTest extends CdiContextTestSupport {
     Endpoint directInjectEndpoint;
 
     @EndpointInject(uri="mock:result")
-    MockEndpoint mockResultendpoint;
+    MockEndpoint mockResultEndpoint;
 
     @Produce(uri = "mock:result")
     ProducerTemplate myProducer;
 
     @Test
     public void beanShouldBeInjected() throws InterruptedException {
-        mockResultendpoint.expectedMessageCount(1);
+        mockResultEndpoint.expectedMessageCount(1);
         myProducer.sendBody("direct:inject", "hello");
 
         assertMockEndpointsSatisfied();
 
-        Exchange exchange = mockResultendpoint.getExchanges().get(0);
+        Exchange exchange = mockResultEndpoint.getExchanges().get(0);
         List<?> results = exchange.getIn().getBody(List.class);
         List<Item> expected = itemsExpected();
         assertNotNull(results);
@@ -69,7 +71,7 @@ public class InjectCamelAnnotationsTest extends CdiContextTestSupport {
             public void configure() throws Exception {
                 from(directInjectEndpoint)
                     .beanRef("shoppingBean", "listAllProducts")
-                    .to(mockResultendpoint);
+                    .to(mockResultEndpoint);
             }
         };
     }
