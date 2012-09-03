@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.RoutePolicySupport;
+import org.apache.camel.util.ServiceHelper;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -46,7 +47,8 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         if (action == Action.START) {
             if (routeStatus == ServiceStatus.Stopped) {
                 startRoute(route);
-            } else if (routeStatus == ServiceStatus.Suspended) {
+                // here we just check the states of the Consumer
+            } else if (ServiceHelper.isSuspended(route.getConsumer())) {
                 startConsumer(route.getConsumer());
             }
         } else if (action == Action.STOP) {
@@ -63,7 +65,11 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             }
         } else if (action == Action.RESUME) {
             if (routeStatus == ServiceStatus.Started) {
-                startConsumer(route.getConsumer());
+                if (ServiceHelper.isSuspended(route.getConsumer())) {
+                    startConsumer(route.getConsumer());
+                } else {
+                    LOG.warn("The Consumer {} is not suspended and cannot be resumed.", route.getConsumer());
+                }
             } else {
                 LOG.warn("Route is not in a started state and cannot be resumed. The current route state is {}", routeStatus);
             }
