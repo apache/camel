@@ -27,8 +27,11 @@ import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FailoverRoutePolicyTest extends ZooKeeperTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(FailoverRoutePolicyTest.class);
 
     protected CamelContext createCamelContext() throws Exception {
         disableJMX();
@@ -76,6 +79,7 @@ public class FailoverRoutePolicyTest extends ZooKeeperTestSupport {
                 template.sendBody("vm:" + routename, ExchangePattern.InOut, message);
             } catch (Exception e) {
                 if (expected > 0) {
+                    LOG.error(e.getMessage(), e);
                     fail("Expected messages...");
                 }
             }

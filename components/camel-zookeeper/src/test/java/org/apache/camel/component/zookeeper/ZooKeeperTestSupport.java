@@ -206,6 +206,15 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
             }
         }
 
+        public void deleteAll(String node) throws Exception {
+            delay(200);
+            log.debug("Deleting {} and it's immediate children", node);
+            for (String child : zk.getChildren(node, false)) {
+                delete(node + "/" + child);
+            }
+            delete(node);
+        }
+
         public void delete(String node) throws Exception {
             delay(200);
             log.debug("Deleting node " + node);
