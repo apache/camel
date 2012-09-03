@@ -17,8 +17,12 @@
 package org.apache.camel.component.hazelcast;
 
 import java.util.Collection;
+import java.util.Set;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
@@ -30,15 +34,15 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSupport {
-
+    private HazelcastInstance hazelcastInstance;
     private MultiMap<String, Object> map;
-
+    
     @Override
-    public void setUp() throws Exception {
-        this.map = Hazelcast.getMultiMap("foo");
+    protected void doPostSetup() throws Exception {
+        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
+        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
+        this.map = hazelcastInstance.getMultiMap("foo");
         this.map.clear();
-
-        super.setUp();
     }
 
     @AfterClass

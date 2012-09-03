@@ -18,7 +18,10 @@ package org.apache.camel.component.hazelcast;
 
 import java.util.Collection;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -31,10 +34,11 @@ public class HazelcastMultimapProducerTest extends CamelTestSupport {
     private MultiMap<String, Object> map;
 
     @Override
-    public void setUp() throws Exception {
-        this.map = Hazelcast.getMultiMap("bar");
+    protected void doPostSetup() throws Exception {
+        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
+        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
+        this.map = hazelcastInstance.getMultiMap("bar");
         this.map.clear();
-        super.setUp();
     }
 
     @AfterClass
