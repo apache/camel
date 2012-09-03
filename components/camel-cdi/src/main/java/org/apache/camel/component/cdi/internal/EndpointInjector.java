@@ -56,6 +56,7 @@ public class EndpointInjector {
         return camelContext.getEndpoint(url, MockEndpoint.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Produces
     public Endpoint createEndpoint(InjectionPoint point) {
         Class<? extends Endpoint> endpointType = Endpoint.class;
