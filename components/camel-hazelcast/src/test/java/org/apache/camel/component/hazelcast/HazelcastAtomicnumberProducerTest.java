@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import com.hazelcast.core.Hazelcast;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 public class HazelcastAtomicnumberProducerTest extends CamelTestSupport {
@@ -58,11 +55,12 @@ public class HazelcastAtomicnumberProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDestroy() {
+    public void testDestroy() throws InterruptedException {
         template.sendBody("direct:set", 10);
         template.sendBody("direct:destroy", null);
-
-        assertTrue(Hazelcast.getInstances().isEmpty());
+        long body = template.requestBody("direct:get", null, Long.class);
+        // the body is destory
+        assertEquals(0, body);
     }
 
     @Override
