@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cdi.internal;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,12 +33,15 @@ import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessBean;
+import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
+import org.apache.camel.Produce;
 import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.impl.CamelPostProcessorHelper;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
@@ -125,13 +129,35 @@ public class CamelExtension implements Extension {
                     BeanAdapter beanAdapter = getBeanAdapter(bean);
                     beanAdapter.addConsumeMethod(method);
                 }
+                Produce produce = method.getAnnotation(Produce.class);
+                if (produce != null) {
+                    BeanAdapter beanAdapter = getBeanAdapter(bean);
+                    beanAdapter.addProduceMethod(method);
+                }
+            }
+        });
+        ReflectionHelper.doWithFields(bean.getBeanClass(), new ReflectionHelper.FieldCallback() {
+            @Override
+            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+                Produce produce = field.getAnnotation(Produce.class);
+                if (produce != null && !injectAnnotatedField(field)) {
+                    BeanAdapter beanAdapter = getBeanAdapter(bean);
+                    beanAdapter.addProduceField(field);
+                }
             }
         });
     }
 
+    /**
+     * Returns true if this field is annotated with @Inject
+     */
+    protected static boolean injectAnnotatedField(Field field) {
+        return field.getAnnotation(Inject.class) != null;
+    }
+
     public void initializeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        CamelPostProcessorHelper postProcessor = new CamelPostProcessorHelper(getCamelContext());
+        DefaultCamelBeanPostProcessor postProcessor = new DefaultCamelBeanPostProcessor(getCamelContext());
         Collection<BeanAdapter> adapters = beanAdapters.values();
         for (BeanAdapter adapter : adapters) {
             Bean<?> bean = adapter.getBean();
@@ -140,10 +166,7 @@ public class CamelExtension implements Extension {
             Object reference = beanManager.getReference(bean, Object.class, creationalContext);
             String beanName = bean.getName();
 
-            List<Method> consumeMethods = adapter.getConsumeMethods();
-            for (Method method : consumeMethods) {
-                postProcessor.consumerInjection(method, reference, beanName);
-            }
+            adapter.initialiseBean(postProcessor, reference, beanName);
         }
     }
 

@@ -67,5 +67,15 @@ public abstract class CdiContextTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         return BeanProvider.getContextualReference(CamelContext.class);
     }
+
+    @Override
+    protected void applyCamelPostProcessor() throws Exception {
+        // lets do nothing and let CDI do all the injection on this
+
+        // TODO as a workaround until we support backwards compatible injection
+        // on @Produce / @EndpointInject without the use of @Inject
+        // lets keep the old behaviour
+        super.applyCamelPostProcessor();
+    }
 }
 

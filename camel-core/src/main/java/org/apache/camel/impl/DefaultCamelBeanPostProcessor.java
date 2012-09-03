@@ -131,7 +131,7 @@ public class DefaultCamelBeanPostProcessor {
     /**
      * Strategy to get the {@link CamelPostProcessorHelper}
      */
-    protected CamelPostProcessorHelper getPostProcessorHelper() {
+    public CamelPostProcessorHelper getPostProcessorHelper() {
         if (camelPostProcessorHelper == null) {
             camelPostProcessorHelper = new CamelPostProcessorHelper(getOrLookupCamelContext());
         }
@@ -178,7 +178,7 @@ public class DefaultCamelBeanPostProcessor {
         });
     }
 
-    protected void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
+    public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
                                Object bean, String beanName) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionValue(field.getType(), endpointUri, endpointRef, endpointProperty,
@@ -206,7 +206,7 @@ public class DefaultCamelBeanPostProcessor {
         }
     }
 
-    protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef, String endpointProperty) {
+    public void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef, String endpointProperty) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {

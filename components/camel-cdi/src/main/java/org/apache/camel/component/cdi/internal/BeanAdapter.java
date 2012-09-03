@@ -17,10 +17,15 @@
  */
 package org.apache.camel.component.cdi.internal;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.inject.spi.Bean;
+
+import org.apache.camel.Produce;
+import org.apache.camel.impl.CamelPostProcessorHelper;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 
 /**
  * Contains the bean and the consume methods
@@ -28,6 +33,8 @@ import javax.enterprise.inject.spi.Bean;
 public class BeanAdapter {
     private final Bean<?> bean;
     private final List<Method> consumeMethods = new ArrayList<Method>();
+    private final List<Method> produceMethods = new ArrayList<Method>();
+    private final List<Field> produceFields = new ArrayList<Field>();
 
     public BeanAdapter(Bean<?> bean) {
         this.bean = bean;
@@ -41,7 +48,50 @@ public class BeanAdapter {
         return consumeMethods;
     }
 
+    public List<Method> getProduceMethods() {
+        return produceMethods;
+    }
+
+    public List<Field> getProduceFields() {
+        return produceFields;
+    }
+
     public void addConsumeMethod(Method method) {
         consumeMethods.add(method);
     }
+
+    public void addProduceMethod(Method method) {
+        produceMethods.add(method);
+    }
+
+    public void addProduceField(Field field) {
+        produceFields.add(field);
+    }
+
+    /**
+     * Perform processing of the various @Consume, @Produce methods on the given bean reference
+     */
+    public void initialiseBean(DefaultCamelBeanPostProcessor postProcessor, Object reference,
+                               String beanName) {
+        CamelPostProcessorHelper postProcessorHelper = postProcessor.getPostProcessorHelper();
+        for (Method method : consumeMethods) {
+            postProcessorHelper.consumerInjection(method, reference, beanName);
+        }
+        for (Method method : produceMethods) {
+            Produce produce = method.getAnnotation(Produce.class);
+            if (produce != null && postProcessorHelper.matchContext(produce.context())) {
+                postProcessor.setterInjection(method, bean, beanName, produce.uri(), produce.ref(),
+                        produce.property());
+
+            }
+        }
+        for (Field field : produceFields) {
+            Produce produce = field.getAnnotation(Produce.class);
+            if (produce != null && postProcessorHelper.matchContext(produce.context())) {
+                postProcessor.injectField(field, produce.uri(), produce.ref(),
+                        produce.property(), reference, beanName);
+            }
+        }
+    }
+
 }
