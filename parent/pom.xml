@@ -87,6 +87,9 @@
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.1.2</geronimo-servlet-spec-version>
+    <geronimo-atinject-1.0-spec.version>1.0</geronimo-atinject-1.0-spec.version>
+    <geronimo-jcdi-1.0-spec.version>1.0</geronimo-jcdi-1.0-spec.version>
+    <geronimo-interceptor-1.1-spec.version>1.0</geronimo-interceptor-1.1-spec.version>
     <google-app-engine-version>1.6.6</google-app-engine-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-guava-version>13.0.1</google-guava-version>
