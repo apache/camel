@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -35,6 +37,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessBean;
 import javax.enterprise.inject.spi.ProcessInjectionTarget;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -59,7 +62,10 @@ public class CamelExtension implements Extension {
     private CamelContext camelContext;
     private DefaultCamelBeanPostProcessor postProcessor;
 
-    private Map<Bean<?>, BeanAdapter> beanAdapters = new HashMap<Bean<?>, BeanAdapter>();
+    private Map<Bean<?>, BeanAdapter> eagerBeans = new HashMap<Bean<?>, BeanAdapter>();
+
+    public CamelExtension() {
+    }
 
     /**
      * Process camel context aware bean definitions.
@@ -128,30 +134,48 @@ public class CamelExtension implements Extension {
      */
     public void detectConsumeBeans(@Observes ProcessBean<?> event) {
         final Bean<?> bean = event.getBean();
-        ReflectionHelper.doWithMethods(bean.getBeanClass(), new ReflectionHelper.MethodCallback() {
+        Class<?> beanClass = bean.getBeanClass();
+        ReflectionHelper.doWithMethods(beanClass, new ReflectionHelper.MethodCallback() {
             @Override
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
                 Consume consume = method.getAnnotation(Consume.class);
                 if (consume != null) {
-                    BeanAdapter beanAdapter = getBeanAdapter(bean);
-                    beanAdapter.addConsumeMethod(method);
+                    eagerlyCreate(bean);
                 }
             }
         });
+
+        // lets force singletons and application scoped objects
+        // to be created eagerly to ensure they startup
+        if (eagerlyCreateSingletonsOnStartup() &&
+                isApplicationScopeOrSingleton(beanClass) &&
+                beanClass.getAnnotation(Startup.class) != null) {
+            eagerlyCreate(bean);
+        }
     }
+
+    /**
+     * Should we eagerly startup @Singleton and @ApplicationScoped beans annotated with @Startup?
+     * Defaults to true which enables us to start camel contexts on startup
+     */
+    protected boolean eagerlyCreateSingletonsOnStartup() {
+        return true;
+    }
+
 
     /**
      * Lets force the CDI container to create all beans annotated with @Consume so that the consumer becomes active
      */
     public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        Set<Map.Entry<Bean<?>, BeanAdapter>> entries = beanAdapters.entrySet();
+        Set<Map.Entry<Bean<?>, BeanAdapter>> entries = eagerBeans.entrySet();
         for (Map.Entry<Bean<?>, BeanAdapter> entry : entries) {
             Bean<?> bean = entry.getKey();
             BeanAdapter adapter = entry.getValue();
             CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
 
-            Object reference = beanManager.getReference(bean, Object.class, creationalContext);
+            // force lazy creation
+            beanManager.getReference(bean, Object.class, creationalContext);
         }
     }
 
@@ -159,6 +183,7 @@ public class CamelExtension implements Extension {
     /**
      * Lets perform injection of all beans which use Camel annotations
      */
+    @SuppressWarnings("unchecked")
     public void onInjectionTarget(@Observes ProcessInjectionTarget event) {
         final InjectionTarget injectionTarget = event.getInjectionTarget();
         final Class beanClass = event.getAnnotatedType().getJavaClass();
@@ -237,11 +262,11 @@ public class CamelExtension implements Extension {
         return postProcessor;
     }
 
-    protected BeanAdapter getBeanAdapter(Bean<?> bean) {
-        BeanAdapter beanAdapter = beanAdapters.get(bean);
+    protected BeanAdapter eagerlyCreate(Bean<?> bean) {
+        BeanAdapter beanAdapter = eagerBeans.get(bean);
         if (beanAdapter == null) {
             beanAdapter = new BeanAdapter();
-            beanAdapters.put(bean, beanAdapter);
+            eagerBeans.put(bean, beanAdapter);
         }
         return beanAdapter;
     }
@@ -259,5 +284,12 @@ public class CamelExtension implements Extension {
      */
     protected static boolean injectAnnotatedField(Field field) {
         return field.getAnnotation(Inject.class) != null;
+    }
+
+    /**
+     * Returns true for singletons or application scoped beans
+     */
+    private boolean isApplicationScopeOrSingleton(Class<?> aClass) {
+        return aClass.getAnnotation(Singleton.class) != null || aClass.getAnnotation(ApplicationScoped.class) != null;
     }
 }

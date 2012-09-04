@@ -33,8 +33,8 @@ import org.apache.camel.cdi.Uri;
 /**
  * Configures all our Camel components, endpoints and beans and create the Camel routes
  */
-@Startup
 @ApplicationScoped
+@Startup
 public class MyRouteConfig {
 
     @Inject
@@ -82,7 +82,6 @@ public class MyRouteConfig {
      */
     @PostConstruct
     public void start() throws Exception {
-        System.out.println("======= Starting MyRouteConfig!!");
         camelContext.addRoutes(createRoutes());
     }
 

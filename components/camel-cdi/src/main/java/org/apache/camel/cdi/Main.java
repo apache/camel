@@ -41,6 +41,7 @@ public class Main extends MainSupport {
     private JAXBContext jaxbContext;
     private CdiContainer cdiContainer;
 
+
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
@@ -126,6 +127,8 @@ public class Main extends MainSupport {
     protected void doStart() throws Exception {
         cdiContainer = CdiContainerLoader.getCdiContainer();
         cdiContainer.boot();
+        cdiContainer.getContextControl().startContexts();
+
         super.doStart();
     }
 

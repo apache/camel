@@ -79,6 +79,7 @@
     <fop-version>1.0</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
     <freemarker-version>2.3.19</freemarker-version>
+    <geronimo-ejb_3.1_spec.version>1.0.2</geronimo-ejb_3.1_spec.version>
     <geronimo-el-spec-version>1.0.1</geronimo-el-spec-version>
     <geronimo-j2ee-connector-spec-version>2.0.0</geronimo-j2ee-connector-spec-version>
     <geronimo-j2ee-jacc-spec-version>1.1</geronimo-j2ee-jacc-spec-version>
