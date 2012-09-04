@@ -147,9 +147,7 @@ public class CamelExtension implements Extension {
 
         // lets force singletons and application scoped objects
         // to be created eagerly to ensure they startup
-        if (eagerlyCreateSingletonsOnStartup() &&
-                isApplicationScopeOrSingleton(beanClass) &&
-                beanClass.getAnnotation(Startup.class) != null) {
+        if (eagerlyCreateSingletonsOnStartup() && isApplicationScopeOrSingleton(beanClass) && beanClass.getAnnotation(Startup.class) != null) {
             eagerlyCreate(bean);
         }
     }
@@ -171,7 +169,6 @@ public class CamelExtension implements Extension {
         Set<Map.Entry<Bean<?>, BeanAdapter>> entries = eagerBeans.entrySet();
         for (Map.Entry<Bean<?>, BeanAdapter> entry : entries) {
             Bean<?> bean = entry.getKey();
-            BeanAdapter adapter = entry.getValue();
             CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
 
             // force lazy creation
@@ -183,10 +180,9 @@ public class CamelExtension implements Extension {
     /**
      * Lets perform injection of all beans which use Camel annotations
      */
-    @SuppressWarnings("unchecked")
-    public void onInjectionTarget(@Observes ProcessInjectionTarget event) {
-        final InjectionTarget injectionTarget = event.getInjectionTarget();
-        final Class beanClass = event.getAnnotatedType().getJavaClass();
+    public void onInjectionTarget(@Observes ProcessInjectionTarget<Object> event) {
+        final InjectionTarget<Object> injectionTarget = event.getInjectionTarget();
+        final Class<?> beanClass = event.getAnnotatedType().getJavaClass();
         // TODO this is a bit of a hack - what should the bean name be?
         final String beanName = event.getInjectionTarget().toString();
         final BeanAdapter adapter = createBeanAdapter(beanClass);
@@ -220,7 +216,7 @@ public class CamelExtension implements Extension {
         }
     }
 
-    private BeanAdapter createBeanAdapter(Class beanClass) {
+    private BeanAdapter createBeanAdapter(Class<?> beanClass) {
         final BeanAdapter adapter = new BeanAdapter();
         ReflectionHelper.doWithFields(beanClass, new ReflectionHelper.FieldCallback() {
             @Override

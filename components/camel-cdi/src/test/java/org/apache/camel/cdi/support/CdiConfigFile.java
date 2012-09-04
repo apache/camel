@@ -18,11 +18,13 @@ package org.apache.camel.cdi.support;
 
 import org.apache.deltaspike.core.api.config.PropertyFileConfig;
 
-/*
+/**
  * Class which is used to retrieve camel properties files tp configure endpoints.
  * By default, it will check for the file META-INF/camel-properties
  */
 public class CdiConfigFile implements PropertyFileConfig {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     public String getPropertyFileName() {

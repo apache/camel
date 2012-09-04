@@ -16,20 +16,24 @@
  */
 package org.apache.camel.cdi;
 
-import org.apache.camel.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.store.Item;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.deltaspike.core.api.config.annotation.ConfigProperty;
 import org.junit.Test;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-
 public class EndpointDefinedUsingConfigPropertyTest extends CdiContextTestSupport {
 
-    @Inject @ConfigProperty(name="directEndpoint")
+    @Inject @ConfigProperty(name = "directEndpoint")
     String directInjectEndpoint;
 
     @EndpointInject(uri = "mock:result")

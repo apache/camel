@@ -24,10 +24,10 @@ import javax.enterprise.inject.spi.InjectionTarget;
 /**
  * A helper class for creating delegate implementations of {@link InjectionTarget}
  */
-public abstract class DelegateInjectionTarget implements InjectionTarget {
-    private final InjectionTarget delegate;
+public abstract class DelegateInjectionTarget implements InjectionTarget<Object> {
+    private final InjectionTarget<Object> delegate;
 
-    public DelegateInjectionTarget(InjectionTarget delegate) {
+    public DelegateInjectionTarget(InjectionTarget<Object> delegate) {
         this.delegate = delegate;
     }
 
@@ -42,7 +42,7 @@ public abstract class DelegateInjectionTarget implements InjectionTarget {
     }
 
     @Override
-    public void inject(Object instance, CreationalContext ctx) {
+    public void inject(Object instance, CreationalContext<Object> ctx) {
         delegate.inject(instance, ctx);
     }
 
@@ -57,7 +57,7 @@ public abstract class DelegateInjectionTarget implements InjectionTarget {
     }
 
     @Override
-    public Object produce(CreationalContext creationalContext) {
+    public Object produce(CreationalContext<Object> creationalContext) {
         return delegate.produce(creationalContext);
     }
 }
