@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -37,7 +36,6 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessBean;
 import javax.enterprise.inject.spi.ProcessInjectionTarget;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -274,10 +272,4 @@ public class CamelExtension implements Extension {
         return field.getAnnotation(Inject.class) != null;
     }
 
-    /**
-     * Returns true for singletons or application scoped beans
-     */
-    protected boolean isApplicationScopeOrSingleton(Class<?> aClass) {
-        return aClass.getAnnotation(Singleton.class) != null || aClass.getAnnotation(ApplicationScoped.class) != null;
-    }
 }
