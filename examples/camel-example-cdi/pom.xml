@@ -93,8 +93,24 @@
                 <artifactId>camel-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <duration>5s</duration>
+                  <useCDI>true</useCDI>
+<!--
+                  <duration>5s</duration>
+-->
                 </configuration>
+                <dependencies>
+                  <!-- lets use deltaspike & weld -->
+                  <dependency>
+                      <groupId>org.apache.deltaspike.cdictrl</groupId>
+                      <artifactId>deltaspike-cdictrl-weld</artifactId>
+                      <version>${deltaspike-version}</version>
+                  </dependency>
+                  <dependency>
+                      <groupId>org.jboss.weld.se</groupId>
+                      <artifactId>weld-se-core</artifactId>
+                      <version>${weld-version}</version>
+                  </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

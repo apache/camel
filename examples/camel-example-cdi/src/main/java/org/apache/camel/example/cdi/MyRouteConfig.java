@@ -18,6 +18,8 @@
 package org.apache.camel.example.cdi;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,19 +33,21 @@ import org.apache.camel.cdi.Uri;
 /**
  * Configures all our Camel components, endpoints and beans and create the Camel routes
  */
+@Startup
+@ApplicationScoped
 public class MyRouteConfig {
 
     @Inject
-    public CamelContext camelContext;
+    private CamelContext camelContext;
 
     @Inject
     //@Uri("activemq:test.MyQueue")
     @Uri("file://target/testdata/queue")
-    public Endpoint queueEndpoint;
+    private Endpoint queueEndpoint;
 
     @Inject
     @Uri("file://target/testdata/result?noop=true")
-    public Endpoint resultEndpoint;
+    private Endpoint resultEndpoint;
 
     @Produces
     public RouteBuilder createRoutes() {
@@ -78,6 +82,11 @@ public class MyRouteConfig {
      */
     @PostConstruct
     public void start() throws Exception {
+        System.out.println("======= Starting MyRouteConfig!!");
         camelContext.addRoutes(createRoutes());
+    }
+
+    public Endpoint getResultEndpoint() {
+        return resultEndpoint;
     }
 }

@@ -122,6 +122,14 @@ public class RunMojo extends AbstractExecMojo {
     protected boolean useBlueprint;
 
     /**
+     * Whether to use CDI when running, instead of Spring
+     *
+     * @parameter expression="${camel.cdi}"
+     *            default-value="false"
+     */
+    protected boolean useCDI;
+
+    /**
      * @component
      */
     private ArtifactResolver artifactResolver;
@@ -350,6 +358,7 @@ public class RunMojo extends AbstractExecMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         boolean usingSpringJavaConfigureMain = false;
+        boolean useCdiMain = useCDI;
         boolean usingBlueprintMain = useBlueprint;
         if (killAfter != -1) {
             getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
@@ -400,6 +409,11 @@ public class RunMojo extends AbstractExecMojo {
         if (usingSpringJavaConfigureMain) {
             mainClass = "org.apache.camel.spring.javaconfig.Main";
             getLog().info("Using org.apache.camel.spring.javaconfig.Main to initiate a CamelContext");
+        } else if (useCdiMain) {
+            mainClass = "org.apache.camel.cdi.Main";
+            // must include plugin dependencies for blueprint
+            includePluginDependencies = true;
+            getLog().info("Using " + mainClass + " to initiate a CamelContext");
         } else if (usingBlueprintMain) {
             mainClass = "org.apache.camel.test.blueprint.Main";
             // must include plugin dependencies for blueprint

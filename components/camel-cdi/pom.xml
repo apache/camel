@@ -34,10 +34,6 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.cdi.*</camel.osgi.export.pkg>
-        <deltaspike-version>0.3-incubating</deltaspike-version>
-        <!-- these properties should be in-sync with deltaspike -->
-        <owb-version>1.1.5</owb-version>
-        <weld-version>1.1.5.Final</weld-version>
         <camel.osgi.import>
             !org.apache.camel.component.cdi.*,
             org.apache.deltaspike.core.api.*;resolution:=optional,
@@ -69,6 +65,13 @@
             <version>${deltaspike-version}</version>
         </dependency>
 
+        <!-- only required for the Main -->
+        <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-api</artifactId>
+            <version>${deltaspike-version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>
@@ -94,12 +97,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.deltaspike.cdictrl</groupId>
-            <artifactId>deltaspike-cdictrl-api</artifactId>
-            <version>${deltaspike-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -139,13 +136,13 @@
                 <dependency>
                     <groupId>org.apache.openwebbeans</groupId>
                     <artifactId>openwebbeans-impl</artifactId>
-                    <version>${owb-version}</version>
+                    <version>${openwebbeans-version}</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.apache.openwebbeans</groupId>
                     <artifactId>openwebbeans-spi</artifactId>
-                    <version>${owb-version}</version>
+                    <version>${openwebbeans-version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>

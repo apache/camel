@@ -48,6 +48,12 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-blueprint</artifactId>
     </dependency>
+    <!-- camel-cdi has Main class for running CDI -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cdi</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.codehaus.mojo</groupId>
       <artifactId>exec-maven-plugin</artifactId>

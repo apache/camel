@@ -54,7 +54,7 @@ public class IntegrationTest {
     public RouteBuilder createRoutes() {
         return new RouteBuilder() {
             public void configure() {
-                from(config.resultEndpoint).to(result);
+                from(config.getResultEndpoint()).to(result);
             }
         };
     }
