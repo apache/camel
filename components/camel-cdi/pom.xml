@@ -51,14 +51,21 @@
 
     <dependencies>
 
-        <dependency>
+        <!-- Camel -->
+       <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
 
+        <!-- DeltaSpike -->
         <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
             <artifactId>deltaspike-core-api</artifactId>
+            <version>${deltaspike-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-impl</artifactId>
             <version>${deltaspike-version}</version>
         </dependency>
 

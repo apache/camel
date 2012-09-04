@@ -19,6 +19,7 @@ package org.apache.camel.cdi;
 import java.util.logging.LogManager;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.component.cdi.internal.CamelExtension;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.deltaspike.cdise.api.CdiContainer;
@@ -66,7 +67,7 @@ public abstract class CdiContextTestSupport extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return BeanProvider.getContextualReference(CamelContext.class);
+        return BeanProvider.getContextualReference(CdiCamelContext.class);
     }
 
     @Override
