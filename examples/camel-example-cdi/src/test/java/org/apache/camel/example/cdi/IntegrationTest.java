@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  */
@@ -40,7 +41,7 @@ import static org.junit.Assert.assertNotNull;
 public class IntegrationTest {
 
     @Inject
-    MyRouteConfig config;
+    MyRoutes config;
 
     @Inject
     CamelContext camelContext;
@@ -61,6 +62,8 @@ public class IntegrationTest {
     @Test
     public void integrationTest() throws Exception {
         assertNotNull("CamelContext not injected!", camelContext);
+        assertTrue("CamelContext is started", camelContext.getStatus().isStarted());
+
         assertNotNull("config not injected!", config);
         assertNotNull("MockEndpoint result not injected!", result);
 
@@ -77,7 +80,7 @@ public class IntegrationTest {
     public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class)
                 .addPackage(CamelExtension.class.getPackage())
-                .addPackage(MyRouteConfig.class.getPackage())
+                .addPackage(MyRoutes.class.getPackage())
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 }

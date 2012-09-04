@@ -79,11 +79,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-ejb_3.1_spec</artifactId>
-            <version>${geronimo-ejb_3.1_spec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jcdi_1.0_spec</artifactId>
             <version>${geronimo-jcdi-1.0-spec.version}</version>
         </dependency>

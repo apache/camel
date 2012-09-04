@@ -19,17 +19,23 @@ package org.apache.camel.component.cdi.internal;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cdi.CdiCamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.deltaspike.core.api.literal.AnyLiteral;
 import org.apache.deltaspike.core.api.literal.DefaultLiteral;
 
@@ -39,10 +45,23 @@ import org.apache.deltaspike.core.api.literal.DefaultLiteral;
 @SuppressWarnings("unchecked")
 public class CamelContextBean implements Bean<CdiCamelContext> {
 
+    private final BeanManager beanManager;
+    private final String name;
+    private final String camelContextName;
+    private final List<Bean<?>> routeBuilderBeans;
     private final InjectionTarget<CdiCamelContext> target;
 
-    public CamelContextBean(InjectionTarget<CdiCamelContext> injectionTarget) {
-        this.target = injectionTarget;
+    public CamelContextBean(BeanManager beanManager) {
+        this(beanManager, "CamelContext", "", Collections.EMPTY_LIST);
+    }
+
+    public CamelContextBean(BeanManager beanManager, String name, String camelContextName,
+                            List<Bean<?>> routeBuilderBeans) {
+        this.beanManager = beanManager;
+        this.name = name;
+        this.camelContextName = camelContextName;
+        this.routeBuilderBeans = routeBuilderBeans;
+        this.target = beanManager.createInjectionTarget(beanManager.createAnnotatedType(CdiCamelContext.class));
     }
 
     @Override
@@ -77,7 +96,7 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
 
     @Override
     public String getName() {
-        return "CamelContext";
+        return name;
     }
 
     @Override
@@ -105,4 +124,29 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
         return false;
     }
 
+    public String getCamelContextName() {
+        return camelContextName;
+    }
+
+    protected void configureCamelContext(CdiCamelContext camelContext) {
+        if (ObjectHelper.isNotEmpty(camelContextName)) {
+            camelContext.setName(camelContextName);
+        }
+        for (Bean<?> bean : routeBuilderBeans) {
+            CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
+            RouteBuilder routeBuilder = (RouteBuilder)beanManager.getReference(bean, RouteBuilder.class, creationalContext);
+            try {
+                camelContext.addRoutes(routeBuilder);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Could not add route builder " + routeBuilder + ". Reason: " + e, e);
+            }
+        }
+    }
+
+    public CdiCamelContext configure() {
+        CreationalContext<CdiCamelContext> creationalContext = beanManager.createCreationalContext(this);
+        CdiCamelContext cdiCamelContext = create(creationalContext);
+        configureCamelContext(cdiCamelContext);
+        return cdiCamelContext;
+    }
 }

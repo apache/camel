@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cdi;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -51,4 +53,15 @@ public class CdiCamelContext extends DefaultCamelContext {
         return !instance.isUnsatisfied() && !instance.isAmbiguous();
     }
 
+    @PostConstruct
+    @Override
+    public void start() throws Exception {
+        super.start();
+    }
+
+    @PreDestroy
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+    }
 }

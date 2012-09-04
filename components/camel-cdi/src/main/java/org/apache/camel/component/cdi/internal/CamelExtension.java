@@ -18,10 +18,11 @@ package org.apache.camel.component.cdi.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
@@ -30,7 +31,6 @@ import javax.enterprise.inject.spi.AfterDeploymentValidation;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
@@ -44,9 +44,10 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CamelStartup;
 import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
@@ -56,13 +57,10 @@ import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
  */
 public class CamelExtension implements Extension {
 
-    /**
-     * Context instance.
-     */
-    private CamelContext camelContext;
-    private DefaultCamelBeanPostProcessor postProcessor;
-
     private Map<Bean<?>, BeanAdapter> eagerBeans = new HashMap<Bean<?>, BeanAdapter>();
+    private Map<String, List<Bean<?>>> namedCamelContexts = new HashMap<String, List<Bean<?>>>();
+    private List<CamelContextBean> camelContextBeans = new ArrayList<CamelContextBean>();
+    private Map<String, CamelContext> camelContexts = new HashMap<String, CamelContext>();
 
     public CamelExtension() {
     }
@@ -103,34 +101,25 @@ public class CamelExtension implements Extension {
      * @param manager Bean manager.
      */
     protected void registerManagedCamelContext(@Observes AfterBeanDiscovery abd, BeanManager manager) {
-        abd.addBean(new CamelContextBean(
-                manager.createInjectionTarget(manager.createAnnotatedType(CdiCamelContext.class))));
-    }
-
-    /**
-     * Start up camel context.
-     *
-     * @param adv After deployment validation event.
-     * @throws Exception In case of failures.
-     */
-    protected void validate(@Observes AfterDeploymentValidation adv) throws Exception {
-        getCamelContext().start();
-    }
-
-    /**
-     * Shutdown camel context.
-     *
-     * @param bsd Shutdown event.
-     * @throws Exception In case of failures.
-     */
-    protected void shutdown(@Observes BeforeShutdown bsd) throws Exception {
-        if (camelContext != null) {
-            camelContext.stop();
+        // lets ensure we have at least one camel context
+        if (namedCamelContexts.isEmpty()) {
+            abd.addBean(new CamelContextBean(manager));
+        } else {
+            Set<Map.Entry<String, List<Bean<?>>>> entries = namedCamelContexts.entrySet();
+            for (Map.Entry<String, List<Bean<?>>> entry : entries) {
+                String name = entry.getKey();
+                List<Bean<?>> beans = entry.getValue();
+                CamelContextBean camelContextBean = new CamelContextBean(manager, "CamelContext:" + name, name, beans);
+                camelContextBeans.add(camelContextBean);
+                abd.addBean(camelContextBean);
+            }
         }
     }
 
     /**
-     * Lets detect all beans annotated with @Consume
+     * Lets detect all beans annotated with @Consume and
+     * beans of type {@link RouteBuilder} which are annotated with {@link org.apache.camel.cdi.CamelStartup}
+     * so they can be auto-registered
      */
     public void detectConsumeBeans(@Observes ProcessBean<?> event) {
         final Bean<?> bean = event.getBean();
@@ -145,30 +134,38 @@ public class CamelExtension implements Extension {
             }
         });
 
-        // lets force singletons and application scoped objects
-        // to be created eagerly to ensure they startup
-        if (eagerlyCreateSingletonsOnStartup() && isApplicationScopeOrSingleton(beanClass) && beanClass.getAnnotation(Startup.class) != null) {
-            eagerlyCreate(bean);
+        // detect all RouteBuilder instances
+        if (RouteBuilder.class.isAssignableFrom(beanClass)) {
+            CamelStartup annotation = beanClass.getAnnotation(CamelStartup.class);
+            if (annotation != null) {
+                String contextName = annotation.contextName();
+                List<Bean<?>> beans = namedCamelContexts.get(contextName);
+                if (beans == null) {
+                    beans = new ArrayList<Bean<?>>();
+                    namedCamelContexts.put(contextName, beans);
+                }
+                beans.add(bean);
+            }
         }
     }
 
     /**
-     * Should we eagerly startup @Singleton and @ApplicationScoped beans annotated with @Startup?
-     * Defaults to true which enables us to start camel contexts on startup
-     */
-    protected boolean eagerlyCreateSingletonsOnStartup() {
-        return true;
-    }
-
-
-    /**
      * Lets force the CDI container to create all beans annotated with @Consume so that the consumer becomes active
      */
-    public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
-        ObjectHelper.notNull(getCamelContext(), "camelContext");
+    public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) throws Exception {
+        if (camelContextBeans.isEmpty()) {
+            CamelContext camelContext = BeanProvider.getContextualReference(CamelContext.class);
+            camelContexts.put("", camelContext);
+        }
+        for (CamelContextBean camelContextBean : camelContextBeans) {
+            CdiCamelContext context = camelContextBean.configure();
+            camelContexts.put(camelContextBean.getCamelContextName(), context);
+        }
+
         Set<Map.Entry<Bean<?>, BeanAdapter>> entries = eagerBeans.entrySet();
         for (Map.Entry<Bean<?>, BeanAdapter> entry : entries) {
             Bean<?> bean = entry.getKey();
+            BeanAdapter adapter = entry.getValue();
             CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
 
             // force lazy creation
@@ -180,9 +177,10 @@ public class CamelExtension implements Extension {
     /**
      * Lets perform injection of all beans which use Camel annotations
      */
-    public void onInjectionTarget(@Observes ProcessInjectionTarget<Object> event) {
-        final InjectionTarget<Object> injectionTarget = event.getInjectionTarget();
-        final Class<?> beanClass = event.getAnnotatedType().getJavaClass();
+    @SuppressWarnings("unchecked")
+    public void onInjectionTarget(@Observes ProcessInjectionTarget event) {
+        final InjectionTarget injectionTarget = event.getInjectionTarget();
+        final Class beanClass = event.getAnnotatedType().getJavaClass();
         // TODO this is a bit of a hack - what should the bean name be?
         final String beanName = event.getInjectionTarget().toString();
         final BeanAdapter adapter = createBeanAdapter(beanClass);
@@ -194,7 +192,7 @@ public class CamelExtension implements Extension {
                     super.postConstruct(instance);
 
                     // now lets do the post instruct to inject our Camel injections
-                    adapter.inject(getPostProcessor(), instance, beanName);
+                    adapter.inject(CamelExtension.this, instance, beanName);
                 }
             };
             event.setInjectionTarget(newTarget);
@@ -212,11 +210,11 @@ public class CamelExtension implements Extension {
         if (!adapter.isEmpty()) {
             // TODO this is a bit of a hack - what should the bean name be?
             final String beanName = bean.toString();
-            adapter.inject(getPostProcessor(), bean, beanName);
+            adapter.inject(this, bean, beanName);
         }
     }
 
-    private BeanAdapter createBeanAdapter(Class<?> beanClass) {
+    private BeanAdapter createBeanAdapter(Class beanClass) {
         final BeanAdapter adapter = new BeanAdapter();
         ReflectionHelper.doWithFields(beanClass, new ReflectionHelper.FieldCallback() {
             @Override
@@ -251,11 +249,13 @@ public class CamelExtension implements Extension {
         return adapter;
     }
 
-    protected DefaultCamelBeanPostProcessor getPostProcessor() {
-        if (postProcessor == null) {
-            postProcessor = new DefaultCamelBeanPostProcessor(getCamelContext());
+    protected DefaultCamelBeanPostProcessor getPostProcessor(String context) {
+        CamelContext camelContext = camelContexts.get(context);
+        if (camelContext != null) {
+            return new DefaultCamelBeanPostProcessor(camelContext);
+        } else {
+            throw new IllegalArgumentException("No such CamelContext '" + context + "' available!");
         }
-        return postProcessor;
     }
 
     protected BeanAdapter eagerlyCreate(Bean<?> bean) {
@@ -267,14 +267,6 @@ public class CamelExtension implements Extension {
         return beanAdapter;
     }
 
-    public CamelContext getCamelContext() {
-        if (camelContext == null) {
-            camelContext = BeanProvider.getContextualReference(CamelContext.class);
-        }
-        return camelContext;
-    }
-
-
     /**
      * Returns true if this field is annotated with @Inject
      */
@@ -285,7 +277,7 @@ public class CamelExtension implements Extension {
     /**
      * Returns true for singletons or application scoped beans
      */
-    private boolean isApplicationScopeOrSingleton(Class<?> aClass) {
+    protected boolean isApplicationScopeOrSingleton(Class<?> aClass) {
         return aClass.getAnnotation(Singleton.class) != null || aClass.getAnnotation(ApplicationScoped.class) != null;
     }
 }

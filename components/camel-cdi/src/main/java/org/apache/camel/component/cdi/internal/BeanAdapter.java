@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.impl.CamelPostProcessorHelper;
@@ -67,38 +68,61 @@ public class BeanAdapter {
     /**
      * Perform injections
      */
-    public void inject(DefaultCamelBeanPostProcessor postProcessor, Object reference,
+    public void inject(CamelExtension camelExtension, Object reference,
                                 String beanName) {
-        CamelPostProcessorHelper postProcessorHelper = postProcessor.getPostProcessorHelper();
         for (Method method : consumeMethods) {
-            postProcessorHelper.consumerInjection(method, reference, beanName);
+            Consume consume = method.getAnnotation(Consume.class);
+            if (consume != null) {
+                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
+                        consume.context());
+                if (postProcessor != null) {
+                    postProcessor.getPostProcessorHelper().consumerInjection(method, reference, beanName);
+                }
+            }
         }
         for (Method method : produceMethods) {
             Produce annotation = method.getAnnotation(Produce.class);
-            if (annotation != null && postProcessorHelper.matchContext(annotation.context())) {
-                postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
-                        annotation.property());
-
+            if (annotation != null) {
+                String contextName = annotation.context();
+                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
+                        contextName);
+                if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
+                    postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
+                            annotation.property());
+                }
             }
         }
         for (Method method : endpointMethods) {
             EndpointInject annotation = method.getAnnotation(EndpointInject.class);
-            if (annotation != null && postProcessorHelper.matchContext(annotation.context())) {
-                postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
-                        annotation.property());
+            if (annotation != null) {
+                String contextName = annotation.context();
+                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
+                        contextName);
+                if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
+                    postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
+                            annotation.property());
 
+                }
             }
         }
         for (Field field : produceFields) {
             Produce annotation = field.getAnnotation(Produce.class);
-            if (annotation != null && postProcessorHelper.matchContext(annotation.context())) {
-                postProcessor.injectField(field, annotation.uri(), annotation.ref(),
-                        annotation.property(), reference, beanName);
+            if (annotation != null) {
+                String contextName = annotation.context();
+                DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
+                        contextName);
+                if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
+                    postProcessor.injectField(field, annotation.uri(), annotation.ref(),
+                            annotation.property(), reference, beanName);
+                }
             }
         }
         for (Field field : endpointFields) {
             EndpointInject annotation = field.getAnnotation(EndpointInject.class);
-            if (annotation != null && postProcessorHelper.matchContext(annotation.context())) {
+            String contextName = annotation.context();
+            DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
+                    contextName);
+            if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                 postProcessor.injectField(field, annotation.uri(), annotation.ref(),
                         annotation.property(), reference, beanName);
             }
