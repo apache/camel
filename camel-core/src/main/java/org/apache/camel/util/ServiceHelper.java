@@ -340,5 +340,20 @@ public final class ServiceHelper {
         }
         return false;
     }
+    
+    /**
+     * Is the given service suspended
+     *
+     * @return <tt>true</tt> if already suspended, otherwise <tt>false</tt>
+     */
+    public static boolean isSuspended(Object value) {
+        if (value instanceof StatefulService) {
+            StatefulService service = (StatefulService) value;
+            if (service.isSuspended() || service.isSuspending()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
