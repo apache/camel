@@ -19,12 +19,13 @@ package org.apache.camel.component.solr;
 import java.io.File;
 import java.util.Arrays;
 import static junit.framework.Assert.assertEquals;
+
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
@@ -45,7 +46,7 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
     }
 
     private static JettySolrRunner solrRunner;
-    private static CommonsHttpSolrServer solrServer;
+    private static HttpSolrServer solrServer;
 
     @Produce(uri = "direct:direct-xml-start")
     protected ProducerTemplate directXmlRoute;
@@ -160,7 +161,7 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
         solrRunner = new JettySolrRunner("/solr", SolrComponentTestSupport.PORT);
         solrRunner.start();
 
-        solrServer = new CommonsHttpSolrServer("http://localhost:" + SolrComponentTestSupport.PORT + "/solr");
+        solrServer = new HttpSolrServer("http://localhost:" + SolrComponentTestSupport.PORT + "/solr");
     }
 
     @AfterClass
