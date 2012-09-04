@@ -16,18 +16,16 @@
  */
 package org.apache.camel.cdi.support;
 
-import javax.inject.Inject;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 
 public class CamelEndpointInjectedBean {
 
-    @EndpointInject(uri="direct:inject")
+    @EndpointInject(uri = "direct:inject")
     Endpoint endpoint;
 
-    @EndpointInject(uri="mock:result")
+    @EndpointInject(uri = "mock:result")
     MockEndpoint mockEndpoint;
 
     public Endpoint getEndpoint() {

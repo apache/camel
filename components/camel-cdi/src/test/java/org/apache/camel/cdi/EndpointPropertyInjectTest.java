@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import org.apache.camel.Endpoint;
 import org.apache.camel.cdi.support.EndpointUriPropertyInjectedBean;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

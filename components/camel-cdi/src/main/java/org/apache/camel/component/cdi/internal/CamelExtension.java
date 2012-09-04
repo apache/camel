@@ -68,7 +68,7 @@ public class CamelExtension implements Extension {
      * @throws Exception In case of exceptions.
      */
     protected void contextAwareness(@Observes ProcessAnnotatedType<CamelContextAware> process)
-            throws Exception {
+        throws Exception {
         AnnotatedType<CamelContextAware> annotatedType = process.getAnnotatedType();
         Class<CamelContextAware> javaClass = annotatedType.getJavaClass();
         if (CamelContextAware.class.isAssignableFrom(javaClass)) {

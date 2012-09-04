@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +20,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import javax.enterprise.inject.spi.Bean;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -42,8 +40,8 @@ public class BeanAdapter {
      * Returns true if this adapter is empty (i.e. has no custom adapter code)
      */
     public boolean isEmpty() {
-        return consumeMethods.isEmpty() && produceMethods.isEmpty() && produceFields.isEmpty() &&
-                endpointMethods.isEmpty() && endpointFields.isEmpty();
+        return consumeMethods.isEmpty() && produceMethods.isEmpty() && produceFields.isEmpty() 
+            && endpointMethods.isEmpty() && endpointFields.isEmpty();
     }
 
     public void addConsumeMethod(Method method) {

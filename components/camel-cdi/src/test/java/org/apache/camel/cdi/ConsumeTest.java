@@ -19,7 +19,6 @@ package org.apache.camel.cdi;
 import javax.inject.Inject;
 
 import org.apache.camel.Consume;
-import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;

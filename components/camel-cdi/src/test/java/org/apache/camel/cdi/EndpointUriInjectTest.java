@@ -19,7 +19,6 @@ package org.apache.camel.cdi;
 import javax.inject.Inject;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.cdi.support.EndpointInjectedBean;
 import org.apache.camel.cdi.support.EndpointUriInjectedBean;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;

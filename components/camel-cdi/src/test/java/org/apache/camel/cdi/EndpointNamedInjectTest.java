@@ -20,8 +20,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.cdi.support.EndpointInjectedBean;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**

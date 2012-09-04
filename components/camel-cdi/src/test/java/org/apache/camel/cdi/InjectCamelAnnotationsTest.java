@@ -31,10 +31,10 @@ import org.junit.Test;
 
 public class InjectCamelAnnotationsTest extends CdiContextTestSupport {
 
-    @EndpointInject(uri="direct:inject")
+    @EndpointInject(uri = "direct:inject")
     Endpoint directInjectEndpoint;
 
-    @EndpointInject(uri="mock:result")
+    @EndpointInject(uri = "mock:result")
     MockEndpoint mockResultEndpoint;
 
     @Produce(uri = "direct:inject")

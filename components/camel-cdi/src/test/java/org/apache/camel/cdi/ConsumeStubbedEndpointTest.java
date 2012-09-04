@@ -16,15 +16,11 @@
  */
 package org.apache.camel.cdi;
 
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consume;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.stub.StubComponent;
 import org.junit.Test;
 
 /**

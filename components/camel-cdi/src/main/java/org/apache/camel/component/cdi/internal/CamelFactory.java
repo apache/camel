@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.Mock;
 import org.apache.camel.cdi.Uri;
@@ -51,7 +50,6 @@ public class CamelFactory {
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri, MockEndpoint.class);
     }
 
-    @SuppressWarnings("unchecked")
     @Produces
     @Uri("")
     public Endpoint createEndpoint(InjectionPoint point, BeanManager beanManager) {
