@@ -35,6 +35,7 @@
     <module>camel-example-aggregate</module>
     <module>camel-example-bam</module>
     <module>camel-example-cafe</module>
+    <module>camel-example-cdi</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
     <module>camel-example-cxf-osgi</module>
