@@ -40,7 +40,6 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
  * <p/>
  * The encoder is used for encoding from String to MLLP (bytes). The String should <b>not</b> contain
  * any of the start and end markers, the encoder will add these, and stream the string as bytes.
- * Also the enocder will convert any <tt>\n</tt> (line breaks) as segment terminators to <tt>\r</tt>.
  * <p/>
  * This codes supports charset encoding/decoding between bytes and String. The JVM platform default charset
  * is used, but the charset can be configued on this codec using the setter method.

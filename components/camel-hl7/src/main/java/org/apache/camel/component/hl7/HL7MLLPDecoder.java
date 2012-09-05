@@ -69,6 +69,9 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         try {
             String body = in.getString(state.length(), charsetDecoder(session));
             LOG.debug("Decoded HL7 from byte stream of length {} to String of length {}", state.length(), body.length());
+            if (config.isConvertLFtoCR()) {
+                body = body.replace('\n', '\r');
+            }
             out.write(body);
             // Avoid redelivery of scanned message
             state.reset();
@@ -79,7 +82,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
 
     private CharsetDecoder charsetDecoder(IoSession session) {
         // convert to string using the charset decoder
-        CharsetDecoder decoder = (CharsetDecoder)session.getAttribute(CHARSET_DECODER);
+        CharsetDecoder decoder = (CharsetDecoder) session.getAttribute(CHARSET_DECODER);
         if (decoder == null) {
             decoder = config.getCharset().newDecoder();
             session.setAttribute(CHARSET_DECODER, decoder);
@@ -90,7 +93,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
     /**
      * Scans the buffer for start and end bytes and stores its position in the
      * session state object.
-     * 
+     *
      * @return <code>true</code> if the end bytes were found, <code>false</code>
      *         otherwise
      */
@@ -122,7 +125,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
             // Check end byte2 
             if (b == config.getEndByte2() && state.waitingForEndByte2) {
                 state.posEnd = in.position() - 2; // use -2 to skip these
-                                                  // last 2 end markers
+                // last 2 end markers
                 state.waitingForEndByte2 = false;
                 LOG.debug("Message ends at position {}", state.posEnd);
                 break;
@@ -135,7 +138,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
     }
 
     private DecoderState decoderState(IoSession session) {
-        DecoderState decoderState = (DecoderState)session.getAttribute(DECODER_STATE);
+        DecoderState decoderState = (DecoderState) session.getAttribute(DECODER_STATE);
         if (decoderState == null) {
             decoderState = new DecoderState();
             session.setAttribute(DECODER_STATE, decoderState);

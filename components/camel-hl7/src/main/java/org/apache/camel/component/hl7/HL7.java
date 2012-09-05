@@ -18,12 +18,14 @@ package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.validation.ValidationContext;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.support.ExpressionAdapter;
 
 public final class HL7 {
-    
+
     private HL7() {
         // Helper class
     }
@@ -40,11 +42,25 @@ public final class HL7 {
         return new AckExpression(code);
     }
 
-    public static Expression ack(AckCode code, String errorMessage, int errorCode) {
+    public static Expression convertLFToCR() {
+        return new ExpressionAdapter() {
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String s = exchange.getIn().getBody(String.class);
+                return s != null ? s.replace('\n', '\r') : null;
+            }
+
+        };
+    }
+
+    public static Expression ack(AckCode code, String errorMessage,
+            int errorCode) {
         return new AckExpression(code, errorMessage, errorCode);
     }
 
-    public static Predicate messageConformsTo(ValidationContext validationContext) {
+    public static Predicate messageConformsTo(
+            ValidationContext validationContext) {
         return new ValidationContextPredicate(validationContext);
     }
 

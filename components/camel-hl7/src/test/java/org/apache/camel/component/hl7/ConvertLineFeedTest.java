@@ -16,39 +16,28 @@
  */
 package org.apache.camel.component.hl7;
 
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-import org.apache.camel.Converter;
+import static org.apache.camel.component.hl7.HL7.convertLFToCR;
 
-/**
- * HL7 converters.
- */
-@Converter
-public final class HL7Converter {
+public class ConvertLineFeedTest extends CamelTestSupport {
 
-    private HL7Converter() {
-        // Helper class
+    @Test
+    public void testConvertLineFeed() throws Exception {
+        String s = "line1\nline2\rline3";
+        String result = template.requestBody("direct:test1", s, String.class);
+        assertEquals("line1\rline2\rline3", result);
     }
 
-    @Converter
-    public static String toString(Message message) throws HL7Exception {
-        return encode(message, new PipeParser());
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:test1").transform(convertLFToCR());
+            }
+        };
     }
-
-    @Converter
-    public static Message toMessage(String body) throws HL7Exception {
-        return parse(body, new PipeParser());
-    }
-    
-    static Message parse(String body, Parser parser) throws HL7Exception {
-        return parser.parse(body);
-    }    
-    
-    static String encode(Message message, Parser parser) throws HL7Exception {
-        return parser.encode(message);
-    }    
 
 }

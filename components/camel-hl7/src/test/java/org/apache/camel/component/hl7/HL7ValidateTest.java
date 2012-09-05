@@ -100,19 +100,19 @@ public class HL7ValidateTest extends CamelTestSupport {
 
         StringBuilder body = new StringBuilder();
         body.append(line1);
-        body.append("\n");
+        body.append("\r");
         body.append(line2);
-        body.append("\n");
+        body.append("\r");
         body.append(line3);
-        body.append("\n");
+        body.append("\r");
         body.append(line4);
-        body.append("\n");
+        body.append("\r");
         body.append(line5);
-        body.append("\n");
+        body.append("\r");
         body.append(line6);
-        body.append("\n");
+        body.append("\r");
         body.append(line7);
-        body.append("\n");
+        body.append("\r");
         body.append(line8);
         return body.toString();
     }

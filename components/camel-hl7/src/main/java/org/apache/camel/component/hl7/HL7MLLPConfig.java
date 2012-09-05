@@ -26,7 +26,7 @@ class HL7MLLPConfig {
 
     private Charset charset = Charset.defaultCharset();
 
-    private boolean convertLFtoCR = true;
+    private boolean convertLFtoCR;
 
     // HL7 MLLP start and end markers
     private char startByte = 0x0b; // 11 decimal
