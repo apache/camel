@@ -19,7 +19,6 @@ package org.apache.camel.component.cdi;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.enterprise.inject.spi.Bean;
 
 import org.apache.camel.spi.Registry;

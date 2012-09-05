@@ -45,10 +45,12 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
+import org.apache.camel.model.RouteContainer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
@@ -158,7 +160,7 @@ public class CamelExtension implements Extension {
     public void detectRouteBuilderBeans(@Observes ProcessBean<?> event) {
         final Bean<?> bean = event.getBean();
         Class<?> beanClass = bean.getBeanClass();
-        if (RouteBuilder.class.isAssignableFrom(beanClass)) {
+        if (isRoutesBean(beanClass)) {
             addRouteBuilderBean(bean, beanClass.getAnnotation(ContextName.class));
         }
     }
@@ -183,7 +185,7 @@ public class CamelExtension implements Extension {
         Annotated annotated = event.getAnnotated();
         ContextName annotation = annotated.getAnnotation(ContextName.class);
         Class<?> returnType = event.getAnnotatedProducerMethod().getJavaMember().getReturnType();
-        if (RouteBuilder.class.isAssignableFrom(returnType)) {
+        if (isRoutesBean(returnType)) {
             addRouteBuilderBean(event.getBean(), annotation);
         }
     }
@@ -314,4 +316,7 @@ public class CamelExtension implements Extension {
         return field.getAnnotation(Inject.class) != null;
     }
 
+    protected boolean isRoutesBean(Class<?> returnType) {
+        return RoutesBuilder.class.isAssignableFrom(returnType) || RouteContainer.class.isAssignableFrom(returnType);
+    }
 }

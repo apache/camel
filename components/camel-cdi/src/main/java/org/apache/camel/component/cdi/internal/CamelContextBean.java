@@ -19,9 +19,7 @@ package org.apache.camel.component.cdi.internal;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
@@ -31,8 +29,6 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.deltaspike.core.api.literal.AnyLiteral;

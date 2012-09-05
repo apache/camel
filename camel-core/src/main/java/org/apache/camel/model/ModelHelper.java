@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
@@ -43,9 +44,7 @@ public final class ModelHelper {
      * @throws JAXBException is throw if error marshalling to XML
      */
     public static String dumpModelAsXml(NamedNode definition) throws JAXBException {
-        // create a new jaxb context
-        // must use classloader from CamelContext to have JAXB working
-        JAXBContext jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
+        JAXBContext jaxbContext = createJaxbContext();
 
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -64,10 +63,7 @@ public final class ModelHelper {
      * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling from xml to model
      */
     public static <T extends NamedNode> T createModelFromXml(String xml, Class<T> type) throws JAXBException {
-        // create a new jaxb context
-        // must use classloader from CamelContext to have JAXB working
-        JAXBContext jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
-
+        JAXBContext jaxbContext = createJaxbContext();
         StringReader reader = new StringReader(xml);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         Object result = unmarshaller.unmarshal(reader);
@@ -76,7 +72,26 @@ public final class ModelHelper {
         if (result == null) {
             throw new JAXBException("Cannot unmarshal to " + type + " using JAXB from XML: " + xml);
         }
-
         return type.cast(result);
+    }
+
+    /**
+     * Marshal the xml to the model definition
+     *
+     * @param stream the xml stream
+     * @param type the definition type to return, will throw a {@link ClassCastException} if not the expected type
+     * @return the model definition
+     * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling from xml to model
+     */
+    public static <T extends NamedNode> T createModelFromXml(InputStream stream, Class<T> type) throws JAXBException {
+        JAXBContext jaxbContext = createJaxbContext();
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        Object result = unmarshaller.unmarshal(stream);
+        return type.cast(result);
+    }
+
+    public static JAXBContext createJaxbContext() throws JAXBException {
+        // must use classloader from CamelContext to have JAXB working
+        return JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
     }
 }

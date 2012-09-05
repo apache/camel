@@ -19,18 +19,18 @@ package org.apache.camel.component.cdi.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Producer;
 
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cdi.CdiCamelContext;
+import org.apache.camel.model.RouteContainer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Configuration options to be applied to a {@link CamelContext} by a {@link CamelContextBean}
+ * Configuration options to be applied to a {@link org.apache.camel.CamelContext} by a {@link CamelContextBean}
  */
 public class CamelContextConfig {
     private final List<Bean<?>> routeBuilderBeans = new ArrayList<Bean<?>>();
@@ -42,11 +42,25 @@ public class CamelContextConfig {
     public void configure(CdiCamelContext camelContext, BeanManager beanManager) {
         for (Bean<?> bean : routeBuilderBeans) {
             CreationalContext<?> createContext = beanManager.createCreationalContext(bean);
-            RouteBuilder routeBuilder = (RouteBuilder)beanManager.getReference(bean, RouteBuilder.class, createContext);
+            Class<?> beanClass = bean.getBeanClass();
+            Object reference = beanManager.getReference(bean, beanClass, createContext);
+            ObjectHelper.notNull(reference, "Could not instantiate bean of type " + beanClass.getName() + " for " + bean);
             try {
-                camelContext.addRoutes(routeBuilder);
+                if (reference instanceof RoutesBuilder) {
+                    RoutesBuilder routeBuilder = (RoutesBuilder)reference;
+                    camelContext.addRoutes(routeBuilder);
+                } else if (reference instanceof RouteContainer) {
+                    RouteContainer routeContainer = (RouteContainer)reference;
+                    camelContext.addRouteDefinitions(routeContainer.getRoutes());
+                } else {
+                    throw new IllegalArgumentException("Invalid route builder " + reference
+                            + " of type " + beanClass.getName()
+                            + ". Should be RoutesBuilder or RoutesContainer");
+                }
             } catch (Exception e) {
-                throw new RuntimeCamelException("Could not add route builder " + routeBuilder + ". Reason: " + e, e);
+                throw new RuntimeCamelException(
+                        "Could not add " + reference + " to CamelContext: " + camelContext + ". Reason: " + e,
+                        e);
             }
         }
     }
