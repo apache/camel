@@ -17,12 +17,28 @@
  */
 package org.apache.camel.itest.cdi;
 
-public class Constants {
-    public static Object[] EXPECTED_BODIES_A = {"messageA1", "messageA2"};
-    public static Object[] EXPECTED_BODIES_B = {"messageB1", "messageB2"};
-    public static Object[] EXPECTED_BODIES_C = {"messageC1", "messageC2"};
-    public static Object[] EXPECTED_BODIES_D = {"messageD1", "messageD2"};
+import org.apache.camel.builder.RouteBuilder;
 
-    public static Object[] EXPECTED_BODIES_Ea = {"messageEa1", "messageEa2"};
-    public static Object[] EXPECTED_BODIES_Ec = {"messageEc1", "messageEc2"};
+/**
+ * An example configurable {@link RouteBuilder}
+ */
+public class MyRouteBuilder extends RouteBuilder {
+    private final String a;
+    private final String b;
+
+    public MyRouteBuilder(String a, String b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    @Override
+    public String toString() {
+        return "MyRouteBuilder(" + a + " -> " + b + ")";
+
+    }
+
+    @Override
+    public void configure() throws Exception {
+        from(a).to(b);
+    }
 }

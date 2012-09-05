@@ -17,12 +17,25 @@
  */
 package org.apache.camel.itest.cdi;
 
-public class Constants {
-    public static Object[] EXPECTED_BODIES_A = {"messageA1", "messageA2"};
-    public static Object[] EXPECTED_BODIES_B = {"messageB1", "messageB2"};
-    public static Object[] EXPECTED_BODIES_C = {"messageC1", "messageC2"};
-    public static Object[] EXPECTED_BODIES_D = {"messageD1", "messageD2"};
+import javax.enterprise.inject.Produces;
 
-    public static Object[] EXPECTED_BODIES_Ea = {"messageEa1", "messageEa2"};
-    public static Object[] EXPECTED_BODIES_Ec = {"messageEc1", "messageEc2"};
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CamelStartup;
+
+/**
+ * Instantiate a number of route builders using
+ */
+public class MyConfig {
+
+    @Produces
+    @CamelStartup(contextName = "contextE")
+    public RouteBuilder createRouteA() {
+        return new MyRouteBuilder("seda:E.a", "mock:E.b");
+    }
+
+    @Produces
+    @CamelStartup(contextName = "contextE")
+    public RouteBuilder createRouteB() {
+        return new MyRouteBuilder("seda:E.c", "mock:E.d");
+    }
 }

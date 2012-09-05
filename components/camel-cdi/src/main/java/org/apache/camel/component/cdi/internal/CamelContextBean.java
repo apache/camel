@@ -47,19 +47,19 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
     private final BeanManager beanManager;
     private final String name;
     private final String camelContextName;
-    private final List<Bean<?>> routeBuilderBeans;
     private final InjectionTarget<CdiCamelContext> target;
+    private final CamelContextConfig config;
 
     public CamelContextBean(BeanManager beanManager) {
-        this(beanManager, "CamelContext", "", Collections.EMPTY_LIST);
+        this(beanManager, "CamelContext", "", new CamelContextConfig());
     }
 
     public CamelContextBean(BeanManager beanManager, String name, String camelContextName,
-                            List<Bean<?>> routeBuilderBeans) {
+                            CamelContextConfig config) {
         this.beanManager = beanManager;
         this.name = name;
         this.camelContextName = camelContextName;
-        this.routeBuilderBeans = routeBuilderBeans;
+        this.config = config;
         this.target = beanManager.createInjectionTarget(beanManager.createAnnotatedType(CdiCamelContext.class));
     }
 
@@ -131,14 +131,6 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
     }
 
     public void configureCamelContext(CdiCamelContext camelContext) {
-        for (Bean<?> bean : routeBuilderBeans) {
-            CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
-            RouteBuilder routeBuilder = (RouteBuilder)beanManager.getReference(bean, RouteBuilder.class, creationalContext);
-            try {
-                camelContext.addRoutes(routeBuilder);
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Could not add route builder " + routeBuilder + ". Reason: " + e, e);
-            }
-        }
+        config.configure(camelContext, beanManager);
     }
 }

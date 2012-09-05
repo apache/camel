@@ -22,9 +22,12 @@ import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.cdi.internal.CamelContextMap;
 import org.apache.camel.component.cdi.internal.CamelExtension;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.CamelContextHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -53,6 +56,9 @@ public class IntegrationTest {
     @Inject
     RoutesContextD routesD;
 
+    @Inject @Uri(value="seda:foo", context = "contextE")
+    ProducerTemplate producerE;
+
     @Test
     public void checkContextsHaveCorrectEndpointsAndRoutes() throws Exception {
         Set<Map.Entry<String,CamelContext>> entries = camelContextMap.getCamelContextMap().entrySet();
@@ -77,6 +83,7 @@ public class IntegrationTest {
         routesB.sendMessages();
         mockEndpointB.assertIsSatisfied();
 
+        // lets check the routes where we default the context from the @CamelStartup
         CamelContext contextC = assertCamelContext("contextC");
         assertHasEndpoints(contextC, "seda://C.a", "mock://C.b");
 
@@ -92,6 +99,30 @@ public class IntegrationTest {
         mockEndpointD.expectedBodiesReceived(Constants.EXPECTED_BODIES_D);
         routesD.sendMessages();
         mockEndpointD.assertIsSatisfied();
+
+        // lets check the 2 routes created using @CamelStartup on a @Produces method
+        CamelContext contextE = assertCamelContext("contextE");
+        assertHasEndpoints(contextE, "seda://E.a", "mock://E.b", "seda://E.c", "mock://E.d");
+
+        MockEndpoint mockEb = CamelContextHelper
+                .getMandatoryEndpoint(contextE, "mock://E.b", MockEndpoint.class);
+        MockEndpoint mockEd = CamelContextHelper
+                .getMandatoryEndpoint(contextE, "mock://E.d", MockEndpoint.class);
+
+
+        mockEb.expectedBodiesReceived(Constants.EXPECTED_BODIES_Ea);
+        mockEd.expectedBodiesReceived(Constants.EXPECTED_BODIES_Ec);
+
+        for (Object body : Constants.EXPECTED_BODIES_Ea) {
+            producerE.sendBody("seda:E.a", body);
+        }
+
+        for (Object body : Constants.EXPECTED_BODIES_Ec) {
+            producerE.sendBody("seda:E.c", body);
+        }
+
+        mockEb.assertIsSatisfied();
+        mockEd.assertIsSatisfied();
     }
 
     public static void assertHasEndpoints(CamelContext context, String... uris) {
