@@ -81,7 +81,6 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.TimerListenerManager;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -788,11 +787,10 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         boolean enabled = camelContext.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         if (enabled) {
             LOG.info("StatisticsLevel at {} so enabling load performance statistics", camelContext.getManagementStrategy().getStatisticsLevel());
-            ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ManagementLoadTask");
-            timerListenerManager.setExecutorService(executorService);
             // must use 1 sec interval as the load statistics is based on 1 sec calculations
             timerListenerManager.setInterval(1000);
-            ServiceHelper.startService(timerListenerManager);
+            // add as a service so we can manage its lifecycle
+            getCamelContext().addService(timerListenerManager);
         }
     }
 
@@ -803,7 +801,6 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         preServices.clear();
         wrappedProcessors.clear();
         managedTracers.clear();
-        ServiceHelper.stopService(timerListenerManager);
     }
 
     /**
