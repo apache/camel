@@ -34,12 +34,12 @@ import org.junit.Test;
 
 public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     private static final String POST_DATA = "<request> hello world </request>";
-    private static final String CONTENT_TYPE = "text/xml";
+    private static final String CONTENT_TYPE = "text/xml; charset=UTF-8";
     private static final String UNICODE_TEXT = "B\u00FCe W\u00F6rld";
 
     @Test
     public void testHttpClient() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/hello", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/hello", new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
         ServletUnitClient client = newClient();
         WebResponse response = client.getResponse(req);
 
@@ -48,7 +48,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         assertEquals("Get a wrong message header", "/hello", response.getHeaderField("PATH"));
         assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
 
-        req = new PostMethodWebRequest(CONTEXT_URL + "/services/helloworld", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        req = new PostMethodWebRequest(CONTEXT_URL + "/services/helloworld", new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
         response = client.getResponse(req);
 
         assertEquals("Get wrong content type", "text/xml", response.getContentType());
@@ -95,7 +95,6 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         WebResponse response = client.getResponse(req);
         assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
         assertEquals("The response body is wrong", UNICODE_TEXT, response.getText());
-        System.out.println(response.getText());
     }
 
     @Test

@@ -109,6 +109,12 @@
       </exclusions>
       <scope>test</scope>
     </dependency>
+     <dependency>
+      <groupId>rhino</groupId>
+      <artifactId>js</artifactId>
+      <version>1.7R1</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
