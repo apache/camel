@@ -1564,7 +1564,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // setup default thread pool for error handler
         if (errorHandlerExecutorService == null || errorHandlerExecutorService.isShutdown()) {
-            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
+            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
         }
 
         // start the route definitions before the routes is started
