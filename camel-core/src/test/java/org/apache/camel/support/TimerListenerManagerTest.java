@@ -21,20 +21,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TimerListener;
 
 /**
  *
  */
-public class TimerListenerManagerTest extends TestCase {
+public class TimerListenerManagerTest extends ContextTestSupport {
 
     private final MyTask task = new MyTask();
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     public void testTimerListenerManager() throws Exception {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         TimerListenerManager manager = new TimerListenerManager();
-        manager.setExecutorService(executor);
+        manager.setCamelContext(context);
         manager.addTimerListener(task);
         manager.start();
 

@@ -16,23 +16,23 @@
  */
 package org.apache.camel.management;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
-import junit.framework.TestCase;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TimerListener;
 import org.apache.camel.management.mbean.LoadTriplet;
 import org.apache.camel.support.TimerListenerManager;
 
-public class LoadTimerTest extends TestCase {
+public class LoadTimerTest extends ContextTestSupport {
 
     private static final int SAMPLES = 3;
 
-    public void testTimer() throws Exception {
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
+    public void testTimer() throws Exception {
         TimerListenerManager myTimer = new TimerListenerManager();
-        myTimer.setExecutorService(executorService);
+        myTimer.setCamelContext(context);
         myTimer.start();
 
         TestLoadAware test = new TestLoadAware();
@@ -48,7 +48,6 @@ public class LoadTimerTest extends TestCase {
         }
 
         myTimer.stop();
-        executorService.shutdown();
     }
 
     private class TestLoadAware implements TimerListener {

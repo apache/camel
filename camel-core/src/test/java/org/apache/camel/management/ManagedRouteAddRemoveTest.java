@@ -53,7 +53,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
         
         log.info("Adding 2nd route");
 
@@ -73,7 +73,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Removing 2nd route");
 
@@ -84,7 +84,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Shutting down...");
     }
@@ -100,7 +100,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
         
         log.info("Adding 2nd route");
 
@@ -120,7 +120,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Removing 2nd route");
 
@@ -131,7 +131,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Shutting down...");
     }
@@ -147,7 +147,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Adding 2nd route");
 
@@ -167,7 +167,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Removing 2nd route");
 
@@ -178,7 +178,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Shutting down...");
     }
@@ -194,7 +194,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Adding 2nd route");
 
@@ -224,7 +224,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -236,7 +236,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Shutting down...");
     }
@@ -252,7 +252,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Adding 2nd route");
 
@@ -283,7 +283,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -295,7 +295,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Shutting down...");
     }
@@ -311,7 +311,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Adding 2nd route");
 
@@ -340,7 +340,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -352,7 +352,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Shutting down...");
     }
@@ -368,7 +368,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Adding 2nd route");
 
@@ -398,7 +398,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -410,7 +410,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         log.info("Shutting down...");
     }
