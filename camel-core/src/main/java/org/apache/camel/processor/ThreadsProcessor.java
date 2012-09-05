@@ -171,7 +171,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
 
     protected void doShutdown() throws Exception {
         if (shutdownExecutorService) {
-            camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            camelContext.getExecutorServiceManager().shutdown(executorService);
         }
         super.doShutdown();
     }

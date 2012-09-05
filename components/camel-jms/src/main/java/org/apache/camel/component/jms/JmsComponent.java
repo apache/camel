@@ -405,7 +405,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     @Override
     protected void doShutdown() throws Exception {
         if (asyncStartStopExecutorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(asyncStartStopExecutorService);
+            getCamelContext().getExecutorServiceManager().shutdown(asyncStartStopExecutorService);
             asyncStartStopExecutorService = null;
         }
         super.doShutdown();

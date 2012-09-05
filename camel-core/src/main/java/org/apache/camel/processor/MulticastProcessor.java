@@ -965,7 +965,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         errorHandlers.clear();
 
         if (shutdownExecutorService && executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            getCamelContext().getExecutorServiceManager().shutdown(executorService);
         }
     }
 

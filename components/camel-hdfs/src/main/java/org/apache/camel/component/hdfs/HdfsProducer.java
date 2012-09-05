@@ -148,7 +148,7 @@ public class HdfsProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         super.doStop();
         if (scheduler != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduler);
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(scheduler);
             scheduler = null;
         }
         if (ostream != null) {

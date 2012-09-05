@@ -110,7 +110,7 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     protected void doShutdown() throws Exception {
         // shutdown thread pools
         for (ExecutorService executor : executors) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            getCamelContext().getExecutorServiceManager().shutdown(executor);
         }
         executors.clear();
         super.doShutdown();
