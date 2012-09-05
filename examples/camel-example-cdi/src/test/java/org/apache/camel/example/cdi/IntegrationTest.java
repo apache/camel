@@ -19,9 +19,8 @@ package org.apache.camel.example.cdi;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.CamelStartup;
+import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Mock;
 import org.apache.camel.component.cdi.internal.CamelExtension;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -49,7 +48,7 @@ public class IntegrationTest {
     MockEndpoint result;
 
     @Produces
-    @CamelStartup
+    @ContextName
     public RouteBuilder createRoutes() {
         return new RouteBuilder() {
             public void configure() {

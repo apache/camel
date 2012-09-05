@@ -46,7 +46,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.CamelStartup;
+import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.util.ObjectHelper;
@@ -69,9 +69,9 @@ public class CamelExtension implements Extension {
     }
 
     /**
-     * If no context name is specified then default it to the value from the {@link org.apache.camel.cdi.CamelStartup} annotation
+     * If no context name is specified then default it to the value from the {@link org.apache.camel.cdi.ContextName} annotation
      */
-    public static String getCamelContextName(String context, CamelStartup annotation) {
+    public static String getCamelContextName(String context, ContextName annotation) {
         if (ObjectHelper.isEmpty(context) && annotation != null) {
             return annotation.contextName();
         }
@@ -132,7 +132,7 @@ public class CamelExtension implements Extension {
 
     /**
      * Lets detect all beans annotated with @Consume and
-     * beans of type {@link RouteBuilder} which are annotated with {@link org.apache.camel.cdi.CamelStartup}
+     * beans of type {@link RouteBuilder} which are annotated with {@link org.apache.camel.cdi.ContextName}
      * so they can be auto-registered
      */
     public void detectConsumeBeans(@Observes ProcessBean<?> event) {
@@ -151,18 +151,18 @@ public class CamelExtension implements Extension {
 
     /**
      * Lets detect all beans annotated of type {@link RouteBuilder}
-     * which are annotated with {@link org.apache.camel.cdi.CamelStartup}
+     * which are annotated with {@link org.apache.camel.cdi.ContextName}
      * so they can be auto-registered
      */
     public void detectRouteBuilderBeans(@Observes ProcessBean<?> event) {
         final Bean<?> bean = event.getBean();
         Class<?> beanClass = bean.getBeanClass();
         if (RouteBuilder.class.isAssignableFrom(beanClass)) {
-            addRouteBuilderBean(bean, beanClass.getAnnotation(CamelStartup.class));
+            addRouteBuilderBean(bean, beanClass.getAnnotation(ContextName.class));
         }
     }
 
-    private void addRouteBuilderBean(Bean<?> bean, CamelStartup annotation) {
+    private void addRouteBuilderBean(Bean<?> bean, ContextName annotation) {
         if (annotation != null) {
             String contextName = annotation.contextName();
             CamelContextConfig config = camelContextConfigMap.get(contextName);
@@ -175,12 +175,12 @@ public class CamelExtension implements Extension {
     }
 
     /**
-     * Lets detect all producer methods createing instances of {@link RouteBuilder} which are annotated with {@link org.apache.camel.cdi.CamelStartup}
+     * Lets detect all producer methods createing instances of {@link RouteBuilder} which are annotated with {@link org.apache.camel.cdi.ContextName}
      * so they can be auto-registered
      */
     public void detectProducerRoutes(@Observes ProcessProducerMethod<?, ?> event) {
         Annotated annotated = event.getAnnotated();
-        CamelStartup annotation = annotated.getAnnotation(CamelStartup.class);
+        ContextName annotation = annotated.getAnnotation(ContextName.class);
         Class<?> returnType = event.getAnnotatedProducerMethod().getJavaMember().getReturnType();
         if (RouteBuilder.class.isAssignableFrom(returnType)) {
             addRouteBuilderBean(event.getBean(), annotation);
@@ -220,8 +220,8 @@ public class CamelExtension implements Extension {
         final Class beanClass = annotatedType.getJavaClass();
         // TODO this is a bit of a hack - what should the bean name be?
         final String beanName = injectionTarget.toString();
-        CamelStartup camelStartup = annotatedType.getAnnotation(CamelStartup.class);
-        final BeanAdapter adapter = createBeanAdapter(beanClass, camelStartup);
+        ContextName contextName = annotatedType.getAnnotation(ContextName.class);
+        final BeanAdapter adapter = createBeanAdapter(beanClass, contextName);
         if (!adapter.isEmpty()) {
             DelegateInjectionTarget newTarget = new DelegateInjectionTarget(injectionTarget) {
 
@@ -245,8 +245,8 @@ public class CamelExtension implements Extension {
      */
     public void inject(Object bean) {
         Class<?> beanClass = bean.getClass();
-        CamelStartup camelStartup = beanClass.getAnnotation(CamelStartup.class);
-        final BeanAdapter adapter = createBeanAdapter(beanClass, camelStartup);
+        ContextName contextName = beanClass.getAnnotation(ContextName.class);
+        final BeanAdapter adapter = createBeanAdapter(beanClass, contextName);
         if (!adapter.isEmpty()) {
             // TODO this is a bit of a hack - what should the bean name be?
             final String beanName = bean.toString();
@@ -254,8 +254,8 @@ public class CamelExtension implements Extension {
         }
     }
 
-    private BeanAdapter createBeanAdapter(Class beanClass, CamelStartup camelStartup) {
-        final BeanAdapter adapter = new BeanAdapter(camelStartup);
+    private BeanAdapter createBeanAdapter(Class beanClass, ContextName contextName) {
+        final BeanAdapter adapter = new BeanAdapter(contextName);
         ReflectionHelper.doWithFields(beanClass, new ReflectionHelper.FieldCallback() {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {

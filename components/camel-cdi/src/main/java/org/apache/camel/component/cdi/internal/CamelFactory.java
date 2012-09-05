@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.cdi.CamelStartup;
+import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Mock;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -73,11 +73,11 @@ public class CamelFactory {
     }
 
     protected CamelContext getCamelContext(InjectionPoint point, String contextName) {
-        CamelStartup startup = point.getAnnotated().getAnnotation(CamelStartup.class);
+        ContextName startup = point.getAnnotated().getAnnotation(ContextName.class);
         if (startup == null) {
             Bean<?> bean = point.getBean();
             if (bean != null) {
-                startup = bean.getBeanClass().getAnnotation(CamelStartup.class);
+                startup = bean.getBeanClass().getAnnotation(ContextName.class);
             }
         }
         String name = CamelExtension.getCamelContextName(contextName, startup);

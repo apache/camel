@@ -83,7 +83,7 @@ public class IntegrationTest {
         routesB.sendMessages();
         mockEndpointB.assertIsSatisfied();
 
-        // lets check the routes where we default the context from the @CamelStartup
+        // lets check the routes where we default the context from the @ContextName
         CamelContext contextC = assertCamelContext("contextC");
         assertHasEndpoints(contextC, "seda://C.a", "mock://C.b");
 
@@ -100,7 +100,7 @@ public class IntegrationTest {
         routesD.sendMessages();
         mockEndpointD.assertIsSatisfied();
 
-        // lets check the 2 routes created using @CamelStartup on a @Produces method
+        // lets check the 2 routes created using @ContextName on a @Produces method
         CamelContext contextE = assertCamelContext("contextE");
         assertHasEndpoints(contextE, "seda://E.a", "mock://E.b", "seda://E.c", "mock://E.d");
 

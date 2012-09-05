@@ -17,21 +17,19 @@
  */
 package org.apache.camel.example.cdi;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.CamelStartup;
+import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 
 /**
  * Configures all our Camel routes, components, endpoints and beans
  */
-@CamelStartup
+@ContextName
 public class MyRoutes extends RouteBuilder {
 
     @Inject

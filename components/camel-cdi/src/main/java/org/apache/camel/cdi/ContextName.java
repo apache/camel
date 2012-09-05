@@ -25,12 +25,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Used to annotate a {@link RouteBuilder} class to bind it to a
- * {@link CamelContext} instance on startup so that it can startup automatically
+ * Used to bind objects to a named {@link CamelContext} instance 
+ * such as {@link RouteBuilder} instances.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
-public @interface CamelStartup {
+public @interface ContextName {
 
     /**
      * Returns the name of the CamelContext to add the routes to.

@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
-import org.apache.camel.cdi.CamelStartup;
+import org.apache.camel.cdi.ContextName;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 
 /**
@@ -36,9 +36,9 @@ public class BeanAdapter {
     private final List<Method> endpointMethods = new ArrayList<Method>();
     private final List<Field> produceFields = new ArrayList<Field>();
     private final List<Field> endpointFields = new ArrayList<Field>();
-    private final CamelStartup startup;
+    private final ContextName startup;
 
-    public BeanAdapter(CamelStartup startup) {
+    public BeanAdapter(ContextName startup) {
         this.startup = startup;
     }
 

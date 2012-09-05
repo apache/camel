@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.CamelStartup;
+import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Uses contextB with explicit context names on all Camel annotations
  */
-@CamelStartup(contextName = "contextB")
+@ContextName(contextName = "contextB")
 public class RoutesContextB extends RouteBuilder {
     private static final transient Logger LOG = LoggerFactory.getLogger(RoutesContextB.class);
 

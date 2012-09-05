@@ -20,7 +20,7 @@ package org.apache.camel.itest.cdi;
 import javax.enterprise.inject.Produces;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.CamelStartup;
+import org.apache.camel.cdi.ContextName;
 
 /**
  * Instantiate a number of route builders using
@@ -28,13 +28,13 @@ import org.apache.camel.cdi.CamelStartup;
 public class MyConfig {
 
     @Produces
-    @CamelStartup(contextName = "contextE")
+    @ContextName(contextName = "contextE")
     public RouteBuilder createRouteA() {
         return new MyRouteBuilder("seda:E.a", "mock:E.b");
     }
 
     @Produces
-    @CamelStartup(contextName = "contextE")
+    @ContextName(contextName = "contextE")
     public RouteBuilder createRouteB() {
         return new MyRouteBuilder("seda:E.c", "mock:E.d");
     }
