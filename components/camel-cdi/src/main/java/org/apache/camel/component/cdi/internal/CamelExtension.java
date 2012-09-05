@@ -163,7 +163,6 @@ public class CamelExtension implements Extension {
         Set<Map.Entry<Bean<?>, BeanAdapter>> entries = eagerBeans.entrySet();
         for (Map.Entry<Bean<?>, BeanAdapter> entry : entries) {
             Bean<?> bean = entry.getKey();
-            BeanAdapter adapter = entry.getValue();
             CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
 
             // force lazy creation

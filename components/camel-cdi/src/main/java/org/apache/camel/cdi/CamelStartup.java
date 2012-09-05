@@ -20,8 +20,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import javax.enterprise.util.Nonbinding;
-import javax.inject.Qualifier;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Used to annotate a {@link RouteBuilder} class to bind it to a
