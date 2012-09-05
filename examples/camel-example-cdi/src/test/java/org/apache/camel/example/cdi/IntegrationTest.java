@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CamelStartup;
 import org.apache.camel.cdi.Mock;
 import org.apache.camel.component.cdi.internal.CamelExtension;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -44,13 +45,11 @@ public class IntegrationTest {
     MyRoutes config;
 
     @Inject
-    CamelContext camelContext;
-
-    @Inject
     @Mock
     MockEndpoint result;
 
     @Produces
+    @CamelStartup
     public RouteBuilder createRoutes() {
         return new RouteBuilder() {
             public void configure() {
@@ -61,16 +60,8 @@ public class IntegrationTest {
 
     @Test
     public void integrationTest() throws Exception {
-        assertNotNull("CamelContext not injected!", camelContext);
-        assertTrue("CamelContext is started", camelContext.getStatus().isStarted());
-
         assertNotNull("config not injected!", config);
         assertNotNull("MockEndpoint result not injected!", result);
-
-        //camelContext.setTracing(true);
-
-        // TODO we could maybe auto-register this?
-        camelContext.addRoutes(createRoutes());
 
         result.expectedMessageCount(2);
         result.assertIsSatisfied();
