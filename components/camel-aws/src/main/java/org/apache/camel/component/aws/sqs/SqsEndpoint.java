@@ -23,6 +23,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
+import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 
 import org.apache.camel.Consumer;
@@ -74,27 +75,41 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     protected void doStart() throws Exception {
         client = getConfiguration().getAmazonSQSClient() != null
                 ? getConfiguration().getAmazonSQSClient() : getClient();
-        
-        // creates a new queue, or returns the URL of an existing one
-        CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
-        if (getConfiguration().getDefaultVisibilityTimeout() != null) {
-            request.getAttributes().put(QueueAttributeName.VisibilityTimeout.name(), String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
+
+        // check whether the queue already exists
+        ListQueuesResult listQueuesResult = client.listQueues();
+        for (String url : listQueuesResult.getQueueUrls()) {
+            if (url.endsWith("/" + configuration.getQueueName())) {
+                queueUrl = url;
+                LOG.trace("Queue available at '{}'. Using existing queue attributes!", queueUrl);
+                break;
+            }
         }
-        if (getConfiguration().getMaximumMessageSize() != null) {
-            request.getAttributes().put(QueueAttributeName.MaximumMessageSize.name(), String.valueOf(getConfiguration().getMaximumMessageSize()));
-        }
-        if (getConfiguration().getMessageRetentionPeriod() != null) {
-            request.getAttributes().put(QueueAttributeName.MessageRetentionPeriod.name(), String.valueOf(getConfiguration().getMessageRetentionPeriod()));
-        }
-        if (getConfiguration().getPolicy() != null) {
-            request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
-        }        
-        LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
         
-        CreateQueueResult queueResult = client.createQueue(request);
-        queueUrl = queueResult.getQueueUrl();
-        
-        LOG.trace("Queue created and available at: {}", queueUrl);
+        if (queueUrl == null) {
+            LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
+
+            // creates a new queue, or returns the URL of an existing one
+            CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
+            if (getConfiguration().getDefaultVisibilityTimeout() != null) {
+                request.getAttributes().put(QueueAttributeName.VisibilityTimeout.name(), String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
+            }
+            if (getConfiguration().getMaximumMessageSize() != null) {
+                request.getAttributes().put(QueueAttributeName.MaximumMessageSize.name(), String.valueOf(getConfiguration().getMaximumMessageSize()));
+            }
+            if (getConfiguration().getMessageRetentionPeriod() != null) {
+                request.getAttributes().put(QueueAttributeName.MessageRetentionPeriod.name(), String.valueOf(getConfiguration().getMessageRetentionPeriod()));
+            }
+            if (getConfiguration().getPolicy() != null) {
+                request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
+            }        
+            LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
+            
+            CreateQueueResult queueResult = client.createQueue(request);
+            queueUrl = queueResult.getQueueUrl();
+            
+            LOG.trace("Queue created and available at: {}", queueUrl);
+        }
     }
 
     @Override
