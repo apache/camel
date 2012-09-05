@@ -88,6 +88,8 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
         ZooKeeperElection electionCandidate1 = createElectionCandidate(candidateOneContext, 2);
         assertTrue("The first candidate was not elected.", electionCandidate1.isMaster());
         ZooKeeperElection electionCandidate2 = createElectionCandidate(candidateTwoContext, 2);
+        // Need to wait for a while to Candidate2 to be elected.
+        Thread.sleep(2000);
         assertTrue("The second candidate should also be a master.", electionCandidate2.isMaster());
     }
 
