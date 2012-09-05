@@ -22,6 +22,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.TimerListener;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -31,18 +33,16 @@ import org.slf4j.LoggerFactory;
  * A {@link TimerListener} manager which triggers the
  * {@link org.apache.camel.TimerListener} listeners once every second.
  * <p/>
- * The {@link #setExecutorService(java.util.concurrent.ScheduledExecutorService)} method
- * must be invoked prior to starting this manager using the {@link #start()} method.
- * <p/>
  * Also ensure when adding and remove listeners, that they are correctly removed to avoid
  * leaking memory.
  *
  * @see TimerListener
  */
-public class TimerListenerManager extends ServiceSupport implements Runnable {
+public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimerListenerManager.class);
     private final Set<TimerListener> listeners = new LinkedHashSet<TimerListener>();
+    private CamelContext camelContext;
     private ScheduledExecutorService executorService;
     private volatile ScheduledFuture<?> task;
     private long interval = 1000L;
@@ -50,8 +50,14 @@ public class TimerListenerManager extends ServiceSupport implements Runnable {
     public TimerListenerManager() {
     }
 
-    public void setExecutorService(ScheduledExecutorService executorService) {
-        this.executorService = executorService;
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     /**
@@ -122,8 +128,11 @@ public class TimerListenerManager extends ServiceSupport implements Runnable {
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(executorService, "executorService", this);
-        task = executorService.scheduleAtFixedRate(this, 1000L, interval, TimeUnit.MILLISECONDS);
+        ObjectHelper.notNull(camelContext, "camelContext", this);
+
+        // create scheduled thread pool to trigger the task to run every interval
+        executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ManagementLoadTask");
+        task = executorService.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
         LOG.debug("Started scheduled TimerListener task to run with interval {} ms", interval);
     }
 
@@ -139,6 +148,9 @@ public class TimerListenerManager extends ServiceSupport implements Runnable {
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
+        // shutdown thread pool when we are shutting down
+        camelContext.getExecutorServiceManager().shutdown(executorService);
+        executorService = null;
         listeners.clear();
     }
 }

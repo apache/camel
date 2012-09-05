@@ -1603,6 +1603,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // the stop order is important
 
+        // shutdown default error handler thread pool
+        if (errorHandlerExecutorService != null) {
+            getExecutorServiceManager().shutdown(errorHandlerExecutorService);
+            errorHandlerExecutorService = null;
+        }
+
         // shutdown debugger
         ServiceHelper.stopAndShutdownService(getDebugger());
 
