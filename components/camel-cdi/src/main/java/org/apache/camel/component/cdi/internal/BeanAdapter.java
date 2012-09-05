@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
+import org.apache.camel.cdi.CamelStartup;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 
 /**
@@ -35,6 +36,11 @@ public class BeanAdapter {
     private final List<Method> endpointMethods = new ArrayList<Method>();
     private final List<Field> produceFields = new ArrayList<Field>();
     private final List<Field> endpointFields = new ArrayList<Field>();
+    private final CamelStartup startup;
+
+    public BeanAdapter(CamelStartup startup) {
+        this.startup = startup;
+    }
 
     /**
      * Returns true if this adapter is empty (i.e. has no custom adapter code)
@@ -70,10 +76,11 @@ public class BeanAdapter {
     public void inject(CamelExtension camelExtension, Object reference,
                                 String beanName) {
         for (Method method : consumeMethods) {
-            Consume consume = method.getAnnotation(Consume.class);
-            if (consume != null) {
+            Consume annotation = method.getAnnotation(Consume.class);
+            if (annotation != null) {
+                String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
                 DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        consume.context());
+                        contextName);
                 if (postProcessor != null) {
                     postProcessor.getPostProcessorHelper().consumerInjection(method, reference, beanName);
                 }
@@ -82,7 +89,7 @@ public class BeanAdapter {
         for (Method method : produceMethods) {
             Produce annotation = method.getAnnotation(Produce.class);
             if (annotation != null) {
-                String contextName = annotation.context();
+                String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
                 DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
                         contextName);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
@@ -94,7 +101,7 @@ public class BeanAdapter {
         for (Method method : endpointMethods) {
             EndpointInject annotation = method.getAnnotation(EndpointInject.class);
             if (annotation != null) {
-                String contextName = annotation.context();
+                String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
                 DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
                         contextName);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
@@ -107,7 +114,7 @@ public class BeanAdapter {
         for (Field field : produceFields) {
             Produce annotation = field.getAnnotation(Produce.class);
             if (annotation != null) {
-                String contextName = annotation.context();
+                String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
                 DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
                         contextName);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
@@ -118,7 +125,7 @@ public class BeanAdapter {
         }
         for (Field field : endpointFields) {
             EndpointInject annotation = field.getAnnotation(EndpointInject.class);
-            String contextName = annotation.context();
+            String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
             DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
                     contextName);
             if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
@@ -127,4 +134,5 @@ public class BeanAdapter {
             }
         }
     }
+
 }

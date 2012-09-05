@@ -35,6 +35,7 @@
     <module>test-bundles</module>
     <module>camel-itest-standalone</module>
     <module>camel-itest</module>
+    <module>camel-itest-cdi</module>
     <module>camel-partial-classpath-test</module>
     <module>camel-typeconverterscan-test</module>
     <module>camel-itest-performance</module>

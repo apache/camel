@@ -36,4 +36,10 @@ public @interface Mock {
      */
     @Nonbinding
     String value() default "";
+
+    /**
+     * Returns the name of the CamelContext to use to resolve the endpoint for this URI
+     */
+    @Nonbinding
+    String context() default "";
 }

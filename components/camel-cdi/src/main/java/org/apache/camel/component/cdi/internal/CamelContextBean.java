@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -67,6 +66,9 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
     @Override
     public CdiCamelContext create(CreationalContext<CdiCamelContext> context) {
         CdiCamelContext camelContext = target.produce(context);
+        if (ObjectHelper.isNotEmpty(camelContextName)) {
+            camelContext.setName(camelContextName);
+        }
         target.postConstruct(camelContext);
         context.push(camelContext);
         return camelContext;
@@ -128,10 +130,7 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
         return camelContextName;
     }
 
-    protected void configureCamelContext(CdiCamelContext camelContext) {
-        if (ObjectHelper.isNotEmpty(camelContextName)) {
-            camelContext.setName(camelContextName);
-        }
+    public void configureCamelContext(CdiCamelContext camelContext) {
         for (Bean<?> bean : routeBuilderBeans) {
             CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
             RouteBuilder routeBuilder = (RouteBuilder)beanManager.getReference(bean, RouteBuilder.class, creationalContext);
@@ -141,12 +140,5 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
                 throw new RuntimeCamelException("Could not add route builder " + routeBuilder + ". Reason: " + e, e);
             }
         }
-    }
-
-    public CdiCamelContext configure() {
-        CreationalContext<CdiCamelContext> creationalContext = beanManager.createCreationalContext(this);
-        CdiCamelContext cdiCamelContext = create(creationalContext);
-        configureCamelContext(cdiCamelContext);
-        return cdiCamelContext;
     }
 }

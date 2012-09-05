@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.CamelStartup;
 import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
@@ -55,12 +57,23 @@ import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
  */
 public class CamelExtension implements Extension {
 
-    private Map<Bean<?>, BeanAdapter> eagerBeans = new HashMap<Bean<?>, BeanAdapter>();
+    CamelContextMap camelContextMap;
+
+    private Set<Bean<?>> eagerBeans = new HashSet<Bean<?>>();
     private Map<String, List<Bean<?>>> namedCamelContexts = new HashMap<String, List<Bean<?>>>();
     private List<CamelContextBean> camelContextBeans = new ArrayList<CamelContextBean>();
-    private Map<String, CamelContext> camelContexts = new HashMap<String, CamelContext>();
 
     public CamelExtension() {
+    }
+
+    /**
+     * If no context name is specified then default it to the value from the {@link org.apache.camel.cdi.CamelStartup} annotation
+     */
+    public static String getCamelContextName(String context, CamelStartup annotation) {
+        if (ObjectHelper.isEmpty(context) && annotation != null) {
+            return annotation.contextName();
+        }
+        return context;
     }
 
     /**
@@ -127,7 +140,7 @@ public class CamelExtension implements Extension {
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
                 Consume consume = method.getAnnotation(Consume.class);
                 if (consume != null) {
-                    eagerlyCreate(bean);
+                    eagerBeans.add(bean);
                 }
             }
         });
@@ -151,22 +164,19 @@ public class CamelExtension implements Extension {
      * Lets force the CDI container to create all beans annotated with @Consume so that the consumer becomes active
      */
     public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) throws Exception {
-        if (camelContextBeans.isEmpty()) {
-            CamelContext camelContext = BeanProvider.getContextualReference(CamelContext.class);
-            camelContexts.put("", camelContext);
-        }
-        for (CamelContextBean camelContextBean : camelContextBeans) {
-            CdiCamelContext context = camelContextBean.configure();
-            camelContexts.put(camelContextBean.getCamelContextName(), context);
+        for (CamelContextBean bean : camelContextBeans) {
+            String name = bean.getCamelContextName();
+            CamelContext context = getCamelContext(name);
+            if (context == null) {
+                throw new IllegalStateException("CamelContext '" + name + "' has not been injected into the CamelContextMap");
+            }
+            bean.configureCamelContext((CdiCamelContext)context);
         }
 
-        Set<Map.Entry<Bean<?>, BeanAdapter>> entries = eagerBeans.entrySet();
-        for (Map.Entry<Bean<?>, BeanAdapter> entry : entries) {
-            Bean<?> bean = entry.getKey();
+        for (Bean<?> bean : eagerBeans) {
+            // force lazy creation to start the consumer
             CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
-
-            // force lazy creation
-            beanManager.getReference(bean, Object.class, creationalContext);
+            beanManager.getReference(bean, bean.getBeanClass(), creationalContext);
         }
     }
 
@@ -177,10 +187,12 @@ public class CamelExtension implements Extension {
     @SuppressWarnings("unchecked")
     public void onInjectionTarget(@Observes ProcessInjectionTarget event) {
         final InjectionTarget injectionTarget = event.getInjectionTarget();
-        final Class beanClass = event.getAnnotatedType().getJavaClass();
+        AnnotatedType annotatedType = event.getAnnotatedType();
+        final Class beanClass = annotatedType.getJavaClass();
         // TODO this is a bit of a hack - what should the bean name be?
-        final String beanName = event.getInjectionTarget().toString();
-        final BeanAdapter adapter = createBeanAdapter(beanClass);
+        final String beanName = injectionTarget.toString();
+        CamelStartup camelStartup = annotatedType.getAnnotation(CamelStartup.class);
+        final BeanAdapter adapter = createBeanAdapter(beanClass, camelStartup);
         if (!adapter.isEmpty()) {
             DelegateInjectionTarget newTarget = new DelegateInjectionTarget(injectionTarget) {
 
@@ -203,7 +215,9 @@ public class CamelExtension implements Extension {
      * of @Produce / @EndpointInject and processing of the @Consume annotations are not performed.
      */
     public void inject(Object bean) {
-        final BeanAdapter adapter = createBeanAdapter(bean.getClass());
+        Class<?> beanClass = bean.getClass();
+        CamelStartup camelStartup = beanClass.getAnnotation(CamelStartup.class);
+        final BeanAdapter adapter = createBeanAdapter(beanClass, camelStartup);
         if (!adapter.isEmpty()) {
             // TODO this is a bit of a hack - what should the bean name be?
             final String beanName = bean.toString();
@@ -211,8 +225,8 @@ public class CamelExtension implements Extension {
         }
     }
 
-    private BeanAdapter createBeanAdapter(Class beanClass) {
-        final BeanAdapter adapter = new BeanAdapter();
+    private BeanAdapter createBeanAdapter(Class beanClass, CamelStartup camelStartup) {
+        final BeanAdapter adapter = new BeanAdapter(camelStartup);
         ReflectionHelper.doWithFields(beanClass, new ReflectionHelper.FieldCallback() {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
@@ -247,7 +261,7 @@ public class CamelExtension implements Extension {
     }
 
     protected DefaultCamelBeanPostProcessor getPostProcessor(String context) {
-        CamelContext camelContext = camelContexts.get(context);
+        CamelContext camelContext = getCamelContext(context);
         if (camelContext != null) {
             return new DefaultCamelBeanPostProcessor(camelContext);
         } else {
@@ -255,13 +269,12 @@ public class CamelExtension implements Extension {
         }
     }
 
-    protected BeanAdapter eagerlyCreate(Bean<?> bean) {
-        BeanAdapter beanAdapter = eagerBeans.get(bean);
-        if (beanAdapter == null) {
-            beanAdapter = new BeanAdapter();
-            eagerBeans.put(bean, beanAdapter);
+    protected CamelContext getCamelContext(String context) {
+        if (camelContextMap == null) {
+            camelContextMap = BeanProvider.getContextualReference(CamelContextMap.class);
+            ObjectHelper.notNull(camelContextMap, "Could not resolve CamelContextMap");
         }
-        return beanAdapter;
+        return camelContextMap.getCamelContext(context);
     }
 
     /**

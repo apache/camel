@@ -23,42 +23,20 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>examples</artifactId>
+        <artifactId>camel-parent</artifactId>
         <version>2.11-SNAPSHOT</version>
-        <relativePath>..</relativePath>
+        <relativePath>../../parent</relativePath>
     </parent>
 
-    <artifactId>camel-example-cdi</artifactId>
-    <packaging>bundle</packaging>
-    <name>Camel :: Example :: CDI</name>
-    <description>An example showing how to work with Camel and CDI for dependency injection</description>
-
-    <properties>
-        <camel.osgi.export>org.apache.camel.example.cdi.*</camel.osgi.export>
-        <camel.osgi.import>
-            org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
-        </camel.osgi.import>
-        <!-- avoid to import the bunch of spring related package -->
-        <camel.osgi.dynamic>*</camel.osgi.dynamic>
-        <junit-version>4.8.1</junit-version>
-    </properties>
+    <artifactId>camel-itest-cdi</artifactId>
+    <name>Camel :: Integration Tests :: CDI</name>
+    <description>Tests for camel-cdi</description>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cdi</artifactId>
         </dependency>
-
-        <!-- activemq component -->
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-camel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
-        </dependency>
-
 
         <!-- logging -->
         <dependency>
@@ -85,36 +63,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <!-- Allows the routes to be run via 'mvn camel:run' -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                  <useCDI>true</useCDI>
-<!--
-                  <duration>5s</duration>
--->
-                </configuration>
-                <dependencies>
-                  <!-- lets use deltaspike & weld -->
-                  <dependency>
-                      <groupId>org.apache.deltaspike.cdictrl</groupId>
-                      <artifactId>deltaspike-cdictrl-weld</artifactId>
-                      <version>${deltaspike-version}</version>
-                  </dependency>
-                  <dependency>
-                      <groupId>org.jboss.weld.se</groupId>
-                      <artifactId>weld-se-core</artifactId>
-                      <version>${weld-version}</version>
-                  </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>arquillian-weld-ee-embedded</id>
@@ -138,7 +86,7 @@
                 <dependency>
                     <groupId>org.jboss.weld</groupId>
                     <artifactId>weld-core</artifactId>
-                  <version>${weld-version}</version>
+                    <version>${weld-version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>

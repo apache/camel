@@ -18,13 +18,14 @@ package org.apache.camel.component.cdi.internal;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Annotated;
-import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.cdi.CamelStartup;
 import org.apache.camel.cdi.Mock;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,8 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  * produces {@link Endpoint} and {@link org.apache.camel.ProducerTemplate} instances for injection into beans
  */
 public class CamelFactory {
-    @Inject
-    private CamelContext camelContext;
+    @Inject CamelContextMap camelContextMap;
 
     @Produces
     @Mock
@@ -47,27 +47,40 @@ public class CamelFactory {
         if (ObjectHelper.isEmpty(uri)) {
             uri = "mock:" + point.getMember().getName();
         }
-        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri, MockEndpoint.class);
+        return CamelContextHelper.getMandatoryEndpoint(getCamelContext(point, annotation.context()), uri, MockEndpoint.class);
     }
 
     @Produces
     @Uri("")
-    public Endpoint createEndpoint(InjectionPoint point, BeanManager beanManager) {
+    public Endpoint createEndpoint(InjectionPoint point) {
         Annotated annotated = point.getAnnotated();
         Uri uri = annotated.getAnnotation(Uri.class);
         ObjectHelper.notNull(uri, "Should be annotated with @Uri");
-        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri.value());
+        return CamelContextHelper.getMandatoryEndpoint(getCamelContext(point, uri.context()), uri.value());
     }
 
     @Produces
     @Uri("")
     public ProducerTemplate createProducerTemplate(InjectionPoint point) {
-        ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
         Annotated annotated = point.getAnnotated();
         Uri uri = annotated.getAnnotation(Uri.class);
+        CamelContext camelContext = getCamelContext(point, uri.context());
+        ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
         ObjectHelper.notNull(uri, "Should be annotated with @Uri");
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, uri.value());
         producerTemplate.setDefaultEndpoint(endpoint);
         return producerTemplate;
+    }
+
+    protected CamelContext getCamelContext(InjectionPoint point, String contextName) {
+        CamelStartup startup = point.getAnnotated().getAnnotation(CamelStartup.class);
+        if (startup == null) {
+            Bean<?> bean = point.getBean();
+            if (bean != null) {
+                startup = bean.getBeanClass().getAnnotation(CamelStartup.class);
+            }
+        }
+        String name = CamelExtension.getCamelContextName(contextName, startup);
+        return camelContextMap.getMandatoryCamelContext(name);
     }
 }

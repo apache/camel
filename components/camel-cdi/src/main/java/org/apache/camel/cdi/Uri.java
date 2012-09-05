@@ -49,4 +49,10 @@ public @interface Uri {
      */
     @Nonbinding
     String value();
+
+    /**
+     * Returns the name of the CamelContext to use to resolve the endpoint for this URI
+     */
+    @Nonbinding
+    String context() default "";
 }
