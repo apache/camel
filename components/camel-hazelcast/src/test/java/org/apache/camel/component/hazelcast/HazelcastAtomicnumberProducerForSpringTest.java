@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import com.hazelcast.core.Hazelcast;
-
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
