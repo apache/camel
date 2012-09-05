@@ -32,9 +32,9 @@
     <description>Camel HTTP (Apache HttpClient 4.x) support</description>
 
     <properties>
-		<!-- 4.1 should still be supported -->
+		<!-- Now we move to the 4.2 -->
 		<camel.osgi.import.before.defaults>
-			org.apache.http.*;version="[4.1,5)"
+			org.apache.http.*;version="[4.2,5)"
 		</camel.osgi.import.before.defaults>
 		<camel.osgi.export.pkg>org.apache.camel.component.http4.*</camel.osgi.export.pkg>
     </properties>
