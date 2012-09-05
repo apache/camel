@@ -28,13 +28,13 @@ import org.apache.camel.cdi.ContextName;
 public class MyConfig {
 
     @Produces
-    @ContextName(contextName = "contextE")
+    @ContextName("contextE")
     public RouteBuilder createRouteA() {
         return new MyRouteBuilder("seda:E.a", "mock:E.b");
     }
 
     @Produces
-    @ContextName(contextName = "contextE")
+    @ContextName("contextE")
     public RouteBuilder createRouteB() {
         return new MyRouteBuilder("seda:E.c", "mock:E.d");
     }

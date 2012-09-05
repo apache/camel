@@ -69,11 +69,12 @@ public class CamelExtension implements Extension {
     }
 
     /**
-     * If no context name is specified then default it to the value from the {@link org.apache.camel.cdi.ContextName} annotation
+     * If no context name is specified then default it to the value from
+     * the {@link org.apache.camel.cdi.ContextName} annotation
      */
     public static String getCamelContextName(String context, ContextName annotation) {
         if (ObjectHelper.isEmpty(context) && annotation != null) {
-            return annotation.contextName();
+            return annotation.value();
         }
         return context;
     }
@@ -164,7 +165,7 @@ public class CamelExtension implements Extension {
 
     private void addRouteBuilderBean(Bean<?> bean, ContextName annotation) {
         if (annotation != null) {
-            String contextName = annotation.contextName();
+            String contextName = annotation.value();
             CamelContextConfig config = camelContextConfigMap.get(contextName);
             if (config == null) {
                 config = new CamelContextConfig();

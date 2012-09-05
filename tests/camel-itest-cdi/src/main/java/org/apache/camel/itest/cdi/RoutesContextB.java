@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Uses contextB with explicit context names on all Camel annotations
  */
-@ContextName(contextName = "contextB")
+@ContextName("contextB")
 public class RoutesContextB extends RouteBuilder {
     private static final transient Logger LOG = LoggerFactory.getLogger(RoutesContextB.class);
 

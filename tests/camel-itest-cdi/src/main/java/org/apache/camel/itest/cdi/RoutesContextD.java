@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Uses contextD implicitly using that context for all injection points without
  * having to mention them on each camel annotation
  */
-@ContextName(contextName = "contextD")
+@ContextName("contextD")
 public class RoutesContextD extends RouteBuilder {
     private static final transient Logger LOG = LoggerFactory.getLogger(RoutesContextD.class);
 

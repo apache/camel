@@ -36,5 +36,5 @@ public @interface ContextName {
      * Returns the name of the CamelContext to add the routes to.
      * If no value is specified then the default CamelContext is used.
      */
-    String contextName() default "";
+    String value() default "";
 }
