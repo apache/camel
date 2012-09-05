@@ -80,7 +80,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(processor);
         if (shutdownExecutorService) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            getCamelContext().getExecutorServiceManager().shutdown(executorService);
         }
     }
 

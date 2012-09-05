@@ -46,6 +46,10 @@ public final class CamelThreadFactory implements ThreadFactory {
         return answer;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String toString() {
         return "CamelThreadFactory[" + name + "]";
     }

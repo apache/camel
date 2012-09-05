@@ -372,7 +372,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
         // shutdown thread pool if it was in use
         if (multicastExecutor != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(multicastExecutor);
+            getCamelContext().getExecutorServiceManager().shutdown(multicastExecutor);
             multicastExecutor = null;
         }
 

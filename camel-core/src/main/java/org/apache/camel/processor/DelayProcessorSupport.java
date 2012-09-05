@@ -232,7 +232,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
     @Override
     protected void doShutdown() throws Exception {
         if (shutdownExecutorService && executorService != null) {
-            camelContext.getExecutorServiceManager().shutdownNow(executorService);
+            camelContext.getExecutorServiceManager().shutdown(executorService);
         }
         super.doShutdown();
     }

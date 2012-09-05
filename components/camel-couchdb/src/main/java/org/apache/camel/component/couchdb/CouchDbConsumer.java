@@ -52,7 +52,7 @@ public class CouchDbConsumer extends DefaultConsumer {
             task.stop();
         }
         if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
     }

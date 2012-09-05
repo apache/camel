@@ -177,7 +177,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             connection.disconnect();
         }
         if (scheduledExecutor != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(scheduledExecutor);
             scheduledExecutor = null;
         }
     }
