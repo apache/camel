@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,12 +28,6 @@ import org.junit.Test;
  * Checks we can load XML routes from the classpath and use then with CDI
  */
 public class XmlRoutesFromClassPathTest extends CdiTestSupport {
-    @Produces
-    @ContextName
-    public RoutesDefinition createRoutes() throws Exception {
-        return RoutesXml.loadRoutesFromClasspath("routes.xml");
-    }
-
     @Inject
     @Mock
     MockEndpoint results;
@@ -43,8 +36,14 @@ public class XmlRoutesFromClassPathTest extends CdiTestSupport {
     @Uri("direct:start")
     ProducerTemplate producer;
 
-    Object[] expectedBodies = { "body:1", "body:2" };
-
+    Object[] expectedBodies = {"body:1", "body:2"};
+    
+    @Produces
+    @ContextName
+    public RoutesDefinition createRoutes() throws Exception {
+        return RoutesXml.loadRoutesFromClasspath("routes.xml");
+    }
+    
     @Test
     public void xmlRoutesWorkOnClassPath() throws Exception {
         assertNotNull("results not injected", results);

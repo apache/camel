@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +31,11 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A helper class for loading route definitions from a file, URL or the classpath
  */
-public class RoutesXml {
+public final class RoutesXml {
+    
+    private RoutesXml() {
+        //The helper class
+    }
 
     /**
      * Loads the routes from the given XML content
@@ -77,7 +80,7 @@ public class RoutesXml {
      * Loads the routes from a {@link File}
      */
     public static RoutesDefinition loadRoutesFromFile(String fileName)
-            throws JAXBException, FileNotFoundException {
+        throws JAXBException, FileNotFoundException {
         return loadRoutesFromFile(new File(fileName));
     }
 

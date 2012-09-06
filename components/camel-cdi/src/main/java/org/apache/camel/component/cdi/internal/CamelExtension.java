@@ -88,7 +88,7 @@ public class CamelExtension implements Extension {
      * @throws Exception In case of exceptions.
      */
     protected void contextAwareness(@Observes ProcessAnnotatedType<CamelContextAware> process)
-            throws Exception {
+        throws Exception {
         AnnotatedType<CamelContextAware> annotatedType = process.getAnnotatedType();
         Class<CamelContextAware> javaClass = annotatedType.getJavaClass();
         if (CamelContextAware.class.isAssignableFrom(javaClass)) {
@@ -194,7 +194,7 @@ public class CamelExtension implements Extension {
      * Lets force the CDI container to create all beans annotated with @Consume so that the consumer becomes active
      */
     public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager)
-            throws Exception {
+        throws Exception {
         for (CamelContextBean bean : camelContextBeans) {
             String name = bean.getCamelContextName();
             CamelContext context = getCamelContext(name);

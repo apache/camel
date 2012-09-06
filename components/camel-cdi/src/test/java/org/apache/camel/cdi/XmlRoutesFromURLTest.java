@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,11 +28,13 @@ public class XmlRoutesFromURLTest extends XmlRoutesFromClassPathTest {
 
     @Override
     public RoutesDefinition createRoutes() throws Exception {
-        String[] prefixes = { "camel-cdi", "components"};
+        String[] prefixes = {"camel-cdi", "components"};
         String fileName = "src/test/resources/routes.xml";
         File file = new File(fileName);
         for (String prefix : prefixes) {
-            if (file.exists()) break;
+            if (file.exists()) {
+                break;
+            }
             file = new File(prefix, file.getPath());
         }
         assertTrue("The file " + file.getPath() + " does not exist", file.exists());
