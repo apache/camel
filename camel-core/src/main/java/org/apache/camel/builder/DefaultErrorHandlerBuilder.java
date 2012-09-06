@@ -419,8 +419,9 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
                     throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
                 }
             } else {
-                // use default shared thread pool for error handlers
-                executorService = camelContext.getErrorHandlerExecutorService();
+                // no explicit configured thread pool, so leave it up to the error handler to deceide if it need
+                // a default thread pool from CamelContext#getErrorHandlerExecutorService
+                executorService = null;
             }
         }
         return executorService;
