@@ -283,6 +283,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     // okay there is a delay so create a scheduled task to have it executed in the future
 
                     if (data.currentRedeliveryPolicy.isAsyncDelayedRedelivery() && !exchange.isTransacted()) {
+
+                        // we are doing a redelivery then a thread pool must be configured (see the doStart method)
+                        ObjectHelper.notNull(executorService, "Redelivery is enabled but ExecutorService has not been configured.", this);
+
                         // let the RedeliverTask be the logic which tries to redeliver the Exchange which we can used a scheduler to
                         // have it being executed in the future, or immediately
                         // we are continuing asynchronously
@@ -442,6 +446,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         if (data.redeliveryCounter > 0) {
+            // we are doing a redelivery then a thread pool must be configured (see the doStart method)
+            ObjectHelper.notNull(executorService, "Redelivery is enabled but ExecutorService has not been configured.", this);
+
             // let the RedeliverTask be the logic which tries to redeliver the Exchange which we can used a scheduler to
             // have it being executed in the future, or immediately
             // Note: the data.redeliverFromSync should be kept as is, in case it was enabled previously
@@ -1048,15 +1055,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected void doStart() throws Exception {
         ServiceHelper.startServices(output, outputAsync, deadLetter);
 
-        if (executorService == null) {
-            // use default shared executor service
-            executorService = camelContext.getErrorHandlerExecutorService();
-        }
-
         // determine if redeliver is enabled or not
         redeliveryEnabled = determineIfRedeliveryIsEnabled();
         if (log.isDebugEnabled()) {
             log.debug("Redelivery enabled: {} on error handler: {}", redeliveryEnabled, this);
+        }
+
+        // we only need thread pool if redelivery is enabled
+        if (redeliveryEnabled) {
+            if (executorService == null) {
+                // use default shared executor service
+                executorService = camelContext.getErrorHandlerExecutorService();
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("Using ExecutorService: {} for redeliveries on error handler: {}", executorService, this);
+            }
         }
     }
 

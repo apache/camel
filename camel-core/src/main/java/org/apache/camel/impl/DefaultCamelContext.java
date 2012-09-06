@@ -1279,7 +1279,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
-    public ScheduledExecutorService getErrorHandlerExecutorService() {
+    public synchronized ScheduledExecutorService getErrorHandlerExecutorService() {
+        if (errorHandlerExecutorService == null) {
+            // setup default thread pool for error handler
+            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
+        }
         return errorHandlerExecutorService;
     }
 
@@ -1561,11 +1565,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // start components
         startServices(components.values());
-
-        // setup default thread pool for error handler
-        if (errorHandlerExecutorService == null || errorHandlerExecutorService.isShutdown()) {
-            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
-        }
 
         // start the route definitions before the routes is started
         startRouteDefinitions(routeDefinitions);
