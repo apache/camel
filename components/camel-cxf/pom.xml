@@ -45,7 +45,7 @@
       javax.activation*;version="[0.0,2)",
       javax.annotation*;version="[0.0,2)",
       javax.jws*;version="[0.0,3)",
-      javax.ws.rs*;version="[0.0,2)",
+      javax.ws.rs*;version="[0.0,3)",
       javax.xml.stream*;version="[0.0,2)",
       javax.xml.ws*;version="[0.0,3.0)",
       org.apache.camel.*;${camel.osgi.import.camel.version},
