@@ -27,24 +27,29 @@ import org.apache.camel.builder.RouteBuilder;
 public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends ContextTestSupport {
 
     private class FirstException extends Exception {
+
+        private static final long serialVersionUID = 1L;
     }
 
     private class SecondException extends Exception {
+       
+        private static final long serialVersionUID = 1L;
     }
 
     private class ExceptionThrowingProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            String camelRedeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
+            String camelRedeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER,
+                                                                       String.class);
             int redeliveries = camelRedeliveryCounter == null ? 0 : Integer.valueOf(camelRedeliveryCounter);
             switch (redeliveries) {
-                case 0:
-                    throw new FirstException();
-                case 1:
-                    throw new SecondException();
-                default:
-                    break; // no-op
+            case 0:
+                throw new FirstException();
+            case 1:
+                throw new SecondException();
+            default:
+                break; // no-op
             }
         }
     }
