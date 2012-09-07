@@ -222,7 +222,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     protected void doShutdown() throws Exception {
         super.doShutdown();
         if (scheduledExecutor != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(scheduledExecutor);
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
         }
     }

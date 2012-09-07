@@ -132,7 +132,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         int size = getConsumers().size();
         if (size == 0 && multicastExecutor != null) {
             // stop the multicast executor as its not needed anymore when size is zero
-            getCamelContext().getExecutorServiceManager().shutdown(multicastExecutor);
+            getCamelContext().getExecutorServiceManager().shutdownGraceful(multicastExecutor);
             multicastExecutor = null;
         }
         if (size > 1) {
@@ -372,7 +372,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
         // shutdown thread pool if it was in use
         if (multicastExecutor != null) {
-            getCamelContext().getExecutorServiceManager().shutdown(multicastExecutor);
+            getCamelContext().getExecutorServiceManager().shutdownNow(multicastExecutor);
             multicastExecutor = null;
         }
 

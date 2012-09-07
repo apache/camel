@@ -217,7 +217,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(processor);
         if (shutdownExecutorService) {
-            destination.getCamelContext().getExecutorServiceManager().shutdown(executorService);
+            destination.getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
         }
     }
 }

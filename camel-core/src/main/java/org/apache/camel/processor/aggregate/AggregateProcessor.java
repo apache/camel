@@ -970,10 +970,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         inProgressCompleteExchanges.clear();
 
         if (shutdownExecutorService) {
-            camelContext.getExecutorServiceManager().shutdown(executorService);
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
         }
         if (shutdownTimeoutCheckerExecutorService) {
-            camelContext.getExecutorServiceManager().shutdown(timeoutCheckerExecutorService);
+            camelContext.getExecutorServiceManager().shutdownNow(timeoutCheckerExecutorService);
             timeoutCheckerExecutorService = null;
         }
 

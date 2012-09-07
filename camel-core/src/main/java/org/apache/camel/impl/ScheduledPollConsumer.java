@@ -360,7 +360,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     @Override
     protected void doShutdown() throws Exception {
         if (shutdownExecutor && scheduledExecutorService != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(scheduledExecutorService);
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutorService);
             scheduledExecutorService = null;
             future = null;
         }

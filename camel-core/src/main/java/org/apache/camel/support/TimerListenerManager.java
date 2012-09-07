@@ -149,7 +149,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
     protected void doShutdown() throws Exception {
         super.doShutdown();
         // shutdown thread pool when we are shutting down
-        camelContext.getExecutorServiceManager().shutdown(executorService);
+        camelContext.getExecutorServiceManager().shutdownNow(executorService);
         executorService = null;
         listeners.clear();
     }

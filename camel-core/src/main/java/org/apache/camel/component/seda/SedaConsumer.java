@@ -306,7 +306,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     protected void doShutdown() throws Exception {
         // only shutdown thread pool when we shutdown
         if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
     }

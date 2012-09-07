@@ -85,7 +85,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         // important: do not close the stream as it will close the standard
         // system.in etc.
         if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
             executor = null;
         }
         lines.clear();

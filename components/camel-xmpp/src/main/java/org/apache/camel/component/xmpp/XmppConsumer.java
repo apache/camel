@@ -165,6 +165,13 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+
+        // stop scheduler first
+        if (scheduledExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
+            scheduledExecutor = null;
+        }
+
         if (muc != null) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Leaving room: {}", muc.getRoom());
@@ -175,10 +182,6 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         }
         if (connection != null && connection.isConnected()) {
             connection.disconnect();
-        }
-        if (scheduledExecutor != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(scheduledExecutor);
-            scheduledExecutor = null;
         }
     }
 
