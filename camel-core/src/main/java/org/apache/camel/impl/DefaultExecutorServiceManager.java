@@ -62,21 +62,21 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     private long shutdownAwaitTermination = 10000;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
     private final Map<String, ThreadPoolProfile> threadPoolProfiles = new HashMap<String, ThreadPoolProfile>();
-    private ThreadPoolProfile builtIndefaultProfile;
+    private ThreadPoolProfile defaultProfile;
 
     public DefaultExecutorServiceManager(CamelContext camelContext) {
         this.camelContext = camelContext;
 
-        builtIndefaultProfile = new ThreadPoolProfile(defaultThreadPoolProfileId);
-        builtIndefaultProfile.setDefaultProfile(true);
-        builtIndefaultProfile.setPoolSize(10);
-        builtIndefaultProfile.setMaxPoolSize(20);
-        builtIndefaultProfile.setKeepAliveTime(60L);
-        builtIndefaultProfile.setTimeUnit(TimeUnit.SECONDS);
-        builtIndefaultProfile.setMaxQueueSize(1000);
-        builtIndefaultProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
+        defaultProfile = new ThreadPoolProfile(defaultThreadPoolProfileId);
+        defaultProfile.setDefaultProfile(true);
+        defaultProfile.setPoolSize(10);
+        defaultProfile.setMaxPoolSize(20);
+        defaultProfile.setKeepAliveTime(60L);
+        defaultProfile.setTimeUnit(TimeUnit.SECONDS);
+        defaultProfile.setMaxQueueSize(1000);
+        defaultProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
 
-        registerThreadPoolProfile(builtIndefaultProfile);
+        registerThreadPoolProfile(defaultProfile);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public void setDefaultThreadPoolProfile(ThreadPoolProfile defaultThreadPoolProfile) {
         threadPoolProfiles.remove(defaultThreadPoolProfileId);
-        defaultThreadPoolProfile.addDefaults(builtIndefaultProfile);
+        defaultThreadPoolProfile.addDefaults(defaultProfile);
 
         LOG.info("Using custom DefaultThreadPoolProfile: " + defaultThreadPoolProfile);
 
