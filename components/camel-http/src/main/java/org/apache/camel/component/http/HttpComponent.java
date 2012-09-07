@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -209,6 +210,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
+        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
         IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
@@ -222,7 +224,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
        
         // create the endpoint
         HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, httpConnectionManager, configurer);
-        setEndpointHeaderFilterStrategy(endpoint);
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        } else {
+            setEndpointHeaderFilterStrategy(endpoint);
+        }
 
         // prefer to use endpoint configured over component configured
         if (binding == null) {
