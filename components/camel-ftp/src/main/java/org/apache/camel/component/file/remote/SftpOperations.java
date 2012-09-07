@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -56,6 +57,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
     private static final transient Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
+    private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
@@ -389,6 +391,15 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             doChangeDirectory(path);
             return;
         }
+        if (getCurrentDirectory().startsWith(path)) {
+            // use relative path
+            String p = getCurrentDirectory().substring(path.length());
+            if (p.length() == 0) {
+                return;
+            }
+            // the first character must be '/' and hence removed
+            path = UP_DIR_PATTERN.matcher(p).replaceAll("/..").substring(1);
+        }
 
         // if it starts with the root path then a little special handling for that
         if (FileUtil.hasLeadingSeparator(path)) {
@@ -416,7 +427,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         if (path == null || ".".equals(path) || ObjectHelper.isEmpty(path)) {
             return;
         }
-
         LOG.trace("Changing directory: {}", path);
         try {
             channel.cd(path);
@@ -480,6 +490,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         OutputStream os = null;
+        String currentDir = null;
         try {
             os = new ByteArrayOutputStream();
             GenericFile<ChannelSftp.LsEntry> target =
@@ -488,7 +499,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             target.setBody(os);
 
             String remoteName = name;
-            String currentDir = null;
             if (endpoint.getConfiguration().isStepwise()) {
                 // remember current directory
                 currentDir = getCurrentDirectory();
@@ -507,11 +517,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             InputStream is = channel.get(remoteName);
             IOHelper.copyAndCloseInput(is, os);
 
-            // change back to current directory
-            if (endpoint.getConfiguration().isStepwise()) {
-                changeCurrentDirectory(currentDir);
-            }
-
             return true;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
@@ -519,6 +524,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
         }
     }
 
@@ -565,13 +574,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }
-
+        String currentDir = null;
         try {
             // store the java.io.File handle as the body
             file.setBody(local);
 
             String remoteName = name;
-            String currentDir = null;
             if (endpoint.getConfiguration().isStepwise()) {
                 // remember current directory
                 currentDir = getCurrentDirectory();
@@ -588,11 +596,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
             channel.get(remoteName, os);
 
-            // change back to current directory
-            if (endpoint.getConfiguration().isStepwise()) {
-                changeCurrentDirectory(currentDir);
-            }
-
         } catch (SftpException e) {
             LOG.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
             // failed to retrieve the file so we need to close streams and delete in progress file
@@ -605,6 +608,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
+
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
         }
 
         LOG.debug("Retrieve file to local work file result: true");
