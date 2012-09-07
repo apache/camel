@@ -111,9 +111,10 @@
              </releases>
          </pluginRepository>
   </pluginRepositories>
+  
   <modules>
-    <module>buildingtools</module>
     <module>parent</module>
+    <module>buildingtools</module>
     <module>camel-core</module>
     <module>components</module>
     <module>platforms</module>

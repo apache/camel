@@ -31,7 +31,6 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>karaf</artifactId>
     <packaging>pom</packaging>
-    <version>2.11-SNAPSHOT</version>
     <name>Camel :: Platforms :: Apache Karaf</name>
 
     <modules>
