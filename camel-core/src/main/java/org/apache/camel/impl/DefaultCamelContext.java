@@ -1604,7 +1604,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // shutdown default error handler thread pool
         if (errorHandlerExecutorService != null) {
-            getExecutorServiceManager().shutdown(errorHandlerExecutorService);
+            // force shutting down the thread pool
+            getExecutorServiceManager().shutdownNow(errorHandlerExecutorService);
             errorHandlerExecutorService = null;
         }
 
