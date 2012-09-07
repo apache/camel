@@ -33,6 +33,8 @@
 
   <properties>
     <compiler.fork>true</compiler.fork>
+    
+    <!-- dependency versions -->
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.6.0</activemq-version>
@@ -136,13 +138,14 @@
     <juel-version>2.1.3</juel-version>
     <junit-version>4.10</junit-version>
     <jt400-version>6.0</jt400-version>
-    <jaxb2-plugin-version>0.8.1</jaxb2-plugin-version>
     <karaf-version>2.2.9</karaf-version>
     <krati-version>0.4.6</krati-version>
     <leveldbjni-version>1.2</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
+    <!-- needed from tooling/archetypes -->
+    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.4</mina2-version>
     <mockito-version>1.9.0</mockito-version>
@@ -174,8 +177,6 @@
     <rome-version>1.0</rome-version>
     <saxon-version>9.4.0.1</saxon-version>
     <scala-version>2.9.1</scala-version>
-    <scala-plugin-version>2.15.2</scala-plugin-version>
-    <scala-maven-plugin-version>3.0.2</scala-maven-plugin-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
     <shiro-version>1.2.1</shiro-version>
     <slf4j-api-version>1.6.6</slf4j-api-version>
@@ -215,11 +216,6 @@
     <xmlbeans-version>2.5.0</xmlbeans-version>
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.3.5</zookeeper-version>
-
-    <!-- Plugin versions -->
-    <!-- used by camel archetypes -->
-    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
-    <maven-bundle-version>2.3.7</maven-bundle-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
@@ -1675,112 +1671,44 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.5</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.5.1</version>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>3.0.2</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-            <maxmem>256M</maxmem>
-            <fork>${compiler.fork}</fork>
+            <args>
+              <arg>-deprecation</arg>
+            </args>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+                <goal>testCompile</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <version>0.8</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.7</version>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-codegen-plugin</artifactId>
+          <version>${cxf-version}</version>
           <configuration>
-            <attach>true</attach>
-            <source>1.6</source>
-            <quiet>true</quiet>
-            <bottom>Apache CAMEL</bottom>
-            <detectOfflineLinks>false</detectOfflineLinks>
-            <javadocVersion>1.6</javadocVersion>
-            <encoding>UTF-8</encoding>
+            <fork>once</fork>
+            <defaultOptions>
+              <markGenerated>true</markGenerated>
+              <faultSerialVersionUID>1</faultSerialVersionUID>
+            </defaultOptions>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.2.1</version>
-          <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
-            <useReleaseProfile>false</useReleaseProfile>
-            <preparationGoals>clean install</preparationGoals>
-            <goals>deploy</goals>
-            <arguments>-Papache-release,enable-schemagen,sourcecheck,validate,hibernate-derby</arguments>
-            <autoVersionSubmodules>true</autoVersionSubmodules>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>1.6</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>2.1</version>
-          <configuration>
-            <webResources>
-              <!-- HACK: Include legal files explicitly, otherwise they will 
-                end up in the wrong path or in another jar file in the war. NOTE: targetPath 
-                is broken for webResources (as documented) -->
-              <resource>
-                <directory>${project.build.outputDirectory}</directory>
-                <includes>
-                  <include>META-INF/LICENSE*</include>
-                  <include>META-INF/NOTICE*</include>
-                  <include>META-INF/DEPENDENCIES*</include>
-                </includes>
-              </resource>
-            </webResources>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.4</version>
-          <configuration>
-            <check>
-              <branchRate>85</branchRate>
-              <lineRate>85</lineRate>
-              <haltOnFailure>false</haltOnFailure>
-              <totalBranchRate>85</totalBranchRate>
-              <totalLineRate>85</totalLineRate>
-              <packageLineRate>85</packageLineRate>
-              <packageBranchRate>85</packageBranchRate>
-              <regexes>
-                <regex>
-                  <pattern>org.apache.camel.impl.*</pattern>
-                  <branchRate>90</branchRate>
-                  <lineRate>80</lineRate>
-                </regex>
-                <regex>
-                  <pattern>org.apache.camel.builder.*</pattern>
-                  <branchRate>40</branchRate>
-                  <lineRate>30</lineRate>
-                </regex>
-              </regexes>
-            </check>
-          </configuration>
+          <dependencies>
+            <!-- needed to add this to get around the following error on 
+              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class 
+              org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory. -->
+            <dependency>
+              <groupId>xerces</groupId>
+              <artifactId>xercesImpl</artifactId>
+              <version>2.8.1</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -1833,145 +1761,18 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.4.3</version>
-          <configuration>
-            <encoding>UTF-8</encoding>
-          </configuration>
+          <artifactId>maven-archetype-plugin</artifactId>
+          <version>2.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.6</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>2.5</version>
-          <configuration>
-            <filesets>
-              <fileset>
-                <!-- just delete the activemq-data directory -->
-                <directory>activemq-data</directory>
-                <followSymlinks>false</followSymlinks>
-              </fileset>
-            </filesets>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.3.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-remote-resources-plugin</artifactId>
-          <version>1.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>2.3.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.4</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.8</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>maven-bundle-plugin</artifactId>
-          <version>${maven-bundle-version}</version>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>2.6</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.1.2</version>
-          <configuration>
-            <archive>
-              <manifestEntries>
-                <Bundle-SymbolicName>${project.groupId}.${project.artifactId}.source</Bundle-SymbolicName>
-                <Bundle-Version>${camel.osgi.version.clean}</Bundle-Version>
-                <Eclipse-SourceBundle>${project.groupId}.${project.artifactId};version="${camel.osgi.version.clean}"</Eclipse-SourceBundle>
-              </manifestEntries>
-            </archive>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>2.5</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>properties-maven-plugin</artifactId>
-          <version>1.0-alpha-2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>axistools-maven-plugin</artifactId>
-          <version>1.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.1.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>ianal-maven-plugin</artifactId>
-          <version>1.0-alpha-1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>taglist-maven-plugin</artifactId>
-          <version>2.4</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>findbugs-maven-plugin</artifactId>
-          <version>2.3.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty-maven-plugin</artifactId>
-          <version>${jetty-version}</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <configuration>
-            <buildcommands>
-              <java.lang.String>org.eclipse.jdt.core.javabuilder</java.lang.String>
-              <java.lang.String>net.sf.eclipsecs.core.CheckstyleBuilder</java.lang.String>
-            </buildcommands>
-            <projectnatures>
-              <nature>org.eclipse.jdt.core.javanature</nature>
-              <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
-            </projectnatures>
-            <additionalConfig>
-              <file>
-                <name>.checkstyle</name>
-                <location>/camel-eclipse-checkstyle</location>
-              </file>
-            </additionalConfig>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
           <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
@@ -2010,34 +1811,258 @@
             </execution>
           </executions>
         </plugin>
-
-        <plugin>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-codegen-plugin</artifactId>
-          <version>${cxf-version}</version>
-          <configuration>
-            <fork>once</fork>
-            <defaultOptions>
-              <markGenerated>true</markGenerated>
-              <faultSerialVersionUID>1</faultSerialVersionUID>
-            </defaultOptions>
-          </configuration>
-          <dependencies>
-            <!-- needed to add this to get around the following error on 
-              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class 
-              org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory. -->
-            <dependency>
-              <groupId>xerces</groupId>
-              <artifactId>xercesImpl</artifactId>
-              <version>2.8.1</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-archetype-plugin</artifactId>
-          <version>2.0</version>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>2.5</version>
+          <configuration>
+            <filesets>
+              <fileset>
+                <!-- just delete the activemq-data directory -->
+                <directory>activemq-data</directory>
+                <followSymlinks>false</followSymlinks>
+              </fileset>
+            </filesets>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.5.1</version>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+            <maxmem>256M</maxmem>
+            <fork>${compiler.fork}</fork>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <configuration>
+            <buildcommands>
+              <java.lang.String>org.eclipse.jdt.core.javabuilder</java.lang.String>
+              <java.lang.String>net.sf.eclipsecs.core.CheckstyleBuilder</java.lang.String>
+            </buildcommands>
+            <projectnatures>
+              <nature>org.eclipse.jdt.core.javanature</nature>
+              <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
+            </projectnatures>
+            <additionalConfig>
+              <file>
+                <name>.checkstyle</name>
+                <location>/camel-eclipse-checkstyle</location>
+              </file>
+            </additionalConfig>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.7</version>
+          <configuration>
+            <attach>true</attach>
+            <source>1.6</source>
+            <quiet>true</quiet>
+            <bottom>Apache CAMEL</bottom>
+            <detectOfflineLinks>false</detectOfflineLinks>
+            <javadocVersion>1.6</javadocVersion>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+       <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.6</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.2.1</version>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
+            <useReleaseProfile>false</useReleaseProfile>
+            <preparationGoals>clean install</preparationGoals>
+            <goals>deploy</goals>
+            <arguments>-Papache-release,enable-schemagen,sourcecheck,validate,hibernate-derby</arguments>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>1.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.4.3</version>
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>1.6</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.1.2</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Bundle-SymbolicName>${project.groupId}.${project.artifactId}.source</Bundle-SymbolicName>
+                <Bundle-Version>${camel.osgi.version.clean}</Bundle-Version>
+                <Eclipse-SourceBundle>${project.groupId}.${project.artifactId};version="${camel.osgi.version.clean}"</Eclipse-SourceBundle>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.8</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>2.1</version>
+          <configuration>
+            <webResources>
+              <!-- HACK: Include legal files explicitly, otherwise they will 
+                end up in the wrong path or in another jar file in the war. NOTE: targetPath 
+                is broken for webResources (as documented) -->
+              <resource>
+                <directory>${project.build.outputDirectory}</directory>
+                <includes>
+                  <include>META-INF/LICENSE*</include>
+                  <include>META-INF/NOTICE*</include>
+                  <include>META-INF/DEPENDENCIES*</include>
+                </includes>
+              </resource>
+            </webResources>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          <version>2.5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.8</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>axistools-maven-plugin</artifactId>
+          <version>1.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <check>
+              <branchRate>85</branchRate>
+              <lineRate>85</lineRate>
+              <haltOnFailure>false</haltOnFailure>
+              <totalBranchRate>85</totalBranchRate>
+              <totalLineRate>85</totalLineRate>
+              <packageLineRate>85</packageLineRate>
+              <packageBranchRate>85</packageBranchRate>
+              <regexes>
+                <regex>
+                  <pattern>org.apache.camel.impl.*</pattern>
+                  <branchRate>90</branchRate>
+                  <lineRate>80</lineRate>
+                </regex>
+                <regex>
+                  <pattern>org.apache.camel.builder.*</pattern>
+                  <branchRate>40</branchRate>
+                  <lineRate>30</lineRate>
+                </regex>
+              </regexes>
+            </check>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.1.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>2.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>ianal-maven-plugin</artifactId>
+          <version>1.0-alpha-1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>properties-maven-plugin</artifactId>
+          <version>1.0-alpha-2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>taglist-maven-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jvnet.jaxb2.maven2</groupId>
+          <artifactId>maven-jaxb2-plugin</artifactId>
+          <version>0.8.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <strict>false</strict>
+            <extension>true</extension>
+            <args>
+              <arg>-Xfluent-api</arg>
+            </args>
+            <plugins>
+              <plugin>
+                <groupId>net.java.dev.jaxb2-commons</groupId>
+                <artifactId>jaxb-fluent-api</artifactId>
+                <version>2.1.8</version>
+              </plugin>
+            </plugins>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>jetty-maven-plugin</artifactId>
+          <version>${jetty-version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -2046,7 +2071,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-version}</version>
+        <version>2.3.7</version>
         <extensions>true</extensions>
         <configuration>
           <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
@@ -2080,7 +2105,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

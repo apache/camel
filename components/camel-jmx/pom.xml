@@ -63,28 +63,6 @@
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>${jaxb2-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <strict>false</strict>
-                    <extension>true</extension>
-                    <args>
-                        <arg>-Xfluent-api</arg>
-                    </args>
-                    <plugins>
-                        <plugin>
-                            <groupId>net.java.dev.jaxb2-commons</groupId>
-                            <artifactId>jaxb-fluent-api</artifactId>
-                            <version>2.1.8</version>
-                        </plugin>
-                    </plugins>
-                </configuration>
             </plugin>
         </plugins>
     </build>
