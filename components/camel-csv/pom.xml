@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.commons-csv</artifactId>
-      <version>${commons-csv}</version>
+      <version>${commons-csv-bundle-version}</version>
     </dependency>
 
     <!-- testing -->

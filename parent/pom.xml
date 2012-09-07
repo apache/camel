@@ -61,7 +61,6 @@
     <bouncycastle-version>1.46</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
     <cglib-version>2.1_3_7</cglib-version>
-    <cmis-bundle-version>0.7.0</cmis-bundle-version> <!-- FIXME cmueller: duplication? -->
     <cmis-version>0.7.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
@@ -70,8 +69,7 @@
     <commons-codec-version>1.6</commons-codec-version>
     <commons-collections-version>3.2.1</commons-collections-version>
     <commons-configuration-version>1.6</commons-configuration-version>
-    <commons-csv-version>1.0-r706900_3</commons-csv-version> <!-- FIXME cmueller: duplication? -->
-    <commons-csv>1.0-r706899_3</commons-csv>
+    <commons-csv-bundle-version>1.0-r706900_3</commons-csv-bundle-version>
     <commons-cli-version>1.2</commons-cli-version>
     <commons-dbcp-bundle-version>1.4_3</commons-dbcp-bundle-version>
     <commons-dbcp-version>1.4</commons-dbcp-version>
@@ -106,24 +104,21 @@
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
     <felix-configadmin-version>1.2.4</felix-configadmin-version>
     <felix-framework-version>2.0.5</felix-framework-version>
-    <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version> <!-- FIXME cmueller: duplication? -->
-    <flatpack-version>3.2.0_2</flatpack-version>
+    <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
     <fop-bundle-version>1.0_2</fop-bundle-version>
     <fop-version>1.0</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
     <freemarker-bundle-version>2.3.19_1</freemarker-bundle-version>
     <freemarker-version>2.3.19</freemarker-version>
-    <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version> <!-- FIXME cmueller: miss spelled -->
+    <geronimo-annotation-spec-version>1.1.1</geronimo-annotation-spec-version>
     <geronimo-atinject-1.0-spec.version>1.0</geronimo-atinject-1.0-spec.version>
     <geronimo-ejb_3.1_spec.version>1.0.2</geronimo-ejb_3.1_spec.version>
     <geronimo-el-spec-version>1.0.1</geronimo-el-spec-version>
-    <geronimo-el-version>1.0.1</geronimo-el-version> <!-- FIXME cmueller: duplication? -->
     <geronimo-interceptor-1.1-spec.version>1.0</geronimo-interceptor-1.1-spec.version>
     <geronimo-j2ee-connector-spec-version>2.0.0</geronimo-j2ee-connector-spec-version>
     <geronimo-j2ee-jacc-spec-version>1.1</geronimo-j2ee-jacc-spec-version>
     <geronimo-j2ee-management-spec-version>1.1</geronimo-j2ee-management-spec-version>
     <geronimo-jcdi-1.0-spec.version>1.0</geronimo-jcdi-1.0-spec.version>
-    <gernimo-jaxws22-spec-version>1.1</gernimo-jaxws22-spec-version> <!-- FIXME cmueller: miss spelled -->
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
     <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
@@ -132,16 +127,15 @@
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <google-app-engine-version>1.6.6</google-app-engine-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
-    <google-guava-bundle-version>11_1</google-guava-bundle-version> <!-- FIXME cmueller: outdated! -->
+    <google-guava-bundle-version>11_1</google-guava-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <google-guava-version>13.0.1</google-guava-version>
     <groovy-version>2.0.1</groovy-version>
     <gson-version>2.2.2</gson-version>
-    <guice-bundle-version>2.0_2</guice-bundle-version> <!-- FIXME cmueller: allign the name? -->
+    <guice-bundle-version>2.0_2</guice-bundle-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <hadoop-bundle-version>1.0.3_1</hadoop-bundle-version>
     <hadoop-version>1.0.3</hadoop-version>
     <hamcrest-version>1.1</hamcrest-version>
-    <hapi-bundle-version>0.5.1_5</hapi-bundle-version> <!-- FIXME cmueller: outdated! -->
     <hapi-version>2.0</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
@@ -167,7 +161,6 @@
     <java-apns-bundle-version>0.1.6_3</java-apns-bundle-version>
     <java-apns-version>0.1.6</java-apns-version>
     <javassist-bundle-version>3.12.1.GA_2</javassist-bundle-version>
-    <javax.el-bundle-version>2.1.0</javax.el-bundle-version> <!-- FIXME cmueller: rename to javax-el-bundle-version -->
     <javax-mail-version>1.4.5</javax-mail-version>
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
     <jaxen-version>1.1.4</jaxen-version>
@@ -196,7 +189,7 @@
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
     <jt400-version>6.0</jt400-version>
-    <juel-bundle-version>2.1.2_2</juel-bundle-version> <!-- FIXME cmueller: outdated! -->
+    <juel-bundle-version>2.1.2_2</juel-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <juel-version>2.1.3</juel-version>
     <junit-bundle-version>4.10_1</junit-bundle-version>
     <junit-version>4.10</junit-version>
@@ -205,7 +198,7 @@
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.2</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
-    <lucene-bundle-version>3.6.0_1</lucene-bundle-version> <!-- FIXME cmueller: outdated! -->
+    <lucene-bundle-version>3.6.0_1</lucene-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
@@ -241,7 +234,7 @@
     <pojosr-version>0.1.8</pojosr-version>
     <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
-    <qpid-bundle-version>0.16_1</qpid-bundle-version> <!-- FIXME cmueller: outdated! -->
+    <qpid-bundle-version>0.16_1</qpid-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <qpid-version>0.18</qpid-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
@@ -268,7 +261,7 @@
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
     <snmp4j-version>1.10.1_1</snmp4j-version>
-    <solrj-bundle-version>3.6.0_1</solrj-bundle-version> <!-- FIXME cmueller: outdated? allign the name! -->
+    <solr-bundle-version>3.6.0_1</solr-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <solr-version>3.6.1</solr-version>
     <spring-batch-version>2.1.8.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
@@ -280,7 +273,7 @@
     <spring-security-version>3.1.0.RELEASE</spring-security-version>
     <!-- spring WS 2.0.3 is the last release to support Spring 3.0.x -->
     <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
-    <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: outdated! -->
+    <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
     <sshd-version>0.7.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
@@ -298,7 +291,6 @@
     <!-- should be in-sync with deltaspike -->
     <weld-version>1.1.5.Final</weld-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
-    <woodstox-core-bundle-version>${woodstox-version}</woodstox-core-bundle-version> <!-- FIXME cmueller: -->
     <woodstox-version>4.1.4</woodstox-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
     <wss4j-version>1.6.5</wss4j-version>
@@ -315,7 +307,7 @@
     <xmlsec-version>1.5.1</xmlsec-version>
     <xmlunit-version>1.3</xmlunit-version>
     <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
-    <xstream-bundle-version>1.4.2_2</xstream-bundle-version> <!-- FIXME cmueller: outdated! -->
+    <xstream-bundle-version>1.4.2_2</xstream-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <xstream-version>1.4.3</xstream-version>
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.3.5</zookeeper-version>

@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.flatpack</artifactId>
-      <version>${flatpack-version}</version>
+      <version>${flatpack-bundle-version}</version>
     </dependency>
 	<dependency> 
 	  <groupId>org.jdom</groupId> 
