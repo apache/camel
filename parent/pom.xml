@@ -2208,6 +2208,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
     </profile>
+    
     <profile>
       <id>fastinstall</id>
       <activation>
@@ -2220,6 +2221,7 @@
         <noassembly>true</noassembly>
       </properties>
     </profile>
+    
     <profile>
       <id>sourcecheck</id>
       <build>
@@ -2231,6 +2233,7 @@
         </plugins>
       </build>
     </profile>
+    
     <profile>
       <id>setup.eclipse</id>
       <build>
@@ -2253,12 +2256,14 @@
         </plugins>
       </build>
     </profile>
+    
     <profile>
       <id>spring3.1</id>
       <properties>
         <spring-version>3.1.2.RELEASE</spring-version>
       </properties>
     </profile>
+    
     <profile>
       <id>jdk1.7</id>
       <activation>
