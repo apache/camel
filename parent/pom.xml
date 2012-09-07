@@ -39,31 +39,53 @@
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.6.0</activemq-version>
     <ahc-version>1.7.6</ahc-version>
+    <ant-bundle-version>1.7.0_6</ant-bundle-version>
+    <antlr-bundle-version>2.7.7_5</antlr-bundle-version>
+    <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
     <apacheds-version>1.5.7</apacheds-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
     <arquillian-weld-ee-embedded-version>1.0.0.CR3</arquillian-weld-ee-embedded-version>
     <asm-bundle-version>3.3_2</asm-bundle-version>
+    <asm2-bundle-version>2.2.3_5</asm2-bundle-version>
     <atomikos-transactions-version>3.8.0</atomikos-transactions-version>
+    <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avro-version>1.6.2</avro-version>
     <avro-bundle-version>1.6.1_1</avro-bundle-version>
+    <aws-java-sdk-bundle-version>1.3.10_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.3.10</aws-java-sdk-version>
     <axiom-version>1.2.12</axiom-version>
+    <bcel-bundle-version>5.2_4</bcel-bundle-version>
+    <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
     <beanio-version>2.0.1</beanio-version>
     <bouncycastle-version>1.46</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
+    <cglib-version>2.1_3_7</cglib-version>
+    <cmis-bundle-version>0.7.0</cmis-bundle-version> <!-- FIXME cmueller: duplication? -->
     <cmis-version>0.7.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
+    <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
     <cometd-java-server>2.3.1</cometd-java-server>
+    <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
     <commons-codec-version>1.6</commons-codec-version>
     <commons-collections-version>3.2.1</commons-collections-version>
+    <commons-configuration-version>1.6</commons-configuration-version>
+    <commons-csv-version>1.0-r706900_3</commons-csv-version> <!-- FIXME cmueller: duplication? -->
     <commons-csv>1.0-r706899_3</commons-csv>
     <commons-cli-version>1.2</commons-cli-version>
+    <commons-dbcp-bundle-version>1.4_3</commons-dbcp-bundle-version>
     <commons-dbcp-version>1.4</commons-dbcp-version>
+    <commons-daemon-version>1.0.5</commons-daemon-version>
+    <commons-digester-version>2.1</commons-digester-version>
     <commons-exec-version>1.1</commons-exec-version>
+    <commons-httpclient-bundle-version>3.1_7</commons-httpclient-bundle-version>
+    <commons-io-bundle-version>1.4_3</commons-io-bundle-version>
     <commons-io-version>1.4</commons-io-version>
+    <commons-jxpath-version>1.3</commons-jxpath-version>
     <commons-lang-version>2.6</commons-lang-version>
+    <commons-lang-version-xmljson>2.5</commons-lang-version-xmljson>
     <commons-logging-version>1.1.1</commons-logging-version>
+    <commons-math-version>2.2</commons-math-version>
     <commons-net-version>3.1</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
     <concurrentlinkedhashmap.version>1.3.1</concurrentlinkedhashmap.version>
@@ -73,86 +95,131 @@
     <deltaspike-version>0.3-incubating</deltaspike-version>
     <derby-version>10.9.1.0</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
+    <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.3.2</dozer-version>
     <easymock-version>3.1</easymock-version>
     <ehcache-bundle-version>2.5.2_1</ehcache-bundle-version>
+    <elasticsearch-bundle-version>0.19.8_1-SNAPSHOT</elasticsearch-bundle-version>
     <elasticsearch-version>0.19.8</elasticsearch-version>
+    <el-api-1.0-version>1.0.1</el-api-1.0-version>
+    <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
+    <fastinfoset-version>1.2.7_4</fastinfoset-version>
+    <felix-configadmin-version>1.2.4</felix-configadmin-version>
+    <felix-framework-version>2.0.5</felix-framework-version>
+    <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version> <!-- FIXME cmueller: duplication? -->
     <flatpack-version>3.2.0_2</flatpack-version>
+    <fop-bundle-version>1.0_2</fop-bundle-version>
     <fop-version>1.0</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
+    <freemarker-bundle-version>2.3.19_1</freemarker-bundle-version>
     <freemarker-version>2.3.19</freemarker-version>
+    <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version> <!-- FIXME cmueller: miss spelled -->
+    <geronimo-atinject-1.0-spec.version>1.0</geronimo-atinject-1.0-spec.version>
     <geronimo-ejb_3.1_spec.version>1.0.2</geronimo-ejb_3.1_spec.version>
     <geronimo-el-spec-version>1.0.1</geronimo-el-spec-version>
+    <geronimo-el-version>1.0.1</geronimo-el-version> <!-- FIXME cmueller: duplication? -->
+    <geronimo-interceptor-1.1-spec.version>1.0</geronimo-interceptor-1.1-spec.version>
     <geronimo-j2ee-connector-spec-version>2.0.0</geronimo-j2ee-connector-spec-version>
     <geronimo-j2ee-jacc-spec-version>1.1</geronimo-j2ee-jacc-spec-version>
     <geronimo-j2ee-management-spec-version>1.1</geronimo-j2ee-management-spec-version>
+    <geronimo-jcdi-1.0-spec.version>1.0</geronimo-jcdi-1.0-spec.version>
+    <gernimo-jaxws22-spec-version>1.1</gernimo-jaxws22-spec-version> <!-- FIXME cmueller: miss spelled -->
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
     <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.1.2</geronimo-servlet-spec-version>
-    <geronimo-atinject-1.0-spec.version>1.0</geronimo-atinject-1.0-spec.version>
-    <geronimo-jcdi-1.0-spec.version>1.0</geronimo-jcdi-1.0-spec.version>
-    <geronimo-interceptor-1.1-spec.version>1.0</geronimo-interceptor-1.1-spec.version>
+    <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <google-app-engine-version>1.6.6</google-app-engine-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
+    <google-guava-bundle-version>11_1</google-guava-bundle-version> <!-- FIXME cmueller: outdated! -->
     <google-guava-version>13.0.1</google-guava-version>
     <groovy-version>2.0.1</groovy-version>
     <gson-version>2.2.2</gson-version>
+    <guice-bundle-version>2.0_2</guice-bundle-version> <!-- FIXME cmueller: allign the name? -->
     <guiceyfruit-version>2.0</guiceyfruit-version>
+    <hadoop-bundle-version>1.0.3_1</hadoop-bundle-version>
     <hadoop-version>1.0.3</hadoop-version>
     <hamcrest-version>1.1</hamcrest-version>
+    <hapi-bundle-version>0.5.1_5</hapi-bundle-version> <!-- FIXME cmueller: outdated! -->
     <hapi-version>2.0</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.11</hawtdispatch-version>
     <hazelcast-version>2.3</hazelcast-version>
     <hbase-version>0.90.5</hbase-version>
+    <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
     <hibernate-version>3.6.10.Final</hibernate-version>
     <hsqldb-version>2.2.8</hsqldb-version>
     <httpunit-version>1.7</httpunit-version>
-    <httpcore4-version>4.2.1</httpcore4-version>
-    <httpclient4-version>4.2.1</httpclient4-version>
-    <httpclient-version>3.1</httpclient-version>
+    <httpcore4-version>4.2.1</httpcore4-version> <!-- FIXME cmueller: rename to httpcore4-version -->
+    <httpclient4-version>4.2.1</httpclient4-version> <!-- FIXME cmueller: rename to commons-httpclient4-version -->
+    <httpclient-version>3.1</httpclient-version> <!-- FIXME cmueller: rename to commons-httpclient-version -->
+    <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <icu4j-version>4.8.1.1</icu4j-version>
+    <irclib-bundle-version>1.10_5</irclib-bundle-version>
+    <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
     <jackson-version>1.9.9</jackson-version>
     <jackrabbit-version>2.2.12</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
+    <jasypt-bundle-version>1.9.0_1</jasypt-bundle-version>
     <jasypt-version>1.9.0</jasypt-version>
+    <java-apns-bundle-version>0.1.6_3</java-apns-bundle-version>
     <java-apns-version>0.1.6</java-apns-version>
     <javassist-bundle-version>3.12.1.GA_2</javassist-bundle-version>
+    <javax.el-bundle-version>2.1.0</javax.el-bundle-version> <!-- FIXME cmueller: rename to javax-el-bundle-version -->
     <javax-mail-version>1.4.5</javax-mail-version>
+    <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
     <jaxen-version>1.1.4</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jclouds-version>1.4.0</jclouds-version>
     <jclouds-feature-version>1.4.0</jclouds-feature-version>
+    <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
     <jetty-version>7.5.4.v20111024</jetty-version>
+    <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jettison-version>1.3.2</jettison-version>
+    <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.4.5</jibx-version>
+    <jing-bundle-version>20030619_5</jing-bundle-version>
+    <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
+    <jodatime2-bundle-version>2.1</jodatime2-bundle-version>
+    <josql-bundle-version>1.5_5</josql-bundle-version>
     <jruby-version>1.6.7.2</jruby-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
+    <jsch-bundle-version>0.1.48_1</jsch-bundle-version>
     <jsch-version>0.1.48</jsch-version>
+    <jsendnsca-bundle-version>1.3.1_3</jsendnsca-bundle-version>
+    <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
     <jsonlib-version>2.4</jsonlib-version>
-    <juel-version>2.1.3</juel-version>
-    <junit-version>4.10</junit-version>
+    <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
+    <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
     <jt400-version>6.0</jt400-version>
+    <juel-bundle-version>2.1.2_2</juel-bundle-version> <!-- FIXME cmueller: outdated! -->
+    <juel-version>2.1.3</juel-version>
+    <junit-bundle-version>4.10_1</junit-bundle-version>
+    <junit-version>4.10</junit-version>
     <karaf-version>2.2.9</karaf-version>
     <krati-version>0.4.6</krati-version>
+    <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.2</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
+    <lucene-bundle-version>3.6.0_1</lucene-bundle-version> <!-- FIXME cmueller: outdated! -->
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+    <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.4</mina2-version>
     <mockito-version>1.9.0</mockito-version>
     <mongo-java-driver-version>2.7.3</mongo-java-driver-version>
     <mqtt-client-version>1.2</mqtt-client-version>
+    <mvel-bundle-version>2.0.18_3</mvel-bundle-version>
     <mvel-version>2.0.18</mvel-version>
     <mybatis-version>3.1.1</mybatis-version>
+    <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <!-- transitive dependency from avro, to use older netty bundle -->
     <netty-bundle-version>3.2.7.Final_1</netty-bundle-version>
     <netty-version>3.5.5.Final</netty-version>
@@ -161,6 +228,9 @@
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
     <ognl-version>3.0.5_1</ognl-version>
+    <opensaml-version>2.5.1_2</opensaml-version>
+    <oro-bundle-version>2.0.8_6</oro-bundle-version>
+    <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.2.0</osgi-version>
     <paranamer-bundle-version>2.4_1</paranamer-bundle-version>
     <pax-exam-version>2.5.0</pax-exam-version>
@@ -169,23 +239,39 @@
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
     <pax-logging-version>1.6.10</pax-logging-version>
     <pojosr-version>0.1.8</pojosr-version>
+    <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
+    <qpid-bundle-version>0.16_1</qpid-bundle-version> <!-- FIXME cmueller: outdated! -->
     <qpid-version>0.18</qpid-version>
+    <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
+    <quickfix-bundle-version>1.5.2_1</quickfix-bundle-version>
     <quickfix-version>1.5.2-bd</quickfix-version>
+    <regexp-bundle-version>1.3_3</regexp-bundle-version>
     <restlet-version>2.0.15</restlet-version>
+    <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
+    <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
+    <saaj-impl-version>1.3.2_2</saaj-impl-version>
+    <saxon-bundle-version>9.4.0.1_2</saxon-bundle-version>
     <saxon-version>9.4.0.1</saxon-version>
+    <scala-bundle-version>2.9.1_3</scala-bundle-version>
     <scala-version>2.9.1</scala-version>
+    <scriptengines-version>1.1</scriptengines-version>
+    <serp-bundle-version>1.13.1_4</serp-bundle-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
+    <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
     <shiro-version>1.2.1</shiro-version>
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.6.6</slf4j-version>
+    <smack-bundle-version>3.2.1_1</smack-bundle-version>
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
     <snmp4j-version>1.10.1_1</snmp4j-version>
+    <solrj-bundle-version>3.6.0_1</solrj-bundle-version> <!-- FIXME cmueller: outdated? allign the name! -->
     <solr-version>3.6.1</solr-version>
     <spring-batch-version>2.1.8.RELEASE</spring-batch-version>
+    <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-integration-version>2.1.3.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-neo4j-version>2.0.1.RELEASE</spring-neo4j-version>
@@ -194,26 +280,43 @@
     <spring-security-version>3.1.0.RELEASE</spring-security-version>
     <!-- spring WS 2.0.3 is the last release to support Spring 3.0.x -->
     <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
+    <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: outdated! -->
     <spymemcached-version>2.8.4</spymemcached-version>
     <sshd-version>0.7.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
+    <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
+    <stringtemplate-bundle-version>3.2_5</stringtemplate-bundle-version>
     <stringtemplate-version>3.2.1</stringtemplate-version>
+    <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.7</testng-version>
+    <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
     <twitter4j-version>2.2.5</twitter4j-version>
+    <velocity-bundle-version>1.7_4</velocity-bundle-version>
     <velocity-version>1.7</velocity-version>
     <vysper-version>0.7</vysper-version>
     <!-- should be in-sync with deltaspike -->
     <weld-version>1.1.5.Final</weld-version>
+    <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
+    <woodstox-core-bundle-version>${woodstox-version}</woodstox-core-bundle-version> <!-- FIXME cmueller: -->
     <woodstox-version>4.1.4</woodstox-version>
-    <xbean-spring-version>3.11.1</xbean-spring-version>
-    <xml-resolver-version>1.2</xml-resolver-version>
-    <xstream-version>1.4.3</xstream-version>
-    <xmlsec-version>1.5.1</xmlsec-version>
-    <xerces-version>2.9.1</xerces-version>
+    <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
+    <wss4j-version>1.6.5</wss4j-version>
+    <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
     <xalan-version>2.7.1</xalan-version>
-    <xmlunit-version>1.3</xmlunit-version>
+    <xbean-spring-version>3.11.1</xbean-spring-version>
+    <xerces-bundle-version>2.9.1_5</xerces-bundle-version>
+    <xerces-version>2.9.1</xerces-version>
+    <xml-resolver-version>1.2</xml-resolver-version>
+    <xmlbeans-bundle-version>2.5.0_2</xmlbeans-bundle-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
+    <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
+    <xmlschema-version>2.0</xmlschema-version>
+    <xmlsec-version>1.5.1</xmlsec-version>
+    <xmlunit-version>1.3</xmlunit-version>
+    <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
+    <xstream-bundle-version>1.4.2_2</xstream-bundle-version> <!-- FIXME cmueller: outdated! -->
+    <xstream-version>1.4.3</xstream-version>
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.3.5</zookeeper-version>
 
