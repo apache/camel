@@ -129,7 +129,7 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * Sets the time to wait for thread pools to shutdown orderly, when invoking the
      * {@link #shutdown()} method.
      * <p/>
-     * The default value is <tt>30000</tt> millis.
+     * The default value is <tt>10000</tt> millis.
      *
      * @param timeInMillis time in millis.
      */
@@ -139,7 +139,7 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * Gets the time to wait for thread pools to shutdown orderly, when invoking the
      * {@link #shutdown()} method.
      * <p/>
-     * The default value is <tt>30000</tt> millis.
+     * The default value is <tt>10000</tt> millis.
      *
      * @return the timeout value
      */
@@ -271,6 +271,17 @@ public interface ExecutorServiceManager extends ShutdownableService {
     ScheduledExecutorService newScheduledThreadPool(Object source, String name, String profileId);
 
     /**
+     * Shutdown the given executor service (<b>not</b> graceful).
+     * <p/>
+     * This implementation will issues a regular shutdown of the executor service,
+     * ie calling {@link java.util.concurrent.ExecutorService#shutdown()} and return.
+     *
+     * @param executorService the executor service to shutdown
+     * @see java.util.concurrent.ExecutorService#shutdown()
+     */
+    void shutdown(ExecutorService executorService);
+
+    /**
      * Shutdown the given executor service graceful at first, and then aggressively
      * if the await termination timeout was hit.
      * <p/>
@@ -285,7 +296,7 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * @see java.util.concurrent.ExecutorService#shutdown()
      * @see #getShutdownAwaitTermination()
      */
-    void shutdown(ExecutorService executorService);
+    void shutdownGraceful(ExecutorService executorService);
 
     /**
      * Shutdown the given executor service graceful at first, and then aggressively
@@ -302,15 +313,31 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * @param shutdownAwaitTermination timeout in millis to wait for orderly shutdown
      * @see java.util.concurrent.ExecutorService#shutdown()
      */
-    void shutdown(ExecutorService executorService, long shutdownAwaitTermination);
+    void shutdownGraceful(ExecutorService executorService, long shutdownAwaitTermination);
 
     /**
      * Shutdown now the given executor service aggressively.
+     * <p/>
+     * This implementation will issues a regular shutdownNow of the executor service,
+     * ie calling {@link java.util.concurrent.ExecutorService#shutdownNow()} and return.
      *
      * @param executorService the executor service to shutdown now
      * @return list of tasks that never commenced execution
      * @see java.util.concurrent.ExecutorService#shutdownNow()
      */
     List<Runnable> shutdownNow(ExecutorService executorService);
+
+    /**
+     * Awaits the termination of the thread pool.
+     * <p/>
+     * This implementation will log every 2nd second at INFO level that we are waiting, so the end user
+     * can see we are not hanging in case it takes longer time to shutdown the pool.
+     *
+     * @param executorService            the thread pool
+     * @param shutdownAwaitTermination   time in millis to use as timeout
+     * @return <tt>true</tt> if the pool is terminated, or <tt>false</tt> if we timed out
+     * @throws InterruptedException is thrown if we are interrupted during waiting
+     */
+    boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination) throws InterruptedException;
 
 }

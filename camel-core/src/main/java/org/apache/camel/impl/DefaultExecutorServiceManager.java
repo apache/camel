@@ -59,7 +59,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     private ThreadPoolFactory threadPoolFactory = new DefaultThreadPoolFactory();
     private final List<ExecutorService> executorServices = new ArrayList<ExecutorService>();
     private String threadNamePattern;
-    private long shutdownAwaitTermination = 30000;
+    private long shutdownAwaitTermination = 10000;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
     private final Map<String, ThreadPoolProfile> threadPoolProfiles = new HashMap<String, ThreadPoolProfile>();
     private ThreadPoolProfile builtIndefaultProfile;
@@ -256,41 +256,50 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public void shutdown(ExecutorService executorService) {
-        ObjectHelper.notNull(executorService, "executorService");
-        shutdown(executorService, shutdownAwaitTermination);
+        doShutdown(executorService, 0);
     }
 
     @Override
-    public void shutdown(ExecutorService executorService, long shutdownAwaitTermination) {
-        ObjectHelper.notNull(executorService, "executorService");
-        if (shutdownAwaitTermination <= 0) {
-            throw new IllegalArgumentException("ShutdownAwaitTermination must be a positive number, was: " + shutdownAwaitTermination);
-        }
+    public void shutdownGraceful(ExecutorService executorService) {
+        doShutdown(executorService, getShutdownAwaitTermination());
+    }
 
+    @Override
+    public void shutdownGraceful(ExecutorService executorService, long shutdownAwaitTermination) {
+        doShutdown(executorService, shutdownAwaitTermination);
+    }
+
+    private void doShutdown(ExecutorService executorService, long shutdownAwaitTermination) {
+        ObjectHelper.notNull(executorService, "executorService");
 
         // shutting down a thread pool is a 2 step process. First we try graceful, and if that fails, then we go more aggressively
         // and try shutting down again. In both cases we wait at most the given shutdown timeout value given
-        // (total wait could then be 2 x shutdownAwaitTermination)
-        boolean warned = false;
-        StopWatch watch = new StopWatch();
+        // (total wait could then be 2 x shutdownAwaitTermination, but when we shutdown the 2nd time we are aggressive and thus
+        // we ought to shutdown much faster)
         if (!executorService.isShutdown()) {
+            boolean warned = false;
+            StopWatch watch = new StopWatch();
+
             LOG.trace("Shutdown of ExecutorService: {} with await termination: {} millis", executorService, shutdownAwaitTermination);
             executorService.shutdown();
-            try {
-                if (!awaitTermination(executorService, shutdownAwaitTermination)) {
-                    warned = true;
-                    LOG.warn("Forcing shutdown of ExecutorService: {} due first await termination elapsed.", executorService);
-                    executorService.shutdownNow();
-                    // we are now shutting down aggressively, so wait to see if we can completely shutdown or not
+
+            if (shutdownAwaitTermination > 0) {
+                try {
                     if (!awaitTermination(executorService, shutdownAwaitTermination)) {
-                        LOG.warn("Cannot completely force shutdown of ExecutorService: {} due second await termination elapsed.", executorService);
+                        warned = true;
+                        LOG.warn("Forcing shutdown of ExecutorService: {} due first await termination elapsed.", executorService);
+                        executorService.shutdownNow();
+                        // we are now shutting down aggressively, so wait to see if we can completely shutdown or not
+                        if (!awaitTermination(executorService, shutdownAwaitTermination)) {
+                            LOG.warn("Cannot completely force shutdown of ExecutorService: {} due second await termination elapsed.", executorService);
+                        }
                     }
+                } catch (InterruptedException e) {
+                    warned = true;
+                    LOG.warn("Forcing shutdown of ExecutorService: {} due interrupted.", executorService);
+                    // we were interrupted during shutdown, so force shutdown
+                    executorService.shutdownNow();
                 }
-            } catch (InterruptedException e) {
-                warned = true;
-                LOG.warn("Forcing shutdown of ExecutorService: {} due interrupted.", executorService);
-                // we were interrupted during shutdown, so force shutdown
-                executorService.shutdownNow();
             }
 
             // if we logged at WARN level, then report at INFO level when we are complete so the end user can see this in the log
@@ -312,35 +321,6 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
         // remove reference as its shutdown
         executorServices.remove(executorService);
-    }
-
-    /**
-     * Awaits the termination of the thread pool.
-     * <p/>
-     * This implementation will log every 5th second at INFO level that we are waiting, so the end user
-     * can see we are not hanging in case it takes longer time to shutdown the pool.
-     *
-     * @param executorService            the thread pool
-     * @param shutdownAwaitTermination   time in millis to use as timeout
-     * @return <tt>true</tt> if the pool is terminated, or <tt>false</tt> if we timed out
-     * @throws InterruptedException is thrown if we are interrupted during the waiting
-     */
-    private static boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination) throws InterruptedException {
-        // log progress every 5th second so end user is aware of we are shutting down
-        StopWatch watch = new StopWatch();
-        long interval = Math.min(5000, shutdownAwaitTermination);
-        boolean done = false;
-        while (!done && interval > 0) {
-            if (executorService.awaitTermination(interval, TimeUnit.MILLISECONDS)) {
-                done = true;
-            } else {
-                LOG.info("Waited {} for ExecutorService: {} to shutdown...", TimeUtils.printDuration(watch.taken()), executorService);
-                // recalculate interval
-                interval = Math.min(5000, shutdownAwaitTermination - watch.taken());
-            }
-        }
-
-        return done;
     }
 
     @Override
@@ -373,12 +353,31 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
             }
         }
 
-        // remove reference as its shutdown
+        // remove reference as its shutdown (do not remove if fail-safe)
         if (!failSafe) {
             executorServices.remove(executorService);
         }
 
         return answer;
+    }
+
+    @Override
+    public boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination) throws InterruptedException {
+        // log progress every 2nd second so end user is aware of we are shutting down
+        StopWatch watch = new StopWatch();
+        long interval = Math.min(2000, shutdownAwaitTermination);
+        boolean done = false;
+        while (!done && interval > 0) {
+            if (executorService.awaitTermination(interval, TimeUnit.MILLISECONDS)) {
+                done = true;
+            } else {
+                LOG.info("Waited {} for ExecutorService: {} to terminate...", TimeUtils.printDuration(watch.taken()), executorService);
+                // recalculate interval
+                interval = Math.min(2000, shutdownAwaitTermination - watch.taken());
+            }
+        }
+
+        return done;
     }
 
     /**
