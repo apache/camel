@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -455,36 +454,6 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         context.stop();
 
         assertTrue(tp.isShutdown());
-    }
-
-    // this is a manual test, by looking at the logs
-    public void xxxTestLongShutdownOfThreadPool() throws Exception {
-        final CountDownLatch latch = new CountDownLatch(1);
-        ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");
-
-        pool.execute(new Runnable() {
-            @Override
-            public void run() {
-                log.info("Starting thread");
-
-                // this should take a long time to shutdown
-                try {
-                    latch.await(42, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-
-                log.info("Existing thread");
-            }
-        });
-
-        // sleep a bit before shutting down
-        Thread.sleep(3000);
-
-        context.getExecutorServiceManager().shutdown(pool);
-
-        assertTrue(pool.isShutdown());
-        assertTrue(pool.isTerminated());
     }
 
 }

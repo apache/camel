@@ -157,7 +157,7 @@ public class ThroughputLogger extends ServiceSupport implements Processor {
     @Override
     public void doStop() throws Exception {
         if (logSchedulerService != null) {
-            camelContext.getExecutorServiceManager().shutdown(logSchedulerService);
+            camelContext.getExecutorServiceManager().shutdownNow(logSchedulerService);
             logSchedulerService = null;
         }
     }

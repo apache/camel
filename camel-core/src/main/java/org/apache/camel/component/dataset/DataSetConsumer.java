@@ -77,7 +77,7 @@ public class DataSetConsumer extends DefaultConsumer {
         super.doStop();
 
         if (executorService != null) {
-            camelContext.getExecutorServiceManager().shutdown(executorService);
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
         }
     }

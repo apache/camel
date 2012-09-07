@@ -86,12 +86,10 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
         log.info("Stopping consumer for " + endpoint.getEndpointUri());
 
         if (pollerExecutor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(pollerExecutor);
-            pollerExecutor = null;
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(pollerExecutor);
         }
         if (handlerExecutor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(handlerExecutor);
-            handlerExecutor = null;
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(handlerExecutor);
         }
 
         super.doStop();

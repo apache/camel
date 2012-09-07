@@ -43,11 +43,6 @@ import org.apache.camel.ShutdownableService;
  * If you use the <tt>newXXX</tt> methods to create thread pools, then Camel will by default take care of
  * shutting down those created pools when {@link org.apache.camel.CamelContext} is shutting down.
  * <p/>
- * For more information about shutting down thread pools see the {@link #shutdown(java.util.concurrent.ExecutorService)}
- * and {@link #shutdownNow(java.util.concurrent.ExecutorService)}, and {@link #getShutdownAwaitTermination()} methods.
- * Notice the details about using a graceful shutdown at fist, and then falling back to aggressive shutdown in case
- * of await termination timeout occurred.
- *
  * @see ThreadPoolFactory
  */
 public interface ExecutorServiceManager extends ShutdownableService {
@@ -124,26 +119,6 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * @return the pattern
      */
     String getThreadNamePattern();
-
-    /**
-     * Sets the time to wait for thread pools to shutdown orderly, when invoking the
-     * {@link #shutdown()} method.
-     * <p/>
-     * The default value is <tt>30000</tt> millis.
-     *
-     * @param timeInMillis time in millis.
-     */
-    void setShutdownAwaitTermination(long timeInMillis);
-
-    /**
-     * Gets the time to wait for thread pools to shutdown orderly, when invoking the
-     * {@link #shutdown()} method.
-     * <p/>
-     * The default value is <tt>30000</tt> millis.
-     *
-     * @return the timeout value
-     */
-    long getShutdownAwaitTermination();
 
     /**
      * Creates a new thread pool using the default thread pool profile.
@@ -271,41 +246,15 @@ public interface ExecutorServiceManager extends ShutdownableService {
     ScheduledExecutorService newScheduledThreadPool(Object source, String name, String profileId);
 
     /**
-     * Shutdown the given executor service graceful at first, and then aggressively
-     * if the await termination timeout was hit.
-     * <p/>
-     * Will try to perform an orderly shutdown by giving the running threads
-     * time to complete tasks, before going more aggressively by doing a
-     * {@link #shutdownNow(java.util.concurrent.ExecutorService)} which
-     * forces a shutdown. The {@link #getShutdownAwaitTermination()}
-     * is used as timeout value waiting for orderly shutdown to
-     * complete normally, before going aggressively.
+     * Shutdown the given executor service.
      *
      * @param executorService the executor service to shutdown
      * @see java.util.concurrent.ExecutorService#shutdown()
-     * @see #getShutdownAwaitTermination()
      */
     void shutdown(ExecutorService executorService);
 
     /**
-     * Shutdown the given executor service graceful at first, and then aggressively
-     * if the await termination timeout was hit.
-     * <p/>
-     * Will try to perform an orderly shutdown by giving the running threads
-     * time to complete tasks, before going more aggressively by doing a
-     * {@link #shutdownNow(java.util.concurrent.ExecutorService)} which
-     * forces a shutdown. The parameter <tt>shutdownAwaitTermination</tt>
-     * is used as timeout value waiting for orderly shutdown to
-     * complete normally, before going aggressively.
-     *
-     * @param executorService the executor service to shutdown
-     * @param shutdownAwaitTermination timeout in millis to wait for orderly shutdown
-     * @see java.util.concurrent.ExecutorService#shutdown()
-     */
-    void shutdown(ExecutorService executorService, long shutdownAwaitTermination);
-
-    /**
-     * Shutdown now the given executor service aggressively.
+     * Shutdown now the given executor service.
      *
      * @param executorService the executor service to shutdown now
      * @return list of tasks that never commenced execution

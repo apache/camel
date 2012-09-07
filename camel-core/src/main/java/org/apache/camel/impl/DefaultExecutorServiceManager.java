@@ -40,8 +40,6 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
@@ -59,7 +57,6 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     private ThreadPoolFactory threadPoolFactory = new DefaultThreadPoolFactory();
     private final List<ExecutorService> executorServices = new ArrayList<ExecutorService>();
     private String threadNamePattern;
-    private long shutdownAwaitTermination = 30000;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
     private final Map<String, ThreadPoolProfile> threadPoolProfiles = new HashMap<String, ThreadPoolProfile>();
     private ThreadPoolProfile builtIndefaultProfile;
@@ -129,17 +126,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         String name = threadNamePattern.replaceFirst("#camelId#", this.camelContext.getName());
         this.threadNamePattern = name;
     }
-
-    @Override
-    public long getShutdownAwaitTermination() {
-        return shutdownAwaitTermination;
-    }
-
-    @Override
-    public void setShutdownAwaitTermination(long shutdownAwaitTermination) {
-        this.shutdownAwaitTermination = shutdownAwaitTermination;
-    }
-
+    
     @Override
     public String resolveThreadName(String name) {
         return ThreadHelper.resolveThreadName(threadNamePattern, name);
@@ -257,50 +244,11 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public void shutdown(ExecutorService executorService) {
         ObjectHelper.notNull(executorService, "executorService");
-        shutdown(executorService, shutdownAwaitTermination);
-    }
 
-    @Override
-    public void shutdown(ExecutorService executorService, long shutdownAwaitTermination) {
-        ObjectHelper.notNull(executorService, "executorService");
-        if (shutdownAwaitTermination <= 0) {
-            throw new IllegalArgumentException("ShutdownAwaitTermination must be a positive number, was: " + shutdownAwaitTermination);
-        }
-
-
-        // shutting down a thread pool is a 2 step process. First we try graceful, and if that fails, then we go more aggressively
-        // and try shutting down again. In both cases we wait at most the given shutdown timeout value given
-        // (total wait could then be 2 x shutdownAwaitTermination)
-        boolean warned = false;
-        StopWatch watch = new StopWatch();
         if (!executorService.isShutdown()) {
-            LOG.trace("Shutdown of ExecutorService: {} with await termination: {} millis", executorService, shutdownAwaitTermination);
+            LOG.debug("Shutdown ExecutorService: {}", executorService);
             executorService.shutdown();
-            try {
-                if (!awaitTermination(executorService, shutdownAwaitTermination)) {
-                    warned = true;
-                    LOG.warn("Forcing shutdown of ExecutorService: {} due first await termination elapsed.", executorService);
-                    executorService.shutdownNow();
-                    // we are now shutting down aggressively, so wait to see if we can completely shutdown or not
-                    if (!awaitTermination(executorService, shutdownAwaitTermination)) {
-                        LOG.warn("Cannot completely force shutdown of ExecutorService: {} due second await termination elapsed.", executorService);
-                    }
-                }
-            } catch (InterruptedException e) {
-                warned = true;
-                LOG.warn("Forcing shutdown of ExecutorService: {} due interrupted.", executorService);
-                // we were interrupted during shutdown, so force shutdown
-                executorService.shutdownNow();
-            }
-
-            // if we logged at WARN level, then report at INFO level when we are complete so the end user can see this in the log
-            if (warned) {
-                LOG.info("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
-                        new Object[]{executorService, executorService.isShutdown(), executorService.isTerminated(), TimeUtils.printDuration(watch.taken())});
-            } else if (LOG.isDebugEnabled()) {
-                LOG.debug("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
-                    new Object[]{executorService, executorService.isShutdown(), executorService.isTerminated(), TimeUtils.printDuration(watch.taken())});
-            }
+            LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
         }
 
         if (executorService instanceof ThreadPoolExecutor) {
@@ -314,56 +262,19 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         executorServices.remove(executorService);
     }
 
-    /**
-     * Awaits the termination of the thread pool.
-     * <p/>
-     * This implementation will log every 5th second at INFO level that we are waiting, so the end user
-     * can see we are not hanging in case it takes longer time to shutdown the pool.
-     *
-     * @param executorService            the thread pool
-     * @param shutdownAwaitTermination   time in millis to use as timeout
-     * @return <tt>true</tt> if the pool is terminated, or <tt>false</tt> if we timed out
-     * @throws InterruptedException is thrown if we are interrupted during the waiting
-     */
-    private static boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination) throws InterruptedException {
-        // log progress every 5th second so end user is aware of we are shutting down
-        StopWatch watch = new StopWatch();
-        long interval = Math.min(5000, shutdownAwaitTermination);
-        boolean done = false;
-        while (!done && interval > 0) {
-            if (executorService.awaitTermination(interval, TimeUnit.MILLISECONDS)) {
-                done = true;
-            } else {
-                LOG.info("Waited {} for ExecutorService: {} to shutdown...", TimeUtils.printDuration(watch.taken()), executorService);
-                // recalculate interval
-                interval = Math.min(5000, shutdownAwaitTermination - watch.taken());
-            }
-        }
-
-        return done;
-    }
-
     @Override
     public List<Runnable> shutdownNow(ExecutorService executorService) {
-        return doShutdownNow(executorService, false);
+        return doShutdownNow(executorService, true);
     }
 
-    private List<Runnable> doShutdownNow(ExecutorService executorService, boolean failSafe) {
+    private List<Runnable> doShutdownNow(ExecutorService executorService, boolean remove) {
         ObjectHelper.notNull(executorService, "executorService");
 
         List<Runnable> answer = null;
         if (!executorService.isShutdown()) {
-            if (failSafe) {
-                // log as warn, as we shutdown as fail-safe, so end user should see more details in the log.
-                LOG.warn("Forcing shutdown of ExecutorService: {}", executorService);
-            } else {
-                LOG.debug("Forcing shutdown of ExecutorService: {}", executorService);
-            }
+            LOG.debug("ShutdownNow ExecutorService: {}", executorService);
             answer = executorService.shutdownNow();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {}.",
-                        new Object[]{executorService, executorService.isShutdown(), executorService.isTerminated()});
-            }
+            LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
         }
 
         if (executorService instanceof ThreadPoolExecutor) {
@@ -374,7 +285,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         }
 
         // remove reference as its shutdown
-        if (!failSafe) {
+        if (remove) {
             executorServices.remove(executorService);
         }
 
@@ -405,23 +316,17 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     protected void doShutdown() throws Exception {
-        // shutdown all remainder executor services by looping and doing this aggressively
-        // as by normal all threads pool should have been shutdown using proper lifecycle
-        // by their EIPs, components etc. This is acting as a fail-safe during shutdown
-        // of CamelContext itself.
-        if (!executorServices.isEmpty()) {
-            LOG.warn("Shutting down {} ExecutorService's which has not been shutdown properly (acting as fail-safe)", executorServices.size());
-            for (ExecutorService executorService : executorServices) {
-                // only log if something goes wrong as we want to shutdown them all
-                try {
-                    doShutdownNow(executorService, true);
-                } catch (Throwable e) {
-                    LOG.warn("Error occurred during shutdown of ExecutorService: "
-                            + executorService + ". This exception will be ignored.", e);
-                }
+        // shutdown all executor services by looping
+        for (ExecutorService executorService : executorServices) {
+            // only log if something goes wrong as we want to shutdown them all
+            try {
+                // must not remove during looping, as we clear the list afterwards
+                doShutdownNow(executorService, false);
+            } catch (Throwable e) {
+                LOG.warn("Error occurred during shutdown of ExecutorService: "
+                        + executorService + ". This exception will be ignored.", e);
             }
         }
-        // clear list
         executorServices.clear();
 
         // do not clear the default profile as we could potential be restarted

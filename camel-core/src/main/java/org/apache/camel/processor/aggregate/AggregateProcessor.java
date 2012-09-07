@@ -917,7 +917,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // and is better suited for preparing to shutdown than this doStop method is
 
         if (recoverService != null) {
-            camelContext.getExecutorServiceManager().shutdown(recoverService);
+            camelContext.getExecutorServiceManager().shutdownNow(recoverService);
         }
         ServiceHelper.stopServices(timeoutMap, processor, deadLetterProducerTemplate);
 
@@ -970,10 +970,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         inProgressCompleteExchanges.clear();
 
         if (shutdownExecutorService) {
-            camelContext.getExecutorServiceManager().shutdown(executorService);
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
         }
         if (shutdownTimeoutCheckerExecutorService) {
-            camelContext.getExecutorServiceManager().shutdown(timeoutCheckerExecutorService);
+            camelContext.getExecutorServiceManager().shutdownNow(timeoutCheckerExecutorService);
             timeoutCheckerExecutorService = null;
         }
 

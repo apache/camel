@@ -238,7 +238,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         // must also stop executor service
         if (executorService != null) {
-            camelContext.getExecutorServiceManager().shutdown(executorService);
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
         }
     }

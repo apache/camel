@@ -128,12 +128,10 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
         // and then shutdown the thread pools
         if (bossExecutor != null) {
-            context.getExecutorServiceManager().shutdown(bossExecutor);
-            bossExecutor = null;
+            context.getExecutorServiceManager().shutdownNow(bossExecutor);
         }
         if (workerExecutor != null) {
-            context.getExecutorServiceManager().shutdown(workerExecutor);
-            workerExecutor = null;
+            context.getExecutorServiceManager().shutdownNow(workerExecutor);
         }
 
         super.doStop();
