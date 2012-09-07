@@ -241,26 +241,6 @@
                 </executions>
             </plugin>
 
-
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkMode>once</forkMode>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
-                    <includes>
-                        <include>**/*Test.*</include>
-                    </includes>
-                    <systemProperties>
-                        <property>
-                            <name>java.util.logging.config.file</name>
-                            <value>${basedir}/target/test-classes/logging.properties</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
-            </plugin>
-
             <!-- Allows the example to be run via 'mvn compile exec:java' -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -102,24 +102,4 @@
     </repository>
 -->
   </repositories>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>once</forkMode>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-          <includes>
-            <include>**/*Test.*</include>
-          </includes>
-          <excludes>
-            <!-- TODO FIXME ASAP -->
-            <exclude>**/FilterTest.*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>

@@ -67,9 +67,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <childDelegation>false</childDelegation>
-          <forkMode>once</forkMode>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <includes>
             <include>**/NoTest.*</include>
           </includes>

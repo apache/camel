@@ -117,10 +117,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skipTests>true</skipTests>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

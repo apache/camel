@@ -73,10 +73,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
                     <forkMode>perTest</forkMode>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                     <excludes>
                         <exclude>**/MQTTProducerTest.*</exclude>
                     </excludes>

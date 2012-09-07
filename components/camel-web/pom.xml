@@ -220,8 +220,6 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>once</forkMode>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                     <!--
                              these settings are mandatory to avoid SureFire giving a bogus
                              system property to the web container

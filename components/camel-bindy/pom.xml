@@ -71,22 +71,4 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <childDelegation>false</childDelegation>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                    <useFile>true</useFile>
-                    <forkMode>once</forkMode>
-                    <excludes>
-                        <exclude>**/CommonBindyTest.*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    
 </project>

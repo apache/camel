@@ -106,19 +106,6 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-          <systemProperties>
-            <property>
-              <name>derby.stream.error.file</name>
-              <value>target/derby.log</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
         <version>${openjpa-version}</version>

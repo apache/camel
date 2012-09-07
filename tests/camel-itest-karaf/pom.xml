@@ -141,12 +141,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <argLine>-Xmx256m</argLine>
-                    <includes>
-                        <include>**/*Test.*</include>
-                    </includes>
                     <excludes>
                         <!-- CXF test will hang with the Spring3, need to check Cxf feature with karaf later -->
                         <exclude>**/*Cxf*.*</exclude>

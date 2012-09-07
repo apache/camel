@@ -132,14 +132,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                    <excludes>
-                        <!-- TODO FIXME ASAP -->
-                        <exclude>**/XXXTest.*</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

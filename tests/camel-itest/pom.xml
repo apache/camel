@@ -352,24 +352,9 @@
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
           <excludes>
             <!-- TODO FIXME ASAP -->
-            <exclude>**/XXXTest.*</exclude>
             <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsTest.*</exclude>
             <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsXaTest.*</exclude>
           </excludes>
-          <systemProperties>
-   	        <property>
-              <name>java.util.logging.config.file</name>
-              <value>${basedir}/target/test-classes/logging.properties</value>
-     	    </property>
-     	    <property>
-              <name>org.apache.activemq.default.directory.prefix</name>
-              <value>target/</value>
-            </property>
-            <property>
-              <name>derby.stream.error.file</name>
-              <value>target/derby.log</value>
-            </property>
-          </systemProperties>
         </configuration>
       </plugin>
       <plugin>

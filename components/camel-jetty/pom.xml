@@ -119,11 +119,6 @@
                 <configuration>
                     <forkMode>pertest</forkMode>
                     <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-			          <excludes>
-			            <!-- TODO FIXME ASAP -->
-				        <!-- need to fix this issue when we rewrite the stream cache-->
-			            <exclude>**/*XXXTest.*</exclude>            
-			          </excludes>
                 </configuration>
             </plugin>
         </plugins>

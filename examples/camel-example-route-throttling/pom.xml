@@ -143,18 +143,6 @@
                     <commandlineArgs>${target.cmd.args}</commandlineArgs>
                 </configuration>
             </plugin>
-            <plugin>
-               <artifactId>maven-surefire-plugin</artifactId>
-               <configuration>
-                 <forkMode>once</forkMode>
-                 <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                 <childDelegation>false</childDelegation>
-                 <useFile>true</useFile>
-                 <includes>
-                   <include>**/*Test.*</include>
-                 </includes>
-               </configuration>
-            </plugin>
         </plugins>
     </build>
 

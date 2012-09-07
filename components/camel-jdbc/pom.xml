@@ -68,22 +68,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-          <systemProperties>
-            <property>
-              <name>derby.stream.error.file</name>
-              <value>target/derby.log</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>

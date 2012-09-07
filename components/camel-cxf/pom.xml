@@ -246,9 +246,6 @@
           <!--parallel>classes</parallel>
           <perCoreThreadCount>true</perCoreThreadCount>
           <threadCount>2</threadCount-->
-          <systemPropertyVariables>
-            <java.util.logging.config.file>${basedir}/target/test-classes/logging.properties</java.util.logging.config.file>
-          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>

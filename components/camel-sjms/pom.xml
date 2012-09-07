@@ -136,15 +136,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
                     <argLine>-Xmx512M</argLine>
-                    <systemProperties>
-                        <property>
-                            <name>org.apache.activemq.default.directory.prefix</name>
-                            <value>target/activemq/</value>
-                        </property>
-                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>

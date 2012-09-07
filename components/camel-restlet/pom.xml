@@ -102,15 +102,8 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <childDelegation>false</childDelegation>
-          <forkMode>once</forkMode>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <reportFormat>brief</reportFormat>
           <useFile>false</useFile>
-          <runOrder>alphabetical</runOrder>
-          <systemPropertyVariables>
-            <java.util.logging.config.file>${basedir}/target/test-classes/logging.properties</java.util.logging.config.file>
-          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

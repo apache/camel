@@ -84,15 +84,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
