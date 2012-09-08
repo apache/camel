@@ -40,7 +40,9 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("timer://kickoff?period=10000").
+                getContext().setTracing(true);
+                
+                from("timer://kickoff?delay=100&period=10000").
                     setBody(constant("select * from customer")).
                     to("jdbc:testdb").
                     to("mock:result");
