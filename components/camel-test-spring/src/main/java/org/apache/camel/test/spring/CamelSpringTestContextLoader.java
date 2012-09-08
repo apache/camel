@@ -422,7 +422,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     }
     
     /**
-     * Handles auto-intercepting of endpoints with mocks based on {@link MockEndpoints} and skipping the
+     * Handles auto-intercepting of endpoints with mocks based on {@link MockEndpointsAndSkip} and skipping the
      * original endpoint.
      *
      * @param context the initialized Spring context
