@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,20 +35,20 @@ import org.slf4j.LoggerFactory;
 public class RoutesContextB extends RouteBuilder {
     private static final transient Logger LOG = LoggerFactory.getLogger(RoutesContextB.class);
 
+    @EndpointInject(uri = "mock:B.b", context = "contextB")
+    public MockEndpoint b;
+
     @Inject @Uri(value = "seda:B.a", context = "contextB")
     Endpoint a;
 
-    @EndpointInject(uri = "mock:B.b", context = "contextB")
-    public MockEndpoint b;
+    @Inject @Uri(value = "seda:B.a", context = "contextB")
+    ProducerTemplate producer;
 
     @Override
     public void configure() throws Exception {
         System.out.println("Adding route from " + a + " to " + b);
         from(a).to(b);
     }
-
-    @Inject @Uri(value = "seda:B.a", context = "contextB")
-    ProducerTemplate producer;
 
     public void sendMessages() {
         for (Object expectedBody : Constants.EXPECTED_BODIES_B) {

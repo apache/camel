@@ -216,11 +216,10 @@ public class CamelExtension implements Extension {
     /**
      * Lets perform injection of all beans which use Camel annotations
      */
-    @SuppressWarnings("unchecked")
-    public void onInjectionTarget(@Observes ProcessInjectionTarget event) {
-        final InjectionTarget injectionTarget = event.getInjectionTarget();
-        AnnotatedType annotatedType = event.getAnnotatedType();
-        final Class beanClass = annotatedType.getJavaClass();
+    public void onInjectionTarget(@Observes ProcessInjectionTarget<Object> event) {
+        final InjectionTarget<Object> injectionTarget = event.getInjectionTarget();
+        AnnotatedType<Object> annotatedType = event.getAnnotatedType();
+        final Class<Object> beanClass = annotatedType.getJavaClass();
         // TODO this is a bit of a hack - what should the bean name be?
         final String beanName = injectionTarget.toString();
         ContextName contextName = annotatedType.getAnnotation(ContextName.class);
@@ -257,7 +256,7 @@ public class CamelExtension implements Extension {
         }
     }
 
-    private BeanAdapter createBeanAdapter(Class beanClass, ContextName contextName) {
+    private BeanAdapter createBeanAdapter(Class<?> beanClass, ContextName contextName) {
         final BeanAdapter adapter = new BeanAdapter(contextName);
         ReflectionHelper.doWithFields(beanClass, new ReflectionHelper.FieldCallback() {
             @Override

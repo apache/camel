@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +16,17 @@
  */
 package org.apache.camel.itest.cdi;
 
-public class Constants {
-    public static Object[] EXPECTED_BODIES_A = {"messageA1", "messageA2"};
-    public static Object[] EXPECTED_BODIES_B = {"messageB1", "messageB2"};
-    public static Object[] EXPECTED_BODIES_C = {"messageC1", "messageC2"};
-    public static Object[] EXPECTED_BODIES_D = {"messageD1", "messageD2"};
+public final class Constants {
 
-    public static Object[] EXPECTED_BODIES_Ea = {"messageEa1", "messageEa2"};
-    public static Object[] EXPECTED_BODIES_Ec = {"messageEc1", "messageEc2"};
+    public static final Object[] EXPECTED_BODIES_A = {"messageA1", "messageA2"};
+    public static final Object[] EXPECTED_BODIES_B = {"messageB1", "messageB2"};
+    public static final Object[] EXPECTED_BODIES_C = {"messageC1", "messageC2"};
+    public static final Object[] EXPECTED_BODIES_D = {"messageD1", "messageD2"};
+
+    public static final Object[] EXPECTED_BODIES_E_A = {"messageEa1", "messageEa2"};
+    public static final Object[] EXPECTED_BODIES_E_C = {"messageEc1", "messageEc2"};
+
+    private Constants() {
+    }
+
 }

@@ -56,12 +56,12 @@ public class IntegrationTest {
     @Inject
     RoutesContextD routesD;
 
-    @Inject @Uri(value="seda:foo", context = "contextE")
+    @Inject @Uri(value = "seda:foo", context = "contextE")
     ProducerTemplate producerE;
 
     @Test
     public void checkContextsHaveCorrectEndpointsAndRoutes() throws Exception {
-        Set<Map.Entry<String,CamelContext>> entries = camelContextMap.getCamelContextMap().entrySet();
+        Set<Map.Entry<String, CamelContext>> entries = camelContextMap.getCamelContextMap().entrySet();
         for (Map.Entry<String, CamelContext> entry : entries) {
             LOG.info("CamelContext " + entry.getKey() + " has endpoints: " + entry.getValue().getEndpointMap()
                     .keySet());
@@ -110,14 +110,14 @@ public class IntegrationTest {
                 .getMandatoryEndpoint(contextE, "mock://E.d", MockEndpoint.class);
 
 
-        mockEb.expectedBodiesReceived(Constants.EXPECTED_BODIES_Ea);
-        mockEd.expectedBodiesReceived(Constants.EXPECTED_BODIES_Ec);
+        mockEb.expectedBodiesReceived(Constants.EXPECTED_BODIES_E_A);
+        mockEd.expectedBodiesReceived(Constants.EXPECTED_BODIES_E_C);
 
-        for (Object body : Constants.EXPECTED_BODIES_Ea) {
+        for (Object body : Constants.EXPECTED_BODIES_E_A) {
             producerE.sendBody("seda:E.a", body);
         }
 
-        for (Object body : Constants.EXPECTED_BODIES_Ec) {
+        for (Object body : Constants.EXPECTED_BODIES_E_C) {
             producerE.sendBody("seda:E.c", body);
         }
 
