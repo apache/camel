@@ -41,7 +41,6 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private MessageStoreFactory messageStoreFactory;
     private LogFactory logFactory;
     private MessageFactory messageFactory;
-    private boolean forcedShutdown;
     private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
 
     @Override
@@ -57,9 +56,9 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                     QuickfixjConfiguration configuration = configurations.get(remaining);
                     if (configuration != null) {
                         SessionSettings settings = configuration.createSessionSettings();
-                        engine = new QuickfixjEngine(uri, settings, forcedShutdown, messageStoreFactory, logFactory, messageFactory);
+                        engine = new QuickfixjEngine(uri, settings, messageStoreFactory, logFactory, messageFactory);
                     } else {
-                        engine = new QuickfixjEngine(uri, remaining, forcedShutdown, messageStoreFactory, logFactory, messageFactory);
+                        engine = new QuickfixjEngine(uri, remaining, messageStoreFactory, logFactory, messageFactory);
                     }
                     engines.put(remaining, engine);
 
@@ -126,8 +125,11 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
         this.messageStoreFactory = messageStoreFactory;
     }
 
+    /**
+     * @deprecated As it had/has no effect.
+     */
+    @Deprecated
     public void setForcedShutdown(boolean forcedShutdown) {
-        this.forcedShutdown = forcedShutdown;
     }
 
     public Map<String, QuickfixjConfiguration> getConfigurations() {
