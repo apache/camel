@@ -331,7 +331,7 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * Awaits the termination of the thread pool.
      * <p/>
      * This implementation will log every 2nd second at INFO level that we are waiting, so the end user
-     * can see we are not hanging in case it takes longer time to shutdown the pool.
+     * can see we are not hanging in case it takes longer time to terminate the pool.
      *
      * @param executorService            the thread pool
      * @param shutdownAwaitTermination   time in millis to use as timeout
