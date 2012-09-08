@@ -215,7 +215,7 @@
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <!-- transitive dependency from avro, to use older netty bundle -->
     <netty-bundle-version>3.2.7.Final_1</netty-bundle-version>
-    <netty-version>3.5.5.Final</netty-version>
+    <netty-version>3.5.7.Final</netty-version>
     <ode-version>1.3.4</ode-version>
     <openjpa-version>2.2.0</openjpa-version>
     <!-- should be in-sync with deltaspike -->
