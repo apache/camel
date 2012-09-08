@@ -20,9 +20,8 @@
 
 	<parent>
 		<groupId>org.apache.camel</groupId>
-		<artifactId>camel-parent</artifactId>
+		<artifactId>components</artifactId>
 		<version>2.11-SNAPSHOT</version>
-        <relativePath>../../parent</relativePath>
 	</parent>
 
 	<groupId>org.apache.camel</groupId>

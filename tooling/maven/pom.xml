@@ -21,9 +21,8 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>tooling</artifactId>
     <version>2.11-SNAPSHOT</version>
-    <relativePath>../../parent</relativePath>
   </parent>
 
   <artifactId>maven-plugins</artifactId>
