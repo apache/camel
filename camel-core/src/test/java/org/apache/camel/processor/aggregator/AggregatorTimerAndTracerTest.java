@@ -44,7 +44,7 @@ public class AggregatorTimerAndTracerTest extends ContextTestSupport {
                     to("mock:foo").
                     to("mock:result");
 
-                from("timer://kickoff?period=9999910000").
+                from("timer://kickoff?delay=100&period=9999910000").
                     setHeader("id").constant("foo").setBody().constant("a b c").
                     split(body().tokenize(" ")).to("seda:splitted");
             }
