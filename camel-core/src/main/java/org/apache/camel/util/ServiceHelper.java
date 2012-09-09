@@ -22,11 +22,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.Channel;
 import org.apache.camel.Navigate;
+import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.processor.ErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -366,20 +369,38 @@ public final class ServiceHelper {
      * @return the services, including the parent service, and all its children
      */
     public static Set<Service> getChildServices(Service service) {
+        return getChildServices(service, false);
+    }
+
+    /**
+     * Gather all child services by navigating the service to recursively gather all child services.
+     *
+     * @param service the service
+     * @param includeErrorHandler whether to include error handlers
+     * @return the services, including the parent service, and all its children
+     */
+    public static Set<Service> getChildServices(Service service, boolean includeErrorHandler) {
         Set<Service> answer = new LinkedHashSet<Service>();
-        doGetChildServices(answer, service);
+        doGetChildServices(answer, service, includeErrorHandler);
         return answer;
     }
 
-    private static void doGetChildServices(Set<Service> services, Service service) {
+    private static void doGetChildServices(Set<Service> services, Service service, boolean includeErrorHandler) {
         services.add(service);
         if (service instanceof Navigate) {
             Navigate<?> nav = (Navigate<?>) service;
             if (nav.hasNext()) {
                 List<?> children = nav.next();
                 for (Object child : children) {
+                    // special for error handler as they are tied to the Channel
+                    if (child instanceof Channel && includeErrorHandler) {
+                        Processor errorHandler = ((Channel) child).getErrorHandler();
+                        if (errorHandler != null && errorHandler instanceof Service) {
+                            services.add((Service) errorHandler);
+                        }
+                    }
                     if (child instanceof Service) {
-                        doGetChildServices(services, (Service) child);
+                        doGetChildServices(services, (Service) child, includeErrorHandler);
                     }
                 }
             }

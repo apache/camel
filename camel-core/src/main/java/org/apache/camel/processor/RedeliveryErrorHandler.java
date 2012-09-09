@@ -30,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -51,7 +52,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version
  */
-public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
+public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ShutdownPrepared {
 
     protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
@@ -65,6 +66,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final CamelLogger logger;
     protected final boolean useOriginalMessagePolicy;
     protected boolean redeliveryEnabled;
+    protected volatile boolean preparingShutdown;
 
     /**
      * Contains the current redelivery data
@@ -86,6 +88,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Predicate continuedPredicate;
         boolean useOriginalInMessage = useOriginalMessagePolicy;
         boolean asyncDelayedRedelivery = redeliveryPolicy.isAsyncDelayedRedelivery();
+        boolean redeliverWhileStopping = redeliveryPolicy.isRedeliverWhileStopping();
     }
 
     /**
@@ -198,14 +201,38 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return false;
     }
 
-    @Override
-    public boolean isRunAllowed() {
-        // determine if we can still run, or the camel context is forcing a shutdown
+    protected boolean isRunAllowed(RedeliveryData data) {
+        // if camel context is forcing a shutdown then do not allow running
         boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
         if (forceShutdown) {
-            log.trace("Run not allowed as ShutdownStrategy is forcing shutting down");
+            log.trace("isRunAllowed() -> false (Run not allowed as ShutdownStrategy is forcing shutting down)");
+            return false;
         }
-        return !forceShutdown && super.isRunAllowed();
+
+        // redelivery policy can control if redelivery is allowed during stopping/shutdown
+        // but this only applies during a redelivery (counter must > 0)
+        if (data.redeliveryCounter > 0) {
+            if (data.redeliverWhileStopping) {
+                log.trace("isRunAllowed() -> true (Run allowed as RedeliverWhileStopping is enabled)");
+                return true;
+            } else if (preparingShutdown) {
+                // do not allow redelivery as we are preparing for shutdown
+                log.trace("isRunAllowed() -> false (Run not allowed as we are preparing for shutdown)");
+                return false;
+            }
+        }
+
+        // fallback and use code from super
+        boolean answer = super.isRunAllowed();
+        log.trace("isRunAllowed() -> {} (Run allowed if we are not stopped/stopping)", answer);
+        return answer;
+    }
+
+    @Override
+    public void prepareShutdown(boolean forced) {
+        // prepare for shutdown, eg do not allow redelivery if configured
+        log.trace("Prepare shutdown on error handler {}", this);
+        preparingShutdown = true;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -233,7 +260,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         while (true) {
 
             // can we still run
-            if (!isRunAllowed()) {
+            if (!isRunAllowed(data)) {
                 log.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
@@ -404,7 +431,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      */
     protected void processAsyncErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
         // can we still run
-        if (!isRunAllowed()) {
+        if (!isRunAllowed(data)) {
             log.trace("Run not allowed, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException());
@@ -1071,6 +1098,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 log.trace("Using ExecutorService: {} for redeliveries on error handler: {}", executorService, this);
             }
         }
+
+        // reset flag when starting
+        preparingShutdown = false;
     }
 
     @Override

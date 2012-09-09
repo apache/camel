@@ -71,6 +71,8 @@ public class RedeliveryPolicyDefinition {
     private String disableRedelivery;
     @XmlAttribute
     private String delayPattern;
+    @XmlAttribute
+    private String redeliverWhileStopping;
 
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
 
@@ -142,6 +144,9 @@ public class RedeliveryPolicyDefinition {
             if (delayPattern != null) {
                 answer.setDelayPattern(delayPattern);
             }
+            if (redeliverWhileStopping != null) {
+                answer.setLogExhausted(CamelContextHelper.parseBoolean(context, redeliverWhileStopping));
+            }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -162,6 +167,21 @@ public class RedeliveryPolicyDefinition {
      */
     public RedeliveryPolicyDefinition asyncDelayedRedelivery() {
         setAsyncDelayedRedelivery("true");
+        return this;
+    }
+
+    /**
+     * Allow synchronous delayed redelivery.
+     */
+    public RedeliveryPolicyDefinition redeliverWhileStopping(boolean redeliverWhileStopping) {
+        return redeliverWhileStopping(Boolean.toString(redeliverWhileStopping));
+    }
+
+    /**
+     * Allow synchronous delayed redelivery.
+     */
+    public RedeliveryPolicyDefinition redeliverWhileStopping(String redeliverWhileStopping) {
+        setRedeliverWhileStopping(redeliverWhileStopping);
         return this;
     }
 
@@ -639,5 +659,13 @@ public class RedeliveryPolicyDefinition {
 
     public void setDelayPattern(String delayPattern) {
         this.delayPattern = delayPattern;
+    }
+
+    public String getRedeliverWhileStopping() {
+        return redeliverWhileStopping;
+    }
+
+    public void setRedeliverWhileStopping(String redeliverWhileStopping) {
+        this.redeliverWhileStopping = redeliverWhileStopping;
     }
 }

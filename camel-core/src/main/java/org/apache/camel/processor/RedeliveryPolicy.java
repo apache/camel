@@ -96,6 +96,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
     protected boolean asyncDelayedRedelivery;
+    protected boolean redeliverWhileStopping = true;
 
     public RedeliveryPolicy() {
     }
@@ -106,6 +107,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", redeliveryDelay=" + redeliveryDelay
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
             + ", asyncDelayedRedelivery=" + asyncDelayedRedelivery
+            + ", redeliverWhileStopping=" + redeliverWhileStopping
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
             + ", logRetryAttempted=" + logRetryAttempted
@@ -403,6 +405,16 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         return this;
     }
 
+    /**
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
+     *
+     * @param redeliverWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     */
+    public RedeliveryPolicy redeliverWhileStopping(boolean redeliverWhileStopping) {
+        setRedeliverWhileStopping(redeliverWhileStopping);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -647,4 +659,18 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     public void setAsyncDelayedRedelivery(boolean asyncDelayedRedelivery) {
         this.asyncDelayedRedelivery = asyncDelayedRedelivery;
     }
+
+    public boolean isRedeliverWhileStopping() {
+        return redeliverWhileStopping;
+    }
+
+    /**
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
+     *
+     * @param redeliverWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     */
+    public void setRedeliverWhileStopping(boolean redeliverWhileStopping) {
+        this.redeliverWhileStopping = redeliverWhileStopping;
+    }
+
 }
