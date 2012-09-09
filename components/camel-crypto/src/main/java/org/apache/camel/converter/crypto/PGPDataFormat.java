@@ -66,10 +66,15 @@ public class PGPDataFormat implements DataFormat {
             throw new IllegalArgumentException("Public key is null, cannot proceed");
         }
 
-        InputStream plaintextStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
-
-        byte[] compressedData = PGPDataFormatUtil.compress(IOUtils.toByteArray(plaintextStream),
-                PGPLiteralData.CONSOLE, CompressionAlgorithmTags.ZIP);
+        byte[] plaintextData;
+        InputStream plaintextStream = null;
+        try {
+            plaintextStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
+            plaintextData = IOUtils.toByteArray(plaintextStream);
+        } finally {
+            IOUtils.closeQuietly(plaintextStream);
+        }
+        byte[] compressedData = PGPDataFormatUtil.compress(plaintextData, PGPLiteralData.CONSOLE, CompressionAlgorithmTags.ZIP);
 
         if (armored) {
             outputStream = new ArmoredOutputStream(outputStream);
@@ -96,8 +101,14 @@ public class PGPDataFormat implements DataFormat {
             throw new IllegalArgumentException("Private key is null, cannot proceed");
         }
 
-        InputStream in = new ByteArrayInputStream(IOUtils.toByteArray(encryptedStream));
-        in = PGPUtil.getDecoderStream(in);
+        InputStream in;
+        try {
+            byte[] encryptedData = IOUtils.toByteArray(encryptedStream);
+            InputStream byteStream = new ByteArrayInputStream(encryptedData);
+            in = PGPUtil.getDecoderStream(byteStream);
+        } finally {
+            IOUtils.closeQuietly(encryptedStream);
+        }
 
         PGPObjectFactory pgpF = new PGPObjectFactory(in);
         PGPEncryptedDataList enc;
