@@ -31,6 +31,10 @@ public class HBaseCell {
     //The value type can be optionally specified for Gets and Scan, to specify how the byte[] read will be converted.
     private Class<?> valueType = String.class;
 
+    public String toString() {
+        return "HBaseCell=[family=" + family + ", qualifier=" + qualifier + ", value=" + value + ", valueType=" + valueType.getName();
+    }
+
     @XmlAttribute(name = "family")
     public String getFamily() {
         return family;
@@ -63,6 +67,9 @@ public class HBaseCell {
     }
 
     public void setValueType(Class<?> valueType) {
+        if (valueType == null) {
+            throw new IllegalArgumentException("Value type can not be null");
+        }
         this.valueType = valueType;
     }
 
