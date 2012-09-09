@@ -120,7 +120,7 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
 
     private void assertIsMaster(ZooKeeperElection electionCandidate) throws InterruptedException {
         // Need to wait for a while to be elected.
-        long timeout = System.currentTimeMillis() + 5000;
+        long timeout = System.currentTimeMillis() + 10000;
         
         while (!electionCandidate.isMaster() && timeout > System.currentTimeMillis()) {
             Thread.sleep(200);
