@@ -76,8 +76,7 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
 
         candidateOneContext.stop(); // the first candidate was killed.
 
-        delay(3000); // more than the timeout on the zeekeeper server.
-        assertTrue("The second candidate should have been elected.", electionCandidate2.isMaster());
+        assertIsMaster(electionCandidate2);
     }
 
     @Test
@@ -89,7 +88,7 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
         assertTrue("The first candidate was not elected.", electionCandidate1.isMaster());
         ZooKeeperElection electionCandidate2 = createElectionCandidate(candidateTwoContext, 2);
         // Need to wait for a while to Candidate2 to be elected.
-        Thread.sleep(2000);
+        Thread.sleep(3000);
         assertTrue("The second candidate should also be a master.", electionCandidate2.isMaster());
     }
 
@@ -119,5 +118,16 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
 
     private ZooKeeperElection createElectionCandidate(final DefaultCamelContext context, int masterCount) {
         return new ZooKeeperElection(context.createProducerTemplate(), context, ELECTION_URI, masterCount);
+    }
+
+    private void assertIsMaster(ZooKeeperElection electionCandidate) throws InterruptedException {
+        // Need to wait for a while to be elected.
+        long timeout = System.currentTimeMillis() + 5000;
+        
+        while (!electionCandidate.isMaster() && timeout > System.currentTimeMillis()) {
+            Thread.sleep(200);
+        }
+        
+        assertTrue("The candidate should have been elected.", electionCandidate.isMaster());
     }
 }
