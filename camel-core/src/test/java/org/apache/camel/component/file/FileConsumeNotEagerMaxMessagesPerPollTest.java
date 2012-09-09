@@ -42,7 +42,7 @@ public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSuppor
     public void testMaxMessagesPerPoll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("AAA", "BBB");
-        mock.setResultWaitTime(3000);
+        mock.setResultWaitTime(4000);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
 
         assertMockEndpointsSatisfied();
