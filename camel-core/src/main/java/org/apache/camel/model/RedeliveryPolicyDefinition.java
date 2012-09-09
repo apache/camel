@@ -145,7 +145,7 @@ public class RedeliveryPolicyDefinition {
                 answer.setDelayPattern(delayPattern);
             }
             if (redeliverWhileStopping != null) {
-                answer.setLogExhausted(CamelContextHelper.parseBoolean(context, redeliverWhileStopping));
+                answer.setRedeliverWhileStopping(CamelContextHelper.parseBoolean(context, redeliverWhileStopping));
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
