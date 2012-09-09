@@ -56,10 +56,11 @@ public class CacheProducer extends DefaultProducer {
         cache = getEndpoint().initializeCache();
 
         Map<String, Object> headers = exchange.getIn().getHeaders();
-        String key = (headers.containsKey(CacheConstants.CACHE_KEY)) ? (String) headers
-                .get(CacheConstants.CACHE_KEY) : getEndpoint().getKey();
+        String key = (headers.containsKey(CacheConstants.CACHE_KEY))
+                ? exchange.getIn().getHeader(CacheConstants.CACHE_KEY, String.class)
+                : getEndpoint().getKey();
 
-        String operation = (headers.containsKey(CacheConstants.CACHE_OPERATION)) ? (String) headers
+        String operation = (headers.containsKey(CacheConstants.CACHE_OPERATION)) ? (String)headers
                 .get(CacheConstants.CACHE_OPERATION) : getEndpoint().getOperation();
 
         if (operation == null) {
