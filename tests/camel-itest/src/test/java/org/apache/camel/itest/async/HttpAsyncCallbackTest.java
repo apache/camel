@@ -48,7 +48,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
 
         // give on completion time to complete properly before we do assertions on its size
         // TODO: improve MockEndpoint.assertIsSatisfied(long) to make this sleep unnecessary
-        Thread.sleep(2200);
+        Thread.sleep(3000);
 
         // END SNIPPET: e3
         assertMockEndpointsSatisfied();
