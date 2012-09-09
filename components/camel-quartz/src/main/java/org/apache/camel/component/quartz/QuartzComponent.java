@@ -88,13 +88,23 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     @Override
     protected QuartzEndpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-
         // lets split the remaining into a group/name
         URI u = new URI(uri);
         String path = ObjectHelper.after(u.getPath(), "/");
         String host = u.getHost();
         String cron = getAndRemoveParameter(parameters, "cron", String.class);
         Boolean fireNow = getAndRemoveParameter(parameters, "fireNow", Boolean.class, Boolean.FALSE);
+        Integer startDelayedSeconds = getAndRemoveParameter(parameters, "startDelayedSeconds", Integer.class);
+        if (startDelayedSeconds != null) {
+            if (scheduler.isStarted()) {
+                LOG.warn("A Quartz job is already started. Cannot apply the 'startDelayedSeconds' configuration!");
+            } else if (this.startDelayedSeconds != 0 && !(this.startDelayedSeconds == startDelayedSeconds)) {
+                LOG.warn("A Quartz job is already configured with a different 'startDelayedSeconds' configuration! "
+                    + "All Quartz jobs must share the same 'startDelayedSeconds' configuration! Cannot apply the 'startDelayedSeconds' configuration!");
+            } else {
+                this.startDelayedSeconds = startDelayedSeconds;
+            }
+        }
 
         // host can be null if the uri did contain invalid host characters such as an underscore
         if (host == null) {
