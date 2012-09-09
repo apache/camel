@@ -21,9 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- * @version 
- */
 public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
     @Override
@@ -39,13 +36,14 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Big file");
 
-        mock.expectedFileExists("target/enrich/.done/AAA.fin", "Start");
-        mock.expectedFileExists("target/enrichdata/.done/AAA.dat", "Big file");
-
         template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
         template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
         assertMockEndpointsSatisfied();
+        // because the on completion is executed async, we should wait a bit to not fail on slow CI servers
+        Thread.sleep(200);
+        assertFileExists("target/enrich/.done/AAA.fin");
+        assertFileExists("target/enrichdata/.done/AAA.dat");
     }
 
     @Override
