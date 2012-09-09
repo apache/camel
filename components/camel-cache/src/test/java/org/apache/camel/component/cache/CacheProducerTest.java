@@ -19,6 +19,7 @@ package org.apache.camel.component.cache;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
@@ -27,6 +28,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
@@ -130,6 +132,26 @@ public class CacheProducerTest extends CamelTestSupport {
         context.start();
         LOG.debug("------------Beginning CacheProducer Add Test---------------");
         sendOriginalFile();
+    }
+
+    @Test
+    public void testAddingDataToCacheWithNonStringCacheKey() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD)).
+                        setHeader(CacheConstants.CACHE_KEY, constant(10L)).
+                        to("cache://TestCache1");
+            }
+        });
+        context.start();
+        NotifyBuilder notify = new NotifyBuilder(context).whenExactlyDone(1).create();
+
+        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        sendOriginalFile();
+
+        notify.matches(10, TimeUnit.SECONDS);
+        assertNotNull(fetchElement("10"));
     }
 
     @Test
