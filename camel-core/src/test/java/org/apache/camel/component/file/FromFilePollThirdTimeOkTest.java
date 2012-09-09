@@ -66,6 +66,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
                             }
                         }
                     })
+                    .convertBodyTo(String.class)
                     .to("mock:result");
             }
         };
