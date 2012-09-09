@@ -126,7 +126,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     }
 
     /**
-     * @deprecated As it had/has no effect.
+     * @deprecated Don't use as setting the {@code forcedShutdown} property had/has no effect.
      */
     @Deprecated
     public void setForcedShutdown(boolean forcedShutdown) {
