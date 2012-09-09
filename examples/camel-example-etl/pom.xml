@@ -137,6 +137,7 @@
   </build>
 
   <profiles>
+    <!-- Hibernate - Derby -->
     <profile>
       <id>hibernate</id>
       <properties>
@@ -164,6 +165,7 @@
       </dependencies>
     </profile>
     
+    <!-- OpenJPA - Derby -->
     <profile>
       <id>openjpa</id>
       <activation>
@@ -228,7 +230,7 @@
       </dependencies>
     </profile>
 
-    <!-- EclipseLink - HSQLDB -->
+    <!-- EclipseLink - Derby -->
     <profile>
       <id>eclipselink</id>
       <build>
@@ -261,7 +263,5 @@
         </repository>
       </repositories>
     </profile>
-
   </profiles>
-
 </project>

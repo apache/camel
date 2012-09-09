@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -16,98 +15,94 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>examples</artifactId>
+    <version>2.11-SNAPSHOT</version>
+  </parent>
 
-    <modelVersion>4.0.0</modelVersion>
+  <artifactId>camel-example-tracer</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: Example :: Tracer</name>
+  <description>An example showing how to persist Camel trace event messages using JPA</description>
 
-    <parent>
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.example.tracer</camel.osgi.export.pkg>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-stream</artifactId>
+    </dependency>
+
+    <!-- lets use log4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+
+    <!-- lets use hibernate by default -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/classes/features.xml</file>
+                  <type>xml</type>
+                  <classifier>features</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Allows the example to be run via 'mvn camel:run' -->
+      <plugin>
         <groupId>org.apache.camel</groupId>
-        <artifactId>examples</artifactId>
-        <version>2.11-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>camel-example-tracer</artifactId>
-    <packaging>bundle</packaging>
-    <name>Camel :: Example :: Tracer</name>
-    <description>An example showing how to persist Camel trace event messages using JPA</description>
-
-    <properties>
-      <camel.osgi.export.pkg>org.apache.camel.example.tracer</camel.osgi.export.pkg>
-    </properties>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-stream</artifactId>
-        </dependency>
-
-        <!-- lets use log4j -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-
-        <!-- lets use hibernate by default -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
-        </dependency>
-
-        <!-- testing -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>attach-artifact</goal>
-						</goals>
-						<configuration>
-							<artifacts>
-								<artifact>
-									<file>target/classes/features.xml</file>
-									<type>xml</type>
-									<classifier>features</classifier>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-            <!-- Allows the example to be run via 'mvn camel:run' -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-maven-plugin</artifactId>
-                <version>${project.version}</version>
-            </plugin>
-        </plugins>
-    </build>
-
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>

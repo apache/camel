@@ -144,7 +144,6 @@
     <hbase-version>0.90.5</hbase-version>
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
     <hibernate-version>3.6.10.Final</hibernate-version>
-    <hsqldb-version>2.2.8</hsqldb-version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.2.1</httpcore4-version> <!-- FIXME cmueller: rename to httpcore4-version -->
     <httpclient4-version>4.2.1</httpclient4-version> <!-- FIXME cmueller: rename to commons-httpclient4-version -->
