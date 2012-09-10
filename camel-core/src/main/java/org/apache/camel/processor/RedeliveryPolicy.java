@@ -96,7 +96,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
     protected boolean asyncDelayedRedelivery;
-    protected boolean redeliverWhileStopping = true;
+    protected boolean allowRedeliveryWhileStopping = true;
 
     public RedeliveryPolicy() {
     }
@@ -107,7 +107,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", redeliveryDelay=" + redeliveryDelay
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
             + ", asyncDelayedRedelivery=" + asyncDelayedRedelivery
-            + ", redeliverWhileStopping=" + redeliverWhileStopping
+            + ", allowRedeliveryWhileStopping=" + allowRedeliveryWhileStopping
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
             + ", logRetryAttempted=" + logRetryAttempted
@@ -410,8 +410,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      *
      * @param redeliverWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
      */
-    public RedeliveryPolicy redeliverWhileStopping(boolean redeliverWhileStopping) {
-        setRedeliverWhileStopping(redeliverWhileStopping);
+    public RedeliveryPolicy allowRedeliveryWhileStopping(boolean redeliverWhileStopping) {
+        setAllowRedeliveryWhileStopping(redeliverWhileStopping);
         return this;
     }
 
@@ -660,17 +660,17 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         this.asyncDelayedRedelivery = asyncDelayedRedelivery;
     }
 
-    public boolean isRedeliverWhileStopping() {
-        return redeliverWhileStopping;
+    public boolean isAllowRedeliveryWhileStopping() {
+        return allowRedeliveryWhileStopping;
     }
 
     /**
      * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param redeliverWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
      */
-    public void setRedeliverWhileStopping(boolean redeliverWhileStopping) {
-        this.redeliverWhileStopping = redeliverWhileStopping;
+    public void setAllowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
+        this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;
     }
 
 }

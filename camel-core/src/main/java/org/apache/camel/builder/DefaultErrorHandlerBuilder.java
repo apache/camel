@@ -169,11 +169,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     /**
      * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
      *
-     * @param redeliverWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
      * @return the builder
      */
-    public DefaultErrorHandlerBuilder redeliverWhileStopping(boolean redeliverWhileStopping) {
-        getRedeliveryPolicy().setRedeliverWhileStopping(redeliverWhileStopping);
+    public DefaultErrorHandlerBuilder allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
+        getRedeliveryPolicy().setAllowRedeliveryWhileStopping(allowRedeliveryWhileStopping);
         return this;
     }
 

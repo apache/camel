@@ -72,7 +72,7 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private String delayPattern;
     @XmlAttribute
-    private String redeliverWhileStopping;
+    private String allowRedeliveryWhileStopping;
 
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
 
@@ -144,8 +144,8 @@ public class RedeliveryPolicyDefinition {
             if (delayPattern != null) {
                 answer.setDelayPattern(delayPattern);
             }
-            if (redeliverWhileStopping != null) {
-                answer.setRedeliverWhileStopping(CamelContextHelper.parseBoolean(context, redeliverWhileStopping));
+            if (allowRedeliveryWhileStopping != null) {
+                answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -164,6 +164,8 @@ public class RedeliveryPolicyDefinition {
 
     /**
      * Allow synchronous delayed redelivery.
+     *
+     * @return the builder
      */
     public RedeliveryPolicyDefinition asyncDelayedRedelivery() {
         setAsyncDelayedRedelivery("true");
@@ -171,17 +173,23 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Allow synchronous delayed redelivery.
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
+     *
+     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @return the builder
      */
-    public RedeliveryPolicyDefinition redeliverWhileStopping(boolean redeliverWhileStopping) {
-        return redeliverWhileStopping(Boolean.toString(redeliverWhileStopping));
+    public RedeliveryPolicyDefinition allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
+        return allowRedeliveryWhileStopping(Boolean.toString(allowRedeliveryWhileStopping));
     }
 
     /**
-     * Allow synchronous delayed redelivery.
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
+     *
+     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @return the builder
      */
-    public RedeliveryPolicyDefinition redeliverWhileStopping(String redeliverWhileStopping) {
-        setRedeliverWhileStopping(redeliverWhileStopping);
+    public RedeliveryPolicyDefinition allowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
+        setAllowRedeliveryWhileStopping(allowRedeliveryWhileStopping);
         return this;
     }
 
@@ -661,11 +669,11 @@ public class RedeliveryPolicyDefinition {
         this.delayPattern = delayPattern;
     }
 
-    public String getRedeliverWhileStopping() {
-        return redeliverWhileStopping;
+    public String getAllowRedeliveryWhileStopping() {
+        return allowRedeliveryWhileStopping;
     }
 
-    public void setRedeliverWhileStopping(String redeliverWhileStopping) {
-        this.redeliverWhileStopping = redeliverWhileStopping;
+    public void setAllowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
+        this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;
     }
 }

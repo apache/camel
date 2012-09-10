@@ -34,7 +34,7 @@
 		<!-- configure error handler, to redeliver up till 10 times, with 1 sec delay
 		     and if we are stopping then do not allow redeliveries, to stop faster -->
 		<errorHandler id="myErrorHandler" type="DefaultErrorHandler">
-			<redeliveryPolicy maximumRedeliveries="20" redeliveryDelay="1000" redeliverWhileStopping="false" retryAttemptedLogLevel="INFO"/>
+			<redeliveryPolicy maximumRedeliveries="20" redeliveryDelay="1000" allowRedeliveryWhileStopping="false" retryAttemptedLogLevel="INFO"/>
 		</errorHandler>
 
         <route id="foo">

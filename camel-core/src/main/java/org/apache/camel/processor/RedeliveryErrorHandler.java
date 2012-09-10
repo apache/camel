@@ -87,8 +87,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Predicate handledPredicate = getDefaultHandledPredicate();
         Predicate continuedPredicate;
         boolean useOriginalInMessage = useOriginalMessagePolicy;
-        boolean asyncDelayedRedelivery = redeliveryPolicy.isAsyncDelayedRedelivery();
-        boolean redeliverWhileStopping = redeliveryPolicy.isRedeliverWhileStopping();
     }
 
     /**
@@ -212,7 +210,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // redelivery policy can control if redelivery is allowed during stopping/shutdown
         // but this only applies during a redelivery (counter must > 0)
         if (data.redeliveryCounter > 0) {
-            if (data.redeliverWhileStopping) {
+            if (data.currentRedeliveryPolicy.allowRedeliveryWhileStopping) {
                 log.trace("isRunAllowed() -> true (Run allowed as RedeliverWhileStopping is enabled)");
                 return true;
             } else if (preparingShutdown) {
@@ -672,7 +670,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
             data.retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
             data.useOriginalInMessage = exceptionPolicy.isUseOriginalMessage();
-            data.asyncDelayedRedelivery = exceptionPolicy.isAsyncDelayedRedelivery(exchange.getContext());
 
             // route specific failure handler?
             Processor processor = null;
