@@ -23,18 +23,34 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+
 import org.junit.Test;
+
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class SpringElasticsearchTest extends AbstractJUnit4SpringContextTests {
+public class SpringElasticsearchTest extends CamelSpringTestSupport {
 
     @Produce(uri = "direct:index")
     protected ProducerTemplate producer;
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mock;
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        deleteDirectory("target/data");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/elasticsearch/SpringElasticsearchTest-context.xml");
+    }
+
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        // let's speed up the tests using the same context
+        return true;
+    }
 
     @Test
     public void testSendBody() throws Exception {

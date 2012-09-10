@@ -23,9 +23,24 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
+
+import org.junit.Before;
 import org.junit.Test;
 
 public class ElasticsearchComponentTest extends CamelTestSupport {
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory("target/data");
+        super.setUp();
+    }
+
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        // let's speed up the tests using the same context
+        return true;
+    }
 
     @Test
     public void testIndex() throws Exception {
