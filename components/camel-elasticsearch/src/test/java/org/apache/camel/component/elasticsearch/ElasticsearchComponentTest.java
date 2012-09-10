@@ -32,8 +32,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/data");
         super.setUp();
+        deleteDirectory("target/data");
     }
 
     @Override
