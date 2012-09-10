@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = {"/SpringElasticsearchTest.xml"})
+@ContextConfiguration
 public class SpringElasticsearchTest extends AbstractJUnit4SpringContextTests {
 
     @Produce(uri = "direct:index")
