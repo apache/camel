@@ -29,56 +29,54 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
 
     @Test
     public void testIndex() throws Exception {
-        HashMap<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("content", "test");
-        String indexId = (String) template.requestBody("direct:index", map);
+        String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
     }
 
     @Test
     public void testGet() throws Exception {
         //first, INDEX a value
-        HashMap<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("content", "test");
         sendBody("direct:index", map);
-        String indexId = (String) template.requestBody("direct:index", map);
+        String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
 
         //now, verify GET succeeded
-        GetResponse response = (GetResponse) template.requestBody("direct:get", indexId);
+        GetResponse response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
     }
 
     @Test
     public void testDelete() throws Exception {
-
         //first, INDEX a value
-        HashMap<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("content", "test");
         sendBody("direct:index", map);
-        String indexId = (String) template.requestBody("direct:index", map);
+        String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
 
         //now, verify GET succeeded
-        GetResponse response = (GetResponse) template.requestBody("direct:get", indexId);
+        GetResponse response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
 
         //now, perform DELETE
-        DeleteResponse deleteResponse = (DeleteResponse) template.requestBody("direct:delete", indexId);
+        DeleteResponse deleteResponse = template.requestBody("direct:delete", indexId, DeleteResponse.class);
         assertNotNull("response should not be null", deleteResponse);
 
         //now, verify GET fails to find the indexed value
-        response = (GetResponse) template.requestBody("direct:get", indexId);
+        response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNull("response source should be null", response.getSource());
     }
 
     @Test
     public void testIndexWithHeaders() throws Exception {
-
-        HashMap<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("content", "test");
 
         Map<String, Object> headers = new HashMap<String, Object>();
@@ -86,15 +84,14 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
 
-        String indexId = (String) template.requestBodyAndHeaders("direct:start", map, headers);
+        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
     }
 
     @Test
     public void testGetWithHeaders() throws Exception {
-
         //first, INDEX a value
-        HashMap<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("content", "test");
 
         Map<String, Object> headers = new HashMap<String, Object>();
@@ -102,20 +99,19 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
 
-        String indexId = (String) template.requestBodyAndHeaders("direct:start", map, headers);
+        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_GET_BY_ID);
-        GetResponse response = (GetResponse) template.requestBodyAndHeaders("direct:start", indexId, headers);
+        GetResponse response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
     }
 
     @Test
     public void testDeleteWithHeaders() throws Exception {
-
         //first, INDEX a value
-        HashMap<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("content", "test");
 
         Map<String, Object> headers = new HashMap<String, Object>();
@@ -123,22 +119,22 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
 
-        String indexId = (String) template.requestBodyAndHeaders("direct:start", map, headers);
+        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_GET_BY_ID);
-        GetResponse response = (GetResponse) template.requestBodyAndHeaders("direct:start", indexId, headers);
+        GetResponse response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
 
         //now, perform DELETE
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_DELETE);
-        DeleteResponse deleteResponse = (DeleteResponse) template.requestBodyAndHeaders("direct:start", indexId, headers);
+        DeleteResponse deleteResponse = template.requestBodyAndHeaders("direct:start", indexId, headers, DeleteResponse.class);
         assertNotNull("response should not be null", deleteResponse);
 
         //now, verify GET fails to find the indexed value
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_GET_BY_ID);
-        response = (GetResponse) template.requestBodyAndHeaders("direct:start", indexId, headers);
+        response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNull("response source should be null", response.getSource());
     }

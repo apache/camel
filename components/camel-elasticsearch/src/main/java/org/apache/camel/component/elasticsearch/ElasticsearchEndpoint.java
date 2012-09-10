@@ -80,12 +80,6 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    @Override
-    protected void doShutdown() throws Exception {
-        // TODO Auto-generated method stub
-        super.doShutdown();
-    }
-
     public Client getClient() {
         return client;
     }

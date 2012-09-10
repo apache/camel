@@ -38,7 +38,6 @@ public class SpringElasticsearchTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testSendBody() throws Exception {
-
         mock.expectedMinimumMessageCount(1);
 
         Map<String, String> body = new HashMap<String, String>();
