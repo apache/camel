@@ -1493,23 +1493,13 @@
       </dependency>
       <dependency>
         <groupId>org.ops4j.pax.exam</groupId>
-        <artifactId>pax-exam-junit</artifactId>
-        <version>${pax-exam-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.ops4j.pax.exam</groupId>
-        <artifactId>pax-exam-container-default</artifactId>
+        <artifactId>pax-exam-junit4</artifactId>
         <version>${pax-exam-version}</version>
       </dependency>
       <dependency>
         <groupId>org.ops4j.pax.runner</groupId>
         <artifactId>pax-runner-no-jcl</artifactId>
         <version>${pax-runner-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.ops4j.pax.exam</groupId>
-        <artifactId>pax-exam-junit-extender-impl</artifactId>
-        <version>${pax-exam-version}</version>
       </dependency>
       <dependency>
         <groupId>org.ops4j.pax.swissbox</groupId>
