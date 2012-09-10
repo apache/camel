@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -213,7 +214,12 @@ public class JdbcProducer extends DefaultProducer {
                     }
                 }
                 // use index based which should be faster
-                row.put(columnName, rs.getObject(columnNumber));
+                int columnType = meta.getColumnType(columnNumber);
+                if (columnType == Types.CLOB || columnType == Types.BLOB) {
+                    row.put(columnName, rs.getString(columnNumber));
+                } else {
+                    row.put(columnName, rs.getObject(columnNumber));
+                }
             }
             data.add(row);
             rowNumber++;
