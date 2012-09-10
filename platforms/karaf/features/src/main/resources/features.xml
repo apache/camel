@@ -35,7 +35,6 @@
     <feature version='${project.version}'>camel-blueprint</feature>
   </feature>
   <feature name='camel-core' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='[3,4)'>spring</feature>
     <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
@@ -54,6 +53,7 @@
   </feature>
   <feature name='camel-test' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-spring</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
   </feature>
