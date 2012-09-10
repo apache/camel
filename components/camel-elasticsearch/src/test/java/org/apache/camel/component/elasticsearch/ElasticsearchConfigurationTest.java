@@ -19,15 +19,12 @@ package org.apache.camel.component.elasticsearch;
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
+
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-public class ElasticsearchConfigurationTest {
+public class ElasticsearchConfigurationTest extends CamelTestSupport {
 
     @Test
     public void localNode() throws Exception {
