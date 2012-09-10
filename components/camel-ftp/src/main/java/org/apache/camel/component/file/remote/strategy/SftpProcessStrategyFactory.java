@@ -84,7 +84,7 @@ public final class SftpProcessStrategyFactory {
         } else {
             // default strategy will do nothing
             GenericFileNoOpProcessStrategy<ChannelSftp.LsEntry> strategy = new GenericFileNoOpProcessStrategy<ChannelSftp.LsEntry>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
         }
     }

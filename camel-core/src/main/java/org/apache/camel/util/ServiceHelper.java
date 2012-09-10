@@ -29,7 +29,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.processor.ErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
