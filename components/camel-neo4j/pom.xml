@@ -27,7 +27,7 @@
     <artifactId>camel-neo4j</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Neo4j</name>
-    <description>Camel Neo4j component</description>
+    <description>Camel Neo4j support</description>
 
 	<properties>
 		<camel.osgi.export.pkg>org.apache.camel.component.neo4j.*</camel.osgi.export.pkg>
