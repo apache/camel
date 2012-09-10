@@ -29,9 +29,7 @@ import org.junit.Test;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration
 public class SpringElasticsearchTest extends CamelSpringTestSupport {
 
     @Produce(uri = "direct:index")
