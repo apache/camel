@@ -51,17 +51,16 @@ public class GHttpBindingTest {
     private URLFetchService service;
 
     private Exchange exchange;
-    
-    
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         binding = new GHttpBinding();
         testServer = GHttpTestUtils.createTestServer();
         testServer.start();
     }
-    
+
     @AfterClass
-    public static void tearDownAfterClass() throws Exception  {
+    public static void tearDownAfterClass() throws Exception {
         testServer.stop();
     }
 
@@ -85,7 +84,7 @@ public class GHttpBindingTest {
         exchange.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE");
         assertEquals(HTTPMethod.DELETE, binding.getRequestMethod(null, exchange));
     }
-    
+
     @Test
     public void testGetRequestUrl() throws Exception {
         GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path");
@@ -102,10 +101,10 @@ public class GHttpBindingTest {
         exchange.getIn().setHeader(Exchange.HTTP_URI, "http://custom.org:8080/path");
         assertEquals("http://custom.org:8080/path?a=b", binding.getRequestUrl(endpoint, exchange).toString());
     }
-    
-    // @Test
+
+    @Test
     public void testGetRequestUrlEncoding() throws Exception {
-        GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path?bridgeEndpoint=false&a=b+c");
+        GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path?bridgeEndpoint=false&a=b c");
         assertEquals("http://somewhere.com:9090/path?a=b+c", binding.getRequestUrl(endpoint, exchange).toString());
         exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=y z");
         assertEquals("http://somewhere.com:9090/path?x=y+z", binding.getRequestUrl(endpoint, exchange).toString());
@@ -115,7 +114,7 @@ public class GHttpBindingTest {
         exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=y z");
         assertEquals("http://custom.org:8080/path?x=y+z", binding.getRequestUrl(endpoint, exchange).toString());
     }
-    
+
     @Test
     public void testWriteRequestHeaders() throws Exception {
         GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path");
@@ -140,7 +139,7 @@ public class GHttpBindingTest {
         binding.writeRequestBody(null, exchange, request);
         assertArrayEquals(body.getBytes(), request.getPayload());
     }
-    
+
     @Test
     public void testWriteRequest() throws Exception {
         GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path");
@@ -148,7 +147,7 @@ public class GHttpBindingTest {
         assertEquals("http://somewhere.com:9090/path", request.getURL().toString());
         assertEquals(HTTPMethod.GET, request.getMethod());
     }
-    
+
     @Test
     public void testReadResponseHeaders() throws Exception {
         GHttpEndpoint endpoint = createEndpoint(getBaseUri("ghttp") + "/test");
@@ -171,7 +170,7 @@ public class GHttpBindingTest {
         binding.readResponseBody(null, exchange, response);
         assertEquals("abc", exchange.getOut().getBody(String.class));
     }
-    
+
     @Test(expected = GHttpException.class)
     public void testFailureException() throws Exception {
         GHttpEndpoint endpoint = createEndpoint(getBaseUri("ghttp") + "/test");
@@ -180,7 +179,7 @@ public class GHttpBindingTest {
         HTTPResponse response = service.fetch(request);
         binding.readResponse(endpoint, exchange, response);
     }
-    
+
     @Test
     public void testFailureNoException() throws Exception {
         GHttpEndpoint endpoint = createEndpoint(getBaseUri("ghttp") + "/test?throwExceptionOnFailure=false");
