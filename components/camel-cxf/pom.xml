@@ -52,9 +52,9 @@
       org.osgi.service.blueprint;resolution:=optional,
       org.osgi.service.blueprint.container;resolution:=optional,
       org.osgi.service.blueprint.reflect;resolution:=optional,
-      org.apache.aries.blueprint;resolution:=optional,
-      org.apache.aries.blueprint.reflect ;resolution:=optional,
-      org.apache.aries.blueprint.mutable;resolution:=optional,
+      org.apache.aries.blueprint;version="[0.3,2.0)";resolution:=optional,
+      org.apache.aries.blueprint.reflect;version="[0.3,2.0)";resolution:=optional,
+      org.apache.aries.blueprint.mutable;version="[0.3,2.0)";resolution:=optional,
       org.apache.camel.blueprint;resolution:=optional,
       org.osgi.framework;resolution:=optional,
       *
