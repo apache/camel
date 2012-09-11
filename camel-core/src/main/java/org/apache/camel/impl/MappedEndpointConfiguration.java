@@ -136,7 +136,7 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
             q += entry;
         }
 
-        StringBuffer u = new StringBuffer(64);
+        StringBuilder u = new StringBuilder(64);
         if (scheme != null) {
             u.append(scheme); // SHOULD NOT be null
             u.append(":");

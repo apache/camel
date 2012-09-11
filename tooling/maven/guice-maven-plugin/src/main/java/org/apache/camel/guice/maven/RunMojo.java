@@ -349,7 +349,7 @@ public class RunMojo extends AbstractExecMojo {
         args.toArray(arguments);
 
         if (getLog().isDebugEnabled()) {
-            StringBuffer msg = new StringBuffer("Invoking : ");
+            StringBuilder msg = new StringBuilder("Invoking : ");
             msg.append(mainClass);
             msg.append(".main(");
             for (int i = 0; i < arguments.length; i++) {

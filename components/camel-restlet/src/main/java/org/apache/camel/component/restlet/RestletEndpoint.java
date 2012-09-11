@@ -189,7 +189,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     // Update the endpointUri with the restlet method information
     protected void updateEndpointUri() {
         String endpointUri = getEndpointUri();
-        StringBuffer methods = new StringBuffer();
+        StringBuilder methods = new StringBuilder();
         if (getRestletMethods() != null && getRestletMethods().length > 0) {
             for (Method method : getRestletMethods()) {
                 methods = methods.append(method.getName()).append(',');

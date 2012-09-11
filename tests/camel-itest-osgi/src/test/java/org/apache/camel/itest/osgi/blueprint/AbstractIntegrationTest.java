@@ -116,7 +116,7 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
      */
     private static String explode(Dictionary<?, ?> dictionary) {
         Enumeration<?> keys = dictionary.keys();
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
             result.append(String.format("%s=%s", key, dictionary.get(key)));

@@ -221,7 +221,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public static String getXmppExceptionLogMessage(XMPPException e) {
         XMPPError xmppError = e.getXMPPError();
         Throwable t = e.getWrappedThrowable();
-        StringBuffer strBuff = new StringBuffer();
+        StringBuilder strBuff = new StringBuilder();
         if (xmppError != null) {
             strBuff.append("[ ").append(xmppError.getCode()).append(" ] ")
                 .append(xmppError.getCondition()).append(" : ")
