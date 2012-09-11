@@ -25,6 +25,8 @@ import com.notnoop.apns.ApnsDelegate;
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.ApnsServiceBuilder;
 import com.notnoop.apns.ReconnectPolicy;
+import com.notnoop.apns.internal.Utilities;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.apns.model.ConnectionStrategy;
@@ -54,9 +56,15 @@ public class ApnsServiceFactory implements CamelContextAware {
     private ApnsDelegate apnsDelegate;
 
     public ApnsServiceFactory() {
+        this.gatewayHost = Utilities.PRODUCTION_GATEWAY_HOST;
+        this.gatewayPort = Utilities.PRODUCTION_GATEWAY_PORT;
+
+        this.feedbackHost = Utilities.PRODUCTION_FEEDBACK_HOST;
+        this.feedbackPort = Utilities.PRODUCTION_FEEDBACK_PORT;
     }
 
     public ApnsServiceFactory(CamelContext camelContext) {
+        this();
         this.camelContext = camelContext;
     }
 
@@ -185,7 +193,7 @@ public class ApnsServiceFactory implements CamelContextAware {
             if (certificateInputStream == null) {
                 throw new FileNotFoundException("Cannot load " + getCertificatePath() + " from classpath");
             }
-            builder.withCert(certificateInputStream, getCertificatePassword()).withProductionDestination();
+            builder.withCert(certificateInputStream, getCertificatePassword());
         } finally {
             ResourceUtils.close(certificateInputStream);
         }
