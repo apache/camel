@@ -130,6 +130,7 @@ public class ZooKeeperElection {
                 LOG.debug("Awaiting election results...");
                 electionComplete.await();
             } catch (InterruptedException e1) {
+                // do nothing here
             }
         }
     }
@@ -224,17 +225,16 @@ public class ZooKeeperElection {
                 public void process(Exchange e) throws Exception {
                     @SuppressWarnings("unchecked")
                     List<String> candidates = e.getIn().getMandatoryBody(List.class);
-
-                    int location = Math.abs(Collections.binarySearch(candidates, candidateName));
+                    // we cannot use the binary search here and the candidates a not sorted in the normal way
                     /**
                      * check if the item at this location starts with this nodes
                      * candidate name
                      */
-                    if (isOurCandidateAtLocationInCandidatesList(candidates, location)) {
-
+                    int location = findCandidateLocationInCandidatesList(candidates, candidateName); 
+                    if (location != -1) {
+                        // set the nodes
                         masterNode.set(location <= enabledCount);
-                        LOG.debug(
-                                "This node is number '{}' on the candidate list, election is configured for the top '{}'. this node will be {}",
+                        LOG.debug("This node is number '{}' on the candidate list, election is configured for the top '{}'. this node will be {}",
                                 new Object[]{location, enabledCount, masterNode.get() ? "enabled" : "disabled"}
                         );
                     }
@@ -243,8 +243,14 @@ public class ZooKeeperElection {
                     notifyElectionWatchers();
                 }
 
-                private boolean isOurCandidateAtLocationInCandidatesList(List<String> candidates, int location) {
-                    return location <= candidates.size() && candidates.get(location - 1).startsWith(candidateName);
+                private int findCandidateLocationInCandidatesList(List<String> candidates, String candidateName) {
+                
+                    for (int location = 1; location <= candidates.size(); location++) {
+                        if (candidates.get(location - 1).startsWith(candidateName)) {
+                            return location;
+                        }
+                    }
+                    return -1;
                 }
             });
         }
