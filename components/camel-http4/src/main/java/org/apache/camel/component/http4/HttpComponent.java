@@ -130,8 +130,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) throws Exception {
         String proxyAuthScheme = getAndRemoveParameter(parameters, "proxyAuthScheme", String.class);
         if (proxyAuthScheme == null) {
-            // fallback and use either http4 or https4 depending on secure
-            proxyAuthScheme = secure ? "https4" : "http4";
+            // fallback and use either http or https depending on secure
+            proxyAuthScheme = secure ? "https" : "http";
         }
         String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
         Integer proxyAuthPort = getAndRemoveParameter(parameters, "proxyAuthPort", Integer.class);
