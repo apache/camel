@@ -105,6 +105,26 @@ public class HttpProxyServerTest extends BaseHttpTest {
 
         assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
     }
+    
+    @Test
+    public void testhttpGetProxyScheme() throws Exception {
+        context.getProperties().put("http.proxyHost", "myProxy");
+        context.getProperties().put("http.proxyPort", "1234");
+        context.getProperties().put("http.proxyScheme", "http");
+        try {
+            HttpEndpoint http1 = context.getEndpoint("https4://www.google.com", HttpEndpoint.class);
+            
+            HttpClient client1 = http1.createHttpClient();
+            HttpHost proxy1 = (HttpHost)client1.getParams().getParameter(ConnRoutePNames.DEFAULT_PROXY);
+            assertEquals("myProxy", proxy1.getHostName());
+            assertEquals(1234, proxy1.getPort());
+            assertEquals("http", proxy1.getSchemeName());
+        } finally {
+            context.getProperties().remove("http.proxyHost");
+            context.getProperties().remove("http.proxyPort");
+            context.getProperties().remove("http.proxyScheme");
+        }
+    }
 
     @Test
     public void httpGetWithProxyAndWithoutUser() throws Exception {
