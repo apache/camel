@@ -66,7 +66,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     private Boolean useForwardedForHeader;
 
     public RestletComponent() {
-        this.component = new Component();
+        this(new Component());
     }
 
     public RestletComponent(Component component) {
@@ -76,9 +76,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RestletEndpoint result = new RestletEndpoint(this, remaining);
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);

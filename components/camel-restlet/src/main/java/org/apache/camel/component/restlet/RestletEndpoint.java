@@ -41,8 +41,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
 
     private Method restletMethod = Method.GET;
 
-    // Optional and for consumer only.  This allows a single route to service multiple 
-    // methods.  If it is non-null, restletMethod is ignored.
+    // Optional and for consumer only. This allows a single route to service multiple methods.
+    // If it is non-null then restletMethod is ignored.
     private Method[] restletMethods;
 
     private String protocol = DEFAULT_PROTOCOL;
@@ -50,8 +50,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private int port = DEFAULT_PORT;
     private String uriPattern;
 
-    // Optional and for consumer only.  This allows a single route to service multiple 
-    // URI patterns.  The URI pattern defined in the endpoint will still be honored.
+    // Optional and for consumer only. This allows a single route to service multiple URI patterns.
+    // The URI pattern defined in the endpoint will still be honored.
     private List<String> restletUriPatterns;
 
     private Map<String, String> restletRealm;
@@ -191,17 +191,24 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         String endpointUri = getEndpointUri();
         StringBuffer methods = new StringBuffer();
         if (getRestletMethods() != null && getRestletMethods().length > 0) {
+            // list the method(s) as a comma seperated list
+            boolean first = true;
             for (Method method : getRestletMethods()) {
-                methods = methods.append(method.getName()).append(',');
+                if (first) {
+                    first = false;
+                } else {
+                    methods.append(',');
+                }
+                methods.append(method.getName());
             }
         } else {
-            Method method = getRestletMethod();
-            methods = methods.append(method.getName());
+            // otherwise consider the single method we own
+            methods.append(getRestletMethod());
         }
-        if (methods != null) {
-            endpointUri = endpointUri + "?restletMethods=" + methods.toString();
-            setEndpointUri(endpointUri);
-        }
+
+        // update the uri
+        endpointUri = endpointUri + "?restletMethods=" + methods;
+        setEndpointUri(endpointUri);
     }
 
     @Override
