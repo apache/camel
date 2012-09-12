@@ -84,20 +84,24 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.fusesource.fuse-extra</groupId>
+                    <artifactId>fusemq-leveldb</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.fusesource.mqtt-client</groupId>
+                    <artifactId>mqtt-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-camel</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-jms</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-web</artifactId>
-                </exclusion>
-            </exclusions>
             <scope>test</scope>
         </dependency>
       <dependency>
