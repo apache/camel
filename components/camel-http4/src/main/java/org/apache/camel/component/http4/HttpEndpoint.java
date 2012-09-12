@@ -129,9 +129,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
             String host = getCamelContext().getProperty("http.proxyHost");
             int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
             String scheme = getCamelContext().getProperty("http.proxyScheme");
-            // fallback and use either http4 or https4 depending on secure
+            // fallback and use either http or https depending on secure
             if (scheme == null) {
-                scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https4" : "http4";
+                scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
             }
             LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
             try {
