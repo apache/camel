@@ -35,7 +35,7 @@ import org.junit.Test;
 /**
  * Unit test that verifies multi part SOAP message functionality
  * 
- * @version @Revision: 789534 $
+ * @version 
  */
 public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSupport {
     protected static int port1 = CXFTestSupport.getPort1(); 

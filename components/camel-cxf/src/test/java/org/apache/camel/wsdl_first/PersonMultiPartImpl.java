@@ -22,7 +22,7 @@ import javax.xml.ws.Holder;
  * Test Impl class for PersonMultiPartType port type that verifies multi part SOAP message
  * functionality.
  * 
- * @version @Revision: 789534 $
+ * @version 
  */
 
 
