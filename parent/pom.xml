@@ -52,8 +52,8 @@
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avro-version>1.6.2</avro-version>
     <avro-bundle-version>1.6.1_1</avro-bundle-version>
-    <aws-java-sdk-bundle-version>1.3.10_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.3.10</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.3.14_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.3.14</aws-java-sdk-version>
     <axiom-version>1.2.12</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
@@ -96,7 +96,7 @@
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.3.2</dozer-version>
     <easymock-version>3.1</easymock-version>
-    <ehcache-bundle-version>2.5.2_1</ehcache-bundle-version>
+    <ehcache-bundle-version>2.6.0_1</ehcache-bundle-version>
     <elasticsearch-bundle-version>0.19.8_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.19.8</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
@@ -187,7 +187,8 @@
     <jsonlib-version>2.4</jsonlib-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
-    <jt400-version>6.0</jt400-version>
+    <jt400-version>6.7</jt400-version>
+    <jt400-bundle-version>6.7_1</jt400-bundle-version>
     <juel-bundle-version>2.1.2_2</juel-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <juel-version>2.1.3</juel-version>
     <junit-bundle-version>4.10_1</junit-bundle-version>
@@ -247,8 +248,8 @@
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.4.0.1_2</saxon-bundle-version>
     <saxon-version>9.4.0.1</saxon-version>
-    <scala-bundle-version>2.9.1_3</scala-bundle-version>
-    <scala-version>2.9.1</scala-version>
+    <scala-bundle-version>2.9.2_1</scala-bundle-version>
+    <scala-version>2.9.2</scala-version>
     <scriptengines-version>1.1</scriptengines-version>
     <serp-bundle-version>1.13.1_4</serp-bundle-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
@@ -306,7 +307,7 @@
     <xmlsec-version>1.5.1</xmlsec-version>
     <xmlunit-version>1.3</xmlunit-version>
     <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
-    <xstream-bundle-version>1.4.2_2</xstream-bundle-version> <!-- FIXME cmueller: not in sync! -->
+    <xstream-bundle-version>1.4.3_1</xstream-bundle-version>
     <xstream-version>1.4.3</xstream-version>
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.3.5</zookeeper-version>

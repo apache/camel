@@ -40,7 +40,7 @@
     </dependency>
     <dependency>
       <groupId>net.sf.jt400</groupId>
-      <artifactId>jt400-full</artifactId>
+      <artifactId>jt400</artifactId>
       <version>${jt400-version}</version>
     </dependency>
     <!-- test dependencies -->
