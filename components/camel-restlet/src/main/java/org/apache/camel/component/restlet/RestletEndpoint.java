@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.restlet.data.Method;
 
 /**
@@ -189,16 +190,10 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     // Update the endpointUri with the restlet method information
     protected void updateEndpointUri() {
         String endpointUri = getEndpointUri();
-        StringBuffer methods = new StringBuffer();
+        CollectionStringBuffer methods = new CollectionStringBuffer(",");
         if (getRestletMethods() != null && getRestletMethods().length > 0) {
             // list the method(s) as a comma seperated list
-            boolean first = true;
             for (Method method : getRestletMethods()) {
-                if (first) {
-                    first = false;
-                } else {
-                    methods.append(',');
-                }
                 methods.append(method.getName());
             }
         } else {
