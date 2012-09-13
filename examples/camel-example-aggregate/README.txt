@@ -31,6 +31,3 @@ have.  Enjoy!
 
 ------------------------
 The Camel Riders!
-
-
-
