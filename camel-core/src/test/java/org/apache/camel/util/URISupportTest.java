@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 
 /**
  * @version
@@ -186,6 +187,25 @@ public class URISupportTest extends ContextTestSupport {
     public void testSanitizePathWithoutSensitiveInfoIsUnchanged() {
         String path = "myhost:8080/mypath";
         assertEquals(path, URISupport.sanitizePath(path));
+    }
+
+    public void testNormalizeEndpointUriWithUserInfoSpecialSign() throws Exception {
+        String out1 = URISupport.normalizeUri("ftp://us%40r:t%st@localhost:21000/tmp3/camel?foo=us@r");
+        assertEquals("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us%40r", out1);
+
+        String out2 = URISupport.normalizeUri("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us@r");
+        assertEquals("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us%40r", out2);
+
+        String out3 = URISupport.normalizeUri("ftp://us@r:t%st@localhost:21000/tmp3/camel?foo=us@r");
+        assertEquals("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us%40r", out3);
+
+        String out4 = URISupport.normalizeUri("ftp://us@r:t%25st@localhost:21000/tmp3/camel?foo=us@r");
+        assertEquals("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us%40r", out4);
+    }
+
+    public void testSpecialUriFromXmppComponent() throws Exception {
+        String out1 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat", out1);
     }
 
 }

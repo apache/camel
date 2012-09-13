@@ -284,8 +284,27 @@ public final class URISupport {
         if (idx != -1) {
             path = path.substring(0, idx);
         }
-        
+
         path = UnsafeUriCharactersEncoder.encode(path);
+
+        // okay if we have user info in the path and they use @ in username or password,
+        // then we need to encode them (but leave the last @ sign before the hostname)
+        // this is needed as Camel end users may not encode their user info properly, but expect
+        // this to work out of the box with Camel, and hence we need to fix it for them
+        String userInfoPath = path;
+        if (userInfoPath.contains("/")) {
+            userInfoPath = userInfoPath.substring(0, userInfoPath.indexOf("/"));
+        }
+        if (StringHelper.countChar(userInfoPath, '@') > 1) {
+            int max = userInfoPath.lastIndexOf('@');
+            String before = userInfoPath.substring(0, max);
+            // after must be from original path
+            String after = path.substring(max);
+
+            // replace the @ with %40
+            before = StringHelper.replaceAll(before, "@", "%40");
+            path = before + after;
+        }
 
         // in case there are parameters we should reorder them
         Map<String, Object> parameters = URISupport.parseParameters(u);
