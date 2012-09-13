@@ -58,6 +58,12 @@
 			<artifactId>camel-mail</artifactId>
 		</dependency>
 
+        <!-- we make use of spring ContextLoaderListener to launch Camel -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
     <!-- mock mail server so we do not send an email for real -->
     <dependency>
         <groupId>org.jvnet.mock-javamail</groupId>
