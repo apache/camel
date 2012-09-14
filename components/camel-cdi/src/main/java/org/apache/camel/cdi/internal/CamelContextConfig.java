@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cdi.internal;
+package org.apache.camel.cdi.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.cdi.CdiCamelContext;
+import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.util.ObjectHelper;
 

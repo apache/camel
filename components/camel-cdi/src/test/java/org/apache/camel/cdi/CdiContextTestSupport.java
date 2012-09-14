@@ -19,8 +19,7 @@ package org.apache.camel.cdi;
 import java.util.logging.LogManager;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cdi.CdiCamelContext;
-import org.apache.camel.component.cdi.internal.CamelExtension;
+import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;

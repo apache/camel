@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cdi.internal;
+package org.apache.camel.cdi.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

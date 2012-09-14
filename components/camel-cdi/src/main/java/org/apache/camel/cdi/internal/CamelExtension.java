@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cdi.internal;
+package org.apache.camel.cdi.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -47,8 +48,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.ContextName;
-import org.apache.camel.component.cdi.CdiCamelContext;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.util.ObjectHelper;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cdi.internal;
+package org.apache.camel.cdi.internal;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Annotated;

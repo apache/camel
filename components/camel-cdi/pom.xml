@@ -33,13 +33,12 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.cdi.*</camel.osgi.export.pkg>
         <camel.osgi.import>
-            !org.apache.camel.component.cdi.*,
+            !org.apache.camel.cdi.*,
             org.apache.deltaspike.core.api.*;resolution:=optional,
             *
         </camel.osgi.import>
         <camel.osgi.export.pkg>
             org.apache.camel.cdi.*;${camel.osgi.version},
-            org.apache.camel.component.cdi.*;${camel.osgi.version}
         </camel.osgi.export.pkg>
     </properties>
 

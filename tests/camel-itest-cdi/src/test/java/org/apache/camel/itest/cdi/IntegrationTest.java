@@ -18,14 +18,15 @@ package org.apache.camel.itest.cdi;
 
 import java.util.Map;
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.Uri;
-import org.apache.camel.component.cdi.internal.CamelContextMap;
-import org.apache.camel.component.cdi.internal.CamelExtension;
+import org.apache.camel.cdi.internal.CamelContextMap;
+import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.CamelContextHelper;
 import org.jboss.arquillian.container.test.api.Deployment;

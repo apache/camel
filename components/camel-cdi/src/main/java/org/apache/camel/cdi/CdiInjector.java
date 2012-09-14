@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cdi;
+package org.apache.camel.cdi;
 
 import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Injector;
