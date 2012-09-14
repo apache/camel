@@ -26,15 +26,16 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.After;
 import org.junit.Test;
 
 /**
- * Tests against a "remote" JMX server. Creates an RMI Registry at port 61000
+ * Tests against a "remote" JMX server. Creates an RMI Registry on or near port 39000
  * and registers the simple mbean
  * <p/>
  * Only test here is the notification test since everything should work the
- * same as the platform server. May want to refactor the exisiting tests to
+ * same as the platform server. May want to refactor the existing tests to
  * run the full suite on the local platform and this "remote" setup.
  */
 public class JMXRemoteTest extends SimpleBeanFixture {
@@ -51,9 +52,10 @@ public class JMXRemoteTest extends SimpleBeanFixture {
 
     @Override
     protected void initServer() throws Exception {
-        registry = LocateRegistry.createRegistry(61000);
+        int port = AvailablePortFinder.getNextAvailable(39000);
+        registry = LocateRegistry.createRegistry(port);
 
-        url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:61000/" + DOMAIN);
+        url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + port + "/" + DOMAIN);
         // create MBean server
         server = MBeanServerFactory.createMBeanServer(DOMAIN);
         // create JMXConnectorServer MBean

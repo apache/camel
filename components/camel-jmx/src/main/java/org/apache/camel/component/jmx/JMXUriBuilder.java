@@ -139,6 +139,21 @@ public class JMXUriBuilder {
         addProperty("stringToCompare", aStringToCompare);
         return this;
     }
+    
+    public JMXUriBuilder withTestConnectionOnStartup(boolean aTestConnectionOnStartup) {
+        addProperty("testConnectionOnStartup", String.valueOf(aTestConnectionOnStartup));
+        return this;
+    }
+    
+    public JMXUriBuilder withReconnectOnConnectionFailure(boolean aReconnectOnConnectionFailure) {
+        addProperty("reconnectOnConnectionFailure", String.valueOf(aReconnectOnConnectionFailure));
+        return this;
+    }
+    
+    public JMXUriBuilder withReconnectDelay(int aReconnectDelay) {
+        addProperty("reconnectDelay", String.valueOf(aReconnectDelay));
+        return this;
+    }
 
     /**
      * Converts all of the values to params with the "key." prefix so the
