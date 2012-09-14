@@ -49,9 +49,11 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
     private static final QName FAULT_CODE_SERVER = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Receiver");
 
     private final SoapJaxbDataFormat dataFormat;
+    private final ObjectFactory objectFactory;
 
     public Soap11DataFormatAdapter(SoapJaxbDataFormat dataFormat) {
         this.dataFormat = dataFormat;
+        this.objectFactory = new ObjectFactory();
     }
 
     public SoapJaxbDataFormat getDataFormat() {
@@ -60,8 +62,8 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
 
     @Override
     public Object doMarshal(Exchange exchange, Object inputObject, OutputStream stream, String soapAction) throws IOException {
-        Body body = new Body();
-        Header header = new Header();
+        Body body = objectFactory.createBody();
+        Header header = objectFactory.createHeader();
 
         Throwable exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         if (exception == null) {
@@ -88,7 +90,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
             envelope.setHeader(header);
         }
         envelope.setBody(body);
-        JAXBElement<Envelope> envelopeEl = new ObjectFactory().createEnvelope(envelope);
+        JAXBElement<Envelope> envelopeEl = objectFactory.createEnvelope(envelope);
         return envelopeEl;
     }
 
@@ -174,8 +176,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
      * WebFault annotation of the Exception class. If no fault detail is set the
      * a RuntimeCamelException is created.
      * 
-     * @param fault
-     *            Soap fault
+     * @param fault Soap fault
      * @return created Exception
      */
     private Exception createExceptionFromFault(Fault fault) {
