@@ -16,9 +16,12 @@
  */
 package org.apache.camel.dataformat.soap.name;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Strategy to determine the marshalled element name by looking at the
@@ -42,7 +45,15 @@ public class TypeNameStrategy implements ElementNameStrategy {
                 nameSpace = xmlSchema.namespace();
             }
         }
-        return new QName(nameSpace, xmlType.name());
+        // prefer name from the XmlType, and fallback to XmlRootElement
+        String localName = xmlType.name();
+        if (ObjectHelper.isEmpty(localName)) {
+            XmlRootElement root = type.getAnnotation(XmlRootElement.class);
+            if (root != null) {
+                localName = root.name();
+            }
+        }
+        return new QName(nameSpace, localName);
     }
 
     public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
