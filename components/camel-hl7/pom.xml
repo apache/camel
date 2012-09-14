@@ -33,6 +33,9 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.hl7.*</camel.osgi.export.pkg>
+        <camel.osgi.import.before.defaults>
+            org.apache.mina.*;version="[${mina-version},2)"
+        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
