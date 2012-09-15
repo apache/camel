@@ -49,6 +49,7 @@
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
+    <openjpa-version>2.2.0</openjpa-version>
   </properties>
 
   <mailingLists>
