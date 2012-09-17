@@ -450,7 +450,6 @@ public abstract class MainSupport extends ServiceSupport {
             String[] routeClasses = routeBuilderClasses.split(",");
             for (String routeClass : routeClasses) {
                 Class<?> routeClazz = camelContext.getClassResolver().resolveClass(routeClass);
-                System.out.println(routeClass);
                 RouteBuilder builder = (RouteBuilder) routeClazz.newInstance();
                 getRouteBuilders().add(builder);
             }
