@@ -75,7 +75,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
             }
             LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (FTPFile f : files) {
-                if (f.getName().equals(file.getFileName())) {
+                if (f.getName().equals(file.getFileNameOnly())) {
                     newLastModified = f.getTimestamp().getTimeInMillis();
                     newLength = f.getSize();
                 }
