@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
+import java.io.ByteArrayInputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
@@ -38,12 +41,19 @@ public class JettyHttpProducerTimeoutTest extends BaseJettyTest {
 
         // give Jetty time to startup properly
         Thread.sleep(1000);
+        final MyInputStream is = new MyInputStream("Content".getBytes());
 
-        Exchange reply = template.request(url, null);
+        Exchange reply = template.request(url, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(is);
+            }
+        });
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
         ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e);
         assertEquals(2000, cause.getTimeout());
+        assertTrue("The input stream should be closed", is.isClosed());
     }
 
     @Override
@@ -55,4 +65,6 @@ public class JettyHttpProducerTimeoutTest extends BaseJettyTest {
             }
         };
     }
+    
+    
 }

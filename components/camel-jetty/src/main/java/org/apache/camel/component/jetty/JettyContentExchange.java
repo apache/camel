@@ -95,12 +95,8 @@ public class JettyContentExchange extends ContentExchange {
     @Override
     protected void onRequestComplete() throws IOException {
         LOG.trace("onRequestComplete");
-
-        // close the input stream when its not needed anymore
-        InputStream is = getRequestContentSource();
-        if (is != null) {
-            IOHelper.close(is, "RequestContentSource", LOG);
-        }
+        
+        closeRequestContentSource();
     }
 
     @Override
@@ -121,6 +117,8 @@ public class JettyContentExchange extends ContentExchange {
         try {
             super.onExpire();
         } finally {
+            // need to close the request input stream
+            closeRequestContentSource();
             doTaskCompleted();
         }
     }
@@ -132,6 +130,8 @@ public class JettyContentExchange extends ContentExchange {
         try {
             super.onException(ex);
         } finally {
+            // need to close the request input stream
+            closeRequestContentSource();
             doTaskCompleted(ex);
         }
     }
@@ -143,6 +143,8 @@ public class JettyContentExchange extends ContentExchange {
         try {
             super.onConnectionFailed(ex);
         } finally {
+            // need to close the request input stream
+            closeRequestContentSource();
             doTaskCompleted(ex);
         }
     }
@@ -159,6 +161,14 @@ public class JettyContentExchange extends ContentExchange {
     public String getUrl() {
         String params = getRequestFields().getStringField(HttpHeaders.CONTENT_ENCODING);
         return getScheme() + "//" + getAddress().toString() + getRequestURI() + (params != null ? "?" + params : "");
+    }
+    
+    protected void closeRequestContentSource() {
+        // close the input stream when its not needed anymore
+        InputStream is = getRequestContentSource();
+        if (is != null) {
+            IOHelper.close(is, "RequestContentSource", LOG);
+        }
     }
 
     protected void doTaskCompleted() {
