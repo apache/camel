@@ -59,6 +59,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected boolean aggregateDot;
     protected boolean trace;
     protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
+    protected String routeBuilderClasses;
     protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
     protected ProducerTemplate camelTemplate;
 
@@ -89,6 +90,15 @@ public abstract class MainSupport extends ServiceSupport {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 showOptions();
                 completed();
+            }
+        });
+        addOption(new ParameterOption("r", "routers",
+                 "Sets the router builder classes which will be loaded when start the camel context",
+                 "routerBuilderClasses") {
+            @Override
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setRouteBuilderClasses(parameter);
+                
             }
         });
         addOption(new ParameterOption("o", "outdir",
@@ -253,6 +263,14 @@ public abstract class MainSupport extends ServiceSupport {
 
     public String getDotOutputDir() {
         return dotOutputDir;
+    }
+    
+    public void setRouteBuilderClasses(String builders) {
+        this.routeBuilderClasses = builders;
+    }
+    
+    public String getRouteBuilderClasses() {
+        return routeBuilderClasses;
     }
 
     /**
@@ -425,8 +443,23 @@ public abstract class MainSupport extends ServiceSupport {
             return answer;
         }
     }
+    
+    protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
+        if (routeBuilderClasses != null) {
+            // get the list of route builder classes
+            String[] routeClasses = routeBuilderClasses.split(",");
+            for (String routeClass : routeClasses) {
+                Class<?> routeClazz = camelContext.getClassResolver().resolveClass(routeClass);
+                System.out.println(routeClass);
+                RouteBuilder builder = (RouteBuilder) routeClazz.newInstance();
+                getRouteBuilders().add(builder);
+            }
+        }
+    }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // try to load the route builders from the routeBuilderClasses
+        loadRouteBuilders(camelContext);
         for (RouteBuilder routeBuilder : routeBuilders) {
             camelContext.addRoutes(routeBuilder);
         }
