@@ -21,6 +21,7 @@ import java.beans.PropertyEditorSupport;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -165,8 +166,8 @@ public class ConverterTest extends TestCase {
 
     public void testFileToString() throws Exception {
         URL resource = getClass().getResource("dummy.txt");
-        assertNotNull("Cannot find resource!");
-        File file = new File(resource.getFile());
+        assertNotNull("Cannot find resource!", resource);
+        File file = new File(URLDecoder.decode(resource.getFile(), "UTF-8"));
         String text = converter.convertTo(String.class, file);
         assertNotNull("Should have returned a String!", text);
         text = text.trim();
