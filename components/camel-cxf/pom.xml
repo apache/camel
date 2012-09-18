@@ -186,6 +186,14 @@
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
+    
+    <!-- this dependency is just for testing -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-rm</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
