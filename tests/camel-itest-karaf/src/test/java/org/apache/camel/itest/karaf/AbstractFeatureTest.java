@@ -155,8 +155,8 @@ public abstract class AbstractFeatureTest {
             new Option[]{
                 karafDistributionConfiguration().frameworkUrl(
                     maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                    //This version doesn't affect the verison of karaf we use 
-                    .karafVersion("2.2.7").name("Apache Karaf")
+                    //This version doesn't affect the version of karaf we use 
+                    .karafVersion("2.2.9").name("Apache Karaf")
                     .unpackDirectory(new File("target/paxexam/unpack/")),
                 
                 KarafDistributionOption.keepRuntimeFolder(),
