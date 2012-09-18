@@ -36,6 +36,8 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.ws.addressing.AddressingProperties;
+import org.apache.cxf.ws.addressing.ContextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +65,8 @@ public class CxfConsumer extends DefaultConsumer {
             public Object invoke(Exchange cxfExchange, Object o) {
                 LOG.trace("Received CXF Request: {}", cxfExchange);                
                 Continuation continuation;
-                if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null) {
+                if (!endpoint.isSynchronous() && isAsyncInvocationSupported(cxfExchange)
+                    && (continuation = getContinuation(cxfExchange)) != null) {
                     LOG.trace("Calling the Camel async processors.");
                     return asyncInvoke(cxfExchange, continuation);
                 } else {
@@ -239,6 +242,23 @@ public class CxfConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         server.stop();
         super.doStop();
+    }
+    
+    protected boolean isAsyncInvocationSupported(Exchange cxfExchange) {
+        Message cxfMessage = cxfExchange.getInMessage();
+        AddressingProperties addressingProperties = (AddressingProperties) cxfMessage.get(CxfConstants.WSA_HEADERS_INBOUND);
+        if (addressingProperties != null 
+               && !ContextUtils.isGenericAddress(addressingProperties.getReplyTo())) {
+            //it's decoupled endpoint, so already switch thread and
+            //use executors, which means underlying transport won't 
+            //be block, so we shouldn't rely on continuation in 
+            //this case, as the SuspendedInvocationException can't be 
+            //caught by underlying transport. So we should use the SyncInvocation this time
+            return false;
+        }
+        // we assume it should support AsyncInvocation out of box
+        return true;
+        
     }
     
     public Server getServer() {
