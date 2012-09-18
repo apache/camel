@@ -39,6 +39,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.apache.camel.view.RouteDotGenerator;
 import org.slf4j.Logger;
@@ -170,7 +171,14 @@ public abstract class MainSupport extends ServiceSupport {
      * Callback to run custom logic before CamelContext is being stopped
      */
     protected void beforeStop() {
-        // noop
+        if (camelTemplate != null) {
+            try {
+                ServiceHelper.stopService(camelTemplate);
+                camelTemplate = null;
+            } catch (Exception e) {
+                // ignore
+            }
+        }
     }
 
     /**
@@ -180,8 +188,6 @@ public abstract class MainSupport extends ServiceSupport {
         completed.set(true);
         latch.countDown();
     }
-
-
 
     /**
      * Displays the command line options

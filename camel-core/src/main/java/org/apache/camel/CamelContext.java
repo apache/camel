@@ -687,6 +687,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
      * <p/>
+     * <b>Important:</b> Make sure to call {@link org.apache.camel.ProducerTemplate#stop()} when you are done using the template,
+     * to clean up any resources.
+     * <p/>
      * Will use cache size defined in Camel property with key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
      * If no key was defined then it will fallback to a default size of 1000.
      * You can also use the {@link org.apache.camel.ProducerTemplate#setMaximumCacheSize(int)} method to use a custom value
@@ -702,6 +705,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * <p/>
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
+     * <p/>
+     * <b>Important:</b> Make sure to call {@link ProducerTemplate#stop()} when you are done using the template,
+     * to clean up any resources.
      *
      * @param maximumCacheSize the maximum cache size
      * @return the template
@@ -714,6 +720,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * <p/>
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a> as it also applies for ConsumerTemplate.
+     * <p/>
+     * <b>Important:</b> Make sure to call {@link ConsumerTemplate#stop()} when you are done using the template,
+     * to clean up any resources.
      * <p/>
      * Will use cache size defined in Camel property with key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
      * If no key was defined then it will fallback to a default size of 1000.
@@ -730,6 +739,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * <p/>
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a> as it also applies for ConsumerTemplate.
+     * <p/>
+     * <b>Important:</b> Make sure to call {@link ConsumerTemplate#stop()} when you are done using the template,
+     * to clean up any resources.
      *
      * @param maximumCacheSize the maximum cache size
      * @return the template
