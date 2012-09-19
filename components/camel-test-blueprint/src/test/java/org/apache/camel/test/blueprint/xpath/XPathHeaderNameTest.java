@@ -21,7 +21,7 @@ import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 
 public class XPathHeaderNameTest extends CamelBlueprintTestSupport {
-	
+
     @Override
     protected String getBlueprintDescriptor() {
         return "org/apache/camel/test/blueprint/xpath/XPathHeaderNameTest.xml";
@@ -34,7 +34,7 @@ public class XPathHeaderNameTest extends CamelBlueprintTestSupport {
         mock.expectedHeaderReceived("invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
  
         template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-        		"invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
+                                   "invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
     }
@@ -46,7 +46,7 @@ public class XPathHeaderNameTest extends CamelBlueprintTestSupport {
         mock.expectedHeaderReceived("invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
  
         template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-        		"invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
+                                   "invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
     }
@@ -58,7 +58,7 @@ public class XPathHeaderNameTest extends CamelBlueprintTestSupport {
         mock.expectedHeaderReceived("invoiceDetails", "<invoice />");
  
         template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-        		"invoiceDetails", "<invoice />");
+                                   "invoiceDetails", "<invoice />");
 
         mock.assertIsSatisfied();
     }
