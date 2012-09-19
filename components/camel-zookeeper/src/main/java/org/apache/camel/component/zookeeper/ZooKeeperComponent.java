@@ -49,11 +49,11 @@ public class ZooKeeperComponent extends DefaultComponent {
             throw new CamelException("No Camel context has been provided to this zookeeper component");
         }
 
-        ZooKeeperConfiguration config = getConfiguration();
+        ZooKeeperConfiguration config = getConfiguration().copy();
         extractConfigFromUri(uri, config);
         setProperties(config, parameters);
 
-        return new ZooKeeperEndpoint(uri, this, config.copy());
+        return new ZooKeeperEndpoint(uri, this, config);
     }
 
     private void extractConfigFromUri(String remaining, ZooKeeperConfiguration config) throws URISyntaxException {
