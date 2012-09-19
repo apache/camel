@@ -19,12 +19,12 @@ package org.apache.camel.component.cxf.wsrm;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.interceptor.MessageSenderInterceptor;
 import org.apache.cxf.io.AbstractWrappedOutputStream;
@@ -68,9 +68,9 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
         
         // discard even-numbered message
         InterceptorChain chain = message.getInterceptorChain();
-        ListIterator it = chain.getIterator();
+        ListIterator<Interceptor<? extends Message>> it = chain.getIterator();
         while (it.hasNext()) {
-            PhaseInterceptor pi = (PhaseInterceptor)it.next();
+            PhaseInterceptor<?> pi = (PhaseInterceptor<?>)it.next();
             if (MessageSenderInterceptor.class.getName().equals(pi.getId())) {
                 chain.remove(pi);
                 LOG.fine("Removed MessageSenderInterceptor from interceptor chain.");

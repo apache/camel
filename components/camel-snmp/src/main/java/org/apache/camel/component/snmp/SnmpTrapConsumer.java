@@ -43,7 +43,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
     private SnmpEndpoint endpoint;
     private Address listenGenericAddress;
     private Snmp snmp;
-    private TransportMapping transport;
+    private TransportMapping<? extends Address> transport;
 
     public SnmpTrapConsumer(SnmpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

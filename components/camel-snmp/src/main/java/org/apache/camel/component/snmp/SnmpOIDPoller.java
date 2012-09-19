@@ -44,7 +44,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     private static final transient Logger LOG = LoggerFactory.getLogger(SnmpOIDPoller.class);
 
     private Address targetAddress;
-    private TransportMapping transport;
+    private TransportMapping<? extends Address> transport;
     private Snmp snmp;
     private USM usm;
     private CommunityTarget target;

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import java.io.ByteArrayInputStream;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;

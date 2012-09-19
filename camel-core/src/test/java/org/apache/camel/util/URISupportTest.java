@@ -22,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
 
 /**
  * @version

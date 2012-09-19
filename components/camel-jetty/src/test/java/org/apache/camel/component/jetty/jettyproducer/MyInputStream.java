@@ -23,7 +23,6 @@ public class MyInputStream extends ByteArrayInputStream {
 
     public MyInputStream(byte[] buf) {
         super(buf);
-        // TODO Auto-generated constructor stub
     }
     
     public void close() {
