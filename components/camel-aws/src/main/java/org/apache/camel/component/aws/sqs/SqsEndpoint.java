@@ -25,6 +25,7 @@ import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
+import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -81,35 +82,63 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         for (String url : listQueuesResult.getQueueUrls()) {
             if (url.endsWith("/" + configuration.getQueueName())) {
                 queueUrl = url;
-                LOG.trace("Queue available at '{}'. Using existing queue attributes!", queueUrl);
+                LOG.trace("Queue available at '{}'.", queueUrl);
                 break;
             }
         }
         
         if (queueUrl == null) {
-            LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
-
-            // creates a new queue, or returns the URL of an existing one
-            CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
-            if (getConfiguration().getDefaultVisibilityTimeout() != null) {
-                request.getAttributes().put(QueueAttributeName.VisibilityTimeout.name(), String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
-            }
-            if (getConfiguration().getMaximumMessageSize() != null) {
-                request.getAttributes().put(QueueAttributeName.MaximumMessageSize.name(), String.valueOf(getConfiguration().getMaximumMessageSize()));
-            }
-            if (getConfiguration().getMessageRetentionPeriod() != null) {
-                request.getAttributes().put(QueueAttributeName.MessageRetentionPeriod.name(), String.valueOf(getConfiguration().getMessageRetentionPeriod()));
-            }
-            if (getConfiguration().getPolicy() != null) {
-                request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
-            }        
-            LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
-            
-            CreateQueueResult queueResult = client.createQueue(request);
-            queueUrl = queueResult.getQueueUrl();
-            
-            LOG.trace("Queue created and available at: {}", queueUrl);
+            createQueue(client);
+        } else {
+            updateQueueAttributes(client);
         }
+    }
+
+    private void createQueue(AmazonSQSClient client) {
+        LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
+
+        // creates a new queue, or returns the URL of an existing one
+        CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
+        if (getConfiguration().getDefaultVisibilityTimeout() != null) {
+            request.getAttributes().put(QueueAttributeName.VisibilityTimeout.name(), String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
+        }
+        if (getConfiguration().getMaximumMessageSize() != null) {
+            request.getAttributes().put(QueueAttributeName.MaximumMessageSize.name(), String.valueOf(getConfiguration().getMaximumMessageSize()));
+        }
+        if (getConfiguration().getMessageRetentionPeriod() != null) {
+            request.getAttributes().put(QueueAttributeName.MessageRetentionPeriod.name(), String.valueOf(getConfiguration().getMessageRetentionPeriod()));
+        }
+        if (getConfiguration().getPolicy() != null) {
+            request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
+        }        
+        LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
+        
+        CreateQueueResult queueResult = client.createQueue(request);
+        queueUrl = queueResult.getQueueUrl();
+        
+        LOG.trace("Queue created and available at: {}", queueUrl);
+    }
+
+    private void updateQueueAttributes(AmazonSQSClient client) {
+        LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
+        
+        SetQueueAttributesRequest request = new SetQueueAttributesRequest();
+        request.setQueueUrl(queueUrl);
+        if (getConfiguration().getDefaultVisibilityTimeout() != null) {
+            request.getAttributes().put(QueueAttributeName.VisibilityTimeout.name(), String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
+        }
+        if (getConfiguration().getMaximumMessageSize() != null) {
+            request.getAttributes().put(QueueAttributeName.MaximumMessageSize.name(), String.valueOf(getConfiguration().getMaximumMessageSize()));
+        }
+        if (getConfiguration().getMessageRetentionPeriod() != null) {
+            request.getAttributes().put(QueueAttributeName.MessageRetentionPeriod.name(), String.valueOf(getConfiguration().getMessageRetentionPeriod()));
+        }
+        if (getConfiguration().getPolicy() != null) {
+            request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
+        }
+        client.setQueueAttributes(request);
+        
+        LOG.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
     }
 
     @Override
