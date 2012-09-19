@@ -1869,6 +1869,11 @@
                 </exclusion>
               </exclusions>
             </dependency>
+            <dependency>
+              <groupId>org.apache.camel</groupId>
+              <artifactId>camel-buildtools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
           </dependencies>
           <executions>
             <execution>
