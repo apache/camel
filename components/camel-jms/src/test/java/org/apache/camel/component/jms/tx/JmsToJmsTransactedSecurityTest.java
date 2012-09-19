@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -27,6 +30,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JmsToJmsTransactedSecurityTest.class);
+    
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JmsToJmsTransactedSecurityTest.xml");
     }
@@ -50,7 +55,11 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(0);
 
         template.sendBody("activemq:queue:foo", "Hello World");
-
+        // get the message that got rolled back
+        Exchange exch = consumer.receive("activemq:queue:foo", 250);
+        if (exch != null) {
+            LOG.info("Cleaned up orphaned message: " + exch);
+        }
         mock.assertIsSatisfied(3000);
     }
 
@@ -73,6 +82,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+       
     }
 
 }
