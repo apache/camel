@@ -19,6 +19,7 @@ package org.apache.camel.itest.cdi;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.cdi.component.properties.CdiPropertiesComponent;
 import org.apache.camel.cdi.internal.CamelExtension;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -32,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Verify if {@link CamelExtension} allows to create custom instance of context.
+ * Verify if {@link CamelExtension} with custom properties.
  */
 @RunWith(Arquillian.class)
 public class PropertiesConfigurationTest {
@@ -44,16 +45,18 @@ public class PropertiesConfigurationTest {
     public void checkContext() throws Exception {
         assertNotNull(camelContext);
 
-        assertEquals("value1", camelContext.resolvePropertyPlaceholders("property1"));
-        assertEquals("value2", camelContext.resolvePropertyPlaceholders("property2"));
+        assertEquals("value1", camelContext.resolvePropertyPlaceholders("{{property1}}"));
+        assertEquals("value2", camelContext.resolvePropertyPlaceholders("{{property2}}"));
+        assertEquals("value1_value2", camelContext.resolvePropertyPlaceholders("{{property1}}_{{property2}}"));
     }
 
     @Deployment
     public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class)
-                .addPackage(CamelExtension.class.getPackage())
-                .addClass(Camel1Config.class)
-                .addClass(Camel2Config.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addPackage(CamelExtension.class.getPackage())
+            .addPackage(CdiPropertiesComponent.class.getPackage())
+            .addClass(Camel1Config.class)
+            .addClass(Camel2Config.class)
+            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 }

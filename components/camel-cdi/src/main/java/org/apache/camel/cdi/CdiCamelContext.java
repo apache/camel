@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
-import org.apache.deltaspike.core.api.config.ConfigResolver;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * CDI {@link org.apache.camel.CamelContext} class.
@@ -54,25 +54,24 @@ public class CdiCamelContext extends DefaultCamelContext {
         return !instance.isUnsatisfied() && !instance.isAmbiguous();
     }
 
-    @Override
-    public String resolvePropertyPlaceholders(String text) throws Exception {
-        String placeholder = text != null ? ConfigResolver.getPropertyValue(text) : null;
-        if (placeholder == null) {
-            // fallback to standard properties loaded by camel
-            return super.resolvePropertyPlaceholders(text);
-        }
-        return placeholder;
-    }
-
     @PostConstruct
     @Override
-    public void start() throws Exception {
-        super.start();
+    public void start() {
+        try {
+            super.start();
+        } catch (Exception e) {
+            ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     @PreDestroy
     @Override
-    public void stop() throws Exception {
-        super.stop();
+    public void stop() {
+        try {
+            super.stop();
+        } catch (Exception e) {
+            ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
+
 }
