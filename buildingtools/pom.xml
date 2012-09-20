@@ -29,5 +29,9 @@
     <artifactId>camel-buildtools</artifactId>
     <name>Apache :: Camel Buildtools</name>
     <description>The build tools for the Camel project</description>
-    
+
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
 </project>
