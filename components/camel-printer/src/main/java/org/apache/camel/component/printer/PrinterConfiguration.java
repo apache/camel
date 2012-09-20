@@ -31,6 +31,7 @@ public class PrinterConfiguration {
     private String hostname;
     private int port;
     private String printername;
+    private String printerPrefix;
     private int copies = 1;
     private String flavor;
     private DocFlavor docFlavor;
@@ -70,6 +71,8 @@ public class PrinterConfiguration {
         setFlavor((String)printSettings.get("flavor"));
         setMimeType((String)printSettings.get("mimeType"));
         setDocFlavor(assignDocFlavor(flavor, mimeType));
+        
+        setPrinterPrefix((String)printSettings.get("printerPrefix"));
         
         if (printSettings.containsKey("copies")) {
             setCopies(Integer.valueOf((String) printSettings.get("copies")));
@@ -305,5 +308,13 @@ public class PrinterConfiguration {
 
     public void setMediaTray(String mediaTray) {
         this.mediaTray = mediaTray;
+    }
+
+    public String getPrinterPrefix() {
+        return printerPrefix;
+    }
+
+    public void setPrinterPrefix(String printerPrefix) {
+        this.printerPrefix = printerPrefix;
     }
 }

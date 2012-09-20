@@ -121,6 +121,9 @@ public class PrinterProducer extends DefaultProducer {
                 name = config.getPrintername();
             } else {
                 name = "\\\\" + config.getHostname() + "\\" + config.getPrintername();
+                if (config.getPrinterPrefix() != null) {
+                    name = config.getPrinterPrefix() + name;
+                }
             }
             log.debug("Using printer name: {}", name);
             setPrinter(name);
