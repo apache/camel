@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -38,6 +39,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -64,6 +66,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private QName partNamespace;
     private String partClass;
     private Class<Object> partialClass;
+    private String namespacePrefixRef;
+    private Map<String, String> namespacePrefix;
+    private JaxbNamespacePrefixMapper namespacePrefixMapper;
 
     private TypeConverter typeConverter;
 
@@ -95,6 +100,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             }
             if (isFragment()) {
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            }
+            if (namespacePrefixMapper != null) {
+                marshaller.setProperty(namespacePrefixMapper.getRegistrationKey(), namespacePrefixMapper);
             }
 
             marshal(exchange, graph, stream, marshaller);
@@ -237,6 +245,22 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         this.partClass = partClass;
     }
 
+    public Map<String, String> getNamespacePrefix() {
+        return namespacePrefix;
+    }
+
+    public void setNamespacePrefix(Map<String, String> namespacePrefix) {
+        this.namespacePrefix = namespacePrefix;
+    }
+
+    public String getNamespacePrefixRef() {
+        return namespacePrefixRef;
+    }
+
+    public void setNamespacePrefixRef(String namespacePrefixRef) {
+        this.namespacePrefixRef = namespacePrefixRef;
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -246,6 +270,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
@@ -255,6 +280,12 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         }
         if (partClass != null) {
             partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass, Object.class);
+        }
+        if (namespacePrefixRef != null) {
+            namespacePrefix = CamelContextHelper.mandatoryLookup(camelContext, namespacePrefixRef, Map.class);
+        }
+        if (namespacePrefix != null) {
+            namespacePrefixMapper = NamespacePrefixMapperFactory.newNamespacePrefixMapper(camelContext, namespacePrefix);
         }
         typeConverter = camelContext.getTypeConverter();
     }

@@ -51,6 +51,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String partClass;
     @XmlAttribute
     private String partNamespace;
+    @XmlAttribute
+    private String namespacePrefixRef;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -125,6 +127,14 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.partNamespace = partNamespace;
     }
 
+    public String getNamespacePrefixRef() {
+        return namespacePrefixRef;
+    }
+
+    public void setNamespacePrefixRef(String namespacePrefixRef) {
+        this.namespacePrefixRef = namespacePrefixRef;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -159,6 +169,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         }
         if (encoding != null) {
             setProperty(dataFormat, "encoding", encoding);
+        }
+        if (namespacePrefixRef != null) {
+            setProperty(dataFormat, "namespacePrefixRef", namespacePrefixRef);
         }
         setProperty(dataFormat, "contextPath", contextPath);
     }

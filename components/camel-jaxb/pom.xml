@@ -30,7 +30,10 @@
     <description>Camel JAXB support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.converter.jaxb.*</camel.osgi.export.pkg>
+		<camel.osgi.import.before.defaults>
+			com.sun.xml.bind.marshaller;resolution:=optional
+		</camel.osgi.import.before.defaults>
+		<camel.osgi.export.pkg>org.apache.camel.converter.jaxb.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
