@@ -20,57 +20,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
-public class BeanRecipientListTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanRecipientListTest.class);
-    protected MyBean myBean = new MyBean();
-
-    public void testSendMessage() throws Exception {
-        final String expectedBody = "Wibble";
-
-        getMockEndpoint("mock:a").expectedBodiesReceived(expectedBody);
-        getMockEndpoint("mock:b").expectedBodiesReceived(expectedBody);
-
-        template.sendBody("direct:in", expectedBody);
-
-        assertMockEndpointsSatisfied();
-    }
-
+public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListTest {
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        checkBean();
-    }
-    
     protected void checkBean() throws Exception {
-        Object lookedUpBean = context.getRegistry().lookup("myBean");
-        assertSame("Lookup of 'myBean' should return same object!", myBean, lookedUpBean);
+        // do nothing here
     }
 
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
-        answer.bind("myBean", myBean);
+        answer.bind("myBean", new MyBean());
         return answer;
     }
-
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:in").beanRef("myBean", "route");
-            }
-        };
+    
+    interface Route {
+        @org.apache.camel.RecipientList
+        String[] route(String body);
     }
-
-    public static class MyBean {
+    
+    public static class MyBean implements Route {
         private static AtomicInteger counter = new AtomicInteger(0);
         private int id;
 
@@ -82,11 +52,11 @@ public class BeanRecipientListTest extends ContextTestSupport {
         public String toString() {
             return "MyBean:" + id;
         }
-
-        @org.apache.camel.RecipientList
+        
         public String[] route(String body) {
-            LOG.debug("Called " + this + " with body: " + body);
             return new String[] {"mock:a", "mock:b"};
         }
     }
+    
+
 }

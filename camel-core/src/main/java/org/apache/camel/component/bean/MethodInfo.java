@@ -25,8 +25,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -113,18 +117,20 @@ public class MethodInfo {
         this.hasCustomAnnotation = hasCustomAnnotation;
         this.hasHandlerAnnotation = hasHandlerAnnotation;
         this.parametersExpression = createParametersExpression();
+        
+        Map<Class<?>, Annotation> collectedMethodAnnotation = collectMethodAnnotations(type, method);
 
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
         }
         
-        if (method.getAnnotation(org.apache.camel.RoutingSlip.class) != null
-                && matchContext(method.getAnnotation(org.apache.camel.RoutingSlip.class).context())) {
-            org.apache.camel.RoutingSlip annotation = method.getAnnotation(org.apache.camel.RoutingSlip.class);
+        org.apache.camel.RoutingSlip routingSlipAnnotation = 
+            (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
+        if (routingSlipAnnotation != null && matchContext(routingSlipAnnotation.context())) {
             routingSlip = new RoutingSlip(camelContext);
-            routingSlip.setDelimiter(annotation.delimiter());
-            routingSlip.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
+            routingSlip.setDelimiter(routingSlipAnnotation.delimiter());
+            routingSlip.setIgnoreInvalidEndpoints(routingSlipAnnotation.ignoreInvalidEndpoints());
             // add created routingSlip as a service so we have its lifecycle managed
             try {
                 camelContext.addService(routingSlip);
@@ -133,12 +139,13 @@ public class MethodInfo {
             }
         }
 
-        if (method.getAnnotation(org.apache.camel.DynamicRouter.class) != null
-                && matchContext(method.getAnnotation(org.apache.camel.DynamicRouter.class).context())) {
-            org.apache.camel.DynamicRouter annotation = method.getAnnotation(org.apache.camel.DynamicRouter.class);
+        org.apache.camel.DynamicRouter dynamicRouterAnnotation = 
+            (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
+        if (dynamicRouterAnnotation != null
+                && matchContext(dynamicRouterAnnotation.context())) {
             dynamicRouter = new DynamicRouter(camelContext);
-            dynamicRouter.setDelimiter(annotation.delimiter());
-            dynamicRouter.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
+            dynamicRouter.setDelimiter(dynamicRouterAnnotation.delimiter());
+            dynamicRouter.setIgnoreInvalidEndpoints(dynamicRouterAnnotation.ignoreInvalidEndpoints());
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
                 camelContext.addService(dynamicRouter);
@@ -147,37 +154,36 @@ public class MethodInfo {
             }
         }
 
-        if (method.getAnnotation(org.apache.camel.RecipientList.class) != null
-                && matchContext(method.getAnnotation(org.apache.camel.RecipientList.class).context())) {
+        org.apache.camel.RecipientList recipientListAnnotation = 
+            (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
+        if (recipientListAnnotation != null
+                && matchContext(recipientListAnnotation.context())) {
+            recipientList = new RecipientList(camelContext, recipientListAnnotation.delimiter());
+            recipientList.setStopOnException(recipientListAnnotation.stopOnException());
+            recipientList.setIgnoreInvalidEndpoints(recipientListAnnotation.ignoreInvalidEndpoints());
+            recipientList.setParallelProcessing(recipientListAnnotation.parallelProcessing());
+            recipientList.setStreaming(recipientListAnnotation.streaming());
+            recipientList.setTimeout(recipientListAnnotation.timeout());
+            recipientList.setShareUnitOfWork(recipientListAnnotation.shareUnitOfWork());
 
-            org.apache.camel.RecipientList annotation = method.getAnnotation(org.apache.camel.RecipientList.class);
-
-            recipientList = new RecipientList(camelContext, annotation.delimiter());
-            recipientList.setStopOnException(annotation.stopOnException());
-            recipientList.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
-            recipientList.setParallelProcessing(annotation.parallelProcessing());
-            recipientList.setStreaming(annotation.streaming());
-            recipientList.setTimeout(annotation.timeout());
-            recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
-
-            if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
-                ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, annotation.executorServiceRef());
+            if (ObjectHelper.isNotEmpty(recipientListAnnotation.executorServiceRef())) {
+                ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, recipientListAnnotation.executorServiceRef());
                 recipientList.setExecutorService(executor);
             }
 
-            if (annotation.parallelProcessing() && recipientList.getExecutorService() == null) {
+            if (recipientListAnnotation.parallelProcessing() && recipientList.getExecutorService() == null) {
                 // we are running in parallel so we need a thread pool
                 ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "@RecipientList");
                 recipientList.setExecutorService(executor);
             }
 
-            if (ObjectHelper.isNotEmpty(annotation.strategyRef())) {
-                AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, annotation.strategyRef(), AggregationStrategy.class);
+            if (ObjectHelper.isNotEmpty(recipientListAnnotation.strategyRef())) {
+                AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, recipientListAnnotation.strategyRef(), AggregationStrategy.class);
                 recipientList.setAggregationStrategy(strategy);
             }
 
-            if (ObjectHelper.isNotEmpty(annotation.onPrepareRef())) {
-                Processor onPrepare = CamelContextHelper.mandatoryLookup(camelContext, annotation.onPrepareRef(), Processor.class);
+            if (ObjectHelper.isNotEmpty(recipientListAnnotation.onPrepareRef())) {
+                Processor onPrepare = CamelContextHelper.mandatoryLookup(camelContext, recipientListAnnotation.onPrepareRef(), Processor.class);
                 recipientList.setOnPrepare(onPrepare);
             }
 
@@ -187,6 +193,32 @@ public class MethodInfo {
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
+        }
+    }
+
+    private Map<Class<?>, Annotation> collectMethodAnnotations(Class<?> c, Method method) {
+        Map<Class<?>, Annotation> annotations = new HashMap<Class<?>, Annotation>();
+        collectMethodAnnotations(c, method, annotations);
+        return annotations;
+    }
+    
+    private void collectMethodAnnotations(Class<?> c, Method method, Map<Class<?>, Annotation> annotations) {
+        for (Class<?> i : c.getInterfaces()) {
+            collectMethodAnnotations(i, method, annotations);
+        }
+        if (!c.isInterface() && c.getSuperclass() != null) {
+            collectMethodAnnotations(c.getSuperclass(), method, annotations);
+        }
+        // make sure the sub class can override the definition
+        try {
+            Annotation[] ma = c.getDeclaredMethod(method.getName(), method.getParameterTypes()).getAnnotations();
+            for (Annotation a : ma) {
+                annotations.put(a.annotationType(), a);
+            }
+        } catch (SecurityException e) {
+            // do nothing here
+        } catch (NoSuchMethodException e) {
+            // do nothing here
         }
     }
 
