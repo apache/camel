@@ -34,6 +34,7 @@ import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 public class Jt400PgmEndpoint extends DefaultEndpoint {
     /**
@@ -64,7 +65,7 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
         try {
             baseEndpoint = new Jt400Endpoint(endpointUri, connectionPool);
         } catch (URISyntaxException e) {
-            throw new CamelException("Unable to parse URI for " + endpointUri, e);
+            throw new CamelException("Unable to parse URI for " + URISupport.sanitizeUri(endpointUri), e);
         }
     }
 
