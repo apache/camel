@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.interceptor.Fault;
@@ -48,9 +49,12 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         if (null != params) {
             InputStream is = (InputStream)params.get(0);
             OutputStream os = message.getContent(OutputStream.class);
-
             try {
-                IOUtils.copy(is, os);
+                if (is instanceof StreamCache) {
+                    ((StreamCache)is).writeTo(os);
+                } else {
+                    IOUtils.copy(is, os);
+                }
             } catch (Exception e) {
                 throw new Fault(e);
             } finally {
