@@ -16,19 +16,34 @@
  */
 package org.apache.camel.component.jms;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.apache.activemq.command.ActiveMQBlobMessage;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-/**
- * @version 
- */
 public class JmsBindingTest {
 
     @Test
     public void testJmsBindingNoArgs() throws Exception {
         JmsBinding underTest = new JmsBinding();
         assertNull(underTest.extractBodyFromJms(null, new ActiveMQBlobMessage()));
+    }
+
+    @Test
+    public void testGetValidJmsHeaderValueWithBigInteger() {
+        JmsBinding binding = new JmsBinding();
+        Object value = binding.getValidJMSHeaderValue("foo", new BigInteger("12345"));
+        assertEquals("12345", value);
+    }
+
+    @Test
+    public void testGetValidJmsHeaderValueWithBigDecimal() {
+        JmsBinding binding = new JmsBinding();
+        Object value = binding.getValidJMSHeaderValue("foo", new BigDecimal("123.45"));
+        assertEquals("123.45", value);
     }
 }
