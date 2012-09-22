@@ -202,7 +202,8 @@ public final class FileUtil {
     }
 
     /**
-     * Compacts a path by stacking it and reducing <tt>..</tt>
+     * Compacts a path by stacking it and reducing <tt>..</tt>,
+     * and uses OS specific file separators (eg {@link java.io.File#separator}).
      */
     public static String compactPath(String path) {
         if (path == null) {
@@ -219,6 +220,9 @@ public final class FileUtil {
             return path;
         }
 
+        // preserve ending slash if given in input path
+        boolean endsWithSlash = path.endsWith("/") || path.endsWith("\\");
+
         Stack<String> stack = new Stack<String>();
         
         String separatorRegex = File.separator;
@@ -227,8 +231,8 @@ public final class FileUtil {
         }
         String[] parts = path.split(separatorRegex);
         for (String part : parts) {
-            if (part.equals("..") && !stack.isEmpty()) {
-                // only pop if there is a previous path
+            if (part.equals("..") && !stack.isEmpty() && !"..".equals(stack.peek())) {
+                // only pop if there is a previous path, which is not a ".." path either
                 stack.pop();
             } else {
                 stack.push(part);
@@ -242,6 +246,10 @@ public final class FileUtil {
             if (it.hasNext()) {
                 sb.append(File.separator);
             }
+        }
+
+        if (endsWithSlash) {
+            sb.append(File.separator);
         }
 
         return sb.toString();

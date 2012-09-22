@@ -905,17 +905,7 @@ public final class ObjectHelper {
      * @return the modified or unmodified string if there were no changes
      */
     private static String resolveUriPath(String name) {
-        String answer = name;
-        if (answer.indexOf("//") > -1) {
-            answer = answer.replaceAll("//", "/");
-        }
-        if (answer.indexOf("../") > -1) {
-            answer = answer.replaceAll("[A-Za-z0-9]*/\\.\\./", "");
-        }
-        if (answer.indexOf("./") > -1) {
-            answer = answer.replaceAll("\\./", "");
-        }
-        return answer;
+        return FileUtil.compactPath(name);
     }
 
     /**
