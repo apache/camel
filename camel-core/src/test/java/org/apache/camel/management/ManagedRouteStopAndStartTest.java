@@ -93,7 +93,9 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/managed").to("mock:result");
+                from("file://target/managed")
+                    .convertBodyTo(String.class)
+                    .to("mock:result");
             }
         };
     }
