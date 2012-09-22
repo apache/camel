@@ -119,7 +119,7 @@ public final class EventHelper {
 
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
-                return;
+                continue;
             }
 
             EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -234,7 +234,7 @@ public final class EventHelper {
 
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
-                return;
+                continue;
             }
 
             EventFactory factory = context.getManagementStrategy().getEventFactory();
