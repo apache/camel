@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements. See the NOTICE file distributed with
@@ -15,251 +14,228 @@
     the specific language governing permissions and limitations under the
     License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>examples</artifactId>
+    <version>2.11-SNAPSHOT</version>
+  </parent>
 
-    <parent>
+  <artifactId>camel-example-cdi</artifactId>
+  <packaging>${packaging.type}</packaging>
+  <name>Camel :: Example :: CDI</name>
+  <description>An example showing how to work with Camel and CDI for dependency injection</description>
+
+  <properties>
+    <camel.osgi.export>org.apache.camel.example.cdi.*</camel.osgi.export>
+    <camel.osgi.import>
+      javax.ejb,
+      javax.inject,
+      org.apache.camel,
+      org.apache.camel.builder,
+      org.apache.camel.model,
+      org.apache.camel.cdi,
+      org.apache.activemq.broker,
+      org.apache.activemq.camel.component,
+      org.apache.activemq.pool,
+      org.apache.activemq.xbean
+    </camel.osgi.import>
+    <!-- avoid to import the bunch of spring related package -->
+    <camel.osgi.dynamic>org.springframework.*</camel.osgi.dynamic>
+    <junit-version>4.8.1</junit-version>
+    <packaging.type>war</packaging.type>
+    <war-plugin-version>2.2</war-plugin-version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cdi</artifactId>
+    </dependency>
+
+    <!-- activemq component -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-pool</artifactId>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+
+    <!-- for testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>1.0.0.CR7</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jboss -releases</id>
+      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <build>
+    <plugins>
+      <!-- Allows the routes to be run via 'mvn camel:run' -->
+      <plugin>
         <groupId>org.apache.camel</groupId>
-        <artifactId>examples</artifactId>
-        <version>2.11-SNAPSHOT</version>
-    </parent>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <useCDI>true</useCDI>
+          <!-- <duration>5s</duration> -->
+        </configuration>
+        <dependencies>
+          <!-- lets use deltaspike & weld -->
+          <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-weld</artifactId>
+            <version>${deltaspike-version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se-core</artifactId>
+            <version>${weld-version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 
-    <artifactId>camel-example-cdi</artifactId>
-    <packaging>${packaging.type}</packaging>
-    <name>Camel :: Example :: CDI</name>
-    <description>An example showing how to work with Camel and CDI for dependency injection</description>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${war-plugin-version}</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-    <properties>
-        <camel.osgi.export>org.apache.camel.example.cdi.*</camel.osgi.export>
-        <camel.osgi.import>
-			javax.ejb,
-			javax.inject,
-			org.apache.camel,
-			org.apache.camel.builder,
-			org.apache.camel.model,
-			org.apache.camel.cdi,
-			org.apache.activemq.broker,
-			org.apache.activemq.camel.component,
-			org.apache.activemq.pool,
-            org.apache.activemq.xbean
-        </camel.osgi.import>
-        <!-- avoid to import the bunch of spring related package -->
-        <camel.osgi.dynamic>org.springframework.*</camel.osgi.dynamic>
-        <junit-version>4.8.1</junit-version>
-		<packaging.type>bundle</packaging.type>
-    </properties>
-
-    <dependencies>
+  <profiles>
+    <profile>
+      <id>arquillian-weld-ee-embedded</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cdi</artifactId>
-        </dependency>
-
-        <!-- activemq component -->
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-camel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
-        </dependency>
-
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.jboss.spec</groupId>
+          <artifactId>jboss-javaee-6.0</artifactId>
+          <version>${jboss-javaee-6-version}</version>
+          <type>pom</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-
-        <!-- for testing -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit-version}</version>
-            <scope>test</scope>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+          <version>${arquillian-weld-ee-embedded-version}</version>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <version>1.0.0.CR7</version>
-            <scope>test</scope>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core</artifactId>
+          <version>${weld-version}</version>
+          <scope>test</scope>
         </dependency>
-    </dependencies>
-	
-	<pluginRepositories>
-	    <pluginRepository>
-			<id>jboss -releases</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-	    </pluginRepository>
-	  </pluginRepositories>
+      </dependencies>
+    </profile>
 
-    <build>
+    <profile>
+      <id>glassfish</id>
+      <properties>
+        <glassfish.version>3.1.1</glassfish.version>
+        <embedded-glassfish-plugin-version>3.1.1</embedded-glassfish-plugin-version>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.glassfish.extras</groupId>
+          <artifactId>glassfish-embedded-all</artifactId>
+          <version>${glassfish.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
         <plugins>
-            <!-- Allows the routes to be run via 'mvn camel:run' -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                  <useCDI>true</useCDI>
-<!--
-                  <duration>5s</duration>
--->
-                </configuration>
-                <dependencies>
-                  <!-- lets use deltaspike & weld -->
-                  <dependency>
-                      <groupId>org.apache.deltaspike.cdictrl</groupId>
-                      <artifactId>deltaspike-cdictrl-weld</artifactId>
-                      <version>${deltaspike-version}</version>
-                  </dependency>
-                  <dependency>
-                      <groupId>org.jboss.weld.se</groupId>
-                      <artifactId>weld-se-core</artifactId>
-                      <version>${weld-version}</version>
-                  </dependency>
-                </dependencies>
-            </plugin>
+          <plugin>
+            <groupId>org.glassfish</groupId>
+            <artifactId>maven-embedded-glassfish-plugin</artifactId>
+            <version>${embedded-glassfish-plugin-version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>4.2.0</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <goalPrefix>glassfish</goalPrefix>
+              <app>target/${artifactId}-${project.version}.war</app>
+              <port>8080</port>
+              <contextRoot>${project.name}</contextRoot>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
 
-    <profiles>
-        <profile>
-            <id>arquillian-weld-ee-embedded</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-			<properties>
-				<packaging.type>war</packaging.type>
-			</properties>	
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.spec</groupId>
-                    <artifactId>jboss-javaee-6.0</artifactId>
-                    <version>${jboss-javaee-6-version}</version>
-                    <type>pom</type>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
-                    <version>${arquillian-weld-ee-embedded-version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld</groupId>
-                    <artifactId>weld-core</artifactId>
-                  <version>${weld-version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>glassfish</id>
-            <properties>
-                <glassfish.version>3.1.1</glassfish.version>
-                <embedded-glassfish-plugin-version>3.1.1</embedded-glassfish-plugin-version>
-                <war-plugin-version>2.2</war-plugin-version>
-				<packaging.type>war</packaging.type>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.glassfish.extras</groupId>
-                    <artifactId>glassfish-embedded-all</artifactId>
-                    <version>${glassfish.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>${war-plugin-version}</version>
-                        <configuration>
-                            <failOnMissingWebXml>false</failOnMissingWebXml>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.glassfish</groupId>
-                        <artifactId>maven-embedded-glassfish-plugin</artifactId>
-                        <version>${embedded-glassfish-plugin-version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.osgi</groupId>
-                                <artifactId>org.osgi.core</artifactId>
-                                <version>4.2.0</version>
-                            </dependency>
-                        </dependencies>
-                        <configuration>
-                            <goalPrefix>glassfish</goalPrefix>
-                            <app>target/${artifactId}-${project.version}.war</app>
-                            <port>8080</port>
-                            <contextRoot>${project.name}</contextRoot>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-		<profile>
-			<id>jboss</id>
-            <properties>
-                <jboss-plugin.version>7.2.Final</jboss-plugin.version>
-                <war-plugin-version>2.2</war-plugin-version>
-                <packaging.type>war</packaging.type>
-             </properties>
-             <dependencies>
-                 <dependency>
-                     <groupId>org.jboss.spec</groupId>
-                     <artifactId>jboss-javaee-6.0</artifactId>
-                     <version>${jboss-javaee-6-version}</version>
-                     <type>pom</type>
-                     <scope>provided</scope>
-                 </dependency>
-			</dependencies>	 
-			<build>
-			    <plugins>
-                  <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>${war-plugin-version}</version>
-                        <configuration>
-                            <failOnMissingWebXml>false</failOnMissingWebXml>
-                        </configuration>
-                  </plugin>
-			      <plugin>
-			        <groupId>org.jboss.as.plugins</groupId>
-			        <artifactId>jboss-as-maven-plugin</artifactId>
-			        <version>${jboss-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                        </execution>
-                    </executions>						
-			      </plugin>
-				</plugins>  
-			</build>	
-		</profile>	
-    </profiles>
+    <profile>
+      <id>jboss</id>
+      <properties>
+        <jboss-plugin.version>7.2.Final</jboss-plugin.version>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.spec</groupId>
+          <artifactId>jboss-javaee-6.0</artifactId>
+          <version>${jboss-javaee-6-version}</version>
+          <type>pom</type>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jboss.as.plugins</groupId>
+            <artifactId>jboss-as-maven-plugin</artifactId>
+            <version>${jboss-plugin.version}</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
