@@ -102,6 +102,14 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         return elementNameStrategy;
     }
 
+    public String getNamespacePrefixRef() {
+        return namespacePrefixRef;
+    }
+
+    public void setNamespacePrefixRef(String namespacePrefixRef) {
+        this.namespacePrefixRef = namespacePrefixRef;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         if (elementNameStrategy != null) {
