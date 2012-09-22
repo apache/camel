@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Enumeration;
@@ -402,6 +404,10 @@ public class JmsBinding {
     protected Object getValidJMSHeaderValue(String headerName, Object headerValue) {
         if (headerValue instanceof String) {
             return headerValue;
+        } else if (headerValue instanceof BigInteger) {
+            return headerValue.toString();
+        } else if (headerValue instanceof BigDecimal) {
+            return headerValue.toString();
         } else if (headerValue instanceof Number) {
             return headerValue;
         } else if (headerValue instanceof Character) {
