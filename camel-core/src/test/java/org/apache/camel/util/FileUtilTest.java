@@ -133,6 +133,10 @@ public class FileUtilTest extends TestCase {
     public void testCompactPath() {
         assertEquals(null, FileUtil.compactPath(null));
         if (FileUtil.isWindows()) {
+            assertEquals("..\\foo", FileUtil.compactPath("..\\foo"));
+            assertEquals("..\\..\\foo", FileUtil.compactPath("..\\..\\foo"));
+            assertEquals("..\\..\\foo\\bar", FileUtil.compactPath("..\\..\\foo\\bar"));
+            assertEquals("..\\..\\foo", FileUtil.compactPath("..\\..\\foo\\bar\\.."));
             assertEquals("foo", FileUtil.compactPath("foo"));
             assertEquals("bar", FileUtil.compactPath("foo\\..\\bar"));
             assertEquals("bar\\baz", FileUtil.compactPath("foo\\..\\bar\\baz"));
@@ -141,6 +145,10 @@ public class FileUtilTest extends TestCase {
             assertEquals("..\\baz", FileUtil.compactPath("foo\\bar\\..\\..\\..\\baz"));
             assertEquals("..\\foo\\bar", FileUtil.compactPath("..\\foo\\bar"));
         } else {
+            assertEquals("../foo", FileUtil.compactPath("../foo"));
+            assertEquals("../../foo", FileUtil.compactPath("../../foo"));
+            assertEquals("../../foo/bar", FileUtil.compactPath("../../foo/bar"));
+            assertEquals("../../foo", FileUtil.compactPath("../../foo/bar/.."));
             assertEquals("foo", FileUtil.compactPath("foo"));
             assertEquals("bar", FileUtil.compactPath("foo/../bar"));
             assertEquals("bar/baz", FileUtil.compactPath("foo/../bar/baz"));
