@@ -209,12 +209,7 @@ public final class FileUtil {
         if (path == null) {
             return null;
         }
-
-        // only normalize path if it contains .. as we want to avoid: path/../sub/../sub2 as this can leads to trouble
-        if (path.indexOf("..") == -1) {
-            return path;
-        }
-
+        
         // only normalize if contains a path separator
         if (path.indexOf(File.separator) == -1) {
             return path;
@@ -234,6 +229,8 @@ public final class FileUtil {
             if (part.equals("..") && !stack.isEmpty() && !"..".equals(stack.peek())) {
                 // only pop if there is a previous path, which is not a ".." path either
                 stack.pop();
+            } else if (part.equals(".") || part.isEmpty()) {
+                // do nothing because we don't want a path like foo/./bar
             } else {
                 stack.push(part);
             }
@@ -379,6 +376,7 @@ public final class FileUtil {
         return renamed;
     }
 
+    @SuppressWarnings("resource")
     public static void copyFile(File from, File to) throws IOException {
         FileChannel in = new FileInputStream(from).getChannel();
         FileChannel out = new FileOutputStream(to).getChannel();
