@@ -2382,7 +2382,7 @@
       </activation>
 
       <properties>
-        <jaxb-version>2.2.5</jaxb-version>
+        <jaxb-version>2.2.6</jaxb-version>
       </properties>
 
       <dependencies>
