@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
  */
 public final class NamespacePrefixMapperFactory {
 
-    private static final String SUN_JAXB_21_MAPPER = "org.apache.camel.converter.jaxb.mapper.SunNamespacePrefixMapper";
+    private static final String SUN_JAXB_21_MAPPER = "org.apache.camel.converter.jaxb.mapper.SunJaxb21NamespacePrefixMapper";
 
     private NamespacePrefixMapperFactory() {
     }
