@@ -146,6 +146,7 @@ public class FileUtilTest extends TestCase {
             assertEquals("..\\foo\\bar", FileUtil.compactPath("..\\foo\\bar"));
             assertEquals("foo\\bar\\baz", FileUtil.compactPath("foo\\bar\\.\\baz"));
             assertEquals("foo\\bar\\baz", FileUtil.compactPath("foo\\bar\\\\baz"));
+            assertEquals("\\foo\\bar\\baz", FileUtil.compactPath("\\foo\\bar\\baz"));
         } else {
             assertEquals("../foo", FileUtil.compactPath("../foo"));
             assertEquals("../../foo", FileUtil.compactPath("../../foo"));
@@ -160,6 +161,7 @@ public class FileUtilTest extends TestCase {
             assertEquals("../foo/bar", FileUtil.compactPath("../foo/bar"));
             assertEquals("foo/bar/baz", FileUtil.compactPath("foo/bar/./baz"));
             assertEquals("foo/bar/baz", FileUtil.compactPath("foo/bar//baz"));
+            assertEquals("/foo/bar/baz", FileUtil.compactPath("/foo/bar/baz"));
         }
     }
 

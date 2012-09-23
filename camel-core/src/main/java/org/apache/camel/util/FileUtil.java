@@ -218,6 +218,9 @@ public final class FileUtil {
         // preserve ending slash if given in input path
         boolean endsWithSlash = path.endsWith("/") || path.endsWith("\\");
 
+        // preserve starting slash if given in input path
+        boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
+        
         Stack<String> stack = new Stack<String>();
         
         String separatorRegex = File.separator;
@@ -230,7 +233,7 @@ public final class FileUtil {
                 // only pop if there is a previous path, which is not a ".." path either
                 stack.pop();
             } else if (part.equals(".") || part.isEmpty()) {
-                // do nothing because we don't want a path like foo/./bar
+                // do nothing because we don't want a path like foo/./bar or foo//bar
             } else {
                 stack.push(part);
             }
@@ -238,6 +241,11 @@ public final class FileUtil {
 
         // build path based on stack
         StringBuilder sb = new StringBuilder();
+        
+        if (startsWithSlash) {
+            sb.append(File.separator);
+        }
+        
         for (Iterator<String> it = stack.iterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
