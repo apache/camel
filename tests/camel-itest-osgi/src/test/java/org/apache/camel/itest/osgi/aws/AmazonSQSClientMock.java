@@ -28,6 +28,7 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
+import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
@@ -40,6 +41,12 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     
     public AmazonSQSClientMock() {
         super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
+    }
+
+    @Override
+    public ListQueuesResult listQueues() throws AmazonServiceException, AmazonClientException {
+        ListQueuesResult result = new ListQueuesResult();
+        return result;
     }
 
     @Override
