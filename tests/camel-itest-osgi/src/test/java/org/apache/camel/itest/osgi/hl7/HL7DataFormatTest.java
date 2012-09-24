@@ -34,30 +34,12 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 public class HL7DataFormatTest extends OSGiIntegrationTestSupport {
 
     @Test
-    public void testUnmarshalFailed() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:unmarshal");
-        mock.expectedMessageCount(0);
-
-        String body = createHL7AsString();
-        try {
-            template.sendBody("direct:unmarshalFailed", body);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(HL7Exception.class, e.getCause());
-            assertIsInstanceOf(DataTypeException.class, e.getCause());
-            assertTrue("Should be a validation error message", e.getCause().getMessage().startsWith("Failed validation rule"));
-        }
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testUnmarshalOk() throws Exception {
+    public void testUnmarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         mock.expectedMessageCount(1);
 
         String body = createHL7AsString();
-        template.sendBody("direct:unmarshalOk", body);
+        template.sendBody("direct:unmarshal", body);
 
         assertMockEndpointsSatisfied();
     }
@@ -65,9 +47,7 @@ public class HL7DataFormatTest extends OSGiIntegrationTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:unmarshalFailed").unmarshal().hl7().to("mock:unmarshal");
-
-                from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
+                from("direct:unmarshal").unmarshal().hl7().to("mock:unmarshal");
             }
         };
     }
