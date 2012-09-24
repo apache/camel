@@ -107,7 +107,7 @@ public class BatchTransactedQueueProducerTest extends CamelTestSupport {
                             
                             // Verify that it isn't empty
                             // if it is do nothing and force the Exception
-                            if(redeliveryAttempt != null && redeliveryAttempt.equals("1")) {
+                            if (redeliveryAttempt != null && redeliveryAttempt.equals("1")) {
                                 // do nothing and allow it to proceed
                             } else {
                                 log.info("BatchMessage received without redelivery. Rolling back.");

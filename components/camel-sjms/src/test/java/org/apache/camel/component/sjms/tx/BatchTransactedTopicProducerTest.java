@@ -97,7 +97,7 @@ public class BatchTransactedTopicProducerTest extends CamelTestSupport {
                 from("direct:start")
                     .to("log:test-before?showAll=true")
                     .to("sjms:topic:batch.topic?transacted=true")
-                                        .process(new Processor() {
+                    .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             // This will force an exception to occur on the exchange
@@ -109,7 +109,7 @@ public class BatchTransactedTopicProducerTest extends CamelTestSupport {
                             
                             // Verify that it isn't empty
                             // if it is do nothing and force the Exception
-                            if(redeliveryAttempt != null && redeliveryAttempt.equals("1")) {
+                            if (redeliveryAttempt != null && redeliveryAttempt.equals("1")) {
                                 // do nothing and allow it to proceed
                             } else {
                                 log.info("BatchMessage received without redelivery. Rolling back.");
