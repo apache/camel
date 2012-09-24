@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.cdi;
+package org.apache.camel.itest.cdi.properties;
 
 import org.apache.deltaspike.core.api.config.PropertyFileConfig;
 
 /**
  * Registers new properties configuration.
  */
-public class Camel2Config implements PropertyFileConfig {
+public class Camel1Config implements PropertyFileConfig {
 
     private static final long serialVersionUID = 1L;
 
     @Override
     public String getPropertyFileName() {
-        return "camel2.properties";
+        return "camel1.properties";
     };
 
 }
