@@ -88,11 +88,24 @@ public final class URISupport {
         return sanitized;
     }
 
+    /**
+     * Parses the query part of the uri (eg the parameters).
+     *
+     * @param uri the uri
+     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     */
+    @SuppressWarnings("unchecked")
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {
         // must check for trailing & as the uri.split("&") will ignore those
         if (uri != null && uri.endsWith("&")) {
             throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
                 + "Check the uri and remove the trailing & marker.");
+        }
+
+        if (ObjectHelper.isEmpty(uri)) {
+            // return an empty map
+            return new LinkedHashMap<String, Object>(0);
         }
 
         try {
@@ -142,6 +155,13 @@ public final class URISupport {
         }
     }
 
+    /**
+     * Parses the query parameters of the uri (eg the query part).
+     *
+     * @param uri the uri
+     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     */
     public static Map<String, Object> parseParameters(URI uri) throws URISyntaxException {
         String query = uri.getQuery();
         if (query == null) {
@@ -161,6 +181,11 @@ public final class URISupport {
 
     /**
      * Creates a URI with the given query
+     *
+     * @param uri the uri
+     * @param query the query to append to the uri
+     * @return uri with the query appended
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     public static URI createURIWithQuery(URI uri, String query) throws URISyntaxException {
         ObjectHelper.notNull(uri, "uri");
@@ -181,6 +206,15 @@ public final class URISupport {
         return new URI(s);
     }
 
+    /**
+     * Strips the prefix from the value.
+     * <p/>
+     * Returns the value as-is if not starting with the prefix.
+     *
+     * @param value  the value
+     * @param prefix the prefix to remove from value
+     * @return the value without the prefix
+     */
     public static String stripPrefix(String value, String prefix) {
         if (value.startsWith(prefix)) {
             return value.substring(prefix.length());
@@ -188,6 +222,13 @@ public final class URISupport {
         return value;
     }
 
+    /**
+     * Assembles a query from the given map.
+     *
+     * @param options  the map with the options (eg key/value pairs)
+     * @return a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no options.
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     */
     @SuppressWarnings("unchecked")
     public static String createQueryString(Map<String, Object> options) throws URISyntaxException {
         try {
@@ -241,7 +282,6 @@ public final class URISupport {
         }
     }
 
-
     /**
      * Creates a URI from the original URI and the remaining parameters
      * <p/>
@@ -262,7 +302,7 @@ public final class URISupport {
      * @param uri the uri
      * @return the normalized uri
      * @throws URISyntaxException in thrown if the uri syntax is invalid
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException is thrown if encoding error
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
 
