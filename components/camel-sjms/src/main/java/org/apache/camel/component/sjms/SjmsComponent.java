@@ -44,7 +44,7 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
     private KeyFormatStrategy keyFormatStrategy;
     private Integer maxConnections = 1;
-    private TransactionCommitStrategy commitStrategy = new DefaultTransactionCommitStrategy();
+    private TransactionCommitStrategy transactionCommitStrategy = new DefaultTransactionCommitStrategy();
 
     /**
      * @see
@@ -204,23 +204,23 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
     }
 
     /**
-     * Gets the TransactionCommitStrategy value of commitStrategy for this
+     * Gets the TransactionCommitStrategy value of transactionCommitStrategy for this
      * instance of SjmsComponent.
      * 
-     * @return the commitStrategy
+     * @return the transactionCommitStrategy
      */
-    public TransactionCommitStrategy getCommitStrategy() {
-        return commitStrategy;
+    public TransactionCommitStrategy getTransactionCommitStrategy() {
+        return transactionCommitStrategy;
     }
 
     /**
-     * Sets the TransactionCommitStrategy value of commitStrategy for this
+     * Sets the TransactionCommitStrategy value of transactionCommitStrategy for this
      * instance of SjmsComponent.
      * 
-     * @param commitStrategy Sets TransactionCommitStrategy, default is TODO add
+     * @param transactionCommitStrategy Sets TransactionCommitStrategy, default is TODO add
      *            default
      */
-    public void setCommitStrategy(TransactionCommitStrategy commitStrategy) {
-        this.commitStrategy = commitStrategy;
+    public void setTransactionCommitStrategy(TransactionCommitStrategy commitStrategy) {
+        this.transactionCommitStrategy = commitStrategy;
     }
 }

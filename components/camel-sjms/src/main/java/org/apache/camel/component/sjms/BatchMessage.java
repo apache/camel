@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A {@link List} of these objects can be used to batch a collection of body and
+ * A {@link List} of these objects can be used to batch a collection of bodies and
  * header pairs in one exchange.
  * 
  */

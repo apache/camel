@@ -26,18 +26,24 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Verify the ability to batch transactions.
+ * Verify the ability to batch transactions to the consumer.
  *
  */
 public class BatchTransactedQueueConsumerTest extends CamelTestSupport {
-    
+
     /**
-     * Verify that messages are being redelivered
+     * Verify that after only sending 10 messages that 10 are delivered to the
+     * processor and upon the 10th message throwing an Exception which causes
+     * the messages deliveries to be rolled back. The messages should then be
+     * redelivered with the JMSRedelivered flag set to true for a total of 10
+     * delivered messages.
+     * 
      * @throws Exception
      */
     @Test
     public void testEndpointConfiguredBatchTransaction() throws Exception {
-        // We should get two sets of 10 messages.  10 before the rollback and 10 after the rollback.
+        // We should get two sets of 10 messages. 10 before the rollback and 10
+        // after the rollback.
         getMockEndpoint("mock:test.before").expectedMessageCount(10);
         getMockEndpoint("mock:test.after").expectedMessageCount(10);
 
@@ -88,7 +94,7 @@ public class BatchTransactedQueueConsumerTest extends CamelTestSupport {
                                         String body = exchange.getIn().getBody(String.class);
                                         
                                         // If the message ends with 10, throw the exception
-                                        if (body.endsWith("10")) {
+                                        if (body.endsWith("4") || body.endsWith("6")) {
                                             log.info("10th message received.  Rolling back.");
                                             exchange.getOut().setFault(true);
                                             exchange.getOut().setBody("10th message received.  Rolling back.");
