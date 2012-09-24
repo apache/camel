@@ -30,9 +30,6 @@ public class CamelContextAwareTest extends CdiContextTestSupport {
     @Inject
     private ContextAwareBean bean;
 
-    @Inject
-    private CamelContext context;
-
     @Test
     public void shouldInjectCamelContextToBean() throws InterruptedException {
         assertNotNull(bean.getCamelContext());
