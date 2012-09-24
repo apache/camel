@@ -19,38 +19,34 @@ package org.apache.camel.util.jndi;
 import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
-
-import org.apache.camel.util.CastUtils;
 
 /**
  * A factory of the Camel {@link javax.naming.InitialContext} which allows a {@link java.util.Map} to be used to create a
  * JNDI context.
  * <p/>
- * This implementation is prototype based, by creating a <b>new</b> context on each call to
+ * This implementation is singleton based, by creating a <b>new</b> context once, and reusing it on each call to
  * {@link #getInitialContext(java.util.Hashtable)}.
  *
- * @version 
+ * @version
  */
-public class CamelInitialContextFactory implements InitialContextFactory {
+public class CamelSingletonInitialContextFactory extends CamelInitialContextFactory {
+
+    private static volatile Context context;
 
     /**
-     * Creates a new context with the given environment.
+     * Gets or creates the context with the given environment.
+     * <p/>
+     * This implementation will create the context once, and then return the same instance
+     * on multiple calls.
      *
      * @param  environment  the environment, must not be <tt>null</tt>
      * @return the created context.
-     * @throws NamingException is thrown if creation failed.
+     * @throws javax.naming.NamingException is thrown if creation failed.
      */
-    public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
-        try {
-            return new JndiContext(CastUtils.cast(environment, String.class, Object.class));
-        } catch (Exception e) {
-            if (e instanceof NamingException) {
-                throw (NamingException) e;
-            }
-            NamingException exception = new NamingException(e.getMessage());
-            exception.initCause(e);
-            throw exception;
+    public synchronized Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+        if (context == null) {
+            context = super.getInitialContext(environment);
         }
+        return context;
     }
 }
