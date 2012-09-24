@@ -16,8 +16,7 @@
  */
 package org.apache.camel.util.jndi;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -27,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.FileUtil;
 
 /**
  *
@@ -35,35 +33,19 @@ import org.apache.camel.util.FileUtil;
 public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupport {
 
     private static final String FAKE = "!!! Get DataSource fake !!!";
-    private File file = new File("src/test/resources/jndi.properties");
+    private final Hashtable env = new Hashtable();
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void setUp() throws Exception {
-        FileUtil.deleteFile(file);
-
-        // crete jndi.properties file
-        FileOutputStream fos = new FileOutputStream(file);
-        try {
-            String name = "java.naming.factory.initial=" + CamelSingletonInitialContextFactory.class.getName();
-            fos.write(name.getBytes());
-        } finally {
-            fos.close();
-        }
-
+        // use the singleton context factory
+        env.put(Context.INITIAL_CONTEXT_FACTORY, CamelSingletonInitialContextFactory.class.getName());
         super.setUp();
     }
 
     @Override
-    protected void tearDown() throws Exception {
-        FileUtil.deleteFile(file);
-        super.tearDown();
-    }
-
-    @Override
     protected JndiRegistry createRegistry() throws Exception {
-        // create jndi registry to use in Camel, using the default initial contex (which will read jndi.properties)
-        // (instead of what test-support offers normally)
-        JndiRegistry jndi = new JndiRegistry(new InitialContext());
+        JndiRegistry jndi = new JndiRegistry(new InitialContext(env));
         jndi.bind("jdbc/myDataSource", FAKE);
         return jndi;
     }
@@ -87,7 +69,7 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 // calling this should get us the existing context
-                                Context context = new InitialContext();
+                                Context context = new InitialContext(env);
                                 exchange.getIn().setBody(context.lookup("jdbc/myDataSource").toString());
                             }
                         })
