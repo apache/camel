@@ -18,11 +18,15 @@ You can see the routing rules by looking at the java code in the
 
   To stop the example hit ctrl + c
   
-Remarks : 
-- When we use the camel plugin, a local CDI container is created and started
-- An additional profile has been defined in the example to run the code into a JBoss AS7 server
+When we launch the example using the camel maven plugin, a local CDI container is created and started.
+Additionally there're two maven profiles being defined by this example (see pom.xml for details) so that
+using maven we can easily embed and deploy the example into an application server.
 
-  mvn deploy -P jboss 
+To run the example using JBoss simply type
+  mvn deploy -Pjboss
+  
+And to launch using Glassfish
+  mvn deploy -Pglassfish
 
 This example is documented at
   http://camel.apache.org/cdi-example.html

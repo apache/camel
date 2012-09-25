@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-example-cdi</artifactId>
-  <packaging>${packaging.type}</packaging>
+  <packaging>war</packaging>
   <name>Camel :: Example :: CDI</name>
   <description>An example showing how to work with Camel and CDI for dependency injection</description>
 
@@ -45,8 +45,6 @@
     </camel.osgi.import>
     <!-- avoid to import the bunch of spring related package -->
     <camel.osgi.dynamic>org.springframework.*</camel.osgi.dynamic>
-    <junit-version>4.8.1</junit-version>
-    <packaging.type>war</packaging.type>
     <war-plugin-version>2.2</war-plugin-version>
   </properties>
 
@@ -95,7 +93,6 @@
         <version>${project.version}</version>
         <configuration>
           <useCDI>true</useCDI>
-          <!-- <duration>5s</duration> -->
         </configuration>
         <dependencies>
           <!-- lets use deltaspike & weld -->
@@ -117,6 +114,26 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>${war-plugin-version}</version>
         <configuration>
+          <webResources>
+            <!-- place the legal files under the META-INF folder -->
+            <resource>
+              <directory>src/main/resources/META-INF</directory>
+              <targetPath>META-INF</targetPath>
+              <includes>
+                <include>*.txt</include>
+              </includes>
+            </resource>
+            <!-- place beans.xml where it's expected to be, that's under the path WEB-INF/beans.xml -->
+            <resource>
+              <directory>src/main/resources/META-INF</directory>
+              <targetPath>WEB-INF</targetPath>
+              <includes>
+                <include>beans.xml</include>
+              </includes>
+            </resource>
+          </webResources>
+          <!-- exclude beans.xml from the root of the WAR -->
+          <packagingExcludes>beans.xml</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
@@ -150,51 +167,22 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
-	  <pluginRepositories>
-	    <pluginRepository>
-	      <id>jboss -releases</id>
-	      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-	    </pluginRepository>
-	  </pluginRepositories>
     </profile>
 
-   <!-- As we have issue with glassfish server and weld - http://java.net/jira/browse/GLASSFISH-15888, we will not use it
     <profile>
       <id>glassfish</id>
       <properties>
-        <glassfish.version>3.1.1</glassfish.version>
         <embedded-glassfish-plugin-version>3.1.2.2</embedded-glassfish-plugin-version>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.glassfish.extras</groupId>
-          <artifactId>glassfish-embedded-all</artifactId>
-          <version>${glassfish.version}</version>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
-	  <pluginRepositories>
-		<pluginRepository>
-		  <id>maven2 - releases</id>
-	      <url>http://central.maven.org/maven2/</url> 
-		</pluginRepository>	
-	  </pluginRepositories>
       <build>
         <plugins>
           <plugin>
             <groupId>org.glassfish.embedded</groupId>
             <artifactId>maven-embedded-glassfish-plugin</artifactId>
             <version>${embedded-glassfish-plugin-version}</version>
-            <dependencies>
-              <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
-                <version>4.2.0</version>
-              </dependency>
-            </dependencies>
             <configuration>
               <goalPrefix>glassfish</goalPrefix>
-              <app>target/${artifactId}-${project.version}.war</app>
+              <app>target/${project.artifactId}-${project.version}.war</app>
               <port>8080</port>
               <contextRoot>${project.name}</contextRoot>
             </configuration>
@@ -210,28 +198,18 @@
         </plugins>
       </build>
     </profile>
-    -->
 
     <profile>
       <id>jboss</id>
       <properties>
-        <jboss-plugin.version>7.2.Final</jboss-plugin.version>
+        <jboss-plugin-version>7.2.Final</jboss-plugin-version>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.spec</groupId>
-          <artifactId>jboss-javaee-6.0</artifactId>
-          <version>${jboss-javaee-6-version}</version>
-          <type>pom</type>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
             <groupId>org.jboss.as.plugins</groupId>
             <artifactId>jboss-as-maven-plugin</artifactId>
-            <version>${jboss-plugin.version}</version>
+            <version>${jboss-plugin-version}</version>
             <executions>
               <execution>
                 <phase>package</phase>
