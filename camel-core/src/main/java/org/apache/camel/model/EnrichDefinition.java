@@ -95,7 +95,7 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
 
         Enricher enricher = new Enricher(null, endpoint.createProducer());
         if (aggregationStrategyRef != null) {
-            aggregationStrategy = routeContext.lookup(aggregationStrategyRef, AggregationStrategy.class);
+            aggregationStrategy = routeContext.mandatoryLookup(aggregationStrategyRef, AggregationStrategy.class);
         }
         if (aggregationStrategy == null) {
             enricher.setDefaultAggregationStrategy();

@@ -97,7 +97,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         WireTapProcessor answer = new WireTapProcessor(endpoint, target, getPattern(), threadPool, shutdownThreadPool);
         answer.setCopy(isCopy());
         if (newExchangeProcessorRef != null) {
-            newExchangeProcessor = routeContext.lookup(newExchangeProcessorRef, Processor.class);
+            newExchangeProcessor = routeContext.mandatoryLookup(newExchangeProcessorRef, Processor.class);
         }
         if (newExchangeProcessor != null) {
             answer.addNewExchangeProcessor(newExchangeProcessor);
