@@ -18,15 +18,12 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.StatefulService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A default implementation that just logs a <tt>WARN</tt> level log in case of rollback.
- * <p/>
- * The implement will <b>not</b> log if the rollback occurred during shutdown.
+ * A default implementation that will not retry on rollback.
  *
  * @version 
  */
@@ -43,16 +40,6 @@ public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollSt
     }
 
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
-        boolean runAllowed = true;
-        if (consumer instanceof StatefulService) {
-            runAllowed = ((StatefulService) consumer).isRunAllowed();
-        }
-
-        // only log warn if we are running, otherwise we are just stopping which we should not log the issue in the logs
-        if (runAllowed) {
-            log.warn("Consumer " + consumer +  " could not poll endpoint: " + endpoint + " caused by: " + e.getMessage(), e);
-        }
-
         // we do not want to retry
         return false;
     }

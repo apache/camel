@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
+import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -117,9 +118,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
         int retryCounter = -1;
         boolean done = false;
+        Throwable cause = null;
 
         while (!done) {
             try {
+                cause = null;
                 // eager assume we are done
                 done = true;
                 if (isPollAllowed()) {
@@ -157,21 +160,31 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 try {
                     boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);
                     if (retry) {
+                        // do not set cause as we retry
                         done = false;
+                    } else {
+                        cause = e;
+                        done = true;
                     }
                 } catch (Throwable t) {
-                    // catch throwable to not let the thread die
-                    getExceptionHandler().handleException("Consumer " + this +  " failed polling endpoint: " + getEndpoint()
-                            + ". Will try again at next poll", t);
-                    // we are done due this fatal error
+                    cause = t;
                     done = true;
                 }
             } catch (Throwable t) {
-                // catch throwable to not let the thread die
-                getExceptionHandler().handleException("Consumer " + this +  " failed polling endpoint: " + getEndpoint()
-                        + ". Will try again at next poll", t);
-                // we are done due this fatal error
+                cause = t;
                 done = true;
+            }
+
+            if (cause != null && isRunAllowed()) {
+                // let exception handler deal with the caused exception
+                // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced shutdown
+                try {
+                    getExceptionHandler().handleException("Consumer " + this +  " failed polling endpoint: " + getEndpoint()
+                            + ". Will try again at next poll", cause);
+                } catch (Throwable e) {
+                    LOG.warn("Error handling exception. This exception will be ignored.", e);
+                }
+                cause = null;
             }
         }
 
