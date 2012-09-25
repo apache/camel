@@ -17,6 +17,7 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -33,8 +34,8 @@ public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
             super.setUp();
         } catch (RuntimeCamelException e) {
             FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("ErrorHandlerBuilder with id bar not found in registry.", iae.getMessage());
+            NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, cause.getCause());
+            assertEquals("No bean could be found in the registry for: bar of type: org.apache.camel.builder.ErrorHandlerBuilder", nsbe.getMessage());
         }
     }
 

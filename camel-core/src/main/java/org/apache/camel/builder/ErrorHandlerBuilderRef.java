@@ -102,10 +102,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
             }
         } else {
             // use specific configured error handler
-            answer = routeContext.lookup(ref, ErrorHandlerBuilder.class);
-            if (answer == null) {
-                throw new IllegalArgumentException("ErrorHandlerBuilder with id " + ref + " not found in registry.");
-            }
+            answer = routeContext.mandatoryLookup(ref, ErrorHandlerBuilder.class);
         }
 
         return answer;

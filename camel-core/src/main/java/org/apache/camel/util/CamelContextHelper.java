@@ -110,7 +110,7 @@ public final class CamelContextHelper {
 
     /**
      * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} or throws NoSuchBeanException if not found.
+     * {@link CamelContext} or throws {@link NoSuchBeanException} if not found.
      */
     public static Object mandatoryLookup(CamelContext context, String name) {
         Object answer = lookup(context, name);

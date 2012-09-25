@@ -89,7 +89,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
 
         answer.setCopy(isCopy());
         if (newExchangeProcessorRef != null) {
-            newExchangeProcessor = routeContext.lookup(newExchangeProcessorRef, Processor.class);
+            newExchangeProcessor = routeContext.mandatoryLookup(newExchangeProcessorRef, Processor.class);
         }
         if (newExchangeProcessor != null) {
             answer.addNewExchangeProcessor(newExchangeProcessor);

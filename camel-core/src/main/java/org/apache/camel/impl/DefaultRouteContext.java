@@ -41,6 +41,7 @@ import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -139,7 +140,12 @@ public class DefaultRouteContext implements RouteContext {
     public <T> Map<String, T> lookupByType(Class<T> type) {
         return getCamelContext().getRegistry().lookupByType(type);
     }
-    
+
+    @Override
+    public <T> T mandatoryLookup(String name, Class<T> type) {
+        return CamelContextHelper.mandatoryLookup(getCamelContext(), name, type);
+    }
+
     public void commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
