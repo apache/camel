@@ -35,8 +35,6 @@ import org.apache.camel.cdi.Uri;
 @ApplicationScoped
 public class MyRoutes extends RouteBuilder {
 
-    public MyRoutes(){};
-
     @Inject
     //@Uri("activemq:test.MyQueue")
     @Uri("file://target/testdata/queue")
