@@ -89,6 +89,15 @@ public interface RouteContext extends RuntimeConfiguration {
     <T> T lookup(String name, Class<T> type);
 
     /**
+     * lookup an object by name and type or throws {@link org.apache.camel.NoSuchBeanException} if not found.
+     *
+     * @param name  the name to lookup
+     * @param type  the expected type
+     * @return the found object
+     */
+    <T> T mandatoryLookup(String name, Class<T> type);
+
+    /**
      * lookup objects by type
      *
      * @param type the expected type

@@ -86,8 +86,7 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
         Processor answer = processor;
         if (processor == null) {
             ObjectHelper.notNull(ref, "ref", this);
-            answer = routeContext.lookup(getRef(), Processor.class);
-            ObjectHelper.notNull(answer, "registry entry called " + getRef(), this);
+            answer = routeContext.mandatoryLookup(getRef(), Processor.class);
         }
 
         // ensure its wrapped in a Service so we can manage it from eg. JMX

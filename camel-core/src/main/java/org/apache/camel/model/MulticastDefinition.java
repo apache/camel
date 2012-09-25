@@ -209,7 +209,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
         if (strategyRef != null) {
-            aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+            aggregationStrategy = routeContext.mandatoryLookup(strategyRef, AggregationStrategy.class);
         }
         if (aggregationStrategy == null) {
             // default to use latest aggregation strategy

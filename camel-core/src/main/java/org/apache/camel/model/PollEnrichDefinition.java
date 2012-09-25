@@ -103,7 +103,7 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         }
 
         if (aggregationStrategyRef != null) {
-            aggregationStrategy = routeContext.lookup(aggregationStrategyRef, AggregationStrategy.class);
+            aggregationStrategy = routeContext.mandatoryLookup(aggregationStrategyRef, AggregationStrategy.class);
         }
         if (aggregationStrategy == null) {
             enricher.setDefaultAggregationStrategy();
