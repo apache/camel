@@ -91,5 +91,10 @@ public class EndpointConfigurationTest {
         public EndpointConfiguration createConfiguration(String uri) throws Exception {
             return new MappedEndpointConfiguration(getCamelContext());
         }
+
+        @Override
+        public boolean useRawUri() {
+            return false;
+        }
     }
 }

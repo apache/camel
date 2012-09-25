@@ -71,7 +71,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         // check URI string to the unsafe URI characters
         String encodedUri = preProcessUri(uri);
         URI u = new URI(encodedUri);
-        String path = u.getSchemeSpecificPart();
+        String path = useRawUri() ? u.getRawSchemeSpecificPart() : u.getSchemeSpecificPart();
 
         // lets trim off any query arguments
         if (path.startsWith("//")) {
@@ -83,12 +83,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
         Map<String, Object> parameters = URISupport.parseParameters(u);
 
-        validateURI(encodedUri, path, parameters);
+        // use encoded or raw uri?
+        uri = useRawUri() ? uri : encodedUri;
 
+        validateURI(uri, path, parameters);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", new Object[]{URISupport.sanitizeUri(encodedUri), URISupport.sanitizePath(path), parameters});
+            LOG.debug("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", new Object[]{URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters});
         }
-        Endpoint endpoint = createEndpoint(encodedUri, path, parameters);
+        Endpoint endpoint = createEndpoint(uri, path, parameters);
         if (endpoint == null) {
             return null;
         }
@@ -102,11 +104,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // if endpoint is strict (not lenient) and we have unknown parameters configured then
             // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
             if (!endpoint.isLenientProperties()) {
-                validateParameters(encodedUri, parameters, null);
+                validateParameters(uri, parameters, null);
             }
         }
 
-        afterConfiguration(encodedUri, path, endpoint, parameters);
+        afterConfiguration(uri, path, endpoint, parameters);
         return endpoint;
     }
 
@@ -116,12 +118,19 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         return config;
     }
 
+    public boolean useRawUri() {
+        // should use encoded uri by default
+        return false;
+    }
+
     /**
      * Strategy to do post configuration logic.
      * <p/>
      * Can be used to construct an URI based on the remaining parameters. For example the parameters that configures
      * the endpoint have been removed from the parameters which leaves only the additional parameters left.
      *
+     * @param uri the uri
+     * @param remaining the remaining part of the URI without the query parameters or component prefix
      * @param endpoint the created endpoint
      * @param parameters the remaining parameters after the endpoint has been created and parsed the parameters
      * @throws Exception can be thrown to indicate error creating the endpoint
@@ -133,7 +142,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Strategy for validation of parameters, that was not able to be resolved to any endpoint options.
      *
-     * @param uri          the uri - the uri the end user provided untouched
+     * @param uri          the uri
      * @param parameters   the parameters, an empty map if no parameters given
      * @param optionPrefix optional prefix to filter the parameters for validation. Use <tt>null</tt> for validate all.
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
@@ -155,7 +164,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Strategy for validation of the uri when creating the endpoint.
      *
-     * @param uri        the uri - the uri the end user provided untouched
+     * @param uri        the uri
      * @param path       the path - part after the scheme
      * @param parameters the parameters, an empty map if no parameters given
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
@@ -206,6 +215,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters the optional parameters passed in
      * @return a newly created endpoint or null if the endpoint cannot be
      *         created based on the inputs
+     * @throws Exception is thrown if error creating the endpoint
      */
     protected abstract Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
         throws Exception;

@@ -437,10 +437,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             throw new ResolveEndpointFailedException(uri, e);
         }
 
+        final String rawUri = uri;
+
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
         uri = normalizeEndpointUri(uri);
 
-        log.trace("Getting endpoint with normalized uri: {}", uri);
+        log.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
 
         Endpoint answer;
         String scheme = null;
@@ -457,7 +459,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     // Ask the component to resolve the endpoint.
                     if (component != null) {
                         // Have the component create the endpoint if it can.
-                        answer = component.createEndpoint(uri);
+                        if (component.useRawUri()) {
+                            answer = component.createEndpoint(rawUri);
+                        } else {
+                            answer = component.createEndpoint(uri);
+                        }
 
                         if (answer != null && log.isDebugEnabled()) {
                             log.debug("{} converted to endpoint: {} by component: {}", new Object[]{URISupport.sanitizeUri(uri), answer, component});
