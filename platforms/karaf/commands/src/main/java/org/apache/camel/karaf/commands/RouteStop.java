@@ -17,12 +17,14 @@
 package org.apache.camel.karaf.commands;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.karaf.commands.internal.RegexUtil;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
+import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
@@ -36,6 +38,10 @@ public class RouteStop extends OsgiCommandSupport {
 
     @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
     String context;
+    
+    @Option(name = "-t", valueToShowInHelp = "", description = "Specifies the timeout in seconds which is used to stop a route.", required = false, multiValued = false)
+    int timeout = -1;
+
 
     private CamelController camelController;
 
@@ -51,7 +57,11 @@ public class RouteStop extends OsgiCommandSupport {
         }
         for (Route camelRoute : camelRoutes) {
             CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
-            camelContext.stopRoute(camelRoute.getId());
+            if (timeout > 0) {
+                camelContext.stopRoute(camelRoute.getId(), timeout, TimeUnit.SECONDS);
+            } else {
+                camelContext.stopRoute(camelRoute.getId());
+            }
         }
 
         return null;
