@@ -1977,7 +1977,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <!-- beware release plugin 2.3.0 is broken -->
+          <!-- beware the ActiveMQ team had issues with the 2.3.2 release plugin (2.2.1 works fine) -->
           <version>2.2.1</version>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
