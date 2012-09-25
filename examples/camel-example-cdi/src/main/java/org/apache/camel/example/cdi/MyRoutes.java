@@ -16,8 +16,8 @@
  */
 package org.apache.camel.example.cdi;
 
-import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,8 +32,10 @@ import org.apache.camel.cdi.Uri;
  */
 @ContextName
 @Startup
-@Singleton
+@ApplicationScoped
 public class MyRoutes extends RouteBuilder {
+
+    public MyRoutes(){};
 
     @Inject
     //@Uri("activemq:test.MyQueue")

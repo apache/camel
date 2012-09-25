@@ -20,13 +20,9 @@ You can see the routing rules by looking at the java code in the
   
 Remarks : 
 - When we use the camel plugin, a local CDI container is created and started
-- Two maven profiles have been defined in the example to run the code into a Glassfish 
+- An additional profile has been defined in the example to run the code into a JBoss AS7 server
 
-mvn deploy -Pglassfish
-
-and JBoss AS 
-
-mvn deploy --Pjboss 
+  mvn deploy -P jboss 
 
 This example is documented at
   http://camel.apache.org/cdi-example.html

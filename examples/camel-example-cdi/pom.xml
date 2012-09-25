@@ -86,13 +86,6 @@
     </dependency>
   </dependencies>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>jboss -releases</id>
-      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <plugins>
       <!-- Allows the routes to be run via 'mvn camel:run' -->
@@ -157,13 +150,20 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
+	  <pluginRepositories>
+	    <pluginRepository>
+	      <id>jboss -releases</id>
+	      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+	    </pluginRepository>
+	  </pluginRepositories>
     </profile>
 
+   <!-- As we have issue with glassfish server and weld - http://java.net/jira/browse/GLASSFISH-15888, we will not use it
     <profile>
       <id>glassfish</id>
       <properties>
         <glassfish.version>3.1.1</glassfish.version>
-        <embedded-glassfish-plugin-version>3.1.1</embedded-glassfish-plugin-version>
+        <embedded-glassfish-plugin-version>3.1.2.2</embedded-glassfish-plugin-version>
       </properties>
       <dependencies>
         <dependency>
@@ -173,10 +173,16 @@
           <scope>provided</scope>
         </dependency>
       </dependencies>
+	  <pluginRepositories>
+		<pluginRepository>
+		  <id>maven2 - releases</id>
+	      <url>http://central.maven.org/maven2/</url> 
+		</pluginRepository>	
+	  </pluginRepositories>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.glassfish</groupId>
+            <groupId>org.glassfish.embedded</groupId>
             <artifactId>maven-embedded-glassfish-plugin</artifactId>
             <version>${embedded-glassfish-plugin-version}</version>
             <dependencies>
@@ -204,6 +210,7 @@
         </plugins>
       </build>
     </profile>
+    -->
 
     <profile>
       <id>jboss</id>
