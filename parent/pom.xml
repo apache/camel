@@ -1977,6 +1977,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
+          <!-- beware release plugin 2.3.0 is broken -->
           <version>2.2.1</version>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
