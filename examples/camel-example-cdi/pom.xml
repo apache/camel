@@ -54,7 +54,7 @@
       <artifactId>camel-cdi</artifactId>
     </dependency>
 
-    <!-- we make use of the javax.ejb.Startup API while running the example embededd inside glassfish/jboss (see the profiles below) -->
+    <!-- we make use of the javax.ejb.Startup API while running the example embedded inside glassfish/jboss (see the profiles below) -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-ejb_3.1_spec</artifactId>
