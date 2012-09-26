@@ -42,7 +42,7 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
     private ConnectionResource connectionResource;
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
     private KeyFormatStrategy keyFormatStrategy;
-    private Integer maxConnections = 1;
+    private Integer connectionCount = 1;
     private TransactionCommitStrategy transactionCommitStrategy;
 
     /**
@@ -132,7 +132,7 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
         if (getConnectionResource() == null) {
             LOGGER.debug("No ConnectionResource provided.  Initialize the ConnectionFactoryResource.");
             // We always use a connection pool, even for a pool of 1
-            ConnectionFactoryResource connections = new ConnectionFactoryResource(getMaxConnections(), getConnectionFactory());
+            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
             connections.fillPool();
             setConnectionResource(connections);
         } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
@@ -189,12 +189,12 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
         return connectionResource;
     }
 
-    public void setMaxConnections(Integer maxConnections) {
-        this.maxConnections = maxConnections;
+    public void setConnectionCount(Integer maxConnections) {
+        this.connectionCount = maxConnections;
     }
 
-    public Integer getMaxConnections() {
-        return maxConnections;
+    public Integer getConnectionCount() {
+        return connectionCount;
     }
 
     public void setKeyFormatStrategy(KeyFormatStrategy keyFormatStrategy) {

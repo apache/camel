@@ -68,7 +68,7 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         SjmsComponent component = new SjmsComponent();
         component.setConnectionResource(connectionResource);
-        component.setMaxConnections(1);
+        component.setConnectionCount(1);
         camelContext.addComponent("sjms", component);
         return camelContext;
     }

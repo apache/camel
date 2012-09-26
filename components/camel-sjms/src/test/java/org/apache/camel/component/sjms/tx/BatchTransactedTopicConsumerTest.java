@@ -68,7 +68,7 @@ public class BatchTransactedTopicConsumerTest extends CamelTestSupport {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
-        component.setMaxConnections(1);
+        component.setConnectionCount(1);
         camelContext.addComponent("sjms", component);
 
         return camelContext;
