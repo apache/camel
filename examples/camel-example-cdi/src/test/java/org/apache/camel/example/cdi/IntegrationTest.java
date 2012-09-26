@@ -20,8 +20,11 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Mock;
+import org.apache.camel.cdi.internal.CamelExtension;
+import org.apache.camel.cdi.internal.CamelFactory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -67,6 +70,8 @@ public class IntegrationTest {
     @Deployment
     public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class)
+                .addPackage(CdiCamelContext.class.getPackage())
+                .addPackage(CamelExtension.class.getPackage())
                 .addPackage(MyRoutes.class.getPackage())
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
