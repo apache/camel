@@ -160,6 +160,13 @@ public class DefaultConsumer extends SjmsConsumer {
         super.doSuspend();
     }
 
+    /**
+     * Creates a {@link MessageConsumerResources} with a dedicated
+     * {@link Session} required for transacted and InOut consumers.
+     * 
+     * @return MessageConsumerResources
+     * @throws Exception
+     */
     private MessageConsumerResources createConsumerWithDedicatedSession() throws Exception {
         Connection conn = getConnectionResource().borrowConnection();
         Session session = null;
@@ -180,6 +187,13 @@ public class DefaultConsumer extends SjmsConsumer {
         return new MessageConsumerResources(session, messageConsumer);
     }
 
+    /**
+     * Creates a {@link MessageConsumerResources} with a shared {@link Session}
+     * for non-transacted InOnly consumers.
+     * 
+     * @return
+     * @throws Exception
+     */
     private MessageConsumerResources createConsumerListener() throws Exception {
         Session queueSession = getSessionPool().borrowObject();
         MessageConsumer messageConsumer = null;
@@ -202,16 +216,16 @@ public class DefaultConsumer extends SjmsConsumer {
      * @return
      */
     protected MessageListener createMessageHandler(Session session) {
-        
+
         TransactionCommitStrategy commitStrategy = null;
-        if (this.getCommitStrategy() != null) {
-            commitStrategy = this.getCommitStrategy();
+        if (this.getTransactionCommitStrategy() != null) {
+            commitStrategy = this.getTransactionCommitStrategy();
         } else if (this.getTransactionBatchCount() > 0) {
             commitStrategy = new BatchTransactionCommitStrategy(this.getTransactionBatchCount());
         } else {
             commitStrategy = new DefaultTransactionCommitStrategy();
         }
-        
+
         DefaultMessageHandler messageHandler = null;
         if (getSjmsEndpoint().getExchangePattern().equals(ExchangePattern.InOnly)) {
             if (isTransacted()) {

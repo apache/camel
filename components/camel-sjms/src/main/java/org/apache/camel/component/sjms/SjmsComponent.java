@@ -25,7 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
-import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -44,7 +43,7 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
     private KeyFormatStrategy keyFormatStrategy;
     private Integer maxConnections = 1;
-    private TransactionCommitStrategy transactionCommitStrategy = new DefaultTransactionCommitStrategy();
+    private TransactionCommitStrategy transactionCommitStrategy;
 
     /**
      * @see
@@ -64,6 +63,9 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
         setProperties(endpoint, parameters);
         if (endpoint.isTransacted()) {
             endpoint.setSynchronous(true);
+        }
+        if (transactionCommitStrategy != null) {
+            endpoint.setTransactionCommitStrategy(transactionCommitStrategy);
         }
         return endpoint;
     }

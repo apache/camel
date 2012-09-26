@@ -386,7 +386,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return TransactionCommitStrategy
      */
     public TransactionCommitStrategy getCommitStrategy() {
-        return getSjmsEndpoint().getCommitStrategy();
+        return getSjmsEndpoint().getTransactionCommitStrategy();
     }
 
 }

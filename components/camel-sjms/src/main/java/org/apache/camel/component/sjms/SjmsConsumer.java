@@ -89,8 +89,8 @@ public class SjmsConsumer extends DefaultConsumer {
         return getSjmsEndpoint().getDurableSubscriptionId();
     }
 
-    public TransactionCommitStrategy getCommitStrategy() {
-        return getSjmsEndpoint().getCommitStrategy();
+    public TransactionCommitStrategy getTransactionCommitStrategy() {
+        return getSjmsEndpoint().getTransactionCommitStrategy();
     }
 
     public int getTransactionBatchCount() {

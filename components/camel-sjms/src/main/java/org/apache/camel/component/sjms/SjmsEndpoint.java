@@ -55,7 +55,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private long responseTimeOut = 5000;
     private String messageSelector;
     private int transactionBatchCount = -1;
-    private TransactionCommitStrategy commitStrategy;
+    private TransactionCommitStrategy transactionCommitStrategy;
 
     public SjmsEndpoint() {
         super();
@@ -262,12 +262,12 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return messageSelector;
     }
 
-    public TransactionCommitStrategy getCommitStrategy() {
-        return commitStrategy;
+    public TransactionCommitStrategy getTransactionCommitStrategy() {
+        return transactionCommitStrategy;
     }
 
-    public void setCommitStrategy(TransactionCommitStrategy commitStrategy) {
-        this.commitStrategy = commitStrategy;
+    public void setTransactionCommitStrategy(TransactionCommitStrategy commitStrategy) {
+        this.transactionCommitStrategy = commitStrategy;
     }
 
     public int getTransactionBatchCount() {
