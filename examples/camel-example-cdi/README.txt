@@ -18,18 +18,20 @@ You can see the routing rules by looking at the java code in the
 
   To stop the example hit ctrl + c
   
-When we launch the example using the camel maven plugin, a local CDI container is created and started.
-Additionally there're two maven profiles being defined by this example (see pom.xml for details) so that
-using maven we can easily embed and deploy the example into an application server.
+When we launch the example using the camel maven plugin, a local CDI container
+is created and started. Additionally there're two maven profiles being defined
+by this example (see pom.xml for details) so that using maven we can easily embed
+and deploy the example into an application server.
 
-To run the example using JBoss simply type
+To run the example using JBoss type
   mvn deploy -Pjboss
   
-And to launch using Glassfish
+And for Glassfish
   mvn deploy -Pglassfish
 
-Please note that both the JBoss as well as Glassfish maven artifacts are pretty big in size so be patient
-as maven downloads them into your local repository for the first time.
+Please note that both the JBoss as well as Glassfish maven artifacts are pretty
+big in size so be patient as maven downloads them into your local repository for
+the first time.
 
 This example is documented at
   http://camel.apache.org/cdi-example.html
