@@ -29,8 +29,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 /**
- * TODO Add Class documentation for JmsTestSupport
- *
+ * A support class that builds up and tears down an ActiveMQ instance to be used
+ * for unit testing.
  */
 public class JmsTestSupport extends CamelTestSupport {
     private static final String BROKER_URI = "tcp://localhost:33333";
@@ -40,20 +40,21 @@ public class JmsTestSupport extends CamelTestSupport {
     private Connection connection;
     private Session session;
 
+    /** 
+     * Set up the Broker
+     *
+     * @see org.apache.camel.test.junit4.CamelTestSupport#doPreSetup()
+     *
+     * @throws Exception
+     */
     @Override
     protected void doPreSetup() throws Exception {
-        super.doPreSetup();
-    }
-
-    @Override
-    public void setUp() throws Exception {
         broker = new BrokerService();
         broker.setUseJmx(true);
         broker.setPersistent(false);
         broker.deleteAllMessages();
         broker.addConnector(BROKER_URI);
         broker.start();
-        super.setUp();
     }
 
     @Override
@@ -79,10 +80,9 @@ public class JmsTestSupport extends CamelTestSupport {
             broker = null;
         }
     }
-    
+
     /*
      * @see org.apache.camel.test.junit4.CamelTestSupport#createCamelContext()
-     *
      * @return
      * @throws Exception
      */
@@ -99,7 +99,7 @@ public class JmsTestSupport extends CamelTestSupport {
         camelContext.addComponent("sjms", component);
         return camelContext;
     }
-    
+
     public void setSession(Session session) {
         this.session = session;
     }

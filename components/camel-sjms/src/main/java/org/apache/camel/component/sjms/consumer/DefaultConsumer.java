@@ -63,9 +63,9 @@ public class DefaultConsumer extends SjmsConsumer {
         protected void destroyObject(MessageConsumerResources model) throws Exception {
             if (model != null) {
                 if (model.getMessageConsumer() != null) {
-                    if (model.getMessageConsumer().getMessageListener() != null) {
-                        model.getMessageConsumer().setMessageListener(null);
-                    }
+//                    if (model.getMessageConsumer().getMessageListener() != null) {
+//                        model.getMessageConsumer().setMessageListener(null);
+//                    }
                     model.getMessageConsumer().close();
                 }
 

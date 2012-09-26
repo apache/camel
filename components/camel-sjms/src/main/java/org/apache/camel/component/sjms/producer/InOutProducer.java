@@ -98,8 +98,10 @@ public class InOutProducer extends SjmsProducer {
 
                 @Override
                 public void onMessage(Message message) {
-                    logger.info("Message Received in the Consumer Pool");
-                    logger.info("  Message : {}", message);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Message Received in the Consumer Pool");
+                        logger.debug("  Message : {}", message);
+                    }
                     try {
                         Exchanger<Object> exchanger = exchangerMap.get(message.getJMSCorrelationID());
                         exchanger.exchange(message, getResponseTimeOut(), TimeUnit.MILLISECONDS);
