@@ -172,17 +172,17 @@
     <profile>
       <id>glassfish</id>
       <properties>
-        <glassfish.version>3.1.1</glassfish.version>
+        <glassfish-version>3.1.1</glassfish-version>
         <embedded-glassfish-plugin-version>3.1.2.2</embedded-glassfish-plugin-version>
       </properties>
-        <dependencies>
-            <dependency>
-                <groupId>org.glassfish.extras</groupId>
-                <artifactId>glassfish-embedded-all</artifactId>
-                <version>${glassfish.version}</version>
-                <scope>provided</scope>
-            </dependency>
-        </dependencies>
+      <dependencies>
+        <dependency>
+          <groupId>org.glassfish.extras</groupId>
+          <artifactId>glassfish-embedded-all</artifactId>
+          <version>${glassfish-version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -213,6 +213,15 @@
       <properties>
         <jboss-plugin-version>7.2.Final</jboss-plugin-version>
       </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.spec</groupId>
+          <artifactId>jboss-javaee-6.0</artifactId>
+          <version>${jboss-javaee-6-version}</version>
+          <type>pom</type>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
