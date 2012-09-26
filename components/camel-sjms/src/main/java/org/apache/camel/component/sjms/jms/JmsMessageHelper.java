@@ -72,7 +72,7 @@ public final class JmsMessageHelper {
     /**
      * A redelivery flag set by the JMS provider
      */
-    public static final String JMS_REDELIVERED = "JMSTimestamp";
+    public static final String JMS_REDELIVERED = "JMSRedelivered";
     /**
      * The JMS Reply To {@link Destination} set by the publishing Client
      */
