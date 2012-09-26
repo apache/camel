@@ -44,7 +44,8 @@ public abstract class BuilderSupport {
     private ModelCamelContext context;
     private ErrorHandlerBuilder errorHandlerBuilder;
 
-    BuilderSupport() { };
+    protected BuilderSupport() {
+    }
 
     protected BuilderSupport(CamelContext context) {
         this.context = (ModelCamelContext)context;
