@@ -75,17 +75,17 @@
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>
-            <version>${geronimo-atinject-1.0-spec.version}</version>
+            <version>${geronimo-atinject-1.0-spec-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-            <version>${geronimo-jcdi-1.0-spec.version}</version>
+            <version>${geronimo-jcdi-1.0-spec-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-interceptor_1.1_spec</artifactId>
-            <version>${geronimo-interceptor-1.1-spec.version}</version>
+            <version>${geronimo-interceptor-1.1-spec-version}</version>
         </dependency>
 
         <!-- logging -->

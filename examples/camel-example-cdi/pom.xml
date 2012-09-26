@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-ejb_3.1_spec</artifactId>
-      <version>${geronimo-ejb_3.1_spec.version}</version>
+      <version>${geronimo-ejb_3.1_spec-version}</version>
       <scope>provided</scope>
     </dependency>
 
