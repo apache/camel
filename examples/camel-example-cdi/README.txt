@@ -28,6 +28,9 @@ To run the example using JBoss simply type
 And to launch using Glassfish
   mvn deploy -Pglassfish
 
+Please note that both the JBoss as well as Glassfish maven artifacts are pretty big in size so be patient
+as maven downloads them into your local repository for the first time.
+
 This example is documented at
   http://camel.apache.org/cdi-example.html
 
