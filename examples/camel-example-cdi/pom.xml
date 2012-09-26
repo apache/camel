@@ -54,6 +54,14 @@
       <artifactId>camel-cdi</artifactId>
     </dependency>
 
+    <!-- we make use of the javax.ejb.Startup API while running the example embededd inside glassfish/jboss (see the profiles below) -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-ejb_3.1_spec</artifactId>
+      <version>${geronimo-ejb_3.1_spec.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- activemq component -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -148,13 +156,6 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.jboss.spec</groupId>
-          <artifactId>jboss-javaee-6.0</artifactId>
-          <version>${jboss-javaee-6-version}</version>
-          <type>pom</type>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
           <groupId>org.jboss.arquillian.container</groupId>
           <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
           <version>${arquillian-weld-ee-embedded-version}</version>
@@ -172,17 +173,8 @@
     <profile>
       <id>glassfish</id>
       <properties>
-        <glassfish-version>3.1.1</glassfish-version>
         <embedded-glassfish-plugin-version>3.1.2.2</embedded-glassfish-plugin-version>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.glassfish.extras</groupId>
-          <artifactId>glassfish-embedded-all</artifactId>
-          <version>${glassfish-version}</version>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -213,15 +205,6 @@
       <properties>
         <jboss-plugin-version>7.2.Final</jboss-plugin-version>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.spec</groupId>
-          <artifactId>jboss-javaee-6.0</artifactId>
-          <version>${jboss-javaee-6-version}</version>
-          <type>pom</type>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
