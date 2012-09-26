@@ -24,7 +24,6 @@ import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Mock;
 import org.apache.camel.cdi.internal.CamelExtension;
-import org.apache.camel.cdi.internal.CamelFactory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
