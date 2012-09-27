@@ -17,7 +17,10 @@
 package org.apache.camel.converter.stream;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -151,5 +154,35 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("Cached a wrong file", temp, TEST_STRING);
 
         exchange.getUnitOfWork().done(exchange);
+    }
+    
+    public void testCachedOutputStreamCustomBufferSize() throws IOException {
+        // double the default buffer size
+        context.getProperties().put(CachedOutputStream.BUFFER_SIZE, "4096");
+        
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        cos.write(TEST_STRING.getBytes("UTF-8"));
+
+        assertEquals("we should have a custom buffer size", cos.getBufferSize(), 4096);
+        
+        // make sure things still work after custom buffer size set
+        File file = new File("./target/cachedir");
+        String[] files = file.list();
+        assertEquals("we should have a temp file", files.length, 1);
+        assertTrue("The file name should start with cos" , files[0].startsWith("cos"));              
+        
+        StreamCache cache = cos.getStreamCache();
+        assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
+        String temp = toString((InputStream)cache);
+        assertEquals("Cached a wrong file", temp, TEST_STRING);
+        cache.reset();
+        temp = toString((InputStream)cache);
+        assertEquals("Cached a wrong file", temp, TEST_STRING);        
+        exchange.getUnitOfWork().done(exchange);
+        assertEquals("we should have a temp file", files.length, 1);
+        ((InputStream)cache).close();
+        
+        files = file.list();
+        assertEquals("we should have no temp file", files.length, 0);       
     }
 }
