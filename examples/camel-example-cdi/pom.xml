@@ -54,7 +54,8 @@
       <artifactId>camel-cdi</artifactId>
     </dependency>
 
-    <!-- we make use of the javax.ejb.Startup API while running the example embedded inside glassfish/jboss (see the profiles below) -->
+    <!-- we make use of the javax.ejb.Startup API while running the example -->
+    <!-- embedded inside glassfish/jboss (see the 2 profiles below) -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-ejb_3.1_spec</artifactId>
@@ -94,7 +95,7 @@
 
   <build>
     <plugins>
-      <!-- Allows the routes to be run via 'mvn camel:run' -->
+      <!-- allows the routes to be run via 'mvn camel:run' -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
@@ -170,11 +171,11 @@
       </activation>
       <dependencies>
         <dependency>
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-javaee-6.0</artifactId>
-            <version>${jboss-javaee-6-version}</version>
-            <type>pom</type>
-            <scope>provided</scope>
+          <groupId>org.jboss.spec</groupId>
+          <artifactId>jboss-javaee-6.0</artifactId>
+          <version>${jboss-javaee-6-version}</version>
+          <type>pom</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.arquillian.container</groupId>
@@ -195,6 +196,10 @@
       <id>glassfish</id>
       <properties>
         <embedded-glassfish-plugin-version>3.1.2.2</embedded-glassfish-plugin-version>
+
+        <!-- skip running the tests while deploying. you can still run them using the default profile -->
+        <!-- 'arquillian-weld-ee-embedded' having the required dependencies for the test execution -->
+        <maven.test.skip>true</maven.test.skip>
       </properties>
       <build>
         <plugins>
@@ -225,6 +230,10 @@
       <id>jboss</id>
       <properties>
         <jboss-plugin-version>7.2.Final</jboss-plugin-version>
+
+        <!-- skip running the tests while deploying. you can still run them using the default profile -->
+        <!-- 'arquillian-weld-ee-embedded' having the required dependencies for the test execution -->
+        <maven.test.skip>true</maven.test.skip>
       </properties>
       <build>
         <plugins>

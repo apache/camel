@@ -21,7 +21,7 @@ You can see the routing rules by looking at the java code in the
 When we launch the example using the camel maven plugin, a local CDI container
 is created and started. Additionally there're two maven profiles being defined
 by this example (see pom.xml for details) so that using maven we can easily embed
-and deploy the example into an application server.
+and deploy the example as a web-app into an application server.
 
 To run the example using JBoss type
   mvn deploy -Pjboss
