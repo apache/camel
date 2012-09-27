@@ -121,8 +121,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
 
             Exchange getExchange = startWithModelEndpoint.createExchange(ExchangePattern.InOut);
             getExchange.getIn().setHeader(HbaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
-            getExchange.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-            getExchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
             getExchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
             Exchange resp = template.send(startWithModelEndpoint, getExchange);
 
