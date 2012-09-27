@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.ShutdownableService;
 
@@ -144,6 +145,15 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * @return the timeout value
      */
     long getShutdownAwaitTermination();
+
+    /**
+     * Creates a new daemon thread with the given name.
+     *
+     * @param name     name which is appended to the thread name
+     * @param runnable a runnable to be executed by new thread instance
+     * @return the created thread
+     */
+    Thread newThread(String name, Runnable runnable);
 
     /**
      * Creates a new thread pool using the default thread pool profile.

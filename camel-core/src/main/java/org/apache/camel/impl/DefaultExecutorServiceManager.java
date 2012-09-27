@@ -146,6 +146,12 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     }
 
     @Override
+    public Thread newThread(String name, Runnable runnable) {
+        ThreadFactory factory = createThreadFactory(name, true);
+        return factory.newThread(runnable);
+    }
+
+    @Override
     public ExecutorService newDefaultThreadPool(Object source, String name) {
         return newThreadPool(source, name, getDefaultThreadPoolProfile());
     }

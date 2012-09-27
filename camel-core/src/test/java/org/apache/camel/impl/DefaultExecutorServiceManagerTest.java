@@ -457,6 +457,19 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertTrue(tp.isShutdown());
     }
 
+    public void testNewThread() throws Exception {
+        Thread thread = context.getExecutorServiceManager().newThread("Cool", new Runnable() {
+            @Override
+            public void run() {
+                // noop
+            }
+        });
+
+        assertNotNull(thread);
+        assertTrue(thread.isDaemon());
+        assertTrue(thread.getName().contains("Cool"));
+    }
+
     // this is a manual test, by looking at the logs
     public void xxxTestLongShutdownOfThreadPool() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
