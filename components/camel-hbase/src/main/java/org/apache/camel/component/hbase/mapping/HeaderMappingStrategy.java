@@ -64,12 +64,14 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
 
             hRow.setId(id);
             hRow.setRowType(rowClass);
-            hCell.setQualifier(columnName);
-            hCell.setFamily(columnFamily);
-            hCell.setValue(value);
-            // String is the default value type
-            hCell.setValueType((valueClass != null) ? valueClass : String.class);
-            hRow.getCells().add(hCell);
+            if (columnFamily != null && columnName != null) {
+                hCell.setQualifier(columnName);
+                hCell.setFamily(columnFamily);
+                hCell.setValue(value);
+                // String is the default value type
+                hCell.setValueType((valueClass != null) ? valueClass : String.class);
+                hRow.getCells().add(hCell);
+            }
         }
         return hRow;
     }
