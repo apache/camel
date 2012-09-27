@@ -25,7 +25,6 @@ import java.rmi.registry.LocateRegistry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -58,7 +57,6 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultManagementAgent.class);
 
     private CamelContext camelContext;
-    private ExecutorService executorService;
     private MBeanServer server;
     // need a name -> actual name mapping as some servers changes the names (suc as WebSphere)
     private final Map<ObjectName, ObjectName> mbeansRegistered = new HashMap<ObjectName, ObjectName>();
@@ -207,14 +205,6 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         this.registerNewRoutes = registerNewRoutes;
     }
 
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -271,6 +261,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (cs != null) {
             try {
                 cs.stop();
+                LOG.debug("Stopped JMX Connector");
             } catch (IOException e) {
                 LOG.debug("Error occurred during stopping JMXConnectorService: "
                         + cs + ". This exception will be ignored.");
@@ -412,23 +403,23 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
 
-        if (executorService == null) {
-            // we only need a single thread for the JMX connector
-            executorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "JMXConnector: " + url);
-        }
-
-        // execute the JMX connector
-        executorService.execute(new Runnable() {
+        // use async thread for starting the JMX Connector
+        // (no need to use a thread pool or enlist in JMX as this thread is terminated when the JMX connector has been started)
+        Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
+                    LOG.debug("Staring JMX Connector thread to listen at: {}", url);
                     cs.start();
+                    LOG.info("JMX Connector thread started and listening at: {}", url);
                 } catch (IOException ioe) {
-                    LOG.warn("Could not start JMXConnector thread.", ioe);
+                    LOG.warn("Could not start JMXConnector thread at: " + url + ". JMX Connector not in use.", ioe);
                 }
             }
         });
-
-        LOG.info("JMX Connector thread started and listening at: " + url);
+        thread.setDaemon(true);
+        String threadName = camelContext.getExecutorServiceManager().resolveThreadName("JMXConnector: " + url);
+        thread.setName(threadName);
+        thread.start();
     }
 
 }
