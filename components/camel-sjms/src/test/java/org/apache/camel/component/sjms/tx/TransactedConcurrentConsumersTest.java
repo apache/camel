@@ -96,7 +96,7 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 int count = counter.incrementAndGet();
                                 if (count == MAX_ATTEMPTS_COUNT) {
-                                    log.info("Exchange does not have a retry message.  Set the exception and allow the retry.");
+                                    log.info("{} Messages have been processed. Failing the exchange to force a rollback of the transaction.", MAX_ATTEMPTS_COUNT);
                                     exchange.getOut().setFault(true);
                                     counter.set(0);
                                 }
