@@ -16,8 +16,10 @@
  */
 package org.apache.camel.cdi.internal;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -28,7 +30,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.util.ObjectHelper;
-import org.jboss.weld.bean.ProducerMethod;
 
 /**
  * Configuration options to be applied to a {@link org.apache.camel.CamelContext} by a {@link CamelContextBean}
@@ -44,9 +45,13 @@ public class CamelContextConfig {
         for (Bean<?> bean : routeBuilderBeans) {
             CreationalContext<?> createContext = beanManager.createCreationalContext(bean);
             Class<?> beanClass = bean.getBeanClass();
-            if (bean instanceof ProducerMethod) {
-                ProducerMethod producerMethod = (ProducerMethod) bean;
-                beanClass = producerMethod.getType();
+            Set<Type> types = bean.getTypes();
+            for (Type type : types) {
+                // lets use the first type for producer methods
+                if (type instanceof Class<?>) {
+                    beanClass = (Class<?>) type;
+                    break;
+                }
             }
             Object reference = beanManager.getReference(bean, beanClass, createContext);
             ObjectHelper.notNull(reference, "Could not instantiate bean of type " + beanClass.getName() + " for " + bean);
