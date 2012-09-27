@@ -40,7 +40,7 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
     public void setUp() throws Exception {
         if (systemReady) {
             try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(DEFAULTTABLE), families);
+                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
             } catch (TableExistsException ex) {
                 //Ignore if table exists
             }
@@ -52,7 +52,7 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
     @After
     public void tearDown() throws Exception {
         if (systemReady) {
-            hbaseUtil.deleteTable(DEFAULTTABLE.getBytes());
+            hbaseUtil.deleteTable(PERSON_TABLE.getBytes());
             super.tearDown();
         }
     }
@@ -74,11 +74,11 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
 
             Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
             exchange.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-            exchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);
-            exchange.getIn().setHeader(HbaseAttribute.HBASE_VALUE.asHeader(), body[0]);
+            exchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+            exchange.getIn().setHeader(HbaseAttribute.HBASE_VALUE.asHeader(), body[0][0][0]);
             Exchange resp = template.send(endpoint, exchange);
             Message out = resp.getOut();
-            assertTrue(out.getHeaders().containsValue(body[0]) && !out.getHeaders().containsValue(body[1]) && !out.getHeaders().containsValue(body[2]));
+            assertTrue(out.getHeaders().containsValue(body[0][0][0]) && !out.getHeaders().containsValue(body[1][0][0]) && !out.getHeaders().containsValue(body[2][0][0]));
 
         }
     }
@@ -93,9 +93,9 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("hbase://" + DEFAULTTABLE);
+                        .to("hbase://" + PERSON_TABLE);
                 from("direct:scan")
-                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&filters=#myFilters");
+                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&filters=#myFilters");
             }
         };
     }

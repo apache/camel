@@ -32,7 +32,7 @@ public class HBaseSpringConsumerTest extends HBaseConsumerTest {
     public void setUp() throws Exception {
         if (systemReady) {
             try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(DEFAULTTABLE), families);
+                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
             } catch (TableExistsException ex) {
                 //Ignore if table exists
             }

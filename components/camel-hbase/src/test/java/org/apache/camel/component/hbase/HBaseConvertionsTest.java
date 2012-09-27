@@ -35,13 +35,13 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
     protected Object[] key = {1, "2", "3"};
     protected final Object[] body = {1L, false, "3"};
     protected final String[] column = {"DEFAULTCOLUMN"};
-    protected final byte[][] families = {DEFAULTFAMILY.getBytes()};
+    protected final byte[][] families = {INFO_FAMILY.getBytes()};
 
     @Before
     public void setUp() throws Exception {
         if (systemReady) {
             try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(DEFAULTTABLE), families);
+                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
             } catch (TableExistsException ex) {
                 //Ignore if table exists
             }
@@ -53,7 +53,7 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
     @After
     public void tearDown() throws Exception {
         if (systemReady) {
-            hbaseUtil.deleteTable(DEFAULTTABLE.getBytes());
+            hbaseUtil.deleteTable(PERSON_TABLE.getBytes());
             super.tearDown();
         }
     }
@@ -64,17 +64,17 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
             ProducerTemplate template = context.createProducerTemplate();
             Map<String, Object> headers = new HashMap<String, Object>();
             headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(), DEFAULTFAMILY);
+            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(), INFO_FAMILY);
             headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);
             headers.put(HbaseAttribute.HBASE_VALUE.asHeader(), body[0]);
 
             headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(2), key[1]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(2), DEFAULTFAMILY);
+            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(2), INFO_FAMILY);
             headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(2), column[0]);
             headers.put(HbaseAttribute.HBASE_VALUE.asHeader(2), body[1]);
 
             headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(3), key[2]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(3), DEFAULTFAMILY);
+            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(3), INFO_FAMILY);
             headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(3), column[0]);
             headers.put(HbaseAttribute.HBASE_VALUE.asHeader(3), body[2]);
 
@@ -83,25 +83,25 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
             template.sendBodyAndHeaders("direct:start", null, headers);
 
             Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-            HTable bar = new HTable(configuration, DEFAULTTABLE.getBytes());
+            HTable bar = new HTable(configuration, PERSON_TABLE.getBytes());
             Get get = new Get(Bytes.toBytes((Integer) key[0]));
 
             //Check row 1
-            get.addColumn(DEFAULTFAMILY.getBytes(), column[0].getBytes());
+            get.addColumn(INFO_FAMILY.getBytes(), column[0].getBytes());
             Result result = bar.get(get);
             byte[] resultValue = result.value();
             assertArrayEquals(Bytes.toBytes((Long) body[0]), resultValue);
 
             //Check row 2
             get = new Get(Bytes.toBytes((String) key[1]));
-            get.addColumn(DEFAULTFAMILY.getBytes(), column[0].getBytes());
+            get.addColumn(INFO_FAMILY.getBytes(), column[0].getBytes());
             result = bar.get(get);
             resultValue = result.value();
             assertArrayEquals(Bytes.toBytes((Boolean) body[1]), resultValue);
 
             //Check row 3
             get = new Get(Bytes.toBytes((String) key[2]));
-            get.addColumn(DEFAULTFAMILY.getBytes(), column[0].getBytes());
+            get.addColumn(INFO_FAMILY.getBytes(), column[0].getBytes());
             result = bar.get(get);
             resultValue = result.value();
             assertArrayEquals(Bytes.toBytes((String) body[2]), resultValue);
@@ -119,10 +119,10 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("hbase://" + DEFAULTTABLE);
+                        .to("hbase://" + PERSON_TABLE);
 
                 from("direct:scan")
-                        .to("hbase://" + DEFAULTTABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&family=family1&qualifier=column1");
+                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&family=family1&qualifier=column1");
             }
         };
     }

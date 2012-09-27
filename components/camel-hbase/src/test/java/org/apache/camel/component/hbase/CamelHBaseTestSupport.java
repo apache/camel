@@ -35,14 +35,27 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     protected static HBaseTestingUtility hbaseUtil = new HBaseTestingUtility();
     protected static int numServers = 1;
-    protected static final String DEFAULTTABLE = "DEFAULTTABLE";
-    protected static final String DEFAULTFAMILY = "DEFAULTFAMILY";
+    protected static final String PERSON_TABLE = "person";
+    protected static final String INFO_FAMILY = "info";
 
     protected String[] key = {"1", "2", "3"};
-    protected final String[] body = {"Hello Hbase", "Hi HBase", "Yo HBase"};
-    protected final String[] family = {"family1", "family2", "family3"};
-    protected final String[] column = {"mycolumn1", "mycolumn2", "mycolumn3"};
-    protected final byte[][] families = {DEFAULTFAMILY.getBytes(),
+    protected final String[] family = {"info", "birthdate", "address"};
+    //comlumn[family][column]
+    protected final String[][] column = {
+        {"firstName", "middleName", "lastName"},
+        {"day", "month", "year"},
+        {"street", "number", "zip"}
+    };
+
+    //body[row][family][column]
+    protected final String[][][] body = {
+        {{"Ioannis", "D.", "Canellos"}, {"09", "03", "1980"}, {"Awesome Street", "23", "15344"}},
+        {{"John", "", "Dow"}, {"01", "01", "1979"}, {"Unknown Street", "1", "1010"}},
+        {{"Jane", "", "Dow"}, {"09", "01", "1979"}, {"Another Unknown Street", "14", "2020"}}
+    };
+
+
+    protected final byte[][] families = {
             family[0].getBytes(),
             family[1].getBytes(),
             family[2].getBytes()};
@@ -75,10 +88,10 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     protected void putMultipleRows() throws IOException {
         Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-        HTable table = new HTable(configuration, DEFAULTTABLE.getBytes());
+        HTable table = new HTable(configuration, PERSON_TABLE.getBytes());
         for (int r = 0; r < key.length; r++) {
             Put put = new Put(key[r].getBytes());
-            put.add(family[0].getBytes(), column[0].getBytes(), body[r].getBytes());
+            put.add(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
             table.put(put);
         }
     }
