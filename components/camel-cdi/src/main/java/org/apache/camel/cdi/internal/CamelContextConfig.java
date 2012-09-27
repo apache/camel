@@ -28,6 +28,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.util.ObjectHelper;
+import org.jboss.weld.bean.ProducerMethod;
 
 /**
  * Configuration options to be applied to a {@link org.apache.camel.CamelContext} by a {@link CamelContextBean}
@@ -43,6 +44,10 @@ public class CamelContextConfig {
         for (Bean<?> bean : routeBuilderBeans) {
             CreationalContext<?> createContext = beanManager.createCreationalContext(bean);
             Class<?> beanClass = bean.getBeanClass();
+            if (bean instanceof ProducerMethod) {
+                ProducerMethod producerMethod = (ProducerMethod) bean;
+                beanClass = producerMethod.getType();
+            }
             Object reference = beanManager.getReference(bean, beanClass, createContext);
             ObjectHelper.notNull(reference, "Could not instantiate bean of type " + beanClass.getName() + " for " + bean);
             try {
