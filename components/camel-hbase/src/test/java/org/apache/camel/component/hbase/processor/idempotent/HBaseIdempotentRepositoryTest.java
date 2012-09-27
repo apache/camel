@@ -41,12 +41,12 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
     public void setUp() throws Exception {
         if (systemReady) {
             try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(DEFAULTTABLE), HBaseHelper.getHBaseFieldAsBytes(DEFAULTFAMILY));
+                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), HBaseHelper.getHBaseFieldAsBytes(INFO_FAMILY));
             } catch (TableExistsException ex) {
                 //Ignore if table exists
             }
-            this.repository = new HBaseIdempotentRepository(hbaseUtil.getConfiguration(), DEFAULTTABLE, DEFAULTFAMILY, "mycolumn");
-            table = new HTable(hbaseUtil.getConfiguration(), DEFAULTTABLE);
+            this.repository = new HBaseIdempotentRepository(hbaseUtil.getConfiguration(), PERSON_TABLE, INFO_FAMILY, "mycolumn");
+            table = new HTable(hbaseUtil.getConfiguration(), PERSON_TABLE);
             super.setUp();
         }
     }
@@ -54,7 +54,7 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
     @After
     public void tearDown() throws Exception {
         if (systemReady) {
-            hbaseUtil.deleteTable(HBaseHelper.getHBaseFieldAsBytes(DEFAULTTABLE));
+            hbaseUtil.deleteTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE));
             super.setUp();
         }
     }

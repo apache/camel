@@ -25,10 +25,10 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to uri="hbase://DEFAULTTABLE"/>
+            <to uri="hbase://person"/>
         </route>
         <route>
-            <from uri="hbase://DEFAULTTABLE"/>
+            <from uri="hbase://person"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
