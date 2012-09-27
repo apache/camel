@@ -44,16 +44,18 @@ import org.slf4j.LoggerFactory;
  */
 public class CachedOutputStream extends OutputStream {
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
+    public static final String BUFFER_SIZE = "CamelCachedOutputStreamBufferSize";
     public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
     private static final transient Logger LOG = LoggerFactory.getLogger(CachedOutputStream.class);
     
-    private OutputStream currentStream = new ByteArrayOutputStream(2048);
+    private OutputStream currentStream;
     private boolean inMemory = true;
     private int totalLength;
     private File tempFile;
     private FileInputStreamCache fileInputStreamCache;
 
     private long threshold = 64 * 1024;
+    private int bufferSize = 2 * 1024;
     private File outputDir;
     
     public CachedOutputStream(Exchange exchange) {
@@ -61,14 +63,21 @@ public class CachedOutputStream extends OutputStream {
     }
 
     public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {
+        String bufferSize = exchange.getContext().getProperties().get(BUFFER_SIZE);
         String hold = exchange.getContext().getProperties().get(THRESHOLD);
         String dir = exchange.getContext().getProperties().get(TEMP_DIR);
+        
+        if (bufferSize != null) {
+            this.bufferSize = exchange.getContext().getTypeConverter().convertTo(Integer.class, bufferSize);
+        }
         if (hold != null) {
             this.threshold = exchange.getContext().getTypeConverter().convertTo(Long.class, hold);
         }
         if (dir != null) {
             this.outputDir = exchange.getContext().getTypeConverter().convertTo(File.class, dir);
         }
+       
+        currentStream = new ByteArrayOutputStream(this.bufferSize);
         
         if (closedOnCompletion) {
             // add on completion so we can cleanup after the exchange is done such as deleting temporary files
@@ -164,7 +173,6 @@ public class CachedOutputStream extends OutputStream {
         return new WrappedInputStream(this, getInputStream());
     }
 
-
     public StreamCache getStreamCache() throws IOException {
         flush();
 
@@ -215,6 +223,10 @@ public class CachedOutputStream extends OutputStream {
         }
     }
     
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
     // This class will close the CachedOutputStream when it is closed
     private static class WrappedInputStream extends InputStream {
         private CachedOutputStream cachedOutputStream;
