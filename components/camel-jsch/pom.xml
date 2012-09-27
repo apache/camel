@@ -82,11 +82,11 @@
       <version>${sshd-version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- needed by sshd server -->
+    <!-- needed by sshd server, unfortunately the current ${mina2-version} which's 2.0.5 is not binary compatible anymore! -->
     <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
-      <version>${mina2-version}</version>
+      <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
