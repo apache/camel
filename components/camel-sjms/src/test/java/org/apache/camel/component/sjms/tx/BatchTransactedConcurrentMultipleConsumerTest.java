@@ -33,10 +33,12 @@ import org.junit.Test;
  */
 public class BatchTransactedConcurrentMultipleConsumerTest extends CamelTestSupport {
 
-    private static final int BATCH_COUNT = 25;
+    private static final int BATCH_COUNT = 10;
     private static final int CONSUMER_COUNT = 2;
-    private static final int MAX_ATTEMPTS_COUNT = 50;
-    private static final int MESSAGE_COUNT = 200;
+    private static final int MAX_ATTEMPTS_COUNT = 10;
+    private static final int MESSAGE_COUNT = 20;
+    private static final int TOTAL_REDELIVERED_FALSE = 19;
+    private static final int TOTAL_REDELIVERED_TRUE = 5;
     private static final String BROKER_URI = "vm://btcmcTestBroker?broker.persistent=false&broker.useJmx=true";
 
     /**
@@ -48,8 +50,8 @@ public class BatchTransactedConcurrentMultipleConsumerTest extends CamelTestSupp
     @Test
     public void testEndpointConfiguredBatchTransaction() throws Exception {
 
-        getMockEndpoint("mock:test.redelivered.false").expectedMessageCount(175);
-        getMockEndpoint("mock:test.redelivered.true").expectedMessageCount(25);
+        getMockEndpoint("mock:test.redelivered.false").expectedMessageCount(TOTAL_REDELIVERED_FALSE);
+        getMockEndpoint("mock:test.redelivered.true").expectedMessageCount(TOTAL_REDELIVERED_TRUE);
 
         // We should never see a message appear in this endpoint or we
         // have problem with our JMS provider
@@ -61,7 +63,8 @@ public class BatchTransactedConcurrentMultipleConsumerTest extends CamelTestSupp
             template.sendBody("direct:start", message);
             log.trace("Sending message: {}", message);
         }
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        Thread.sleep(3000);
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 
     }
 
@@ -105,12 +108,6 @@ public class BatchTransactedConcurrentMultipleConsumerTest extends CamelTestSupp
                         .to("mock:test.redelivered.false")
                     // Now process again any messages that were redelivered
                     .when(header("JMSRedelivered").isEqualTo("true"))
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                log.info("Retry processing attempt.  Continue processing the message.");
-                            }
-                        })
                         .log("2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
                         .to("mock:test.redelivered.true")
                     .otherwise()

@@ -34,8 +34,10 @@ import org.junit.Test;
 public class TransactedConcurrentConsumersTest extends CamelTestSupport {
 
     private static final int CONSUMER_COUNT = 2;
-    private static final int MAX_ATTEMPTS_COUNT = 50;
-    private static final int MESSAGE_COUNT = 100;
+    private static final int MAX_ATTEMPTS_COUNT = 10;
+    private static final int MESSAGE_COUNT = 20;
+    private static final int TOTAL_REDELIVERED_FALSE = 18;
+    private static final int TOTAL_REDELIVERED_TRUE = 2;
     private static final String BROKER_URI = "vm://tccTestBroker?broker.persistent=false&broker.useJmx=true";
 
     /**
@@ -45,12 +47,10 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
      */
     @Test
     public void testEndpointConfiguredBatchTransaction() throws Exception {
-        // We are set up for a failure to occur every 50 messages. Even with
-        // multiple consumers we should still only see 4 message failures
-        // over the course of 200 messages.
-        int transactedMsgs = MESSAGE_COUNT/MAX_ATTEMPTS_COUNT;
-        getMockEndpoint("mock:test.redelivered.false").expectedMessageCount(MESSAGE_COUNT - transactedMsgs);
-        getMockEndpoint("mock:test.redelivered.true").expectedMessageCount(transactedMsgs);
+        // We are set up for a failure to occur every 10 messages. We should see
+        // 2 message failures over the course of 20 messages.
+        getMockEndpoint("mock:test.redelivered.false").expectedMessageCount(TOTAL_REDELIVERED_FALSE);
+        getMockEndpoint("mock:test.redelivered.true").expectedMessageCount(TOTAL_REDELIVERED_TRUE);
 
         // We should never see a message appear in this endpoint or we
         // have problem with our JMS provider
@@ -62,8 +62,8 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
             template.sendBody("direct:start", message);
             log.trace("Sending message: {}", message);
         }
-        
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        Thread.sleep(3000);
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 
     }
 
@@ -109,12 +109,6 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
                         .to("mock:test.redelivered.false")
                     // Now process again any messages that were redelivered
                     .when(header("JMSRedelivered").isEqualTo("true"))
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                log.info("Retry processing attempt.  Continue processing the message.");
-                            }
-                        })
                         .log("2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
                         .to("mock:test.redelivered.true")
                     .otherwise()
@@ -122,4 +116,45 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
             }
         };
     }
+    
+//    private class RedeliveredProcessor implements Processor {
+//        private CountDownLatch latch;
+//        
+//        public RedeliveredProcessor(CountDownLatch latch) {
+//            super();
+//            this.latch = latch;
+//        }
+//
+//        @Override
+//        public void process(Exchange exchange) throws Exception {
+//            // TODO Auto-generated method stub
+//            
+//        }
+//        
+//    }
+//    
+//    private class NotRedeliveredProcessor implements Processor {
+//        private final AtomicInteger counter = new AtomicInteger(0);
+//        private final AtomicInteger total = new AtomicInteger(0);
+//        private CountDownLatch latch;
+//        
+//        public NotRedeliveredProcessor(CountDownLatch latch) {
+//            super();
+//            this.latch = latch;
+//        }
+//
+//        @Override
+//        public void process(Exchange exchange) throws Exception {
+//            int count = counter.incrementAndGet();
+//            if (count == MAX_ATTEMPTS_COUNT) {
+//                log.info("{} Messages have been processed. Failing the exchange to force a rollback of the transaction.", MAX_ATTEMPTS_COUNT);
+//                exchange.getOut().setFault(true);
+//                counter.set(0);
+//            }
+//            if(total.incrementAndGet() == TOTAL_REDELIVERED_FALSE) {
+//                cdl.countDown();
+//            }
+//        }
+//        
+//    }
 }

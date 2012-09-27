@@ -34,11 +34,14 @@ import org.junit.Test;
  */
 public class BatchTransactedConcurrentMultipleRouteConsumersTest extends CamelTestSupport {
     private static final int ROUTE_COUNT = 2;
-    private static final int BATCH_COUNT = 25;
-    private static final int MAX_ATTEMPTS_COUNT = 50;
-    private static final int MESSAGE_COUNT = 200;
+    private static final int BATCH_COUNT = 10;
+    private static final int MAX_ATTEMPTS_COUNT = 10;
+    private static final int MESSAGE_COUNT = 20;
     private static final int CONSUMER_COUNT = 1;
+    private static final int TOTAL_REDELIVERED_FALSE = 9;
+    private static final int TOTAL_REDELIVERED_TRUE = 10;
     private static final String BROKER_URI = "vm://btccmrcTestBroker?broker.persistent=false&broker.useJmx=true";
+    
 
     /**
      * We want to verify that when consuming from a single destination with
@@ -52,13 +55,13 @@ public class BatchTransactedConcurrentMultipleRouteConsumersTest extends CamelTe
         // We will only get 99 messages because after the 50th attempt
         // the exception will throw and that message will not make
         // it to the test.redelivered.false.# endpoint
-        getMockEndpoint("mock:test.redelivered.false.1").expectedMessageCount(99);
-        getMockEndpoint("mock:test.redelivered.false.2").expectedMessageCount(99);
+        getMockEndpoint("mock:test.redelivered.false.1").expectedMessageCount(TOTAL_REDELIVERED_FALSE);
+        getMockEndpoint("mock:test.redelivered.false.2").expectedMessageCount(TOTAL_REDELIVERED_FALSE);
 
         // We should always get 25 for each endpoint since that is our batch
         // count to roll back.
-        getMockEndpoint("mock:test.redelivered.true.1").expectedMessageCount(25);
-        getMockEndpoint("mock:test.redelivered.true.2").expectedMessageCount(25);
+        getMockEndpoint("mock:test.redelivered.true.1").expectedMessageCount(TOTAL_REDELIVERED_TRUE);
+        getMockEndpoint("mock:test.redelivered.true.2").expectedMessageCount(TOTAL_REDELIVERED_TRUE);
         getMockEndpoint("mock:test.after").expectedMessageCount(0);
 
         // Send the message count
@@ -67,7 +70,9 @@ public class BatchTransactedConcurrentMultipleRouteConsumersTest extends CamelTe
             template.sendBody("direct:start", message);
             log.trace("Sending message: {}", message);
         }
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+
+        Thread.sleep(3000);
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
 
     @Override
@@ -108,17 +113,11 @@ public class BatchTransactedConcurrentMultipleRouteConsumersTest extends CamelTe
                                     }
                                 }
                             })
-                            .log("1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
+                            .log("Route " + i + " 1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
                             .to("mock:test.redelivered.false." + i)
                         // Now process again any messages that were redelivered
                         .when(header("JMSRedelivered").isEqualTo("true"))
-                            .process(new Processor() {
-                                @Override
-                                public void process(Exchange exchange) throws Exception {
-                                    log.info("Retry processing attempt.  Continue processing the message.");
-                                }
-                            })
-                            .log("2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
+                            .log("Route " + i + " 2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
                             .to("mock:test.redelivered.true." + i)
                         .otherwise()
                             .to("mock:test.after");
