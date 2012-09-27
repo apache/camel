@@ -955,6 +955,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         ServiceHelper.stopAndShutdownServices(processors, errorHandlers);
         // only clear error handlers when shutting down
         errorHandlers.clear();
+        if (aggregateExecutorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(aggregateExecutorService);
+        }
     }
 
     protected static void setToEndpoint(Exchange exchange, Processor processor) {
