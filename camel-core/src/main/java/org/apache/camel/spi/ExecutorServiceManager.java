@@ -19,7 +19,6 @@ package org.apache.camel.spi;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.ShutdownableService;
 

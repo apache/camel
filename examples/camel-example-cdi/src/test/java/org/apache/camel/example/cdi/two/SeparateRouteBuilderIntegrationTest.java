@@ -18,7 +18,6 @@ package org.apache.camel.example.cdi.two;
 
 import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.internal.CamelExtension;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.cdi.MyRoutes;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -31,7 +30,6 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Lets use a separate {@link TestRouteBuilder} to test the routes

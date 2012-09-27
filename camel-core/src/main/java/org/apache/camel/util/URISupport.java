@@ -95,7 +95,6 @@ public final class URISupport {
      * @return the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {
         // must check for trailing & as the uri.split("&") will ignore those
         if (uri != null && uri.endsWith("&")) {

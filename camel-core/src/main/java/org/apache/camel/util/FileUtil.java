@@ -384,7 +384,6 @@ public final class FileUtil {
         return renamed;
     }
 
-    @SuppressWarnings("resource")
     public static void copyFile(File from, File to) throws IOException {
         FileChannel in = new FileInputStream(from).getChannel();
         FileChannel out = new FileOutputStream(to).getChannel();

@@ -33,10 +33,9 @@ import org.apache.camel.impl.JndiRegistry;
 public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupport {
 
     private static final String FAKE = "!!! Get DataSource fake !!!";
-    private final Hashtable env = new Hashtable();
+    private final Hashtable<String, String> env = new Hashtable<String, String>();
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void setUp() throws Exception {
         // use the singleton context factory
         env.put(Context.INITIAL_CONTEXT_FACTORY, CamelSingletonInitialContextFactory.class.getName());
