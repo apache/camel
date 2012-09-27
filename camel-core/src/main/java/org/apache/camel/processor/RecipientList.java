@@ -176,7 +176,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         camelContext.removeService(producerCache);
         ServiceHelper.stopAndShutdownService(producerCache);
 
-        if (shutdownExecutorService && executorService != null) {
+        if (executorService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(executorService);
         }
     }
