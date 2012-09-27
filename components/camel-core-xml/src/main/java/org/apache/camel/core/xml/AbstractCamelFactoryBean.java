@@ -63,6 +63,10 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     }
 
     public CamelContext getCamelContext() {
+        if (ObjectHelper.isNotEmpty(camelContextId)) {
+            // always return the context by its id
+            return getCamelContextWithId(camelContextId);
+        }
         return camelContext;
     }
 
