@@ -22,7 +22,9 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ConsumerCache;
 
@@ -40,7 +42,9 @@ public class ManagedConsumerCacheTest extends ManagementTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        Exchange out = cache.getConsumer(context.getEndpoint("seda:queue")).receive(3000);
+        Endpoint endpoint = context.getEndpoint("seda:queue");
+        PollingConsumer consumer = cache.getConsumer(endpoint);
+        Exchange out = consumer.receive(3000);
         assertNotNull("Should got an exchange", out);
         assertEquals("Hello World", out.getIn().getBody());
 
@@ -73,6 +77,11 @@ public class ManagedConsumerCacheTest extends ManagementTestSupport {
 
         current = (Integer) mbeanServer.getAttribute(on, "Size");
         assertEquals(0, current.intValue());
+
+        // stop the consumer as it was purged from the cache
+        // so we need to manually stop it
+        consumer.stop();
+        cache.stop();
     }
 
     @Override
