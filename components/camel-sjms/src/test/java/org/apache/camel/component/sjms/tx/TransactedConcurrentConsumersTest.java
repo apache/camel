@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.tx;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -34,7 +35,8 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
 
     private static final int CONSUMER_COUNT = 2;
     private static final int MAX_ATTEMPTS_COUNT = 50;
-    private static final int MESSAGE_COUNT = 200;
+    private static final int MESSAGE_COUNT = 100;
+    private static final String BROKER_URI = "vm://tccTestBroker?broker.persistent=false&broker.useJmx=true";
 
     /**
      * Verify that transacted and concurrent consumers work correctly together.
@@ -46,8 +48,9 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
         // We are set up for a failure to occur every 50 messages. Even with
         // multiple consumers we should still only see 4 message failures
         // over the course of 200 messages.
-        getMockEndpoint("mock:test.redelivered.false").expectedMessageCount(196);
-        getMockEndpoint("mock:test.redelivered.true").expectedMessageCount(4);
+        int transactedMsgs = MESSAGE_COUNT/MAX_ATTEMPTS_COUNT;
+        getMockEndpoint("mock:test.redelivered.false").expectedMessageCount(MESSAGE_COUNT - transactedMsgs);
+        getMockEndpoint("mock:test.redelivered.true").expectedMessageCount(transactedMsgs);
 
         // We should never see a message appear in this endpoint or we
         // have problem with our JMS provider
@@ -59,8 +62,8 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
             template.sendBody("direct:start", message);
             log.trace("Sending message: {}", message);
         }
-
-        assertMockEndpointsSatisfied();
+        
+        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
 
     }
 
@@ -68,7 +71,7 @@ public class TransactedConcurrentConsumersTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(BROKER_URI);
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);

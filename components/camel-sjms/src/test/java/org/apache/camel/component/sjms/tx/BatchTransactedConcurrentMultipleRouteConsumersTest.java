@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.tx;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -37,6 +38,7 @@ public class BatchTransactedConcurrentMultipleRouteConsumersTest extends CamelTe
     private static final int MAX_ATTEMPTS_COUNT = 50;
     private static final int MESSAGE_COUNT = 200;
     private static final int CONSUMER_COUNT = 1;
+    private static final String BROKER_URI = "vm://btccmrcTestBroker?broker.persistent=false&broker.useJmx=true";
 
     /**
      * We want to verify that when consuming from a single destination with
@@ -65,14 +67,14 @@ public class BatchTransactedConcurrentMultipleRouteConsumersTest extends CamelTe
             template.sendBody("direct:start", message);
             log.trace("Sending message: {}", message);
         }
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(BROKER_URI);
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
