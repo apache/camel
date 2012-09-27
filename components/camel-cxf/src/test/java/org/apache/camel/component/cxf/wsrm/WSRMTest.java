@@ -59,7 +59,6 @@ public class WSRMTest extends AbstractJUnit4SpringContextTests {
 
         if (getCxfClientConfig() != null) {
             cxfConfig = ClassLoaderUtils.getResource(getCxfClientConfig(), this.getClass());
-            System.out.println("cxfConfig" + cxfConfig);
         }
         proxyFactory.setBus(bf.createBus(cxfConfig));
         proxyFactory.getOutInterceptors().add(new MessageLossSimulator());
