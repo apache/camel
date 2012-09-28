@@ -34,10 +34,12 @@ public class LoggingErrorHandler extends DefaultErrorHandler {
      * @param camelContext            the camel context
      * @param output                  outer processor that should use this logging error handler
      * @param logger                  logger to use for logging failures
+     * @param redeliveryPolicy        redelivery policy
      * @param exceptionPolicyStrategy strategy for onException handling
      */
-    public LoggingErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        super(camelContext, output, logger, null, new RedeliveryPolicy(), exceptionPolicyStrategy, null, null);
+    public LoggingErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
+                               RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        super(camelContext, output, logger, null, redeliveryPolicy, exceptionPolicyStrategy, null, null);
     }
 
     @Override
