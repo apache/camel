@@ -748,6 +748,19 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         public void afterDestroy(Object bean, String beanName) {
         }
 
+        @Override
+        protected boolean isSingleton(Object bean, String beanName) {
+            ComponentMetadata meta = blueprintContainer.getComponentMetadata(beanName);
+            if (meta != null && meta instanceof BeanMetadata) {
+                String scope = ((BeanMetadata) meta).getScope();
+                if (scope != null) {
+                    return BeanMetadata.SCOPE_SINGLETON.equals(scope);
+                }
+            }
+            // fallback to super, which will assume singleton
+            // for beans not implementing Camel's IsSingleton interface
+            return super.isSingleton(bean, beanName);
+        }
     }
 
     public static class CamelDependenciesFinder implements ComponentDefinitionRegistryProcessor {
