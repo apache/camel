@@ -17,8 +17,10 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -44,8 +46,14 @@ public class DualCamelContextEndpointOutsideTest extends SpringTestSupport {
         MockEndpoint mockB = camelB.getEndpoint("mock:mock2", MockEndpoint.class);
         mockB.expectedBodiesReceived("Hello B");
 
-        camelA.createProducerTemplate().sendBody("direct:start1", "Hello A");
-        camelB.createProducerTemplate().sendBody("direct:start2", "Hello B");
+        ProducerTemplate producer1 = camelA.createProducerTemplate();
+        producer1.sendBody("direct:start1", "Hello A");
+
+        ProducerTemplate producer2 = camelB.createProducerTemplate();
+        producer2.sendBody("direct:start2", "Hello B");
+
+        // make sure we properly stop the services we created
+        ServiceHelper.stopServices(producer1, producer2);
 
         mockA.assertIsSatisfied();
         mockB.assertIsSatisfied();
