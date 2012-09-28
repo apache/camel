@@ -24,17 +24,19 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * Special InvocationHandler for methods that have only one parameter. This
+ * Special {@link java.lang.reflect.InvocationHandler} for methods that have only one parameter. This
  * parameter is directly sent to as the body of the message. The idea is to use
  * that as a very open message format especially when combined with e.g. JAXB
  * serialization.
  */
 public class PojoMessageInvocationHandler extends AbstractCamelInvocationHandler {
+
     public PojoMessageInvocationHandler(Endpoint endpoint, Producer producer) {
         super(endpoint, producer);
     }
 
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+    @Override
+    public Object doInvokeProxy(Object proxy, Method method, Object[] args) throws Throwable {
         int argsLength = (args == null) ? 0 : args.length;
         if (argsLength != 1) {
             throw new RuntimeCamelException(String.format("Error creating proxy for %s.%s Number of arguments must be 1 but is %d", 
@@ -42,7 +44,7 @@ public class PojoMessageInvocationHandler extends AbstractCamelInvocationHandler
                                                           method.getName(), argsLength));
         }
         final ExchangePattern pattern = method.getReturnType() != Void.TYPE ? ExchangePattern.InOut : ExchangePattern.InOnly;
-        return invokeWithbody(method, args[0], pattern);
+        return invokeWithBody(method, args[0], pattern);
     }
 
 }

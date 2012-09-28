@@ -19,6 +19,9 @@ package org.apache.camel.component.bean;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -41,9 +44,15 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractCamelInvocationHandler implements InvocationHandler {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     private static ExecutorService executorService;
     protected final Endpoint endpoint;
     protected final Producer producer;
+
+    static {
+        // exclude all java.lang.Object methods as we dont want to invoke them
+        EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
+    }
 
     public AbstractCamelInvocationHandler(Endpoint endpoint, Producer producer) {
         this.endpoint = endpoint;
@@ -67,7 +76,26 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    protected Object invokeWithbody(final Method method, Object body, final ExchangePattern pattern) throws InterruptedException, Throwable {
+    @Override
+    public final Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+        if (isValidMethod(method)) {
+            return doInvokeProxy(proxy, method, args);
+        } else {
+            // invalid method then invoke methods on this instead
+            if ("toString".equals(method.getName())) {
+                return this.toString();
+            } else if ("hashCode".equals(method.getName())) {
+                return this.hashCode();
+            } else if ("equals".equals(method.getName())) {
+                return Boolean.FALSE;
+            }
+            return null;
+        }
+    }
+
+    public abstract Object doInvokeProxy(final Object proxy, final Method method, final Object[] args) throws Throwable;
+
+    protected Object invokeWithBody(final Method method, Object body, final ExchangePattern pattern) throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
         exchange.getIn().setBody(body);
 
@@ -212,6 +240,17 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
 
         return null;
+    }
+
+    protected boolean isValidMethod(Method method) {
+        // must not be in the excluded list
+        for (Method excluded : EXCLUDED_METHODS) {
+            if (ObjectHelper.isOverridingMethod(excluded, method)) {
+                // the method is overriding an excluded method so its not valid
+                return false;
+            }
+        }
+        return true;
     }
 
 }
