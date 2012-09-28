@@ -136,11 +136,12 @@
                 <configuration>
                     <forkMode>pertest</forkMode>
                     <argLine>-Xmx512M</argLine>
-<!--                     <excludes> -->
-<!--                         <exclude>**/BatchTransactedConcurrentMultipleConsumerTest.*</exclude> -->
+                    <excludes>
+                        <exclude>**/BatchTransactedConcurrentMultipleConsumerTest.*</exclude>
+                        <exclude>**/BatchTransactedTopicConsumerTest.*</exclude>
 <!--                         <exclude>**/BatchTransactedConcurrentMultipleRouteConsumersTest.*</exclude> -->
 <!--                         <exclude>**/TransactedConcurrentConsumersTest.*</exclude> -->
-<!--                     </excludes> -->
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
