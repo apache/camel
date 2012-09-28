@@ -37,11 +37,12 @@ public class CamelInvocationHandler extends AbstractCamelInvocationHandler imple
         this.methodInfoCache = methodInfoCache;
     }
 
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+    @Override
+    public Object doInvokeProxy(Object proxy, Method method, Object[] args) throws Throwable {
         BeanInvocation invocation = new BeanInvocation(method, args);
         MethodInfo methodInfo = methodInfoCache.getMethodInfo(method);
         final ExchangePattern pattern = methodInfo != null ? methodInfo.getPattern() : ExchangePattern.InOut;
-        return invokeWithbody(method, invocation, pattern);
+        return invokeWithBody(method, invocation, pattern);
     }
 
 }
