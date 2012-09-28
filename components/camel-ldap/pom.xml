@@ -71,11 +71,10 @@
             <version>${apacheds-version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Apache DS uses Mina 2.0.0 for testing -->
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
-            <version>2.0.0</version>
+            <version>${mina2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
