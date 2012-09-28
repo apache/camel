@@ -894,7 +894,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addService(Object object) throws Exception {
+        doAddService(object, true);
+    }
 
+    private void doAddService(Object object, boolean closeOnShutdown) throws Exception {
         // inject CamelContext
         if (object instanceof CamelContextAware) {
             CamelContextAware aware = (CamelContextAware) object;
@@ -922,7 +925,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // do not add endpoints as they have their own list
             if (singleton && !(service instanceof Endpoint)) {
                 // only add to list of services to close if its not already there
-                if (!hasService(service)) {
+                if (closeOnShutdown && !hasService(service)) {
                     servicesToClose.add(service);
                 }
             }
@@ -1544,7 +1547,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // and we needed to create endpoints up-front as it may be accessed before this context is started
         endpoints = new EndpointRegistry(this, endpoints);
         addService(endpoints);
-        addService(executorServiceManager);
+        // special for executorServiceManager as want to stop it manually
+        doAddService(executorServiceManager, false);
         addService(producerServicePool);
         addService(inflightRepository);
         addService(shutdownStrategy);
@@ -1644,7 +1648,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             shutdownServices(notifier);
         }
 
-        // shutdown management as the last one
+        // shutdown executor service and management as the last one
+        shutdownServices(executorServiceManager);
         shutdownServices(managementStrategy);
         shutdownServices(lifecycleStrategies);
         // do not clear lifecycleStrategies as we can start Camel again and get the route back as before
