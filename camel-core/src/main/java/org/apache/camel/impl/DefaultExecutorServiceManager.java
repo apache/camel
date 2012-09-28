@@ -19,8 +19,10 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -262,28 +264,28 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public void shutdown(ExecutorService executorService) {
-        doShutdown(executorService, 0);
+        doShutdown(executorService, 0, false);
     }
 
     @Override
     public void shutdownGraceful(ExecutorService executorService) {
-        doShutdown(executorService, getShutdownAwaitTermination());
+        doShutdown(executorService, getShutdownAwaitTermination(), false);
     }
 
     @Override
     public void shutdownGraceful(ExecutorService executorService, long shutdownAwaitTermination) {
-        doShutdown(executorService, shutdownAwaitTermination);
+        doShutdown(executorService, shutdownAwaitTermination, false);
     }
 
-    private void doShutdown(ExecutorService executorService, long shutdownAwaitTermination) {
+    private boolean doShutdown(ExecutorService executorService, long shutdownAwaitTermination, boolean failSafe) {
         ObjectHelper.notNull(executorService, "executorService");
+        boolean warned = false;
 
         // shutting down a thread pool is a 2 step process. First we try graceful, and if that fails, then we go more aggressively
         // and try shutting down again. In both cases we wait at most the given shutdown timeout value given
         // (total wait could then be 2 x shutdownAwaitTermination, but when we shutdown the 2nd time we are aggressive and thus
         // we ought to shutdown much faster)
         if (!executorService.isShutdown()) {
-            boolean warned = false;
             StopWatch watch = new StopWatch();
 
             LOG.trace("Shutdown of ExecutorService: {} with await termination: {} millis", executorService, shutdownAwaitTermination);
@@ -325,8 +327,12 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
             }
         }
 
-        // remove reference as its shutdown
-        executorServices.remove(executorService);
+        // remove reference as its shutdown (do not remove if fail-safe)
+        if (!failSafe) {
+            executorServices.remove(executorService);
+        }
+
+        return warned;
     }
 
     @Override
@@ -414,18 +420,34 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         // as by normal all threads pool should have been shutdown using proper lifecycle
         // by their EIPs, components etc. This is acting as a fail-safe during shutdown
         // of CamelContext itself.
+        Set<ExecutorService> forced = new LinkedHashSet<ExecutorService>();
         if (!executorServices.isEmpty()) {
-            LOG.warn("Shutting down {} ExecutorService's which has not been shutdown properly (acting as fail-safe)", executorServices.size());
+            // at first give a bit of time to shutdown nicely as the thread pool is most likely in the process of being shutdown also
+            LOG.debug("Giving time for {} ExecutorService's to shutdown properly (acting as fail-safe)", executorServices.size());
             for (ExecutorService executorService : executorServices) {
-                // only log if something goes wrong as we want to shutdown them all
                 try {
-                    doShutdownNow(executorService, true);
+                    boolean warned = doShutdown(executorService, getShutdownAwaitTermination(), true);
+                    // remember the thread pools that was forced to shutdown (eg warned)
+                    if (warned) {
+                        forced.add(executorService);
+                    }
                 } catch (Throwable e) {
+                    // only log if something goes wrong as we want to shutdown them all
                     LOG.warn("Error occurred during shutdown of ExecutorService: "
                             + executorService + ". This exception will be ignored.", e);
                 }
             }
         }
+
+        // log the thread pools which was forced to shutdown so it may help the user to identify a problem of his
+        if (!forced.isEmpty()) {
+            LOG.warn("Forced shutdown of {} ExecutorService's which has not been shutdown properly (acting as fail-safe)", forced.size());
+            for (ExecutorService executorService : forced) {
+                LOG.warn("  forced -> {}", executorService);
+            }
+        }
+        forced.clear();
+
         // clear list
         executorServices.clear();
 
