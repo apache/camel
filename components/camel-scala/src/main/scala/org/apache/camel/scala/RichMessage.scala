@@ -81,7 +81,8 @@ class RichMessage(val message: Message) extends Message {
   def getAttachmentNames = message.getAttachmentNames
 
   def getAttachment(id: String) = message.getAttachment(id)
-
+  
+  @Deprecated
   def createExchangeId = message.createExchangeId
 
   def copyFrom(message: Message) = message.copyFrom(message)
