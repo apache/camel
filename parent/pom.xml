@@ -100,6 +100,7 @@
     <elasticsearch-bundle-version>0.19.8_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.19.8</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
+    <exec-maven-plugin-version>1.1.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
     <felix-configadmin-version>1.2.4</felix-configadmin-version>
@@ -203,6 +204,9 @@
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+    <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
+    <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
+    <maven-version>2.0</maven-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.4</mina2-version>
@@ -230,6 +234,8 @@
     <pax-runner-version>1.6.1</pax-runner-version>
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
     <pax-logging-version>1.6.10</pax-logging-version>
+    <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
+    <plexus-utils-version>1.5.6</plexus-utils-version>
     <pojosr-version>0.1.8</pojosr-version>
     <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
@@ -1643,6 +1649,43 @@
         <version>${axiom-version}</version>
       </dependency>
 
+      <!-- Tooling dependencies -->
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>${maven-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-project</artifactId>
+        <version>${maven-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-container-default</artifactId>
+        <version>${plexus-container-default-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>${plexus-utils-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.reporting</groupId>
+        <artifactId>maven-reporting-api</artifactId>
+        <version>${maven-reporting-api-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.reporting</groupId>
+        <artifactId>maven-reporting-impl</artifactId>
+        <version>${maven-reporting-impl-version}</version>
+      </dependency>
+
       <!-- optional misc -->
       <dependency>
         <groupId>org.jruby</groupId>
@@ -1668,6 +1711,11 @@
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
         <version>${httpclient-version}</version>
+      </dependency>
+  	 <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>${xalan-version}</version>
       </dependency>
       <dependency>
         <groupId>xerces</groupId>

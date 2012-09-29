@@ -16,7 +16,6 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -30,12 +29,6 @@
   <description>Camel Maven Plugins</description>
   <packaging>pom</packaging>
 
-  <properties>
-    <maven-version>2.0</maven-version>
-    <maven-plugin-version>2.2</maven-plugin-version>
-    <maven-reporting-version>2.2.1</maven-reporting-version>
-  </properties>
-
   <modules>
     <module>camel-maven-plugin</module>
     <module>guice-maven-plugin</module>
@@ -46,22 +39,18 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${maven-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>${maven-version}</version>
     </dependency>
   </dependencies>
 
   <reporting>
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>${maven-plugin-version}</version>
       </plugin>
 
       <plugin>
@@ -71,13 +60,12 @@
           <links>
             <link>http://download.oracle.com/javase/6/docs/api/</link>
             <link>http://download.oracle.com/javaee/6/api/</link>
-            <link>http://static.springsource.org/spring/docs/3.0.6.RELEASE/api/</link>
+            <link>http://static.springsource.org/spring/docs/${spring-version}/api/</link>
           </links>
           <stylesheetfile>${basedir}/../../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>900m</maxmemory>
           <source>1.6</source>
-
           <!-- TODO we can't aggregate as it won't find the CSS file :( -->
           <!--<aggregate>true</aggregate>-->
         </configuration>

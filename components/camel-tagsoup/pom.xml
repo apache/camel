@@ -94,12 +94,11 @@
           </plugin>
         </plugins>
       </build>
+      
       <dependencies>
-
         <dependency>
           <groupId>xalan</groupId>
           <artifactId>xalan</artifactId>
-          <version>${xalan-version}</version>
           <scope>test</scope>
           <exclusions>
             <exclusion>
