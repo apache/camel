@@ -17,11 +17,20 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.EnrichDefinition
+import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
  * Scala enrichment for Camel's EnrichDefinition
  */
 case class SEnrichDefinition(override val target: EnrichDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[EnrichDefinition] {
+  
+  def aggregationStrategy(strategy: AggregationStrategy) = wrap(target.setAggregationStrategy(strategy))
+  def aggregationStrategyRef(ref: String) = wrap(target.setAggregationStrategyRef(ref))
+  
+  def resourceRef(ref: String) = wrap(target.setResourceRef(ref))
+  def resourceUri(resourceUri: String) = wrap(target.setResourceUri(resourceUri))
+  
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SEnrichDefinition]
 
 }

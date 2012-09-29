@@ -16,6 +16,8 @@
  */
 package org.apache.camel.scala.dsl;
 
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.ScheduledExecutorService
 import org.apache.camel.model.AggregateDefinition
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
@@ -50,6 +52,19 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
   def eagerCheckCompletion = wrap(target.eagerCheckCompletion)
   def ignoreInvalidCorrelationKeys = wrap(target.ignoreInvalidCorrelationKeys)
   def groupExchanges = wrap(target.groupExchanges)
+ 
+  def discardOnCompletionTimeout = wrap(target.discardOnCompletionTimeout)
+  def forceCompletionOnStop = wrap(target.forceCompletionOnStop())
+  def timeoutCheckerExecutorService(executorService: ScheduledExecutorService) 
+      = wrap(target.setTimeoutCheckerExecutorService(executorService))
+  def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
+  def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
+  
+  def completionPredicate(filter: Exchange => Any) {
+     // uses implicit conversion
+     val predicate = filter
+     target.completionPredicate(predicate)
+  }
 
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SAggregateDefinition]
 }

@@ -36,6 +36,10 @@ case class SLoadBalanceDefinition(override val target: LoadBalanceDefinition)(im
   def sticky(expression: Exchange => Any) = wrap(target.sticky(expression))
 
   def topic = wrap(target.topic)
+  
+  def weighted(roundRobin: Boolean, distributionRatio: String, distributionRatioDelimiter :String = ",") 
+      = wrap(target.weighted(roundRobin, distributionRatio, distributionRatioDelimiter))
+  def custom(ref: String) = wrap(target.custom(ref))
 
   override def wrap(block: => Unit) : SLoadBalanceDefinition = super.wrap(block).asInstanceOf[SLoadBalanceDefinition] 
 }
