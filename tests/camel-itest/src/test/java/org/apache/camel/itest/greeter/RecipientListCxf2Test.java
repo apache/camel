@@ -31,7 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class RecipientListCxf2Test extends CamelSpringTestSupport {
     
     private static int port1 = AvailablePortFinder.getNextAvailable(20012);
-    private static int port2 = AvailablePortFinder.getNextAvailable(20013);
+    private static int port2 = AvailablePortFinder.getNextAvailable(20023);
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
