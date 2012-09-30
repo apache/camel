@@ -34,21 +34,25 @@ public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
     /**
      * Adds error handler for the given exception type
      *
-     * @param exception  the exception to handle
+     * @param routeContext  the route context
+     * @param exception     the exception to handle
      */
-    void addErrorHandlers(OnExceptionDefinition exception);
+    void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception);
 
     /**
      * Adds the error handlers for the given list of exception types
      *
-     * @param exceptions  the list of exceptions to handle
+     * @param routeContext  the route context
+     * @param exceptions    the list of exceptions to handle
      */
-    void setErrorHandlers(List<OnExceptionDefinition> exceptions);
+    void setErrorHandlers(RouteContext routeContext, List<OnExceptionDefinition> exceptions);
 
     /**
      * Gets the error handlers
+     *
+     * @param routeContext  the route context
      */
-    List<OnExceptionDefinition> getErrorHandlers();
+    List<OnExceptionDefinition> getErrorHandlers(RouteContext routeContext);
 
     /**
      * Gets the exception policy strategy
@@ -75,4 +79,15 @@ public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
      * @param handler the other error handler
      */
     void configure(RouteContext routeContext, ErrorHandler handler);
+
+    /**
+     * Clones this builder so each {@link RouteBuilder} has its private builder
+     * to use, to avoid changes from one {@link RouteBuilder} to influence the
+     * others.
+     * <p/>
+     * This is needed by the current Camel 2.x architecture.
+     *
+     * @return a clone of this {@link ErrorHandlerBuilder}
+     */
+    ErrorHandlerBuilder cloneBuilder();
 }

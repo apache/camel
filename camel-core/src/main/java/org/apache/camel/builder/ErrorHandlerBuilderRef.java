@@ -16,7 +16,9 @@
  */
 package org.apache.camel.builder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
@@ -33,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
     private final String ref;
-    private ErrorHandlerBuilder handler;
+    private final Map<RouteContext, ErrorHandlerBuilder> handlers = new HashMap<RouteContext, ErrorHandlerBuilder>();
     private boolean supportTransacted;
 
     public ErrorHandlerBuilderRef(String ref) {
@@ -41,22 +43,40 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     }
 
     @Override
-    public void addErrorHandlers(OnExceptionDefinition exception) {
+    public void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception) {
+        ErrorHandlerBuilder handler = handlers.get(routeContext);
         if (handler != null) {
-            handler.addErrorHandlers(exception);
+            handler.addErrorHandlers(routeContext, exception);
         }
-        super.addErrorHandlers(exception);
+        super.addErrorHandlers(routeContext, exception);
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
+        ErrorHandlerBuilder handler = handlers.get(routeContext);
         if (handler == null) {
             handler = createErrorHandler(routeContext);
+            handlers.put(routeContext, handler);
         }
         return handler.createErrorHandler(routeContext, processor);
     }
 
     public boolean supportTransacted() {
         return supportTransacted;
+    }
+
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        ErrorHandlerBuilderRef answer = new ErrorHandlerBuilderRef(ref);
+        cloneBuilder(answer);
+        return answer;
+    }
+
+    protected void cloneBuilder(ErrorHandlerBuilderRef other) {
+        super.cloneBuilder(other);
+
+        // no need to copy the handlers
+
+        other.supportTransacted = supportTransacted;
     }
 
     /**
@@ -98,7 +118,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
                 }
                 // inherit the error handlers from the other as they are to be shared
                 // this is needed by camel-spring when none error handler has been explicit configured
-                ((ErrorHandlerBuilder)answer).setErrorHandlers(other.getErrorHandlers());
+                ((ErrorHandlerBuilder)answer).setErrorHandlers(routeContext, other.getErrorHandlers(routeContext));
             }
         } else {
             // use specific configured error handler
@@ -142,20 +162,18 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return ref;
     }
 
-    public ErrorHandlerFactory getHandler() {
-        return handler;
-    }
-
     private ErrorHandlerBuilder createErrorHandler(RouteContext routeContext) {
-        handler = (ErrorHandlerBuilder)lookupErrorHandlerBuilder(routeContext, getRef());
+        ErrorHandlerBuilder handler = (ErrorHandlerBuilder)lookupErrorHandlerBuilder(routeContext, getRef());
         ObjectHelper.notNull(handler, "error handler '" + ref + "'");
 
         // configure if the handler support transacted
         supportTransacted = handler.supportTransacted();
 
-        List<OnExceptionDefinition> list = getErrorHandlers();
-        for (OnExceptionDefinition exceptionType : list) {
-            handler.addErrorHandlers(exceptionType);
+        List<OnExceptionDefinition> list = getErrorHandlers(routeContext);
+        if (list != null) {
+            for (OnExceptionDefinition exceptionType : list) {
+                handler.addErrorHandlers(routeContext, exceptionType);
+            }
         }
         return handler;
     }
