@@ -37,4 +37,11 @@ public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     public boolean supportTransacted() {
         return false;
     }
+
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        NoErrorHandlerBuilder answer = new NoErrorHandlerBuilder();
+        cloneBuilder(answer);
+        return answer;
+    }
 }

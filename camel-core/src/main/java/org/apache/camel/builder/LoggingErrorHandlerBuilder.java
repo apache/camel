@@ -50,6 +50,20 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return false;
     }
 
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        LoggingErrorHandlerBuilder answer = new LoggingErrorHandlerBuilder();
+        cloneBuilder(answer);
+        return answer;
+    }
+
+    protected void cloneBuilder(LoggingErrorHandlerBuilder other) {
+        super.cloneBuilder(other);
+
+        other.level = level;
+        other.log = log;
+    }
+
     public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) {
         CamelLogger logger = new CamelLogger(log, level);
 
