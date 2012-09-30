@@ -45,7 +45,6 @@
     </camel.osgi.import>
     <!-- avoid to import the bunch of spring related package -->
     <camel.osgi.dynamic>org.springframework.*</camel.osgi.dynamic>
-    <war-plugin-version>2.2</war-plugin-version>
   </properties>
 
   <dependencies>
@@ -121,7 +120,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>${war-plugin-version}</version>
         <configuration>
           <webResources>
             <!-- place the legal files under the META-INF folder -->
