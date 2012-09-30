@@ -59,4 +59,8 @@ public class DualCamelContextEndpointOutsideTest extends SpringTestSupport {
         mockB.assertIsSatisfied();
     }
 
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
 }
