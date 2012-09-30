@@ -40,7 +40,7 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <version>4.2.0</version>
+      <version>${osgi-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -144,6 +144,7 @@
         </repository>
       </repositories>
     </profile>
+    
     <profile>
       <id>validate</id>
       <!-- Added the repository for the google script -->
