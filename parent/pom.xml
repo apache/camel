@@ -45,6 +45,7 @@
     <apacheds-version>1.5.7</apacheds-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
+    <arquillian-junit-container-version>1.0.0.CR7</arquillian-junit-container-version>
     <arquillian-weld-ee-embedded-version>1.0.0.CR3</arquillian-weld-ee-embedded-version>
     <asm-bundle-version>3.3_2</asm-bundle-version>
     <asm2-bundle-version>2.2.3_5</asm2-bundle-version>
@@ -1511,6 +1512,11 @@
         <groupId>org.ops4j.pax.swissbox</groupId>
         <artifactId>pax-swissbox-tinybundles</artifactId>
         <version>${pax-tiny-bundle-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openengsb.labs.paxexam.karaf</groupId>
+        <artifactId>paxexam-karaf-container</artifactId>
+        <version>${paxexam-karaf-container-version}</version>
       </dependency>
 
       <!-- optional Saxon support -->

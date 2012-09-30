@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +15,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -36,7 +34,6 @@
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
-            <version>${pax-exam-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -52,7 +49,6 @@
         <dependency>
             <groupId>org.openengsb.labs.paxexam.karaf</groupId>
             <artifactId>paxexam-karaf-container</artifactId>
-            <version>${paxexam-karaf-container-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -96,7 +92,6 @@
         <dependency>
             <groupId>org.apache.camel.karaf</groupId>
             <artifactId>apache-camel</artifactId>
-            <version>${project.version}</version>
             <type>pom</type>
             <scope>test</scope>
         </dependency>
