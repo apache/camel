@@ -69,6 +69,45 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return false;
     }
 
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        DefaultErrorHandlerBuilder answer = new DefaultErrorHandlerBuilder();
+        cloneBuilder(answer);
+        return answer;
+    }
+
+    protected void cloneBuilder(DefaultErrorHandlerBuilder other) {
+        super.cloneBuilder(other);
+
+        if (logger != null) {
+            other.setLogger(logger);
+        }
+        if (redeliveryPolicy != null) {
+            other.setRedeliveryPolicy(redeliveryPolicy.copy());
+        }
+        if (onRedelivery != null) {
+            other.setOnRedelivery(onRedelivery);
+        }
+        if (retryWhile != null) {
+            other.setRetryWhile(retryWhile);
+        }
+        if (retryWhileRef != null) {
+            other.setRetryWhileRef(retryWhileRef);
+        }
+        if (failureProcessor != null) {
+            other.setFailureProcessor(failureProcessor);
+        }
+        if (deadLetter != null) {
+            other.setDeadLetter(deadLetter);
+        }
+        if (deadLetterUri != null) {
+            other.setDeadLetterUri(deadLetterUri);
+        }
+        other.setUseOriginalMessage(useOriginalMessage);
+        other.setAsyncDelayedRedelivery(asyncDelayedRedelivery);
+        other.setExecutorServiceRef(executorServiceRef);
+    }
+
     // Builder methods
     // -------------------------------------------------------------------------
     public DefaultErrorHandlerBuilder backOffMultiplier(double backOffMultiplier) {

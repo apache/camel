@@ -65,6 +65,13 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
         return false;
     }
 
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        DeadLetterChannelBuilder answer = new DeadLetterChannelBuilder();
+        super.cloneBuilder(answer);
+        return answer;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 

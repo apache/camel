@@ -17,7 +17,9 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
@@ -32,33 +34,48 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
-    private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();
+    private Map<RouteContext, List<OnExceptionDefinition>> onExceptions = new HashMap<RouteContext, List<OnExceptionDefinition>>();
     private ExceptionPolicyStrategy exceptionPolicyStrategy;
 
-    public void addErrorHandlers(OnExceptionDefinition exception) {
+    public void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception) {
         // only add if we not already have it
-        if (!exceptions.contains(exception)) {
-            exceptions.add(exception);
+        List<OnExceptionDefinition> list = onExceptions.get(routeContext);
+        if (list == null) {
+            list = new ArrayList<OnExceptionDefinition>();
+            onExceptions.put(routeContext, list);
         }
+        if (!list.contains(exception)) {
+            list.add(exception);
+        }
+    }
+
+    protected void cloneBuilder(ErrorHandlerBuilderSupport other) {
+        if (!onExceptions.isEmpty()) {
+            Map<RouteContext, List<OnExceptionDefinition>> copy = new HashMap<RouteContext, List<OnExceptionDefinition>>(onExceptions);
+            other.onExceptions = copy;
+        }
+        other.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 
     public void configure(RouteContext routeContext, ErrorHandler handler) {
         if (handler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
 
-            for (OnExceptionDefinition exception : exceptions) {
-                handlerSupport.addExceptionPolicy(routeContext, exception);
+            List<OnExceptionDefinition> list = onExceptions.get(routeContext);
+            if (list != null) {
+                for (OnExceptionDefinition exception : list) {
+                    handlerSupport.addExceptionPolicy(routeContext, exception);
+                }
             }
         }
     }
 
-    public List<OnExceptionDefinition> getErrorHandlers() {
-        return exceptions;
+    public List<OnExceptionDefinition> getErrorHandlers(RouteContext routeContext) {
+        return onExceptions.get(routeContext);
     }
 
-    public void setErrorHandlers(List<OnExceptionDefinition> exceptions) {
-        this.exceptions.clear();
-        this.exceptions.addAll(exceptions);
+    public void setErrorHandlers(RouteContext routeContext, List<OnExceptionDefinition> exceptions) {
+        this.onExceptions.put(routeContext, exceptions);
     }
 
     /**
