@@ -74,18 +74,6 @@ public class InOutMessageHandler extends DefaultMessageHandler {
     }
 
     /**
-     * TODO Add Constructor Javadoc
-     *
-     * @param endpoint
-     * @param executor
-     * @param commitStrategy
-     * @param rollbackStrategy
-     */
-    public InOutMessageHandler(Endpoint endpoint, ExecutorService executor, TransactionCommitStrategy commitStrategy) {
-        super(endpoint, executor, commitStrategy);
-    }
-
-    /**
      * @param message
      */
     @Override

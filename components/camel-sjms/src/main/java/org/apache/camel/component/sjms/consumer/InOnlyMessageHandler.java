@@ -49,16 +49,6 @@ public class InOnlyMessageHandler extends DefaultMessageHandler {
     }
 
     /**
-     * @param endpoint
-     * @param executor
-     * @param commitStrategy
-     * @param rollbackStrategy
-     */
-    public InOnlyMessageHandler(Endpoint endpoint, ExecutorService executor, TransactionCommitStrategy commitStrategy) {
-        super(endpoint, executor, commitStrategy);
-    }
-
-    /**
      * @param message
      */
     @Override

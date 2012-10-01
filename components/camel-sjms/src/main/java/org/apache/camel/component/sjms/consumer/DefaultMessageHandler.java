@@ -66,13 +66,6 @@ public abstract class DefaultMessageHandler implements MessageListener {
         this.executor = executor;
     }
 
-    public DefaultMessageHandler(Endpoint endpoint, ExecutorService executor, TransactionCommitStrategy commitStrategy) {
-        super();
-        this.endpoint = endpoint;
-        this.executor = executor;
-        this.commitStrategy = commitStrategy;
-    }
-
     @Override
     public void onMessage(Message message) {
         handleMessage(message);
