@@ -45,6 +45,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(Arquillian.class)
 public class IntegrationTest {
+    static boolean routeConfigured;
     private static final transient Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
 
     @Inject
@@ -53,8 +54,6 @@ public class IntegrationTest {
     @Inject
     @Mock
     MockEndpoint result;
-
-    static boolean routeConfigured;
 
     @Produces
     @ApplicationScoped

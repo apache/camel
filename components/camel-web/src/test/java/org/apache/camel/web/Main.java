@@ -32,15 +32,11 @@ import org.slf4j.LoggerFactory;
  */
 public final class Main {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-
     public static int mainPort = 9998;
-
     public static final String WEBAPP_DIR = "src/main/webapp";
-
     public static final String WEBAPP_CTX = "/";
-
-    protected static Server server = new Server();
+    protected static final Server SERVER = new Server();
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     private Main() {
     }
@@ -62,16 +58,16 @@ public final class Main {
 
         SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort(mainPort);
-        connector.setServer(server);
+        connector.setServer(SERVER);
         WebAppContext context = new WebAppContext();
 
         context.setResourceBase(WEBAPP_DIR);
         context.setContextPath(WEBAPP_CTX);
-        context.setServer(server);
+        context.setServer(SERVER);
 
-        server.setHandler(context);
-        server.setConnectors(new Connector[]{connector});
-        server.start();
+        SERVER.setHandler(context);
+        SERVER.setConnectors(new Connector[]{connector});
+        SERVER.start();
 
         LOG.info("");
         LOG.info("==============================================================================");
@@ -81,7 +77,7 @@ public final class Main {
     }
 
     public static void stop() throws Exception {
-        server.stop();
+        SERVER.stop();
     }
 
     /**

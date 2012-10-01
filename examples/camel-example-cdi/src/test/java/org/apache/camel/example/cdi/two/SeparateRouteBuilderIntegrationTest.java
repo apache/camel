@@ -16,6 +16,8 @@
  */
 package org.apache.camel.example.cdi.two;
 
+import javax.inject.Inject;
+
 import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.example.cdi.MyRoutes;
@@ -26,8 +28,6 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
 
 import static org.junit.Assert.assertNotNull;
 

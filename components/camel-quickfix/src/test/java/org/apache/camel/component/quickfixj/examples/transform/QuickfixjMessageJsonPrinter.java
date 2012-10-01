@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.quickfixj.examples.transform;
 
+import org.apache.camel.Exchange;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.camel.Exchange;
 
 import quickfix.ConfigError;
 
