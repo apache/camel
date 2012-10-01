@@ -16,95 +16,37 @@
  */
 package org.apache.camel.component.sjms.tx;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Verify the ability to batch transactions to the consumer.
  *
  */
-public class BatchTransactedQueueConsumerTest extends CamelTestSupport {
+public class BatchTransactedQueueConsumerTest extends TransactedConsumerSupport {
+    
+    private static final String BROKER_URI = "vm://btqc_test_broker?broker.persistent=false&broker.useJmx=true";
 
     /**
-     * Verify that after only sending 10 messages that 10 are delivered to the
-     * processor and upon the 10th message throwing an Exception which causes
-     * the messages deliveries to be rolled back. The messages should then be
-     * redelivered with the JMSRedelivered flag set to true for a total of 10
-     * delivered messages.
+     * We want to verify that when consuming from a single destination with
+     * multiple routes that we are thread safe and behave accordingly.
      * 
      * @throws Exception
      */
     @Test
-    public void testEndpointConfiguredBatchTransaction() throws Exception {
-        // We should get two sets of 10 messages. 10 before the rollback and 10
-        // after the rollback.
-        getMockEndpoint("mock:test.before").expectedMessageCount(10);
-        getMockEndpoint("mock:test.after").expectedMessageCount(10);
-
-        // Send only 10 messages
-        for (int i = 1; i <= 10; i++) {
-            template.sendBody("direct:start", "Hello World " + i);
-        }
-
-        getMockEndpoint("mock:test.before").assertIsSatisfied();
-        getMockEndpoint("mock:test.after").assertIsSatisfied();
-
+    public void testRoute() throws Exception {
+        final String destinationName = "sjms:queue:one.consumer.one.route.batch.tx.test"; 
+        int routeCount = 1;
+        int consumerCount = 1;
+        int batchCount = 5;
+        int messageCount = 20;
+        int maxAttemptsCount = 10;
+        int totalRedeliverdFalse = 20;
+        int totalRedeliveredTrue = 5;
+        runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue, batchCount, consumerCount, maxAttemptsCount);
     }
-
+    
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
-        SjmsComponent component = new SjmsComponent();
-        component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
-
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                
-                // Having a producer route helps with debugging and logging
-                from("direct:start")
-                    .to("sjms:queue:transacted.consumer.test");
-
-                // Our test consumer route
-                from("sjms:queue:transacted.consumer.test?transacted=true&transactionBatchCount=10")
-                    // first consume all the messages that are not redelivered
-                    .choice()
-                        .when(header("JMSRedelivered").isEqualTo("false"))
-                            .to("log:before_log?showAll=true")
-                            .to("mock:test.before")
-                            // This is where we will cause the rollback after 10 messages have been sent.
-                            .process(new Processor() {
-                                    @Override
-                                    public void process(Exchange exchange) throws Exception {
-                                        // Get the body
-                                        String body = exchange.getIn().getBody(String.class);
-                                        
-                                        // If the message ends with 10, throw the exception
-                                        if (body.endsWith("4") || body.endsWith("6")) {
-                                            log.info("10th message received.  Rolling back.");
-                                            exchange.getOut().setFault(true);
-                                            exchange.getOut().setBody("10th message received.  Rolling back.");
-                                        }
-                                    }
-                                })
-                        .otherwise()
-                            .to("log:after_log?showAll=true")
-                            .to("mock:test.after");
-            }
-        };
+    public String getBrokerUri() {
+        return BROKER_URI;
     }
 }

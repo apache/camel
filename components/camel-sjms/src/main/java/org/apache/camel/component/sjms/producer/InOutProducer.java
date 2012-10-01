@@ -297,6 +297,8 @@ public class InOutProducer extends SjmsProducer {
                 consumers.returnObject(consumer);
                 producer.getMessageProducer().send(request);
 
+                // Return the producer to the pool so another waiting producer can move forward
+                // without waiting on us to complete the exchange
                 try {
                     getProducers().returnObject(producer);
                 } catch (Exception exception) {

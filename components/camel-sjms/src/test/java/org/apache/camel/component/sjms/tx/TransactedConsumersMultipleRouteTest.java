@@ -19,12 +19,11 @@ package org.apache.camel.component.sjms.tx;
 import org.junit.Test;
 
 /**
- * Verify the ability to batch transactions to the consumer.
- *
+ * Test to verify concurrent consumers on a transacted endpoint.
  */
-public class BatchTransactedTopicConsumerTest extends TransactedConsumerSupport {
+public class TransactedConsumersMultipleRouteTest extends TransactedConsumerSupport {
     
-    private static final String BROKER_URI = "vm://bttc_test_broker?broker.persistent=false&broker.useJmx=true";
+    private static final String BROKER_URI = "vm://btqc_test_broker?broker.persistent=false&broker.useJmx=true";
 
     /**
      * We want to verify that when consuming from a single destination with
@@ -34,14 +33,14 @@ public class BatchTransactedTopicConsumerTest extends TransactedConsumerSupport 
      */
     @Test
     public void testRoute() throws Exception {
-        final String destinationName = "sjms:topic:one.consumer.one.route.batch.tx.test"; 
-        int routeCount = 1;
+        final String destinationName = "sjms:queue:one.consumer.one.route.test"; 
+        int routeCount = 2;
         int consumerCount = 1;
-        int batchCount = 5;
+        int batchCount = 1;
         int messageCount = 20;
         int maxAttemptsCount = 10;
-        int totalRedeliverdFalse = 20;
-        int totalRedeliveredTrue = 5;
+        int totalRedeliverdFalse = 10;
+        int totalRedeliveredTrue = 1;
         runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue, batchCount, consumerCount, maxAttemptsCount);
     }
     
