@@ -60,7 +60,6 @@ public class InOnlyMessageHandler extends DefaultMessageHandler {
         } else {
             NoOpAsyncCallback callback = new NoOpAsyncCallback();
             if (isTransacted() || isSynchronous()) {
-                //SessionTransactionAsyncCallback callback = new SessionTransactionAsyncCallback(exchange, getSession(), getCommitStrategy());
                 // must process synchronous if transacted or configured to
                 // do so
                 if (log.isDebugEnabled()) {
