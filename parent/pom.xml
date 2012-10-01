@@ -154,7 +154,7 @@
     <icu4j-version>4.8.1.1</icu4j-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
-    <jackson-version>1.9.9</jackson-version>
+    <jackson-version>1.9.10</jackson-version>
     <jackrabbit-version>2.2.12</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasypt-bundle-version>1.9.0_1</jasypt-bundle-version>
