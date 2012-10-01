@@ -254,6 +254,7 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
+        message.setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
         doWriteResponse(message, response, exchange);
     }
 
