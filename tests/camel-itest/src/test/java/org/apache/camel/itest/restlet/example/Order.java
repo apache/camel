@@ -24,8 +24,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @XmlRootElement(name = "Order")
 public class Order {
+    private static final Logger LOG = LoggerFactory.getLogger(Order.class);
     private long id;
     private String description;
     private Map<Long, Product> products = new HashMap<Long, Product>();
@@ -54,7 +58,7 @@ public class Order {
     @Path("products/{productId}/")
     @Produces("application/xml")
     public Product getProduct(@PathParam("productId")int productId) {
-        System.out.println("----invoking getProduct with id: " + productId);
+        LOG.info("----invoking getProduct with id: " + productId);
         Product p = products.get(new Long(productId));
         return p;
     }

@@ -46,7 +46,7 @@ public class RoutesContextA extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        System.out.println("Adding route from " + a + " to " + b);
+        LOG.info("Adding route from " + a + " to " + b);
         from(a).to(b);
     }
 

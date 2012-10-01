@@ -29,11 +29,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.model.RouteDefinition;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents the status of a single single Camel Route which is used to implement one or more
  * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
  */
 public class RouteStatusResource {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RouteStatusResource.class);
     private RouteResource routeResource;
 
     public RouteStatusResource(RouteResource routeResource) {
@@ -88,7 +93,7 @@ public class RouteStatusResource {
     @Consumes("application/x-www-form-urlencoded")
     public Response setStatus(Form formData) throws Exception {
         // TODO replace the Form class with an injected bean?
-        System.out.println("Received form! " + formData);
+        LOG.info("Received form! " + formData);
         String status = formData.getFirst("status", String.class);
         setStatus(status);
         return Response.seeOther(new URI("/routes")).build();

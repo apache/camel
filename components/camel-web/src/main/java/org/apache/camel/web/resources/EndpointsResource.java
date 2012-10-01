@@ -129,17 +129,17 @@ public class EndpointsResource extends CamelChildResourceSupport {
     @Consumes("application/x-www-form-urlencoded")
     public Response postUriForm(@Context UriInfo uriInfo, Form formData) throws URISyntaxException {
         // TODO replace the Form class with an injected bean?
-        System.out.println("Received form! " + formData);
+        LOG.info("Received form! " + formData);
         newUri = formData.getFirst("uri", String.class);
         EndpointResource endpoint = getEndpoint(newUri);
         if (endpoint != null) {
             String href = endpoint.getHref();
-            System.out.println("Created endpoint so redirecting to " + href);
+            LOG.info("Created endpoint so redirecting to " + href);
             return Response.seeOther(new URI(href)).build();
         } else {
             error = "Could not find a component to resolve that URI";
 
-            System.out.println("Failed to create new endpoint!");
+            LOG.info("Failed to create new endpoint!");
 
             // lets re-render the form
             return Response.ok(new Viewable("index", this)).build();

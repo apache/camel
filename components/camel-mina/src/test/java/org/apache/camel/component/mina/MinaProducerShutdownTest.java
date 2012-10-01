@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Ignore;
 
 /**
@@ -30,7 +31,7 @@ import org.junit.Ignore;
  * Run this test from maven: mvn exec:java and see the output if there is a error.
  */
 @Ignore
-public class MinaProducerShutdownTest {
+public class MinaProducerShutdownTest extends TestSupport {
 
     private static final String URI = "mina:tcp://localhost:6321?textline=true&sync=false";
     private long start;
@@ -62,7 +63,7 @@ public class MinaProducerShutdownTest {
         public void run() {
             long diff = System.currentTimeMillis() - start;
             if (diff > 5000) {
-                System.err.println("ERROR: MinaProducer should be able to shutdown within 5000 millis: time=" + diff);
+                log.error("ERROR: MinaProducer should be able to shutdown within 5000 millis: time=" + diff);
             }
         }
     }

@@ -59,7 +59,7 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        System.out.println("RoutePerformancePojoTest: Sent: " + size + " Took: " + delta + " ms");
+        log.info("RoutePerformancePojoTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
 }

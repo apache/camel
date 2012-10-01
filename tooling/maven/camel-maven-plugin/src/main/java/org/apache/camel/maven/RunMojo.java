@@ -454,10 +454,10 @@ public class RunMojo extends AbstractExecMojo {
                     main.invoke(main, new Object[] {arguments});
                 } catch (Exception e) { // just pass it on
                     // let it be printed so end users can see the exception on the console
-                    System.err.println("*************************************");
-                    System.err.println("Error occurred while running main from: " + mainClass);
-                    e.printStackTrace();
-                    System.err.println("*************************************");
+                    getLog().error("*************************************");
+                    getLog().error("Error occurred while running main from: " + mainClass);
+                    getLog().error(e);
+                    getLog().error("*************************************");
                     Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
                 }
             }

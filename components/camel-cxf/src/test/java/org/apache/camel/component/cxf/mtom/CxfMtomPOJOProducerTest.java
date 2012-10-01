@@ -71,11 +71,10 @@ public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
     @SuppressWarnings("unchecked")
     @Test
     public void testInvokingServiceFromCxfProducer() throws Exception {
-        if (Boolean.getBoolean("java.awt.headless")) {
-            System.out.println("Running headless. Skipping test as Images may not work.");
+        if (MtomTestHelper.isAwtHeadless(logger, null)) {
             return;
         }
-        
+
         final Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
         final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
         

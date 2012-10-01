@@ -21,6 +21,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple bootstrap class for starting Jetty in your IDE using the local web
@@ -29,6 +31,8 @@ import org.eclipse.jetty.webapp.WebAppContext;
  * @version 
  */
 public final class Main {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static int mainPort = 9998;
 
@@ -54,7 +58,7 @@ public final class Main {
     }
 
     public static void start() throws Exception {
-        System.out.println("Starting Web Server on port: " + mainPort);
+        LOG.info("Starting Web Server on port: " + mainPort);
 
         SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort(mainPort);
@@ -69,11 +73,11 @@ public final class Main {
         server.setConnectors(new Connector[]{connector});
         server.start();
 
-        System.out.println();
-        System.out.println("==============================================================================");
-        System.out.println("Started the Camel REST Console: point your web browser at " + getRootUrl());
-        System.out.println("==============================================================================");
-        System.out.println();
+        LOG.info("");
+        LOG.info("==============================================================================");
+        LOG.info("Started the Camel REST Console: point your web browser at " + getRootUrl());
+        LOG.info("==============================================================================");
+        LOG.info("");
     }
 
     public static void stop() throws Exception {

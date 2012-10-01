@@ -30,10 +30,15 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  */
 public class MyInOutTestConsumer implements MessageListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MyInOutTestConsumer.class);
     private static int ackMode;
     private static String clientQueueName;
 
@@ -98,7 +103,7 @@ public class MyInOutTestConsumer implements MessageListener {
             if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage) message;
                 messageText = textMessage.getText();
-                System.out.println("messageText = " + messageText);
+                LOG.info("messageText = " + messageText);
             }
         } catch (JMSException e) {
             //Handle the exception appropriately

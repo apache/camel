@@ -30,13 +30,11 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
     
     @SuppressWarnings("unchecked")
     @Test
-    public void testInvokingService() throws Exception {        
-       
-        if (Boolean.getBoolean("java.awt.headless")) { 
-            System.out.println("Running headless. Skipping test as Images may not work.");
+    public void testInvokingService() throws Exception {   
+        if (MtomTestHelper.isAwtHeadless(null, log)) {
             return;
-        }        
-        
+        }
+
         final Holder<byte[]> photo = new Holder<byte[]>("RequestFromCXF".getBytes("UTF-8"));
         final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
         

@@ -300,7 +300,6 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             try {
                                 field.set(obj, result);
                             } catch (Exception e) {
-                                // System.out.println("Exception : " + e);
                                 throw new IllegalArgumentException("Setting of field " + field + " failed for object : " + obj + " and result : " + result);
                             }
 

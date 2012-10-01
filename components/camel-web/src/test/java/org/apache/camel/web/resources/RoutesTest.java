@@ -32,14 +32,14 @@ public class RoutesTest extends TestSupport {
     public void testRoutes() throws Exception {
 
         String text = resource.path("routes").accept("application/xml").get(String.class);
-        System.out.println("Routes XML: " + text);
+        log.info("Routes XML: " + text);
         assertNotNull("XML should not be null", text);
 
         RoutesDefinition routes = resource.path("routes").accept("application/xml").get(RoutesDefinition.class);
         assertNotNull("Should have found routes", routes);
         List<RouteDefinition> routeList = routes.getRoutes();
         assertTrue("Should have at least one route", routeList.size() > 0);
-        System.out.println("Have routes: " + routeList);
+        log.info("Have routes: " + routeList);
         
         //call the REST API to remove the first route, then validate that the response page doesn't contain the route
         String routeID = routeList.get(0).getId();

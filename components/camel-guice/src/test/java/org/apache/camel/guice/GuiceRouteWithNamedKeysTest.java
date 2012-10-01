@@ -27,8 +27,8 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.TestSupport;
 import org.guiceyfruit.Injectors;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -36,7 +36,7 @@ import org.junit.Test;
  *
  * @version 
  */
-public class GuiceRouteWithNamedKeysTest extends Assert {
+public class GuiceRouteWithNamedKeysTest extends TestSupport {
 
     public static class MyModule extends CamelModuleWithMatchingRoutes {
 
@@ -54,27 +54,27 @@ public class GuiceRouteWithNamedKeysTest extends Assert {
         MyConfigurableRoute2 instance = injector.getInstance(Key.get(MyConfigurableRoute2.class, Names.named("foo")));
         assertNotNull("should have found a key for 'foo'", instance);
 
-        System.out.println("Found instance: " + instance);
+        log.info("Found instance: " + instance);
 
         //List<Binding<RouteBuilder>> list = injector.findBindingsByType(TypeLiteral.get(RouteBuilder.class));
         Collection<RouteBuilder> list = Injectors.getInstancesOf(injector, RouteBuilder.class);
-        System.out.println("RouteBuilder List: " + list);
+        log.info("RouteBuilder List: " + list);
 
         assertEquals("route builder list: " + list, 1, list.size());
 
         list = Injectors.getInstancesOf(injector, Matchers.subclassesOf(RouteBuilder.class));
-        System.out.println("RouteBuilder List: " + list);
+        log.info("RouteBuilder List: " + list);
 
         assertEquals("route builder list: " + list, 1, list.size());
 /*
 
         list = Injectors.getInstancesOf(injector, Matchers.subclassesOf(RouteBuilder.class).and(Matchers.annotatedWith(Names.named("foo"))));
-        System.out.println("RouteBuilder List: " + list);
+        log.info("RouteBuilder List: " + list);
 
         assertEquals("route builder list: " + list, 1, list.size());
 
         list = Injectors.getInstancesOf(injector, Matchers.subclassesOf(RouteBuilder.class).and(Matchers.annotatedWith(Names.named("bar"))));
-        System.out.println("RouteBuilder List: " + list);
+        log.info("RouteBuilder List: " + list);
 
         assertEquals("route builder list: " + list, 0, list.size());
 */

@@ -26,14 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.jndi.JndiContext;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class RmiRouteTest extends Assert {
+public class RmiRouteTest extends TestSupport {
 
     private int port;
 
@@ -98,12 +98,12 @@ public class RmiRouteTest extends Assert {
             URL[] urls = ucl.getURLs();
             for (URL url : urls) {
                 if (url.getPath().contains(" ")) {
-                    System.err.println("=======================================================================");
-                    System.err.println(" TEST Skipped: " + this.getClass().getName());
-                    System.err.println("   Your probably on windows.  We detected that the classpath");
-                    System.err.println("   has a space in it.  Try running maven with the following option: ");
-                    System.err.println("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");
-                    System.err.println("=======================================================================");
+                    log.error("=======================================================================");
+                    log.error(" TEST Skipped: " + this.getClass().getName());
+                    log.error("   Your probably on windows.  We detected that the classpath");
+                    log.error("   has a space in it.  Try running maven with the following option: ");
+                    log.error("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");
+                    log.error("=======================================================================");
                     return true;
                 }
             }

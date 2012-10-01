@@ -42,7 +42,7 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
         assertEquals(size, processor.getCounter());
 
         long delta = System.currentTimeMillis() - start;
-        System.out.println("RoutePerformanceCountTest: Sent: " + size + " Took: " + delta + " ms");
+        log.info("RoutePerformanceCountTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
     @Override

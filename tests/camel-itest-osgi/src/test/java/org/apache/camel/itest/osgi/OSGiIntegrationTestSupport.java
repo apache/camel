@@ -56,7 +56,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             }
         }
         for (Bundle b : bundleContext.getBundles()) {
-            System.err.println("Bundle: " + b.getSymbolicName());
+            LOG.warn("Bundle: " + b.getSymbolicName());
         }
         throw new RuntimeException("Bundle " + symbolicName + " does not exist");
     }
@@ -95,7 +95,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     
     public static UrlReference getKarafFeatureUrl() {
         String karafVersion = System.getProperty("karafVersion");
-        System.out.println("*** The karaf version is " + karafVersion + " ***");
+        LOG.info("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";
         return mavenBundle().groupId("org.apache.karaf.assemblies.features").
@@ -104,7 +104,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
 
     public static UrlReference getKarafEnterpriseFeatureUrl() {
         String karafVersion = System.getProperty("karafVersion");
-        System.out.println("*** The karaf version is " + karafVersion + " ***");
+        LOG.info("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";
         return mavenBundle().groupId("org.apache.karaf.assemblies.features").

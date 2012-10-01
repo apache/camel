@@ -73,11 +73,9 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
-        
-        if (Boolean.getBoolean("java.awt.headless")) {
-            System.out.println("Running headless. Skipping test as Images may not work.");
+        if (MtomTestHelper.isAwtHeadless(logger, null)) {
             return;
-        }        
+        }
         
         Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
         Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));

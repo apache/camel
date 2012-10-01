@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TestSupport extends Assert {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TestSupport.class);
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
     protected ClientConfig clientConfig;
     protected Client client;
@@ -39,7 +39,6 @@ public class TestSupport extends Assert {
 
     @Before
     public void setUp() throws Exception {
-        
         Main.start();
 
         clientConfig = new DefaultClientConfig();
@@ -56,7 +55,7 @@ public class TestSupport extends Assert {
 
 
     protected WebResource resource(String uri) {
-        LOG.info("About to test URI: " + uri);
+        log.info("About to test URI: " + uri);
         return resource.path(uri);
     }
     protected void assertHtmlResponse(String response) {

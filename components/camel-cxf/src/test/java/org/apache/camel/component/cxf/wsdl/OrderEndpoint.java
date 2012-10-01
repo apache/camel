@@ -19,12 +19,17 @@ package org.apache.camel.component.cxf.wsdl;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @WebService
 public class OrderEndpoint {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OrderEndpoint.class);
+
     @WebMethod
     public String doOrder(Order order) {
-        System.out.println("Processing order");
+        LOG.info("Processing order");
         return "Order processed " + order;
     };
 }

@@ -163,27 +163,15 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
                 
                 if (sslContextParameters != null) {
-
-                    // TODO: Remove us, but part of investigation issue on Java7 on ubuntu
-                    System.out.println(sslContextParameters);
                     SSLContext ssl = sslContextParameters.createSSLContext();
-                    System.out.println(ssl);
-
                     builder.setSSLContext(ssl);
                 }
                 
                 config = builder.build();
             } else {
                 if (sslContextParameters != null) {
-                    AsyncHttpClientConfig.Builder builder =
-                        new AsyncHttpClientConfig.Builder();
-
-                    // TODO: Remove us, but part of investigation issue on Java7 on ubuntu
-                    System.out.println(sslContextParameters);
-
+                    AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
                     SSLContext ssl = sslContextParameters.createSSLContext();
-                    System.out.println(ssl);
-
                     builder.setSSLContext(ssl);
                     config = builder.build();
                 }

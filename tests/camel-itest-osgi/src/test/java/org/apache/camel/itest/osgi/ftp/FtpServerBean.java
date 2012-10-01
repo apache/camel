@@ -47,7 +47,6 @@ public final class FtpServerBean {
 
     public static void startServer() throws Exception {
         initPort();
-        System.out.println("Starting FTP server on port " + port);
         LOG.info("Starting FTP server on port " + port);
         initFtpServer();
         ftpServer.start();
@@ -58,7 +57,6 @@ public final class FtpServerBean {
     }
 
     public static void shutdownServer() throws Exception {
-        System.out.println("Shutting down FTP server");
         LOG.info("Shutting down FTP server with port " + port);
         try {
             ftpServer.stop();

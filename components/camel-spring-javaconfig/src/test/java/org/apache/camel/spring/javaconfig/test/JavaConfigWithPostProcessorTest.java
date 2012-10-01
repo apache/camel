@@ -38,7 +38,7 @@ public class JavaConfigWithPostProcessorTest extends AbstractJUnit4SpringContext
     }
 
     public void doCheese() {
-        System.out.println("doCheese called!");
+        logger.info("doCheese called!");
         doCheeseCalled = true;
     }
 }

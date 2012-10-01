@@ -21,14 +21,14 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.junit4.TestSupport;
 import org.guiceyfruit.Injectors;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class GuiceTest extends Assert {
+public class GuiceTest extends TestSupport {
 
     /**
      * Asserts that the CamelContext is available in the given Injector, that its been started, then close the injector
@@ -68,7 +68,7 @@ public class GuiceTest extends Assert {
         Cheese cheese = injector.getInstance(Cheese.class);
         assertNotNull("Should have cheese", cheese);
         assertNotNull("Should have camelContext", cheese.getCamelContext());
-        System.out.println("Got " + cheese);
+        log.info("Got " + cheese);
 
         assertCamelContextRunningThenCloseInjector(injector);
     }

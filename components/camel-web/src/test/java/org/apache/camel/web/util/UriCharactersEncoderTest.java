@@ -16,10 +16,11 @@
  */
 package org.apache.camel.web.util;
 
-import org.junit.Assert;
+
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
-public class UriCharactersEncoderTest extends Assert {
+public class UriCharactersEncoderTest extends TestSupport {
 
     @Test
     public void testEncoder() {
@@ -33,7 +34,7 @@ public class UriCharactersEncoderTest extends Assert {
     @Test
     public void testNoEncoding() {
         String noEncoding = "direct:start\uFD04";
-        System.out.println(noEncoding.length());
+        log.info("The non-encoded endpoint {} has the lenght {}", noEncoding.length());
         String result = UriCharactersEncoder.encode(noEncoding);
         assertEquals("Get the wrong encoding result", noEncoding, result);
     }
