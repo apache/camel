@@ -33,7 +33,6 @@ import javax.jms.Topic;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sjms.TransactionCommitStrategy;
 import org.apache.camel.component.sjms.jms.JmsMessageExchangeHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.spi.Synchronization;
@@ -53,8 +52,7 @@ public class InOutMessageHandler extends DefaultMessageHandler {
 
     
     /**
-     * TODO Add Constructor Javadoc
-     *
+     * 
      * @param endpoint
      * @param executor
      */
@@ -63,7 +61,6 @@ public class InOutMessageHandler extends DefaultMessageHandler {
     }
     
     /**
-     * TODO Add Constructor Javadoc
      *
      * @param endpoint
      * @param executor

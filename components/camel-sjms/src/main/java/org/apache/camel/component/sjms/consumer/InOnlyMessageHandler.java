@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sjms.TransactionCommitStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.AsyncProcessorHelper;
 
