@@ -35,6 +35,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.JmsOperations;
+import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -496,7 +497,14 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             endpoint.setJmsKeyFormatStrategy(resolveAndRemoveReferenceParameter(
                     parameters, KEY_FORMAT_STRATEGY_PARAM, JmsKeyFormatStrategy.class));
         }
-
+        
+        // remove the listener from the registry because we cannot reuse it for a 2nd endpoint
+        AbstractMessageListenerContainer customMessageListenerContainer = resolveAndRemoveReferenceParameter(
+        		parameters, "customMessageListenerContainerRef", AbstractMessageListenerContainer.class);
+        if (customMessageListenerContainer != null) {
+        	endpoint.setCustomMessageListenerContainer(customMessageListenerContainer);        	
+        }
+        
         setProperties(endpoint.getConfiguration(), parameters);
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
