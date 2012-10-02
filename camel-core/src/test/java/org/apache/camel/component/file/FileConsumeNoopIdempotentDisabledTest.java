@@ -36,7 +36,7 @@ public class FileConsumeNoopIdempotentDisabledTest extends ContextTestSupport {
     public void testNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // should be able to read the file multiple times as idempotent is false
-        mock.expectedMessageCount(2);
+        mock.expectedMinimumMessageCount(2);
 
         assertMockEndpointsSatisfied();
     }
