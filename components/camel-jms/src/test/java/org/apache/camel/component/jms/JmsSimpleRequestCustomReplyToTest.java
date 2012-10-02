@@ -48,7 +48,7 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
     @Test
     public void testRequetCustomReplyTo() throws Exception {
         // use another thread to send the late reply to simulate that we do it later, not
-        // from the origianl route anyway
+        // from the original route anyway
         Thread sender = new Thread(new SendLateReply());
         sender.start();
 
