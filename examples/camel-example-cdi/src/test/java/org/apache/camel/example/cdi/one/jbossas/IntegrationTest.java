@@ -14,35 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.cdi.one;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+package org.apache.camel.example.cdi.one.jbossas;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Mock;
-import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.cdi.MyRoutes;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import java.io.File;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Lets use an embedded {@link RouteBuilder} to test {@link MyRoutes}
- */
+
 @RunWith(Arquillian.class)
 public class IntegrationTest {
     static boolean routeConfigured;
@@ -81,12 +83,25 @@ public class IntegrationTest {
     }
 
     @Deployment
-    public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-                //.addPackage(CdiCamelContext.class.getPackage())
-                .addPackage(CamelExtension.class.getPackage())
+    @TargetsContainer("jbossas-managed")
+    public static Archive<?> createTestArchive() {
+
+
+        JavaArchive jarTest = ShrinkWrap.create(JavaArchive.class)
                 .addPackage(MyRoutes.class.getPackage())
                 .addPackage(IntegrationTest.class.getPackage())
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+
+        File[] libs = Maven.resolver()
+                .loadPomFromFile("pom.xml")
+                .resolve("org.apache.camel:camel-core","org.apache.camel:camel-cdi","org.apache.activemq:activemq-camel")
+                .withTransitivity()
+                .as(File.class);
+
+        return ShrinkWrap
+                .create(WebArchive.class, "test.war")
+                .addAsLibrary(jarTest)
+                .addAsLibraries(libs);
     }
+
 }

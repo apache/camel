@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.cdi.two;
-
-import javax.inject.Inject;
+package org.apache.camel.example.cdi.two.weld;
 
 import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.example.cdi.MyRoutes;
+import org.apache.camel.example.cdi.two.TestRouteBuilder;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -29,10 +29,12 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Lets use a separate {@link TestRouteBuilder} to test the routes
+ * Lets use a separate {@link org.apache.camel.example.cdi.two.TestRouteBuilder} to test the routes
  */
 @RunWith(Arquillian.class)
 public class SeparateRouteBuilderIntegrationTest {
@@ -47,11 +49,13 @@ public class SeparateRouteBuilderIntegrationTest {
     }
 
     @Deployment
+    @TargetsContainer("weld-ee-embedded-1.1")
     public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class)
                 .addPackage(CdiCamelContext.class.getPackage())
                 .addPackage(CamelExtension.class.getPackage())
                 .addPackage(MyRoutes.class.getPackage())
+                .addPackage(TestRouteBuilder.class.getPackage())
                 .addPackage(SeparateRouteBuilderIntegrationTest.class.getPackage())
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }

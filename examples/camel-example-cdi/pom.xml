@@ -15,241 +15,350 @@
     License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>examples</artifactId>
-    <version>2.11-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>camel-example-cdi</artifactId>
-  <packaging>war</packaging>
-  <name>Camel :: Example :: CDI</name>
-  <description>An example showing how to work with Camel and CDI for dependency injection</description>
-
-  <properties>
-    <camel.osgi.export>org.apache.camel.example.cdi.*</camel.osgi.export>
-    <camel.osgi.import>
-      javax.ejb,
-      javax.inject,
-      org.apache.camel,
-      org.apache.camel.builder,
-      org.apache.camel.model,
-      org.apache.camel.cdi,
-      org.apache.activemq.broker,
-      org.apache.activemq.camel.component,
-      org.apache.activemq.pool,
-      org.apache.activemq.xbean
-    </camel.osgi.import>
-    <!-- avoid to import the bunch of spring related package -->
-    <camel.osgi.dynamic>org.springframework.*</camel.osgi.dynamic>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cdi</artifactId>
-    </dependency>
-
-    <!-- we make use of the javax.ejb.Startup API while running the example -->
-    <!-- embedded inside glassfish/jboss (see the 2 profiles below) -->
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-ejb_3.1_spec</artifactId>
-      <version>${geronimo-ejb_3.1_spec-version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- activemq component -->
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-camel</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-pool</artifactId>
-    </dependency>
-
-    <!-- logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-
-    <!-- for testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.arquillian.junit</groupId>
-      <artifactId>arquillian-junit-container</artifactId>
-      <version>${arquillian-junit-container-version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <!-- allows the routes to be run via 'mvn camel:run' -->
-      <plugin>
+    <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <useCDI>true</useCDI>
-        </configuration>
-        <dependencies>
-          <!-- lets use deltaspike & weld -->
-          <dependency>
-            <groupId>org.apache.deltaspike.cdictrl</groupId>
-            <artifactId>deltaspike-cdictrl-weld</artifactId>
-            <version>${deltaspike-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se-core</artifactId>
-            <version>${weld-version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
+        <artifactId>examples</artifactId>
+        <version>2.11-SNAPSHOT</version>
+    </parent>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <webResources>
-            <!-- place the legal files under the META-INF folder -->
-            <resource>
-              <directory>src/main/resources/META-INF</directory>
-              <targetPath>META-INF</targetPath>
-              <includes>
-                <include>*.txt</include>
-              </includes>
-            </resource>
-            <!-- place beans.xml where it's expected to be, that's under the path WEB-INF/beans.xml -->
-            <resource>
-              <directory>src/main/resources/META-INF</directory>
-              <targetPath>WEB-INF</targetPath>
-              <includes>
-                <include>beans.xml</include>
-              </includes>
-            </resource>
-          </webResources>
-          <!-- exclude beans.xml from the root of the WAR -->
-          <packagingExcludes>beans.xml</packagingExcludes>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
+    <artifactId>camel-example-cdi</artifactId>
+    <packaging>war</packaging>
+    <name>Camel :: Example :: CDI</name>
+    <description>An example showing how to work with Camel and CDI for dependency injection</description>
 
-      <plugin>
-        <!-- lets re-enable IntegrationTest -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
-          <excludes>
-            <exclude>**/*XXXTest.*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <properties>
+        <camel.osgi.export>org.apache.camel.example.cdi.*</camel.osgi.export>
+        <camel.osgi.import>
+            javax.ejb,
+            javax.inject,
+            org.apache.camel,
+            org.apache.camel.builder,
+            org.apache.camel.model,
+            org.apache.camel.cdi,
+            org.apache.activemq.broker,
+            org.apache.activemq.camel.component,
+            org.apache.activemq.pool,
+            org.apache.activemq.xbean
+        </camel.osgi.import>
+        <!-- avoid to import the bunch of spring related package -->
+        <camel.osgi.dynamic>org.springframework.*</camel.osgi.dynamic>
+    </properties>
 
-  <profiles>
-    <profile>
-      <id>arquillian-weld-ee-embedded</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <dependencies>
+    <dependencies>
         <dependency>
-          <groupId>org.jboss.spec</groupId>
-          <artifactId>jboss-javaee-6.0</artifactId>
-          <version>${jboss-javaee-6-version}</version>
-          <type>pom</type>
-          <scope>provided</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cdi</artifactId>
+        </dependency>
+
+        <!-- we make use of the javax.ejb.Startup API while running the example -->
+        <!-- embedded inside glassfish/jbossas (see the 2 profiles below) -->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-ejb_3.1_spec</artifactId>
+            <version>${geronimo-ejb_3.1_spec-version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- activemq component -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-camel</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
-          <version>${arquillian-weld-ee-embedded-version}</version>
-          <scope>test</scope>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+        </dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+        <!-- for testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.jboss.weld</groupId>
-          <artifactId>weld-core</artifactId>
-          <version>${weld-version}</version>
-          <scope>test</scope>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <version>${arquillian-junit-container-version}</version>
+            <scope>test</scope>
         </dependency>
-      </dependencies>
-    </profile>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>2.0.0-alpha-4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-    <profile>
-      <id>glassfish</id>
-      <properties>
-        <embedded-glassfish-plugin-version>3.1.2.2</embedded-glassfish-plugin-version>
-
-        <!-- skip running the tests while deploying. you can still run them using the default profile -->
-        <!-- 'arquillian-weld-ee-embedded' having the required dependencies for the test execution -->
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-      <build>
+    <build>
         <plugins>
-          <plugin>
-            <groupId>org.glassfish.embedded</groupId>
-            <artifactId>maven-embedded-glassfish-plugin</artifactId>
-            <version>${embedded-glassfish-plugin-version}</version>
-            <configuration>
-              <goalPrefix>glassfish</goalPrefix>
-              <app>target/${project.artifactId}-${project.version}.war</app>
-              <port>8080</port>
-              <contextRoot>${project.name}</contextRoot>
-            </configuration>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+            <!-- allows the routes to be run via 'mvn camel:run' -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <useCDI>true</useCDI>
+                </configuration>
+                <dependencies>
+                    <!-- lets use deltaspike & weld -->
+                    <dependency>
+                        <groupId>org.apache.deltaspike.cdictrl</groupId>
+                        <artifactId>deltaspike-cdictrl-weld</artifactId>
+                        <version>${deltaspike-version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.weld.se</groupId>
+                        <artifactId>weld-se-core</artifactId>
+                        <version>${weld-version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
-    <profile>
-      <id>jboss</id>
-      <properties>
-        <jboss-plugin-version>7.2.Final</jboss-plugin-version>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <!-- place the legal files under the META-INF folder -->
+                        <resource>
+                            <directory>src/main/resources/META-INF</directory>
+                            <targetPath>META-INF</targetPath>
+                            <includes>
+                                <include>*.txt</include>
+                            </includes>
+                        </resource>
+                        <!-- place beans.xml where it's expected to be, that's under the path WEB-INF/beans.xml -->
+                        <resource>
+                            <directory>src/main/resources/META-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <includes>
+                                <include>beans.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                    <!-- exclude beans.xml from the root of the WAR -->
+                    <packagingExcludes>beans.xml</packagingExcludes>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
 
-        <!-- skip running the tests while deploying. you can still run them using the default profile -->
-        <!-- 'arquillian-weld-ee-embedded' having the required dependencies for the test execution -->
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.jboss.as.plugins</groupId>
-            <artifactId>jboss-as-maven-plugin</artifactId>
-            <version>${jboss-plugin-version}</version>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
+            <plugin>
+                <!-- lets re-enable IntegrationTest -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <arquillian.launch>${arquillian}</arquillian.launch>
+                        <arquillian>${arquillian}</arquillian>
+                    </systemProperties>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*XXXTest.*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
-  </profiles>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>arquillian-weld-ee-embedded</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.spec</groupId>
+                    <artifactId>jboss-javaee-6.0</artifactId>
+                    <version>${jboss-javaee-6-version}</version>
+                    <type>pom</type>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                    <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+                    <version>${arquillian-weld-ee-embedded-version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.weld</groupId>
+                    <artifactId>weld-core</artifactId>
+                    <version>${weld-version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- lets re-enable IntegrationTest -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <arquillian.launch>weld-ee-embedded-1.1</arquillian.launch>
+                                <arquillian>weld-ee-embedded-1.1</arquillian>
+                            </systemPropertyVariables>
+                            <excludes>
+                                <exclude>**/jbossas/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+
+            </build>
+        </profile>
+
+        <profile>
+            <id>arquillian-jbossas-managed</id>
+            <properties>
+                <jboss-arquillian-version>7.1.1.Final</jboss-arquillian-version>
+                <arquillian-version>1.0.0.CR6</arquillian-version>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.spec</groupId>
+                    <artifactId>jboss-javaee-6.0</artifactId>
+                    <version>${jboss-javaee-6-version}</version>
+                    <type>pom</type>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-arquillian-container-managed</artifactId>
+                    <version>${jboss-arquillian-version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.arquillian.protocol</groupId>
+                    <artifactId>arquillian-protocol-servlet</artifactId>
+                    <version>${arquillian-version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                    <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+                    <version>2.0.0-alpha-4</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.jboss.as</groupId>
+                                            <artifactId>jboss-as-dist</artifactId>
+                                            <version>${jboss-arquillian-version}</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>target</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- lets re-enable IntegrationTest -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <arquillian.launch>jbossas-managed</arquillian.launch>
+                                <arquillian>jbossas-managed</arquillian>
+                            </systemPropertyVariables>
+                            <excludes>
+                                <exclude>**/weld/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>glassfish</id>
+            <properties>
+                <embedded-glassfish-plugin-version>3.1.2.2</embedded-glassfish-plugin-version>
+
+                <!-- skip running the tests while deploying. you can still run them using the default profile -->
+                <!-- 'arquillian-weld-ee-embedded' having the required dependencies for the test execution -->
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.glassfish.embedded</groupId>
+                        <artifactId>maven-embedded-glassfish-plugin</artifactId>
+                        <version>${embedded-glassfish-plugin-version}</version>
+                        <configuration>
+                            <goalPrefix>glassfish</goalPrefix>
+                            <app>target/${project.artifactId}-${project.version}.war</app>
+                            <port>8080</port>
+                            <contextRoot>${project.name}</contextRoot>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>jboss</id>
+            <properties>
+                <jboss-plugin-version>7.2.Final</jboss-plugin-version>
+
+                <!-- skip running the tests while deploying. you can still run them using the default profile -->
+                <!-- 'arquillian-weld-ee-embedded' having the required dependencies for the test execution -->
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jboss.as.plugins</groupId>
+                        <artifactId>jboss-as-maven-plugin</artifactId>
+                        <version>${jboss-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+    </profiles>
 </project>

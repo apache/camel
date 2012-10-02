@@ -19,17 +19,18 @@ You can see the routing rules by looking at the java code in the
   To stop the example hit ctrl + c
   
 When we launch the example using the camel maven plugin, a local CDI container
-is created and started. Additionally there're two maven profiles being defined
-by this example (see pom.xml for details) so that using maven we can easily embed
-and deploy the example as a web-app into an application server.
+is created and started.
 
-To run the example using JBoss type
-  mvn deploy -Pjboss
+Additionally there are maven profiles being defined by this example (see pom.xml for details)
+which allow to test using arquillian the project in weld container, jboss-as, ...
+
+To run the example with Arquillian & JBossAS 7.x managed, type
+  mvn test -Parquillian-jbossas-managed
   
-And for Glassfish
-  mvn deploy -Pglassfish
+And for Arquillian & Weld
+  mvn test -Parquillian-weld-ee-embedded
 
-Please note that both the JBoss as well as Glassfish maven artifacts are pretty
+Please note that both the JBoss as well as Weld maven artifacts are pretty
 big in size so be patient as maven downloads them into your local repository for
 the first time.
 
