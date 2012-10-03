@@ -91,18 +91,5 @@
         <enabled>true</enabled>
       </releases>
     </repository>
-<!--
-    <repository>
-      <id>guiceyfruit.snapshot</id>
-      <name>GuiceyFruit Snapshot Repository</name>
-      <url>http://guiceyfruit.googlecode.com/svn/repo/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
--->
   </repositories>
 </project>
