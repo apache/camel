@@ -16,19 +16,9 @@
  */
 package org.apache.camel.example.cdi.two;
 
-import org.apache.camel.cdi.CdiCamelContext;
-import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.example.cdi.ArchiveUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-
-import java.io.File;
 
 /**
  *  Factory to create archive (jar, war)
@@ -47,10 +37,10 @@ public class DeploymentFactory {
         System.out.println("Deployment type : " + deploymentType);
 
         if (deploymentType.equals("weld-ee-embedded-1.1")) {
-            archive = ArchiveUtil.createWeldArchive(packages);
+            archive = ArchiveUtil.createJarArchive(packages);
 
         } else if (deploymentType.equals("jbossas-managed")) {
-            archive =  ArchiveUtil.createJBossASArchive(packages);
+            archive =  ArchiveUtil.createWarArchive(packages);
         }
         return archive;
     }

@@ -17,8 +17,9 @@ import java.io.File;
  */
 public class ArchiveUtil {
 
-    @TargetsContainer("weld-ee-embedded-1.1")
-    public static Archive<?> createWeldArchive(String[] packages) {
+    //weld-ee-embedded-1.1
+    @TargetsContainer("")
+    public static Archive<?> createJarArchive(String[] packages) {
 
         JavaArchive jar =  ShrinkWrap.create(JavaArchive.class)
                 .addPackage(CdiCamelContext.class.getPackage())
@@ -31,8 +32,9 @@ public class ArchiveUtil {
         return jar;
     }
 
-    @TargetsContainer("jbossas-managed")
-    public static Archive<?> createJBossASArchive(String[] packages) {
+    // jbossas-managed
+    @TargetsContainer("")
+    public static Archive<?> createWarArchive(String[] packages) {
 
         JavaArchive jarTest = ShrinkWrap.create(JavaArchive.class)
                 .addPackages(false, packages)
