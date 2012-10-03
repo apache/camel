@@ -42,11 +42,11 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.webapp.WebAppContext;
 
 public class CMISTestSupport extends CamelTestSupport {
     protected static final String CMIS_ENDPOINT_TEST_SERVER
@@ -144,9 +144,7 @@ public class CMISTestSupport extends CamelTestSupport {
     @BeforeClass
     public static void startServer() throws Exception {
         cmisServer = new Server(9090);
-        WebAppContext openCmisServerApi = new WebAppContext(OPEN_CMIS_SERVER_WAR_PATH,
-                "/chemistry-opencmis-server-inmemory");
-        cmisServer.addHandler(openCmisServerApi);
+        cmisServer.setHandler(new WebAppContext(OPEN_CMIS_SERVER_WAR_PATH, "/chemistry-opencmis-server-inmemory"));
         cmisServer.start();
     }
 
