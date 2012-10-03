@@ -198,14 +198,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
             this.breadcrumbId = MDC.get(MDC_BREADCRUMB_ID);
             this.correlationId = MDC.get(MDC_CORRELATION_ID);
             this.camelContextId = MDC.get(MDC_CAMEL_CONTEXT_ID);
-
-            String routeId = MDC.get(MDC_ROUTE_ID);
-            if (routeId != null) {
-                // intern route id as this reduces memory allocations
-                this.routeId = routeId.intern();
-            } else {
-                this.routeId = null;
-            }
+            this.routeId = MDC.get(MDC_ROUTE_ID);
         }
 
         public void done(boolean doneSync) {
