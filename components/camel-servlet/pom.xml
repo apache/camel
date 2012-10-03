@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -15,7 +14,6 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -41,7 +39,7 @@
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.compendium</artifactId>
-      <version>1.2.0</version>
+      <version>${felix-compendium-version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -76,6 +74,7 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
@@ -110,7 +109,7 @@
      <dependency>
       <groupId>rhino</groupId>
       <artifactId>js</artifactId>
-      <version>1.7R1</version>
+      <version>${rhino-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

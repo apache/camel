@@ -48,7 +48,9 @@
     <arquillian-junit-container-version>1.0.0.CR7</arquillian-junit-container-version>
     <arquillian-weld-ee-embedded-version>1.0.0.CR3</arquillian-weld-ee-embedded-version>
     <asm-bundle-version>3.3_2</asm-bundle-version>
+    <asm-version>3.1</asm-version>
     <asm2-bundle-version>2.2.3_5</asm2-bundle-version>
+    <aspectj-version>1.6.2</aspectj-version>
     <atomikos-transactions-version>3.8.0</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avro-version>1.6.2</avro-version>
@@ -59,9 +61,11 @@
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
     <beanio-version>2.0.1</beanio-version>
+    <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.46</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
-    <cglib-version>2.1_3_7</cglib-version>
+    <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
+    <cglib-version>2.2</cglib-version>
     <cmis-version>0.7.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
@@ -105,6 +109,7 @@
     <exec-maven-plugin-version>1.1.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
+    <felix-compendium-version>1.2.0</felix-compendium-version>
     <felix-configadmin-version>1.2.4</felix-configadmin-version>
     <felix-framework-version>2.0.5</felix-framework-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
@@ -179,6 +184,7 @@
     <jdom-version>1.1.3</jdom-version>
     <jetty-version>7.6.7.v20120910</jetty-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
+    <jetty6-version>6.1.26</jetty6-version>
     <jettison-version>1.3.2</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
@@ -205,6 +211,8 @@
     <juel-version>2.1.3</juel-version>
     <junit-bundle-version>4.10_1</junit-bundle-version>
     <junit-version>4.10</junit-version>
+    <jython-engine-version>20080611</jython-engine-version>
+    <jython-version>2.2.1</jython-version>
     <karaf-version>2.2.9</karaf-version>
     <krati-version>0.4.6</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
@@ -214,7 +222,6 @@
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
-    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-version>2.0</maven-version>
@@ -262,6 +269,7 @@
     <relaxngDatatype-version>20020414</relaxngDatatype-version>
     <restlet-version>2.0.15</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
+    <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>

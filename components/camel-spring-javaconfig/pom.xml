@@ -65,10 +65,10 @@
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.cglib</artifactId>
-      <version>2.1_3_6</version>
+      <version>${cglib-bundle-version}</version>
     </dependency>
 
-    <!-- testing -->
+    <!-- test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

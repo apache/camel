@@ -35,7 +35,6 @@
   </properties>
  
   <dependencies>
-    <!-- runtime -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -56,7 +55,7 @@
       <version>${rome-version}</version>
     </dependency>
     
-    <!-- testing -->
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>      
