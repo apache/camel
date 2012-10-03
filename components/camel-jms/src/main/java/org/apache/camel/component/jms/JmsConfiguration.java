@@ -135,7 +135,7 @@ public class JmsConfiguration implements Cloneable {
     // the cacheLevelName of reply manager
     private String replyToCacheLevelName;
     private boolean allowNullBody = true;
-	private AbstractMessageListenerContainer customMessageListenerContainer;
+    private MessageListenerContainerFactory messageListenerContainerFactory;
 
     public JmsConfiguration() {
     }
@@ -385,10 +385,17 @@ public class JmsConfiguration implements Cloneable {
         case Default:
             return new DefaultJmsMessageListenerContainer(endpoint);
         case Custom:
-            return getCustomMessageListenerContainer();            
+            return getCustomMessageListenerContainer(endpoint);            
         default:
             throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
+    }
+
+    private AbstractMessageListenerContainer getCustomMessageListenerContainer(JmsEndpoint endpoint) {
+        if (messageListenerContainerFactory != null) {
+            return messageListenerContainerFactory.createMessageListenerContainer(endpoint);
+        }
+        return null;
     }
 
     // Properties
@@ -1281,12 +1288,11 @@ public class JmsConfiguration implements Cloneable {
         this.allowNullBody = allowNullBody;
     }
 
-	public AbstractMessageListenerContainer getCustomMessageListenerContainer() {
-	    return customMessageListenerContainer;
+    public MessageListenerContainerFactory getMessageListenerContainerFactory() {
+        return messageListenerContainerFactory;
     }
 
-	public void setCustomMessageListenerContainer(
-            AbstractMessageListenerContainer customMessageListenerContainer) {
-	    this.customMessageListenerContainer = customMessageListenerContainer;
+    public void setMessageListenerContainerFactory(MessageListenerContainerFactory messageListenerContainerFactory) {
+        this.messageListenerContainerFactory = messageListenerContainerFactory;
     }
 }
