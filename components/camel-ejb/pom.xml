@@ -36,27 +36,21 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openejb</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>5.0-3</version>
-            <scope>provided</scope>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-core</artifactId>
         </dependency>
 
         <!-- testing -->
         <dependency>
-            <groupId>org.apache.openejb</groupId>
-            <artifactId>openejb-core</artifactId>
-            <version>3.1.4</version>
-            <scope>test</scope>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>openejb-core</artifactId>
+          <version>${openejb-version}</version>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring</artifactId>
-            <scope>test</scope>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-test-spring</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.slf4j</groupId>
@@ -64,9 +58,9 @@
           <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <scope>test</scope>
         </dependency>
     </dependencies>
 
