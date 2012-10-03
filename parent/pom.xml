@@ -346,6 +346,7 @@
       org.apache.velocity.*;version="[1.6.2,2)",
       org.apache.xmlbeans.*;version="[2.4,3)",
       org.eclipse.jetty.*;version="[7.5,8.2)",
+      org.eclipse.jetty.util.ssl;version="[7.6,8.2)";resolution:=optional,
       com.thoughtworks.xstream.*;version="[1.3,2)",
       org.antlr.stringtemplate.*;version="[3.0,4)",
       org.jivesoftware.smack.*;version="[3.0,4)",
