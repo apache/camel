@@ -52,7 +52,7 @@ public class LogComponent extends DefaultComponent {
             logger = new ThroughputLogger(camelLogger, this.getCamelContext(), groupInterval, groupDelay, groupActiveOnly);
         } else {
             LogFormatter formatter = new LogFormatter();
-            IntrospectionSupport.setProperties(formatter, parameters);
+            setProperties(formatter, parameters);
 
             logger = new CamelLogProcessor(camelLogger, formatter);
         }
