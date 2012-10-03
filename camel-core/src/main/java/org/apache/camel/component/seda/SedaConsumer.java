@@ -309,8 +309,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         shutdownExecutor();
     }
 
-	private void shutdownExecutor() {
-	    if (executor != null) {
+    private void shutdownExecutor() {
+        if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
