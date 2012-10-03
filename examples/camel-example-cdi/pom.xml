@@ -188,8 +188,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <arquillian.launch>weld-ee-embedded-1.1</arquillian.launch>
-                                <arquillian>weld-ee-embedded-1.1</arquillian>
+                                <arquillian.launch>weld-ee-embedded</arquillian.launch>
+                                <arquillian>weld-ee-embedded</arquillian>
                             </systemPropertyVariables>
                             <includes>
                                 <include>**/*Test.java</include>

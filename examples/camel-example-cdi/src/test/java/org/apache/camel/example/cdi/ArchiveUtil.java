@@ -13,11 +13,10 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import java.io.File;
 
 /**
- *  Util class used to create Archive used by Arquillian
+ *  Util class used to create Jar or War archive used by Arquillian
  */
 public class ArchiveUtil {
 
-    //weld-ee-embedded-1.1
     @TargetsContainer("")
     public static Archive<?> createJarArchive(String[] packages) {
 
@@ -32,7 +31,6 @@ public class ArchiveUtil {
         return jar;
     }
 
-    // jbossas-managed
     @TargetsContainer("")
     public static Archive<?> createWarArchive(String[] packages) {
 

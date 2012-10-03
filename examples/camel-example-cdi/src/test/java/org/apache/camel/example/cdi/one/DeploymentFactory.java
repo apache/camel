@@ -25,6 +25,10 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public class DeploymentFactory {
 
+    private static String WELD_EMBEDDED_CONTAINER = "weld-ee-embedded";
+    private static String JBOSSAS_MANAGED_CONTAINER = "jbossas-managed";
+
+
     @Deployment
     public static Archive<?> createArchive() {
 
@@ -34,12 +38,10 @@ public class DeploymentFactory {
         // TODO FIND A BETTER WAY TO PASS PACKAGES
         String[] packages = {"org.apache.camel.example.cdi","org.apache.camel.example.cdi.one"};
 
-        System.out.println("Deployment type : " + deploymentType);
-
-        if (deploymentType.equals("weld-ee-embedded-1.1")) {
+        if (deploymentType.equals(WELD_EMBEDDED_CONTAINER)) {
             archive = ArchiveUtil.createJarArchive(packages);
 
-        } else if (deploymentType.equals("jbossas-managed")) {
+        } else if (deploymentType.equals(JBOSSAS_MANAGED_CONTAINER)) {
             archive =  ArchiveUtil.createWarArchive(packages);
         }
         return archive;
