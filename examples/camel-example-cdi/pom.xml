@@ -150,24 +150,6 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <!-- lets re-enable IntegrationTest -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemProperties>
-                        <arquillian.launch>${arquillian}</arquillian.launch>
-                        <arquillian>${arquillian}</arquillian>
-                    </systemProperties>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*XXXTest.*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -201,7 +183,7 @@
             <build>
                 <plugins>
                     <plugin>
-                        <!-- lets re-enable IntegrationTest -->
+                        <!-- lets re-enable IntegrationTeeest -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
@@ -209,8 +191,11 @@
                                 <arquillian.launch>weld-ee-embedded-1.1</arquillian.launch>
                                 <arquillian>weld-ee-embedded-1.1</arquillian>
                             </systemPropertyVariables>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
                             <excludes>
-                                <exclude>**/jbossas/**</exclude>
+                                <exclude>**/*JBoss*.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
@@ -280,7 +265,7 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <!-- lets re-enable IntegrationTest -->
+                        <!-- lets re-enable IntegrationTeeest -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
@@ -288,8 +273,11 @@
                                 <arquillian.launch>jbossas-managed</arquillian.launch>
                                 <arquillian>jbossas-managed</arquillian>
                             </systemPropertyVariables>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
                             <excludes>
-                                <exclude>**/weld/**</exclude>
+                                <exclude>**/*Weld*.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
@@ -297,13 +285,11 @@
             </build>
         </profile>
 
+        <!--
         <profile>
             <id>glassfish</id>
             <properties>
                 <embedded-glassfish-plugin-version>3.1.2.2</embedded-glassfish-plugin-version>
-
-                <!-- skip running the tests while deploying. you can still run them using the default profile -->
-                <!-- 'arquillian-weld-ee-embedded' having the required dependencies for the test execution -->
                 <maven.test.skip>true</maven.test.skip>
             </properties>
             <build>
@@ -335,9 +321,6 @@
             <id>jboss</id>
             <properties>
                 <jboss-plugin-version>7.2.Final</jboss-plugin-version>
-
-                <!-- skip running the tests while deploying. you can still run them using the default profile -->
-                <!-- 'arquillian-weld-ee-embedded' having the required dependencies for the test execution -->
                 <maven.test.skip>true</maven.test.skip>
             </properties>
             <build>
@@ -358,7 +341,7 @@
                 </plugins>
             </build>
         </profile>
-
+         -->
 
     </profiles>
 </project>
