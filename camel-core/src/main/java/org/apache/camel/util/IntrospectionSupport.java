@@ -41,6 +41,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Helper for introspections of beans.
+ * <p/>
+ * <b>Important: </b> Its recommended to call the {@link #stop()} method when
+ * {@link org.apache.camel.CamelContext} is being stopped. This allows to clear the introspection cache.
+ * <p/>
+ * This implementation will skip methods from <tt>java.lang.Object</tt> and <tt>java.lang.reflect.Proxy</tt>.
+ * <p/>
+ * This implementation will use a cache when the {@link #getProperties(Object, java.util.Map, String)}
+ * method is being used. Also the {@link #cacheClass(Class)} method gives access to the introspect cache.
  */
 public final class IntrospectionSupport {
 
@@ -48,6 +56,7 @@ public final class IntrospectionSupport {
     private static final Pattern GETTER_PATTERN = Pattern.compile("(get|is)[A-Z].*");
     private static final Pattern SETTER_PATTERN = Pattern.compile("set[A-Z].*");
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
+    private static final Map<Class<?>, ClassInfo> CACHE = new LRUSoftCache<Class<?>, ClassInfo>(1000);
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
@@ -57,9 +66,37 @@ public final class IntrospectionSupport {
     }
 
     /**
+     * Structure of an introspected class.
+     */
+    public static final class ClassInfo {
+        public Class<?> clazz;
+        public MethodInfo[] methods;
+    }
+
+    /**
+     * Structure of an introspected method.
+     */
+    public static final class MethodInfo {
+        public Method method;
+        public Boolean isGetter;
+        public Boolean isSetter;
+        public String getterOrSetterShorthandName;
+        public Boolean hasGetterAndSetter;
+    }
+
+    /**
      * Utility classes should not have a public constructor.
      */
     private IntrospectionSupport() {
+    }
+
+    /**
+     * {@link org.apache.camel.CamelContext} should call this stop method when its stopping.
+     * <p/>
+     * This implementation will clear its introspection cache.
+     */
+    public static void stop() {
+        CACHE.clear();
     }
 
     public static boolean isGetter(Method method) {
@@ -144,45 +181,98 @@ public final class IntrospectionSupport {
             optionPrefix = "";
         }
 
-        Class<?> clazz = target.getClass();
-        Method[] methods = clazz.getMethods();
-        for (Method method : methods) {
-            if (EXCLUDED_METHODS.contains(method)) {
-                continue;
-            }
-            try {
-                // must be properties which have setters
-                if (isGetter(method) && hasSetter(target, method)) {
+        ClassInfo cache = cacheClass(target.getClass());
+
+        for (int i = 0; i < cache.methods.length; i++) {
+            MethodInfo info = cache.methods[i];
+            Method method = info.method;
+            // we can only get properties if we have both a getter and a setter
+            if (info.isGetter && info.hasGetterAndSetter) {
+                String name = info.getterOrSetterShorthandName;
+                try {
                     Object value = method.invoke(target);
-                    String name = getGetterShorthandName(method);
                     properties.put(optionPrefix + name, value);
                     rc = true;
+                } catch (Exception e) {
+                    // ignore
                 }
-            } catch (Exception e) {
-                // ignore
             }
         }
 
         return rc;
     }
 
-    public static boolean hasSetter(Object target, Method getter) {
-        String name = getGetterShorthandName(getter);
+    /**
+     * Introspects the given class.
+     *
+     * @param clazz the class
+     * @return the introspection result as a {@link ClassInfo} structure.
+     */
+    public static ClassInfo cacheClass(Class<?> clazz) {
+        ClassInfo cache = CACHE.get(clazz);
+        if (cache == null) {
+            cache = doIntrospectClass(clazz);
+            CACHE.put(clazz, cache);
+        }
+        return cache;
+    }
 
-        Class<?> clazz = target.getClass();
+    private static ClassInfo doIntrospectClass(Class<?> clazz) {
+        ClassInfo answer = new ClassInfo();
+        answer.clazz = clazz;
+
+        // loop each method on the class and gather details about the method
+        // especially about getter/setters
+        List<MethodInfo> found = new ArrayList<MethodInfo>();
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (EXCLUDED_METHODS.contains(method)) {
                 continue;
             }
-            if (isSetter(method)) {
-                if (name.equals(getSetterShorthandName(method))) {
-                    return true;
+
+            MethodInfo cache = new MethodInfo();
+            cache.method = method;
+            if (isGetter(method)) {
+                cache.isGetter = true;
+                cache.isSetter = false;
+                cache.getterOrSetterShorthandName = getGetterShorthandName(method);
+            } else if (isSetter(method)) {
+                cache.isGetter = false;
+                cache.isSetter = true;
+                cache.getterOrSetterShorthandName = getSetterShorthandName(method);
+            } else {
+                cache.isGetter = false;
+                cache.isSetter = false;
+                cache.hasGetterAndSetter = false;
+            }
+            found.add(cache);
+        }
+
+        // for all getter/setter, find out if there is a corresponding getter/setter,
+        // so we have a read/write bean property.
+        for (MethodInfo info : found) {
+            info.hasGetterAndSetter = false;
+            if (info.isGetter) {
+                // loop and find the matching setter
+                for (MethodInfo info2 : found) {
+                    if (info2.isSetter && info.getterOrSetterShorthandName.equals(info2.getterOrSetterShorthandName)) {
+                        info.hasGetterAndSetter = true;
+                        break;
+                    }
+                }
+            } else if (info.isSetter) {
+                // loop and find the matching getter
+                for (MethodInfo info2 : found) {
+                    if (info2.isGetter && info.getterOrSetterShorthandName.equals(info2.getterOrSetterShorthandName)) {
+                        info.hasGetterAndSetter = true;
+                        break;
+                    }
                 }
             }
         }
 
-        return false;
+        answer.methods = found.toArray(new MethodInfo[found.size()]);
+        return answer;
     }
 
     public static boolean hasProperties(Map<String, Object> properties, String optionPrefix) {

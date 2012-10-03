@@ -119,6 +119,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
@@ -1651,11 +1652,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // shutdown executor service and management as the last one
         shutdownServices(executorServiceManager);
         shutdownServices(managementStrategy);
+        shutdownServices(managementMBeanAssembler);
         shutdownServices(lifecycleStrategies);
         // do not clear lifecycleStrategies as we can start Camel again and get the route back as before
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
+
+        // stop to clear introspection cache
+        IntrospectionSupport.stop();
 
         stopWatch.stop();
         if (log.isInfoEnabled()) {

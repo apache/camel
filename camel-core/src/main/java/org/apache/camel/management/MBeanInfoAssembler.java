@@ -17,7 +17,7 @@
 package org.apache.camel.management;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,12 +30,14 @@ import javax.management.modelmbean.ModelMBeanInfoSupport;
 import javax.management.modelmbean.ModelMBeanNotificationInfo;
 import javax.management.modelmbean.ModelMBeanOperationInfo;
 
+import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedNotification;
 import org.apache.camel.api.management.ManagedNotifications;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +47,30 @@ import org.slf4j.LoggerFactory;
  * details from the {@link ManagedResource}, {@link ManagedAttribute}, {@link ManagedOperation},
  * {@link ManagedNotification}, and {@link ManagedNotifications} annotations.
  */
-public class MBeanInfoAssembler {
+public class MBeanInfoAssembler implements Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(MBeanInfoAssembler.class);
+
+    // use a cache to speedup gathering JMX MBeanInfo for known classes
+    private final Map<Class<?>, MBeanAttributesAndOperations> cache = new LRUSoftCache<Class<?>, MBeanAttributesAndOperations>(1000);
+
+    @Override
+    public void start() throws Exception {
+        // noop
+    }
+
+    @Override
+    public void stop() throws Exception {
+        cache.clear();
+    }
+
+    /**
+     * Structure to hold cached mbean attributes and operations for a given class.
+     */
+    private static final class MBeanAttributesAndOperations {
+        private Map<String, ManagedAttributeInfo> attributes;
+        private Set<ManagedOperationInfo> operations;
+    }
 
     /**
      * Gets the {@link ModelMBeanInfo} for the given managed bean
@@ -60,7 +83,7 @@ public class MBeanInfoAssembler {
      */
     public ModelMBeanInfo getMBeanInfo(Object defaultManagedBean, Object customManagedBean, String objectName) throws JMException {
         // maps and lists to contain information about attributes and operations
-        Map<String, ManagedAttributeInfo> attributes = new HashMap<String, ManagedAttributeInfo>();
+        Map<String, ManagedAttributeInfo> attributes = new LinkedHashMap<String, ManagedAttributeInfo>();
         Set<ManagedOperationInfo> operations = new LinkedHashSet<ManagedOperationInfo>();
         Set<ModelMBeanAttributeInfo> mBeanAttributes = new LinkedHashSet<ModelMBeanAttributeInfo>();
         Set<ModelMBeanOperationInfo> mBeanOperations = new LinkedHashSet<ModelMBeanOperationInfo>();
@@ -93,8 +116,28 @@ public class MBeanInfoAssembler {
     }
 
     private void extractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
+        MBeanAttributesAndOperations cached = cache.get(managedClass);
+        if (cached == null) {
+            doExtractAttributesAndOperations(managedClass, attributes, operations);
+            cached = new MBeanAttributesAndOperations();
+            cached.attributes = new LinkedHashMap<String, ManagedAttributeInfo>(attributes);
+            cached.operations = new LinkedHashSet<ManagedOperationInfo>(operations);
+
+            // clear before we re-add them
+            attributes.clear();
+            operations.clear();
+
+            // add to cache
+            cache.put(managedClass, cached);
+        }
+
+        attributes.putAll(cached.attributes);
+        operations.addAll(cached.operations);
+    }
+
+    private void doExtractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
         // extract the class
-        doExtractAttributesAndOperations(managedClass, attributes, operations);
+        doDoExtractAttributesAndOperations(managedClass, attributes, operations);
 
         // and then any sub classes
         if (managedClass.getSuperclass() != null) {
@@ -102,7 +145,7 @@ public class MBeanInfoAssembler {
             // skip any JDK classes
             if (!clazz.getName().startsWith("java")) {
                 LOG.trace("Extracting attributes and operations from sub class: {}", clazz);
-                extractAttributesAndOperations(clazz, attributes, operations);
+                doExtractAttributesAndOperations(clazz, attributes, operations);
             }
         }
 
@@ -115,31 +158,39 @@ public class MBeanInfoAssembler {
                     continue;
                 }
                 LOG.trace("Extracting attributes and operations from implemented interface: {}", clazz);
-                extractAttributesAndOperations(clazz, attributes, operations);
+                doExtractAttributesAndOperations(clazz, attributes, operations);
             }
         }
     }
 
-    private void doExtractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
+    private void doDoExtractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
         LOG.trace("Extracting attributes and operations from class: {}", managedClass);
-        for (Method method : managedClass.getDeclaredMethods()) {
-            LOG.trace("Extracting attributes and operations from method: {}", method);
 
-            ManagedAttribute ma = method.getAnnotation(ManagedAttribute.class);
+        // introspect the class, and leverage the cache to have better performance
+        IntrospectionSupport.ClassInfo cache = IntrospectionSupport.cacheClass(managedClass);
+
+        for (IntrospectionSupport.MethodInfo cacheInfo : cache.methods) {
+            // must be from declaring class
+            if (cacheInfo.method.getDeclaringClass() != managedClass) {
+                continue;
+            }
+
+            LOG.trace("Extracting attributes and operations from method: {}", cacheInfo.method);
+            ManagedAttribute ma = cacheInfo.method.getAnnotation(ManagedAttribute.class);
             if (ma != null) {
                 String key;
                 String desc = ma.description();
                 Method getter = null;
                 Method setter = null;
 
-                if (IntrospectionSupport.isGetter(method)) {
-                    key = IntrospectionSupport.getGetterShorthandName(method);
-                    getter = method;
-                } else if (IntrospectionSupport.isSetter(method)) {
-                    key = IntrospectionSupport.getSetterShorthandName(method);
-                    setter = method;
+                if (cacheInfo.isGetter) {
+                    key = cacheInfo.getterOrSetterShorthandName;
+                    getter = cacheInfo.method;
+                } else if (cacheInfo.isSetter) {
+                    key = cacheInfo.getterOrSetterShorthandName;
+                    setter = cacheInfo.method;
                 } else {
-                    throw new IllegalArgumentException("@ManagedAttribute can only be used on Java bean methods, was: " + method + " on bean: " + managedClass);
+                    throw new IllegalArgumentException("@ManagedAttribute can only be used on Java bean methods, was: " + cacheInfo.method + " on bean: " + managedClass);
                 }
 
                 // they key must be capitalized
@@ -161,10 +212,10 @@ public class MBeanInfoAssembler {
             }
 
             // operations
-            ManagedOperation mo = method.getAnnotation(ManagedOperation.class);
+            ManagedOperation mo = cacheInfo.method.getAnnotation(ManagedOperation.class);
             if (mo != null) {
                 String desc = mo.description();
-                Method operation = method;
+                Method operation = cacheInfo.method;
                 operations.add(new ManagedOperationInfo(desc, operation));
             }
         }
