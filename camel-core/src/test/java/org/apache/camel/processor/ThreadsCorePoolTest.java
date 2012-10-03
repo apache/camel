@@ -26,8 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ThreadsCorePoolTest extends ContextTestSupport {
 
-    private static String beforeThreadName;
-    private static String afterThreadName;
+    private String beforeThreadName;
+    private volatile String afterThreadName;
 
     public void testThreadsCorePool() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -36,6 +36,8 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        assertNotNull("The main thread name should be already properly set!", beforeThreadName);
+        assertNotNull("The camel thread name should be already properly set!", afterThreadName);
         assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
@@ -46,6 +48,8 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        assertNotNull("The main thread name should be already properly set!", beforeThreadName);
+        assertNotNull("The camel thread name should be already properly set!", afterThreadName);
         assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
@@ -74,8 +78,18 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
                     .to("mock:result");
 
                 from("direct:foo")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            beforeThreadName = Thread.currentThread().getName();
+                        }
+                    })
                     // using the builder style
                     .threads().poolSize(5)
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            afterThreadName = Thread.currentThread().getName();
+                        }
+                    })
                     .to("mock:result");
             }
         };
