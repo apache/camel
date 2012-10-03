@@ -56,6 +56,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     private QueueBrowseStrategy queueBrowseStrategy;
     private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
     private ExecutorService asyncStartStopExecutorService;
+    private MessageListenerContainerFactory messageListenerContainerFactory;
 
     public JmsComponent() {
     }
@@ -497,14 +498,13 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             endpoint.setJmsKeyFormatStrategy(resolveAndRemoveReferenceParameter(
                     parameters, KEY_FORMAT_STRATEGY_PARAM, JmsKeyFormatStrategy.class));
         }
-        
-        // remove the listener from the registry because we cannot reuse it for a 2nd endpoint
-        AbstractMessageListenerContainer customMessageListenerContainer = resolveAndRemoveReferenceParameter(
-        		parameters, "customMessageListenerContainerRef", AbstractMessageListenerContainer.class);
-        if (customMessageListenerContainer != null) {
-        	endpoint.setCustomMessageListenerContainer(customMessageListenerContainer);        	
+
+        messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters, "messageListenerContainerFactoryRef",
+                MessageListenerContainerFactory.class);
+        if (messageListenerContainerFactory != null) {
+            endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
         }
-        
+
         setProperties(endpoint.getConfiguration(), parameters);
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
