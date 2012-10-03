@@ -49,7 +49,8 @@
          <artifactId>twitter4j-stream</artifactId>
          <version>${twitter4j-version}</version>
       </dependency>
-      <!-- testing -->
+      
+      <!-- test dependencies -->
       <dependency>
          <groupId>org.apache.camel</groupId>
          <artifactId>camel-test</artifactId>

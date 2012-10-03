@@ -172,6 +172,7 @@
     <jasypt-version>1.9.0</jasypt-version>
     <java-apns-bundle-version>0.1.6_3</java-apns-bundle-version>
     <java-apns-version>0.1.6</java-apns-version>
+    <javacrumbs-version>0.19</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
     <javax-mail-version>1.4.5</javax-mail-version>
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
@@ -191,6 +192,7 @@
     <jibx-version>1.2.4.5</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
+    <jline-version>0.9.94</jline-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.1</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
@@ -313,6 +315,7 @@
     <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
     <twitter4j-version>2.2.5</twitter4j-version>
     <velocity-bundle-version>1.7_4</velocity-bundle-version>
+    <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
     <vysper-version>0.7</vysper-version>
     <!-- should be in-sync with deltaspike -->
@@ -334,6 +337,7 @@
     <xmlsec-version>1.5.1</xmlsec-version>
     <xmlunit-version>1.3</xmlunit-version>
     <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
+    <xpp3-version>1.1.4c</xpp3-version>
     <xsdlib-version>20060615</xsdlib-version>
     <xstream-bundle-version>1.4.3_1</xstream-bundle-version>
     <xstream-version>1.4.3</xstream-version>
@@ -1690,11 +1694,6 @@
         <version>${maven-version}</version>
       </dependency>
       <dependency>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin-version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-container-default</artifactId>
         <version>${plexus-container-default-version}</version>
@@ -2127,6 +2126,15 @@
           <artifactId>apache-rat-plugin</artifactId>
           <version>0.8</version>
         </plugin>
+        <plugin>  
+          <groupId>org.apache.tomcat.maven</groupId>  
+          <artifactId>tomcat7-maven-plugin</artifactId>  
+          <version>2.0</version>
+          <configuration>
+            <path>/</path>  
+            <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>                       
+           </configuration>  
+        </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>axistools-maven-plugin</artifactId>
@@ -2189,6 +2197,14 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>taglist-maven-plugin</artifactId>
           <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>tomcat-maven-plugin</artifactId>
+          <version>1.1</version>
+          <configuration>
+            <path>/</path>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.jvnet.jaxb2.maven2</groupId>

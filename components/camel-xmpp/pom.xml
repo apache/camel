@@ -54,6 +54,8 @@
       <artifactId>smackx</artifactId>
       <version>${smack-version}</version>
     </dependency>
+
+    <!-- test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

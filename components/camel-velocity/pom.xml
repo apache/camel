@@ -46,7 +46,7 @@
             <version>${velocity-version}</version>
         </dependency>
 
-        <!-- testing -->
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-tools</artifactId>
-            <version>2.0</version>
+            <version>${velocity-tools-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

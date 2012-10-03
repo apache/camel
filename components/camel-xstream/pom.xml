@@ -64,7 +64,7 @@
       <artifactId>woodstox-core-asl</artifactId>
     </dependency>
 
-    <!-- testing -->
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>      
@@ -78,10 +78,9 @@
     <dependency>
       <groupId>xpp3</groupId>
       <artifactId>xpp3</artifactId>
-      <version>1.1.4c</version>
+      <version>${xpp3-version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
