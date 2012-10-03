@@ -46,7 +46,7 @@
 	<version>${mvel-version}</version>
     </dependency>
 
-    <!-- testing -->
+    <!-- test dependency -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>

@@ -68,7 +68,8 @@
       <artifactId>geronimo-jpa_2.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!-- testing -->
+    
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>

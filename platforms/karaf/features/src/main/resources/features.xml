@@ -599,8 +599,8 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.isorelax/${isorelax-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-msv/${project.version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-msv/${project.version}</bundle>
   </feature>
   <feature name='camel-mvel' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mvel/${mvel-bundle-version}</bundle>

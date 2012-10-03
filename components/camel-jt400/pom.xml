@@ -43,6 +43,7 @@
       <artifactId>jt400</artifactId>
       <version>${jt400-version}</version>
     </dependency>
+
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>

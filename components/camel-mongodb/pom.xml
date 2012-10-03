@@ -56,7 +56,7 @@
       <version>${mongo-java-driver-version}</version>
     </dependency>
 
-    <!-- testing -->
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
