@@ -301,18 +301,16 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     protected void doStop() throws Exception {
         endpoint.onStopped(this);
         
-        // need to shutdown executor here as well or each time this endpoint is 
-        // started a new thread will be created
-        if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
-            executor = null;
-        }
+        shutdownExecutor();
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        // only shutdown thread pool when we shutdown
-        if (executor != null) {
+        shutdownExecutor();
+    }
+
+	private void shutdownExecutor() {
+	    if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
