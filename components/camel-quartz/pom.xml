@@ -52,19 +52,8 @@
       <artifactId>quartz</artifactId>
       <version>${quartz-version}</version>
     </dependency>
-    
-    <!-- commons-collections is needed at runtime by quartz -->
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-    </dependency>
-    <!-- quartz uses slf4j -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
 
-    <!-- testing -->
+    <!-- test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

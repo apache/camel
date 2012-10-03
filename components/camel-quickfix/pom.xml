@@ -53,6 +53,7 @@
       <version>${quickfix-version}</version>
     </dependency>
 
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
