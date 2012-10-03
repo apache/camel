@@ -34,7 +34,7 @@ import org.apache.camel.util.StopWatch;
  */
 public class RoutePerformanceTest extends ContextTestSupport {
     
-    private int size = 1000;
+    private int size = 250;
     private SimpleDataSet dataSet = new SimpleDataSet(size);
     private String uri = "mock:results";
 
@@ -46,7 +46,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
         endpoint.expectedHeaderReceived("foo", 123);
 
         // wait 30 sec for slow servers
-        MockEndpoint.assertIsSatisfied(context, 3000, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         log.info("RoutePerformanceTest: Sent: " + size + " Took: " + watch.taken() + " ms");
     }
