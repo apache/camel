@@ -1694,6 +1694,11 @@
         <version>${maven-version}</version>
       </dependency>
       <dependency>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin-version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-container-default</artifactId>
         <version>${plexus-container-default-version}</version>

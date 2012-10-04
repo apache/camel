@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.cglib</artifactId>
-      <version>${cglib-version}</version>
+      <version>${cglib-bundle-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
