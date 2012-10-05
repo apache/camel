@@ -59,7 +59,7 @@ public class ConnectionResourceIT extends JmsTestSupport {
     }
 
     @Test
-    public void testAsynchronous() throws Exception {
+    public void testConnectionResourceRouter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(100);
         mock.expectsNoDuplicates(body());
