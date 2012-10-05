@@ -656,7 +656,7 @@ public final class ObjectHelper {
         if (camelProperties != null) {
             for (Map.Entry<String, String> entry : camelProperties.entrySet()) {
                 String key = entry.getKey();
-                if (key.startsWith(prefix)) {
+                if (key != null && key.startsWith(prefix)) {
                     answer.put(key.substring(prefix.length()), entry.getValue());
                 }
             }
