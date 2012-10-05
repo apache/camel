@@ -103,6 +103,9 @@ public final class IntrospectionSupport {
             LOG.debug("Clearing cache[size={}, hits={}, misses={}]", new Object[]{CACHE.size(), CACHE.getHits(), CACHE.getMisses()});
         }
         CACHE.clear();
+
+        // flush java beans introspector as it may be in use by the PropertyEditor
+        java.beans.Introspector.flushCaches();
     }
 
     public static boolean isGetter(Method method) {
@@ -484,13 +487,18 @@ public final class IntrospectionSupport {
         if (typeConverter != null) {
             return typeConverter.mandatoryConvertTo(type, value);
         }
-        PropertyEditor editor = PropertyEditorManager.findEditor(type);
-        if (editor != null) {
-            editor.setAsText(value.toString());
-            return editor.getValue();
-        }
         if (type == URI.class) {
             return new URI(value.toString());
+        }
+        PropertyEditor editor = PropertyEditorManager.findEditor(type);
+        if (editor != null) {
+            // property editor is not thread safe, so we need to lock
+            Object answer;
+            synchronized (editor) {
+                editor.setAsText(value.toString());
+                answer = editor.getValue();
+            }
+            return answer;
         }
         return null;
     }
