@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.management.JMException;
+import javax.management.ObjectName;
 
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -96,6 +97,7 @@ public class QuickfixjEngine extends ServiceSupport {
     private final MessageCorrelator messageCorrelator = new MessageCorrelator();
     private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<QuickfixjEventListener>();
     private final String uri;
+    private ObjectName connectorObjectName;
 
     public enum ThreadModel {
         ThreadPerConnector, ThreadPerSession;
@@ -200,7 +202,7 @@ public class QuickfixjEngine extends ServiceSupport {
         if (initiator != null) {
             initiator.start();
             if (jmxExporter != null) {
-                jmxExporter.register(initiator);
+                connectorObjectName = jmxExporter.register(initiator);
             }
         }
     }
@@ -212,6 +214,10 @@ public class QuickfixjEngine extends ServiceSupport {
         }
         if (initiator != null) {
             initiator.stop();
+
+            if (jmxExporter != null && connectorObjectName != null) {
+                jmxExporter.getMBeanServer().unregisterMBean(connectorObjectName);
+            }
         }
     }
 
