@@ -51,7 +51,7 @@ public class ManagedProducerCacheTest extends ManagementTestSupport {
         assertNotNull("Should have found ProducerCache", on);
 
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
-        assertEquals(1000, max.intValue());
+        assertEquals(-1, max.intValue());
 
         Integer current = (Integer) mbeanServer.getAttribute(on, "Size");
         assertEquals(1, current.intValue());

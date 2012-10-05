@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.HashMap;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducerCallback;
@@ -143,7 +145,11 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext);
+            // use a single producer cache as we need to only hold reference for one destination
+            // and use a regular HashMap as we do not want a soft reference store that may get re-claimed when low on memory
+            // as we want to ensure the producer is kept around, to ensure its lifecycle is fully managed,
+            // eg stopping the producer when we stop etc.
+            producerCache = new ProducerCache(this, camelContext, new HashMap<String, Producer>(1));
             // add it as a service so we can manage it
             camelContext.addService(producerCache);
         }
