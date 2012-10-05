@@ -64,6 +64,10 @@ public class ProducerCache extends ServiceSupport {
         this(source, camelContext, camelContext.getProducerServicePool(), createLRUCache(cacheSize));
     }
 
+    public ProducerCache(Object source, CamelContext camelContext, Map<String, Producer> cache) {
+        this(source, camelContext, camelContext.getProducerServicePool(), cache);
+    }
+
     public ProducerCache(Object source, CamelContext camelContext, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
         this.source = source;
         this.camelContext = camelContext;

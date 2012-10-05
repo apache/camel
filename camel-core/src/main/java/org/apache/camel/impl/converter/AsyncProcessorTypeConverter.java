@@ -44,7 +44,7 @@ public class AsyncProcessorTypeConverter extends TypeConverterSupport {
     }
 
     /**
-     * @deprecated use AnycProcessorConverter.convert instead
+     * @deprecated use {@link AsyncProcessorConverterHelper#convert(org.apache.camel.Processor)} instead
      */
     @Deprecated
     public static AsyncProcessor convert(Processor value) {
