@@ -60,6 +60,7 @@ public final class IntrospectionSupport {
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
     private static final LRUCache<Class<?>, ClassInfo> CACHE = new LRUWeakCache<Class<?>, ClassInfo>(1000);
+    private static final Object LOCK = new Object();
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
@@ -494,7 +495,7 @@ public final class IntrospectionSupport {
         if (editor != null) {
             // property editor is not thread safe, so we need to lock
             Object answer;
-            synchronized (editor) {
+            synchronized (LOCK) {
                 editor.setAsText(value.toString());
                 answer = editor.getValue();
             }
