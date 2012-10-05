@@ -26,20 +26,19 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
-import org.apache.camel.component.sjms.jms.JmsMessageExchangeHelper;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
- * TODO Add Class documentation for DefaultMessageHandler
+ * Abstract MessageListener 
  */
-public abstract class DefaultMessageHandler implements MessageListener {
+public abstract class AbstractMessageHandler implements MessageListener {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -54,30 +53,28 @@ public abstract class DefaultMessageHandler implements MessageListener {
     private boolean topic;
     private TransactionCommitStrategy commitStrategy;
 
-    public DefaultMessageHandler(Endpoint endpoint, ExecutorService executor) {
+    public AbstractMessageHandler(Endpoint endpoint, ExecutorService executor) {
         this.endpoint = endpoint;
         this.executor = executor;
     }
 
-    public DefaultMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
+    public AbstractMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
         super();
         this.synchronization = synchronization;
         this.endpoint = endpoint;
         this.executor = executor;
     }
 
-    @Override
-    public void onMessage(Message message) {
-        handleMessage(message);
-    }
-
-    /**
+    /*
+     * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
+     *
      * @param message
      */
-    private void handleMessage(Message message) {
+    @Override
+    public void onMessage(Message message) {
         RuntimeCamelException rce = null;
         try {
-            final DefaultExchange exchange = (DefaultExchange)JmsMessageExchangeHelper.createExchange(message, getEndpoint());
+            final DefaultExchange exchange = (DefaultExchange)SjmsExchangeMessageHelper.createExchange(message, getEndpoint());
             
             log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
             
@@ -87,16 +84,17 @@ public abstract class DefaultMessageHandler implements MessageListener {
             try {
                 if (isTransacted() || isSynchronous()) {
                     log.debug("  Handling synchronous message: {}", exchange.getIn().getBody());
-                    doHandleMessage(exchange);
+                    handleMessage(exchange);
                 } else {
                     log.debug("  Handling asynchronous message: {}", exchange.getIn().getBody());
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                doHandleMessage(exchange);
+                                handleMessage(exchange);
                             } catch (Exception e) {
-                                ObjectHelper.wrapRuntimeCamelException(e);
+                                exchange.setException(e);
+//                                ObjectHelper.wrapRuntimeCamelException(e);
                             }
 
                         }
@@ -120,8 +118,14 @@ public abstract class DefaultMessageHandler implements MessageListener {
         }
     }
 
-    public abstract void doHandleMessage(final Exchange exchange);
+    /**
+     * @param exchange
+     */
+    public abstract void handleMessage(final Exchange exchange);
 
+    /**
+     * Method will be called to 
+     */
     public abstract void close();
 
     public void setTransacted(boolean transacted) {

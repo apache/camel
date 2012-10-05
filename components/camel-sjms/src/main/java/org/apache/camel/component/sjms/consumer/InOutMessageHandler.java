@@ -33,19 +33,19 @@ import javax.jms.Topic;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sjms.jms.JmsMessageExchangeHelper;
+import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * TODO Add Class documentation for DefaultMessageHandler 
+ * TODO Add Class documentation for AbstractMessageHandler 
  * TODO Create a producer
  * cache manager to store and purge unused cashed producers or we will have a
  * memory leak
  */
-public class InOutMessageHandler extends DefaultMessageHandler {
+public class InOutMessageHandler extends AbstractMessageHandler {
 
     private Map<String, MessageProducer> producerCache = new TreeMap<String, MessageProducer>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -74,7 +74,7 @@ public class InOutMessageHandler extends DefaultMessageHandler {
      * @param message
      */
     @Override
-    public void doHandleMessage(final Exchange exchange) {
+    public void handleMessage(final Exchange exchange) {
         try {
             MessageProducer messageProducer = null;
             Object obj = exchange.getIn().getHeader("JMSReplyTo");
@@ -192,7 +192,7 @@ public class InOutMessageHandler extends DefaultMessageHandler {
                         exchange.getOut().setBody(bytes);
                     }
                 }
-                Message response = JmsMessageExchangeHelper.createMessage(exchange, getSession(), true);
+                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), true);
                 response.setJMSCorrelationID(exchange.getIn().getHeader("JMSCorrelationID", String.class));
                 localProducer.send(response);
             } catch (Exception e) {

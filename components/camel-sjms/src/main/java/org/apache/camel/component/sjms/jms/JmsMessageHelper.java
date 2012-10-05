@@ -32,9 +32,6 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.camel.component.sjms.DefaultJmsKeyFormatStrategy;
-import org.apache.camel.component.sjms.IllegalHeaderException;
-import org.apache.camel.component.sjms.KeyFormatStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

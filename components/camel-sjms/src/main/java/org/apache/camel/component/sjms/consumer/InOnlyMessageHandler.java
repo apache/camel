@@ -25,10 +25,10 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
- * An InOnly {@link DefaultMessageHandler}
+ * An InOnly {@link AbstractMessageHandler}
  * 
  */
-public class InOnlyMessageHandler extends DefaultMessageHandler {
+public class InOnlyMessageHandler extends AbstractMessageHandler {
 
     /**
      * @param endpoint
@@ -51,7 +51,7 @@ public class InOnlyMessageHandler extends DefaultMessageHandler {
      * @param message
      */
     @Override
-    public void doHandleMessage(final Exchange exchange) {
+    public void handleMessage(final Exchange exchange) {
         if (log.isDebugEnabled()) {
             log.debug("Handling InOnly Message: {}", exchange.getIn().getBody());
         }

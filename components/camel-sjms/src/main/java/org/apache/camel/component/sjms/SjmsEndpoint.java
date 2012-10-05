@@ -23,8 +23,8 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.sjms.consumer.DefaultConsumer;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
+import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
 import org.apache.camel.component.sjms.jms.SessionPool;
 import org.apache.camel.component.sjms.producer.InOnlyProducer;
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO Add Class documentation for SjmsEndpoint
+ * A JMS Endpoint
  */
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
@@ -64,9 +64,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     public SjmsEndpoint(String uri, Component component) {
         super(uri, component);
         if (getEndpointUri().indexOf("://queue:") > -1) {
-            setTopic(false);
+            topic = false;
         } else if (getEndpointUri().indexOf("://topic:") > -1) {
-            setTopic(true);
+            topic = true;
         } else {
             throw new RuntimeCamelException("Endpoint URI unsupported: " + uri);
         }
@@ -113,7 +113,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DefaultConsumer(this, processor);
+        return new SjmsConsumer(this, processor);
     }
 
     @Override
@@ -150,18 +150,277 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return getSjmsComponent().getKeyFormatStrategy();
     }
 
+    /**
+     * Returns a SessionPool if available.
+     * 
+     * @return the sessions
+     */
     public SessionPool getSessions() {
         return sessions;
     }
 
-    public void setSynchronous(boolean asyncConsumer) {
-        this.synchronous = asyncConsumer;
+    /**
+     * SessionPool used by endpoints that do not require a dedicated session per
+     * consumer or producer.
+     * 
+     * @param sessions default null
+     */
+    public void setSessions(SessionPool sessions) {
+        this.sessions = sessions;
     }
 
+    /**
+     * Use to determine whether or not to process exchanges synchronously.
+     * 
+     * @return true if endoint is synchronous, otherwise false
+     */
     public boolean isSynchronous() {
         return synchronous;
     }
 
+    /**
+     * Flag can be set to enable/disable synchronous exchange processing.
+     * 
+     * @param synchronous true to process synchronously, default is true
+     */
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
+    /**
+     * Returns the configured acknowledgementMode.
+     * 
+     * @return the acknowledgementMode
+     */
+    public SessionAcknowledgementType getAcknowledgementMode() {
+        return acknowledgementMode;
+    }
+
+    /**
+     * Sets the acknowledgementMode configured on this endpoint.
+     * 
+     * @param acknowledgementMode default is
+     *            SessionAcknowledgementType.AUTO_ACKNOWLEDGE
+     */
+    public void setAcknowledgementMode(SessionAcknowledgementType acknowledgementMode) {
+        this.acknowledgementMode = acknowledgementMode;
+    }
+
+    /**
+     * Flag set by the endpoint used by consumers and producers to determine if
+     * the endpoint is a JMS Topic.
+     * 
+     * @return the topic true if endpoint is a JMS Topic, default is false
+     */
+    public boolean isTopic() {
+        return topic;
+    }
+
+    /**
+     * Returns the number of Session instances expected on this endpoint.
+     * 
+     * @return the sessionCount
+     */
+    public int getSessionCount() {
+        return sessionCount;
+    }
+
+    /**
+     * Sets the number of Session instances used for this endpoint. Value is
+     * ignored for endpoints that require a dedicated session such as a
+     * transacted or InOut endpoint.
+     * 
+     * @param sessionCount the number of Session instances, default is 1
+     */
+    public void setSessionCount(int sessionCount) {
+        this.sessionCount = sessionCount;
+    }
+
+    /**
+     * Returns the number of consumer listeners for this endpoint.
+     * 
+     * @return the producerCount
+     */
+    public int getProducerCount() {
+        return producerCount;
+    }
+
+    /**
+     * Sets the number of producers used for this endpoint.
+     * 
+     * @param producerCount the number of producers for this endpoint, default
+     *            is 1
+     */
+    public void setProducerCount(int producerCount) {
+        this.producerCount = producerCount;
+    }
+
+    /**
+     * Returns the number of consumer listeners for this endpoint.
+     * 
+     * @return the consumerCount
+     */
+    public int getConsumerCount() {
+        return consumerCount;
+    }
+
+    /**
+     * Sets the number of consumer listeners used for this endpoint.
+     * 
+     * @param consumerCount the number of consumers for this endpoint, default
+     *            is 1
+     */
+    public void setConsumerCount(int consumerCount) {
+        this.consumerCount = consumerCount;
+    }
+
+    /**
+     * Returns the Time To Live set on this endpoint.
+     * 
+     * @return the ttl
+     */
+    public long getTtl() {
+        return ttl;
+    }
+
+    /**
+     * Flag used to adjust the Time To Live value of produced messages.
+     * 
+     * @param ttl a new TTL, default is -1 (disabled)
+     */
+    public void setTtl(long ttl) {
+        this.ttl = ttl;
+    }
+
+    /**
+     * Use to determine if the enpoint has message persistence enabled or
+     * disabled.
+     * 
+     * @return true if persistent, otherwise false
+     */
+    public boolean isPersistent() {
+        return persistent;
+    }
+
+    /**
+     * Flag used to enable/disable message persistence.
+     * 
+     * @param persistent true if persistent, default is true
+     */
+    public void setPersistent(boolean persistent) {
+        this.persistent = persistent;
+    }
+
+    /**
+     * Gets the durable subscription Id.
+     * 
+     * @return the durableSubscriptionId
+     */
+    public String getDurableSubscriptionId() {
+        return durableSubscriptionId;
+    }
+
+    /**
+     * Sets the durable subscription Id required for durable topics.
+     * 
+     * @param durableSubscriptionId durable subscription Id or null
+     */
+    public void setDurableSubscriptionId(String durableSubscriptionId) {
+        this.durableSubscriptionId = durableSubscriptionId;
+    }
+
+    /**
+     * Returns the InOut response timeout.
+     * 
+     * @return the responseTimeOut
+     */
+    public long getResponseTimeOut() {
+        return responseTimeOut;
+    }
+
+    /**
+     * Sets the amount of time we should wait before timing out a InOut
+     * response.
+     * 
+     * @param responseTimeOut response timeout
+     */
+    public void setResponseTimeOut(long responseTimeOut) {
+        this.responseTimeOut = responseTimeOut;
+    }
+
+    /**
+     * Returns the JMS Message selector syntax used to refine the messages being
+     * consumed.
+     * 
+     * @return the messageSelector
+     */
+    public String getMessageSelector() {
+        return messageSelector;
+    }
+
+    /**
+     * Sets the JMS Message selector syntax.
+     * 
+     * @param messageSelector Message selector syntax or null
+     */
+    public void setMessageSelector(String messageSelector) {
+        this.messageSelector = messageSelector;
+    }
+
+    /**
+     * If transacted, returns the nubmer of messages to be processed before
+     * committing the transaction.
+     * 
+     * @return the transactionBatchCount
+     */
+    public int getTransactionBatchCount() {
+        return transactionBatchCount;
+    }
+
+    /**
+     * If transacted sets the number of messages to process before committing a
+     * transaction.
+     * 
+     * @param transactionBatchCount number of messages to process before
+     *            committing, default is 1
+     */
+    public void setTransactionBatchCount(int transactionBatchCount) {
+        this.transactionBatchCount = transactionBatchCount;
+    }
+
+    /**
+     * Gets the commit strategy.
+     * 
+     * @return the transactionCommitStrategy
+     */
+    public TransactionCommitStrategy getTransactionCommitStrategy() {
+        return transactionCommitStrategy;
+    }
+
+    /**
+     * Sets the commit strategy.
+     * 
+     * @param transactionCommitStrategy commit strategy to use when processing
+     *            transacted messages
+     */
+    public void setTransactionCommitStrategy(TransactionCommitStrategy transactionCommitStrategy) {
+        this.transactionCommitStrategy = transactionCommitStrategy;
+    }
+
+    /**
+     * Use to determine if transactions are enabled or disabled.
+     * 
+     * @return true if transacted, otherwise false
+     */
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    /**
+     * Enable/disable flag for transactions
+     * 
+     * @param transacted true if transacted, otherwise false
+     */
     public void setTransacted(boolean transacted) {
         if (transacted) {
             setAcknowledgementMode(SessionAcknowledgementType.SESSION_TRANSACTED);
@@ -169,112 +428,22 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         this.transacted = transacted;
     }
 
-    public boolean isTransacted() {
-        return transacted;
-    }
-
-    public void setNamedReplyTo(String namedReplyTo) {
-        this.namedReplyTo = namedReplyTo;
-        this.setExchangePattern(ExchangePattern.InOut);
-    }
-
+    /**
+     * Returns the reply to destination name used for InOut producer endpoints.
+     * 
+     * @return the namedReplyTo
+     */
     public String getNamedReplyTo() {
         return namedReplyTo;
     }
 
-    public void setAcknowledgementMode(SessionAcknowledgementType acknowledgementMode) {
-        this.acknowledgementMode = acknowledgementMode;
-    }
-
-    public SessionAcknowledgementType getAcknowledgementMode() {
-        return acknowledgementMode;
-    }
-
-    public void setTopic(boolean topic) {
-        this.topic = topic;
-    }
-
-    public boolean isTopic() {
-        return topic;
-    }
-
-    public void setProducerCount(int producerCount) {
-        this.producerCount = producerCount;
-    }
-
-    public int getProducerCount() {
-        return producerCount;
-    }
-
-    public void setConsumerCount(int consumerCount) {
-        this.consumerCount = consumerCount;
-    }
-
-    public int getConsumerCount() {
-        return consumerCount;
-    }
-
-    public long getTtl() {
-        return ttl;
-    }
-
-    public void setTtl(long ttl) {
-        this.ttl = ttl;
-    }
-
-    public boolean isPersistent() {
-        return persistent;
-    }
-
-    public void setPersistent(boolean persistent) {
-        this.persistent = persistent;
-    }
-
-    public String getDurableSubscriptionId() {
-        return durableSubscriptionId;
-    }
-
-    public void setDurableSubscriptionId(String durableSubscription) {
-        this.durableSubscriptionId = durableSubscription;
-    }
-
-    public int getSessionCount() {
-        return sessionCount;
-    }
-
-    public void setSessionCount(int sessionCount) {
-        this.sessionCount = sessionCount;
-    }
-
-    public void setResponseTimeOut(long responseTimeOut) {
-        this.responseTimeOut = responseTimeOut;
-    }
-
-    public long getResponseTimeOut() {
-        return responseTimeOut;
-    }
-
-    public void setMessageSelector(String messageSelector) {
-        this.messageSelector = messageSelector;
-    }
-
-    public String getMessageSelector() {
-        return messageSelector;
-    }
-
-    public TransactionCommitStrategy getTransactionCommitStrategy() {
-        return transactionCommitStrategy;
-    }
-
-    public void setTransactionCommitStrategy(TransactionCommitStrategy commitStrategy) {
-        this.transactionCommitStrategy = commitStrategy;
-    }
-
-    public int getTransactionBatchCount() {
-        return transactionBatchCount;
-    }
-
-    public void setTransactionBatchCount(int transactionBatchCount) {
-        this.transactionBatchCount = transactionBatchCount;
+    /**
+     * Sets the reply to destination name used for InOut producer endpoints.
+     * 
+     * @param the namedReplyTo the JMS reply to destination name
+     */
+    public void setNamedReplyTo(String namedReplyTo) {
+        this.namedReplyTo = namedReplyTo;
+        this.setExchangePattern(ExchangePattern.InOut);
     }
 }

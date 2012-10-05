@@ -38,8 +38,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.SjmsEndpoint;
+import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
 import org.apache.camel.component.sjms.SjmsProducer;
-import org.apache.camel.component.sjms.jms.JmsMessageExchangeHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.jms.ObjectPool;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
@@ -272,7 +272,7 @@ public class InOutProducer extends SjmsProducer {
                     exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
                 }
 
-                Message request = JmsMessageExchangeHelper.createMessage(exchange, producer.getSession());
+                Message request = SjmsExchangeMessageHelper.createMessage(exchange, producer.getSession());
                 
                 // TODO just set the correlation id don't get it from the
                 // message
@@ -284,7 +284,7 @@ public class InOutProducer extends SjmsProducer {
                 }
                 Object responseObject = null;
                 Exchanger<Object> messageExchanger = new Exchanger<Object>();
-                JmsMessageExchangeHelper.setCorrelationId(request, correlationId);
+                SjmsExchangeMessageHelper.setCorrelationId(request, correlationId);
                 try {
                     lock.writeLock().lock();
                     exchangerMap.put(correlationId, messageExchanger);
@@ -293,7 +293,7 @@ public class InOutProducer extends SjmsProducer {
                 }
 
                 MessageConsumerResource consumer = consumers.borrowObject(getResponseTimeOut());
-                JmsMessageExchangeHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
+                SjmsExchangeMessageHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
                 consumers.returnObject(consumer);
                 producer.getMessageProducer().send(request);
 
@@ -327,7 +327,7 @@ public class InOutProducer extends SjmsProducer {
                         exchange.setException((Throwable)responseObject);
                     } else if (responseObject instanceof Message) {
                         Message response = (Message)responseObject;
-                        JmsMessageExchangeHelper.populateExchange(response, exchange, true);
+                        SjmsExchangeMessageHelper.populateExchange(response, exchange, true);
                     } else {
                         exchange.setException(new CamelException("Unknown response type: " + responseObject));
                     }
