@@ -160,8 +160,13 @@
       <version>1.7</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
+	  <groupId>org.apache.camel</groupId>
+	  <artifactId>camel-netty</artifactId>
+	  <scope>test</scope>
+	</dependency>
+
+	  <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ftp</artifactId>
       <scope>test</scope>
