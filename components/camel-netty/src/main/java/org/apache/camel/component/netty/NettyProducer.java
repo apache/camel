@@ -188,15 +188,10 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             return true;
         }
 
-        // log what we are writing
-        LOG.debug("Writing body: {}", body);
-        // write the body asynchronously
-        ChannelFuture future = channel.write(body);
-
-        // add listener which handles the operation
-        future.addListener(new ChannelFutureListener() {
+        // write body
+        NettyHelper.writeBodyAsync(channel, null, body, exchange, new ChannelFutureListener() {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                LOG.debug("Operation complete {}", channelFuture);
+                LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
                     // no success the set the caused exception and signal callback and break
                     exchange.setException(channelFuture.getCause());
@@ -221,8 +216,8 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
                             disconnect = close;
                         }
                         if (disconnect) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Closing channel when complete at address: {}", getEndpoint().getConfiguration().getAddress());
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Closing channel when complete at address: {}", getEndpoint().getConfiguration().getAddress());
                             }
                             NettyHelper.close(channel);
                         }

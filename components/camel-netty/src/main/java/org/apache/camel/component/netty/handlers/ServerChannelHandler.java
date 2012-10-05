@@ -54,14 +54,18 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
 
     @Override
     public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        LOG.trace("Channel open: {}", e.getChannel());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Channel open: {}", e.getChannel());
+        }
         // to keep track of open sockets
         consumer.getAllChannels().add(e.getChannel());
     }
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        LOG.trace("Channel closed: {}", e.getChannel());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Channel closed: {}", e.getChannel());
+        }
     }
 
     @Override
@@ -78,7 +82,9 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent messageEvent) throws Exception {
         Object in = messageEvent.getMessage();
-        LOG.debug("Incoming message: {}", in);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Receiving from channel: {} body: {}", new Object[]{messageEvent.getChannel(), in});
+        }
 
         // create Exchange and let the consumer process it
         final Exchange exchange = consumer.getEndpoint().createExchange(ctx, messageEvent);
@@ -148,8 +154,8 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             if (consumer.getConfiguration().isDisconnectOnNoReply()) {
                 // must close session if no data to write otherwise client will never receive a response
                 // and wait forever (if not timing out)
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Closing channel as no payload to send as reply at address: {}", messageEvent.getRemoteAddress());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Closing channel as no payload to send as reply at address: {}", messageEvent.getRemoteAddress());
                 }
                 NettyHelper.close(messageEvent.getChannel());
             }
@@ -160,7 +166,6 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             }
 
             // we got a body to write
-            LOG.debug("Writing body: {}", body);
             ChannelFutureListener listener = new ResponseFutureListener(exchange, messageEvent.getRemoteAddress());
             if (consumer.getConfiguration().isTcp()) {
                 NettyHelper.writeBodyAsync(messageEvent.getChannel(), null, body, exchange, listener);
@@ -206,8 +211,8 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
                 disconnect = close;
             }
             if (disconnect) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Closing channel when complete at address: {}", remoteAddress);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Closing channel when complete at address: {}", remoteAddress);
                 }
                 NettyHelper.close(future.getChannel());
             }
