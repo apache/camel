@@ -16,7 +16,7 @@
  */
 package org.apache.camel.util;
 
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A Least Recently Used Cache which uses {@link SoftReference}.
+ * A Least Recently Used Cache which uses {@link java.lang.ref.WeakReference}.
  * <p/>
- * This implementation uses {@link java.lang.ref.SoftReference} for stored values in the cache, to support the JVM
- * when it wants to reclaim objects when it's running out of memory. Therefore this implementation does
+ * This implementation uses {@link java.lang.ref.WeakReference} for stored values in the cache, to support the JVM
+ * when it wants to reclaim objects for example during garbage collection. Therefore this implementation does
  * not support <b>all</b> the {@link java.util.Map} methods.
  * <p/>
  * The following methods is <b>only</b> be be used:
@@ -48,37 +48,37 @@ import java.util.Set;
  * for the existence of a value without catering for the soft references.
  *
  * @see LRUCache
- * @see LRUWeakCache
+ * @see LRUSoftCache
  */
-public class LRUSoftCache<K, V> extends LRUCache<K, V> {
+public class LRUWeakCache<K, V> extends LRUCache<K, V> {
     private static final long serialVersionUID = 1L;
 
-    public LRUSoftCache(int maximumCacheSize) {
+    public LRUWeakCache(int maximumCacheSize) {
         super(maximumCacheSize);
     }
 
-    public LRUSoftCache(int initialCapacity, int maximumCacheSize) {
+    public LRUWeakCache(int initialCapacity, int maximumCacheSize) {
         super(initialCapacity, maximumCacheSize);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public V put(K key, V value) {
-        SoftReference<V> put = new SoftReference<V>(value);
-        SoftReference<V> prev = (SoftReference<V>) super.put(key, (V) put);
+        WeakReference<V> put = new WeakReference<V>(value);
+        WeakReference<V> prev = (WeakReference<V>) super.put(key, (V) put);
         return prev != null ? prev.get() : null;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public V get(Object o) {
-        SoftReference<V> ref = (SoftReference<V>) super.get(o);
+        WeakReference<V> ref = (WeakReference<V>) super.get(o);
         return ref != null ? ref.get() : null;
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+        for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
@@ -86,7 +86,7 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
     @Override
     @SuppressWarnings("unchecked")
     public V remove(Object o) {
-        SoftReference<V> ref = (SoftReference<V>) super.remove(o);
+        WeakReference<V> ref = (WeakReference<V>) super.remove(o);
         return ref != null ? ref.get() : null;
     }
 
@@ -94,9 +94,9 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
     @SuppressWarnings("unchecked")
     public Collection<V> values() {
         // return a copy of all the active values
-        Collection<SoftReference<V>> col = (Collection<SoftReference<V>>) super.values();
+        Collection<WeakReference<V>> col = (Collection<WeakReference<V>>) super.values();
         Collection<V> answer = new ArrayList<V>();
-        for (SoftReference<V> ref : col) {
+        for (WeakReference<V> ref : col) {
             V value = ref.get();
             if (value != null) {
                 answer.add(value);
@@ -110,7 +110,7 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
         // only count as a size if there is a value
         int size = 0;
         for (V value : super.values()) {
-            SoftReference<?> ref = (SoftReference<?>) value;
+            WeakReference<?> ref = (WeakReference<?>) value;
             if (ref != null && ref.get() != null) {
                 size++;
             }
@@ -131,15 +131,15 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
     }
 
     @Override
-    public Set<Map.Entry<K, V>> entrySet() {
-        Set<Map.Entry<K, V>> original = super.entrySet();
+    public Set<Entry<K, V>> entrySet() {
+        Set<Entry<K, V>> original = super.entrySet();
 
         // must use a copy to avoid concurrent modifications and be able to get/set value using
         // the soft reference so the returned set is without the soft reference, and thus is
         // use able for the caller to use
-        Set<Map.Entry<K, V>> answer = new LinkedHashSet<Map.Entry<K, V>>(original.size());
-        for (final Map.Entry<K, V> entry : original) {
-            Map.Entry<K, V> view = new Map.Entry<K, V>() {
+        Set<Entry<K, V>> answer = new LinkedHashSet<Entry<K, V>>(original.size());
+        for (final Entry<K, V> entry : original) {
+            Entry<K, V> view = new Entry<K, V>() {
                 @Override
                 public K getKey() {
                     return entry.getKey();
@@ -148,15 +148,15 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
                 @Override
                 @SuppressWarnings("unchecked")
                 public V getValue() {
-                    SoftReference<V> ref = (SoftReference<V>) entry.getValue();
+                    WeakReference<V> ref = (WeakReference<V>) entry.getValue();
                     return ref != null ? ref.get() : null;
                 }
 
                 @Override
                 @SuppressWarnings("unchecked")
                 public V setValue(V v) {
-                    V put = (V) new SoftReference<V>(v);
-                    SoftReference<V> prev = (SoftReference<V>) entry.setValue(put);
+                    V put = (V) new WeakReference<V>(v);
+                    WeakReference<V> prev = (WeakReference<V>) entry.setValue(put);
                     return prev != null ? prev.get() : null;
                 }
             };
@@ -168,6 +168,6 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
 
     @Override
     public String toString() {
-        return "LRUSoftCache@" + ObjectHelper.getIdentityHashCode(this);
+        return "LRUWeakCache@" + ObjectHelper.getIdentityHashCode(this);
     }
 }

@@ -56,7 +56,10 @@ public final class IntrospectionSupport {
     private static final Pattern GETTER_PATTERN = Pattern.compile("(get|is)[A-Z].*");
     private static final Pattern SETTER_PATTERN = Pattern.compile("set[A-Z].*");
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
-    private static final Map<Class<?>, ClassInfo> CACHE = new LRUSoftCache<Class<?>, ClassInfo>(1000);
+    // use a cache to speedup introspecting for known classes during startup
+    // use a weak cache as we dont want the cache to keep around as it reference classes
+    // which could prevent classloader to unload classes if being referenced from this cache
+    private static final LRUCache<Class<?>, ClassInfo> CACHE = new LRUWeakCache<Class<?>, ClassInfo>(1000);
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
@@ -96,6 +99,9 @@ public final class IntrospectionSupport {
      * This implementation will clear its introspection cache.
      */
     public static void stop() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Clearing cache[size={}, hits={}, misses={}]", new Object[]{CACHE.size(), CACHE.getHits(), CACHE.getMisses()});
+        }
         CACHE.clear();
     }
 
