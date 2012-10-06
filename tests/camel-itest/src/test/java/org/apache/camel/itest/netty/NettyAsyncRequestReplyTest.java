@@ -16,6 +16,15 @@
  */
 package org.apache.camel.itest.netty;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import javax.naming.Context;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
@@ -36,6 +45,41 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
     public void testNetty() throws Exception {
         String out = template.requestBody("netty:tcp://localhost:" + port + "?textline=true?sync=true", "World", String.class);
         assertEquals("Bye World", out);
+
+        String out2 = template.requestBody("netty:tcp://localhost:" + port + "?textline=true?sync=true", "Camel", String.class);
+        assertEquals("Bye Camel", out2);
+    }
+
+    @Test
+    public void testConcurrent() throws Exception {
+        int size = 1000;
+
+        ExecutorService executor = Executors.newFixedThreadPool(20);
+        Map<Integer, Future<String>> responses = new ConcurrentHashMap<Integer, Future<String>>();
+        for (int i = 0; i < size; i++) {
+            final int index = i;
+            Future<String> out = executor.submit(new Callable<String>() {
+                public String call() throws Exception {
+                    String reply = template.requestBody("netty:tcp://localhost:" + port + "?textline=true?sync=true", index, String.class);
+                    log.info("Sent {} received {}", index, reply);
+                    assertEquals("Bye " + index, reply);
+                    return reply;
+                }
+            });
+            responses.put(index, out);
+        }
+
+        // get all responses
+        Set<Object> unique = new HashSet<Object>();
+        for (Future<String> future : responses.values()) {
+            String reply = future.get(30, TimeUnit.SECONDS);
+            assertNotNull("Should get a reply", reply);
+            unique.add(reply);
+        }
+
+        // should be 10 unique responses
+        assertEquals("Should be " + size + " unique responses", size, unique.size());
+        executor.shutdownNow();
     }
 
     @Override
