@@ -179,7 +179,6 @@
     <jaxen-version>1.1.4</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jclouds-version>1.5.1</jclouds-version>
-    <jclouds-feature-version>1.5.1</jclouds-feature-version>
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
