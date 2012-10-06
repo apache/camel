@@ -35,7 +35,8 @@ public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implem
     private final CamelContext context;
 
     public EndpointRegistry(CamelContext context) {
-        super(CamelContextHelper.getMaximumEndpointCacheSize(context));
+        // do not stop on eviction, as the endpoint may still be in use
+        super(CamelContextHelper.getMaximumEndpointCacheSize(context), CamelContextHelper.getMaximumEndpointCacheSize(context), false);
         this.context = context;
     }
 

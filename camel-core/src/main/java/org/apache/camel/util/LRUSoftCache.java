@@ -46,6 +46,9 @@ import java.util.Set;
  * <p/>
  * The {@link #containsValue(Object)} method should <b>not</b> be used as it's not adjusted to check
  * for the existence of a value without catering for the soft references.
+ * <p/>
+ * Notice that if the JVM reclaim memory the content of this cache may be garbage collected, without any
+ * eviction notifications.
  *
  * @see LRUCache
  */
@@ -58,6 +61,10 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
 
     public LRUSoftCache(int initialCapacity, int maximumCacheSize) {
         super(initialCapacity, maximumCacheSize);
+    }
+
+    public LRUSoftCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
+        super(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
     @Override

@@ -480,6 +480,22 @@ public class ProducerCache extends ServiceSupport {
     }
 
     /**
+     * Gets the cache evicted statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the evicted
+     */
+    public long getEvicted() {
+        long evicted = -1;
+        if (producers instanceof LRUCache) {
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
+            evicted = cache.getEvicted();
+        }
+        return evicted;
+    }
+
+    /**
      * Resets the cache statistics
      */
     public void resetCacheStatistics() {
