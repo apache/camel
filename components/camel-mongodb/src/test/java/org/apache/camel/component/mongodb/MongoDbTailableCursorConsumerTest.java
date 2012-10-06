@@ -28,10 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
     
@@ -384,20 +381,11 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         cappedTestCollection.drop();
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/mongodb/mongoComponentTest.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
-    }
-    
     protected void addTestRoutes() throws Exception {
         context.addRoutes(new RouteBuilder() {
             
             @Override
             public void configure() throws Exception {
-                PropertiesComponent pc = new PropertiesComponent("classpath:mongodb.test.properties");
-                context.addComponent("properties", pc);
                 
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing")
                     .id("tailableCursorConsumer1")

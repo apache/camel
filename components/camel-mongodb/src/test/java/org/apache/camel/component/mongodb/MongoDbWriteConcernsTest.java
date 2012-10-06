@@ -22,9 +22,7 @@ import com.mongodb.WriteResult;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
 
@@ -79,13 +77,6 @@ public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
         } catch (Exception e) {
             extractAndAssertCamelMongoDbException(e, "WriteConcern specified in the " + MongoDbConstants.WRITECONCERN + " header");
         }
-    }
-    
-    
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/mongodb/mongoComponentTest.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
     }
         
     @Override
