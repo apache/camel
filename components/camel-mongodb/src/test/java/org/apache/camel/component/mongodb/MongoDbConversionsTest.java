@@ -70,20 +70,11 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         DBObject b = testCollection.findOne("testInsertJsonString");
         assertNotNull("No record with 'testInsertJsonString' _id", b);
     }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/mongodb/mongoComponentTest.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
-    }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                
-                PropertiesComponent pc = new PropertiesComponent("classpath:mongodb.test.properties");
-                context.addComponent("properties", pc);
                 
                 from("direct:insertMap").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
                 from("direct:insertPojo").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");

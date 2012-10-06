@@ -56,7 +56,7 @@
       <version>${restlet-version}</version>
     </dependency>
 
-    <!-- test artifacts -->
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>      

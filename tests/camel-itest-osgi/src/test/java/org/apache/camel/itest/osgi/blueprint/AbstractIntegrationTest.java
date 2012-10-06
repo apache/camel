@@ -74,14 +74,14 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
             if (svc == null) {
                 @SuppressWarnings("rawtypes")
                 Dictionary dic = bundleContext.getBundle().getHeaders();
-                System.err.println("Test bundle headers: " + explode(dic));
+                LOG.warn("Test bundle headers: " + explode(dic));
 
                 for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
-                    System.err.println("ServiceReference: " + ref);
+                    LOG.warn("ServiceReference: " + ref);
                 }
 
                 for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
-                    System.err.println("Filtered ServiceReference: " + ref);
+                    LOG.warn("Filtered ServiceReference: " + ref);
                 }
 
                 throw new RuntimeException("Gave up waiting for service " + flt);
@@ -106,7 +106,7 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
             }
         }
         for (Bundle b : bundleContext.getBundles()) {
-            System.err.println("Bundle: " + b.getSymbolicName());
+            LOG.warn("Bundle: " + b.getSymbolicName());
         }
         throw new RuntimeException("Bundle " + symbolicName + " does not exist");
     }

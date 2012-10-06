@@ -114,12 +114,12 @@ public class RmiConcurrencyTest extends CamelTestSupport {
             URL[] urls = ucl.getURLs();
             for (URL url : urls) {
                 if (url.getPath().contains(" ")) {
-                    System.err.println("=======================================================================");
-                    System.err.println(" TEST Skipped: " + this.getClass().getName());
-                    System.err.println("   Your probably on windows.  We detected that the classpath");
-                    System.err.println("   has a space in it.  Try running maven with the following option: ");
-                    System.err.println("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");
-                    System.err.println("=======================================================================");
+                    log.error("=======================================================================");
+                    log.error(" TEST Skipped: " + this.getClass().getName());
+                    log.error("   Your probably on windows.  We detected that the classpath");
+                    log.error("   has a space in it.  Try running maven with the following option: ");
+                    log.error("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");
+                    log.error("=======================================================================");
                     return true;
                 }
             }

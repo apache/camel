@@ -41,14 +41,12 @@
         <dependency>
             <groupId>jini</groupId>
             <artifactId>jini-core</artifactId>
-            <version>2.1</version>
-            <scope>compile</scope>
+            <version>${jini-version}</version>
         </dependency>
         <dependency>
             <groupId>jini</groupId>
             <artifactId>jini-ext</artifactId>
-            <version>2.1</version>
-            <scope>compile</scope>
+            <version>${jini-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -62,8 +60,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -83,14 +79,14 @@
                 <dependency>
                     <groupId>jini</groupId>
                     <artifactId>jini-core</artifactId>
-                    <version>2.1</version>
+                    <version>${jini-version}</version>
                     <scope>system</scope>
                     <systemPath>${JSHOMEDIR}/lib/required/gs-runtime.jar</systemPath>
                 </dependency>
                 <dependency>
                     <groupId>jini</groupId>
                     <artifactId>jini-ext</artifactId>
-                    <version>2.1</version>
+                    <version>${jini-version}</version>
                     <scope>system</scope>
                     <systemPath>${JSHOMEDIR}/lib/required/gs-runtime.jar</systemPath>
                 </dependency>

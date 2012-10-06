@@ -107,12 +107,7 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Object getProperty(String name) {
-        if (hasProperties()) {
-            // use intern String for properties which is Camel* properties
-            // this reduces memory allocations needed for those common properties
-            if (name.startsWith("Camel")) {
-                name = name.intern();
-            }
+        if (properties != null) {
             return properties.get(name);
         }
         return null;
@@ -164,11 +159,6 @@ public final class DefaultExchange implements Exchange {
     }
 
     public void setProperty(String name, Object value) {
-        // use intern String for properties which is Camel* properties
-        // this reduces memory allocations needed for those common properties
-        if (name != null && name.startsWith("Camel")) {
-            name = name.intern();
-        }
         if (value != null) {
             // avoid the NullPointException
             getProperties().put(name, value);

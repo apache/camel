@@ -36,6 +36,9 @@ public interface ManagedConsumerCacheMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Cache misses")
     Long getMisses();
 
+    @ManagedAttribute(description = "Cache evicted")
+    Long getEvicted();
+
     @ManagedOperation(description = "Reset cache statistics")
     void resetStatistics();
 

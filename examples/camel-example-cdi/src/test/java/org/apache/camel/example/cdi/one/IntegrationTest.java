@@ -16,36 +16,36 @@
  */
 package org.apache.camel.example.cdi.one;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Mock;
-import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.cdi.MyRoutes;
+import org.apache.camel.example.cdi.one.DeploymentFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Lets use an embedded {@link RouteBuilder} to test {@link MyRoutes}
- */
 @RunWith(Arquillian.class)
-public class IntegrationTest {
+public class IntegrationTest extends DeploymentFactory {
+
     private static final transient Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
+
+    static boolean routeConfigured;
 
     @Inject
     MyRoutes config;
@@ -54,14 +54,14 @@ public class IntegrationTest {
     @Mock
     MockEndpoint result;
 
-    static boolean routeConfigured;
-
     @Produces
     @ApplicationScoped
     @ContextName
-    public RouteBuilder createRoutes() {
-        return new RouteBuilder() {
-            public void configure() {
+    public RouteBuilder createRoute() {
+        return new RouteBuilder()
+        {
+            public void configure()
+            {
                 routeConfigured = true;
                 Endpoint resultEndpoint = config.getResultEndpoint();
                 LOG.info("consuming from output: " + resultEndpoint + " to endpoint: " + result);
@@ -73,6 +73,7 @@ public class IntegrationTest {
 
     @Test
     public void integrationTest() throws Exception {
+
         assertNotNull("config not injected!", config);
         assertNotNull("MockEndpoint result not injected!", result);
         assertTrue("RouteBuilder has not been configured!", routeConfigured);
@@ -81,13 +82,4 @@ public class IntegrationTest {
         result.assertIsSatisfied();
     }
 
-    @Deployment
-    public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-                //.addPackage(CdiCamelContext.class.getPackage())
-                .addPackage(CamelExtension.class.getPackage())
-                .addPackage(MyRoutes.class.getPackage())
-                .addPackage(IntegrationTest.class.getPackage())
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
 }

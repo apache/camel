@@ -53,13 +53,13 @@ public class EndpointsTest extends TestSupport {
     protected void assertValidCamel(Camel camel) {
         assertNotNull("Should have found camel", camel);
 
-        System.out.println("Found: " + camel);
+        log.info("Found: " + camel);
     }
 
     protected void assertValidEndpoints(Endpoints endpoints) {
         assertNotNull("Should have found endpoints", endpoints);
 
-        System.out.println("Found: " + endpoints.getEndpoints());
+        log.info("Found: " + endpoints.getEndpoints());
 
         List<EndpointLink> list = endpoints.getEndpoints();
         assertTrue("Should have received some endpoints!", !list.isEmpty());

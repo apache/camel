@@ -65,55 +65,46 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- ServiceMix Repo Script Engines -->
-
+        <!-- test dependencies -->
         <dependency>
             <groupId>com.sun.script</groupId>
             <artifactId>jython-engine</artifactId>
-            <version>20080611</version>
+            <version>${jython-engine-version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>rhino</groupId>
             <artifactId>js</artifactId>
-            <version>1.6R7</version>
+            <version>${rhino-version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.python</groupId>
             <artifactId>jython</artifactId>
-            <version>2.2.1</version>
+            <version>${jython-version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.beanshell</groupId>
             <artifactId>bsh</artifactId>
-            <version>2.0b5</version>
+            <version>${bsh-version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

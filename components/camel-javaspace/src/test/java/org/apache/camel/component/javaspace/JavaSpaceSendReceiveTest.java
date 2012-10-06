@@ -58,7 +58,7 @@ public class JavaSpaceSendReceiveTest extends CamelTestSupport {
         }
         resultEndpoint.assertIsSatisfied();
         long stop = System.currentTimeMillis();
-        System.out.println(stop - start);
+        log.info("{} took {} milliseconds", getTestMethodName(), stop - start);
     }
 
     @Override

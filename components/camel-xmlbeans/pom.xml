@@ -50,7 +50,7 @@
       <artifactId>stax-api</artifactId>
     </dependency>
 
-    <!-- testing -->
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>

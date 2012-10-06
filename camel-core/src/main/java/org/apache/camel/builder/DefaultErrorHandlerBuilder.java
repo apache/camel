@@ -69,6 +69,45 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return false;
     }
 
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        DefaultErrorHandlerBuilder answer = new DefaultErrorHandlerBuilder();
+        cloneBuilder(answer);
+        return answer;
+    }
+
+    protected void cloneBuilder(DefaultErrorHandlerBuilder other) {
+        super.cloneBuilder(other);
+
+        if (logger != null) {
+            other.setLogger(logger);
+        }
+        if (redeliveryPolicy != null) {
+            other.setRedeliveryPolicy(redeliveryPolicy.copy());
+        }
+        if (onRedelivery != null) {
+            other.setOnRedelivery(onRedelivery);
+        }
+        if (retryWhile != null) {
+            other.setRetryWhile(retryWhile);
+        }
+        if (retryWhileRef != null) {
+            other.setRetryWhileRef(retryWhileRef);
+        }
+        if (failureProcessor != null) {
+            other.setFailureProcessor(failureProcessor);
+        }
+        if (deadLetter != null) {
+            other.setDeadLetter(deadLetter);
+        }
+        if (deadLetterUri != null) {
+            other.setDeadLetterUri(deadLetterUri);
+        }
+        other.setUseOriginalMessage(useOriginalMessage);
+        other.setAsyncDelayedRedelivery(asyncDelayedRedelivery);
+        other.setExecutorServiceRef(executorServiceRef);
+    }
+
     // Builder methods
     // -------------------------------------------------------------------------
     public DefaultErrorHandlerBuilder backOffMultiplier(double backOffMultiplier) {
@@ -430,7 +469,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
                     throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
                 }
             } else {
-                // no explicit configured thread pool, so leave it up to the error handler to deceide if it need
+                // no explicit configured thread pool, so leave it up to the error handler to decide if it need
                 // a default thread pool from CamelContext#getErrorHandlerExecutorService
                 executorService = null;
             }

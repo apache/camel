@@ -18,11 +18,16 @@ package org.apache.camel.itest.greeter;
 
 import javax.xml.ws.Endpoint;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Server {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Server.class);
     Endpoint endpoint;
 
     public void start() throws Exception {
-        System.out.println("Starting Server");
+        LOG.info("Starting Server");
         Object implementor = new GreeterImpl();
         String address = "http://cxf.apache.org/transports/jms";
         endpoint = Endpoint.publish(address, implementor);
@@ -36,10 +41,10 @@ public class Server {
 
     public static void main(String args[]) throws Exception {
         Server server = new Server();
-        System.out.println("Server ready...");
+        LOG.info("Server ready...");
         server.start();
         Thread.sleep(5 * 60 * 1000);
-        System.out.println("Server exiting");
+        LOG.info("Server exiting");
         server.stop();
         System.exit(0);
     }

@@ -89,7 +89,7 @@ public class TransactedTryCatchTest extends CamelSpringTestSupport {
         error.expectedMessageCount(1);
         error.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {
-                // System.out.println(exchange);
+                log.info("{}", exchange);
             }
         });
         try {

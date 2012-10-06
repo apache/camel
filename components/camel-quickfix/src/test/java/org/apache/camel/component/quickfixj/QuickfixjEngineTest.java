@@ -383,7 +383,6 @@ public class QuickfixjEngineTest {
     }
 
     @Test
-    @Ignore("The unit test works but we have a collision with the enableJmxForInitiator one")
     public void enableJmxForAcceptor() throws Exception {
         settings.setBool(QuickfixjEngine.SETTING_USE_JMX, true);
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);

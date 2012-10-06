@@ -18,9 +18,14 @@ package org.apache.camel.component.quickfixj.examples.transform;
 
 import org.apache.camel.Exchange;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import quickfix.ConfigError;
 
 public class QuickfixjMessageJsonPrinter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjMessageJsonPrinter.class);
     private QuickfixjEventJsonTransformer formatter;
 
     public QuickfixjMessageJsonPrinter() throws ConfigError {
@@ -28,6 +33,6 @@ public class QuickfixjMessageJsonPrinter {
     }
     
     public void print(Exchange exchange) {
-        System.out.println(formatter.transform(exchange));
+        LOG.info(formatter.transform(exchange));
     }
 }

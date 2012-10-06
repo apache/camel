@@ -18,8 +18,12 @@ package org.apache.camel.example.cdi.two;
 
 import org.apache.camel.cdi.CdiCamelContext;
 import org.apache.camel.cdi.internal.CamelExtension;
+import org.apache.camel.example.cdi.two.DeploymentFactory;
 import org.apache.camel.example.cdi.MyRoutes;
+import org.apache.camel.example.cdi.one.*;
+import org.apache.camel.example.cdi.two.TestRouteBuilder;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -32,10 +36,11 @@ import javax.inject.Inject;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Lets use a separate {@link TestRouteBuilder} to test the routes
+ * Lets use a separate {@link org.apache.camel.example.cdi.two.TestRouteBuilder} to test the routes
  */
 @RunWith(Arquillian.class)
-public class SeparateRouteBuilderIntegrationTest {
+public class SeparateRouteBuilderIntegrationTest extends DeploymentFactory {
+
     @Inject
     TestRouteBuilder testRouteBuilder;
 
@@ -44,15 +49,5 @@ public class SeparateRouteBuilderIntegrationTest {
         assertNotNull("testRouteBuilder not injected!", testRouteBuilder);
 
         testRouteBuilder.assertIsSatisfied();
-    }
-
-    @Deployment
-    public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-                .addPackage(CdiCamelContext.class.getPackage())
-                .addPackage(CamelExtension.class.getPackage())
-                .addPackage(MyRoutes.class.getPackage())
-                .addPackage(SeparateRouteBuilderIntegrationTest.class.getPackage())
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 }

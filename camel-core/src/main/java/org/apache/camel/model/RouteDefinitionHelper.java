@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -161,7 +162,13 @@ public final class RouteDefinitionHelper {
 
         if (context != null) {
             // let the route inherit the error handler builder from camel context if none already set
-            route.setErrorHandlerBuilderIfNull(context.getErrorHandlerBuilder());
+
+            // must clone to avoid side effects while building routes using multiple RouteBuilders
+            ErrorHandlerBuilder builder = context.getErrorHandlerBuilder();
+            if (builder != null) {
+                builder = builder.cloneBuilder();
+                route.setErrorHandlerBuilderIfNull(builder);
+            }
         }
 
         // init parent and error handler builder on the route

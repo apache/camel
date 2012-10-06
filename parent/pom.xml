@@ -45,9 +45,12 @@
     <apacheds-version>1.5.7</apacheds-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
+    <arquillian-junit-container-version>1.0.0.CR7</arquillian-junit-container-version>
     <arquillian-weld-ee-embedded-version>1.0.0.CR3</arquillian-weld-ee-embedded-version>
     <asm-bundle-version>3.3_2</asm-bundle-version>
+    <asm-version>3.1</asm-version>
     <asm2-bundle-version>2.2.3_5</asm2-bundle-version>
+    <aspectj-version>1.6.2</aspectj-version>
     <atomikos-transactions-version>3.8.0</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avro-version>1.6.2</avro-version>
@@ -57,10 +60,12 @@
     <axiom-version>1.2.12</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
-    <beanio-version>2.0.1</beanio-version>
+    <beanio-version>2.0.2</beanio-version>
+    <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.46</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
-    <cglib-version>2.1_3_7</cglib-version>
+    <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
+    <cglib-version>2.2</cglib-version>
     <cmis-version>0.7.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
@@ -86,6 +91,7 @@
     <commons-math-version>2.2</commons-math-version>
     <commons-net-version>3.1</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
+    <commons-jxpath-version>1.3</commons-jxpath-version>
     <concurrentlinkedhashmap.version>1.3.1</concurrentlinkedhashmap.version>
     <cxf-version>2.6.2</cxf-version>
     <cxf-version-range>[2.4,2.8)</cxf-version-range>
@@ -103,6 +109,7 @@
     <exec-maven-plugin-version>1.1.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
+    <felix-compendium-version>1.2.0</felix-compendium-version>
     <felix-configadmin-version>1.2.4</felix-configadmin-version>
     <felix-framework-version>2.0.5</felix-framework-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
@@ -124,7 +131,7 @@
     <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
-    <geronimo-servlet-spec-version>1.1.2</geronimo-servlet-spec-version>
+    <geronimo-servlet-spec-version>1.2</geronimo-servlet-spec-version>
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <google-app-engine-version>1.6.6</google-app-engine-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
@@ -150,36 +157,48 @@
     <httpclient4-version>4.2.1</httpclient4-version> <!-- FIXME cmueller: rename to commons-httpclient4-version -->
     <httpclient-version>3.1</httpclient-version> <!-- FIXME cmueller: rename to commons-httpclient-version -->
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
+    <ibatis-version>2.3.4.726</ibatis-version>
     <icu4j-version>4.8.1.1</icu4j-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
+    <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
-    <jackson-version>1.9.9</jackson-version>
+    <isorelax-jaxp-bridge-version>1.0</isorelax-jaxp-bridge-version>
+    <isorelax-version>20050913</isorelax-version>
+    <jini-version>2.1</jini-version>
+    <jackson-version>1.9.10</jackson-version>
     <jackrabbit-version>2.2.12</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasypt-bundle-version>1.9.0_1</jasypt-bundle-version>
     <jasypt-version>1.9.0</jasypt-version>
     <java-apns-bundle-version>0.1.6_3</java-apns-bundle-version>
     <java-apns-version>0.1.6</java-apns-version>
+    <javacrumbs-version>0.19</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
     <javax-mail-version>1.4.5</javax-mail-version>
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
     <jaxen-version>1.1.4</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
-    <jclouds-version>1.5.0</jclouds-version>
+    <jclouds-version>1.5.1</jclouds-version>
     <jclouds-feature-version>1.5.0</jclouds-feature-version>
+    <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
     <jetty-version>7.6.7.v20120910</jetty-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
+    <jetty6-version>6.1.26</jetty6-version>
     <jettison-version>1.3.2</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.4.5</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
+    <jing-version>20030619</jing-version>
+    <jline-version>0.9.94</jline-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.1</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
+    <josql-version>1.5</josql-version>
     <jruby-version>1.6.7.2</jruby-version>
+    <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
     <jsch-bundle-version>0.1.48_1</jsch-bundle-version>
     <jsch-version>0.1.48</jsch-version>
@@ -194,6 +213,8 @@
     <juel-version>2.1.3</juel-version>
     <junit-bundle-version>4.10_1</junit-bundle-version>
     <junit-version>4.10</junit-version>
+    <jython-engine-version>20080611</jython-engine-version>
+    <jython-version>2.2.1</jython-version>
     <karaf-version>2.2.9</karaf-version>
     <krati-version>0.4.6</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
@@ -203,15 +224,14 @@
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
-    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-version>2.0</maven-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
-    <mina2-version>2.0.4</mina2-version>
+    <mina2-version>2.0.6</mina2-version>
     <mockito-version>1.9.0</mockito-version>
-    <mongo-java-driver-version>2.7.3</mongo-java-driver-version>
+    <mongo-java-driver-version>2.9.1</mongo-java-driver-version>
     <mqtt-client-version>1.2</mqtt-client-version>
     <mvel-bundle-version>2.0.18_3</mvel-bundle-version>
     <mvel-version>2.0.18</mvel-version>
@@ -219,11 +239,12 @@
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <!-- transitive dependency from avro, to use older netty bundle -->
     <netty-bundle-version>3.2.7.Final_1</netty-bundle-version>
-    <netty-version>3.5.7.Final</netty-version>
+    <netty-version>3.5.8.Final</netty-version>
     <ode-version>1.3.4</ode-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
     <ognl-version>3.0.5_1</ognl-version>
+    <openejb-version>3.1.4</openejb-version>
     <opensaml-version>2.5.1_2</opensaml-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
@@ -234,6 +255,7 @@
     <pax-runner-version>1.6.1</pax-runner-version>
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
     <pax-logging-version>1.6.10</pax-logging-version>
+    <pdfbox-version>1.6.0</pdfbox-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
     <pojosr-version>0.1.8</pojosr-version>
@@ -246,8 +268,10 @@
     <quickfix-bundle-version>1.5.2_1</quickfix-bundle-version>
     <quickfix-version>1.5.2-bd</quickfix-version>
     <regexp-bundle-version>1.3_3</regexp-bundle-version>
+    <relaxngDatatype-version>20020414</relaxngDatatype-version>
     <restlet-version>2.0.15</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
+    <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
@@ -291,6 +315,7 @@
     <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
     <twitter4j-version>2.2.5</twitter4j-version>
     <velocity-bundle-version>1.7_4</velocity-bundle-version>
+    <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
     <vysper-version>0.7</vysper-version>
     <!-- should be in-sync with deltaspike -->
@@ -312,6 +337,8 @@
     <xmlsec-version>1.5.1</xmlsec-version>
     <xmlunit-version>1.3</xmlunit-version>
     <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
+    <xpp3-version>1.1.4c</xpp3-version>
+    <xsdlib-version>20060615</xsdlib-version>
     <xstream-bundle-version>1.4.3_1</xstream-bundle-version>
     <xstream-version>1.4.3</xstream-version>
     <xom-version>1.2.5</xom-version>
@@ -331,6 +358,7 @@
       org.apache.velocity.*;version="[1.6.2,2)",
       org.apache.xmlbeans.*;version="[2.4,3)",
       org.eclipse.jetty.*;version="[7.5,8.2)",
+      org.eclipse.jetty.util.ssl;version="[7.6,8.2)";resolution:=optional,
       com.thoughtworks.xstream.*;version="[1.3,2)",
       org.antlr.stringtemplate.*;version="[3.0,4)",
       org.jivesoftware.smack.*;version="[3.0,4)",
@@ -1512,6 +1540,11 @@
         <artifactId>pax-swissbox-tinybundles</artifactId>
         <version>${pax-tiny-bundle-version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.openengsb.labs.paxexam.karaf</groupId>
+        <artifactId>paxexam-karaf-container</artifactId>
+        <version>${paxexam-karaf-container-version}</version>
+      </dependency>
 
       <!-- optional Saxon support -->
       <dependency>
@@ -2071,7 +2104,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.2</version>
           <configuration>
             <webResources>
               <!-- HACK: Include legal files explicitly, otherwise they will 
@@ -2097,6 +2130,15 @@
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <version>0.8</version>
+        </plugin>
+        <plugin>  
+          <groupId>org.apache.tomcat.maven</groupId>  
+          <artifactId>tomcat7-maven-plugin</artifactId>  
+          <version>2.0</version>
+          <configuration>
+            <path>/</path>  
+            <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>                       
+           </configuration>  
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -2160,6 +2202,14 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>taglist-maven-plugin</artifactId>
           <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>tomcat-maven-plugin</artifactId>
+          <version>1.1</version>
+          <configuration>
+            <path>/</path>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.jvnet.jaxb2.maven2</groupId>

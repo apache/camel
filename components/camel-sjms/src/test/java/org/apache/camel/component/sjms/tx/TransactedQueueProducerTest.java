@@ -42,7 +42,7 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTransactedProducer() throws Exception {
+    public void testRoute() throws Exception {
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World 2");

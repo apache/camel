@@ -43,7 +43,7 @@
         <dependency>
             <groupId>thaiopensource</groupId>
             <artifactId>jing</artifactId>
-            <version>20030619</version>
+            <version>${jing-version}</version>
         </dependency>
 
         <!-- for testing -->

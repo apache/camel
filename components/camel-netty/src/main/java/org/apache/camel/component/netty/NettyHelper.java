@@ -86,8 +86,14 @@ public final class NettyHelper {
         // the write operation is asynchronous. Use future to wait until the session has been written
         ChannelFuture future;
         if (remoteAddress != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Writing to channel: {} remote address: {} with body: {}", new Object[]{channel, remoteAddress, body});
+            }
             future = channel.write(body, remoteAddress);
         } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Writing to channel: {} with body: {}", new Object[]{channel, body});
+            }
             future = channel.write(body);
         }
 

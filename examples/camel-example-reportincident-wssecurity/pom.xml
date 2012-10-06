@@ -156,7 +156,6 @@
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
-                <version>${cxf-version}</version>
                 <executions>
                     <execution>
                         <id>generate-sources</id>
@@ -180,7 +179,6 @@
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty-version}</version>
                 <configuration>
                    <connectors>
                       <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">

@@ -77,6 +77,8 @@ public class JpaComponent extends DefaultComponent {
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
+
         // lookup entity manager factory and use it if only one provided
         if (entityManagerFactory == null) {
             Map<String, EntityManagerFactory> map = getCamelContext().getRegistry().lookupByType(EntityManagerFactory.class);
@@ -130,7 +132,5 @@ public class JpaComponent extends DefaultComponent {
         if (transactionManager == null) {
             LOG.warn("No TransactionManager has been configured on this JpaComponent. Each JpaEndpoint will auto create their own JpaTransactionManager.");
         }
-
-        super.doStart();
     }
 }

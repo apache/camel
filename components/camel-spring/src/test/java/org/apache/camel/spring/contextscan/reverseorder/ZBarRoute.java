@@ -14,45 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms;
+package org.apache.camel.spring.contextscan.reverseorder;
 
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spring.SpringRouteBuilder;
+import org.springframework.stereotype.Component;
 
-/**
- * IllegalHeaderException is thrown if a header is detected that doesn't meet
- * the JMS standard.
- */
-public class IllegalHeaderException extends RuntimeCamelException {
+@Component
+public class ZBarRoute extends SpringRouteBuilder {
 
-   
-    private static final long serialVersionUID = 3136304415267471091L;
+    @Override
+    public void configure() throws Exception {
+        onException(IllegalArgumentException.class)
+                .handled(true)
+                .to("mock:handle-bar");
 
-    /**
-     */
-    public IllegalHeaderException() {
-        super();
+        from("direct:bar").routeId("bar")
+                .to("mock:bar")
+                .throwException(new IllegalArgumentException("Damn"));
     }
-
-    /**
-     * @param message
-     * @param cause
-     */
-    public IllegalHeaderException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * @param message
-     */
-    public IllegalHeaderException(String message) {
-        super(message);
-    }
-
-    /**
-     * @param cause
-     */
-    public IllegalHeaderException(Throwable cause) {
-        super(cause);
-    }
-
 }

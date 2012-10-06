@@ -51,7 +51,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
             Assert.assertTrue(reply.getPayload().equals("REPLY for REQUEST " + i));
         }
         long stop = System.currentTimeMillis();
-        System.out.println(stop - start);
+        log.info("{} took {} milliseconds", getTestMethodName(), stop - start);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
             Assert.assertTrue(futureTask.get().getPayload().equals("REPLY for REQUEST " + i++));
         }
         long stop = System.currentTimeMillis();
-        System.out.println(stop - start);
+        log.info("{} took {} milliseconds", getTestMethodName(), stop - start);
         es.shutdownNow();
     }
 

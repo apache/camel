@@ -135,6 +135,7 @@ public class JmsConfiguration implements Cloneable {
     // the cacheLevelName of reply manager
     private String replyToCacheLevelName;
     private boolean allowNullBody = true;
+    private MessageListenerContainerFactory messageListenerContainerFactory;
 
     public JmsConfiguration() {
     }
@@ -383,9 +384,18 @@ public class JmsConfiguration implements Cloneable {
             return new SimpleJmsMessageListenerContainer(endpoint);
         case Default:
             return new DefaultJmsMessageListenerContainer(endpoint);
+        case Custom:
+            return getCustomMessageListenerContainer(endpoint);            
         default:
             throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
+    }
+
+    private AbstractMessageListenerContainer getCustomMessageListenerContainer(JmsEndpoint endpoint) {
+        if (messageListenerContainerFactory != null) {
+            return messageListenerContainerFactory.createMessageListenerContainer(endpoint);
+        }
+        return null;
     }
 
     // Properties
@@ -1276,5 +1286,13 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
+    }
+
+    public MessageListenerContainerFactory getMessageListenerContainerFactory() {
+        return messageListenerContainerFactory;
+    }
+
+    public void setMessageListenerContainerFactory(MessageListenerContainerFactory messageListenerContainerFactory) {
+        this.messageListenerContainerFactory = messageListenerContainerFactory;
     }
 }

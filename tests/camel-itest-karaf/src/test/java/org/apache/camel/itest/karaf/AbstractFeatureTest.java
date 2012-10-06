@@ -43,7 +43,8 @@ import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 
 public abstract class AbstractFeatureTest {
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractFeatureTest.class);
+    protected transient Logger log = LoggerFactory.getLogger(getClass());
 
     @Inject
     protected BundleContext bundleContext;
@@ -115,7 +116,7 @@ public abstract class AbstractFeatureTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(bundleContext);
-        log.info("Get the bundleContext is " + bundleContext);
+        LOG.info("Get the bundleContext is " + bundleContext);
         return factory.createContext();
     }
 
@@ -143,7 +144,7 @@ public abstract class AbstractFeatureTest {
     
     public static UrlReference getKarafFeatureUrl() {
         String karafVersion = System.getProperty("karafVersion");
-        System.out.println("*** The karaf version is " + karafVersion + " ***");
+        LOG.info("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";
         return mavenBundle().groupId("org.apache.karaf.assemblies.features").

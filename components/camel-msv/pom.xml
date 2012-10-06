@@ -62,30 +62,30 @@
     <dependency>
       <groupId>org.iso_relax.verifier.jaxp.validation</groupId>
       <artifactId>isorelax-jaxp-bridge</artifactId>
-      <version>1.0</version>
+      <version>${isorelax-jaxp-bridge-version}</version>
     </dependency>
     <dependency>
       <groupId>msv</groupId>
       <artifactId>isorelax</artifactId>
-      <version>20050913</version>
+      <version>${isorelax-version}</version>
     </dependency>
     <dependency>
       <groupId>msv</groupId>
       <artifactId>msv</artifactId>
-      <version>20050913</version>
+      <version>${isorelax-version}</version>
     </dependency>
     <dependency>
       <groupId>com.sun.msv.datatype.xsd</groupId>
       <artifactId>xsdlib</artifactId>
-      <version>20060615</version>
+      <version>${xsdlib-version}</version>
     </dependency>
     <dependency>
       <groupId>relaxngDatatype</groupId>
       <artifactId>relaxngDatatype</artifactId>
-      <version>20020414</version>
+      <version>${relaxngDatatype-version}</version>
     </dependency>
 
-    <!-- for testing -->
+    <!-- test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

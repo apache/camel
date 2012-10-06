@@ -17,13 +17,13 @@
 
 package org.apache.camel.component.cxf.multipart;
 
-import java.util.logging.Logger;
-
 import javax.xml.ws.Holder;
 
 import org.apache.camel.cxf.multipart.MultiPartInvoke;
 import org.apache.camel.cxf.multipart.types.InE;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @javax.jws.WebService(
                       serviceName = "MultiPartInvokeService",
@@ -33,13 +33,13 @@ import org.apache.camel.cxf.multipart.types.InE;
                       
 public class MultiPartInvokeImpl implements MultiPartInvoke {
 
-    private static final Logger LOG = Logger.getLogger(MultiPartInvokeImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MultiPartInvokeImpl.class);
 
     @Override
     public void foo(InE in, InE in1, Holder<InE> out, Holder<InE> out1) {
         LOG.info("Executing operation foo");
-        //System.out.println(in);
-        //System.out.println(in1);
+        LOG.info("{}", in);
+        LOG.info("{}", in1);
         try {
             InE outValue = in;
             out.value = outValue;

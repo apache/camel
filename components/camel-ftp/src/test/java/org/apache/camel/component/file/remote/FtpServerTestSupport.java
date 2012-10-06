@@ -68,10 +68,8 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
             if (nsae != null) {
                 canTest = false;
 
-                // warn both through console as well as log that we can not run the test
                 String name = System.getProperty("os.name");
                 String message = nsae.getMessage();
-                System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + message);
                 log.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
             } else {
                 // some other error then throw it so the test can fail

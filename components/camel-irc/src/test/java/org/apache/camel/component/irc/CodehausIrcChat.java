@@ -25,65 +25,70 @@ import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @version 
  */
 public final class CodehausIrcChat {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CodehausIrcChat.class);
+
     private static final class CodehausIRCEventAdapter extends IRCEventAdapter {
         @Override
         public void onRegistered() {
             super.onRegistered();
-            System.out.println("onRegistered");
+            LOG.info("onRegistered");
         }
 
         @Override
         public void onDisconnected() {
             super.onDisconnected();
-            System.out.println("onDisconnected");
+            LOG.info("onDisconnected");
         }
 
         @Override
         public void onMode(String string, IRCUser ircUser, IRCModeParser ircModeParser) {
             super.onMode(string, ircUser, ircModeParser);
-            System.out.println("onMode.string = " + string);
-            System.out.println("onMode.ircUser = " + ircUser);
-            System.out.println("onMode.ircModeParser = " + ircModeParser);
+            LOG.info("onMode.string = " + string);
+            LOG.info("onMode.ircUser = " + ircUser);
+            LOG.info("onMode.ircModeParser = " + ircModeParser);
         }
 
         @Override
         public void onMode(IRCUser ircUser, String string, String string1) {
             super.onMode(ircUser, string, string1);
-            System.out.println("onMode.ircUser = " + ircUser);
-            System.out.println("onMode.string = " + string);
-            System.out.println("onMode.string1 = " + string1);
+            LOG.info("onMode.ircUser = " + ircUser);
+            LOG.info("onMode.string = " + string);
+            LOG.info("onMode.string1 = " + string1);
         }
 
         @Override
         public void onPing(String string) {
             super.onPing(string);
-            System.out.println("onPing.string = " + string);
+            LOG.info("onPing.string = " + string);
         }
 
         @Override
         public void onError(String string) {
-            System.out.println("onError.string = " + string);
+            LOG.info("onError.string = " + string);
         }
 
         @Override
         public void onError(int i, String string) {
             super.onError(i, string);
-            System.out.println("onError.i = " + i);
-            System.out.println("onError.string = " + string);
+            LOG.info("onError.i = " + i);
+            LOG.info("onError.string = " + string);
         }
 
         @Override
         public void unknown(String string, String string1, String string2, String string3) {
             super.unknown(string, string1, string2, string3);
-            System.out.println("unknown.string = " + string);
-            System.out.println("unknown.string1 = " + string1);
-            System.out.println("unknown.string2 = " + string2);
-            System.out.println("unknown.string3 = " + string3);
+            LOG.info("unknown.string = " + string);
+            LOG.info("unknown.string1 = " + string1);
+            LOG.info("unknown.string2 = " + string2);
+            LOG.info("unknown.string3 = " + string3);
         }
     }
 
@@ -110,12 +115,12 @@ public final class CodehausIrcChat {
         }
         // while (!conn.isConnected()) {
         // Thread.sleep(1000);
-        // System.out.println("Sleeping");
+        // LOG.info("Sleeping");
         // }
-        System.out.println("Connected");
+        LOG.info("Connected");
         // conn.send("/JOIN #camel-test");
 
-        // System.out.println("Joining Channel: " + config.getTarget());
+        // LOG.info("Joining Channel: " + config.getTarget());
 
         for (IrcChannel channel : config.getChannels()) {
             conn.doJoin(channel.getName());

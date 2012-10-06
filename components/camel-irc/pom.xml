@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.schwering</groupId>
       <artifactId>irclib</artifactId>
-      <version>1.10</version>
+      <version>${irclib-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -62,10 +62,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>1.8.5</version>
-        <scope>test</scope>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito-version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

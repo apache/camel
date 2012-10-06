@@ -39,7 +39,7 @@ public class JavaConfigWithNestedConfigClassTest extends AbstractJUnit4SpringCon
     }
 
     public void doCheese() {
-        System.out.println("doCheese called!");
+        logger.info("doCheese called!");
         doCheeseCalled = true;
     }
 

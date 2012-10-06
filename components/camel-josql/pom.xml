@@ -66,14 +66,15 @@
     <dependency>
       <groupId>net.sf.josql</groupId>
       <artifactId>josql</artifactId>
-      <version>1.5</version>
+      <version>${josql-version}</version>
     </dependency>
     <dependency>
       <groupId>net.sf.josql</groupId>
       <artifactId>gentlyweb-utils</artifactId>
-      <version>1.5</version>
+      <version>${josql-version}</version>
     </dependency>
 
+    <!-- test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

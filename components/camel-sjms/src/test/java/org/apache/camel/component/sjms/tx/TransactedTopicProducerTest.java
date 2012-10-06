@@ -33,7 +33,6 @@ public class TransactedTopicProducerTest extends CamelTestSupport {
 
     @Produce
     protected ProducerTemplate template;
-    protected ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
 
     public TransactedTopicProducerTest() {
     }
@@ -44,7 +43,7 @@ public class TransactedTopicProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTransactedProducer() throws Exception {
+    public void testRoute() throws Exception {
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World 2");

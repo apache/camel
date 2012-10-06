@@ -65,7 +65,7 @@ public class PerformanceRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        System.out.println("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
+        log.info("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
     private boolean canRunOnThisPlatform() {

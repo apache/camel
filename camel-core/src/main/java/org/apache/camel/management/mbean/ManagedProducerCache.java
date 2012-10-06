@@ -60,6 +60,10 @@ public class ManagedProducerCache extends ManagedService implements ManagedProdu
         return producerCache.getMisses();
     }
 
+    public Long getEvicted() {
+        return producerCache.getEvicted();
+    }
+
     public void resetStatistics() {
         producerCache.resetCacheStatistics();
     }

@@ -29,14 +29,19 @@ import com.mongodb.MongoURI;
 import com.mongodb.WriteConcern;
 import com.mongodb.util.JSON;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
@@ -95,6 +100,15 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     public void cleanup() {
         testCollection.drop();
         dynamicCollection.drop();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/mongodb/mongoComponentTest.xml");
+        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
+        PropertiesComponent pc = new PropertiesComponent("classpath:mongodb.test.properties");
+        ctx.addComponent("properties", pc);
+        return ctx;
     }
 
     protected void pumpDataIntoTestCollection() {

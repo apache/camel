@@ -35,6 +35,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.JmsOperations;
+import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -55,6 +56,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     private QueueBrowseStrategy queueBrowseStrategy;
     private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
     private ExecutorService asyncStartStopExecutorService;
+    private MessageListenerContainerFactory messageListenerContainerFactory;
 
     public JmsComponent() {
     }
@@ -495,6 +497,12 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             parameters.put(KEY_FORMAT_STRATEGY_PARAM, strategyVal);
             endpoint.setJmsKeyFormatStrategy(resolveAndRemoveReferenceParameter(
                     parameters, KEY_FORMAT_STRATEGY_PARAM, JmsKeyFormatStrategy.class));
+        }
+
+        messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters, "messageListenerContainerFactoryRef",
+                MessageListenerContainerFactory.class);
+        if (messageListenerContainerFactory != null) {
+            endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
         }
 
         setProperties(endpoint.getConfiguration(), parameters);

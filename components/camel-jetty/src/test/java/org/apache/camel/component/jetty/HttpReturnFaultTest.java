@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpOperationFailedException;
 import org.junit.Test;
 
 /**
@@ -28,8 +29,18 @@ public class HttpReturnFaultTest extends BaseJettyTest {
 
     @Test
     public void testHttpFault() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
-        assertEquals("This is a fault", out);
+        Exchange exchange = template.request("http://localhost:{{port}}/test", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World!");
+            }
+            
+        });
+        assertTrue(exchange.isFailed());
+        HttpOperationFailedException exception = exchange.getException(HttpOperationFailedException.class);
+        assertNotNull(exception);
+        assertEquals("This is a fault", exception.getResponseBody());
+        assertEquals(500, exception.getStatusCode());
     }
 
     @Override

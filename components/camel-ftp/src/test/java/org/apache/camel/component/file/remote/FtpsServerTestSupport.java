@@ -45,10 +45,8 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
             // ignore if algorithm is not on the OS
             NoSuchAlgorithmException nsae = ObjectHelper.getException(NoSuchAlgorithmException.class, e);
             if (nsae != null) {
-                // warn both through console as well as log that we can not run the test
                 String name = System.getProperty("os.name");
                 String message = nsae.getMessage();
-                System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + message);
                 log.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
                 
                 return null;

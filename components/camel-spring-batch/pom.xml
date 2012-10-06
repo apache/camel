@@ -35,20 +35,17 @@
     </properties>
 
     <dependencies>
-        <!-- Camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
-
-        <!-- Spring Batch -->
         <dependency>
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-core</artifactId>
             <version>${spring-batch-version}</version>
         </dependency>
 
-        <!-- Tests -->
+        <!-- test dependencies -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>

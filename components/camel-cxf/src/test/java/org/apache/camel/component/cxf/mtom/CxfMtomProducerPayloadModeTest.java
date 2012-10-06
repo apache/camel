@@ -85,12 +85,10 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
     @SuppressWarnings("unchecked")
     @Test
     public void testProducer() throws Exception {
-        
-        if (Boolean.getBoolean("java.awt.headless")) {
-            System.out.println("Running headless. Skipping test as Images may not work.");
+        if (MtomTestHelper.isAwtHeadless(logger, null)) {
             return;
-        }     
-        
+        }
+
         // START SNIPPET: producer
 
         Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint", new Processor() {

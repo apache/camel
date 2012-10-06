@@ -90,4 +90,23 @@ public final class MtomTestHelper {
             Assert.assertEquals(bytes1[i], bytes2[i]);
         }
     }
+
+    static boolean isAwtHeadless(org.apache.commons.logging.Log log, org.slf4j.Logger logger) {
+        Assert.assertFalse("Both loggers are not allowed to be null!", log == null && logger == null);
+        boolean headless = Boolean.getBoolean("java.awt.headless");
+        if (headless) {
+            // having the conversion characters %c{1} inside log4j.properties will reveal us the
+            // test class currently running as we make use of it's logger to warn about skipping!
+            String warning = "Running headless. Skipping test as Images may not work.";
+            if (log != null) {
+                log.warn(warning);
+            }
+
+            if (logger != null) {
+                logger.warn("Running headless. Skipping test as Images may not work.");
+            }
+        }
+
+        return headless;
+    }
 }

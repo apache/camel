@@ -14,30 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms;
+package org.apache.camel.component.jms;
+
+import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
- * Strategy for applying encoding and decoding of JMS headers so they apply to
- * the JMS spec.
- * 
- * @version
+ * Factory used to create a custom {@link org.springframework.jms.listener.AbstractMessageListenerContainer} to
+ * be used in JMS endpoints.
  */
-public interface KeyFormatStrategy {
+public interface MessageListenerContainerFactory {
 
     /**
-     * Encodes the key before its sent as a {@link javax.jms.Message} message.
+     * Create a custom {@link org.springframework.jms.listener.AbstractMessageListenerContainer}.
      * 
-     * @param key the original key
-     * @return the encoded key
+     * @param endpoint the endpoint to create the listener container for
+     * @return the custom message listener container
      */
-    String encodeKey(String key);
-
-    /**
-     * Decodes the key after its received from a {@link javax.jms.Message}
-     * message.
-     * 
-     * @param key the encoded key
-     * @return the decoded key as the original key
-     */
-    String decodeKey(String key);
+    AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint);
 }

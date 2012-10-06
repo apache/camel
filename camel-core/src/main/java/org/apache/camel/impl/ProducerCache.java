@@ -64,6 +64,10 @@ public class ProducerCache extends ServiceSupport {
         this(source, camelContext, camelContext.getProducerServicePool(), createLRUCache(cacheSize));
     }
 
+    public ProducerCache(Object source, CamelContext camelContext, Map<String, Producer> cache) {
+        this(source, camelContext, camelContext.getProducerServicePool(), cache);
+    }
+
     public ProducerCache(Object source, CamelContext camelContext, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
         this.source = source;
         this.camelContext = camelContext;
@@ -473,6 +477,22 @@ public class ProducerCache extends ServiceSupport {
             misses = cache.getMisses();
         }
         return misses;
+    }
+
+    /**
+     * Gets the cache evicted statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the evicted
+     */
+    public long getEvicted() {
+        long evicted = -1;
+        if (producers instanceof LRUCache) {
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
+            evicted = cache.getEvicted();
+        }
+        return evicted;
     }
 
     /**

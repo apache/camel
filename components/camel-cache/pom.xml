@@ -59,7 +59,6 @@
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version>${xerces-version}</version>
         </dependency>
 
         <!-- testing -->

@@ -55,7 +55,7 @@
         </dependency>
 
 
-        <!-- for testing -->
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-api</artifactId>
@@ -125,7 +125,6 @@
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
-                <version>${cxf-version}</version>
                 <executions>
                     <execution>
                         <id>generate-sources-wsdl</id>

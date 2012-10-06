@@ -21,6 +21,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple bootstrap class for starting Jetty in your IDE using the local web
@@ -31,12 +33,10 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public final class Main {
 
     public static int mainPort = 9998;
-
     public static final String WEBAPP_DIR = "src/main/webapp";
-
     public static final String WEBAPP_CTX = "/";
-
-    protected static Server server = new Server();
+    protected static final Server SERVER = new Server();
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     private Main() {
     }
@@ -54,30 +54,30 @@ public final class Main {
     }
 
     public static void start() throws Exception {
-        System.out.println("Starting Web Server on port: " + mainPort);
+        LOG.info("Starting Web Server on port: " + mainPort);
 
         SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort(mainPort);
-        connector.setServer(server);
+        connector.setServer(SERVER);
         WebAppContext context = new WebAppContext();
 
         context.setResourceBase(WEBAPP_DIR);
         context.setContextPath(WEBAPP_CTX);
-        context.setServer(server);
+        context.setServer(SERVER);
 
-        server.setHandler(context);
-        server.setConnectors(new Connector[]{connector});
-        server.start();
+        SERVER.setHandler(context);
+        SERVER.setConnectors(new Connector[]{connector});
+        SERVER.start();
 
-        System.out.println();
-        System.out.println("==============================================================================");
-        System.out.println("Started the Camel REST Console: point your web browser at " + getRootUrl());
-        System.out.println("==============================================================================");
-        System.out.println();
+        LOG.info("");
+        LOG.info("==============================================================================");
+        LOG.info("Started the Camel REST Console: point your web browser at " + getRootUrl());
+        LOG.info("==============================================================================");
+        LOG.info("");
     }
 
     public static void stop() throws Exception {
-        server.stop();
+        SERVER.stop();
     }
 
     /**

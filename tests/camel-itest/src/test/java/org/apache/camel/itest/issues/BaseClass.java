@@ -19,12 +19,17 @@ package org.apache.camel.itest.issues;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @version 
  */
 public class BaseClass implements MessageListener {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BaseClass.class);
+
     public void onMessage(Message message) {
-        System.out.println("base called");
+        LOG.info("base called");
     }
 }

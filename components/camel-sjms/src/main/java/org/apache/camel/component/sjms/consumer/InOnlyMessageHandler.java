@@ -21,15 +21,14 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sjms.TransactionCommitStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
- * An InOnly {@link DefaultMessageHandler}
+ * An InOnly {@link AbstractMessageHandler}
  * 
  */
-public class InOnlyMessageHandler extends DefaultMessageHandler {
+public class InOnlyMessageHandler extends AbstractMessageHandler {
 
     /**
      * @param endpoint
@@ -49,20 +48,10 @@ public class InOnlyMessageHandler extends DefaultMessageHandler {
     }
 
     /**
-     * @param endpoint
-     * @param executor
-     * @param commitStrategy
-     * @param rollbackStrategy
-     */
-    public InOnlyMessageHandler(Endpoint endpoint, ExecutorService executor, TransactionCommitStrategy commitStrategy) {
-        super(endpoint, executor, commitStrategy);
-    }
-
-    /**
      * @param message
      */
     @Override
-    public void doHandleMessage(final Exchange exchange) {
+    public void handleMessage(final Exchange exchange) {
         if (log.isDebugEnabled()) {
             log.debug("Handling InOnly Message: {}", exchange.getIn().getBody());
         }
@@ -71,7 +60,6 @@ public class InOnlyMessageHandler extends DefaultMessageHandler {
         } else {
             NoOpAsyncCallback callback = new NoOpAsyncCallback();
             if (isTransacted() || isSynchronous()) {
-                //SessionTransactionAsyncCallback callback = new SessionTransactionAsyncCallback(exchange, getSession(), getCommitStrategy());
                 // must process synchronous if transacted or configured to
                 // do so
                 if (log.isDebugEnabled()) {
