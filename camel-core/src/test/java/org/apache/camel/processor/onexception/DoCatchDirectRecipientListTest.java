@@ -24,18 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DoCatchDirectRecipientListTest extends ContextTestSupport {
 
-    // TODO: CAMEL-5681
-
     public void testDoCatchDirectRoute() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);
-        // getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-        } catch (Exception e) {
-            // should not happen
-        }
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
