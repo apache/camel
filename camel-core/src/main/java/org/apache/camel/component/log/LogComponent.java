@@ -26,7 +26,6 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * The <a href="http://camel.apache.org/log.html">Log Component</a>

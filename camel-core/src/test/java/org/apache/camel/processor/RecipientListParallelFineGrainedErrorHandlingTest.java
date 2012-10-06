@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.ExecutionException;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
