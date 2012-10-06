@@ -29,7 +29,6 @@
     <groupId>org.apache.camel.tests.bundles</groupId>
     <artifactId>bundles-pom</artifactId>
     <packaging>pom</packaging>
-    <version>2.11-SNAPSHOT</version>
     <name>Camel :: Integration Tests :: Test Bundles</name>
 
     <properties>

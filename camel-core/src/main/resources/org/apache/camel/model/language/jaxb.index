@@ -34,5 +34,6 @@ SimpleExpression
 SpELExpression
 SqlExpression
 TokenizerExpression
+VtdXmlExpression
 XPathExpression
 XQueryExpression

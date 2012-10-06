@@ -113,8 +113,6 @@ public class ServiceSupportTest extends TestSupport {
 
         @Override
         protected void doStop() throws Exception {
-            // TODO Auto-generated method stub
-
         }
 
     }

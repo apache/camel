@@ -44,8 +44,6 @@ public final class HL7Converter {
     }
     
     static Message parse(String body, Parser parser) throws HL7Exception {
-        // replace \n with \r as HL7 uses 0x0d = \r as segment terminators and HAPI only parses with \r
-        body = body.replace('\n', '\r');
         return parser.parse(body);
     }    
     

@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,10 @@ public class CMISConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         return this.sessionFacade.poll(this);
+    }
+    
+    public OperationContext createOperationContext() {
+        return sessionFacade.createOperationContext();
     }
 
     int sendExchangeWithPropsAndBody(Map<String, Object> properties, InputStream inputStream)

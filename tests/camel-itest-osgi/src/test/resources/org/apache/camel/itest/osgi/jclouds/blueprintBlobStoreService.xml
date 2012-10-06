@@ -17,16 +17,22 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
 
-    <bean id="blobStoreContextFactory" class="org.jclouds.blobstore.BlobStoreContextFactory"/>
+    <!-- BlobStore Service -->
+    <bean id="contextBuilder" class="org.jclouds.ContextBuilder" factory-method="newBuilder">
+        <argument value="transient"/>
+    </bean>
 
-    <bean id="blobStoreContext" factory-ref="blobStoreContextFactory" factory-method="createContext">
-        <argument index="0" value="transient"/>
-        <argument index="1"  value="identity"/>
-        <argument index="2" value="credential"/>
+    <bean id="contextBuilderWithCreds" factory-ref="contextBuilder" factory-method="credentials">
+        <argument index="0"  value="identity"/>
+        <argument index="1" value="credential"/>
+    </bean>
+
+    <bean id="blobStoreContext" factory-ref="contextBuilderWithCreds" factory-method="buildView">
+        <argument value="org.jclouds.blobstore.BlobStoreContext"/>        
     </bean>
 
     <bean id="blobStore" factory-ref="blobStoreContext" factory-method="getBlobStore"/>
-
+    
     <service ref="blobStore" interface="org.jclouds.blobstore.BlobStore"/>
 
 </blueprint>

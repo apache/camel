@@ -56,6 +56,7 @@ public class FtpShutdownCompleteCurrentTaskOnlyTest extends FtpServerTestSupport
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
+        Thread.sleep(50);
 
         assertMockEndpointsSatisfied();
 

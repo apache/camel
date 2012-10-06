@@ -29,7 +29,6 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 public class MyProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
-        // TODO Auto-generated method stub
         Thread.sleep(4000);
         Message in = exchange.getIn();
         // Get the parameter list

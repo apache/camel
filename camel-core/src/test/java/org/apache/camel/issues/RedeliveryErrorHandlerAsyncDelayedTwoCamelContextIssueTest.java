@@ -41,6 +41,8 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         context2.start();
 
         // now stop 1, and see that 2 is still working
+        consumer1.stop();
+        producer1.stop();
         context1.stop();
 
         producer2.sendBody("seda://input", "Hey2");
@@ -51,6 +53,8 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         Assert.assertNotNull(ex2);
         Assert.assertEquals("Hey2", ex2.getIn().getBody());
 
+        consumer2.stop();
+        producer2.stop();
         context2.stop();
     }
 

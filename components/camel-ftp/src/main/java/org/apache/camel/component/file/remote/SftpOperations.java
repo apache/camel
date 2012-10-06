@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -56,6 +57,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
     private static final transient Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
+    private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
@@ -389,6 +391,15 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             doChangeDirectory(path);
             return;
         }
+        if (getCurrentDirectory().startsWith(path)) {
+            // use relative path
+            String p = getCurrentDirectory().substring(path.length());
+            if (p.length() == 0) {
+                return;
+            }
+            // the first character must be '/' and hence removed
+            path = UP_DIR_PATTERN.matcher(p).replaceAll("/..").substring(1);
+        }
 
         // if it starts with the root path then a little special handling for that
         if (FileUtil.hasLeadingSeparator(path)) {
@@ -416,7 +427,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         if (path == null || ".".equals(path) || ObjectHelper.isEmpty(path)) {
             return;
         }
-
         LOG.trace("Changing directory: {}", path);
         try {
             channel.cd(path);
@@ -480,6 +490,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         OutputStream os = null;
+        String currentDir = null;
         try {
             os = new ByteArrayOutputStream();
             GenericFile<ChannelSftp.LsEntry> target =
@@ -488,7 +499,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             target.setBody(os);
 
             String remoteName = name;
-            String currentDir = null;
             if (endpoint.getConfiguration().isStepwise()) {
                 // remember current directory
                 currentDir = getCurrentDirectory();
@@ -507,11 +517,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             InputStream is = channel.get(remoteName);
             IOHelper.copyAndCloseInput(is, os);
 
-            // change back to current directory
-            if (endpoint.getConfiguration().isStepwise()) {
-                changeCurrentDirectory(currentDir);
-            }
-
             return true;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
@@ -519,6 +524,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
         }
     }
 
@@ -565,13 +574,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }
-
+        String currentDir = null;
         try {
             // store the java.io.File handle as the body
             file.setBody(local);
 
             String remoteName = name;
-            String currentDir = null;
             if (endpoint.getConfiguration().isStepwise()) {
                 // remember current directory
                 currentDir = getCurrentDirectory();
@@ -588,11 +596,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
             channel.get(remoteName, os);
 
-            // change back to current directory
-            if (endpoint.getConfiguration().isStepwise()) {
-                changeCurrentDirectory(currentDir);
-            }
-
         } catch (SftpException e) {
             LOG.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
             // failed to retrieve the file so we need to close streams and delete in progress file
@@ -605,6 +608,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
+
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
         }
 
         LOG.debug("Retrieve file to local work file result: true");
@@ -661,7 +669,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         LOG.trace("doStoreFile({})", targetName);
 
         // if an existing file already exists what should we do?
-        if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
+        if (endpoint.getFileExist() == GenericFileExist.Ignore
+                || endpoint.getFileExist() == GenericFileExist.Fail
+                || endpoint.getFileExist() == GenericFileExist.Move) {
             boolean existFile = existsFile(targetName);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
@@ -669,6 +679,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 return true;
             } else if (existFile && endpoint.getFileExist() == GenericFileExist.Fail) {
                 throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
+            } else if (existFile && endpoint.getFileExist() == GenericFileExist.Move) {
+                // move any existing file first
+                doMoveExistingFile(name, targetName);
             }
         }
 
@@ -713,6 +726,53 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
             IOHelper.close(is, "store: " + name, LOG);
+        }
+    }
+
+    /**
+     * Moves any existing file due fileExists=Move is in use.
+     */
+    private void doMoveExistingFile(String name, String targetName) throws GenericFileOperationFailedException {
+        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
+        // create a dummy exchange as Exchange is needed for expression evaluation
+        // we support only the following 3 tokens.
+        Exchange dummy = endpoint.createExchange();
+        // we only support relative paths for the ftp component, so dont provide any parent
+        String parent = null;
+        String onlyName = FileUtil.stripPath(targetName);
+        dummy.getIn().setHeader(Exchange.FILE_NAME, targetName);
+        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
+        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
+
+        String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
+        // we only support relative paths for the ftp component, so strip any leading paths
+        to = FileUtil.stripLeadingSeparator(to);
+        // normalize accordingly to configuration
+        to = endpoint.getConfiguration().normalizePath(to);
+        if (ObjectHelper.isEmpty(to)) {
+            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + name);
+        }
+
+        // do we have a sub directory
+        String dir = FileUtil.onlyPath(to);
+        if (dir != null) {
+            // ensure directory exists
+            buildDirectory(dir, false);
+        }
+
+        // deal if there already exists a file
+        if (existsFile(to)) {
+            if (endpoint.isEagerDeleteTargetFile()) {
+                LOG.trace("Deleting existing file: {}", to);
+                deleteFile(to);
+            } else {
+                throw new GenericFileOperationFailedException("Cannot moved existing file from: " + name + " to: " + to + " as there already exists a file: " + to);
+            }
+        }
+
+        LOG.trace("Moving existing file: {} to: {}", name, to);
+        if (!renameFile(targetName, to)) {
+            throw new GenericFileOperationFailedException("Cannot rename file from: " + name + " to: " + to);
         }
     }
 

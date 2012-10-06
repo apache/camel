@@ -69,6 +69,8 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     private String disableRedelivery;
     @XmlAttribute
     private String delayPattern;
+    @XmlAttribute
+    private String allowRedeliveryWhileStopping;
 
     public RedeliveryPolicy getObject() throws Exception {
         RedeliveryPolicy answer = new RedeliveryPolicy();
@@ -132,6 +134,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         }
         if (delayPattern != null) {
             answer.setDelayPattern(CamelContextHelper.parseText(context, delayPattern));
+        }
+        if (allowRedeliveryWhileStopping != null) {
+            answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));
         }
 
         return answer;
@@ -283,5 +288,13 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
 
     public void setDelayPattern(String delayPattern) {
         this.delayPattern = delayPattern;
+    }
+
+    public String getAllowRedeliveryWhileStopping() {
+        return allowRedeliveryWhileStopping;
+    }
+
+    public void setAllowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
+        this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;
     }
 }

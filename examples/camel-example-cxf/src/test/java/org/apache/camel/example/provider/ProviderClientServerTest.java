@@ -17,6 +17,7 @@
 package org.apache.camel.example.provider;
 
 import org.apache.camel.example.cxf.provider.Client;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -24,10 +25,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ProviderClientServerTest extends CamelSpringTestSupport {
     
+    int port;
+    
     @Test 
     public void testClientInvocation() throws Exception {
         // set the client's service access point
-        Client client = new Client("http://localhost:9000/GreeterContext/SOAPMessageService");
+        Client client = new Client("http://localhost:" + port + "/GreeterContext/SOAPMessageService");
         // invoke the services
         String response = client.invoke();
         
@@ -36,6 +39,9 @@ public class ProviderClientServerTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        port = AvailablePortFinder.getNextAvailable();
+        System.setProperty("port", String.valueOf(port));
+        
         return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CamelCXFProviderRouteConfig.xml"});
     }
 

@@ -93,6 +93,10 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
 
             ResultScanner scanner = table.getScanner(scan);
             int exchangeCount = 0;
+            // The next three statements are used just to get a reference to the BodyCellMappingStrategy instance.
+            Exchange exchange = endpoint.createExchange();
+            exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, CellMappingStrategyFactory.BODY);
+            CellMappingStrategy mappingStrategy = endpoint.getCellMappingStrategyFactory().getStrategy(exchange.getIn());
             for (Result result = scanner.next(); (exchangeCount < maxMessagesPerPoll || maxMessagesPerPoll <= 0) && result != null; result = scanner.next()) {
                 HBaseData data = new HBaseData();
                 HBaseRow resultRow = new HBaseRow();
@@ -112,9 +116,9 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
                         resultRow.getCells().add(resultCell);
                     }
                     data.getRows().add(resultRow);
-                    Exchange exchange = endpoint.createExchange();
+                    exchange = endpoint.createExchange();
+                    // Probably overkill but kept it here for consistency.
                     exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, CellMappingStrategyFactory.BODY);
-                    CellMappingStrategy mappingStrategy = endpoint.getCellMappingStrategyFactory().getStrategy(exchange.getIn());
                     mappingStrategy.applyScanResults(exchange.getIn(), data);
                     //Make sure that there is a header containing the marked row ids, so that they can be deleted.
                     exchange.getIn().setHeader(HbaseAttribute.HBASE_MARKED_ROW_ID.asHeader(), result.getRow());
@@ -170,14 +174,11 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
      * Delegates to the {@link HBaseRemoveHandler}.
      */
     private void remove(byte[] row) throws IOException {
-        HTableInterface table = null;
+        HTableInterface table = tablePool.getTable(tableName);
         try {
-            table = tablePool.getTable(tableName);
             endpoint.getRemoveHandler().remove(table, row);
         } finally {
-            if (table != null) {
-                table.close();
-            }
+            table.close();
         }
     }
 

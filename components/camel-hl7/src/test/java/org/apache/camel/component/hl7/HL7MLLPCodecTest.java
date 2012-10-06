@@ -40,6 +40,7 @@ public class HL7MLLPCodecTest extends CamelTestSupport {
         // START SNIPPET: e1
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
+        codec.setConvertLFtoCR(true);
 
         jndi.bind("hl7codec", codec);
         // END SNIPPET: e1
@@ -83,23 +84,20 @@ public class HL7MLLPCodecTest extends CamelTestSupport {
         // END SNIPPET: e2
 
         String[] lines = out.split("\r");
-        assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);
+        assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19^ADR_A19|456|P|2.4", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
     }
 
     // START SNIPPET: e3
     private static Message createHL7AsMessage() throws Exception {
         ADR_A19 adr = new ADR_A19();
+        adr.initQuickstart("ADR", "A19", "P");
 
         // Populate the MSH Segment
         MSH mshSegment = adr.getMSH();
-        mshSegment.getFieldSeparator().setValue("|");
-        mshSegment.getEncodingCharacters().setValue("^~\\&");
         mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue("200701011539");
         mshSegment.getSendingApplication().getNamespaceID().setValue("MYSENDER");
-        mshSegment.getSequenceNumber().setValue("123");
-        mshSegment.getMessageType().getMessageType().setValue("ADR");
-        mshSegment.getMessageType().getTriggerEvent().setValue("A19");
+        mshSegment.getMessageControlID().setValue("456");
 
         // Populate the PID Segment
         MSA msa = adr.getMSA();

@@ -42,7 +42,7 @@ public class InitSolrEndpointTest extends CamelTestSupport {
 
     @Test(expected = ResolveEndpointFailedException.class)
     public void wrongURLFormatFailsEndpointCreation() throws Exception {
-        context.getEndpoint("solr://localhost:-99/solr");
+        context.getEndpoint("solr://localhost:x99/solr");
     }
 
     private String getFullOptions() {

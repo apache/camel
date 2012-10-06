@@ -29,7 +29,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.localserver.LocalTestServer;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.Test;
@@ -77,7 +76,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                 response.setHeader("bar", "yes");
                 response.addHeader("foo", "123");
                 response.addHeader("foo", "456");
-                response.setEntity(new StringEntity("OK", HTTP.ASCII));
+                response.setEntity(new StringEntity("OK", "ASCII"));
                 response.setStatusCode(HttpStatus.SC_OK);
             }
         });

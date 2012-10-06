@@ -78,7 +78,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def id(id : String) = wrap(target.id(id))
   def idempotentConsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
+  @Deprecated
   def inOnly = wrap(target.inOnly)
+  @Deprecated
   def inOut = wrap(target.inOut)
 
   def loadbalance = SLoadBalanceDefinition(target.loadBalance)
@@ -116,13 +118,19 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def resequence(expression: Exchange => Any) = SResequenceDefinition(target.resequence(expression))
   def rollback = wrap(target.rollback)
   def routeId(routeId: String) = wrap(target.routeId(routeId))
+  @Deprecated
   def routingSlip(header: String) = wrap(target.routingSlip(header))
+  @Deprecated
   def routingSlip(header: String, separator: String) = wrap(target.routingSlip(header, separator))
+  
+  def routingSlip(expression: Exchange => Any, separator: String) = wrap(target.routingSlip(expression, separator)) 
   def routingSlip(expression: Exchange => Any) = wrap(target.routingSlip(expression))
+  
 
   def setBody(expression: Exchange => Any) = wrap(target.setBody(expression))
   def setFaultBody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))
   def setHeader(name: String, expression: Exchange => Any) = wrap(target.setHeader(name, expression))
+  def setExchangePattern(mep: ExchangePattern) = wrap(target.setExchangePattern(mep))
   def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = wrap(target.sort(expression, comparator))
   def split(expression: Exchange => Any) = SSplitDefinition(target.split(expression))
   def stop = wrap(target.stop)

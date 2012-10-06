@@ -51,7 +51,7 @@ public final class Client {
     
     public static void main(String args[]) throws Exception {
         // set the client's service access point
-        Client client = new Client("http://localhost:9091/GreeterContext/GreeterPort");
+        Client client = new Client("http://localhost:9001/GreeterContext/GreeterPort");
         // invoking the services
         client.invoke();
     }

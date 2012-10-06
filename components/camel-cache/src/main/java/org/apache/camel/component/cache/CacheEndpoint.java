@@ -103,15 +103,15 @@ public class CacheEndpoint extends DefaultEndpoint {
      */
     public Ehcache initializeCache() {
         CacheManager cacheManager = getCacheManagerFactory().getInstance();
-        Cache cache;
+        Ehcache cache;
         if (cacheManager.cacheExists(config.getCacheName())) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found an existing cache: {}", config.getCacheName());
                 LOG.trace("Cache {} currently contains {} elements",
                         config.getCacheName(),
-                        cacheManager.getCache(config.getCacheName()).getSize());
+                        cacheManager.getEhcache(config.getCacheName()).getSize());
             }
-            cache = cacheManager.getCache(config.getCacheName());
+            cache = cacheManager.getEhcache(config.getCacheName());
         } else {
             cache = new Cache(config.getCacheName(),
                     config.getMaxElementsInMemory(),

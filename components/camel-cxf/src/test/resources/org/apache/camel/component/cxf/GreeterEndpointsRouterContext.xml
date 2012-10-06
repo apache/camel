@@ -31,7 +31,8 @@
 
    <!-- START SNIPPET: example -->
    <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port2}/CXFGreeterRouterTest/CamelContext/RouterPort"
-    		serviceClass="org.apache.hello_world_soap_http.GreeterImpl">
+    		serviceClass="org.apache.hello_world_soap_http.GreeterImpl"
+    		skipFaultLogging="true">
         <cxf:outInterceptors>
             <!-- This interceptor will force the CXF server send the XML start document to client -->
             <bean class="org.apache.camel.component.cxf.WriteXmlDeclarationInterceptor"/>

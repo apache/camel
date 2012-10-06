@@ -17,7 +17,6 @@
 package org.apache.camel.util.jndi;
 
 import java.util.Hashtable;
-
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
@@ -25,8 +24,11 @@ import javax.naming.spi.InitialContextFactory;
 import org.apache.camel.util.CastUtils;
 
 /**
- * A factory of the Camel InitialContext which allows a Map to be used to create a
+ * A factory of the Camel {@link javax.naming.InitialContext} which allows a {@link java.util.Map} to be used to create a
  * JNDI context.
+ * <p/>
+ * This implementation is prototype based, by creating a <b>new</b> context on each call to
+ * {@link #getInitialContext(java.util.Hashtable)}.
  *
  * @version 
  */

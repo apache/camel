@@ -54,6 +54,7 @@ public class Mina2Configuration implements Cloneable {
     private boolean autoStartTls = true;
     private int maximumPoolSize = 16; // 16 is the default mina setting
     private IoHandlerAdapter ioHandler;
+    private boolean orderedThreadPoolExecutor = true;
 
     /**
      * Returns a copy of this configuration
@@ -267,4 +268,12 @@ public class Mina2Configuration implements Cloneable {
 
     
 
+
+    public boolean isOrderedThreadPoolExecutor() {
+        return orderedThreadPoolExecutor;
+    }
+
+    public void setOrderedThreadPoolExecutor(boolean orderedThreadPoolExecutor) {
+        this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
+    }
 }

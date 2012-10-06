@@ -43,12 +43,20 @@
         </property>
     </bean>
 
-    <bean id="blobStoreContextFactory" class="org.jclouds.blobstore.BlobStoreContextFactory"/>
+        <!-- BlobStore Service -->
+    <bean id="contextBuilder" class="org.jclouds.ContextBuilder" factory-method="newBuilder">
+        <constructor-arg value="transient"/>
+    </bean>
 
-    <bean id="blobStoreContext" factory-bean="blobStoreContextFactory" factory-method="createContext">
-        <constructor-arg name="provider" value="transient"/>
-        <constructor-arg name="identity"  value="identity"/>
-        <constructor-arg name="credential" value="credential"/>
+    <bean id="contextBuilderWithCreds" factory-bean="contextBuilder" factory-method="credentials">
+        <constructor-arg  value="identity"/>
+        <constructor-arg  value="credential"/>
+    </bean>
+
+    <bean id="blobStoreContext" factory-bean="contextBuilderWithCreds" factory-method="buildView">
+        <constructor-arg>
+            <value>org.jclouds.blobstore.BlobStoreContext</value>
+        </constructor-arg>
     </bean>
 
     <bean id="blobStore" factory-bean="blobStoreContext" factory-method="getBlobStore"/>

@@ -27,6 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.language.NamespacePrefix;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -41,7 +42,9 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
         if (annotation instanceof XQuery) {
             XQuery xQueryAnnotation = (XQuery)annotation;
             builder.setStripsAllWhiteSpace(xQueryAnnotation.stripsAllWhiteSpace());
-
+            if (ObjectHelper.isNotEmpty(xQueryAnnotation.headerName())) {
+                builder.setHeaderName(xQueryAnnotation.headerName());
+            }
             NamespacePrefix[] namespaces = xQueryAnnotation.namespaces();
             if (namespaces != null) {
                 for (NamespacePrefix namespacePrefix : namespaces) {

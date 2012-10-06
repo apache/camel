@@ -27,9 +27,6 @@ import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
-/**
- * @version 
- */
 @RunWith(JUnit4TestRunner.class)
 public class JmsTest extends OSGiIntegrationSpringTestSupport {
 
@@ -53,7 +50,7 @@ public class JmsTest extends OSGiIntegrationSpringTestSupport {
             getDefaultCamelKarafOptions(),
                 
             // using the features to install AMQ
-            scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.4.0/xml/features", "activemq"),
+            scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.6.0/xml/features", "activemq"),
 
             // using the features to install the camel components
             loadCamelFeatures("camel-jms"));

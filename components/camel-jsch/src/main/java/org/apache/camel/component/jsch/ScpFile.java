@@ -28,7 +28,7 @@ public class ScpFile {
     private String parent;
 
     public String header() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(directory ? "D" : "C");
         buffer.append(" ");
         return buffer.toString();

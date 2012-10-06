@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -48,7 +49,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
         HttpPost post = new HttpPost(simpleEndpointAddress);
         post.addHeader("Accept" , "text/xml");
         
-        StringEntity entity = new StringEntity(ECHO_REQUEST, "text/xml", "ISO-8859-1");
+        StringEntity entity = new StringEntity(ECHO_REQUEST, ContentType.create("text/xml", "ISO-8859-1"));
         post.setEntity(entity);
         HttpClient httpclient = new DefaultHttpClient();
 

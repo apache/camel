@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-public class CommonBindyTest extends AbstractJUnit4SpringContextTests {
+public abstract class CommonBindyTest extends AbstractJUnit4SpringContextTests {
 
     public static final String URI_MOCK_RESULT = "mock:result";
     public static final String URI_MOCK_ERROR = "mock:error";

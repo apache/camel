@@ -43,4 +43,10 @@ public @interface XQuery {
         @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
         @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")
     };
+    
+    /**
+     * @return The name of the header we want to apply the Xquery expression to.
+     *  If this is empty then the Xquery expression will be applied to the body instead.
+     */
+    String headerName() default "";
 }

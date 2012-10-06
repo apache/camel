@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -83,7 +84,8 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
     public void afterPropertiesSet() throws Exception {
         // lets bind the URI to a pojo
         notNull(uri, "uri");
-        if (camelContext == null && camelContextId != null) {
+        // Always resolve the camel context by using the camelContextID
+        if (ObjectHelper.isNotEmpty(camelContextId)) {
             camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
         }
         notNull(camelContext, "camelContext");

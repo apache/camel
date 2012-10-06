@@ -49,7 +49,7 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
                 String name = System.getProperty("os.name");
                 String message = nsae.getMessage();
                 System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + message);
-                log.warn("SunX509 is not avail on this platform [{0}] Testing is skipped! Real cause: {1}", name, message);
+                log.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
                 
                 return null;
             } else {

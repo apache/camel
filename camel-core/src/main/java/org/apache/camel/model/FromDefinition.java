@@ -50,7 +50,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     }
 
     public FromDefinition(Endpoint endpoint) {
-        this.endpoint = endpoint;
+        setEndpoint(endpoint);
     }
 
     @Override
@@ -128,6 +128,10 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
+        this.uri = null;
+        if (endpoint != null) {
+            this.uri = endpoint.getEndpointUri();
+        }
     }
 
     /**

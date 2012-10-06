@@ -36,6 +36,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -278,6 +279,9 @@ public abstract class CamelTestSupport extends TestSupport {
         if (pattern != null) {
             context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
+
+        // configure properties component (mandatory for testing)
+        context.getComponent("properties", PropertiesComponent.class);
 
         postProcessTest();
 

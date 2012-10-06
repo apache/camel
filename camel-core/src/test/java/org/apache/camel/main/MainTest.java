@@ -33,12 +33,7 @@ public class MainTest extends TestCase {
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRouteBuilder(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("mock:results");
-            }
-        });
+        main.addRouteBuilder(new MyRouteBuilder());
         main.bind("foo", new Integer(31));
         main.start();
 
@@ -55,5 +50,31 @@ public class MainTest extends TestCase {
         endpoint.assertIsSatisfied();
 
         main.stop();
+    }
+    
+    public void testLoadingRouteFromCommand() throws Exception {
+        Main main = new Main();
+        // let the main load the MyRouteBuilder
+        main.parseArguments(new String[]{"-r", "org.apache.camel.main.MainTest$MyRouteBuilder"});
+        main.start();
+        
+        main.getCamelTemplate().sendBody("direct:start", "<message>1</message>");
+        
+        List<CamelContext> contextList = main.getCamelContexts();
+        assertNotNull(contextList);
+        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
+        CamelContext camelContext = contextList.get(0);
+        
+        MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
+        endpoint.expectedMinimumMessageCount(1);
+        endpoint.assertIsSatisfied();
+        main.stop();
+    }
+    
+    public static class MyRouteBuilder extends RouteBuilder {
+        @Override
+        public void configure() throws Exception {
+            from("direct:start").to("mock:results");
+        }
     }
 }

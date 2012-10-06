@@ -39,6 +39,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.apache.camel.view.RouteDotGenerator;
 import org.slf4j.Logger;
@@ -59,6 +60,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected boolean aggregateDot;
     protected boolean trace;
     protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
+    protected String routeBuilderClasses;
     protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
     protected ProducerTemplate camelTemplate;
 
@@ -91,6 +93,14 @@ public abstract class MainSupport extends ServiceSupport {
                 completed();
             }
         });
+        addOption(new ParameterOption("r", "routers",
+                 "Sets the router builder classes which will be loaded while starting the camel context",
+                 "routerBuilderClasses") {
+            @Override
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setRouteBuilderClasses(parameter);
+            }
+        });
         addOption(new ParameterOption("o", "outdir",
                 "Sets the DOT output directory where the visual representations of the routes are generated",
                 "dot") {
@@ -117,15 +127,13 @@ public abstract class MainSupport extends ServiceSupport {
                 setDuration(Integer.parseInt(value));
             }
         });
-
         addOption(new Option("t", "trace", "Enables tracing") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 enableTrace();
             }
         });
         addOption(new ParameterOption("out", "output", "Output all routes to the specified XML file", "filename") {
-            protected void doProcess(String arg, String parameter,
-                    LinkedList<String> remainingArgs) {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setRoutesOutputFile(parameter);
             }
         });
@@ -160,31 +168,32 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Callback to run custom logic after CamelContext has been started
+     * Callback to run custom logic after CamelContext has been started.
      */
-    protected void afterStart() {
+    protected void afterStart() throws Exception {
         // noop
     }
 
     /**
-     * Callback to run custom logic before CamelContext is being stopped
+     * Callback to run custom logic before CamelContext is being stopped.
      */
-    protected void beforeStop() {
-        // noop
+    protected void beforeStop() throws Exception {
+        if (camelTemplate != null) {
+            ServiceHelper.stopService(camelTemplate);
+            camelTemplate = null;
+        }
     }
 
     /**
-     * Marks this process as being completed
+     * Marks this process as being completed.
      */
     public void completed() {
         completed.set(true);
         latch.countDown();
     }
 
-
-
     /**
-     * Displays the command line options
+     * Displays the command line options.
      */
     public void showOptions() {
         showOptionsHeader();
@@ -195,7 +204,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Parses the command line arguments
+     * Parses the command line arguments.
      */
     public void parseArguments(String[] arguments) {
         LinkedList<String> args = new LinkedList<String>(Arrays.asList(arguments));
@@ -245,7 +254,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Sets the time unit duration
+     * Sets the time unit duration.
      */
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
@@ -255,10 +264,18 @@ public abstract class MainSupport extends ServiceSupport {
         return dotOutputDir;
     }
 
+    public void setRouteBuilderClasses(String builders) {
+        this.routeBuilderClasses = builders;
+    }
+
+    public String getRouteBuilderClasses() {
+        return routeBuilderClasses;
+    }
+
     /**
      * Sets the output directory of the generated DOT Files to show the visual
      * representation of the routes. A null value disables the dot file
-     * generation
+     * generation.
      */
     public void setDotOutputDir(String dotOutputDir) {
         this.dotOutputDir = dotOutputDir;
@@ -319,7 +336,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Parses the command line arguments then runs the program
+     * Parses the command line arguments then runs the program.
      */
     public void run(String[] args) throws Exception {
         parseArguments(args);
@@ -327,7 +344,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Displays the header message for the command line options
+     * Displays the header message for the command line options.
      */
     public void showOptionsHeader() {
         System.out.println("Apache Camel Runner takes the following options");
@@ -412,7 +429,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Used for aggregate dot generation, generate a single camel context containing all of the available contexts
+     * Used for aggregate dot generation, generate a single camel context containing all of the available contexts.
      */
     private CamelContext aggregateCamelContext() throws Exception {
         if (camelContexts.size() == 1) {
@@ -426,7 +443,21 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
+    protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
+        if (routeBuilderClasses != null) {
+            // get the list of route builder classes
+            String[] routeClasses = routeBuilderClasses.split(",");
+            for (String routeClass : routeClasses) {
+                Class<?> routeClazz = camelContext.getClassResolver().resolveClass(routeClass);
+                RouteBuilder builder = (RouteBuilder) routeClazz.newInstance();
+                getRouteBuilders().add(builder);
+            }
+        }
+    }
+
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // try to load the route builders from the routeBuilderClasses
+        loadRouteBuilders(camelContext);
         for (RouteBuilder routeBuilder : routeBuilders) {
             camelContext.addRoutes(routeBuilder);
         }
@@ -477,8 +508,7 @@ public abstract class MainSupport extends ServiceSupport {
     public abstract class ParameterOption extends Option {
         private String parameterName;
 
-        protected ParameterOption(String abbreviation, String fullName, String description,
-                String parameterName) {
+        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
             super(abbreviation, fullName, description);
             this.parameterName = parameterName;
         }
@@ -495,8 +525,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         public String getInformation() {
-            return "  " + getAbbreviation() + " or " + getFullName()
-                    + " <" + parameterName + "> = " + getDescription();
+            return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
         }
 
         protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);

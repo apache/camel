@@ -46,16 +46,26 @@ public class DefaultAnnotationExpressionFactory implements AnnotationExpressionF
     }
 
     protected String getExpressionFromAnnotation(Annotation annotation) {
-        // let's try the 'value()' method
+        Object value = getAnnotationObjectValue(annotation, "value");
+        if (value == null) {
+            throw new IllegalArgumentException("Cannot determine the expression from the annotation: " + annotation);
+        }
+        return value.toString();
+    }
+    
+    /**
+     * @param annotation The annotation to get the value of 
+     * @param methodName The annotation name 
+     * @return The value of the annotation
+     */
+    protected Object getAnnotationObjectValue(Annotation annotation, String methodName) {        
         try {
-            Method method = annotation.getClass().getMethod("value");
+            Method method = annotation.getClass().getMethod(methodName);
             Object value = ObjectHelper.invokeMethod(method, annotation);
-            if (value == null) {
-                throw new IllegalArgumentException("Cannot determine the expression from the annotation: " + annotation);
-            }
-            return value.toString();
+            return value;
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Cannot determine the expression of the annotation: " + annotation + " as it does not have a value() method");
+            throw new IllegalArgumentException("Cannot determine the Object value of the annotation: " + annotation
+                + " as it does not have the method: " + methodName + "() method", e);
         }
     }
 }

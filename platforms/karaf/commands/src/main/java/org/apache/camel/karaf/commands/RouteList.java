@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -62,8 +63,8 @@ public class RouteList extends OsgiCommandSupport {
             if (routeDefinitions != null && !routeDefinitions.isEmpty()) {
                 for (RouteDefinition routeDefinition : routeDefinitions) {
                     String contextName = camelContext.getName();
-                    String status = camelContext.getRouteStatus(routeDefinition.getId()).name();
-                    System.out.println(String.format(OUTPUT_FORMAT, routeDefinition.getId(), contextName, status));
+                    ServiceStatus status = camelContext.getRouteStatus(routeDefinition.getId());
+                    System.out.println(String.format(OUTPUT_FORMAT, routeDefinition.getId(), contextName, status != null ? status.name() : UNKNOWN));
                 }
             }
         }

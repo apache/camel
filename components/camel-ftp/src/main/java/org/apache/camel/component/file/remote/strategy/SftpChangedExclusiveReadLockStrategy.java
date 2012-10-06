@@ -25,7 +25,6 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.StopWatch;
-import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +75,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             }
             LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (ChannelSftp.LsEntry f : files) {
-                if (f.getFilename().equals(file.getFileName())) {
+                if (f.getFilename().equals(file.getFileNameOnly())) {
                     newLastModified = f.getAttrs().getMTime();
                     newLength = f.getAttrs().getSize();
                 }

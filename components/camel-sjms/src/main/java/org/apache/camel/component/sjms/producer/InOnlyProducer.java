@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.sjms.producer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jms.Connection;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
@@ -23,32 +26,40 @@ import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.sjms.BatchMessage;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsProducer;
+import org.apache.camel.component.sjms.TransactionCommitStrategy;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
+import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 
 /**
- * The InOnlyProducer is responsible for publishing messages to the JMS
- * {@link Destination} for the value specified in the destinationName field.
+ * A Camel Producer that provides the InOnly Exchange pattern..
  */
 public class InOnlyProducer extends SjmsProducer {
-    
+
     public InOnlyProducer(SjmsEndpoint endpoint) {
         super(endpoint);
     }
-    
+
     /*
      * @see org.apache.camel.component.sjms.SjmsProducer#doCreateProducerModel()
-     *
      * @return
      * @throws Exception
      */
+    @Override
     public MessageProducerResources doCreateProducerModel() throws Exception {
         Connection conn = getConnectionResource().borrowConnection();
+        TransactionCommitStrategy commitStrategy = null;
         Session session = null;
         if (isEndpointTransacted()) {
+            if (this.getCommitStrategy() != null) {
+                commitStrategy = this.getCommitStrategy();
+            } else {
+                commitStrategy = new DefaultTransactionCommitStrategy();
+            }
             session = conn.createSession(true, getAcknowledgeMode());
         } else {
             session = conn.createSession(false, getAcknowledgeMode());
@@ -60,20 +71,48 @@ public class InOnlyProducer extends SjmsProducer {
             messageProducer = JmsObjectFactory.createQueueProducer(session, getDestinationName());
         }
         getConnectionResource().returnConnection(conn);
-        return new MessageProducerResources(session, messageProducer);
+        return new MessageProducerResources(session, messageProducer, commitStrategy);
     }
-    
+
+    /*
+     * @see org.apache.camel.component.sjms.SjmsProducer#sendMessage(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)
+     *
+     * @param exchange
+     * @param callback
+     * @throws Exception
+     */
     @Override
     public void sendMessage(Exchange exchange, AsyncCallback callback) throws Exception {
+        List<Message> messages = new ArrayList<Message>();
+        MessageProducerResources producer = getProducers().borrowObject();
         if (getProducers() != null) {
-            MessageProducerResources producer = getProducers().borrowObject();
-            
-            if (isEndpointTransacted()) {
-                exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession()));
+            if (exchange.getIn().getBody() != null) {
+                if (exchange.getIn().getBody() instanceof List) {
+                    List<?> payload = (List<?>)exchange.getIn().getBody();
+                    for (Object object : payload) {
+                        Message message = null;
+                        if (BatchMessage.class.isInstance(object)) {
+                            BatchMessage<?> batchMessage = (BatchMessage<?>)object;
+                            message = JmsMessageHelper.createMessage(producer.getSession(), batchMessage.getPayload(), batchMessage.getHeaders(), getSjmsEndpoint()
+                                .getJmsKeyFormatStrategy());
+                        } else {
+                            message = JmsMessageHelper.createMessage(producer.getSession(), object, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+                        }
+                        messages.add(message);
+                    }
+                } else {
+                    Object payload = exchange.getIn().getBody();
+                    Message message = JmsMessageHelper.createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+                    messages.add(message);
+                }
             }
-            
-            Message message = JmsMessageHelper.createMessage(exchange, producer.getSession());
-            producer.getMessageProducer().send(message);
+
+            if (isEndpointTransacted()) {
+                exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), producer.getCommitStrategy()));
+            }
+            for (Message message : messages) {
+                producer.getMessageProducer().send(message);
+            }
             getProducers().returnObject(producer);
             callback.done(isSynchronous());
         }

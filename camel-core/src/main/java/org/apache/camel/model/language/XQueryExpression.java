@@ -39,6 +39,8 @@ public class XQueryExpression extends NamespaceAwareExpression {
     private String type;
     @XmlTransient
     private Class<?> resultType;
+    @XmlAttribute
+    private String headerName;
 
     public XQueryExpression() {
     }
@@ -67,6 +69,14 @@ public class XQueryExpression extends NamespaceAwareExpression {
         this.resultType = resultType;
     }
 
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+    
     @Override
     public Expression createExpression(CamelContext camelContext) {
         if (resultType == null && type != null) {
@@ -86,6 +96,9 @@ public class XQueryExpression extends NamespaceAwareExpression {
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
+        if (ObjectHelper.isNotEmpty(getHeaderName())) {
+            setProperty(expression, "headerName", getHeaderName());
+        }
     }
 
     @Override
@@ -93,6 +106,9 @@ public class XQueryExpression extends NamespaceAwareExpression {
         super.configurePredicate(camelContext, predicate);
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
+        }
+        if (ObjectHelper.isNotEmpty(getHeaderName())) {
+            setProperty(predicate, "headerName", getHeaderName());
         }
     }
 

@@ -11,5 +11,3 @@ Enjoy!
 
 ------------------------
 The Camel riders!
-
-

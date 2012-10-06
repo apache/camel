@@ -23,9 +23,8 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>tests</artifactId>
     <version>2.11-SNAPSHOT</version>
-    <relativePath>../../parent</relativePath>
   </parent>
 
   <artifactId>camel-itest-osgi</artifactId>
@@ -408,10 +407,6 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
               <forkMode>pertest</forkMode>
-              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-              <includes>
-                  <include>**/*Test.class</include>
-              </includes>
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
                   <exclude>**/FtpConsumeTest.*</exclude>

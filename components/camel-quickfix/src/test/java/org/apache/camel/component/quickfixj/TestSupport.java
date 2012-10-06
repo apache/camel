@@ -111,7 +111,7 @@ public final class TestSupport {
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 8000);
         settings.setBool(sessionID, Session.SETTING_USE_DATA_DICTIONARY, false);
         
-        return new QuickfixjEngine("", settings, false, 
+        return new QuickfixjEngine("", settings, 
             mockMessageStoreFactory, 
             Mockito.mock(LogFactory.class), 
             Mockito.mock(MessageFactory.class));

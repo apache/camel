@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.restlet.data.Method;
 
 /**
@@ -41,8 +42,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
 
     private Method restletMethod = Method.GET;
 
-    // Optional and for consumer only.  This allows a single route to service multiple 
-    // methods.  If it is non-null, restletMethod is ignored.
+    // Optional and for consumer only. This allows a single route to service multiple methods.
+    // If it is non-null then restletMethod is ignored.
     private Method[] restletMethods;
 
     private String protocol = DEFAULT_PROTOCOL;
@@ -50,8 +51,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private int port = DEFAULT_PORT;
     private String uriPattern;
 
-    // Optional and for consumer only.  This allows a single route to service multiple 
-    // URI patterns.  The URI pattern defined in the endpoint will still be honored.
+    // Optional and for consumer only. This allows a single route to service multiple URI patterns.
+    // The URI pattern defined in the endpoint will still be honored.
     private List<String> restletUriPatterns;
 
     private Map<String, String> restletRealm;
@@ -184,6 +185,25 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
 
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
+    }
+    
+    // Update the endpointUri with the restlet method information
+    protected void updateEndpointUri() {
+        String endpointUri = getEndpointUri();
+        CollectionStringBuffer methods = new CollectionStringBuffer(",");
+        if (getRestletMethods() != null && getRestletMethods().length > 0) {
+            // list the method(s) as a comma seperated list
+            for (Method method : getRestletMethods()) {
+                methods.append(method.getName());
+            }
+        } else {
+            // otherwise consider the single method we own
+            methods.append(getRestletMethod());
+        }
+
+        // update the uri
+        endpointUri = endpointUri + "?restletMethods=" + methods;
+        setEndpointUri(endpointUri);
     }
 
     @Override

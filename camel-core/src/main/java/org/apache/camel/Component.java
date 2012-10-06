@@ -26,21 +26,36 @@ public interface Component extends CamelContextAware {
 
     /**
      * Attempt to resolve an endpoint for the given URI if the component is
-     * capable of handling the URI
+     * capable of handling the URI.
+     * <p/>
+     * See {@link #useRawUri()} for controlling whether the passed in uri
+     * should be as-is (raw), or encoded (default).
      * 
-     * @param uri the URI to create
+     * @param uri the URI to create; either raw or encoded (default)
      * @return a newly created {@link Endpoint} or null if this component cannot create
      *         {@link Endpoint} instances using the given uri
      * @throws Exception is thrown if error creating the endpoint
+     * @see #useRawUri()
      */
     Endpoint createEndpoint(String uri) throws Exception;
-    
+
+    /**
+     * Whether to use raw or encoded uri, when creating endpoints.
+     *
+     * @return <tt>true</tt> to use raw uris, <tt>false</tt> to use encoded uris (default).
+     *
+     * @since Camel 2.11.0
+     */
+    boolean useRawUri();
+
     /**
      * Attempt to create a configuration object from the given uri
-     * 
+     *
      * @param uri the configuration URI
      * @return a newly created {@link EndpointConfiguration}
      * @throws Exception is thrown if the configuration URI is invalid
+     *
+     * @since Camel 2.9.0
      */
     EndpointConfiguration createConfiguration(String uri) throws Exception;
 }

@@ -91,7 +91,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
 
         StringBuilder body = new StringBuilder();
         body.append(line1);
-        body.append("\n");
+        body.append("\r");
         body.append(line2);
         return body.toString();
     }

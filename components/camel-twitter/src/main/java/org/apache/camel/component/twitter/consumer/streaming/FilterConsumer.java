@@ -27,6 +27,9 @@ public class FilterConsumer extends StreamingConsumer {
 
     public FilterConsumer(TwitterEndpoint te) {
         super(te);
+    }
+
+    protected void startStreaming() {
         twitterStream.filter(createFilter(te));
     }
 

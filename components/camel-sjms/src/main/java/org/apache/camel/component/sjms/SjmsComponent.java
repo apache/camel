@@ -42,9 +42,10 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
     private ConnectionResource connectionResource;
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
     private KeyFormatStrategy keyFormatStrategy;
-    private Integer maxConnections = 1;
+    private Integer connectionCount = 1;
+    private TransactionCommitStrategy transactionCommitStrategy;
 
-    /*
+    /**
      * @see
      * org.apache.camel.impl.DefaultComponent#createEndpoint(java.lang.String,
      * java.lang.String, java.util.Map)
@@ -62,6 +63,9 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
         setProperties(endpoint, parameters);
         if (endpoint.isTransacted()) {
             endpoint.setSynchronous(true);
+        }
+        if (transactionCommitStrategy != null) {
+            endpoint.setTransactionCommitStrategy(transactionCommitStrategy);
         }
         return endpoint;
     }
@@ -128,7 +132,7 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
         if (getConnectionResource() == null) {
             LOGGER.debug("No ConnectionResource provided.  Initialize the ConnectionFactoryResource.");
             // We always use a connection pool, even for a pool of 1
-            ConnectionFactoryResource connections = new ConnectionFactoryResource(getMaxConnections(), getConnectionFactory());
+            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
             connections.fillPool();
             setConnectionResource(connections);
         } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
@@ -185,12 +189,12 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
         return connectionResource;
     }
 
-    public void setMaxConnections(Integer maxConnections) {
-        this.maxConnections = maxConnections;
+    public void setConnectionCount(Integer maxConnections) {
+        this.connectionCount = maxConnections;
     }
 
-    public Integer getMaxConnections() {
-        return maxConnections;
+    public Integer getConnectionCount() {
+        return connectionCount;
     }
 
     public void setKeyFormatStrategy(KeyFormatStrategy keyFormatStrategy) {
@@ -199,5 +203,26 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
 
     public KeyFormatStrategy getKeyFormatStrategy() {
         return keyFormatStrategy;
+    }
+
+    /**
+     * Gets the TransactionCommitStrategy value of transactionCommitStrategy for this
+     * instance of SjmsComponent.
+     * 
+     * @return the transactionCommitStrategy
+     */
+    public TransactionCommitStrategy getTransactionCommitStrategy() {
+        return transactionCommitStrategy;
+    }
+
+    /**
+     * Sets the TransactionCommitStrategy value of transactionCommitStrategy for this
+     * instance of SjmsComponent.
+     * 
+     * @param transactionCommitStrategy Sets TransactionCommitStrategy, default is TODO add
+     *            default
+     */
+    public void setTransactionCommitStrategy(TransactionCommitStrategy commitStrategy) {
+        this.transactionCommitStrategy = commitStrategy;
     }
 }

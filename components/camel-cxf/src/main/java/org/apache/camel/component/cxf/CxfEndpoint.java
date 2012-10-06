@@ -82,6 +82,7 @@ import org.apache.cxf.jaxws.context.WebServiceContextResourceResolver;
 import org.apache.cxf.jaxws.handler.AnnotationHandlerChainBuilder;
 import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
+import org.apache.cxf.logging.FaultListener;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
@@ -133,6 +134,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String address;
     private boolean mtomEnabled;
     private boolean skipPayloadMessagePartCheck;
+    private boolean skipFaultLogging;
     private Map<String, Object> properties;
     private List<Interceptor<? extends Message>> in 
         = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
@@ -311,6 +313,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
             sfb.getProperties().put("soap.no.validate.parts", Boolean.TRUE);
         }
+        
+        if (this.isSkipFaultLogging()) {
+            if (sfb.getProperties() == null) {
+                sfb.setProperties(new HashMap<String, Object>());                
+            }
+            sfb.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+        }
 
         sfb.setBus(getBus());
         sfb.setStart(false);
@@ -475,6 +484,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 factoryBean.setProperties(new HashMap<String, Object>());                
             }
             factoryBean.getProperties().put("soap.no.validate.parts", Boolean.TRUE);
+        }
+        
+        if (this.isSkipFaultLogging()) {
+            if (factoryBean.getProperties() == null) {
+                factoryBean.setProperties(new HashMap<String, Object>());                
+            }
+            factoryBean.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }
 
         factoryBean.setBus(getBus());
@@ -1030,6 +1046,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     
     public BindingConfiguration getBindingConfig() {
         return bindingConfig;
+    }
+
+    public boolean isSkipFaultLogging() {
+        return skipFaultLogging;
+    }
+
+    public void setSkipFaultLogging(boolean skipFaultLogging) {
+        this.skipFaultLogging = skipFaultLogging;
     }
 
     public void setBindingConfig(BindingConfiguration bindingConfig) {

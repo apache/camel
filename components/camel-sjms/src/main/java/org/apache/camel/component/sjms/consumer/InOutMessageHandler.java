@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
@@ -32,42 +33,58 @@ import javax.jms.Topic;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sjms.jms.JmsMessageHelper;
+import org.apache.camel.component.sjms.TransactionCommitStrategy;
+import org.apache.camel.component.sjms.jms.JmsMessageExchangeHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * TODO Add Class documentation for DefaultMessageHandler
- * TODO Create a producer cache manager to store and purge unused cashed producers or we will have a memory leak
- * 
+ * TODO Add Class documentation for DefaultMessageHandler 
+ * TODO Create a producer
+ * cache manager to store and purge unused cashed producers or we will have a
+ * memory leak
  */
 public class InOutMessageHandler extends DefaultMessageHandler {
 
     private Map<String, MessageProducer> producerCache = new TreeMap<String, MessageProducer>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
+    
     /**
      * TODO Add Constructor Javadoc
-     * 
+     *
      * @param endpoint
-     * @param processor
+     * @param executor
      */
     public InOutMessageHandler(Endpoint endpoint, ExecutorService executor) {
-        this(endpoint, executor, null);
+        super(endpoint, executor);
     }
-
+    
     /**
      * TODO Add Constructor Javadoc
-     * 
-     * @param stopped
+     *
+     * @param endpoint
+     * @param executor
      * @param synchronization
      */
     public InOutMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
         super(endpoint, executor, synchronization);
     }
-    
+
+    /**
+     * TODO Add Constructor Javadoc
+     *
+     * @param endpoint
+     * @param executor
+     * @param commitStrategy
+     * @param rollbackStrategy
+     */
+    public InOutMessageHandler(Endpoint endpoint, ExecutorService executor, TransactionCommitStrategy commitStrategy) {
+        super(endpoint, executor, commitStrategy);
+    }
+
     /**
      * @param message
      */
@@ -83,8 +100,7 @@ public class InOutMessageHandler extends DefaultMessageHandler {
                 } else if (obj instanceof String) {
                     replyTo = JmsObjectFactory.createDestination(getSession(), (String)obj, isTopic());
                 } else {
-                    throw new Exception("The value of JMSReplyTo must be a valid Destination or String.  Value provided: "
-                                            + obj);
+                    throw new Exception("The value of JMSReplyTo must be a valid Destination or String.  Value provided: " + obj);
                 }
 
                 String destinationName = getDestinationName(replyTo);
@@ -106,7 +122,7 @@ public class InOutMessageHandler extends DefaultMessageHandler {
                     }
                 }
             }
-            
+
             MessageHanderAsyncCallback callback = new MessageHanderAsyncCallback(exchange, messageProducer);
             if (exchange.isFailed()) {
                 return;
@@ -114,9 +130,7 @@ public class InOutMessageHandler extends DefaultMessageHandler {
                 if (isTransacted() || isSynchronous()) {
                     // must process synchronous if transacted or configured to
                     // do so
-                    if (log.isDebugEnabled()) {
-                        log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
-                    }
+                    log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
                     try {
                         AsyncProcessorHelper.process(getProcessor(), exchange);
                     } catch (Exception e) {
@@ -126,9 +140,7 @@ public class InOutMessageHandler extends DefaultMessageHandler {
                     }
                 } else {
                     // process asynchronous using the async routing engine
-                    if (log.isDebugEnabled()) {
-                        log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
-                    }
+                    log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
                     boolean sync = AsyncProcessorHelper.process(getProcessor(), exchange, callback);
                     if (!sync) {
                         // will be done async so return now
@@ -141,11 +153,10 @@ public class InOutMessageHandler extends DefaultMessageHandler {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("SjmsMessageConsumer invoked for Exchange id:{} ",
-                    exchange.getExchangeId());
+            log.debug("SjmsMessageConsumer invoked for Exchange id:{} ", exchange.getExchangeId());
         }
     }
-    
+
     @Override
     public void close() {
         for (String key : producerCache.keySet()) {
@@ -158,11 +169,11 @@ public class InOutMessageHandler extends DefaultMessageHandler {
         }
         producerCache.clear();
     }
-    
+
     private boolean isDestination(Object object) {
         return object instanceof Destination;
     }
-    
+
     private String getDestinationName(Destination destination) throws Exception {
         String answer = null;
         if (destination instanceof Queue) {
@@ -180,6 +191,7 @@ public class InOutMessageHandler extends DefaultMessageHandler {
         private MessageProducer localProducer;
 
         public MessageHanderAsyncCallback(Exchange exchange, MessageProducer localProducer) {
+            super();
             this.exchange = exchange;
             this.localProducer = localProducer;
         }
@@ -188,10 +200,15 @@ public class InOutMessageHandler extends DefaultMessageHandler {
         public void done(boolean sync) {
 
             try {
-                Message response = JmsMessageHelper.createMessage(exchange,
-                        getSession(), true);
-                response.setJMSCorrelationID(exchange.getIn().getHeader(
-                        "JMSCorrelationID", String.class)); 
+                Object body = exchange.getOut().getBody();
+                if (body != null) {
+                    if (body instanceof InputStream) {
+                        byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, body);
+                        exchange.getOut().setBody(bytes);
+                    }
+                }
+                Message response = JmsMessageExchangeHelper.createMessage(exchange, getSession(), true);
+                response.setJMSCorrelationID(exchange.getIn().getHeader("JMSCorrelationID", String.class));
                 localProducer.send(response);
             } catch (Exception e) {
                 exchange.setException(e);

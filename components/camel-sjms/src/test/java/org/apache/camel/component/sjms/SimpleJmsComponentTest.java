@@ -24,10 +24,9 @@ import org.junit.Test;
 
 public class SimpleJmsComponentTest extends CamelTestSupport {
 
-
     @Test
     public void testHelloWorld() throws Exception {
-        SjmsComponent component = (SjmsComponent) this.context.getComponent("sjms");
+        SjmsComponent component = (SjmsComponent)this.context.getComponent("sjms");
         assertNotNull(component);
     }
 
@@ -35,8 +34,7 @@ public class SimpleJmsComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                        "vm://broker?broker.persistent=false&broker.useJmx=true");
+                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
                 SjmsComponent component = new SjmsComponent();
                 component.setConnectionFactory(connectionFactory);
                 getContext().addComponent("sjms", component);

@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.management.JMException;
 
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.quickfixj.jmx.JmxExporter;
 import org.slf4j.Logger;
@@ -76,7 +77,7 @@ import quickfix.UnsupportedMessageType;
  * The wrapper will create an initiator or acceptor or both depending on the
  * roles of sessions described in the settings file.
  */
-public class QuickfixjEngine {
+public class QuickfixjEngine extends ServiceSupport {
     public static final String DEFAULT_START_TIME = "00:00:00";
     public static final String DEFAULT_END_TIME = "00:00:00";
     public static final long DEFAULT_HEARTBTINT = 30;
@@ -88,27 +89,37 @@ public class QuickfixjEngine {
     private final Acceptor acceptor;
     private final Initiator initiator;
     private final JmxExporter jmxExporter;
-    private final boolean forcedShutdown;
     private final MessageStoreFactory messageStoreFactory;
     private final LogFactory sessionLogFactory;
     private final MessageFactory messageFactory;
     private final MessageCorrelator messageCorrelator = new MessageCorrelator();
-    
-    private boolean started;
     private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<QuickfixjEventListener>();
-
     private final String uri;
 
     public enum ThreadModel {
         ThreadPerConnector, ThreadPerSession;
     }
 
+    /**
+     * @deprecated Better make use of the {@link #QuickfixjEngine(String, String)} constructor
+     *             as the {@code forcedShutdown} paramater had/has no effect.
+     */
+    @Deprecated
     public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown)
         throws ConfigError, FieldConvertError, IOException, JMException {
 
         this(uri, settingsResourceName, forcedShutdown, null, null, null);
     }
 
+    public QuickfixjEngine(String uri, String settingsResourceName) throws ConfigError, FieldConvertError, IOException, JMException {
+        this(uri, settingsResourceName, null, null, null);
+    }
+
+    /**
+     * @deprecated Better make use of the {@link #QuickfixjEngine(String, String, MessageStoreFactory, LogFactory, MessageFactory)} constructor
+     *             as the {@code forcedShutdown} paramater had/has no effect.
+     */
+    @Deprecated
     public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown,
             MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
             MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
@@ -116,14 +127,27 @@ public class QuickfixjEngine {
                 sessionLogFactoryOverride, messageFactoryOverride);
     }
 
+    public QuickfixjEngine(String uri, String settingsResourceName, MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
+                           MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
+        this(uri, loadSettings(settingsResourceName), messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride);
+    }
+
+    /**
+     * @deprecated Better make use of the {@link #QuickfixjEngine(String, SessionSettings, MessageStoreFactory, LogFactory, MessageFactory)} constructor
+     *             as the {@code forcedShutdown} paramater had/has no effect.
+     */
+    @Deprecated
     public QuickfixjEngine(String uri, SessionSettings settings, boolean forcedShutdown,
             MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
             MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
+        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride);
+    }
 
+    public QuickfixjEngine(String uri, SessionSettings settings, MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
+                           MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
         addEventListener(messageCorrelator);
 
         this.uri = uri;
-        this.forcedShutdown = forcedShutdown;
         
         messageFactory = messageFactoryOverride != null ? messageFactoryOverride : new DefaultMessageFactory();
         sessionLogFactory = sessionLogFactoryOverride != null ? sessionLogFactoryOverride : inferLogFactory(settings);
@@ -191,7 +215,8 @@ public class QuickfixjEngine {
         return new SessionSettings(inputStream);
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
         if (acceptor != null) {
             acceptor.start();
             if (jmxExporter != null) {
@@ -204,28 +229,25 @@ public class QuickfixjEngine {
                 jmxExporter.register(initiator);
             }
         }
-        started = true;
     }
 
-    public void stop() throws Exception {
-        stop(forcedShutdown);
-    }
-
-    public void stop(boolean force) throws Exception {
+    @Override
+    protected void doStop() throws Exception {
         if (acceptor != null) {
             acceptor.stop();
         }
         if (initiator != null) {
             initiator.stop();
         }
-        started = false;
     }
 
-    public boolean isStarted() {
-        return started;
+    @Override
+    protected void doShutdown() throws Exception {
+        // also clear event listeners
+        eventListeners.clear();
     }
-    
-    private Initiator createInitiator(Application application, SessionSettings settings, 
+
+    private Initiator createInitiator(Application application, SessionSettings settings,
             MessageStoreFactory messageStoreFactory, LogFactory sessionLogFactory, 
             MessageFactory messageFactory, ThreadModel threadModel) throws ConfigError {
         

@@ -29,9 +29,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.StreamCacheConverter;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.junit.Test;
 
 
@@ -41,9 +41,8 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     private static final String TEST_CONTAINER = "testContainer";
     private static final String TEST_BLOB_IN_DIR = "/dir/testBlob";
     private static final String MESSAGE = "<test>This is a test</test>";
-
-    BlobStoreContextFactory contextFactory = new BlobStoreContextFactory();
-    BlobStoreContext blobStoreContext = contextFactory.createContext("transient", "identity", "credential");
+        
+    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("transient").credentials("identity", "credential").build(BlobStoreContext.class);
     BlobStore blobStore = blobStoreContext.getBlobStore();
 
     @Test

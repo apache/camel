@@ -19,25 +19,18 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class QuartzStartDelayedTest extends CamelTestSupport {
 
     @Test
     public void testStartDelayed() throws Exception {
-        StopWatch watch = new StopWatch();
-
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setMinimumResultWaitTime(1900);
+        mock.setResultWaitTime(3000);
         mock.expectedMessageCount(2);
 
         assertMockEndpointsSatisfied();
-
-        long time = watch.stop();
-        assertTrue("Should take longer than 3 seconds, was: " + time + " millis.", time > 2500);
     }
 
     @Override
@@ -46,7 +39,7 @@ public class QuartzStartDelayedTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
-                quartz.setStartDelayedSeconds(3);
+                quartz.setStartDelayedSeconds(2);
 
                 from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute").to("mock:result");
             }

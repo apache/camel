@@ -437,10 +437,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             throw new ResolveEndpointFailedException(uri, e);
         }
 
+        final String rawUri = uri;
+
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
         uri = normalizeEndpointUri(uri);
 
-        log.trace("Getting endpoint with normalized uri: {}", uri);
+        log.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
 
         Endpoint answer;
         String scheme = null;
@@ -457,7 +459,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     // Ask the component to resolve the endpoint.
                     if (component != null) {
                         // Have the component create the endpoint if it can.
-                        answer = component.createEndpoint(uri);
+                        if (component.useRawUri()) {
+                            answer = component.createEndpoint(rawUri);
+                        } else {
+                            answer = component.createEndpoint(uri);
+                        }
 
                         if (answer != null && log.isDebugEnabled()) {
                             log.debug("{} converted to endpoint: {} by component: {}", new Object[]{URISupport.sanitizeUri(uri), answer, component});
@@ -888,7 +894,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addService(Object object) throws Exception {
+        doAddService(object, true);
+    }
 
+    private void doAddService(Object object, boolean closeOnShutdown) throws Exception {
         // inject CamelContext
         if (object instanceof CamelContextAware) {
             CamelContextAware aware = (CamelContextAware) object;
@@ -916,7 +925,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // do not add endpoints as they have their own list
             if (singleton && !(service instanceof Endpoint)) {
                 // only add to list of services to close if its not already there
-                if (!hasService(service)) {
+                if (closeOnShutdown && !hasService(service)) {
                     servicesToClose.add(service);
                 }
             }
@@ -1279,7 +1288,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
-    public ScheduledExecutorService getErrorHandlerExecutorService() {
+    public synchronized ScheduledExecutorService getErrorHandlerExecutorService() {
+        if (errorHandlerExecutorService == null) {
+            // setup default thread pool for error handler
+            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
+        }
         return errorHandlerExecutorService;
     }
 
@@ -1394,7 +1407,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // if the context was configured with auto startup = false, and we are already started,
         // then we may need to start the routes on the 2nd start call
         if (firstStartDone && !isAutoStartup() && isStarted()) {
-            // invoke this logic to warmup the routes and if possible also start the routes
+            // invoke this logic to warm up the routes and if possible also start the routes
             doStartOrResumeRoutes(routeServices, true, true, false, true);
         }
 
@@ -1534,7 +1547,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // and we needed to create endpoints up-front as it may be accessed before this context is started
         endpoints = new EndpointRegistry(this, endpoints);
         addService(endpoints);
-        addService(executorServiceManager);
+        // special for executorServiceManager as want to stop it manually
+        doAddService(executorServiceManager, false);
         addService(producerServicePool);
         addService(inflightRepository);
         addService(shutdownStrategy);
@@ -1561,11 +1575,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // start components
         startServices(components.values());
-
-        // setup default thread pool for error handler
-        if (errorHandlerExecutorService == null || errorHandlerExecutorService.isShutdown()) {
-            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
-        }
 
         // start the route definitions before the routes is started
         startRouteDefinitions(routeDefinitions);
@@ -1603,6 +1612,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // the stop order is important
 
+        // shutdown default error handler thread pool
+        if (errorHandlerExecutorService != null) {
+            // force shutting down the thread pool
+            getExecutorServiceManager().shutdownNow(errorHandlerExecutorService);
+            errorHandlerExecutorService = null;
+        }
+
         // shutdown debugger
         ServiceHelper.stopAndShutdownService(getDebugger());
 
@@ -1632,7 +1648,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             shutdownServices(notifier);
         }
 
-        // shutdown management as the last one
+        // shutdown executor service and management as the last one
+        shutdownServices(executorServiceManager);
         shutdownServices(managementStrategy);
         shutdownServices(lifecycleStrategies);
         // do not clear lifecycleStrategies as we can start Camel again and get the route back as before
@@ -1642,7 +1659,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         stopWatch.stop();
         if (log.isInfoEnabled()) {
-            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()) + ". Uptime " + getUptime() + ".");
+            log.info("Uptime {}", getUptime());
+            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()));
         }
 
         // and clear start date

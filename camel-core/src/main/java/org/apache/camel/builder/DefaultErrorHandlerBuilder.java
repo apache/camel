@@ -167,6 +167,17 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
+     *
+     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @return the builder
+     */
+    public DefaultErrorHandlerBuilder allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
+        getRedeliveryPolicy().setAllowRedeliveryWhileStopping(allowRedeliveryWhileStopping);
+        return this;
+    }
+
+    /**
      * Sets a reference to a thread pool to be used for redelivery.
      *
      * @param ref reference to a scheduled thread pool
@@ -419,8 +430,9 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
                     throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
                 }
             } else {
-                // use default shared thread pool for error handlers
-                executorService = camelContext.getErrorHandlerExecutorService();
+                // no explicit configured thread pool, so leave it up to the error handler to deceide if it need
+                // a default thread pool from CamelContext#getErrorHandlerExecutorService
+                executorService = null;
             }
         }
         return executorService;

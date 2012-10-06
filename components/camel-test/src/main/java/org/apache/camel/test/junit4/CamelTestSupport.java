@@ -277,15 +277,14 @@ public abstract class CamelTestSupport extends TestSupport {
             context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
 
-        // configure properties component
+        // configure properties component (mandatory for testing)
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         Properties extra = useOverridePropertiesWithPropertiesComponent();
         if (extra != null && !extra.isEmpty()) {
-            PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
             pc.setOverrideProperties(extra);
         }
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
         if (ignore != null) {
-            PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
             pc.setIgnoreMissingLocation(ignore);
         }
 
@@ -399,7 +398,16 @@ public abstract class CamelTestSupport extends TestSupport {
         template = threadTemplate.get();
         consumer = threadConsumer.get();
         camelContextService = threadService.get();
+        applyCamelPostProcessor();
+    }
 
+    /**
+     * Applies the {@link DefaultCamelBeanPostProcessor} to this instance.
+     *
+     * Derived classes using IoC / DI frameworks may wish to turn this into a NoOp such as for CDI
+     * we would just use CDI to inject this
+     */
+    protected void applyCamelPostProcessor() throws Exception {
         // use the default bean post processor from camel-core
         DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
         processor.postProcessBeforeInitialization(this, getClass().getName());

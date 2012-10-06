@@ -16,14 +16,12 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>components</artifactId>
     <version>2.11-SNAPSHOT</version>
-    <relativePath>../../parent</relativePath>
   </parent>
 
   <artifactId>camel-cxf</artifactId>
@@ -45,7 +43,7 @@
       javax.activation*;version="[0.0,2)",
       javax.annotation*;version="[0.0,2)",
       javax.jws*;version="[0.0,3)",
-      javax.ws.rs*;version="[0.0,2)",
+      javax.ws.rs*;version="[0.0,3)",
       javax.xml.stream*;version="[0.0,2)",
       javax.xml.ws*;version="[0.0,3.0)",
       org.apache.camel.*;${camel.osgi.import.camel.version},
@@ -54,9 +52,9 @@
       org.osgi.service.blueprint;resolution:=optional,
       org.osgi.service.blueprint.container;resolution:=optional,
       org.osgi.service.blueprint.reflect;resolution:=optional,
-      org.apache.aries.blueprint;resolution:=optional,
-      org.apache.aries.blueprint.reflect ;resolution:=optional,
-      org.apache.aries.blueprint.mutable;resolution:=optional,
+      org.apache.aries.blueprint;version="[0.3,2.0)";resolution:=optional,
+      org.apache.aries.blueprint.reflect;version="[0.3,2.0)";resolution:=optional,
+      org.apache.aries.blueprint.mutable;version="[0.3,2.0)";resolution:=optional,
       org.apache.camel.blueprint;resolution:=optional,
       org.osgi.framework;resolution:=optional,
       *
@@ -188,6 +186,14 @@
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
+    
+    <!-- this dependency is just for testing -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-rm</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -246,9 +252,6 @@
           <!--parallel>classes</parallel>
           <perCoreThreadCount>true</perCoreThreadCount>
           <threadCount>2</threadCount-->
-          <systemPropertyVariables>
-            <java.util.logging.config.file>${basedir}/target/test-classes/logging.properties</java.util.logging.config.file>
-          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>

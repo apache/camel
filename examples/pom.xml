@@ -31,9 +31,11 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>camel-example-activemq-tomcat</module>
     <module>camel-example-aggregate</module>
     <module>camel-example-bam</module>
     <module>camel-example-cafe</module>
+    <module>camel-example-cdi</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
     <module>camel-example-cxf-osgi</module>
@@ -98,16 +100,41 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                    <includes>
-                        <include>**/*Test.*</include>
-                    </includes>
                     <systemPropertyVariables>
                         <skipStartingCamelContext>${skip.starting.camel.context}</skipStartingCamelContext>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+          <plugins>
+            <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+            <plugin>
+              <groupId>org.eclipse.m2e</groupId>
+              <artifactId>lifecycle-mapping</artifactId>
+              <version>1.0.0</version>
+              <configuration>
+                <lifecycleMappingMetadata>
+                  <pluginExecutions>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <versionRange>[2.3.7,)</versionRange>
+                        <goals>
+                          <goal>cleanVersions</goal>
+                        </goals>
+                      </pluginExecutionFilter>
+                      <action>
+                        <ignore></ignore>
+                      </action>
+                    </pluginExecution>
+                  </pluginExecutions>
+                </lifecycleMappingMetadata>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
     </build>
 
     <profiles>

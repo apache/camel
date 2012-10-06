@@ -18,7 +18,6 @@ package org.apache.camel.component.jclouds;
 
 import java.util.List;
 import java.util.Map;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.jclouds.blobstore.BlobStore;
@@ -48,7 +47,7 @@ public class JcloudsComponent extends DefaultComponent {
         if (JcloudsConstants.BLOBSTORE.endsWith(endpointType)) {
             if (uriParts.length >= 2) {
                 String provider = uriParts[1];
-                BlobStore blobStore = getBlobStoreForProvider(provider);
+                BlobStore blobStore = getBlobStore(provider);
                 endpoint = new JcloudsBlobStoreEndpoint(uri, this, blobStore);
             } else {
                 throw new Exception("Invalid Endpoint URI. It should contains a valid provider name");
@@ -56,7 +55,7 @@ public class JcloudsComponent extends DefaultComponent {
         } else if (JcloudsConstants.COMPUTE.endsWith(endpointType)) {
             if (uriParts.length >= 2) {
                 String provider = uriParts[1];
-                ComputeService computeService = getComputeServiceForProvider(provider);
+                ComputeService computeService = getComputeService(provider);
                 endpoint = new JcloudsComputeEndpoint(uri, this, computeService);
             } else {
                 throw new Exception("Invalid Endpoint URI. It should contains a valid provider name");
@@ -68,38 +67,38 @@ public class JcloudsComponent extends DefaultComponent {
     }
 
     /**
-     * Returns the {@link BlobStore} that matches the given provider.
-     * @param provider The provider id.
+     * Returns the {@link BlobStore} that matches the given providerOrApi.
+     * @param providerOrApi The providerOrApi id.
      * @return The matching {@link BlobStore}
      */
-    protected BlobStore getBlobStoreForProvider(String provider) throws Exception {
+    protected BlobStore getBlobStore(String providerOrApi) throws Exception {
 
         if (blobStores != null && !blobStores.isEmpty()) {
             for (BlobStore blobStore : blobStores) {
-                if (blobStore.getContext().getProviderSpecificContext().getId().equals(provider)) {
+                if (blobStore.getContext().unwrap().getId().equals(providerOrApi)) {
                     return blobStore;
                 }
             }
-            throw new Exception(String.format("No blobstore found for provider:%s", provider));
+            throw new Exception(String.format("No blobstore found for provider:%s", providerOrApi));
         } else {
             throw new Exception("No blobstore available.");
         }
     }
 
     /**
-     * Returns the {@link ComputeService} that matches the given provider.
-     * @param provider The provider id.
+     * Returns the {@link ComputeService} that matches the given providerOrApi.
+     * @param providerOrApi The providerOrApi id.
      * @return The matching {@link ComputeService}
      */
-    protected ComputeService getComputeServiceForProvider(String provider) throws Exception {
+    protected ComputeService getComputeService(String providerOrApi) throws Exception {
 
         if (computeServices != null && !computeServices.isEmpty()) {
             for (ComputeService computeService : computeServices) {
-                if (computeService.getContext().getProviderSpecificContext().getId().equals(provider)) {
+                if (computeService.getContext().unwrap().getId().equals(providerOrApi)) {
                     return computeService;
                 }
             }
-            throw new Exception(String.format("No compute service found for provider:%s", provider));
+            throw new Exception(String.format("No compute service found for provider:%s", providerOrApi));
         } else {
             throw new Exception("No compute service available.");
         }

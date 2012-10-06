@@ -49,7 +49,7 @@ import org.apache.cxf.staxutils.StaxUtils;
  * method can initialize the service model's message part schema based on the service class in the message part info.  
  * Hence, this DataBinding supports DOMSource object de/serialization without requiring users to provide a WSDL.
  * 
- * @version @Revision: 789534 $
+ * @version 
  */
 public class HybridSourceDataBinding extends JAXBDataBinding {
     private static final Logger LOG = LogUtils.getL7dLogger(SourceDataBinding.class);

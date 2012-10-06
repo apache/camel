@@ -17,7 +17,6 @@
         See the License for the specific language governing permissions and
         limitations under the License.
     -->
-
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -28,7 +27,6 @@
 
     <groupId>org.apache.camel.tests</groupId>
     <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
-    <version>2.11-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Camel :: Integration Tests :: Test Bundles: ${pkgArtifactId}-${pkgVersion}</name>
     <description>

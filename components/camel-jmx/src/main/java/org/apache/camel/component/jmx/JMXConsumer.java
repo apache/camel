@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.jmx;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
 import javax.management.ObjectName;
+import javax.management.remote.JMXConnectionNotification;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -34,12 +38,31 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer will add itself as a NotificationListener on the object
  * specified by the objectName param.
  */
 public class JMXConsumer extends DefaultConsumer implements NotificationListener {
+    
+    private static final transient Logger LOG = LoggerFactory.getLogger(JMXConsumer.class);
+    
+    private JMXEndpoint mJmxEndpoint;
+    private JMXConnector mConnector;
+    private String mConnectionId;
+    
+    /**
+     * Used to schedule delayed connection attempts
+     */
+    private ScheduledExecutorService mScheduledExecutor;
+    
+    /**
+     * Used to receive notifications about lost connections
+     */
+    private ConnectionNotificationListener mConnectionNotificationListener;
 
     /**
      * connection to the mbean server (local or remote)
@@ -51,8 +74,10 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      */
     private NotificationXmlFormatter mFormatter;
 
+
     public JMXConsumer(JMXEndpoint aEndpoint, Processor aProcessor) {
         super(aEndpoint, aProcessor);
+        this.mJmxEndpoint = aEndpoint;
         mFormatter = new NotificationXmlFormatter();
     }
 
@@ -62,23 +87,137 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      */
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
-        JMXEndpoint ep = (JMXEndpoint) getEndpoint();
-
         // connect to the mbean server
-        if (ep.isPlatformServer()) {
+        if (mJmxEndpoint.isPlatformServer()) {
             setServerConnection(ManagementFactory.getPlatformMBeanServer());
         } else {
-            JMXServiceURL url = new JMXServiceURL(ep.getServerURL());
-            String[] creds = {ep.getUser(), ep.getPassword()};
-            Map<String, String[]> map = Collections.singletonMap(JMXConnector.CREDENTIALS, creds);
-            JMXConnector connector = JMXConnectorFactory.connect(url, map);
-            setServerConnection(connector.getMBeanServerConnection());
+            try {
+                initNetworkConnection();
+            } catch (IOException e) {
+                if (!mJmxEndpoint.getTestConnectionOnStartup()) {
+                    LOG.warn("Failed to connect to JMX server. >> {}", e.getMessage());
+                    scheduleDelayedStart();
+                    return;
+                } else {
+                    throw e;
+                } 
+            }
         }
         // subscribe
         addNotificationListener();
+        super.doStart();
     }
+    
+    /**
+     * Initializes a network connection to the configured JMX server and registers a connection 
+     * notification listener to to receive notifications of connection loss
+     */
+    private void initNetworkConnection() throws IOException {
+        if (mConnector != null) {
+            try {
+                mConnector.close();
+            } catch (Exception e) {
+                // ignore, as this is best effort
+            }
+        }
+        JMXServiceURL url = new JMXServiceURL(mJmxEndpoint.getServerURL());
+        String[] creds = {mJmxEndpoint.getUser(), mJmxEndpoint.getPassword()};
+        Map<String, String[]> map = Collections.singletonMap(JMXConnector.CREDENTIALS, creds);
+        mConnector = JMXConnectorFactory.connect(url, map);
+        mConnector.addConnectionNotificationListener(getConnectionNotificationListener(), null, null);
+        mConnectionId = mConnector.getConnectionId();
+        setServerConnection(mConnector.getMBeanServerConnection());
+    }
+    
+    /**
+     * Returns the connection notification listener; creates the default listener if one does not 
+     * already exist
+     */
+    protected ConnectionNotificationListener getConnectionNotificationListener() {
+        if (mConnectionNotificationListener == null) {
+            mConnectionNotificationListener = new ConnectionNotificationListener();
+        }  
+        return mConnectionNotificationListener;
+    }
+    
+    /**
+     * Schedules execution of the doStart() operation to occur again after the reconnect delay
+     */
+    protected void scheduleDelayedStart() throws Exception {
+        Runnable startRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    doStart();
+                } catch (Exception e) {
+                    LOG.error("An unrecoverable exception has occurred while starting the JMX consumer" 
+                                + "for endpoint {}", URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
+                }
+            }
+        };
+        LOG.info("Delaying JMX consumer startup for endpoint {}. Trying again in {} seconds.",
+                URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), mJmxEndpoint.getReconnectDelay());
+        getExecutor().schedule(startRunnable, mJmxEndpoint.getReconnectDelay(), TimeUnit.SECONDS);
+    }
+    
+    /**
+     * Helper class used for receiving connection loss notifications
+     */
+    private class ConnectionNotificationListener implements NotificationListener {
+
+        @Override
+        public void handleNotification(Notification notification, Object handback) {
+            JMXConnectionNotification connectionNotification = (JMXConnectionNotification)notification;
+            // only reset the connection if the notification is for the connection from this endpoint
+            if (!connectionNotification.getConnectionId().equals(mConnectionId)) {
+                return;
+            }
+            if (connectionNotification.getType().equals(JMXConnectionNotification.NOTIFS_LOST) 
+                        || connectionNotification.getType().equals(JMXConnectionNotification.CLOSED) 
+                        || connectionNotification.getType().equals(JMXConnectionNotification.FAILED)) {
+                LOG.warn("Lost JMX connection for : {}", URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()));
+                if (mJmxEndpoint.getReconnectOnConnectionFailure()) {
+                    scheduleReconnect();
+                } else {
+                    LOG.warn("The JMX consumer will not be reconnected.  Use 'reconnectOnConnectionFailure' to "
+                            + "enable reconnections.");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Schedules an attempt to re-initialize a lost connection after the reconnect delay
+     */
+    protected void scheduleReconnect() {
+        Runnable startRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    initNetworkConnection();
+                    addNotificationListener();
+                } catch (Exception e) {
+                    LOG.warn("Failed to reconnect to JMX server. >> {}", e.getMessage());
+                    scheduleReconnect();
+                }
+            }
+        };
+        LOG.info("Delaying JMX consumer reconnection for endpoint {}. Trying again in {} seconds.",
+                URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), mJmxEndpoint.getReconnectDelay());
+        getExecutor().schedule(startRunnable, mJmxEndpoint.getReconnectDelay(), TimeUnit.SECONDS);
+    }
+    
+    /**
+     * Returns the thread executor used for scheduling delayed connection events.  Creates the executor
+     * if it does not already exist
+     */
+    private ScheduledExecutorService getExecutor() {
+        if (this.mScheduledExecutor == null) {
+            mScheduledExecutor = mJmxEndpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "connectionExcutor");
+        }
+        return mScheduledExecutor;
+    }    
 
     /**
      * Adds a notification listener to the target bean.
@@ -94,21 +233,31 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     }
 
     /**
-     * Removes the notification listener
+     * Removes the notification listeners and terminates the background connection polling process if it exists
      */
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        removeNotificationListener();
+        
+        if (mScheduledExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(mScheduledExecutor);
+            mScheduledExecutor = null;
+        }
+
+        removeNotificationListeners();
+    }
+    
+    /**
+     * Removes the configured notification listener and the connection notification listener from the 
+     * connection
+     */
+    protected void removeNotificationListeners() throws Exception {   
+        getServerConnection().removeNotificationListener(mJmxEndpoint.getJMXObjectName(), this);
+        if (mConnectionNotificationListener != null) {
+            mConnector.removeConnectionNotificationListener(mConnectionNotificationListener);
+        }    
     }
 
-    /**
-     * Removes the consumer as a listener from the bean. 
-     */
-    protected void removeNotificationListener() throws Exception {
-        JMXEndpoint ep = (JMXEndpoint) getEndpoint();
-        getServerConnection().removeNotificationListener(ep.getJMXObjectName(), this);
-    }
 
     protected MBeanServerConnection getServerConnection() {
         return mServerConnection;

@@ -355,6 +355,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     @Override
     protected void doShutdown() throws Exception {
         if (executor != null) {
+            // force shutting down as we are shutting down Camel
             camelContext.getExecutorServiceManager().shutdownNow(executor);
             // should clear executor so we can restart by creating a new thread pool
             executor = null;
@@ -372,7 +373,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private static void prepareShutdown(Service service, boolean forced, boolean includeChildren) {
         Set<Service> list;
         if (includeChildren) {
-            list = ServiceHelper.getChildServices(service);
+            // include error handlers as we want to prepare them for shutdown as well
+            list = ServiceHelper.getChildServices(service, true);
         } else {
             list = new LinkedHashSet<Service>(1);
             list.add(service);
@@ -495,6 +497,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
                         LOG.debug("Route: " + order.getRoute().getId() + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
                     }
+                }
+            }
+
+            // notify the services we intend to shutdown
+            for (RouteStartupOrder order : routes) {
+                for (Service service : order.getServices()) {
+                    // skip the consumer as we handle that specially
+                    if (service instanceof Consumer) {
+                        continue;
+                    }
+                    prepareShutdown(service, false, true);
                 }
             }
 

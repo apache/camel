@@ -61,7 +61,7 @@ public class HL7RouteTest extends CamelTestSupport {
 
         StringBuilder in = new StringBuilder();
         in.append(line1);
-        in.append("\n");
+        in.append("\r");
         in.append(line2);
 
         String out = (String) template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
@@ -84,7 +84,7 @@ public class HL7RouteTest extends CamelTestSupport {
 
         StringBuilder in = new StringBuilder();
         in.append(line1);
-        in.append("\n");
+        in.append("\r");
         in.append(line2);
 
         String out = (String) template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
@@ -106,7 +106,7 @@ public class HL7RouteTest extends CamelTestSupport {
 
         StringBuilder in = new StringBuilder();
         in.append(line1);
-        in.append("\n");
+        in.append("\r");
         in.append(line2);
 
         template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
@@ -141,7 +141,7 @@ public class HL7RouteTest extends CamelTestSupport {
                             .to("mock:unknown")
                     // end choice block
                     .end()
-                    // marhsal response back
+                    // marshal response back
                     .marshal(hl7);
                 // END SNIPPET: e1
             }

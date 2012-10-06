@@ -24,6 +24,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    
+  <!-- Enable bridge between Camel Property Placeholder and Spring Property placeholder so we can use system properties
+       to dynamically set the port number for unit testing the example.  -->
+  <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer"/>
+  
   <!-- START SNIPPET: example -->
 
   <!--
@@ -37,7 +42,7 @@
 
   <cxf:cxfEndpoint id="soapMessageEndpoint"
                    serviceClass="org.apache.camel.example.cxf.provider.GreeterProvider"
-                   address="http://localhost:9000/GreeterContext/SOAPMessageService"
+                   address="http://localhost:{{port}}/GreeterContext/SOAPMessageService"
                    wsdlURL="wsdl/hello_world.wsdl"
                    endpointName="s:SoapOverHttpRouter"
                    serviceName="s:SOAPService"

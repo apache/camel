@@ -76,14 +76,9 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
         } else {
             LOG.info("Leaving ElasticSearch cluster " + config.getClusterName());
         }
+        client.close();
         node.close();
         super.doStop();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        // TODO Auto-generated method stub
-        super.doShutdown();
     }
 
     public Client getClient() {

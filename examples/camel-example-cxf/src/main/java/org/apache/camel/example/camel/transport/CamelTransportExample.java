@@ -33,7 +33,7 @@ public final class CamelTransportExample {
             // start the endpoints
             server.start();
             // set the client's service access point
-            Client client = new Client("http://localhost:9091/GreeterContext/GreeterPort");
+            Client client = new Client("http://localhost:9001/GreeterContext/GreeterPort");
             // invoking the services
             client.invoke();
 

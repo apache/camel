@@ -68,6 +68,7 @@
     <module>camel-cmis</module>
     <module>camel-cometd</module>
     <module>camel-context</module>
+    <module>camel-couchdb</module>
     <module>camel-crypto</module>
     <module>camel-csv</module>
     <module>camel-dns</module>

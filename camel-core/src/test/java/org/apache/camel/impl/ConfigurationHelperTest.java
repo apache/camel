@@ -239,6 +239,11 @@ public class ConfigurationHelperTest {
             }
             return null;
         }
+
+        @Override
+        public boolean useRawUri() {
+            return false;
+        }
     }
 
     public static class UriDumpConfiguration extends DefaultEndpointConfiguration {

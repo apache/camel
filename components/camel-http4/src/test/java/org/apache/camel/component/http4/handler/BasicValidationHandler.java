@@ -27,7 +27,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.util.EntityUtils;
@@ -81,7 +80,7 @@ public class BasicValidationHandler implements HttpRequestHandler {
 
         response.setStatusCode(HttpStatus.SC_OK);
         if (responseContent != null) {
-            response.setEntity(new StringEntity(responseContent, HTTP.ASCII));
+            response.setEntity(new StringEntity(responseContent, "ASCII"));
         }
     }
 

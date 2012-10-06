@@ -218,7 +218,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      */
     protected IdempotentRepository<?> resolveMessageIdRepository(RouteContext routeContext) {
         if (messageIdRepositoryRef != null) {
-            idempotentRepository = routeContext.lookup(messageIdRepositoryRef, IdempotentRepository.class);
+            idempotentRepository = routeContext.mandatoryLookup(messageIdRepositoryRef, IdempotentRepository.class);
         }
         return idempotentRepository;
     }

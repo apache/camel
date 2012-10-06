@@ -35,7 +35,7 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
 
         @Override
         public Object groupLines(List<String> lines) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             for (String line : lines) {
                 buffer.append(line);
                 buffer.append("\n");

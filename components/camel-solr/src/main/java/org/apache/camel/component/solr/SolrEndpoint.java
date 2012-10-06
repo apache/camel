@@ -16,32 +16,35 @@
  */
 package org.apache.camel.component.solr;
 
+import java.net.URL;
 import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-import org.apache.solr.client.solrj.impl.StreamingUpdateSolrServer;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 
 /**
  * Represents a Solr endpoint.
  */
 public class SolrEndpoint extends DefaultEndpoint {
 
-    private CommonsHttpSolrServer solrServer;
-    private CommonsHttpSolrServer streamingSolrServer;
+    private HttpSolrServer solrServer;
+    private ConcurrentUpdateSolrServer streamingSolrServer;
     private String requestHandler;
     private int streamingThreadCount;
     private int streamingQueueSize;
 
     public SolrEndpoint(String endpointUri, SolrComponent component, String address, Map<String, Object> parameters) throws Exception {
         super(endpointUri, component);
-
-        solrServer = new CommonsHttpSolrServer("http://" + address);
+        // check the url address
+        URL url = new URL("http://" + address);
+        solrServer = new HttpSolrServer(url.toString());
         streamingQueueSize = getIntFromString((String) parameters.get(SolrConstants.PARAM_STREAMING_QUEUE_SIZE), SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE);
         streamingThreadCount = getIntFromString((String) parameters.get(SolrConstants.PARAM_STREAMING_THREAD_COUNT), SolrConstants.DEFAULT_STREAMING_THREAD_COUNT);
-        streamingSolrServer = new StreamingUpdateSolrServer("http://" + address, streamingQueueSize, streamingThreadCount);
+        streamingSolrServer = new ConcurrentUpdateSolrServer(url.toString(), streamingQueueSize, streamingThreadCount);
     }
 
     public static int getIntFromString(String value, int defaultValue) {
@@ -66,51 +69,44 @@ public class SolrEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public CommonsHttpSolrServer getSolrServer() {
+    public HttpSolrServer getSolrServer() {
         return solrServer;
     }
 
-    public CommonsHttpSolrServer getStreamingSolrServer() {
+    public ConcurrentUpdateSolrServer getStreamingSolrServer() {
         return streamingSolrServer;
     }
 
-    public void setStreamingSolrServer(CommonsHttpSolrServer streamingSolrServer) {
+    public void setStreamingSolrServer(ConcurrentUpdateSolrServer streamingSolrServer) {
         this.streamingSolrServer = streamingSolrServer;
     }
 
     public void setMaxRetries(int maxRetries) {
         solrServer.setMaxRetries(maxRetries);
-        streamingSolrServer.setMaxRetries(maxRetries);
     }
 
     public void setSoTimeout(int soTimeout) {
         solrServer.setSoTimeout(soTimeout);
-        streamingSolrServer.setSoTimeout(soTimeout);
     }
 
     public void setConnectionTimeout(int connectionTimeout) {
         solrServer.setConnectionTimeout(connectionTimeout);
-        streamingSolrServer.setConnectionTimeout(connectionTimeout);
     }
 
     public void setDefaultMaxConnectionsPerHost(int defaultMaxConnectionsPerHost) {
         solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
-        streamingSolrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
     }
 
     public void setMaxTotalConnections(int maxTotalConnections) {
         solrServer.setMaxTotalConnections(maxTotalConnections);
-        streamingSolrServer.setMaxTotalConnections(maxTotalConnections);
     }
 
     public void setFollowRedirects(boolean followRedirects) {
         solrServer.setFollowRedirects(followRedirects);
-        streamingSolrServer.setFollowRedirects(followRedirects);
     }
 
     public void setAllowCompression(boolean allowCompression) {
         solrServer.setAllowCompression(allowCompression);
-        streamingSolrServer.setAllowCompression(allowCompression);
     }
 
     public void setRequestHandler(String requestHandler) {

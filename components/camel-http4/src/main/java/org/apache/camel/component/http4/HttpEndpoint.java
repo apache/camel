@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -128,12 +129,16 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
             String host = getCamelContext().getProperty("http.proxyHost");
             int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
             String scheme = getCamelContext().getProperty("http.proxyScheme");
-            // fallback and use either http4 or https4 depending on secure
+            // fallback and use either http or https depending on secure
             if (scheme == null) {
-                scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https4" : "http4";
+                scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
             }
-
             LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
+            try {
+                component.registerPort(HttpHelper.isSecureConnection(scheme), component.getX509HostnameVerifier(), port, component.getSslContextParameters());
+            } catch (Exception ex) {
+                throw new RuntimeCamelException(ex);
+            }
             HttpHost proxy = new HttpHost(host, port, scheme);
             answer.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
         }

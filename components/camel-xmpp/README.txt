@@ -7,34 +7,15 @@ For more details see
 
   http://camel.apache.org/xmpp.html
 
+  
+About the XMPP unit / integration tests
+------------------------------------------
+Most of the tests in this module are configured to execute against an embedded version
+of the Apache Vysper XMPP server (http://mina.apache.org/vysper/).  A small number of users and 
+chat rooms are statically configured during the server setup and are re-used across the tests.  
 
-Using Spring based xml configuration in 'activemq.xml'
-------------------------------------------------------
+@see org.apache.camel.component.xmpp.EmbeddedXmppTestServer.java in ./src/test/java 
 
-In this example an xmpp user called 'bot' will propagate any messages to the queue 'gimme_an_a' to a muc 
-called 'monitor'. The conference subdomain is part of openfire muc jid implementation (i guess). Notice 
-the quoted ampersands.
-
-<camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-    <route>
-        <from uri="activemq:gimme_an_a"/>
-        <to uri="xmpp://bot@freetwix.hh/?port=5222&amp;password=meapassword&amp;room=monitor@conference.freetwix.hh"/>
-    </route>
-</camelContext>
-
-
-Running the Integration Tests
------------------------------
-
-To run the intergration tests you need a Jabber server to communicate with such as Jive Software's WildFire
-
-
-To enable the integration tests set the maven property
-
-  xmpp.enable = true
-
-You may also want to overload the default value of the server to connect with via
-
-  xmpp.url = xmpp://camel@localhost/?login=false&room=
-
-
+A few of the tests in this module specifically require a GoogleTalk service.  These tests are
+annotated with @Ignore by default. The tester must configure such tests with known gmail 
+credentials prior to execution.

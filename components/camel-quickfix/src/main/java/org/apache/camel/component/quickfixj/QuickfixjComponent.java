@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
 import quickfix.SessionSettings;
 
-public class QuickfixjComponent extends DefaultComponent {
+public class QuickfixjComponent extends DefaultComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
 
     private final Object engineInstancesLock = new Object();
@@ -39,7 +41,6 @@ public class QuickfixjComponent extends DefaultComponent {
     private MessageStoreFactory messageStoreFactory;
     private LogFactory logFactory;
     private MessageFactory messageFactory;
-    private boolean forcedShutdown;
     private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
 
     @Override
@@ -55,12 +56,15 @@ public class QuickfixjComponent extends DefaultComponent {
                     QuickfixjConfiguration configuration = configurations.get(remaining);
                     if (configuration != null) {
                         SessionSettings settings = configuration.createSessionSettings();
-                        engine = new QuickfixjEngine(uri, settings, forcedShutdown, messageStoreFactory, logFactory, messageFactory);
+                        engine = new QuickfixjEngine(uri, settings, messageStoreFactory, logFactory, messageFactory);
                     } else {
-                        engine = new QuickfixjEngine(uri, remaining, forcedShutdown, messageStoreFactory, logFactory, messageFactory);
+                        engine = new QuickfixjEngine(uri, remaining, messageStoreFactory, logFactory, messageFactory);
                     }
                     engines.put(remaining, engine);
-                    if (isStarted()) {
+
+                    // only start engine if CamelContext is already started, otherwise the engines gets started
+                    // automatic later when CamelContext has been started using the StartupListener
+                    if (getCamelContext().getStatus().isStarted()) {
                         startQuickfixjEngine(engine);
                     }
                 }
@@ -77,26 +81,31 @@ public class QuickfixjComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        synchronized (engineInstancesLock) {
-            for (QuickfixjEngine engine : engines.values()) {
-                startQuickfixjEngine(engine);
-            }
-        }
-    }
-
-    private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
-        LOG.info("Starting QuickFIX/J engine: uri=", engine.getUri());
-        engine.start();
+        // we defer starting quickfix engines till the onCamelContextStarted callback
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        // stop engines when stopping component
         synchronized (engineInstancesLock) {
             for (QuickfixjEngine engine : engines.values()) {
                 engine.stop();
             }
         }
+        super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // cleanup when shutting down
+        engines.clear();
+        endpoints.clear();
+        super.doShutdown();
+    }
+
+    private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
+        LOG.info("Starting QuickFIX/J engine: {}", engine.getUri());
+        engine.start();
     }
 
     // Test Support
@@ -116,8 +125,11 @@ public class QuickfixjComponent extends DefaultComponent {
         this.messageStoreFactory = messageStoreFactory;
     }
 
+    /**
+     * @deprecated Don't use as setting the {@code forcedShutdown} property had/has no effect.
+     */
+    @Deprecated
     public void setForcedShutdown(boolean forcedShutdown) {
-        this.forcedShutdown = forcedShutdown;
     }
 
     public Map<String, QuickfixjConfiguration> getConfigurations() {
@@ -128,4 +140,13 @@ public class QuickfixjComponent extends DefaultComponent {
         this.configurations = configurations;
     }
 
+    @Override
+    public void onCamelContextStarted(CamelContext camelContext, boolean alreadyStarted) throws Exception {
+        // only start quickfix engines when CamelContext have finished starting
+        synchronized (engineInstancesLock) {
+            for (QuickfixjEngine engine : engines.values()) {
+                startQuickfixjEngine(engine);
+            }
+        }
+    }
 }

@@ -18,7 +18,6 @@ package org.apache.camel.component.sjms.consumer;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
@@ -27,12 +26,11 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.sjms.jms.JmsMessageHelper;
-import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
+import org.apache.camel.component.sjms.TransactionCommitStrategy;
+import org.apache.camel.component.sjms.jms.JmsMessageExchangeHelper;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,32 +38,39 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * TODO Add Class documentation for DefaultMessageHandler
- * 
  */
 public abstract class DefaultMessageHandler implements MessageListener {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    
+
     private final ExecutorService executor;
-    
+
     private Endpoint endpoint;
     private AsyncProcessor processor;
     private Session session;
     private boolean transacted;
-    private SessionAcknowledgementType acknowledgementType = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
     private boolean synchronous = true;
-    private Destination namedReplyTo;
     private Synchronization synchronization;
     private boolean topic;
+    private TransactionCommitStrategy commitStrategy;
 
     public DefaultMessageHandler(Endpoint endpoint, ExecutorService executor) {
-        this(endpoint, executor, null);
+        this.endpoint = endpoint;
+        this.executor = executor;
     }
 
     public DefaultMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
+        super();
         this.synchronization = synchronization;
         this.endpoint = endpoint;
         this.executor = executor;
+    }
+
+    public DefaultMessageHandler(Endpoint endpoint, ExecutorService executor, TransactionCommitStrategy commitStrategy) {
+        super();
+        this.endpoint = endpoint;
+        this.executor = executor;
+        this.commitStrategy = commitStrategy;
     }
 
     @Override
@@ -79,24 +84,19 @@ public abstract class DefaultMessageHandler implements MessageListener {
     private void handleMessage(Message message) {
         RuntimeCamelException rce = null;
         try {
-            final DefaultExchange exchange = (DefaultExchange) JmsMessageHelper
-                    .createExchange(message, getEndpoint());
-            if (log.isDebugEnabled()) {
-                log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
-            }
+            final DefaultExchange exchange = (DefaultExchange)JmsMessageExchangeHelper.createExchange(message, getEndpoint());
+            
+            log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
+            
             if (isTransacted() && synchronization != null) {
                 exchange.addOnCompletion(synchronization);
             }
             try {
                 if (isTransacted() || isSynchronous()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("  Handling synchronous message: {}", exchange.getIn().getBody());
-                    }
+                    log.debug("  Handling synchronous message: {}", exchange.getIn().getBody());
                     doHandleMessage(exchange);
                 } else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("  Handling asynchronous message: {}", exchange.getIn().getBody());
-                    }
+                    log.debug("  Handling asynchronous message: {}", exchange.getIn().getBody());
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -128,7 +128,7 @@ public abstract class DefaultMessageHandler implements MessageListener {
     }
 
     public abstract void doHandleMessage(final Exchange exchange);
-    
+
     public abstract void close();
 
     public void setTransacted(boolean transacted) {
@@ -151,15 +151,6 @@ public abstract class DefaultMessageHandler implements MessageListener {
         this.processor = processor;
     }
 
-    public SessionAcknowledgementType getAcknowledgementType() {
-        return acknowledgementType;
-    }
-
-    public void setAcknowledgementType(
-            SessionAcknowledgementType acknowledgementType) {
-        this.acknowledgementType = acknowledgementType;
-    }
-
     public void setSession(Session session) {
         this.session = session;
     }
@@ -176,19 +167,15 @@ public abstract class DefaultMessageHandler implements MessageListener {
         return synchronous;
     }
 
-    public void setNamedReplyTo(Destination namedReplyToDestination) {
-        this.namedReplyTo = namedReplyToDestination;
-    }
-
-    public Destination getNamedReplyTo() {
-        return namedReplyTo;
-    }
-
     public void setTopic(boolean topic) {
         this.topic = topic;
     }
 
     public boolean isTopic() {
         return topic;
+    }
+
+    public TransactionCommitStrategy getCommitStrategy() {
+        return commitStrategy;
     }
 }

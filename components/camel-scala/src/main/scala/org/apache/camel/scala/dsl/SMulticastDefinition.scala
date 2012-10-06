@@ -16,6 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
 
+import java.util.concurrent.ExecutorService
 import org.apache.camel.model.MulticastDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 import org.apache.camel.Exchange
@@ -37,7 +38,17 @@ case class SMulticastDefinition(override val target: MulticastDefinition)(implic
   def parallel = wrap(target.parallelProcessing)
 
   def streaming = wrap(target.streaming)
-
+  
+  def stopOnException = wrap(target.stopOnException())
+  
+  def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
+  
+  def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
+  
+  def timeout(timeout: Long) = wrap(target.timeout(timeout))
+  
+  
+ 
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SMulticastDefinition]
   
 }

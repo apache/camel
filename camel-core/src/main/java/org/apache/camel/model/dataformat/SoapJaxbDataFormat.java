@@ -38,6 +38,8 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     private Object elementNameStrategy;
     @XmlAttribute
     private String version;
+    @XmlAttribute
+    private String namespacePrefixRef;
 
     public SoapJaxbDataFormat() {
         super("soapjaxb");
@@ -100,6 +102,14 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         return elementNameStrategy;
     }
 
+    public String getNamespacePrefixRef() {
+        return namespacePrefixRef;
+    }
+
+    public void setNamespacePrefixRef(String namespacePrefixRef) {
+        this.namespacePrefixRef = namespacePrefixRef;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         if (elementNameStrategy != null) {
@@ -113,6 +123,9 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         }
         if (version != null) {
             setProperty(dataFormat, "version", version);
+        }
+        if (namespacePrefixRef != null) {
+            setProperty(dataFormat, "namespacePrefixRef", namespacePrefixRef);
         }
         setProperty(dataFormat, "contextPath", contextPath);
     }

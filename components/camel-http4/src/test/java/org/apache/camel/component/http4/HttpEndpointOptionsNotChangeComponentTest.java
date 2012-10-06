@@ -49,6 +49,7 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("other", new MyOtherBinding());
+        jndi.bind("myStrategy", new MyHeaderFilterStrategy());
         return jndi;
     }
 
@@ -65,6 +66,10 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
         // and the default option has not been messed with
         HttpEndpoint end3 = context.getEndpoint("http4://www.google.com", HttpEndpoint.class);
         assertIsInstanceOf(MyBinding.class, end3.getBinding());
+        
+        // test the headerFilterStrategy
+        HttpEndpoint end4 = context.getEndpoint("http4://www.google.com?headerFilterStrategy=#myStrategy", HttpEndpoint.class);
+        assertIsInstanceOf(MyHeaderFilterStrategy.class, end4.getHeaderFilterStrategy());
     }
 
     @SuppressWarnings("deprecation")
@@ -74,4 +79,8 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
     @SuppressWarnings("deprecation")
     private static class MyOtherBinding extends DefaultHttpBinding {
     }
+    
+    private static class MyHeaderFilterStrategy extends HttpHeaderFilterStrategy {
+    }
+
 }

@@ -56,7 +56,7 @@ public class LoadBalancerDefinition extends IdentifiedType implements LoadBalanc
     public static LoadBalancer getLoadBalancer(RouteContext routeContext, LoadBalancerDefinition type, String ref) {
         if (type == null) {
             ObjectHelper.notNull(ref, "ref or loadBalancer");
-            LoadBalancer loadBalancer = routeContext.lookup(ref, LoadBalancer.class);
+            LoadBalancer loadBalancer = routeContext.mandatoryLookup(ref, LoadBalancer.class);
             if (loadBalancer instanceof LoadBalancerDefinition) {
                 type = (LoadBalancerDefinition) loadBalancer;
             } else {

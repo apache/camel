@@ -14,8 +14,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<beanio xmlns="http://www.beanio.org/2011/01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+<beanio xmlns="http://www.beanio.org/2012/03" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
 
   <template name="A1Record">
     <field name="sedol" type="string" length="7"/>
@@ -43,7 +43,7 @@
     </record>
   </stream>
 
-  <stream name="securityData" format="fixedlength" ordered="true">
+  <stream name="securityData" format="fixedlength" strict="true">
 
     <group name="headerGroup" minOccurs="1" maxOccurs="1" order="1">
 

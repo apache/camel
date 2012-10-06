@@ -25,11 +25,15 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to uri="hbase://DEFAULTTABLE"/>
+            <to uri="hbase://person"/>
+        </route>
+        <route>
+            <from uri="direct:start-with-model"/>
+            <to uri="hbase://person?family=info&amp;qualifier=firstName&amp;family2=birthdate&amp;qualifier2=year"/>
         </route>
         <route>
             <from uri="direct:scan"/>
-            <to uri="hbase://DEFAULTTABLE?operation=CamelHBaseScan&amp;maxResults=2"/>
+            <to uri="hbase://person?operation=CamelHBaseScan&amp;maxResults=2"/>
         </route>
     </camelContext>
 

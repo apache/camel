@@ -18,7 +18,9 @@ package org.apache.camel.example.cxf.httptojms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 
 /**
  * An example for demonstrating how Camel works as a Router.
@@ -26,8 +28,8 @@ import org.apache.camel.impl.DefaultCamelContext;
  * to a SOAP over JMS Service.
  */
 public final class CamelCxfExample {
-    private static final String ROUTER_ADDRESS = "http://localhost:9001/SoapContext/SoapPort";
-    private static final String SERVICE_ADDRESS = "http://localhost:9003/SoapContext/SoapPort";
+    private static final String ROUTER_ADDRESS = "http://localhost:{{routerPort}}/SoapContext/SoapPort";
+    private static final String SERVICE_ADDRESS = "http://localhost:{{servicePort}}/SoapContext/SoapPort";
     private static final String SERVICE_CLASS = "serviceClass=org.apache.hello_world_soap_http.Greeter";
     private static final String WSDL_LOCATION = "wsdlURL=wsdl/hello_world.wsdl";
     private static final String SERVICE_NAME = "serviceName={http://apache.org/hello_world_soap_http}SOAPService";
@@ -46,6 +48,10 @@ public final class CamelCxfExample {
 
         @Override
         public void configure() throws Exception {
+            // Set system properties for use with Camel property placeholders for running the example tests.
+            System.setProperty("routerPort", String.valueOf(AvailablePortFinder.getNextAvailable()));
+            System.setProperty("servicePort", String.valueOf(AvailablePortFinder.getNextAvailable()));
+            
             // Here we just pass the exception back, don't need to use errorHandler
             errorHandler(noErrorHandler());
             from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);
@@ -54,10 +60,16 @@ public final class CamelCxfExample {
     }
 
     public static void main(String args[]) throws Exception {
+        
+        // Set system properties for use with Camel property placeholders for running the examples.
+        System.setProperty("routerPort", "9001");
+        System.setProperty("servicePort", "9003");
 
         // START SNIPPET: e1
         CamelContext context = new DefaultCamelContext();
         // END SNIPPET: e1
+        PropertiesComponent pc = new PropertiesComponent();
+        context.addComponent("properties", pc);
         // Set up the JMS broker and the CXF SOAP over JMS server
         // START SNIPPET: e2
         JmsBroker broker = new JmsBroker();
@@ -76,11 +88,12 @@ public final class CamelCxfExample {
                 }
             });
             // END SNIPPET: e3
+            String address = ROUTER_ADDRESS.replace("{{routerPort}}", System.getProperty("routerPort"));
             // Starting the routing context
             // Using the CXF Client to kick off the invocations
             // START SNIPPET: e4
             context.start();
-            Client client = new Client(ROUTER_ADDRESS + "?wsdl");
+            Client client = new Client(address + "?wsdl");
             // END SNIPPET: e4
             // Now everything is set up - let's start the context
 

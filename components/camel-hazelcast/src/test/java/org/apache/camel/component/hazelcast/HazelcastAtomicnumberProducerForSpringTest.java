@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import com.hazelcast.core.Hazelcast;
-
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -65,11 +61,12 @@ public class HazelcastAtomicnumberProducerForSpringTest extends CamelSpringTestS
     }
 
     @Test
-    public void testDestroy() {
+    public void testDestroy() throws InterruptedException {
         template.sendBody("direct:set", 10);
         template.sendBody("direct:destroy", null);
-
-        assertTrue(Hazelcast.getInstances().isEmpty());
+        long body = template.requestBody("direct:get", null, Long.class);
+        // the body is destory
+        assertEquals(0, body);
     }
 
 }

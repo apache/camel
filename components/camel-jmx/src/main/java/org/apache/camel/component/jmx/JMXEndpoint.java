@@ -155,6 +155,24 @@ public class JMXEndpoint extends DefaultEndpoint {
      * URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key "jmx.handback"
      */
     private Object mHandback;
+    
+    /**
+     * URI Property:  If true the consumer will throw an exception if unable to establish the JMX connection upon startup.  If false, the consumer will attempt
+     *                to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured  reconnectionDelay 
+     */
+    private boolean mTestConnectionOnStartup = true;
+    
+    
+    /**
+     * URI Property:  If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
+     *                to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured  reconnectionDelay
+     */
+    private boolean mReconnectOnConnectionFailure;
+     
+     /**
+      * URI Property:  The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
+      */
+    private int mReconnectDelay = 10;
 
     /**
      * URI Property: properties for the object name. These values will be used if the objectName param is not set
@@ -437,7 +455,31 @@ public class JMXEndpoint extends DefaultEndpoint {
     public void setStringToCompare(String aStringToCompare) {
         mStringToCompare = aStringToCompare;
     }
-
+    
+    public boolean getTestConnectionOnStartup() {
+        return this.mTestConnectionOnStartup;
+    }
+    
+    public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
+        this.mTestConnectionOnStartup = testConnectionOnStartup;
+    }
+    
+    public boolean getReconnectOnConnectionFailure() {
+        return this.mReconnectOnConnectionFailure;
+    }
+    
+    public void setReconnectOnConnectionFailure(boolean reconnectOnConnectionFailure) {
+        this.mReconnectOnConnectionFailure = reconnectOnConnectionFailure;
+    }    
+    
+    public int getReconnectDelay() {
+        return this.mReconnectDelay;
+    }    
+     
+    public void setReconnectDelay(int reconnectDelay) {
+        this.mReconnectDelay = reconnectDelay;
+    }
+     
     private ObjectName buildObjectName() throws MalformedObjectNameException {
         ObjectName objectName;
         if (getObjectProperties() == null) {

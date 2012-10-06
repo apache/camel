@@ -18,7 +18,6 @@ package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
-import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -114,16 +113,7 @@ public class MessageValidatorTest extends CamelTestSupport {
 
     private static Message createADT01Message() throws Exception {
         ADT_A01 adt = new ADT_A01();
-
-        // Populate the MSH Segment
-        MSH mshSegment = adt.getMSH();
-        mshSegment.getFieldSeparator().setValue("|");
-        mshSegment.getEncodingCharacters().setValue("^~\\&");
-        mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue("200701011539");
-        mshSegment.getSendingApplication().getNamespaceID().setValue("MYSENDER");
-        mshSegment.getSequenceNumber().setValue("123");
-        mshSegment.getMessageType().getMessageType().setValue("ADT");
-        mshSegment.getMessageType().getTriggerEvent().setValue("A01");
+        adt.initQuickstart("ADT", "A01", "P");
 
         // Populate the PID Segment
         PID pid = adt.getPID();

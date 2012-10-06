@@ -176,18 +176,23 @@ public final class SimpleTokenizer {
                 // grab next character to escape
                 char next = expression.charAt(++index);
                 // special for new line, tabs and carriage return
+                boolean special = false;
                 if ('n' == next) {
                     sb.append("\n");
+                    special = true;
                 } else if ('t' == next) {
                     sb.append("\t");
+                    special = true;
                 } else if ('r' == next) {
                     sb.append("\r");
+                    special = true;
                 } else {
-                    // append the next
-                    sb.append(next);
+                    // not special just a regular character
+                    sb.append(ch);
                 }
-                // force 2 as length
-                return new SimpleToken(new SimpleTokenType(TokenType.character, sb.toString()), index, 2);
+
+                // force 2 as length if special
+                return new SimpleToken(new SimpleTokenType(TokenType.character, sb.toString()), index, special ? 2 : 1);
             }
         }
 

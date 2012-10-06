@@ -20,6 +20,7 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -45,7 +46,7 @@ public class CxfBeanWithWsdlLocationInBeanAndIoCTest extends AbstractJUnit4Sprin
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
             + "<personId>hello</personId></GetPerson></soap:Body></soap:Envelope>";
         
-        StringEntity entity = new StringEntity(body, "text/xml", "ISO-8859-1");
+        StringEntity entity = new StringEntity(body, ContentType.create("text/xml", "ISO-8859-1"));
         post.setEntity(entity);
         HttpClient httpclient = new DefaultHttpClient();
 

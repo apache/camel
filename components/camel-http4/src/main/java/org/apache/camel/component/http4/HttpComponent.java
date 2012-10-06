@@ -24,13 +24,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.auth.params.AuthParamBean;
 import org.apache.http.client.params.ClientParamBean;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.params.ConnConnectionParamBean;
 import org.apache.http.conn.params.ConnRouteParamBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -39,7 +39,7 @@ import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.cookie.params.CookieSpecParamBean;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParamBean;
 import org.apache.http.params.HttpParams;
@@ -130,8 +130,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) throws Exception {
         String proxyAuthScheme = getAndRemoveParameter(parameters, "proxyAuthScheme", String.class);
         if (proxyAuthScheme == null) {
-            // fallback and use either http4 or https4 depending on secure
-            proxyAuthScheme = secure ? "https4" : "http4";
+            // fallback and use either http or https depending on secure
+            proxyAuthScheme = secure ? "https" : "http";
         }
         String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
         Integer proxyAuthPort = getAndRemoveParameter(parameters, "proxyAuthPort", Integer.class);
@@ -195,6 +195,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         
+        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        
         boolean secure = HttpHelper.isSecureConnection(uri);
 
         // create the configurer to use for this endpoint
@@ -226,7 +228,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             }
         }
         endpoint.setHttpUri(httpUri);
-        setEndpointHeaderFilterStrategy(endpoint);
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        } else {
+            setEndpointHeaderFilterStrategy(endpoint);
+        }
         endpoint.setBinding(getHttpBinding());
         if (httpBinding != null) {
             endpoint.setHttpBinding(httpBinding);
@@ -292,7 +298,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected ClientConnectionManager createConnectionManager() {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
 
-        ThreadSafeClientConnManager answer = new ThreadSafeClientConnManager(schemeRegistry);
+        PoolingClientConnectionManager answer = new PoolingClientConnectionManager(schemeRegistry);
         if (getMaxTotalConnections() > 0) {
             answer.setMaxTotal(getMaxTotalConnections());
         }
@@ -312,10 +318,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
         ClientParamBean clientParamBean = new ClientParamBean(clientParams);
         IntrospectionSupport.setProperties(clientParamBean, parameters, "httpClient.");
-
-        ConnConnectionParamBean connConnectionParamBean = new ConnConnectionParamBean(clientParams);
-        IntrospectionSupport.setProperties(connConnectionParamBean, parameters, "httpClient.");
-
+        
         ConnRouteParamBean connRouteParamBean = new ConnRouteParamBean(clientParams);
         IntrospectionSupport.setProperties(connRouteParamBean, parameters, "httpClient.");
 

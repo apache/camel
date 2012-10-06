@@ -27,6 +27,10 @@
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
+  <!-- Enable bridge between Camel Property Placeholder and Spring Property placeholder so we can use system properties
+       to dynamically set the port number for unit testing the example.  -->
+  <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer"/>
+    
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
   <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">

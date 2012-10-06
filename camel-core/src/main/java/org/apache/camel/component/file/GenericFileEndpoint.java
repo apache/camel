@@ -84,6 +84,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Expression move;
     protected Expression moveFailed;
     protected Expression preMove;
+    protected Expression moveExisting;
     protected Boolean idempotent;
     protected IdempotentRepository<String> idempotentRepository;
     protected GenericFileFilter<T> filter;
@@ -342,6 +343,23 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     public void setPreMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
         this.preMove = createFileLanguageExpression(expression);
+    }
+
+    public Expression getMoveExisting() {
+        return moveExisting;
+    }
+
+    public void setMoveExisting(Expression moveExisting) {
+        this.moveExisting = moveExisting;
+    }
+
+    /**
+     * Sets the move existing expression based on
+     * {@link org.apache.camel.language.simple.SimpleLanguage}
+     */
+    public void setMoveExisting(String fileLanguageExpression) {
+        String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
+        this.moveExisting = createFileLanguageExpression(expression);
     }
 
     public Expression getFileName() {
@@ -661,8 +679,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Set up the exchange properties with the options of the file endpoint
-     *
-     * @param exchange
      */
     public void configureExchange(Exchange exchange) {
         // Now we just set the charset property here
@@ -672,8 +688,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Strategy to configure the move or premove option based on a String input.
-     * <p/>
+     * Strategy to configure the move, preMove, or moveExisting option based on a String input.
      *
      * @param expression the original string input
      * @return configured string or the original if no modifications is needed

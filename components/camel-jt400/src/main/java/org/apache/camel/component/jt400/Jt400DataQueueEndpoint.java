@@ -29,6 +29,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * AS/400 Data queue endpoint
@@ -95,7 +96,7 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
         try {
             baseEndpoint = new Jt400Endpoint(endpointUri, connectionPool);
         } catch (URISyntaxException e) {
-            throw new CamelException("Unable to parse URI for " + endpointUri, e);
+            throw new CamelException("Unable to parse URI for " + URISupport.sanitizeUri(endpointUri), e);
         }
     }
 

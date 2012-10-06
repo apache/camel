@@ -16,7 +16,6 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -38,7 +37,6 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.6</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -47,7 +45,6 @@
 	<dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
-      <version>${xalan-version}</version>
       <exclusions>
         <exclusion>
           <groupId>xml-apis</groupId>

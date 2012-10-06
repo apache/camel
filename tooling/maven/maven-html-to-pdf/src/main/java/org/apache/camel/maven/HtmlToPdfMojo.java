@@ -227,7 +227,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
 
         getLog().info("About to execute PrinceXml (see www.princexml.com)");
         String[] lines = cl.getCommandline();
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (String line : lines) {
             buffer.append(" ");
             buffer.append(line);

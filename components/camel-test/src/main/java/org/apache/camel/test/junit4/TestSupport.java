@@ -491,6 +491,14 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
+     * To be used to check is a file is <b>not</b> found in the file system
+     */
+    public static void assertFileNotExists(String filename) {
+        File file = new File(filename).getAbsoluteFile();
+        assertFalse("File " + filename + " should not exist", file.exists());
+    }
+
+    /**
      * Is this OS the given platform.
      * <p/>
      * Uses <tt>os.name</tt> from the system properties to determine the OS.

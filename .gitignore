@@ -1,5 +1,7 @@
 target
-*.i??
+*.iml
+*.ipr
+*.iws
 .idea
 .DS_Store
 .classpath

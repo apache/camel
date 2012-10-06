@@ -134,35 +134,30 @@ public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupp
         }
 
         @Consume(property = "foo")
-        @SuppressWarnings("unused")
         public void consumeSomething(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
         }
 
         @Consume()
-        @SuppressWarnings("unused")
         public void foo(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
         }
 
         @Consume()
-        @SuppressWarnings("unused")
         public void onFoo(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
         }
 
         @Consume()
-        @SuppressWarnings("unused")
         public void bar(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
         }
 
         @Consume()
-        @SuppressWarnings("unused")
         public void onBar(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);

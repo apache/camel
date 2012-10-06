@@ -71,6 +71,8 @@ public class RedeliveryPolicyDefinition {
     private String disableRedelivery;
     @XmlAttribute
     private String delayPattern;
+    @XmlAttribute
+    private String allowRedeliveryWhileStopping;
 
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
 
@@ -142,6 +144,9 @@ public class RedeliveryPolicyDefinition {
             if (delayPattern != null) {
                 answer.setDelayPattern(delayPattern);
             }
+            if (allowRedeliveryWhileStopping != null) {
+                answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));
+            }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -159,9 +164,32 @@ public class RedeliveryPolicyDefinition {
 
     /**
      * Allow synchronous delayed redelivery.
+     *
+     * @return the builder
      */
     public RedeliveryPolicyDefinition asyncDelayedRedelivery() {
         setAsyncDelayedRedelivery("true");
+        return this;
+    }
+
+    /**
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
+     *
+     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
+        return allowRedeliveryWhileStopping(Boolean.toString(allowRedeliveryWhileStopping));
+    }
+
+    /**
+     * Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.
+     *
+     * @param allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition allowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
+        setAllowRedeliveryWhileStopping(allowRedeliveryWhileStopping);
         return this;
     }
 
@@ -639,5 +667,13 @@ public class RedeliveryPolicyDefinition {
 
     public void setDelayPattern(String delayPattern) {
         this.delayPattern = delayPattern;
+    }
+
+    public String getAllowRedeliveryWhileStopping() {
+        return allowRedeliveryWhileStopping;
+    }
+
+    public void setAllowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
+        this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;
     }
 }

@@ -525,11 +525,31 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, 
+            String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
+            keyCipherAlgorithm, keyOrTrustStoreParametersId, keyPassword);
+        return dataFormat(xsdf);
+    }    
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, 
             String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
             keyCipherAlgorithm, keyOrTrustStoreParameters);
         return dataFormat(xsdf);
     }
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, 
+            String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
+            keyCipherAlgorithm, keyOrTrustStoreParameters, keyPassword);
+        return dataFormat(xsdf);
+    }    
     
     /**
      * Uses the XML Security data format
@@ -545,11 +565,31 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
+                keyCipherAlgorithm, keyOrTrustStoreParametersId, keyPassword);
+        return dataFormat(xsdf);
+    }    
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
                 keyCipherAlgorithm, keyOrTrustStoreParameters);
         return dataFormat(xsdf);
     }
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
+                keyCipherAlgorithm, keyOrTrustStoreParameters, keyPassword);
+        return dataFormat(xsdf);
+    }    
     
     /**
      * Uses the xmlBeans data format

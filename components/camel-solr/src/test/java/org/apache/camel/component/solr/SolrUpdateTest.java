@@ -20,10 +20,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.camel.Exchange;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -123,7 +123,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
 
         template.send("direct:start", exchange);
 
-        assertEquals(SolrException.class, exchange.getException().getClass());
+        assertEquals(SolrServerException.class, exchange.getException().getClass());
     }
 
     @Test

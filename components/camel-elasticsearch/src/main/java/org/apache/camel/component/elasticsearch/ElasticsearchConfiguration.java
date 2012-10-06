@@ -49,7 +49,6 @@ public class ElasticsearchConfiguration {
     private String operation;
 
     public ElasticsearchConfiguration(URI uri, Map<String, Object> parameters) throws Exception {
-
         String protocol = uri.getScheme();
 
         if (!protocol.equalsIgnoreCase(PROTOCOL)) {

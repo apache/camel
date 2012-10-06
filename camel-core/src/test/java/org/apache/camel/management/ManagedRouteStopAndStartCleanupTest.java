@@ -53,12 +53,12 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, completed.longValue());
 
-        // should be 1 consumer and 1 processor
+        // should be 1 consumer and 2 processors
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
         assertEquals("Should be 1 consumer", 1, set.size());
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals("Should be 1 processor", 1, set.size());
+        assertEquals("Should be 2 processors", 2, set.size());
 
         // stop
         log.info(">>>>>>>>>>>>>>>>>> invoking stop <<<<<<<<<<<<<<<<<<<<<");
@@ -102,7 +102,7 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         assertEquals("Should be 1 consumer", 1, set.size());
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals("Should be 1 processor", 1, set.size());
+        assertEquals("Should be 2 processors", 2, set.size());
 
         // this time the file is consumed
         mock.assertIsSatisfied();

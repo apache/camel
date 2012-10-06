@@ -35,25 +35,26 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
  */
 public class ElasticsearchProducer extends DefaultProducer {
 
-    private ElasticsearchEndpoint endpoint;
-
     public ElasticsearchProducer(ElasticsearchEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
+    }
+
+    @Override
+    public ElasticsearchEndpoint getEndpoint() {
+        return (ElasticsearchEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
-
-        String operation = (String) exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_OPERATION);
+        String operation = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_OPERATION, String.class);
         if (operation == null) {
-            operation = endpoint.getConfig().getOperation();
+            operation = getEndpoint().getConfig().getOperation();
         }
 
         if (operation == null) {
             throw new IllegalArgumentException(ElasticsearchConfiguration.PARAM_OPERATION + " is missing");
         }
 
-        Client client = endpoint.getClient();
+        Client client = getEndpoint().getClient();
 
         if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_INDEX)) {
             addToIndex(client, exchange);
@@ -67,15 +68,14 @@ public class ElasticsearchProducer extends DefaultProducer {
     }
 
     public void getById(Client client, Exchange exchange) {
-
         String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
         if (indexName == null) {
-            indexName = endpoint.getConfig().getIndexName();
+            indexName = getEndpoint().getConfig().getIndexName();
         }
 
         String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
         if (indexType == null) {
-            indexType = endpoint.getConfig().getIndexType();
+            indexType = getEndpoint().getConfig().getIndexType();
         }
 
         String indexId = exchange.getIn().getBody(String.class);
@@ -85,15 +85,14 @@ public class ElasticsearchProducer extends DefaultProducer {
     }
 
     public void deleteById(Client client, Exchange exchange) {
-
         String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
         if (indexName == null) {
-            indexName = endpoint.getConfig().getIndexName();
+            indexName = getEndpoint().getConfig().getIndexName();
         }
 
         String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
         if (indexType == null) {
-            indexType = endpoint.getConfig().getIndexType();
+            indexType = getEndpoint().getConfig().getIndexType();
         }
 
         String indexId = exchange.getIn().getBody(String.class);
@@ -103,15 +102,14 @@ public class ElasticsearchProducer extends DefaultProducer {
     }
 
     public void addToIndex(Client client, Exchange exchange) {
-
         String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
         if (indexName == null) {
-            indexName = endpoint.getConfig().getIndexName();
+            indexName = getEndpoint().getConfig().getIndexName();
         }
 
         String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
         if (indexType == null) {
-            indexType = endpoint.getConfig().getIndexType();
+            indexType = getEndpoint().getConfig().getIndexType();
         }
 
         IndexRequestBuilder prepareIndex = client.prepareIndex(indexName, indexType);

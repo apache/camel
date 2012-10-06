@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -30,19 +29,13 @@ import org.junit.Test;
  */
 public class XmppProducerConcurrentTest extends CamelTestSupport {
 
-    @Ignore
     @Test
     public void testNoConcurrentProducers() throws Exception {
-        // a disabled test... before enabling you must fill in your own gmail credentials in the route below
-
         doSendMessages(1, 1);
     }
 
-    @Ignore
     @Test
     public void testConcurrentProducers() throws Exception {
-        // a disabled test... before enabling you must fill in your own gmail credentials in the route below
-
         doSendMessages(10, 5);
     }
 
@@ -71,9 +64,10 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").
-                        to("xmpp://talk.google.com:5222/touser@gmail.com?serviceName=gmail.com&user=fromuser&password=secret").
-                        to("mock:result");
+                from("direct:start")
+                    .to("xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+                            + "?user=camel_consumer&password=secret&serviceName=apache.camel")
+                    .to("mock:result");
             }
         };
     }

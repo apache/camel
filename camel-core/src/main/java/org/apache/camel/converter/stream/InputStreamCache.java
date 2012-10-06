@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.camel.StreamCache;
-import org.apache.camel.util.IOHelper;
 
 public class InputStreamCache extends ByteArrayInputStream implements StreamCache {
 
@@ -30,7 +29,7 @@ public class InputStreamCache extends ByteArrayInputStream implements StreamCach
     }
 
     public void writeTo(OutputStream os) throws IOException {
-        IOHelper.copy(this, os);
+        os.write(buf, pos, count - pos);
     }
 
 }

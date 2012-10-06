@@ -16,9 +16,9 @@
  */
 package org.apache.camel.management;
 
-import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -50,13 +50,14 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class DefaultManagementStrategy implements ManagementStrategy, CamelContextAware {
 
-    private List<EventNotifier> eventNotifiers = new ArrayList<EventNotifier>();
+    private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<EventNotifier>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
     private boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
+    private boolean loadStatisticsEnabled = true;
     private CamelContext camelContext;
 
     public DefaultManagementStrategy() {
@@ -187,6 +188,14 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
 
     public ManagementStatisticsLevel getStatisticsLevel() {
         return statisticsLevel;
+    }
+
+    public boolean isLoadStatisticsEnabled() {
+        return loadStatisticsEnabled;
+    }
+
+    public void setLoadStatisticsEnabled(boolean loadStatisticsEnabled) {
+        this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
     public void start() throws Exception {

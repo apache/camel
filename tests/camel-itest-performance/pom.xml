@@ -23,9 +23,8 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>tests</artifactId>
     <version>2.11-SNAPSHOT</version>
-    <relativePath>../../parent</relativePath>
   </parent>
 
   <artifactId>camel-itest-performance</artifactId>
@@ -67,9 +66,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <childDelegation>false</childDelegation>
-          <forkMode>once</forkMode>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <includes>
             <include>**/NoTest.*</include>
           </includes>

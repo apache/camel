@@ -48,35 +48,22 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) {
+
+        // make sure we are connected
         try {
-            // make sure we are connected
+            if (connection == null) {
+                connection = endpoint.createConnection();
+            }
+
             if (!connection.isConnected()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
-                }
-                connection.connect();
+                this.reconnect();
             }
         } catch (XMPPException e) {
-            throw new RuntimeExchangeException("Cannot connect to: "
-                    + XmppEndpoint.getConnectionMessage(connection), exchange, e);
+            throw new RuntimeException("Could not connect to XMPP server.", e);
         }
 
         ChatManager chatManager = connection.getChatManager();
-
-        LOG.trace("Looking for existing chat instance with thread ID {}", endpoint.getChatId());
-        Chat chat = chatManager.getThreadChat(endpoint.getChatId());
-        if (chat == null) {
-            LOG.trace("Creating new chat instance with thread ID {}", endpoint.getChatId());
-            chat = chatManager.createChat(getParticipant(), endpoint.getChatId(), new MessageListener() {
-                public void processMessage(Chat chat, Message message) {
-                    // not here to do conversation
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Received and discarding message from {} : {}", getParticipant(), message.getBody());
-                    }
-                }
-            });
-        }
-
+        Chat chat = getOrCreateChat(chatManager);
         Message message = null;
         try {
             message = new Message();
@@ -91,18 +78,57 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             }
             chat.sendMessage(message);
         } catch (XMPPException xmppe) {
-            throw new RuntimeExchangeException("Cannot send XMPP message: to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
+            throw new RuntimeExchangeException("Could not send XMPP message: to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
         } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot send XMPP message to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
+            throw new RuntimeExchangeException("Could not send XMPP message to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
     }
+
+    private synchronized Chat getOrCreateChat(ChatManager chatManager) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Looking for existing chat instance with thread ID {}", endpoint.getChatId());
+        }
+        Chat chat = chatManager.getThreadChat(endpoint.getChatId());
+        if (chat == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Creating new chat instance with thread ID {}", endpoint.getChatId());
+            }
+            chat = chatManager.createChat(getParticipant(), endpoint.getChatId(), new MessageListener() {
+                public void processMessage(Chat chat, Message message) {
+                    // not here to do conversation
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Received and discarding message from {} : {}"
+                                , getParticipant(), message.getBody());
+                    }
+                }
+            });
+        }
+        return chat;
+    }
     
+    private synchronized void reconnect() throws XMPPException {
+        if (!connection.isConnected()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
+            }
+            connection.connect();
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (connection == null) {
-            connection = endpoint.createConnection();
+            try {
+                connection = endpoint.createConnection();
+            } catch (XMPPException e) {
+                if (endpoint.isTestConnectionOnStartup()) {
+                    throw new RuntimeException("Could not establish connection to XMPP server:  " + endpoint.getConnectionDescription(), e);
+                } else {
+                    LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.", XmppEndpoint.getXmppExceptionLogMessage(e));
+                }
+            }
         }
         super.doStart();
     }

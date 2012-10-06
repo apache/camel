@@ -16,19 +16,17 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class InOnlyConsumerDefaultTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer.";
+    private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test
@@ -39,15 +37,16 @@ public class InOnlyConsumerDefaultTest extends JmsTestSupport {
         mock.expectedBodiesReceived(expectedBody);
 
         template.sendBody(SJMS_QUEUE_NAME, expectedBody);
-        
+
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from(SJMS_QUEUE_NAME)
-                    .to(MOCK_RESULT);
+                from(SJMS_QUEUE_NAME).to(MOCK_RESULT);
             }
         };
     }

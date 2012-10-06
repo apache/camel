@@ -172,6 +172,10 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(producerCache);
+
+        if (shutdownExecutorService && executorService != null) {
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
+        }
     }
 
     public boolean isStreaming() {

@@ -20,7 +20,7 @@ package dsl.builder
 
 import org.apache.camel.model.DataFormatDefinition
 import org.apache.camel.{Exchange, RoutesBuilder}
-import org.apache.camel.builder.{DeadLetterChannelBuilder, ErrorHandlerBuilder}
+import org.apache.camel.builder.{LoggingErrorHandlerBuilder, DeadLetterChannelBuilder, ErrorHandlerBuilder}
 
 import org.apache.camel.spi.Policy
 import org.apache.camel.processor.aggregate.AggregationStrategy
@@ -32,6 +32,7 @@ import org.apache.camel.scala.dsl._
 import org.apache.camel.scala.dsl.languages.Languages
 import java.lang.String
 import java.util.Comparator
+import org.slf4j.{Logger, LoggerFactory}
 
 /**
  * Scala RouteBuilder implementation
@@ -114,6 +115,10 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
     dlc.setDeadLetterUri(uri)
     dlc
   }
+  def loggingErrorHandler : LoggingErrorHandlerBuilder = new LoggingErrorHandlerBuilder
+  def loggingErrorHandler(log: String) : LoggingErrorHandlerBuilder = loggingErrorHandler(LoggerFactory.getLogger(log))
+  def loggingErrorHandler(log: Logger) : LoggingErrorHandlerBuilder = new LoggingErrorHandlerBuilder(log)
+  def loggingErrorHandler(log: Logger, level: LoggingLevel) : LoggingErrorHandlerBuilder = new LoggingErrorHandlerBuilder(log, level)
   def defaultErrorHandler = builder.defaultErrorHandler
 
   def filter(predicate: Exchange => Any) = stack.top.filter(predicate)

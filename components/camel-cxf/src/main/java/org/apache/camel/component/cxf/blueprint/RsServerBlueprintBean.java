@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.cxf.blueprint;
 
+import java.util.HashMap;
+
+import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.logging.FaultListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
@@ -78,6 +82,15 @@ public class RsServerBlueprintBean extends JAXRSServerFactoryBean implements Blu
                 loggingFeature = new LoggingFeature();
             }
             getFeatures().add(loggingFeature);
+        }
+    }
+    
+    public void setSkipFaultLogging(boolean skipFaultLogging) {
+        if (skipFaultLogging) {
+            if (this.getProperties() == null) {
+                this.setProperties(new HashMap<String, Object>());
+            }
+            this.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }
     }
     

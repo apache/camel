@@ -121,6 +121,9 @@ public class PrinterProducer extends DefaultProducer {
                 name = config.getPrintername();
             } else {
                 name = "\\\\" + config.getHostname() + "\\" + config.getPrintername();
+                if (config.getPrinterPrefix() != null) {
+                    name = config.getPrinterPrefix() + name;
+                }
             }
             log.debug("Using printer name: {}", name);
             setPrinter(name);
@@ -136,7 +139,7 @@ public class PrinterProducer extends DefaultProducer {
     private int findPrinter(PrintService[] services, String printer) {
         int position = -1;
         for (int i = 0; i < services.length; i++) {
-            if (printer.equalsIgnoreCase(services[i].getName())) {
+            if (services[i].getName().toLowerCase().endsWith(printer.toLowerCase())) {
                 position = i;
                 break;
             }

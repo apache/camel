@@ -101,10 +101,12 @@ public class NettyConsumer extends DefaultConsumer {
 
         // and then shutdown the thread pools
         if (bossExecutor != null) {
-            context.getExecutorServiceManager().shutdownNow(bossExecutor);
+            context.getExecutorServiceManager().shutdown(bossExecutor);
+            bossExecutor = null;
         }
         if (workerExecutor != null) {
-            context.getExecutorServiceManager().shutdownNow(workerExecutor);
+            context.getExecutorServiceManager().shutdown(workerExecutor);
+            workerExecutor = null;
         }
 
         LOG.info("Netty consumer unbound from: " + configuration.getAddress());

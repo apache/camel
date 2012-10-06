@@ -23,12 +23,14 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 
-@ContextConfiguration(locations = {"/SpringElasticsearchTest.xml"})
-public class SpringElasticsearchTest extends AbstractJUnit4SpringContextTests {
+import org.junit.Test;
+
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SpringElasticsearchTest extends CamelSpringTestSupport {
 
     @Produce(uri = "direct:index")
     protected ProducerTemplate producer;
@@ -36,9 +38,20 @@ public class SpringElasticsearchTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mock;
 
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        deleteDirectory("target/data");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/elasticsearch/SpringElasticsearchTest-context.xml");
+    }
+
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        // let's speed up the tests using the same context
+        return true;
+    }
+
     @Test
     public void testSendBody() throws Exception {
-
         mock.expectedMinimumMessageCount(1);
 
         Map<String, String> body = new HashMap<String, String>();

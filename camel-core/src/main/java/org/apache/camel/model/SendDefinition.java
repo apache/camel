@@ -97,6 +97,10 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
+        this.uri = null;
+        if (endpoint != null) {
+            this.uri = endpoint.getEndpointUri();
+        }
     }
 
     public ExchangePattern getPattern() {

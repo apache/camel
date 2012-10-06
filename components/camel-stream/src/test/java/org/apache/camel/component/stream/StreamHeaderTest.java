@@ -30,7 +30,7 @@ public class StreamHeaderTest extends CamelTestSupport {
 
     // START SNIPPET: e1
     private OutputStream mystream = new MyOutputStream();
-    private StringBuffer sb = new StringBuffer();
+    private StringBuilder sb = new StringBuilder();
 
     @Test
     public void testStringContent() {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hbase;
 
+@Deprecated
 public final class HBaseContats {
 
     public static final String OPERATION = "CamelHBaseOperation";

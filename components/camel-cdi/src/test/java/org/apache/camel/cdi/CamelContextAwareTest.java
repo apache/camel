@@ -18,7 +18,6 @@ package org.apache.camel.cdi;
 
 import javax.inject.Inject;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.support.ContextAwareBean;
 import org.junit.Test;
 
@@ -29,9 +28,6 @@ public class CamelContextAwareTest extends CdiContextTestSupport {
 
     @Inject
     private ContextAwareBean bean;
-
-    @Inject
-    private CamelContext context;
 
     @Test
     public void shouldInjectCamelContextToBean() throws InterruptedException {

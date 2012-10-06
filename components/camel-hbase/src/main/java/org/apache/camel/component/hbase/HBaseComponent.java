@@ -78,8 +78,8 @@ public class HBaseComponent extends DefaultComponent {
             cellModel.setFamily(String.valueOf(parameters.remove(HbaseAttribute.HBASE_FAMILY.asOption(i))));
             cellModel.setQualifier(String.valueOf(parameters.remove(HbaseAttribute.HBASE_QUALIFIER.asOption(i))));
             cellModel.setValue(String.valueOf(parameters.remove(HbaseAttribute.HBASE_VALUE.asOption(i))));
-            if (parameters.containsKey(HbaseAttribute.HBASE_VALUE_TYPE.asOption())) {
-                String valueType = String.valueOf(parameters.remove(HbaseAttribute.HBASE_VALUE_TYPE.asOption()));
+            if (parameters.containsKey(HbaseAttribute.HBASE_VALUE_TYPE.asOption(i))) {
+                String valueType = String.valueOf(parameters.remove(HbaseAttribute.HBASE_VALUE_TYPE.asOption(i)));
                 if (valueType != null && !valueType.isEmpty()) {
                     rowModel.setRowType(getCamelContext().getClassResolver().resolveClass(valueType));
                 }

@@ -25,8 +25,11 @@ import org.apache.camel.util.StopWatch;
 
 import org.junit.Test;
 
+
 /**
- * @version 
+ * Integration test that verifies the ability of SJMS to correctly process
+ * synchronous InOut exchanges from both the Producer and Consumer perspective
+ * using a temporary destination.
  */
 public class SyncJmsInOutTempDestIT extends JmsTestSupport {
 
@@ -53,23 +56,12 @@ public class SyncJmsInOutTempDestIT extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // in a fully sync mode it would take at least 5 + 5 sec to process the 100 messages
-                // (there are delays in both routes)
-                // however due async routing, we can leverage the fact to let threads non blocked
-                // in the first route, and therefore can have the messages processed faster
-                // because we can have messages wait concurrently in both routes
-                // this means the async processing model is about 2x faster
-
                 from("seda:start")
-                    // we can only send at fastest the 100 msg in 5 sec due the delay
-                    .delay(50)
-                    .to("sjms:in.out.temp.queue?exchangePattern=InOut")
+                    .to("sjms:in.foo.tempQ?exchangePattern=InOut")
                     .to("mock:result");
 
-                from("sjms:in.out.temp.queue?exchangePattern=InOut")
+                from("sjms:in.foo.tempQ?exchangePattern=InOut")
                     .log("Using ${threadName} to process ${body}")
-                    // we can only process at fastest the 100 msg in 5 sec due the delay
-                    .delay(50)
                     .transform(body().prepend("Bye "));
             }
         };

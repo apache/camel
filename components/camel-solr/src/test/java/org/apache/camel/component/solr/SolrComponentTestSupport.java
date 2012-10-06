@@ -25,7 +25,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -37,7 +37,7 @@ public class SolrComponentTestSupport extends CamelTestSupport {
 
     protected static final String TEST_ID = "1234";
     protected static JettySolrRunner solrRunner;
-    protected static CommonsHttpSolrServer solrServer;
+    protected static HttpSolrServer solrServer;
 
     protected void solrInsertTestEntry() {
         Map<String, Object> headers = new HashMap<String, Object>();
@@ -69,7 +69,7 @@ public class SolrComponentTestSupport extends CamelTestSupport {
         solrRunner = new JettySolrRunner("/solr", PORT);
         solrRunner.start();
 
-        solrServer = new CommonsHttpSolrServer("http://localhost:" + PORT + "/solr");
+        solrServer = new HttpSolrServer("http://localhost:" + PORT + "/solr");
     }
 
     @AfterClass

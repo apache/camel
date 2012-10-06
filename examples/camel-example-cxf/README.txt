@@ -18,18 +18,6 @@ To run the example of using WebServiceProvider API
 To run the example of showing how to create CXF JAXRS endpoint
   mvn exec:java -PJAXRS
 
-To run the example within ServiceMix 4
- First, you need to install the camel-cxf, camel-jetty features into ServiceMix4
- Then install this bundle into ServiceMix, and use the following Java clients 
- to call the services:
- 
- mvn exec:java -PHttpToJMS.Client
- mvn exec:java -PCamelTransport.Client
- mvn exec:java -PWebServiceProvider.Client
- mvn exec:java -PJAXRS.Client
- 
-To stop the example hit ctrl + c
-
 This example is documented at
   http://camel.apache.org/cxf-example.html
 
@@ -41,6 +29,3 @@ have.  Enjoy!
 
 ------------------------
 The Camel Riders!
-
-
-

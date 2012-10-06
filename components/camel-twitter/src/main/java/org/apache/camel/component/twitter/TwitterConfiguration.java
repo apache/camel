@@ -213,9 +213,6 @@ public class TwitterConfiguration {
     }
 
     public TwitterStream getTwitterStream() {
-        if (twitterStream == null) {
-            twitterStream = new TwitterStreamFactory(getConfiguration()).getInstance();
-        }
         return twitterStream;
     }
 
@@ -238,6 +235,14 @@ public class TwitterConfiguration {
         } catch (ParseException e) {
             throw new IllegalArgumentException("date must be in yyyy-mm-dd format!");
         }
+    }
+
+    public TwitterStream createTwitterStream() {
+        if (twitterStream == null) {
+            twitterStream = new TwitterStreamFactory(getConfiguration()).getInstance();
+        }
+
+        return twitterStream;
     }
 }
 

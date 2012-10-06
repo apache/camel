@@ -20,16 +20,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarInputStream;
 
@@ -46,6 +49,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundles;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -91,18 +95,23 @@ public final class CamelBlueprintHelper {
     }
 
     public static BundleContext createBundleContext(String name, String bundleFilter, TinyBundle bundle) throws Exception {
-        deleteDirectory("target/bundles");
-        createDirectory("target/bundles");
-
         // ensure pojosr stores bundles in an unique target directory
-        System.setProperty("org.osgi.framework.storage", "target/bundles/" + System.currentTimeMillis());
+        String uid = "" + System.currentTimeMillis();
+        String tempDir = "target/bundles/" + uid;
+        System.setProperty("org.osgi.framework.storage", tempDir);
+        createDirectory(tempDir);
+
+        // use another directory for the jar of the bundle as it cannot be in the same directory
+        // as it has a file lock during running the tests which will cause the temp dir to not be
+        // fully deleted between tests
+        createDirectory("target/test-bundles");
 
         // get the bundles
         List<BundleDescriptor> bundles = getBundleDescriptors(bundleFilter);
 
         if (bundle != null) {
-            String jarName = name.toLowerCase();
-            bundles.add(getBundleDescriptor("target/bundles/" + jarName + ".jar", bundle));
+            String jarName = name.toLowerCase(Locale.ENGLISH) + "-" + uid + ".jar";
+            bundles.add(getBundleDescriptor("target/test-bundles/" + jarName, bundle));
         }
 
         if (LOG.isDebugEnabled()) {
@@ -124,10 +133,22 @@ public final class CamelBlueprintHelper {
     public static void disposeBundleContext(BundleContext bundleContext) throws BundleException {
         try {
             if (bundleContext != null) {
-                bundleContext.getBundle().stop();
+                List<Bundle> bundles = new ArrayList<Bundle>();
+                bundles.addAll(Arrays.asList(bundleContext.getBundles()));
+                Collections.reverse(bundles);
+                for (Bundle bundle : bundles) {
+                    LOG.debug("Stopping bundle {}", bundle);
+                    bundle.stop();
+                }
             }
+        } catch (Exception e) {
+            LOG.warn("Error during disposing BundleContext. This exception will be ignored.", e);
         } finally {
-            System.clearProperty("org.osgi.framework.storage");
+            String tempDir = System.clearProperty("org.osgi.framework.storage");
+            if (tempDir != null) {
+                LOG.info("Deleting work directory {}", tempDir);
+                deleteDirectory(tempDir);
+            }
         }
     }
 
@@ -202,7 +223,7 @@ public final class CamelBlueprintHelper {
      */
     private static String explode(Dictionary<?, ?> dictionary) {
         Enumeration<?> keys = dictionary.keys();
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
             result.append(String.format("%s=%s", key, dictionary.get(key)));
@@ -296,13 +317,19 @@ public final class CamelBlueprintHelper {
 
     private static BundleDescriptor getBundleDescriptor(String path, TinyBundle bundle) throws Exception {
         File file = new File(path);
-        FileOutputStream fos = new FileOutputStream(file, true);
+        // tell the JVM its okay to delete this file on exit as its a temporary file
+        // the JVM may not successfully delete the file though
+        file.deleteOnExit();
+
+        FileOutputStream fos = new FileOutputStream(file, false);
+        InputStream is = bundle.build();
         try {
-            IOHelper.copyAndCloseInput(bundle.build(), fos);
+            IOHelper.copyAndCloseInput(is, fos);
         } finally {
-            IOHelper.close(fos);
+            IOHelper.close(is, fos);
         }
 
+        BundleDescriptor answer = null;
         FileInputStream fis = null;
         JarInputStream jis = null;
         try {
@@ -313,13 +340,15 @@ public final class CamelBlueprintHelper {
                 headers.put(entry.getKey().toString(), entry.getValue().toString());
             }
 
-            return new BundleDescriptor(
+            answer = new BundleDescriptor(
                     bundle.getClass().getClassLoader(),
                     new URL("jar:" + file.toURI().toString() + "!/"),
                     headers);
         } finally {
-            IOHelper.close(fis, jis);
+            IOHelper.close(jis, fis);
         }
+
+        return answer;
     }
 
 }

@@ -16,24 +16,31 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.util.StringHelper;
+
 /**
  * Default strategy that handles dots and hyphens.
  * <p/>
- * This can be used for sending keys containg package names that is common by Java frameworks.
+ * This can be used for sending keys containing package names that is common by Java frameworks.
  *
  * @version 
  */
 public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 
+    private static final String DOT = ".";
+    private static final String DOT_REPLACEMENT = "_DOT_";
+    private static final String HYPHEN = "-";
+    private static final String HYPHEN_REPLACEMENT = "_HYPHEN_";
+
     public String encodeKey(String key) {
-        String answer = key.replace(".", "_DOT_");
-        answer = answer.replaceAll("-", "_HYPHEN_");
+        String answer = StringHelper.replaceAll(key, DOT, DOT_REPLACEMENT);
+        answer = StringHelper.replaceAll(answer, HYPHEN, HYPHEN_REPLACEMENT);
         return answer;
     }
 
     public String decodeKey(String key) {
-        String answer = key.replaceAll("_HYPHEN_", "-");
-        answer = answer.replace("_DOT_", ".");
+        String answer = StringHelper.replaceAll(key, DOT_REPLACEMENT, DOT);
+        answer = StringHelper.replaceAll(answer, HYPHEN_REPLACEMENT, HYPHEN);
         return answer;
     }
 

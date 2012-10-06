@@ -44,6 +44,23 @@ public class XmppGroupChatProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) {
+
+        if (connection == null) {
+            try {
+                connection = endpoint.createConnection();
+            } catch (XMPPException e) {
+                throw new RuntimeExchangeException("Could not connect to XMPP server.", exchange, e);
+            }
+        }
+
+        if (chat == null) {
+            try {
+                initializeChat();
+            } catch (Exception e) {
+                throw new RuntimeExchangeException("Could not initialize XMPP chat.", exchange, e);
+            }
+        }
+
         Message message = chat.createMessage();
         message.setTo(room);
         message.setFrom(endpoint.getUser());
@@ -52,10 +69,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
         try {
             // make sure we are connected
             if (!connection.isConnected()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
-                }
-                connection.connect();
+                this.reconnect();
             }
 
             if (LOG.isDebugEnabled()) {
@@ -66,16 +80,41 @@ public class XmppGroupChatProducer extends DefaultProducer {
             // otherwise the client local queue will fill up (CAMEL-1467)
             chat.pollMessage();
         } catch (XMPPException e) {
-            throw new RuntimeExchangeException("Cannot send XMPP message: " + message, exchange, e);
+            throw new RuntimeExchangeException("Could not send XMPP message: " + message, exchange, e);
+        }
+    }
+
+    private synchronized void reconnect() throws XMPPException {
+        if (!connection.isConnected()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
+            }
+            connection.connect();
         }
     }
 
     @Override
     protected void doStart() throws Exception {
         if (connection == null) {
-            connection = endpoint.createConnection();
+            try {
+                connection = endpoint.createConnection();
+            } catch (XMPPException e) {
+                if (endpoint.isTestConnectionOnStartup()) {
+                    throw new RuntimeException("Could not connect to XMPP server:  " + endpoint.getConnectionDescription(), e);
+                } else {
+                    LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.", XmppEndpoint.getXmppExceptionLogMessage(e));
+                }
+            }
         }
 
+        if (chat == null && connection != null) {
+            initializeChat();
+        }
+
+        super.doStart();
+    }
+
+    protected synchronized void initializeChat() throws XMPPException {
         if (chat == null) {
             room = endpoint.resolveRoom(connection);
             chat = new MultiUserChat(connection, room);
@@ -86,8 +125,6 @@ public class XmppGroupChatProducer extends DefaultProducer {
                 LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
             }
         }
-
-        super.doStart();
     }
 
     @Override

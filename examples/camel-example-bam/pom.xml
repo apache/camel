@@ -25,7 +25,6 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>examples</artifactId>
     <version>2.11-SNAPSHOT</version>
-    <relativePath>..</relativePath>
   </parent>
 
   <artifactId>camel-example-bam</artifactId>
@@ -71,7 +70,6 @@
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
-      <version>2.7.1</version>
     </dependency>
 
     <!-- lets use hibernate by default -->
@@ -106,13 +104,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-          <systemProperties>
-            <property>
-              <name>derby.stream.error.file</name>
-              <value>target/derby.log</value>
-            </property>
-          </systemProperties>
         </configuration>
       </plugin>
       

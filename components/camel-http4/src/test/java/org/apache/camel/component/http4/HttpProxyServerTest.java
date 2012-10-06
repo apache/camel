@@ -42,7 +42,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.localserver.LocalTestServer;
 import org.apache.http.protocol.BasicHttpProcessor;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
@@ -104,6 +103,26 @@ public class HttpProxyServerTest extends BaseHttpTest {
         assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyAuthHost=myotherproxy&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
 
         assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
+    }
+    
+    @Test
+    public void testhttpGetProxyScheme() throws Exception {
+        context.getProperties().put("http.proxyHost", "myProxy");
+        context.getProperties().put("http.proxyPort", "1234");
+        context.getProperties().put("http.proxyScheme", "http");
+        try {
+            HttpEndpoint http1 = context.getEndpoint("https4://www.google.com", HttpEndpoint.class);
+            
+            HttpClient client1 = http1.createHttpClient();
+            HttpHost proxy1 = (HttpHost)client1.getParams().getParameter(ConnRoutePNames.DEFAULT_PROXY);
+            assertEquals("myProxy", proxy1.getHostName());
+            assertEquals(1234, proxy1.getPort());
+            assertEquals("http", proxy1.getSchemeName());
+        } finally {
+            context.getProperties().remove("http.proxyHost");
+            context.getProperties().remove("http.proxyPort");
+            context.getProperties().remove("http.proxyScheme");
+        }
     }
 
     @Test
@@ -225,10 +244,10 @@ public class HttpProxyServerTest extends BaseHttpTest {
                 String authscheme = auth.substring(0, i);
                 if (authscheme.equalsIgnoreCase("basic")) {
                     String s = auth.substring(i + 1).trim();
-                    byte[] credsRaw = s.getBytes(HTTP.ASCII);
+                    byte[] credsRaw = s.getBytes("ASCII");
                     BinaryDecoder codec = new Base64();
                     try {
-                        String creds = new String(codec.decode(credsRaw), HTTP.ASCII);
+                        String creds = new String(codec.decode(credsRaw), "ASCII");
                         context.setAttribute("proxy-creds", creds);
                     } catch (DecoderException ex) {
                         throw new ProtocolException("Malformed BASIC credentials");

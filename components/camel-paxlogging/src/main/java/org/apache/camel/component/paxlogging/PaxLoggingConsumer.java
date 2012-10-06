@@ -18,7 +18,6 @@ package org.apache.camel.component.paxlogging;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -70,14 +69,16 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         // TODO: populate exchange headers
         exchange.getIn().setBody(paxLoggingEvent);
 
-        LOG.trace("PaxLogging {} is firing", endpoint.getName());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("PaxLogging {} is firing", endpoint.getName());
+        }
         try {
             getProcessor().process(exchange);
-            // log exception if an exception occurred and was not handled
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
         } catch (Exception e) {
+            exchange.setException(e);
+        }
+        // log exception if an exception occurred and was not handled
+        if (exchange.getException() != null) {
             getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
         }
     }
@@ -88,7 +89,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         Properties props = new Properties();
         props.put("org.ops4j.pax.logging.appender.name", endpoint.getName());
         registration = endpoint.getComponent().getBundleContext().registerService(PaxAppender.class.getName(), this, props);
-        executor = Executors.newSingleThreadExecutor();
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "PaxLoggingEventTask");
     }
 
     @Override
@@ -96,7 +97,10 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         if (registration != null) {
             registration.unregister();
         }
-        executor.shutdown();
+        if (executor != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            executor = null;
+        }
         super.doStop();
     }
 }

@@ -164,7 +164,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
         if (aggregationStrategy == null && strategyRef != null) {
-            aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+            aggregationStrategy = routeContext.mandatoryLookup(strategyRef, AggregationStrategy.class);
         }
         if (aggregationStrategy == null) {
             // fallback to use latest

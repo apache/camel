@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.cxf.CxfEndpointUtils;
+import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -38,6 +40,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
+import org.apache.cxf.logging.FaultListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +59,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private int maxClientCacheSize = 10;
     private boolean loggingFeatureEnabled;
     private int loggingSizeLimit;
+    private boolean skipFaultLogging;
     
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
@@ -126,6 +130,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return binding;
     }
     
+    public boolean isSkipFaultLogging() {
+        return skipFaultLogging;
+    }
+
+    public void setSkipFaultLogging(boolean skipFaultLogging) {
+        this.skipFaultLogging = skipFaultLogging;
+    }
+    
     protected void checkBeanType(Object object, Class<?> clazz) {
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new IllegalArgumentException("The configure bean is not the instance of " + clazz.getName());
@@ -164,6 +176,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
                 cfb.getFeatures().add(new LoggingFeature());
             }
         }
+        if (this.isSkipFaultLogging()) {
+            if (cfb.getProperties() == null) {
+                cfb.setProperties(new HashMap<String, Object>());
+            }
+            cfb.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+        }
         cfb.setThreadSafe(true);
     }
     
@@ -198,6 +216,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
                 answer.getFeatures().add(new LoggingFeature());
             }
         }
+        if (this.isSkipFaultLogging()) {
+            if (answer.getProperties() == null) {
+                answer.setProperties(new HashMap<String, Object>());
+            }
+            answer.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+        }
         return answer;
     }
     
@@ -215,6 +239,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             } else {
                 answer.getFeatures().add(new LoggingFeature());
             }
+        }
+        if (this.isSkipFaultLogging()) {
+            if (answer.getProperties() == null) {
+                answer.setProperties(new HashMap<String, Object>());
+            }
+            answer.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }
         return answer;
     }

@@ -21,9 +21,8 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>tests</artifactId>
     <version>2.11-SNAPSHOT</version>
-    <relativePath>../../parent</relativePath>
   </parent>
 
   <artifactId>camel-itest</artifactId>
@@ -318,17 +317,17 @@
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions</artifactId>
-      <version>${atomikos-trascations-version}</version>
+      <version>${atomikos-transactions-version}</version>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
-      <version>${atomikos-trascations-version}</version>
+      <version>${atomikos-transactions-version}</version>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jms</artifactId>
-      <version>${atomikos-trascations-version}</version>
+      <version>${atomikos-transactions-version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.jms</groupId>
@@ -339,7 +338,7 @@
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jdbc</artifactId>
-      <version>${atomikos-trascations-version}</version>
+      <version>${atomikos-transactions-version}</version>
     </dependency>
   </dependencies>
 
@@ -352,24 +351,9 @@
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
           <excludes>
             <!-- TODO FIXME ASAP -->
-            <exclude>**/XXXTest.*</exclude>
             <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsTest.*</exclude>
             <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsXaTest.*</exclude>
           </excludes>
-          <systemProperties>
-   	        <property>
-              <name>java.util.logging.config.file</name>
-              <value>${basedir}/target/test-classes/logging.properties</value>
-     	    </property>
-     	    <property>
-              <name>org.apache.activemq.default.directory.prefix</name>
-              <value>target/</value>
-            </property>
-            <property>
-              <name>derby.stream.error.file</name>
-              <value>target/derby.log</value>
-            </property>
-          </systemProperties>
         </configuration>
       </plugin>
       <plugin>

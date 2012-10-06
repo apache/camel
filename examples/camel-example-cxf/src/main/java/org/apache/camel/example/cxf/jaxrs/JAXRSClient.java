@@ -31,7 +31,7 @@ public final class JAXRSClient {
     
     public JAXRSClient() {       
         bookStore = JAXRSClientFactory.create(
-            "http://localhost:9002/rest",
+            "http://localhost:" + System.getProperty("restEndpointPort") + "/rest",
             BookStore.class,
             Collections.singletonList(new TestResponseExceptionMapper()));        
     }

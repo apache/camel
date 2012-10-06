@@ -103,7 +103,7 @@ public class JMXMonitorConsumer extends JMXConsumer {
     }
 
     @Override
-    protected void removeNotificationListener() throws Exception {
+    protected void removeNotificationListeners() throws Exception {
         // remove ourselves as a listener
         ManagementFactory.getPlatformMBeanServer().removeNotificationListener(mMonitorObjectName, this);
         // unregister the monitor bean

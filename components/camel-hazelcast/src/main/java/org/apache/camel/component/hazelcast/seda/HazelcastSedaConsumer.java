@@ -62,7 +62,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStop() throws Exception {
         if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
         super.doStop();
