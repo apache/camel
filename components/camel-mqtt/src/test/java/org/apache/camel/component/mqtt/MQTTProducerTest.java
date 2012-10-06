@@ -33,7 +33,6 @@ public class MQTTProducerTest extends MQTTBaseTest {
 
     @Test
     public void testProduce() throws Exception {
-
         MQTT mqtt = new MQTT();
         final BlockingConnection subscribeConnection = mqtt.blockingConnection();
         subscribeConnection.connect();
@@ -53,7 +52,6 @@ public class MQTTProducerTest extends MQTTBaseTest {
                         e.printStackTrace();
                         break;
                     }
-
                 }
             }
         });
@@ -69,9 +67,7 @@ public class MQTTProducerTest extends MQTTBaseTest {
         assertTrue("Messages not consumed = " + latch.getCount(), latch.getCount() == 0);
     }
 
-
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
             public void configure() {
                 from("direct:foo").to("mqtt:boo?publishTopicName=" + TEST_TOPIC);

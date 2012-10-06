@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.fusesource.mqtt.client.Callback;
 import org.fusesource.mqtt.client.QoS;
 
 public class MQTTProducer extends DefaultAsyncProducer implements Processor {
@@ -29,41 +30,58 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
     public MQTTProducer(MQTTEndpoint mqttEndpoint) {
         super(mqttEndpoint);
         this.mqttEndpoint = mqttEndpoint;
-
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback asyncCallback) {
-        try {
-            doProcess(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-        asyncCallback.done(true);
-        return true;
-    }
-
-    void doProcess(Exchange exchange) throws Exception {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         byte[] body = exchange.getIn().getBody(byte[].class);
         if (body != null) {
             MQTTConfiguration configuration = mqttEndpoint.getConfiguration();
-            boolean retain = configuration.isByDefaultRetain();
+            boolean retain = exchange.getProperty(configuration.getMqttRetainPropertyName(), configuration.isByDefaultRetain(), Boolean.class);
 
-            if (exchange.getProperty(configuration.getMqttRetainPropertyName()) != null) {
-                retain = exchange.getProperty(configuration.getMqttRetainPropertyName(), Boolean.class);
-            }
             QoS qoS = configuration.getQoS();
             Object qoSValue = exchange.getProperty(configuration.getMqttQosPropertyName());
             if (qoSValue != null) {
                 qoS = MQTTConfiguration.getQoS(qoSValue.toString());
             }
 
+            // where should we publish to
             String topicName = configuration.getPublishTopicName();
             Object topicValue = exchange.getProperty(configuration.getMqttTopicPropertyName());
             if (topicValue != null) {
                 topicName = topicValue.toString();
             }
-            mqttEndpoint.publish(topicName, body, qoS, retain);
+            final String name = topicName;
+
+            try {
+                log.debug("Publishing to {}", name);
+                mqttEndpoint.publish(name, body, qoS, retain, new Callback<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        log.trace("onSuccess from {}", name);
+                        callback.done(false);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        log.trace("onFailure from {}", name);
+                        exchange.setException(throwable);
+                        callback.done(false);
+                    }
+                });
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
+
+            // we continue async, as the mqtt endpoint will invoke the callback when its done
+            return false;
+        } else {
+            // no data to send so we are done
+            log.trace("No data to publish");
+            callback.done(true);
+            return true;
         }
     }
 }

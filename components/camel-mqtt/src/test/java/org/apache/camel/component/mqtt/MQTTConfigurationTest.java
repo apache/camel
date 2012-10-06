@@ -23,7 +23,6 @@ import org.junit.Test;
 
 public class MQTTConfigurationTest extends MQTTBaseTest {
 
-
     @Test
     public void testBasicConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicName=" + TEST_TOPIC);
