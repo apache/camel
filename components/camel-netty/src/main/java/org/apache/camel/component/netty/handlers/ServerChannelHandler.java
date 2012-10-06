@@ -43,7 +43,8 @@ import org.slf4j.LoggerFactory;
  * Client handler which cannot be shared
  */
 public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ServerChannelHandler.class);
+    // use NettyConsumer as logger to make it easier to read the logs as this is part of the consumer
+    private static final transient Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
     private NettyConsumer consumer;
     private CamelLogger noReplyLogger;
 
@@ -83,7 +84,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent messageEvent) throws Exception {
         Object in = messageEvent.getMessage();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Receiving from channel: {} body: {}", new Object[]{messageEvent.getChannel(), in});
+            LOG.debug("Channel: {} received body: {}", new Object[]{messageEvent.getChannel(), in});
         }
 
         // create Exchange and let the consumer process it
@@ -168,9 +169,9 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             // we got a body to write
             ChannelFutureListener listener = new ResponseFutureListener(exchange, messageEvent.getRemoteAddress());
             if (consumer.getConfiguration().isTcp()) {
-                NettyHelper.writeBodyAsync(messageEvent.getChannel(), null, body, exchange, listener);
+                NettyHelper.writeBodyAsync(LOG, messageEvent.getChannel(), null, body, exchange, listener);
             } else {
-                NettyHelper.writeBodyAsync(messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange, listener);
+                NettyHelper.writeBodyAsync(LOG, messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange, listener);
             }
         }
     }

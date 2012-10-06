@@ -53,14 +53,12 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        MQTTConsumer consumer = new MQTTConsumer(this, processor);
-        return consumer;
+        return new MQTTConsumer(this, processor);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        MQTTProducer producer = new MQTTProducer(this);
-        return producer;
+        return new MQTTProducer(this);
     }
 
     public MQTTConfiguration getConfiguration() {
@@ -74,31 +72,25 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
         connection.listener(new Listener() {
             public void onConnected() {
-                LOG.info("MQTT Endpoint Connected to " + configuration.getHost());
+                LOG.info("MQTT Connection connected to {}", configuration.getHost());
             }
 
             public void onDisconnected() {
-                LOG.debug("MQTT Connection disconnected");
+                LOG.debug("MQTT Connection disconnected from {}", configuration.getHost());
             }
 
             public void onPublish(UTF8Buffer topic, Buffer body, Runnable ack) {
-
                 if (!consumers.isEmpty()) {
                     Exchange exchange = createExchange();
                     exchange.getIn().setBody(body.toByteArray());
                     exchange.setProperty(configuration.getMqttTopicPropertyName(), topic.toString());
                     for (MQTTConsumer consumer : consumers) {
-                        try {
-                            consumer.processExchange(exchange);
-                        } catch (Exception e) {
-                            LOG.error("Failed to process exchange ", exchange);
-                        }
+                        consumer.processExchange(exchange);
                     }
                 }
                 if (ack != null) {
                     ack.run();
                 }
-
             }
 
             public void onFailure(Throwable value) {
@@ -106,12 +98,13 @@ public class MQTTEndpoint extends DefaultEndpoint {
                     public void onSuccess(Void value) {
                     }
 
-                    public void onFailure(Throwable value) {
-                        LOG.debug("Failed to disconnect from " + configuration.getHost());
+                    public void onFailure(Throwable e) {
+                        LOG.debug("Failed to disconnect from " + configuration.getHost() + ". This exception is ignored.", e);
                     }
                 });
             }
         });
+
         final Promise<Object> promise = new Promise<Object>();
         connection.connect(new Callback<Void>() {
             public void onSuccess(Void value) {
@@ -161,8 +154,8 @@ public class MQTTEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    void publish(String topic, byte[] payload, QoS qoS, boolean retain) throws Exception {
-        connection.publish(topic, payload, qoS, retain, null);
+    void publish(String topic, byte[] payload, QoS qoS, boolean retain, Callback<Void> callback) throws Exception {
+        connection.publish(topic, payload, qoS, retain, callback);
     }
 
     void addConsumer(MQTTConsumer consumer) {
@@ -174,6 +167,6 @@ public class MQTTEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 }

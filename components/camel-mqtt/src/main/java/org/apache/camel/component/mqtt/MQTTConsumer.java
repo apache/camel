@@ -21,21 +21,35 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 public class MQTTConsumer extends DefaultConsumer {
+
     public MQTTConsumer(MQTTEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
+    @Override
+    public MQTTEndpoint getEndpoint() {
+        return (MQTTEndpoint) super.getEndpoint();
+    }
+
     protected void doStart() throws Exception {
-        ((MQTTEndpoint) getEndpoint()).addConsumer(this);
+        getEndpoint().addConsumer(this);
         super.doStart();
     }
 
     protected void doStop() throws Exception {
-        ((MQTTEndpoint) getEndpoint()).removeConsumer(this);
+        getEndpoint().removeConsumer(this);
         super.doStop();
     }
 
-    void processExchange(Exchange exchange) throws Exception {
-        getProcessor().process(exchange);
+    void processExchange(Exchange exchange) {
+        try {
+            getProcessor().process(exchange);
+        } catch (Throwable e) {
+            exchange.setException(e);
+        }
+
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error processing exchange.", exchange, exchange.getException());
+        }
     }
 }

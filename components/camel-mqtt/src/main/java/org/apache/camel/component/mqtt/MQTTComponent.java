@@ -22,7 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * MQTT component
+ * MQTT Component
  */
 public class MQTTComponent extends DefaultComponent {
 
