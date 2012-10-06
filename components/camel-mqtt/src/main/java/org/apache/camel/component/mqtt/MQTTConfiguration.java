@@ -20,6 +20,7 @@ import org.fusesource.mqtt.client.MQTT;
 import org.fusesource.mqtt.client.QoS;
 
 public class MQTTConfiguration extends MQTT {
+
     /**
      * These a properties that are looked for in an Exchange - to publish to
      */
@@ -28,7 +29,7 @@ public class MQTTConfiguration extends MQTT {
     private String mqttQosPropertyName = "MQTTQos";
 
     /**
-     * These are set on the Endpoint - together with properties inheritted from MQTT
+     * These are set on the Endpoint - together with properties inherited from MQTT
      */
     private String subscribeTopicName = "";
     private String publishTopicName = "camel/mqtt/test";
@@ -39,7 +40,6 @@ public class MQTTConfiguration extends MQTT {
     private int sendWaitInSeconds = 5;
     private boolean byDefaultRetain;
     private QoS qos = QoS.AT_LEAST_ONCE;
-
 
     public String getQualityOfService() {
         return qualityOfService;
@@ -94,7 +94,6 @@ public class MQTTConfiguration extends MQTT {
         this.mqttQosPropertyName = mqttQosPropertyName;
     }
 
-
     public int getConnectWaitInSeconds() {
         return connectWaitInSeconds;
     }
@@ -119,7 +118,6 @@ public class MQTTConfiguration extends MQTT {
         this.sendWaitInSeconds = sendWaitInSeconds;
     }
 
-
     public boolean isByDefaultRetain() {
         return byDefaultRetain;
     }
@@ -128,9 +126,7 @@ public class MQTTConfiguration extends MQTT {
         this.byDefaultRetain = byDefaultRetain;
     }
 
-
     static QoS getQoS(String qualityOfService) {
-
         for (QoS q : QoS.values()) {
             if (q.name().equalsIgnoreCase(qualityOfService)) {
                 return q;
@@ -147,6 +143,7 @@ public class MQTTConfiguration extends MQTT {
         }
         throw new IllegalArgumentException("There is no QoS with name " + qualityOfService);
     }
+
 }
 
 
