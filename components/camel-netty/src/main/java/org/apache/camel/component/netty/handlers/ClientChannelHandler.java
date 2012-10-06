@@ -117,7 +117,9 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         AsyncCallback callback = getAsyncCallback(ctx);
 
         Object body = messageEvent.getMessage();
-        LOG.debug("Message received: {}", body);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Receiving from channel: {} body: {}", new Object[]{messageEvent.getChannel(), body});
+        }
 
         // if textline enabled then covert to a String which must be used for textline
         if (producer.getConfiguration().isTextline()) {
@@ -152,8 +154,8 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
                 disconnect = close;
             }
             if (disconnect) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Closing channel when complete at address: {}", producer.getConfiguration().getAddress());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Closing channel when complete at address: {}", producer.getConfiguration().getAddress());
                 }
                 NettyHelper.close(ctx.getChannel());
             }
