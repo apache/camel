@@ -50,7 +50,7 @@ public class DoCatchDirectDynamicRouteTest extends ContextTestSupport {
 
                 from("direct:a")
                     .to("mock:a")
-                    .dynamicRouter(method(DoCatchDirectDynamicRouteTest.class, "next"));
+                    .dynamicRouter(bean(DoCatchDirectDynamicRouteTest.class, "next"));
 
                 from("direct:b")
                     .to("mock:b")
