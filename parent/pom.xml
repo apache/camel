@@ -231,7 +231,7 @@
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.4</mina2-version>
     <mockito-version>1.9.0</mockito-version>
-    <mongo-java-driver-version>2.7.3</mongo-java-driver-version>
+    <mongo-java-driver-version>2.9.1</mongo-java-driver-version>
     <mqtt-client-version>1.2</mqtt-client-version>
     <mvel-bundle-version>2.0.18_3</mvel-bundle-version>
     <mvel-version>2.0.18</mvel-version>
