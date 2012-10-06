@@ -76,6 +76,8 @@ public class NettyConfiguration implements Cloneable {
     private ServerPipelineFactory serverPipelineFactory;
     private SSLContextParameters sslContextParameters;
     private boolean needClientAuth;
+    private int maximumPoolSize = 16;
+    private boolean orderedThreadPoolExecutor = true;
     
     /**
      * Returns a copy of this configuration
@@ -517,6 +519,22 @@ public class NettyConfiguration implements Cloneable {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public int getMaximumPoolSize() {
+        return maximumPoolSize;
+    }
+
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
+    }
+
+    public boolean isOrderedThreadPoolExecutor() {
+        return orderedThreadPoolExecutor;
+    }
+
+    public void setOrderedThreadPoolExecutor(boolean orderedThreadPoolExecutor) {
+        this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {

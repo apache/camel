@@ -75,24 +75,25 @@ public final class NettyHelper {
     /**
      * Writes the given body to Netty channel. Will <b>not</b >wait until the body has been written.
      *
+     * @param log             logger to use
      * @param channel         the Netty channel
      * @param remoteAddress   the remote address when using UDP
      * @param body            the body to write (send)
      * @param exchange        the exchange
      * @param listener        listener with work to be executed when the operation is complete
      */
-    public static void writeBodyAsync(Channel channel, SocketAddress remoteAddress, Object body,
+    public static void writeBodyAsync(Logger log, Channel channel, SocketAddress remoteAddress, Object body,
                                       Exchange exchange, ChannelFutureListener listener) {
         // the write operation is asynchronous. Use future to wait until the session has been written
         ChannelFuture future;
         if (remoteAddress != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing to channel: {} remote address: {} with body: {}", new Object[]{channel, remoteAddress, body});
+            if (log.isDebugEnabled()) {
+                log.debug("Channel: {} remote address: {} writing body: {}", new Object[]{channel, remoteAddress, body});
             }
             future = channel.write(body, remoteAddress);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing to channel: {} with body: {}", new Object[]{channel, body});
+            if (log.isDebugEnabled()) {
+                log.debug("Channel: {} writing body: {}", new Object[]{channel, body});
             }
             future = channel.write(body);
         }

@@ -189,7 +189,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         }
 
         // write body
-        NettyHelper.writeBodyAsync(channel, null, body, exchange, new ChannelFutureListener() {
+        NettyHelper.writeBodyAsync(LOG, channel, null, body, exchange, new ChannelFutureListener() {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
