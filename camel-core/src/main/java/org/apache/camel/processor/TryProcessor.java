@@ -361,6 +361,8 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
             // give the rest of the pipeline another chance
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
             exchange.setException(null);
+            // and we should not be regarded as exhausted as we are in a try .. catch block
+            exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
             // is the exception handled by the catch clause
             final Boolean handled = catchClause.handles(exchange);

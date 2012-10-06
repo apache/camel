@@ -123,10 +123,9 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
             fail("Should throw exception");
         } catch (CamelExecutionException e) {
             // expected
-            assertIsInstanceOf(ExecutionException.class, e.getCause());
-            assertIsInstanceOf(CamelExchangeException.class, e.getCause().getCause());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
-            assertEquals("Damn", e.getCause().getCause().getCause().getMessage());
+            assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("Damn", e.getCause().getCause().getMessage());
         }
 
         assertMockEndpointsSatisfied();
