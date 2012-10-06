@@ -65,7 +65,7 @@ public class MBeanInfoAssembler implements Service {
     @Override
     public void stop() throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Clearing cache[size={}, hits={}, misses={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses()});
+            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
         }
         cache.clear();
     }

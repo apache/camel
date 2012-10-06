@@ -60,6 +60,10 @@ public class ManagedConsumerCache extends ManagedService implements ManagedConsu
         return consumerCache.getMisses();
     }
 
+    public Long getEvicted() {
+        return consumerCache.getEvicted();
+    }
+
     public void resetStatistics() {
         consumerCache.resetCacheStatistics();
     }

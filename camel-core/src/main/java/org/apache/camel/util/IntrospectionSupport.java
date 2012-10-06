@@ -101,7 +101,7 @@ public final class IntrospectionSupport {
      */
     public static void stop() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Clearing cache[size={}, hits={}, misses={}]", new Object[]{CACHE.size(), CACHE.getHits(), CACHE.getMisses()});
+            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{CACHE.size(), CACHE.getHits(), CACHE.getMisses(), CACHE.getEvicted()});
         }
         CACHE.clear();
 

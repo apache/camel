@@ -190,6 +190,22 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     /**
+     * Gets the cache evicted statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the evicted
+     */
+    public long getEvicted() {
+        long evicted = -1;
+        if (consumers instanceof LRUCache) {
+            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
+            evicted = cache.getEvicted();
+        }
+        return evicted;
+    }
+
+    /**
      * Resets the cache statistics
      */
     public void resetCacheStatistics() {
