@@ -240,7 +240,7 @@
   </feature>
   <feature name='camel-beanio' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:org.beanio/beanio/${beanio-version}</bundle>
+    <bundle dependency='true'>mvn:org.beanio/beanio/${beanio-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-beanio/${project.version}</bundle>
   </feature>
   <feature name='camel-bean-validator' version='${project.version}' resolver='(obr)' start-level='50'>
