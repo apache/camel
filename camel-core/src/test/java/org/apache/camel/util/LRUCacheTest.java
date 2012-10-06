@@ -44,6 +44,59 @@ public class LRUCacheTest extends TestCase {
         assertSame(service2, cache.get("B"));
     }
 
+    public void testLRUCacheEviction() {
+        MyService service1 = new MyService();
+        MyService service2 = new MyService();
+        MyService service3 = new MyService();
+        MyService service4 = new MyService();
+        MyService service5 = new MyService();
+        MyService service6 = new MyService();
+        MyService service7 = new MyService();
+        MyService service8 = new MyService();
+        MyService service9 = new MyService();
+        MyService service10 = new MyService();
+        MyService service11 = new MyService();
+        MyService service12 = new MyService();
+
+        cache.put("A", service1);
+        assertNull(service1.getStopped());
+        cache.put("B", service2);
+        assertNull(service2.getStopped());
+        cache.put("C", service3);
+        assertNull(service3.getStopped());
+        cache.put("D", service4);
+        assertNull(service4.getStopped());
+        cache.put("E", service5);
+        assertNull(service5.getStopped());
+        cache.put("F", service6);
+        assertNull(service6.getStopped());
+        cache.put("G", service7);
+        assertNull(service7.getStopped());
+        cache.put("H", service8);
+        assertNull(service8.getStopped());
+        cache.put("I", service9);
+        assertNull(service9.getStopped());
+        cache.put("J", service10);
+        assertNull(service10.getStopped());
+
+        // we are now full
+        assertEquals(10, cache.size());
+
+        cache.put("K", service11);
+        assertNull(service11.getStopped());
+
+        // should evict the eldest, and stop the service
+        assertTrue(service1.getStopped());
+
+        cache.put("L", service12);
+        assertNull(service12.getStopped());
+
+        // should evict the eldest, and stop the service
+        assertTrue(service2.getStopped());
+
+        assertEquals(10, cache.size());
+    }
+
     public void testLRUCacheHitsAndMisses() {
         MyService service1 = new MyService();
         MyService service2 = new MyService();
@@ -92,10 +145,18 @@ public class LRUCacheTest extends TestCase {
     }
 
     private static final class MyService implements Service {
+
+        private Boolean stopped;
+
         public void start() throws Exception {
         }
 
         public void stop() throws Exception {
+            stopped = true;
+        }
+
+        public Boolean getStopped() {
+            return stopped;
         }
     }
 }

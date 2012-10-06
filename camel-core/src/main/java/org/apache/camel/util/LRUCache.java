@@ -23,22 +23,51 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+import com.googlecode.concurrentlinkedhashmap.EvictionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A Least Recently Used Cache
+ * A Least Recently Used Cache.
+ * <p/>
+ * If this cache stores {@link org.apache.camel.Service} then this implementation will on eviction
+ * invoke the {@link org.apache.camel.Service#stop()} method, to auto-stop the service.
  *
- * @version 
+ * @see LRUSoftCache
+ * @see LRUWeakCache
  */
-public class LRUCache<K, V> implements Map<K, V>, Serializable {
+public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serializable {
     private static final long serialVersionUID = -342098639681884414L;
+    private static final Logger LOG = LoggerFactory.getLogger(LRUCache.class);
     
     private int maxCacheSize = 10000;
+    private boolean stopOnEviction;
     private final AtomicLong hits = new AtomicLong();
     private final AtomicLong misses = new AtomicLong();
+    private final AtomicLong evicted = new AtomicLong();
     private ConcurrentLinkedHashMap<K, V> map;
 
+    /**
+     * Constructs an empty <tt>LRUCache</tt> instance with the
+     * specified maximumCacheSize, and will stop on eviction.
+     *
+     * @param maximumCacheSize the max capacity.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
     public LRUCache(int maximumCacheSize) {
         this(maximumCacheSize, maximumCacheSize);
+    }
+
+    /**
+     * Constructs an empty <tt>LRUCache</tt> instance with the
+     * specified initial capacity, maximumCacheSize, and will stop on eviction.
+     *
+     * @param initialCapacity  the initial capacity.
+     * @param maximumCacheSize the max capacity.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
+    public LRUCache(int initialCapacity, int maximumCacheSize) {
+        this(initialCapacity, maximumCacheSize, true);
     }
 
     /**
@@ -47,14 +76,16 @@ public class LRUCache<K, V> implements Map<K, V>, Serializable {
      *
      * @param initialCapacity  the initial capacity.
      * @param maximumCacheSize the max capacity.
+     * @param stopOnEviction   whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
-     *                                  or the load factor is non positive.
      */
-    public LRUCache(int initialCapacity, int maximumCacheSize) {
+    public LRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
         map = new ConcurrentLinkedHashMap.Builder<K, V>()
-            .initialCapacity(initialCapacity)
-            .maximumWeightedCapacity(maximumCacheSize).build();
+                .initialCapacity(initialCapacity)
+                .maximumWeightedCapacity(maximumCacheSize)
+                .listener(this).build();
         this.maxCacheSize = maximumCacheSize;
+        this.stopOnEviction = stopOnEviction;
     }
 
     @Override
@@ -123,6 +154,20 @@ public class LRUCache<K, V> implements Map<K, V>, Serializable {
         return map.ascendingMap().entrySet();
     }
 
+    @Override
+    public void onEviction(K key, V value) {
+        evicted.incrementAndGet();
+        LOG.trace("onEviction {} -> {}", key, value);
+        if (stopOnEviction) {
+            try {
+                // stop service as its evicted from cache
+                ServiceHelper.stopService(value);
+            } catch (Exception e) {
+                LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+            }
+        }
+    }
+
     /**
      * Gets the number of cache hits
      */
@@ -138,6 +183,13 @@ public class LRUCache<K, V> implements Map<K, V>, Serializable {
     }
 
     /**
+     * Gets the number of evicted entries.
+     */
+    public long getEvicted() {
+        return evicted.get();
+    }
+
+    /**
      * Returns the maxCacheSize.
      */
     public int getMaxCacheSize() {
@@ -150,6 +202,7 @@ public class LRUCache<K, V> implements Map<K, V>, Serializable {
     public void resetStatistics() {
         hits.set(0);
         misses.set(0);
+        evicted.set(0);
     }
 
     @Override
