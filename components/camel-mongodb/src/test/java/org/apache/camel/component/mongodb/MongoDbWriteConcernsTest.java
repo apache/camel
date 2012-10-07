@@ -20,8 +20,8 @@ import com.mongodb.CommandResult;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+
 import org.junit.Test;
 
 public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {

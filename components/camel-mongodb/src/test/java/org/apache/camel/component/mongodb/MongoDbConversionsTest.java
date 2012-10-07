@@ -22,12 +22,9 @@ import java.util.Map;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.spring.SpringCamelContext;
+
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MongoDbConversionsTest extends AbstractMongoDbTest {
     

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.onexception;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**

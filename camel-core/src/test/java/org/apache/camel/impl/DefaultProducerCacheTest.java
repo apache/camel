@@ -16,14 +16,21 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
 /**
  * @version 
  */
 public class DefaultProducerCacheTest extends ContextTestSupport {
+
+    private static final AtomicInteger counter = new AtomicInteger();
 
     public void testCacheProducerAcquireAndRelease() throws Exception {
         ProducerCache cache = new ProducerCache(this, context);
@@ -40,6 +47,75 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         assertEquals("Size should be 1000", 1000, cache.size());
         cache.stop();
+    }
+
+    public void testCacheStopExpired() throws Exception {
+        ProducerCache cache = new ProducerCache(this, context, 5);
+        cache.start();
+
+        assertEquals("Size should be 0", 0, cache.size());
+
+        for (int i = 0; i < 8; i++) {
+            Endpoint e = new MyEndpoint(i);
+            Producer p = cache.acquireProducer(e);
+            cache.releaseProducer(e, p);
+        }
+
+        assertEquals("Size should be 5", 5, cache.size());
+
+        // should have stopped the 3 evicted
+        assertEquals(3, counter.get());
+
+        cache.stop();
+
+        // should have stopped all 8
+        assertEquals(8, counter.get());
+    }
+
+    private class MyEndpoint extends DefaultEndpoint {
+
+        private int number;
+
+        private MyEndpoint(int number) {
+            this.number = number;
+        }
+
+        @Override
+        public Producer createProducer() throws Exception {
+            return new MyProducer(this);
+        }
+
+        @Override
+        public Consumer createConsumer(Processor processor) throws Exception {
+            return null;
+        }
+
+        @Override
+        public boolean isSingleton() {
+            return true;
+        }
+
+        @Override
+        public String getEndpointUri() {
+            return "my://" + number;
+        }
+    }
+
+    private class MyProducer extends DefaultProducer {
+
+        public MyProducer(Endpoint endpoint) {
+            super(endpoint);
+        }
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            // noop
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            counter.incrementAndGet();
+        }
     }
 
 }

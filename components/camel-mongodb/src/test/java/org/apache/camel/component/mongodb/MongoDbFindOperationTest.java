@@ -23,9 +23,9 @@ import java.util.Map;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+
 import org.junit.Test;
 
 public class MongoDbFindOperationTest extends AbstractMongoDbTest {

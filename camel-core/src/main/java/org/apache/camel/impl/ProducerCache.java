@@ -37,7 +37,6 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -78,14 +77,17 @@ public class ProducerCache extends ServiceSupport {
     /**
      * Creates the {@link LRUCache} to be used.
      * <p/>
-     * This implementation returns a {@link LRUSoftCache} instance.
+     * This implementation returns a {@link LRUCache} instance.
 
      * @param cacheSize the cache size
      * @return the cache
      */
     protected static LRUCache<String, Producer> createLRUCache(int cacheSize) {
-        // We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
-        return new LRUSoftCache<String, Producer>(cacheSize);
+        // Use a regular cache as we want to ensure that the lifecycle of the producers
+        // being cache is properly handled, such as they are stopped when being evicted
+        // or when this cache is stopped. This is needed as some producers requires to
+        // be stopped so they can shutdown internal resources that otherwise may cause leaks
+        return new LRUCache<String, Producer>(cacheSize);
     }
 
     public CamelContext getCamelContext() {

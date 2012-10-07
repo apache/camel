@@ -23,8 +23,8 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+
 import org.junit.Test;
 
 public class MongoDbDynamicityTest extends AbstractMongoDbTest {

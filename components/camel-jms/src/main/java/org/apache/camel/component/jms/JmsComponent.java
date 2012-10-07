@@ -35,7 +35,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;

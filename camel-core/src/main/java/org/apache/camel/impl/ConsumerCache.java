@@ -27,7 +27,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,14 +59,17 @@ public class ConsumerCache extends ServiceSupport {
     /**
      * Creates the {@link LRUCache} to be used.
      * <p/>
-     * This implementation returns a {@link org.apache.camel.util.LRUSoftCache} instance.
+     * This implementation returns a {@link LRUCache} instance.
 
      * @param cacheSize the cache size
      * @return the cache
      */
     protected static LRUCache<String, PollingConsumer> createLRUCache(int cacheSize) {
-        // We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
-        return new LRUSoftCache<String, PollingConsumer>(cacheSize);
+        // Use a regular cache as we want to ensure that the lifecycle of the consumers
+        // being cache is properly handled, such as they are stopped when being evicted
+        // or when this cache is stopped. This is needed as some consumers requires to
+        // be stopped so they can shutdown internal resources that otherwise may cause leaks
+        return new LRUCache<String, PollingConsumer>(cacheSize);
     }
 
     public synchronized PollingConsumer getConsumer(Endpoint endpoint) {

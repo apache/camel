@@ -18,7 +18,7 @@
 <features name='camel-${project.version}'>
 
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
-  <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds-feature-version}/xml/features</repository>
+  <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds-version}/xml/features</repository>
 
   <feature name='xml-specs-api' version='${servicemix-specs-version}' resolver='(obr)' start-level='10'>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
@@ -459,9 +459,8 @@
     <bundle>mvn:org.apache.camel/camel-jaxb/${project.version}</bundle>
   </feature>
   <feature name='camel-jclouds' version='${project.version}' resolver='(obr)' start-level='50'>
-    <!-- Added jclouds feature to workaround the karaf feature validate issue -->
-    <feature version='${jclouds-feature-version}'>jclouds</feature>
-    <feature version='${jclouds-feature-version}'>jclouds-compute</feature>
+    <feature version='${jclouds-version}'>jclouds</feature>
+    <feature version='${jclouds-version}'>jclouds-compute</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jclouds/${project.version}</bundle>
   </feature>
