@@ -64,12 +64,8 @@ public class JettyHttpsProducerSslContextInUriTest extends JettyProducerHttpsRou
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                port1 = getPort();
-                port2 = getNextPort();
-                
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);

@@ -53,9 +53,6 @@ public class JettyHttpsProducerRouteSetupWithSystemPropsTest extends JettyProduc
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {

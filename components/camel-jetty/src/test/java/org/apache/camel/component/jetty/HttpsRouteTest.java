@@ -38,7 +38,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class HttpsRouteTest extends BaseJettyTest {
+
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
+
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
     protected Properties originalValues = new Properties();
@@ -52,6 +54,9 @@ public class HttpsRouteTest extends BaseJettyTest {
     @Override
     @Before
     public void setUp() throws Exception {
+        port1 = getNextPort();
+        port2 = getNextPort(port1 + 1);
+        
         super.setUp();
         // ensure jsse clients can validate the self signed dummy localhost cert, 
         // use the server keystore as the trust store for these tests
@@ -169,9 +174,6 @@ public class HttpsRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                port1 = getPort();
-                port2 = getNextPort();
-                
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
