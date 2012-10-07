@@ -474,6 +474,8 @@ public class QuickfixjEngineTest extends Assert {
         assertTrue("Application message not received", messageLatch.await(5000, TimeUnit.MILLISECONDS));
         quickfixjEngine.removeEventListener(messageListener);
 
+        assertThat(events.size(), is(2));
+
         EventRecord sendEvent = new EventRecord(QuickfixjEventCategory.AppMessageSent, initiatorSessionID, new Message());
         assertTrue(events.contains(sendEvent));
         int sendEventIndex = events.indexOf(sendEvent);
@@ -508,6 +510,8 @@ public class QuickfixjEngineTest extends Assert {
 
         assertTrue("Logoffs not received", logoffLatch.await(5000, TimeUnit.MILLISECONDS));
         quickfixjEngine.removeEventListener(logoffListener);
+
+        assertThat(events.size(), is(2));
 
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogoff, acceptorSessionID, null)));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogoff, initiatorSessionID, null)));
