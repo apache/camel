@@ -17,6 +17,7 @@
 package org.apache.camel
 package scala.dsl
 
+import java.util.concurrent.ExecutorService
 import model.{WhenDefinition,OnCompletionDefinition}
 import org.apache.camel.scala.dsl.builder.RouteBuilder;
 
