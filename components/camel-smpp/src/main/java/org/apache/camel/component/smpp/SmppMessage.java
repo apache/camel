@@ -17,6 +17,7 @@
 package org.apache.camel.component.smpp;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.camel.impl.DefaultMessage;
 import org.jsmpp.bean.AlertNotification;
@@ -77,11 +78,17 @@ public class SmppMessage extends DefaultMessage {
     protected Object createBody() {
         if (command instanceof MessageRequest) {
             byte[] shortMessage = ((MessageRequest) command).getShortMessage();
-            try {
-                return new String(shortMessage, configuration.getEncoding());
-            } catch (UnsupportedEncodingException e) {
-                return new String(shortMessage);
+            if (shortMessage == null || shortMessage.length == 0) {
+                return null;
             }
+            if (Charset.isSupported(configuration.getEncoding())) {
+                try {
+                    return new String(shortMessage, configuration.getEncoding());
+                } catch (UnsupportedEncodingException e) {
+                    // ignore
+                }
+            }
+            return new String(shortMessage);
         }
 
         return null;
