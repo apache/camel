@@ -50,31 +50,41 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
     public void onAcceptAlertNotification(AlertNotification alertNotification) {
         LOG.debug("Received an alertNotification {}", alertNotification);
 
+        Exchange exchange = endpoint.createOnAcceptAlertNotificationExchange(alertNotification);
         try {
-            Exchange exchange = endpoint.createOnAcceptAlertNotificationExchange(alertNotification);
-
-            LOG.trace("Processing the new smpp exchange...");
             processor.process(exchange);
-            LOG.trace("Processed the new smpp exchange");
         } catch (Exception e) {
-            exceptionHandler.handleException(e);
+            exchange.setException(e);
+        }
+
+        if (exchange.getException() != null) {
+            exceptionHandler.handleException("Cannot process exchange. This exception will be ignored.", exchange, exchange.getException());
         }
     }
 
     public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
         LOG.debug("Received a deliverSm {}", deliverSm);
 
+        Exchange exchange;
         try {
-            Exchange exchange = endpoint.createOnAcceptDeliverSmExchange(deliverSm);
-
-            LOG.trace("processing the new smpp exchange...");
-            processor.process(exchange);
-            LOG.trace("processed the new smpp exchange");
+            exchange = endpoint.createOnAcceptDeliverSmExchange(deliverSm);
         } catch (Exception e) {
-            exceptionHandler.handleException(e);
-            if (e instanceof ProcessRequestException) {
-                throw (ProcessRequestException) e;
+            exceptionHandler.handleException("Cannot create exchange. This exception will be ignored.", e);
+            return;
+        }
+
+        try {
+            processor.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        if (exchange.getException() != null) {
+            ProcessRequestException pre = exchange.getException(ProcessRequestException.class);
+            if (pre == null) {
+                pre = new ProcessRequestException(exchange.getException().getMessage(), 255, exchange.getException());
             }
+            throw pre;
         }
     }
 
@@ -82,19 +92,19 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         LOG.debug("Received a dataSm {}", dataSm);
 
         MessageId newMessageId = messageIDGenerator.newMessageId();
-
+        Exchange exchange = endpoint.createOnAcceptDataSm(dataSm, newMessageId.getValue());
         try {
-            Exchange exchange = endpoint.createOnAcceptDataSm(dataSm, newMessageId.getValue());
-
-            LOG.trace("processing the new smpp exchange...");
             processor.process(exchange);
-            LOG.trace("processed the new smpp exchange");
         } catch (Exception e) {
-            exceptionHandler.handleException(e);
-            if (e instanceof ProcessRequestException) {
-                throw (ProcessRequestException) e;
+            exchange.setException(e);
+        }
+
+        if (exchange.getException() != null) {
+            ProcessRequestException pre = exchange.getException(ProcessRequestException.class);
+            if (pre == null) {
+                pre = new ProcessRequestException(exchange.getException().getMessage(), 255, exchange.getException());
             }
-            throw new ProcessRequestException(e.getMessage(), 255, e);
+            throw pre;
         }
 
         return new DataSmResult(newMessageId, dataSm.getOptionalParametes());

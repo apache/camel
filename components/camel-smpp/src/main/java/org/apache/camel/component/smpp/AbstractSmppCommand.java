@@ -37,10 +37,8 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     protected Message getResponseMessage(Exchange exchange) {
         Message message;
         if (exchange.getPattern().isOutCapable()) {
-            log.debug("Exchange is out capable, setting headers on out exchange...");
             message = exchange.getOut();
         } else {
-            log.debug("Exchange is not out capable, setting headers on in exchange...");
             message = exchange.getIn();
         }
         

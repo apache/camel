@@ -56,7 +56,9 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         
         for (SubmitMulti submitMulti : submitMulties) {
             SubmitMultiResult result;
-            log.debug("Sending multiple short messages for exchange id '{}'...", exchange.getExchangeId());
+            if (log.isDebugEnabled()) {
+                log.debug("Sending multiple short messages for exchange id '{}'...", exchange.getExchangeId());
+            }
             
             try {
                 result = session.submitMultiple(
@@ -82,7 +84,9 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
             }
         }
 
-        log.debug("Sent multiple short messages for exchange id '{}' and received results '{}'", exchange.getExchangeId(), results);
+        if (log.isDebugEnabled()) {
+            log.debug("Sent multiple short messages for exchange id '{}' and received results '{}'", exchange.getExchangeId(), results);
+        }
 
         List<String> messageIDs = new ArrayList<String>(results.size());
         // {messageID : [{destAddr : address, error : errorCode}]}

@@ -75,7 +75,7 @@ public enum SmppCommandType {
      * Tries to return an instance of {@link SmppCommandType} using
      * {@link SmppConstants#COMMAND} header of the incoming message.
      * <p/>
-     * Returns {@link #SUBMIT_SM} if threre is no {@link SmppConstants#COMMAND}
+     * Returns {@link #SUBMIT_SM} if there is no {@link SmppConstants#COMMAND}
      * header in the incoming message or value of such a header cannot be
      * recognized.
      * <p/>
@@ -89,7 +89,7 @@ public enum SmppCommandType {
      * 
      * @param exchange
      *            an exchange to get an incoming message from
-     * @return an instalce of {@link SmppCommandType}
+     * @return an instance of {@link SmppCommandType}
      */
     public static SmppCommandType fromExchange(Exchange exchange) {
         Message in = exchange.getIn();
