@@ -111,7 +111,7 @@
     <jibx-version>1.2.4.5</jibx-version>
     <jruby-version>1.6.7</jruby-version>
     <jsmpp-version>2.1.0_3</jsmpp-version>
-    <jsch-version>0.1.44-1</jsch-version>
+    <jsch-version>0.1.48</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
     <karaf-version>2.2.9</karaf-version>
