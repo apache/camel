@@ -46,7 +46,7 @@ public interface SmppConstants {
     String REGISTERED_DELIVERY = "CamelSmppRegisteredDelivery";
     String REPLACE_IF_PRESENT_FLAG = "CamelSmppReplaceIfPresentFlag";
     String SCHEDULE_DELIVERY_TIME = "CamelSmppScheduleDeliveryTime";
-    String SENT_MESSAGE_COUNT = "CamelSmppSentMessageCount"; // TODO: document this new property
+    String SENT_MESSAGE_COUNT = "CamelSmppSentMessageCount";
     String SEQUENCE_NUMBER = "CamelSmppSequenceNumber";
     String SERVICE_TYPE = "CamelSmppServiceType";
     String SOURCE_ADDR = "CamelSmppSourceAddr";

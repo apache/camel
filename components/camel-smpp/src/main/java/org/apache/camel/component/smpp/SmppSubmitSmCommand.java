@@ -50,7 +50,9 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         for (int i = 0; i < submitSms.length; i++) {
             SubmitSm submitSm = submitSms[i];
             String messageID;
-            log.debug("Sending short message {} for exchange id '{}'...", i, exchange.getExchangeId());
+            if (log.isDebugEnabled()) {
+                log.debug("Sending short message {} for exchange id '{}'...", i, exchange.getExchangeId());
+            }
             
             try {
                 messageID = session.submitShortMessage(
@@ -79,8 +81,10 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
             messageIDs.add(messageID);
         }
 
-        log.debug("Sent short message for exchange id '{}' and received message ids '{}'",
-                exchange.getExchangeId(), messageIDs);
+        if (log.isDebugEnabled()) {
+            log.debug("Sent short message for exchange id '{}' and received message ids '{}'",
+                    exchange.getExchangeId(), messageIDs);
+        }
 
         Message message = getResponseMessage(exchange);
         message.setHeader(SmppConstants.ID, messageIDs);
@@ -205,7 +209,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         
         submitSm.setEsmClass(new ESMClass().value());
         
-        submitSm.setOptionalParametes(new OptionalParameter[0]);
+        submitSm.setOptionalParametes();
 
         return submitSm;
     }

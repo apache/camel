@@ -51,7 +51,7 @@ public class SmppBinding {
 
     /**
      * Create the SmppCommand object from the inbound exchange
-     * 
+     *
      * @throws UnsupportedEncodingException if the encoding is not supported
      */
     public SmppCommand createSmppCommand(SMPPSession session, Exchange exchange) {

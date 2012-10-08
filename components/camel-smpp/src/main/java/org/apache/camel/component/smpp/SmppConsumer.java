@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of @{link Consumer} which use the SMPP protocol
+ * An implementation of {@link Consumer} which use the SMPP protocol
  * 
  * @version 
  */

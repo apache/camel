@@ -49,9 +49,11 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
 
         ReplaceSm replaceSm = createReplaceSmTempate(exchange);
         replaceSm.setShortMessage(message);
-        
-        log.debug("Sending replacement command for a short message for exchange id '{}' and message id '{}'",
-                exchange.getExchangeId(), replaceSm.getMessageId());
+
+        if (log.isDebugEnabled()) {
+            log.debug("Sending replacement command for a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(), replaceSm.getMessageId());
+        }
 
         try {
             session.replaceShortMessage(
@@ -68,8 +70,10 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
             throw new SmppException(e);
         }
 
-        log.debug("Sent replacement command for a short message for exchange id '{}' and message id '{}'",
-                exchange.getExchangeId(), replaceSm.getMessageId());
+        if (log.isDebugEnabled()) {
+            log.debug("Sent replacement command for a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(), replaceSm.getMessageId());
+        }
         
         Message rspMsg = getResponseMessage(exchange);
         rspMsg.setHeader(SmppConstants.ID, replaceSm.getMessageId());
