@@ -32,9 +32,11 @@ public class SmppCancelSmCommand extends AbstractSmppCommand {
     @Override
     public void execute(Exchange exchange) throws SmppException {
         CancelSm cancelSm = createCancelSm(exchange);
-        
-        log.debug("Canceling a short message for exchange id '{}' and message id '{}'",
-                exchange.getExchangeId(), cancelSm.getMessageId());
+
+        if (log.isDebugEnabled()) {
+            log.debug("Canceling a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(), cancelSm.getMessageId());
+        }
 
         try {
             session.cancelShortMessage(
@@ -50,8 +52,10 @@ public class SmppCancelSmCommand extends AbstractSmppCommand {
             throw new SmppException(e);
         }
 
-        log.debug("Cancel a short message for exchange id '{}' and message id '{}'",
-                exchange.getExchangeId(), cancelSm.getMessageId());
+        if (log.isDebugEnabled()) {
+            log.debug("Cancel a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(), cancelSm.getMessageId());
+        }
 
         Message message = getResponseMessage(exchange);
         message.setHeader(SmppConstants.ID, cancelSm.getMessageId());

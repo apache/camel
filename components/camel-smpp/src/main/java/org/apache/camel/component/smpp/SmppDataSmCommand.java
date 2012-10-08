@@ -37,7 +37,9 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
     public void execute(Exchange exchange) throws SmppException {
         DataSm dataSm = createDataSm(exchange);
 
-        log.debug("Sending a data short message for exchange id '{}'...", exchange.getExchangeId());
+        if (log.isDebugEnabled()) {
+            log.debug("Sending a data short message for exchange id '{}'...", exchange.getExchangeId());
+        }
         
         DataSmResult result;
         try {
@@ -56,8 +58,10 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
             throw new SmppException(e);
         }
 
-        log.debug("Sent a data short message for exchange id '{}' and message id '{}'",
-                exchange.getExchangeId(), result.getMessageId());
+        if (log.isDebugEnabled()) {
+            log.debug("Sent a data short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(), result.getMessageId());
+        }
 
         Message message = getResponseMessage(exchange);
         message.setHeader(SmppConstants.ID, result.getMessageId());

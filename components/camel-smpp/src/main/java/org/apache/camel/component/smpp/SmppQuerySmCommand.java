@@ -34,8 +34,10 @@ public class SmppQuerySmCommand extends AbstractSmppCommand {
     public void execute(Exchange exchange) throws SmppException {
         QuerySm querySm = createQuerySm(exchange);
 
-        log.debug("Querying for a short message for exchange id '{}' and message id '{}'...",
-                exchange.getExchangeId(), querySm.getMessageId());
+        if (log.isDebugEnabled()) {
+            log.debug("Querying for a short message for exchange id '{}' and message id '{}'...",
+                    exchange.getExchangeId(), querySm.getMessageId());
+        }
         
         QuerySmResult querySmResult;
         try {
@@ -48,8 +50,10 @@ public class SmppQuerySmCommand extends AbstractSmppCommand {
             throw new SmppException(e);
         }
 
-        log.debug("Query for a short message for exchange id '{}' and message id '{}'",
-                exchange.getExchangeId(), querySm.getMessageId());
+        if (log.isDebugEnabled()) {
+            log.debug("Query for a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(), querySm.getMessageId());
+        }
 
         Message message = getResponseMessage(exchange);
         message.setHeader(SmppConstants.ID, querySm.getMessageId());
