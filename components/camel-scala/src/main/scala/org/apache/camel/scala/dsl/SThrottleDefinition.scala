@@ -16,6 +16,8 @@
  */
 package org.apache.camel.scala.dsl;
 
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.ScheduledExecutorService
 import org.apache.camel.model.ThrottleDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
@@ -24,4 +26,18 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
  */
 case class SThrottleDefinition(override val target: ThrottleDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ThrottleDefinition] {
  
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SThrottleDefinition]
+  
+  def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
+  
+  def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
+  
+  def timePeriodMillis(timePeriodMillis: Long) = wrap(target.timePeriodMillis(timePeriodMillis))
+  
+  def maximumRequestsPerPeriod(maximumRequestsPerPeriod: Long) = wrap(target.maximumRequestsPerPeriod(maximumRequestsPerPeriod))
+  
+  def callerRunsWhenRejected(callerRunsWhenRejected: Boolean) = wrap(target.callerRunsWhenRejected(callerRunsWhenRejected))
+  
+  def asyncDelayed = wrap(target.asyncDelayed)
+  
 }

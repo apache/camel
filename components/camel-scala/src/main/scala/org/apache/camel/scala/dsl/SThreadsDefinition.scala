@@ -16,8 +16,13 @@
  */
 package org.apache.camel.scala.dsl
 
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 import builder.RouteBuilder
+import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.model.ThreadsDefinition
+
 
 /**
  * Scala enrichment for Camel's ThreadsDefinition
@@ -25,8 +30,26 @@ import org.apache.camel.model.ThreadsDefinition
 case class SThreadsDefinition(override val target: ThreadsDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ThreadsDefinition] {
 
   def poolSize(size: Int) = wrap(target.poolSize(size))
+  
+  def maxPoolSize(size: Int) = wrap(target.maxPoolSize(size))
+  
+  def keepAliveTime(size: Long) = wrap(target.keepAliveTime(size))
+  
+  def timeUnit(timeUnit: TimeUnit) = wrap(target.timeUnit(timeUnit))
+  
+  def maxQueueSize(size: Int) = wrap(target.maxQueueSize(size))
+  
+  def rejectedPolicy(policy: ThreadPoolRejectedPolicy) = wrap(target.rejectedPolicy(policy))
+  
+  def threadName(name: String) = wrap(target.threadName(name))
+  
+  def callerRunsWhenRejected(callerRunsWhenRejected: Boolean) = wrap(target.callerRunsWhenRejected(callerRunsWhenRejected))
 
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SThreadsDefinition]
+  
+  def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
+  
+  def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
 
 }
   
