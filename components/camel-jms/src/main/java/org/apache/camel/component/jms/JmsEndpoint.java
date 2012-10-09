@@ -267,8 +267,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public boolean isMultipleConsumersSupported() {
-        // only allow multiple consumers for pub sub domain (e.g. topics)
-        return isPubSubDomain();
+        // JMS allows multiple consumers on both queues and topics
+        return true;
     }
 
     // Properties
