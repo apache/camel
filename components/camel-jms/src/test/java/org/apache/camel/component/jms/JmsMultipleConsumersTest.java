@@ -19,10 +19,8 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -33,7 +31,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsMultipleConsumersTest extends CamelTestSupport {
 
     @Test
-    public void testMultipleConsumersAllowed() throws Exception {
+    public void testMultipleConsumersTopic() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -59,23 +57,26 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMultipleConsumersNotAllowed() throws Exception {
+    public void testMultipleConsumersQueue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jms:queue:foo").to("mock:foo");
+                from("jms:queue:foo").to("mock:result");
 
                 from("direct:start").to("mock:result");
 
-                from("jms:queue:foo").to("mock:bar");
+                from("jms:queue:foo").to("mock:result");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown an exception");
-        } catch (FailedToStartRouteException e) {
-            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: Endpoint[jms://queue:foo]"));
-        }
+
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBody("jms:queue:foo", "Hello World");
+        template.sendBody("jms:queue:foo", "Bye World");
+
+        assertMockEndpointsSatisfied();
     }
 
     protected CamelContext createCamelContext() throws Exception {
