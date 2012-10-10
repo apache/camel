@@ -30,7 +30,7 @@ import org.apache.camel.Producer;
  */
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
-    private static final AtomicInteger counter = new AtomicInteger();
+    private static final AtomicInteger COUNTER = new AtomicInteger();
 
     public void testCacheProducerAcquireAndRelease() throws Exception {
         ProducerCache cache = new ProducerCache(this, context);
@@ -64,15 +64,15 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals("Size should be 5", 5, cache.size());
 
         // should have stopped the 3 evicted
-        assertEquals(3, counter.get());
+        assertEquals(3, COUNTER.get());
 
         cache.stop();
 
         // should have stopped all 8
-        assertEquals(8, counter.get());
+        assertEquals(8, COUNTER.get());
     }
 
-    private class MyEndpoint extends DefaultEndpoint {
+    private final class MyEndpoint extends DefaultEndpoint {
 
         private int number;
 
@@ -114,7 +114,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         @Override
         protected void doStop() throws Exception {
-            counter.incrementAndGet();
+            COUNTER.incrementAndGet();
         }
     }
 

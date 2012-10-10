@@ -39,12 +39,12 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
             String camelRedeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
             int redeliveries = camelRedeliveryCounter == null ? 0 : Integer.valueOf(camelRedeliveryCounter);
             switch (redeliveries) {
-                case 0:
-                    throw new FirstException();
-                case 1:
-                    throw new SecondException();
-                default:
-                    break; // no-op
+            case 0:
+                throw new FirstException();
+            case 1:
+                throw new SecondException();
+            default:
+                break; // no-op
             }
         }
     }

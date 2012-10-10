@@ -51,7 +51,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
     protected MockEndpoint mockRejectEndpoint;
 
     @EndpointInject(uri = "mock:mock_output")
-    protected MockEndpoint mock_output;
+    protected MockEndpoint mockOutput;
 
     @Test
     public void testErrorHandlingJaxb() throws Exception {
@@ -59,7 +59,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
         String errorExample = "myerror\u0010";
 
         mockRejectEndpoint.expectedMessageCount(1);
-        mock_output.expectedMessageCount(4);
+        mockOutput.expectedMessageCount(4);
 
         templateError.sendBody(correctExample);
         templateError.sendBody(errorExample);
@@ -68,7 +68,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
         templateError.sendBody(correctExample);
 
         mockRejectEndpoint.assertIsSatisfied();
-        mock_output.assertIsSatisfied();
+        mockOutput.assertIsSatisfied();
     }
 
     @Test
@@ -77,7 +77,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
         String errorExample = "myerror\u0010";
 
         mockRejectEndpoint.expectedMessageCount(1);
-        mock_output.expectedMessageCount(4);
+        mockOutput.expectedMessageCount(4);
 
         templateError2.sendBody(correctExample);
         templateError2.sendBody(errorExample);
@@ -86,7 +86,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
         templateError2.sendBody(correctExample);
 
         mockRejectEndpoint.assertIsSatisfied();
-        mock_output.assertIsSatisfied();
+        mockOutput.assertIsSatisfied();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
                         }
                     })
                     .split().xpath("//twits/twit").streaming()
-                    .to(mock_output);
+                    .to(mockOutput);
 
 
                 from("direct:error2")
@@ -147,7 +147,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
                         }
                     })
                     .split().xpath("//twits/twit").streaming()
-                    .to(mock_output);
+                    .to(mockOutput);
             }
         };
     }

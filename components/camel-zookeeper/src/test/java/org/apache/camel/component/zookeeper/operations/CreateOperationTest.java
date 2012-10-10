@@ -39,7 +39,7 @@ public class CreateOperationTest extends ZooKeeperTestSupport {
 
     @Test
     public void createBasic() throws Exception {
-         CreateOperation create = new CreateOperation(connection, "/one");
+        CreateOperation create = new CreateOperation(connection, "/one");
 
         OperationResult<String> result = create.get();
         assertEquals("/one", result.getResult());
