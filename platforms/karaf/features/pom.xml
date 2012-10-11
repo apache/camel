@@ -62,7 +62,7 @@
       <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
       <felix-configadmin-version>1.2.4</felix-configadmin-version>
       <felix-framework-version>2.0.5</felix-framework-version>
-      <fop-bundle-version>1.0_2</fop-bundle-version>
+      <fop-bundle-version>1.0_3</fop-bundle-version>
       <freemarker-bundle-version>2.3.19_1</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
@@ -121,7 +121,7 @@
       <stringtemplate-bundle-version>3.2_5</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
       <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
-      <velocity-bundle-version>1.7_4</velocity-bundle-version>
+      <velocity-bundle-version>1.7_5</velocity-bundle-version>
       <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_5</xerces-bundle-version>
       <xmlbeans-bundle-version>2.5.0_2</xmlbeans-bundle-version>
