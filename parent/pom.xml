@@ -103,8 +103,8 @@
     <dozer-version>5.3.2</dozer-version>
     <easymock-version>3.1</easymock-version>
     <ehcache-bundle-version>2.6.0_1</ehcache-bundle-version>
-    <elasticsearch-bundle-version>0.19.8_1</elasticsearch-bundle-version>
-    <elasticsearch-version>0.19.8</elasticsearch-version>
+    <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
+    <elasticsearch-version>0.19.10</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <exec-maven-plugin-version>1.1.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
@@ -113,7 +113,7 @@
     <felix-configadmin-version>1.2.4</felix-configadmin-version>
     <felix-framework-version>2.0.5</felix-framework-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
-    <fop-bundle-version>1.0_2</fop-bundle-version>
+    <fop-bundle-version>1.0_3</fop-bundle-version>
     <fop-version>1.0</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
     <freemarker-bundle-version>2.3.19_1</freemarker-bundle-version>
@@ -274,8 +274,8 @@
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
-    <saxon-bundle-version>9.4.0.1_2</saxon-bundle-version>
-    <saxon-version>9.4.0.1</saxon-version>
+    <saxon-bundle-version>9.4.0.4_1</saxon-bundle-version>
+    <saxon-version>9.4.0.4</saxon-version>
     <scala-bundle-version>2.9.2_1</scala-bundle-version>
     <scala-version>2.9.2</scala-version>
     <scriptengines-version>1.1</scriptengines-version>
@@ -313,7 +313,7 @@
     <testng-version>6.7</testng-version>
     <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
     <twitter4j-version>2.2.5</twitter4j-version>
-    <velocity-bundle-version>1.7_4</velocity-bundle-version>
+    <velocity-bundle-version>1.7_5</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
     <vysper-version>0.7</vysper-version>
