@@ -92,7 +92,6 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         
         record1 = testCollection.findOne("testSave1");
         assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record1.get("scientist"));
-        record1.put("scientist", "Darwin");
 
     }
     
@@ -108,6 +107,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
             } else {
                 body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
             }
+            f.close();
             template.requestBody("direct:insert", body);
         }
         assertEquals(100L, testCollection.count());
@@ -139,6 +139,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
             } else {
                 body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
             }
+            f.close();
             template.requestBody("direct:insert", body);
         }
         assertEquals(100L, testCollection.count());
@@ -172,6 +173,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
             String body = null;
             Formatter f = new Formatter();
             body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
+            f.close();
             template.requestBody("direct:insert", body);
         }
         

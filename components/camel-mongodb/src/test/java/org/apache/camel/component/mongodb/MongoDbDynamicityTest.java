@@ -33,6 +33,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
     public void testInsertDynamicityDisabled() {
         assertEquals(0, testCollection.count());
         mongo.getDB("otherDB").dropDatabase();
+        db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
         String body = "{\"_id\": \"testInsertDynamicityDisabled\", \"a\" : \"1\"}";
@@ -60,6 +61,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
     public void testInsertDynamicityEnabledDBOnly() {
         assertEquals(0, testCollection.count());
         mongo.getDB("otherDB").dropDatabase();
+        db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBOnly\", \"a\" : \"1\"}";
@@ -85,6 +87,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
     public void testInsertDynamicityEnabledCollectionOnly() {
         assertEquals(0, testCollection.count());
         mongo.getDB("otherDB").dropDatabase();
+        db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnly\", \"a\" : \"1\"}";
@@ -109,6 +112,7 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
     public void testInsertDynamicityEnabledDBAndCollection() {
         assertEquals(0, testCollection.count());
         mongo.getDB("otherDB").dropDatabase();
+        db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : \"1\"}";
@@ -135,9 +139,9 @@ public class MongoDbDynamicityTest extends AbstractMongoDbTest {
         return new RouteBuilder() {
             public void configure() {
                                 
-                from("direct:noDynamicity").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
-                from("direct:noDynamicityExplicit").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=false");
-                from("direct:dynamicityEnabled").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=true");
+                from("direct:noDynamicity").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE");
+                from("direct:noDynamicityExplicit").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=false&writeConcern=SAFE");
+                from("direct:dynamicityEnabled").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=true&writeConcern=SAFE");
 
             }
         };

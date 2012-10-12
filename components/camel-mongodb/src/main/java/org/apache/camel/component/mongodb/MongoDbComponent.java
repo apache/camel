@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.mongodb.Mongo;
 
@@ -28,6 +31,10 @@ import org.apache.camel.util.CamelContextHelper;
  * Represents the component that manages {@link MongoDbEndpoint}.
  */
 public class MongoDbComponent extends DefaultComponent {
+    
+    public static final Set<MongoDbOperation> WRITE_OPERATIONS = 
+            new HashSet<MongoDbOperation>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, 
+                    MongoDbOperation.update, MongoDbOperation.remove));
 
     /**
      * Should access a singleton of type Mongo
