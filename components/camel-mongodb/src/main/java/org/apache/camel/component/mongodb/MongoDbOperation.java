@@ -22,8 +22,8 @@ public enum MongoDbOperation {
     findById,
     findOneByQuery,
     findAll,
-    // group, // future
-    // mapReduce, // future
+    // group,       // future operation
+    // mapReduce,   // future operation
     
     // create/update operations
     insert,

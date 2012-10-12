@@ -55,6 +55,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private WriteConcern writeConcernRef;
     private ReadPreference readPreference;
     private boolean dynamicity; // = false
+    private boolean writeResultAsHeader; // = false
     // tailable cursor consumer by default
     private MongoDbConsumerType consumerType;
     private long cursorRegenerationDelay = 1000L;
@@ -498,6 +499,19 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public String getPersistentId() {
         return persistentId;
+    }
+
+    public boolean isWriteResultAsHeader() {
+        return writeResultAsHeader;
+    }
+
+    /**
+     * In write operations, it determines whether instead of returning {@link WriteResult} as the body of the OUT
+     * message, we transfer the IN message to the OUT and attach the WriteResult as a header.
+     * @param writeResultAsHeader flag to indicate if this option is enabled
+     */
+    public void setWriteResultAsHeader(boolean writeResultAsHeader) {
+        this.writeResultAsHeader = writeResultAsHeader;
     }
 
 }
