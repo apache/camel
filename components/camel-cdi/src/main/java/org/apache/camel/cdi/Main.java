@@ -16,36 +16,34 @@
  */
 package org.apache.camel.cdi;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.main.MainSupport;
+import org.apache.camel.view.ModelFileGenerator;
+import org.apache.deltaspike.core.api.provider.BeanProvider;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.main.MainSupport;
-import org.apache.camel.view.ModelFileGenerator;
-import org.apache.deltaspike.cdise.api.CdiContainer;
-import org.apache.deltaspike.cdise.api.CdiContainerLoader;
-import org.apache.deltaspike.core.api.provider.BeanProvider;
 
 /**
  * Allows Camel and CDI applications to be booted up on the command line as a Java Application
  */
-public class Main extends MainSupport {
+public abstract class Main extends MainSupport { // abstract to prevent cdi management
     private static Main instance;
     private JAXBContext jaxbContext;
-    private CdiContainer cdiContainer;
+    private Object cdiContainer; // we don't want to need cdictrl API in OSGi
 
     public Main() {
         // add options...
     }
 
     public static void main(String... args) throws Exception {
-        Main main = new Main();
+        Main main = new Main() {};
         instance = main;
         main.enableHangupSupport();
         main.run(args);
@@ -123,16 +121,17 @@ public class Main extends MainSupport {
 
     @Override
     protected void doStart() throws Exception {
-        cdiContainer = CdiContainerLoader.getCdiContainer();
-        cdiContainer.boot();
-        cdiContainer.getContextControl().startContexts();
-
+        org.apache.deltaspike.cdise.api.CdiContainer container = org.apache.deltaspike.cdise.api.CdiContainerLoader.getCdiContainer();
+        container.boot();
+        container.getContextControl().startContexts();
+        cdiContainer = container;
         super.doStart();
     }
+
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        cdiContainer.shutdown();
+        ((org.apache.deltaspike.cdise.api.CdiContainer) cdiContainer).shutdown();
     }
 }
