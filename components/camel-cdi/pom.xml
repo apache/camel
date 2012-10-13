@@ -41,9 +41,6 @@
             org.apache.camel.cdi.internal;${camel.osgi.version},
             org.apache.camel.cdi.component.*;${camel.osgi.version}
         </camel.osgi.export.pkg>
-        <camel.osgi.private.pkg>
-            org.apache.camel.cdi.internal
-        </camel.osgi.private.pkg>
     </properties>
 
     <dependencies>
