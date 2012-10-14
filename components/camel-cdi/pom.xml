@@ -33,6 +33,7 @@
     <properties>
         <camel.osgi.import>
             !org.apache.camel.cdi.*,
+            !org.apache.deltaspike.cdise.api.*,
             org.apache.deltaspike.core.api.*;resolution:=optional,
             *
         </camel.osgi.import>
