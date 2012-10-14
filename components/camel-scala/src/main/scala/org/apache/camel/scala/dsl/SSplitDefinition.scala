@@ -16,9 +16,37 @@
  */
 package org.apache.camel.scala.dsl;
 
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.ScheduledExecutorService
+import org.apache.camel.Processor
 import org.apache.camel.model.SplitDefinition
+import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 case class SSplitDefinition(override val target: SplitDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[SplitDefinition] {
+  
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SSplitDefinition]
+  
+  def aggregationStrategy(aggregationStrategy: AggregationStrategy) = wrap(target.aggregationStrategy(aggregationStrategy))
+  
+  def aggregationStrategyRef(ref: String) = wrap(target.aggregationStrategyRef(ref))
+  
+  def parallelProcessing = wrap(target.parallelProcessing)
+  
+  def streaming = wrap(target.streaming)
+  
+  def stopOnException = wrap(target.stopOnException)
+  
+  def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
+  
+  def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
+  
+  def onPrepare(onPrepare :Processor) = wrap(target.onPrepare(onPrepare))
+  
+  def onPrepareRef(ref :String) = wrap(target.onPrepareRef(ref))
+  
+  def timeout(timeout :Long) = wrap(target.timeout(timeout))
+  
+  def shareUnitOfWork = wrap(target.shareUnitOfWork)
   
 }

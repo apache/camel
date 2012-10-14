@@ -17,6 +17,7 @@
 package org.apache.camel
 package scala.dsl
 
+import java.util.concurrent.ExecutorService
 import model.{WhenDefinition,OnCompletionDefinition}
 import org.apache.camel.scala.dsl.builder.RouteBuilder;
 
@@ -30,6 +31,11 @@ case class SOnCompletionDefinition(override val target : OnCompletionDefinition)
 
   def onFailureOnly = wrap(target.onFailureOnly)
   def onCompleteOnly = wrap(target.onCompleteOnly)
+  
+  def useOriginalBody = wrap(target.useOriginalBody())
+  
+  def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
+  def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
 
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SOnCompletionDefinition]
 

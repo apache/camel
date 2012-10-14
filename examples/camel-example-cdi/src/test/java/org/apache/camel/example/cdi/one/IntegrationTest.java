@@ -16,36 +16,29 @@
  */
 package org.apache.camel.example.cdi.one;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Mock;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.cdi.MyRoutes;
-import org.apache.camel.example.cdi.one.DeploymentFactory;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class IntegrationTest extends DeploymentFactory {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
-
     static boolean routeConfigured;
+    private static final transient Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
 
     @Inject
     MyRoutes config;
@@ -58,10 +51,8 @@ public class IntegrationTest extends DeploymentFactory {
     @ApplicationScoped
     @ContextName
     public RouteBuilder createRoute() {
-        return new RouteBuilder()
-        {
-            public void configure()
-            {
+        return new RouteBuilder() {
+            public void configure() {
                 routeConfigured = true;
                 Endpoint resultEndpoint = config.getResultEndpoint();
                 LOG.info("consuming from output: " + resultEndpoint + " to endpoint: " + result);

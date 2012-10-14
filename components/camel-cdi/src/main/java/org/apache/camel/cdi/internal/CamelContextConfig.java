@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
@@ -36,12 +37,20 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class CamelContextConfig {
     private final List<Bean<?>> routeBuilderBeans = new ArrayList<Bean<?>>();
+    private final List<ProcessAnnotatedType<?>> patRouteBuilders = new ArrayList<ProcessAnnotatedType<?>>();
 
     public void addRouteBuilderBean(Bean<?> bean) {
         routeBuilderBeans.add(bean);
     }
 
     public void configure(CdiCamelContext camelContext, BeanManager beanManager) {
+        for (ProcessAnnotatedType<?> pat : patRouteBuilders) {
+            final Set<Bean<?>> beans = beanManager.getBeans(pat.getAnnotatedType().getJavaClass());
+            final Bean<?> bean = beanManager.resolve(beans);
+            routeBuilderBeans.add(bean);
+        }
+        patRouteBuilders.clear();
+
         for (Bean<?> bean : routeBuilderBeans) {
             CreationalContext<?> createContext = beanManager.createCreationalContext(bean);
             Class<?> beanClass = bean.getBeanClass();
@@ -73,5 +82,9 @@ public class CamelContextConfig {
                         e);
             }
         }
+    }
+
+    public void addRouteBuilderBean(final ProcessAnnotatedType<?> process) {
+        patRouteBuilders.add(process);
     }
 }

@@ -31,9 +31,6 @@ public class HttpsRouteWithSslConnectorPropertiesTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 // START SNIPPET: e1
                 // keystore path
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");

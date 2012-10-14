@@ -25,10 +25,8 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
 
-/**
- * @version
- */
 public abstract class BaseJettyTest extends CamelTestSupport {
+
     private static volatile int port;
 
     @BeforeClass
@@ -56,11 +54,14 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     protected int getNextPort() {
-        port = AvailablePortFinder.getNextAvailable(port + 1);
-        return port;
+        return AvailablePortFinder.getNextAvailable(port + 1);
     }
 
-    protected int getPort() {
+    protected int getNextPort(int startWithPort) {
+        return AvailablePortFinder.getNextAvailable(startWithPort);
+    }
+
+    protected static int getPort() {
         return port;
     }
 

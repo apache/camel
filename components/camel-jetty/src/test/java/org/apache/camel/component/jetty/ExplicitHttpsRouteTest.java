@@ -45,9 +45,6 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
                 Map<Integer, SslSelectChannelConnector> connectors = new HashMap<Integer, SslSelectChannelConnector>();

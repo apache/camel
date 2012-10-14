@@ -35,7 +35,8 @@ public final class MongoDbConstants {
     public static final String WRITECONCERN = "CamelMongoDbWriteConcern";
     public static final String LIMIT = "CamelMongoDbLimit";
     public static final String FROM_TAILABLE = "CamelMongoDbTailable";
-    
+    public static final String WRITERESULT = "CamelMongoWriteResult";
+
     private MongoDbConstants() { }
     
 }

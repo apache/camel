@@ -81,7 +81,7 @@ public final class SmppUtils {
      * Java format is (yyMMddHHmmSS).
      *
      * @param date in <tt>String</tt> format.
-     * @return
+     * @return the date
      * @throws NumberFormatException if there is contains non number on
      *         <code>date</code> parameter.
      * @throws IndexOutOfBoundsException if the date length in <tt>String</tt>

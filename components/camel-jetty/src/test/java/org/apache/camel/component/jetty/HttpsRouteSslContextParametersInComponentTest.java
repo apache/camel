@@ -31,9 +31,6 @@ public class HttpsRouteSslContextParametersInComponentTest extends HttpsRouteTes
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 // create jetty component
                 JettyHttpComponent jetty = new JettyHttpComponent();
                 

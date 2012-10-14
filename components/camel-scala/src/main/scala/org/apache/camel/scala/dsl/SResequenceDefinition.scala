@@ -18,6 +18,8 @@ package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.ResequenceDefinition
 import org.apache.camel.model.config.BatchResequencerConfig
+import org.apache.camel.model.config.StreamResequencerConfig
+import org.apache.camel.processor.resequencer.ExpressionResultComparator
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 case class SResequenceDefinition(override val target: ResequenceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ResequenceDefinition] {
@@ -28,5 +30,31 @@ case class SResequenceDefinition(override val target: ResequenceDefinition)(impl
     target.batch(config)
     this
   }
+  
+  def stream = wrap(target.stream)
+  
+  def stream(config: StreamResequencerConfig) = wrap(target.stream(config))
+  
+  def batch = wrap(target.batch)
+  
+  def batch(config: BatchResequencerConfig) = wrap(target.batch(config))
+  
+  def timeout(timeout: Long) = wrap(target.timeout(timeout))
+  
+  def rejectOld = wrap(target.rejectOld)
+  
+  def size(size: Int) = wrap(target.size(size))
+  
+  def capacity(capacity: Int) = wrap(target.capacity(capacity))
+  
+  def allowDuplicates = wrap(target.allowDuplicates)
+  
+  def reverse = wrap(target.reverse)
+  
+  def ignoreInvalidExchanges = wrap(target.ignoreInvalidExchanges)
+  
+  def comparator(comparator: ExpressionResultComparator) = wrap(target.comparator(comparator))
+  
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SResequenceDefinition]
 
 }

@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,11 +115,11 @@ public class MongoDbProducer extends DefaultProducer {
             break;
 
         case getDbStats:
-            doGetStats(exchange, 'D');
+            doGetStats(exchange, MongoDbOperation.getDbStats);
             break;
 
         case getColStats:
-            doGetStats(exchange, 'C');
+            doGetStats(exchange, MongoDbOperation.getColStats);
             break;
 
         default:
@@ -128,17 +129,20 @@ public class MongoDbProducer extends DefaultProducer {
 
     // ----------- MongoDB operations ----------------
     
-    protected void doGetStats(Exchange exchange, char c) {
+    protected void doGetStats(Exchange exchange, MongoDbOperation operation) throws Exception {
         DBObject result = null;
         
-        if (c == 'C') {
+        if (operation == MongoDbOperation.getColStats) {
             result = calculateCollection(exchange).getStats();
-        } else if (c == 'D') {
+        } else if (operation == MongoDbOperation.getDbStats) {
             // if it's a DB, also take into account the dynamicity option and the DB that is used
             result = calculateCollection(exchange).getDB().getStats();
+        } else {
+            throw new CamelMongoDbException("Internal error: wrong operation for getStats variant" + operation);
         }
 
-        exchange.getOut().setBody(result);
+        Message responseMessage = prepareResponseMessage(exchange, operation);
+        responseMessage.setBody(result);
     }
 
     protected void doRemove(Exchange exchange) throws Exception {
@@ -147,13 +151,12 @@ public class MongoDbProducer extends DefaultProducer {
         
         WriteConcern wc = extractWriteConcern(exchange);
         WriteResult result = wc == null ? dbCol.remove(removeObj) : dbCol.remove(removeObj, wc);
-        processWriteResult(result, exchange);
         
-        Message out = exchange.getOut();
-        // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
-        // obtain the cached CommandResult
-        out.setBody(result);
-        out.setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getN());
+        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.remove);
+        // we always return the WriteResult, because whether the getLastError was called or not, 
+        // the user will have the means to call it or obtain the cached CommandResult
+        processAndTransferWriteResult(result, exchange);
+        resultMessage.setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getN());
     }
 
     @SuppressWarnings("unchecked")
@@ -185,12 +188,11 @@ public class MongoDbProducer extends DefaultProducer {
                     : dbCol.update(updateCriteria, objNew, calculateBooleanValue(upsert), calculateBooleanValue(multi), wc);
         }
         
-        processWriteResult(result, exchange);
-        Message out = exchange.getOut();
+        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.update);
         // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
         // obtain the cached CommandResult
-        out.setBody(result);
-        out.setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getN());
+        processAndTransferWriteResult(result, exchange);
+        resultMessage.setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getN());
     }
     
     protected void doSave(Exchange exchange) throws Exception {
@@ -199,10 +201,11 @@ public class MongoDbProducer extends DefaultProducer {
         
         WriteConcern wc = extractWriteConcern(exchange);
         WriteResult result = wc == null ? dbCol.save(saveObj) : dbCol.save(saveObj, wc);
-        processWriteResult(result, exchange);
+        
+        prepareResponseMessage(exchange, MongoDbOperation.save);
         // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
         // obtain the cached CommandResult
-        exchange.getOut().setBody(result);
+        processAndTransferWriteResult(result, exchange);
     }
     
     protected void doFindById(Exchange exchange) throws Exception {
@@ -217,10 +220,9 @@ public class MongoDbProducer extends DefaultProducer {
             ret = dbCol.findOne(o, fieldFilter);
         }
     
-        Message out = exchange.getOut();
-        out.setBody(ret);
-        out.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
-        
+        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.save);
+        resultMessage.setBody(ret);
+        resultMessage.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -248,11 +250,11 @@ public class MongoDbProducer extends DefaultProducer {
             result = wc == null ? dbCol.insert((List<DBObject>) insert) : dbCol.insert((List<DBObject>) insert, wc);
         }
         
-        processWriteResult(result, exchange);
-        
+        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.insert);
         // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
         // obtain the cached CommandResult
-        exchange.getOut().setBody(result);
+        processAndTransferWriteResult(result, exchange);
+        resultMessage.setBody(result);
     }
 
     protected void doFindAll(Exchange exchange) throws Exception {
@@ -296,10 +298,10 @@ public class MongoDbProducer extends DefaultProducer {
                 ret.limit(limit.intValue());
             }
             
-            Message out = exchange.getOut();
-            out.setBody(ret.toArray());
-            out.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret.count());
-            out.setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ret.size());
+            Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.findAll);
+            resultMessage.setBody(ret.toArray());
+            resultMessage.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret.count());
+            resultMessage.setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ret.size());
             
         } catch (Exception e) {
             // rethrow the exception
@@ -325,15 +327,16 @@ public class MongoDbProducer extends DefaultProducer {
             ret = dbCol.findOne(o, fieldFilter);
         }
         
-        Message out = exchange.getOut();
-        out.setBody(ret);
-        out.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
+        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.findOneByQuery);
+        resultMessage.setBody(ret);
+        resultMessage.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
     }
 
     protected void doCount(Exchange exchange) throws Exception {
         DBCollection dbCol = calculateCollection(exchange);
         Long answer = Long.valueOf(dbCol.count());
-        exchange.getOut().setBody(answer);
+        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.count);
+        resultMessage.setBody(answer);
     }
     
     // --------- Convenience methods -----------------------
@@ -368,7 +371,7 @@ public class MongoDbProducer extends DefaultProducer {
         return b == null ? false : b.booleanValue();      
     }
     
-    private void processWriteResult(WriteResult result, Exchange exchange) {
+    private void processAndTransferWriteResult(WriteResult result, Exchange exchange) {
         // if invokeGetLastError is set, or a WriteConcern is set which implicitly calls getLastError, then we have the chance to populate 
         // the MONGODB_LAST_ERROR header, as well as setting an exception on the Exchange if one occurred at the MongoDB server
         if (endpoint.isInvokeGetLastError() || (endpoint.getWriteConcern() != null ? endpoint.getWriteConcern().callGetLastError() : false)) {
@@ -377,6 +380,13 @@ public class MongoDbProducer extends DefaultProducer {
             if (!cr.ok()) {
                 exchange.setException(MongoDbComponent.wrapInCamelMongoDbException(cr.getException()));
             }
+        }
+        
+        // determine where to set the WriteResult: as the OUT body or as an IN message header
+        if (endpoint.isWriteResultAsHeader()) {
+            exchange.getOut().setHeader(MongoDbConstants.WRITERESULT, result);
+        } else {
+            exchange.getOut().setBody(result);
         }
     }
     
@@ -413,6 +423,19 @@ public class MongoDbProducer extends DefaultProducer {
             }
         }
         return dbObjectList;
+    }
+    
+    private Message prepareResponseMessage(Exchange exchange, MongoDbOperation operation) {
+        Message answer = exchange.getOut();
+        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
+        if (isWriteOperation(operation) && endpoint.isWriteResultAsHeader()) {
+            answer.setBody(exchange.getIn().getBody());
+        }
+        return answer;
+    }
+    
+    private boolean isWriteOperation(MongoDbOperation operation) {
+        return MongoDbComponent.WRITE_OPERATIONS.contains(operation);
     }
     
 }

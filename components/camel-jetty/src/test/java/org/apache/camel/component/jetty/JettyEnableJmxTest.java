@@ -112,7 +112,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                serverUri0 = "http://localhost:" + getPort() + "/myservice?enableJmx=true";
+                serverUri0 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=true";
                 serverUri1 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=true";
                 serverUri2 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
                 serverUri3 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";

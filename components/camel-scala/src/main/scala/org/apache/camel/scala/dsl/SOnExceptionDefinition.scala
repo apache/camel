@@ -17,6 +17,7 @@
 package org.apache.camel
 package scala.dsl
 
+import org.apache.camel.LoggingLevel
 import org.apache.camel.model.OnExceptionDefinition
 import org.apache.camel.scala.ScalaProcessor
 import org.apache.camel.scala.dsl.builder.RouteBuilder
@@ -40,6 +41,42 @@ case class SOnExceptionDefinition[E <: Throwable](override val target: OnExcepti
   def onRedelivery(processor: Exchange => Unit) = wrap(target.onRedelivery(new ScalaProcessor(processor)))
 
   def onWhen(when: Exchange => Any) = wrap(target.onWhen(predicateBuilder(when)))
+  
+  def backOffMultiplier(backOffMultiplier: Double) = wrap(target.backOffMultiplier(backOffMultiplier))
+  
+  def collisionAvoidanceFactor(collisionAvoidanceFactor: Double) = wrap(target.collisionAvoidanceFactor(collisionAvoidanceFactor))
+  
+  def collisionAvoidancePercent(collisionAvoidancePercent: Double) = wrap(target.collisionAvoidancePercent(collisionAvoidancePercent))
+  
+  def redeliveryDelay(redeliveryDelay: Long) = wrap(target.redeliveryDelay(redeliveryDelay))
+  
+  def asyncDelayedRedelivery = wrap(target.asyncDelayedRedelivery)
+  
+  def retriesExhaustedLogLevel(logLevel: LoggingLevel) = wrap(target.retriesExhaustedLogLevel(logLevel))
+  
+  def retryAttemptedLogLevel(logLevel: LoggingLevel) = wrap(target.retryAttemptedLogLevel(logLevel))
+  
+  def logHandled(logHandled: Boolean) = wrap(target.logHandled(logHandled))
+  
+  def logContinued(logContinued: Boolean) = wrap(target.logContinued(logContinued))
+  
+  def logRetryAttempted(logRetryAttempted: Boolean) = wrap(target.logRetryAttempted(logRetryAttempted))
+  
+  def logExhausted(logExhausted: Boolean) = wrap(target.logExhausted(logExhausted))
+  
+  def useCollisionAvoidance = wrap(target.useCollisionAvoidance)
+  
+  def useExponentialBackOff = wrap(target.useExponentialBackOff)
+  
+  def maximumRedeliveryDelay(maximumRedeliveryDelay: Long) = wrap(target.maximumRedeliveryDelay(maximumRedeliveryDelay))
+  
+  def logStackTrace(log: Boolean) = wrap(target.logStackTrace(log))
+  
+  def logRetryStackTrace(log: Boolean) = wrap(target.logRetryStackTrace(log))
+  
+  def redeliveryPolicyRef(ref: String) = wrap(target.redeliveryPolicyRef(ref))
+  
+  def delayPattern(pattern: String) = wrap(target.delayPattern(pattern))
 
   def retryWhile(retryWhile: Exchange => Any) = wrap(target.retryWhile(predicateBuilder(retryWhile)))
 

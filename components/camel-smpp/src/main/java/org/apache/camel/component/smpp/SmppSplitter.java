@@ -142,16 +142,16 @@ public class SmppSplitter {
         int lengthOfData;
         byte refNum = getReferenceNumber();
         for (int i = 0; i < segmentNum; i++) {
-            LOG.debug("segment number = {}", i);
+            LOG.trace("segment number = {}", i);
             if (segmentNum - i == 1) {
                 lengthOfData = messageLength - i * segmentLength;
             } else {
                 lengthOfData = segmentLength;
             }
-            LOG.debug("Length of data = {}", lengthOfData);
+            LOG.trace("Length of data = {}", lengthOfData);
 
             segments[i] = new byte[UDHIE_HEADER_REAL_LENGTH + lengthOfData];
-            LOG.debug("segments[{}].length = {}", i, segments[i].length);
+            LOG.trace("segments[{}].length = {}", i, segments[i].length);
 
             segments[i][0] = UDHIE_HEADER_LENGTH; // doesn't include itself, is header length
             // SAR identifier
