@@ -62,6 +62,11 @@ public class NettyEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    @Override
+    public NettyComponent getComponent() {
+        return (NettyComponent) super.getComponent();
+    }
+
     public NettyConfiguration getConfiguration() {
         return configuration;
     }

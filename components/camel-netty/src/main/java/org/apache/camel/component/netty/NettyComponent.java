@@ -18,10 +18,14 @@ package org.apache.camel.component.netty;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.concurrent.CamelThreadFactory;
+import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
 
@@ -29,6 +33,7 @@ public class NettyComponent extends DefaultComponent {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
     private static volatile Timer timer;
     private NettyConfiguration configuration;
+    private OrderedMemoryAwareThreadPoolExecutor executorService;
 
     public NettyComponent() {
     }
@@ -69,18 +74,50 @@ public class NettyComponent extends DefaultComponent {
         return timer;
     }
 
+    public synchronized OrderedMemoryAwareThreadPoolExecutor getExecutorService() {
+        if (executorService == null) {
+            executorService = createExecutorService();
+        }
+        return executorService;
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (timer == null) {
             timer = new HashedWheelTimer();
         }
+
+        if (configuration == null) {
+            configuration = new NettyConfiguration();
+        }
+        if (configuration.isOrderedThreadPoolExecutor()) {
+            executorService = createExecutorService();
+        }
+
         super.doStart();
+    }
+
+    protected OrderedMemoryAwareThreadPoolExecutor createExecutorService() {
+        // use ordered thread pool, to ensure we process the events in order, and can send back
+        // replies in the expected order. eg this is required by TCP.
+        // and use a Camel thread factory so we have consistent thread namings
+        // we should use a shared thread pool as recommended by Netty
+        String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
+        ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
+        return new OrderedMemoryAwareThreadPoolExecutor(configuration.getMaximumPoolSize(),
+                0L, 0L, 30, TimeUnit.SECONDS, factory);
     }
 
     @Override
     protected void doStop() throws Exception {
         timer.stop();
         timer = null;
+
+        if (executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            executorService = null;
+        }
+
         super.doStop();
     }
 

@@ -17,19 +17,15 @@
 package org.apache.camel.component.netty;
 
 import java.util.List;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
-import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.execution.ExecutionHandler;
-import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,15 +70,11 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
         }
 
         if (consumer.getConfiguration().isOrderedThreadPoolExecutor()) {
+            // this must be added just before the ServerChannelHandler
             // use ordered thread pool, to ensure we process the events in order, and can send back
             // replies in the expected order. eg this is required by TCP.
             // and use a Camel thread factory so we have consistent thread namings
-            String pattern = consumer.getContext().getExecutorServiceManager().getThreadNamePattern();
-            ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
-            final ExecutionHandler executionHandler = new ExecutionHandler(
-                    new OrderedMemoryAwareThreadPoolExecutor(consumer.getConfiguration().getMaximumPoolSize(),
-                            0L, 0L, 30, TimeUnit.SECONDS, factory));
-            // this must be added just before the ServerChannelHandler
+            ExecutionHandler executionHandler = new ExecutionHandler(consumer.getEndpoint().getComponent().getExecutorService());
             addToPipeline("executionHandler", channelPipeline, executionHandler);
             LOG.debug("Using OrderedMemoryAwareThreadPoolExecutor with core pool size: {}", consumer.getConfiguration().getMaximumPoolSize());
         }
