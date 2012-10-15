@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -25,11 +26,11 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
 
-/**
- * @version
- */
 public abstract class BaseJettyTest extends CamelTestSupport {
+
     private static volatile int port;
+
+    private final AtomicInteger counter = new AtomicInteger(1);
 
     @BeforeClass
     public static void initPort() throws Exception {
@@ -56,8 +57,11 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     protected int getNextPort() {
-        port = AvailablePortFinder.getNextAvailable(port + 1);
-        return port;
+        return AvailablePortFinder.getNextAvailable(port + counter.getAndIncrement());
+    }
+
+    protected int getNextPort(int startWithPort) {
+        return AvailablePortFinder.getNextAvailable(startWithPort);
     }
 
     protected int getPort() {
