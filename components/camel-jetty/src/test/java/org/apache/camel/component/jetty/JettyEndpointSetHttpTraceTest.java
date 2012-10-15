@@ -26,11 +26,6 @@ public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
     private int portTraceOn = getNextPort();
     private int portTraceOff = getNextPort();
 
-    public JettyEndpointSetHttpTraceTest() {
-        portTraceOn = getNextPort();
-        portTraceOff = getNextPort();
-    }
-    
     @Test
     public void testTraceDisabled() throws Exception {        
         HttpClient httpclient = new HttpClient();
