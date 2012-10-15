@@ -21,13 +21,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.TraceMethod;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
 
-    private int portTraceOn = 8080;
-    private int portTraceOff = 8081;
+    private int portTraceOn = getNextPort();
+    private int portTraceOff = getNextPort();
 
     public JettyEndpointSetHttpTraceTest() {
         portTraceOn = getNextPort();
