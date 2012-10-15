@@ -29,7 +29,8 @@ import org.junit.BeforeClass;
 public abstract class BaseJettyTest extends CamelTestSupport {
 
     private static volatile int port;
-    private static final AtomicInteger counter = new AtomicInteger(1);
+
+    private final AtomicInteger counter = new AtomicInteger(1);
 
     @BeforeClass
     public static void initPort() throws Exception {
