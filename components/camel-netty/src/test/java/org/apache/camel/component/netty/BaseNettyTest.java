@@ -47,8 +47,8 @@ public class BaseNettyTest extends CamelTestSupport {
             // read port number from file
             String s = IOConverter.toString(file, null);
             port = Integer.parseInt(s);
-            // use next port
-            port++;
+            // use next free port
+            port = AvailablePortFinder.getNextAvailable(port + 1);
         }
 
     }
