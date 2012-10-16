@@ -25,12 +25,14 @@ import org.apache.camel.test.AvailablePortFinder;
  * and closed all the time. 
  */
 public final class CXFTestSupport {
+
     static final int PORT1 = AvailablePortFinder.getNextAvailable();  
     static final int PORT2 = AvailablePortFinder.getNextAvailable();  
     static final int PORT3 = AvailablePortFinder.getNextAvailable();  
     static final int PORT4 = AvailablePortFinder.getNextAvailable();  
     static final int PORT5 = AvailablePortFinder.getNextAvailable();  
     static final int PORT6 = AvailablePortFinder.getNextAvailable();
+
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
@@ -55,20 +57,24 @@ public final class CXFTestSupport {
     public static int getPort1() {
         return PORT1;
     }
+
     public static int getPort2() {
         return PORT2;
     }
+
     public static int getPort3() {
         return PORT3;
     }
+
     public static int getPort4() {
         return PORT4;
     }
+
     public static int getPort5() {
         return PORT5;
     }
+
     public static int getPort6() {
         return PORT6;
     }
-
 }
