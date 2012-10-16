@@ -26,11 +26,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.commons.pool.ObjectPool;
+import org.apache.commons.pool.PoolableObjectFactory;
+import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -47,7 +49,7 @@ import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAware {
+public class NettyProducer extends DefaultAsyncProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
     private static final ChannelGroup ALL_CHANNELS = new DefaultChannelGroup("NettyProducer");
     private CamelContext context;
@@ -59,8 +61,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     private ExecutorService bossExecutor;
     private ExecutorService workerExecutor;
     private final ChannelLocal<NettyCamelState> state = new ChannelLocal<NettyCamelState>();
-    private ChannelFuture channelFuture;
-    private Channel channel;
+    private ObjectPool<Channel> pool;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
@@ -76,9 +77,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
     @Override
     public boolean isSingleton() {
-        // the producer should not be singleton otherwise cannot use concurrent producers and safely
-        // use request/reply with correct correlation
-        return false;
+        return true;
     }
 
     public CamelContext getContext() {
@@ -92,6 +91,21 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
+        GenericObjectPool.Config config = new GenericObjectPool.Config();
+        config.maxActive = configuration.getProducerPoolMaxActive();
+        config.minIdle = configuration.getProducerPoolMinIdle();
+        config.maxIdle = configuration.getProducerPoolMaxIdle();
+        // we should test on borrow to ensure the channel is still valid
+        config.testOnBorrow = true;
+        // only evict channels which are no longer valid
+        config.testWhileIdle = true;
+        // run eviction every 30th second
+        config.timeBetweenEvictionRunsMillis = 30 * 1000L;
+        config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
+        config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
+        pool = new GenericObjectPool<Channel>(new NettyProducerPoolableObjectFactory(), config);
 
         // setup pipeline factory
         ClientPipelineFactory factory = configuration.getClientPipelineFactory();
@@ -136,10 +150,15 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             workerExecutor = null;
         }
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+        }
+        pool.close();
+
         super.doStop();
     }
 
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+    public boolean process(final Exchange exchange, AsyncCallback callback) {
         if (!isRunAllowed()) {
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException());
@@ -171,22 +190,30 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
         }
 
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+        }
+
+        // get a channel from the pool
+        Channel existing;
         try {
-            // allow to reuse channel, on this producer, to avoid creating a new connection
-            // for each message being sent
-            if (channelFuture == null || channel == null || !channel.isOpen()) {
-                channel = null;
-                channelFuture = openConnection();
-                channel = openChannel(channelFuture);
+            existing = pool.borrowObject();
+            if (existing != null) {
+                LOG.trace("Got channel from pool {}", existing);
             }
-            // setup state now we have the channel we can do this because
-            // this producer is not thread safe, but pooled using ServicePoolAware
-            state.set(channel, new NettyCamelState(callback, exchange));
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
         }
+
+        // need to declare as final
+        final Channel channel = existing;
+        final AsyncCallback producerCallback = new NettyProducerCallback(channel, callback);
+
+        // setup state now we have the channel we can do this because
+        // this producer is not thread safe, but pooled using ServicePoolAware
+        state.set(channel, new NettyCamelState(producerCallback, exchange));
 
         // write body
         NettyHelper.writeBodyAsync(LOG, channel, null, body, exchange, new ChannelFutureListener() {
@@ -195,7 +222,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
                 if (!channelFuture.isSuccess()) {
                     // no success the set the caused exception and signal callback and break
                     exchange.setException(channelFuture.getCause());
-                    callback.done(false);
+                    producerCallback.done(false);
                     return;
                 }
 
@@ -223,7 +250,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
                         }
                     } finally {
                         // signal callback to continue routing
-                        callback.done(false);
+                        producerCallback.done(false);
                     }
                 }
             }
@@ -322,16 +349,16 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         latch.await();
 
         if (!channelFuture.isSuccess()) {
-            // clear channel as we did not connect
-            channel = null;
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
         }
-        channel = channelFuture.getChannel();
+        Channel answer = channelFuture.getChannel();
         // to keep track of all channels in use
-        ALL_CHANNELS.add(channel);
+        ALL_CHANNELS.add(answer);
 
-        LOG.debug("Creating connector to address: {}", configuration.getAddress());
-        return channel;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating connector to address: {}", configuration.getAddress());
+        }
+        return answer;
     }
 
     private void openAndCloseConnection() throws Exception {
@@ -360,4 +387,72 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
     public ChannelGroup getAllChannels() {
         return ALL_CHANNELS;
     }
+
+    /**
+     * Callback that ensures the channel is returned to the pool when we are done.
+     */
+    private final class NettyProducerCallback implements AsyncCallback {
+
+        private final Channel channel;
+        private final AsyncCallback callback;
+
+        private NettyProducerCallback(Channel channel, AsyncCallback callback) {
+            this.channel = channel;
+            this.callback = callback;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            // put back in pool
+            try {
+                LOG.trace("Putting channel back to pool {}", channel);
+                pool.returnObject(channel);
+            } catch (Exception e) {
+                LOG.warn("Error returning channel to pool {}. This exception will be ignored.", channel);
+            } finally {
+                // ensure we call the delegated callback
+                callback.done(doneSync);
+            }
+        }
+    }
+
+    /**
+     * Object factory to create {@link Channel} used by the pool.
+     */
+    private final class NettyProducerPoolableObjectFactory implements PoolableObjectFactory<Channel> {
+
+        @Override
+        public Channel makeObject() throws Exception {
+            ChannelFuture channelFuture = openConnection();
+            Channel answer = openChannel(channelFuture);
+            LOG.trace("Created channel: {}", answer);
+            return answer;
+        }
+
+        @Override
+        public void destroyObject(Channel channel) throws Exception {
+            LOG.trace("Destroying channel: {}", channel);
+            NettyHelper.close(channel);
+            ALL_CHANNELS.remove(channel);
+        }
+
+        @Override
+        public boolean validateObject(Channel channel) {
+            // we need a connected channel to be valid
+            boolean answer = channel.isConnected();
+            LOG.trace("Validating channel: {} -> {}", channel, answer);
+            return answer;
+        }
+
+        @Override
+        public void activateObject(Channel channel) throws Exception {
+            // noop
+        }
+
+        @Override
+        public void passivateObject(Channel channel) throws Exception {
+            // noop
+        }
+    }
+
 }

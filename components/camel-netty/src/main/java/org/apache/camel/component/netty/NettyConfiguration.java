@@ -78,6 +78,10 @@ public class NettyConfiguration implements Cloneable {
     private boolean needClientAuth;
     private int maximumPoolSize = 16;
     private boolean orderedThreadPoolExecutor = true;
+    private int producerPoolMaxActive = -1;
+    private int producerPoolMinIdle = 0;
+    private int producerPoolMaxIdle = 100;
+    private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     
     /**
      * Returns a copy of this configuration
@@ -535,6 +539,38 @@ public class NettyConfiguration implements Cloneable {
 
     public void setOrderedThreadPoolExecutor(boolean orderedThreadPoolExecutor) {
         this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
+    }
+
+    public int getProducerPoolMaxActive() {
+        return producerPoolMaxActive;
+    }
+
+    public void setProducerPoolMaxActive(int producerPoolMaxActive) {
+        this.producerPoolMaxActive = producerPoolMaxActive;
+    }
+
+    public int getProducerPoolMinIdle() {
+        return producerPoolMinIdle;
+    }
+
+    public void setProducerPoolMinIdle(int producerPoolMinIdle) {
+        this.producerPoolMinIdle = producerPoolMinIdle;
+    }
+
+    public int getProducerPoolMaxIdle() {
+        return producerPoolMaxIdle;
+    }
+
+    public void setProducerPoolMaxIdle(int producerPoolMaxIdle) {
+        this.producerPoolMaxIdle = producerPoolMaxIdle;
+    }
+
+    public long getProducerPoolMinEvictableIdle() {
+        return producerPoolMinEvictableIdle;
+    }
+
+    public void setProducerPoolMinEvictableIdle(long producerPoolMinEvictableIdle) {
+        this.producerPoolMinEvictableIdle = producerPoolMinEvictableIdle;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
