@@ -194,6 +194,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         public void operationComplete(ChannelFuture future) throws Exception {
             // if it was not a success then thrown an exception
             if (!future.isSuccess()) {
+                future.getCause().printStackTrace();
                 Exception e = new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.getCause());
                 consumer.getExceptionHandler().handleException(e);
             }
