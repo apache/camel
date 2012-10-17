@@ -444,7 +444,7 @@ public class NotifyBuilder {
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
                 if (exchange.getExchangeId().equals(id)) {
-                    done.set(false);
+                    done.set(true);
                 }
                 return true;
             }
