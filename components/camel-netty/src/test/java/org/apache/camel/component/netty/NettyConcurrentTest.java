@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.StopWatch;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -52,6 +53,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
+        StopWatch watch = new StopWatch();
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(files).create();
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
@@ -70,6 +72,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
         }
 
         notify.matches(2, TimeUnit.MINUTES);
+        log.info("Took " + watch.taken() + " millis to process " + files + " messages using " + poolSize + " client threads.");
         assertEquals(files, responses.size());
 
         // get all responses
