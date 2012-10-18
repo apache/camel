@@ -223,6 +223,7 @@
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
+    <maven-resources-plugin-version>2.4.3</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-version>2.0</maven-version>
@@ -2076,7 +2077,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.4.3</version>
+          <version>${maven-resources-plugin-version}</version>
           <configuration>
             <encoding>UTF-8</encoding>
           </configuration>
