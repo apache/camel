@@ -535,7 +535,7 @@ public class QuickfixjEngineTest extends Assert {
             int result = 1;
             result = prime * result + ((eventCategory == null) ? 0 : eventCategory.hashCode());
             result = prime * result + ((sessionID == null) ? 0 : sessionID.hashCode());
-            // don't take message into the account as otherwise we would break the expected java.lang.Object.equals() contract
+            result = prime * result + (message == null ? 1231 : 1237);
 
             return result;
         }
@@ -571,7 +571,7 @@ public class QuickfixjEngineTest extends Assert {
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(ScreenLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.quickfixj:*"), null);
+        Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Acceptor,*"), null);
         assertTrue("QFJ mbean should not have been registered", names.isEmpty());
     }
 
