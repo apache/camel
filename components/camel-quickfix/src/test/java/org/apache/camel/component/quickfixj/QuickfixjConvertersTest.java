@@ -25,12 +25,11 @@ import javax.management.JMException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.TransportType;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import quickfix.Acceptor;
@@ -49,12 +48,8 @@ import quickfix.fix44.Message.Header.NoHops;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
-public class QuickfixjConvertersTest {
-    private static DefaultCamelContext camelContext;
-
+public class QuickfixjConvertersTest extends CamelTestSupport {
     private File settingsFile;
     private ClassLoader contextClassLoader;
     private SessionSettings settings;
@@ -62,13 +57,10 @@ public class QuickfixjConvertersTest {
 
     private QuickfixjEngine quickfixjEngine;
 
-    @BeforeClass
-    public static void classSetUp() throws Exception {
-        camelContext = new DefaultCamelContext();
-    }
-    
     @Before
     public void setUp() throws Exception {
+        super.setUp();
+
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         tempdir = settingsFile.getParentFile();
         URL[] urls = new URL[] {tempdir.toURI().toURL()};
@@ -81,25 +73,26 @@ public class QuickfixjConvertersTest {
         settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, TransportType.VM_PIPE.toString());
         settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, TransportType.VM_PIPE.toString());
     }
-    
+
     @After
     public void tearDown() throws Exception {
-        Thread.currentThread().setContextClassLoader(contextClassLoader);     
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
+
+        super.tearDown();
     }
 
     @Test
     public void convertSessionID() {
-        Object value = camelContext.getTypeConverter().convertTo(SessionID.class, "FIX.4.0:FOO->BAR");
+        Object value = context.getTypeConverter().convertTo(SessionID.class, "FIX.4.0:FOO->BAR");
         
         assertThat(value, instanceOf(SessionID.class));
         assertThat((SessionID)value, is(new SessionID("FIX.4.0", "FOO", "BAR")));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void convertToExchange() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", camelContext);
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent());
         
         Message message = new Message();     
         message.getHeader().setString(MsgType.FIELD, MsgType.ORDER_SINGLE);
@@ -114,11 +107,10 @@ public class QuickfixjConvertersTest {
         assertThat((String)exchange.getIn().getHeader(QuickfixjEndpoint.MESSAGE_TYPE_KEY), is(MsgType.ORDER_SINGLE));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void convertToExchangeWithNullMessage() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", camelContext);
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent());
         
         Exchange exchange = QuickfixjConverters.toExchange(endpoint, sessionID, null, QuickfixjEventCategory.AppMessageSent);
         
@@ -135,8 +127,8 @@ public class QuickfixjConvertersTest {
         String data = "8=FIX.4.0\0019=100\00135=D\00134=2\00149=TW\00156=ISLD\00111=ID\00121=1\001"
             + "40=1\00154=1\00140=2\00138=200\00155=INTC\00110=160\001";
         
-        Exchange exchange = new DefaultExchange(camelContext);
-        Object value = camelContext.getTypeConverter().convertTo(Message.class, exchange, data);
+        Exchange exchange = new DefaultExchange(context);
+        Object value = context.getTypeConverter().convertTo(Message.class, exchange, data);
         
         assertThat(value, instanceOf(Message.class));
     }
@@ -152,7 +144,7 @@ public class QuickfixjConvertersTest {
                     + "627=2\001628=FOO\001628=BAR\001"
                     + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
 
-            Exchange exchange = new DefaultExchange(camelContext);
+            Exchange exchange = new DefaultExchange(context);
             exchange.getIn().setHeader(QuickfixjEndpoint.SESSION_ID_KEY, sessionID);
             exchange.getIn().setBody(data);
             
@@ -180,7 +172,7 @@ public class QuickfixjConvertersTest {
                     + "627=2\001628=FOO\001628=BAR\001"
                     + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
 
-            Exchange exchange = new DefaultExchange(camelContext);
+            Exchange exchange = new DefaultExchange(context);
             exchange.setProperty(QuickfixjEndpoint.DATA_DICTIONARY_KEY, new DataDictionary("FIX44.xml"));
             exchange.getIn().setBody(data);
             
@@ -208,7 +200,7 @@ public class QuickfixjConvertersTest {
                     + "627=2\001628=FOO\001628=BAR\001"
                     + "98=0\001384=2\001372=D\001385=R\001372=8\001385=S\00110=230\001";
 
-            Exchange exchange = new DefaultExchange(camelContext);
+            Exchange exchange = new DefaultExchange(context);
             exchange.setProperty(QuickfixjEndpoint.DATA_DICTIONARY_KEY, "FIX44.xml");
             exchange.getIn().setBody(data);
             
