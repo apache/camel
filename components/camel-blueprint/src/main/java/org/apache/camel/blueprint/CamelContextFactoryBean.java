@@ -261,7 +261,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         getContext().getPackageScanClassResolver().addFilter(filter);
         ClassLoader classLoader = new BundleDelegatingClassLoader(((ExtendedBlueprintContainer) blueprintContainer).getBundleContext().getBundle());
         PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, classLoader,
-                                                                                 /*getBeanPostProcessor(),*/ getContext().getPackageScanClassResolver());
+                                                                                 getContext().getPackageScanClassResolver());
         finder.appendBuilders(builders);
 
         // and remove the filter
