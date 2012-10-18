@@ -26,11 +26,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BlueprintCamelContext extends DefaultCamelContext {
+public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
 
@@ -71,27 +73,31 @@ public class BlueprintCamelContext extends DefaultCamelContext {
     }
 
     public void init() throws Exception {
-        final ClassLoader original = Thread.currentThread().getContextClassLoader();
-        try {
-            // let's set a more suitable TCCL while starting the context
-            Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
-            maybeStart();
-        } finally {
-            Thread.currentThread().setContextClassLoader(original);
-        }
-    }
-
-    private void maybeStart() throws Exception {
-        if (!isStarted() && !isStarting()) {
-            start();
-        } else {
-            // ignore as Camel is already started
-            LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
-        }
+        // add service listener so we can be notified when blueprint container is done
+        // and we would be ready to start CamelContext
+        bundleContext.addServiceListener(this);
     }
 
     public void destroy() throws Exception {
+        // remove listener and stop this CamelContext
+        bundleContext.removeServiceListener(this);
         stop();
+    }
+
+    @Override
+    public void serviceChanged(ServiceEvent event) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Service {} changed to {}", event, event.getType());
+        }
+        // look for blueprint container to be registered, and then we can start the CamelContext
+        if (event.getType() == ServiceEvent.REGISTERED && event.getServiceReference().isAssignableTo(bundleContext.getBundle(),
+                "org.osgi.service.blueprint.container.BlueprintContainer")) {
+            try {
+                maybeStart();
+            } catch (Exception e) {
+                LOG.warn("Error occurred during starting " + this, e);
+            }
+        }
     }
 
     @Override
@@ -111,4 +117,20 @@ public class BlueprintCamelContext extends DefaultCamelContext {
         return OsgiCamelContextHelper.wrapRegistry(this, reg, bundleContext);
     }
 
+    private void maybeStart() throws Exception {
+        if (!isStarted() && !isStarting()) {
+            final ClassLoader original = Thread.currentThread().getContextClassLoader();
+            try {
+                // let's set a more suitable TCCL while starting the context
+                Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
+                LOG.debug("Starting {}", this);
+                start();
+            } finally {
+                Thread.currentThread().setContextClassLoader(original);
+            }
+        } else {
+            // ignore as Camel is already started
+            LOG.trace("Ignoring maybeStart() as {} is already started", this);
+        }
+    }
 }
