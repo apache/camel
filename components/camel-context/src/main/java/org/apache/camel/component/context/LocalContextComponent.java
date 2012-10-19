@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -90,7 +91,8 @@ public class LocalContextComponent extends DefaultComponent {
                 }
             }
         }
-        return null;
+        throw new ResolveEndpointFailedException("Cannot find the endpoint with uri " + uri + " in the CamelContext " + getLocalCamelContext().getName());
+        
     }
 
     protected void logUsingEndpoint(String uri, Endpoint endpoint) {
