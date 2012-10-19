@@ -5,7 +5,7 @@ To build this project use
 
     mvn install
 
-To run this route:
+To run this example
 
     mvn exec:java
     

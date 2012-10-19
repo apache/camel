@@ -30,11 +30,14 @@
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="maven-resources-plugin-version">
+      <defaultValue>${maven-resources-plugin-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="maven-eclipse-plugin-version">
-      <defaultValue>2.8</defaultValue>
+      <defaultValue>${maven-eclipse-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="exec-maven-plugin-version">
-      <defaultValue>1.2.1</defaultValue>
+      <defaultValue>${exec-maven-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="scala-version">
       <defaultValue>${scala-version}</defaultValue>

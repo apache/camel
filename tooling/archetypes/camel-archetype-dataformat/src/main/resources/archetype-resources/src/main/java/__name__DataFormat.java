@@ -27,6 +27,7 @@ import org.apache.camel.spi.DataFormat;
  * for ${name} data.
  */
 public class ${name}DataFormat implements DataFormat {
+
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, graph);
         stream.write(bytes);
