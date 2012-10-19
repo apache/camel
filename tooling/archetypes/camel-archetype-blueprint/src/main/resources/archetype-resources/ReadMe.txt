@@ -5,6 +5,10 @@ To build this project use
 
     mvn install
 
+To run the example you can execute the following Maven goal
+
+    mvn camel:run
+
 To deploy the example in OSGi. For example using Apache ServiceMix
 or Apache Karaf. You will run the following command from its shell:
 

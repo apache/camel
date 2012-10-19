@@ -5,11 +5,11 @@ To build this project use
 
     mvn install
 
-To run this router from within Maven use
+To run this example from within Maven use
 
     mvn exec:java
 
 For more help see the Apache Camel documentation
 
     http://camel.apache.org/
-    
+

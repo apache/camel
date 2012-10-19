@@ -106,7 +106,7 @@
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.19.10</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
-    <exec-maven-plugin-version>1.1.1</exec-maven-plugin-version>
+    <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
     <felix-compendium-version>1.2.0</felix-compendium-version>
@@ -223,6 +223,9 @@
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
+    <maven-bundle-version>2.3.7</maven-bundle-version>
+    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+    <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
     <maven-resources-plugin-version>2.4.3</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
@@ -279,6 +282,7 @@
     <saxon-version>9.4.0.4</saxon-version>
     <scala-bundle-version>2.9.2_1</scala-bundle-version>
     <scala-version>2.9.2</scala-version>
+    <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
     <scriptengines-version>1.1</scriptengines-version>
     <serp-bundle-version>1.13.1_4</serp-bundle-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>

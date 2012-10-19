@@ -6,7 +6,7 @@ To build this project use
     mvn install
 
 You can run this example from the command line using
-the following maven goal:
+the following Maven goal:
 
     mvn camel:run
 
