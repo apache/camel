@@ -82,17 +82,4 @@ public class DataFormatBinding implements Binding {
     public void setProducerDataFormat(DataFormat producerDataFormat) {
         this.producerDataFormat = producerDataFormat;
     }
-
-
-    /**
-     * We need to set the exchange as being out capable for the output to be copied in a pipeline
-     * <p/>
-     * TODO should we be more clever about other patterns here?
-     */
-    protected void makeOutCapable(Exchange exchange) {
-        if (!exchange.getPattern().isOutCapable()) {
-            exchange.setPattern(ExchangePattern.InOut);
-        }
-    }
-
 }
