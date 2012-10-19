@@ -51,6 +51,7 @@ public class SmppConfiguration implements Cloneable {
     private byte destAddrTon = TypeOfNumber.UNKNOWN.value();
     private byte sourceAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
     private byte destAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
+    private String addressRange = "";
     private byte protocolId = (byte) 0;
     private byte priorityFlag = (byte) 1;
     private byte replaceIfPresentFlag = ReplaceIfPresentFlag.DEFAULT.value();
@@ -344,6 +345,14 @@ public class SmppConfiguration implements Cloneable {
         this.sessionStateListener = sessionStateListener;
     }
 
+    public String getAddressRange() {
+        return addressRange;
+    }
+
+    public void setAddressRange(String addressRange) {
+        this.addressRange = addressRange;
+    }
+
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL 
@@ -363,6 +372,7 @@ public class SmppConfiguration implements Cloneable {
             + ", destAddrTon=" + destAddrTon
             + ", sourceAddrNpi=" + sourceAddrNpi 
             + ", destAddrNpi=" + destAddrNpi 
+            + ", addressRange=" + addressRange
             + ", protocolId=" + protocolId
             + ", priorityFlag=" + priorityFlag 
             + ", replaceIfPresentFlag=" + replaceIfPresentFlag 
