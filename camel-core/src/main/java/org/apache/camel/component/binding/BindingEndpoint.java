@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Binding;
+import org.apache.camel.spi.HasBinding;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
@@ -32,7 +33,7 @@ import org.apache.camel.util.ExchangeHelper;
  * before its sent to the endpoint and processes messages received by the endpoint consumer before its passed
  * to the real consumer.
  */
-public class BindingEndpoint extends DefaultEndpoint {
+public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
     private final Binding binding;
     private final Endpoint delegate;
 
@@ -58,6 +59,7 @@ public class BindingEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    @Override
     public Binding getBinding() {
         return binding;
     }
