@@ -30,7 +30,7 @@ import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 
 /**
  * A composite {@link Component} which creates a {@link BindingEndpoint} from a
- * configured {@link Binding} instance and using the optional {@link #setUriPostfix(String)}
+ * configured {@link Binding} instance and using the optional {@link #setUriPrefix(String)}
  * and {@link #setUriPostfix(String)} to create the underlying endpoint from the remaining URI
  */
 public class BindingComponent extends DefaultComponent {
