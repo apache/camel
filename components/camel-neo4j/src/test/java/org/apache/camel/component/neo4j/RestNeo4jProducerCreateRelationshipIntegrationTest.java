@@ -28,6 +28,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.data.neo4j.rest.SpringRestGraphDatabase;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 
@@ -39,7 +40,7 @@ public class RestNeo4jProducerCreateRelationshipIntegrationTest extends CamelTes
 
     private final String neo4jEndpoint = "neo4j:http://localhost:7474/db/data/";
 
-    private final Neo4jTemplate neo = new Neo4jTemplate(new SpringRestGraphDatabase("http://localhost:7474/db/data/"));
+    private final Neo4jTemplate neo = new Neo4jTemplate((GraphDatabase) new SpringRestGraphDatabase("http://localhost:7474/db/data/"));
 
     @EndpointInject(uri = "mock:end")
     private MockEndpoint end;
