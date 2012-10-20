@@ -313,6 +313,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
                 if (size >= value) {
                     return "size";
+                } else {
+                    // not completed yet
+                    return null;
                 }
             }
         }
