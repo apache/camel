@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -43,11 +44,19 @@ public class QualifiedContextComponent extends DefaultComponent {
             Component component = getCamelContext().getComponent(contextId);
             if (component != null) {
                 LOG.debug("Attempting to create local endpoint: {} inside the component: {}", localEndpoint, component);
-                return component.createEndpoint(localEndpoint);
+                Endpoint endpoint =  component.createEndpoint(localEndpoint);
+                if (endpoint == null) {
+                    // throw the exception tell we cannot find an then endpoint from the given context
+                    throw new ResolveEndpointFailedException("Cannot create a endpoint with uri" + localEndpoint + " for the CamelContext Component " + contextId);
+                } else {
+                    return endpoint;
+                }
+            } else {
+                throw new ResolveEndpointFailedException("Cannot create the camel context component for context " + contextId);
             }
+        } else { // the uri is wrong
+            throw new ResolveEndpointFailedException("The uri " + remaining + "from camel context component is wrong");
         }
-
-        return null;
     }
 
 }
