@@ -80,7 +80,6 @@ import org.slf4j.LoggerFactory;
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected Boolean inheritErrorHandler;
-    private NodeFactory nodeFactory;
     private final LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition<?> parent;
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
@@ -165,7 +164,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
 
         output.setParent(this);
-        output.setNodeFactory(getNodeFactory());
         configureChild(output);
         getOutputs().add(output);
     }
@@ -1257,7 +1255,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression) {
         IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
-        answer.setExpression(new ExpressionDefinition(messageIdExpression));
+        answer.setExpression(ExpressionNodeHelper.toExpressionDefinition(messageIdExpression));
         addOutput(answer);
         return answer;
     }
@@ -1330,7 +1328,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public FilterDefinition filter(ExpressionDefinition expression) {
-        FilterDefinition filter = getNodeFactory().createFilter();
+        FilterDefinition filter = new FilterDefinition();
         filter.setExpression(expression);
         addOutput(filter);
         return filter;
@@ -1359,7 +1357,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ValidateDefinition validate(Expression expression) {
         ValidateDefinition answer = new ValidateDefinition();
-        answer.setExpression(new ExpressionDefinition(expression));
+        answer.setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
         addOutput(answer);
         return answer;
     }
@@ -1374,7 +1372,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ValidateDefinition validate(Predicate predicate) {
         ValidateDefinition answer = new ValidateDefinition();
-        answer.setExpression(new ExpressionDefinition(predicate));
+        answer.setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
         addOutput(answer);
         return answer;
     }
@@ -1849,7 +1847,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ResequenceDefinition resequence(Expression expression) {
         ResequenceDefinition answer = new ResequenceDefinition();
-        answer.setExpression(new ExpressionDefinition(expression));
+        answer.setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
         addOutput(answer);
         return answer;
     }
@@ -2007,7 +2005,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public LoopDefinition loop(Expression expression) {
-        LoopDefinition loop = getNodeFactory().createLoop();
+        LoopDefinition loop = new LoopDefinition();
         loop.setExpression(expression);
         addOutput(loop);
         return loop;
@@ -2022,7 +2020,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public LoopDefinition loop(int count) {
-        LoopDefinition loop = getNodeFactory().createLoop();
+        LoopDefinition loop = new LoopDefinition();
         loop.setExpression(new ConstantExpression(Integer.toString(count)));
         addOutput(loop);
         return loop;
@@ -3114,18 +3112,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     public void setParent(ProcessorDefinition<?> parent) {
         this.parent = parent;
-    }
-
-    @XmlTransient
-    public NodeFactory getNodeFactory() {
-        if (nodeFactory == null) {
-            nodeFactory = new NodeFactory();
-        }
-        return nodeFactory;
-    }
-
-    public void setNodeFactory(NodeFactory nodeFactory) {
-        this.nodeFactory = nodeFactory;
     }
 
     @XmlTransient

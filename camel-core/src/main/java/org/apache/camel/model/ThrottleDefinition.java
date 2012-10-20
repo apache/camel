@@ -139,7 +139,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition maximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
-        setExpression(new ExpressionDefinition(ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
+        setExpression(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
         return this;
     }
 
