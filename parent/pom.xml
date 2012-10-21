@@ -102,6 +102,7 @@
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.3.2</dozer-version>
     <easymock-version>3.1</easymock-version>
+    <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-bundle-version>2.6.0_1</ehcache-bundle-version>
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.19.10</elasticsearch-version>
@@ -234,6 +235,7 @@
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.7</mina2-version>
+    <mock-javamail-version>1.7</mock-javamail-version>
     <mockito-version>1.9.0</mockito-version>
     <mongo-java-driver-version>2.9.1</mongo-java-driver-version>
     <mqtt-client-version>1.4</mqtt-client-version>
@@ -1250,6 +1252,11 @@
         <artifactId>jaxb-xjc</artifactId>
         <version>${jaxb-version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.sun.xml.parsers</groupId>
+        <artifactId>jaxp-ri</artifactId>
+        <version>1.4.2</version>
+      </dependency>
 
       <!-- logging -->
       <dependency>
@@ -2033,6 +2040,11 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.8.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.3.1</version>
         </plugin>
@@ -2135,6 +2147,11 @@
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <version>0.8</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.servicemix.tooling</groupId>
+          <artifactId>depends-maven-plugin</artifactId>
+          <version>1.2</version>
         </plugin>
         <plugin>  
           <groupId>org.apache.tomcat.maven</groupId>  

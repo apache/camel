@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.eclipse.equinox</groupId>
       <artifactId>common</artifactId>
-      <version>3.3.0-v20070426</version>
+      <version>${eclipse-equinox-common-version}</version>
     </dependency>
 
     <!-- testing -->

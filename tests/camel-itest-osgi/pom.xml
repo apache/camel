@@ -198,7 +198,7 @@
     <dependency>
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-structures-v24</artifactId>
-      <version>1.0</version>
+      <version>${hapi-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -388,7 +388,6 @@
       <plugin>
         <groupId>org.apache.servicemix.tooling</groupId>
         <artifactId>depends-maven-plugin</artifactId>
-        <version>1.2</version>
         <executions>
           <execution>
             <id>generate-depends-file</id>
