@@ -27,7 +27,12 @@
 
   <camelContext id="camelContext2" xmlns="http://camel.apache.org/schema/spring">
     <camel:route>
-      <camel:from uri="jetty:http://0.0.0.0:9010/camel-context-2/"/>
+      <camel:from uri="jetty:http://0.0.0.0:9010/camel-context-2/continuation/?useContinuation=true"/>
+      <camel:process ref="jettyProcessor"/>
+    </camel:route>
+    
+    <camel:route>
+      <camel:from uri="jetty:http://0.0.0.0:9010/camel-context-2/noContinuation/?useContinuation=false"/>
       <camel:process ref="jettyProcessor"/>
     </camel:route>
   </camelContext>

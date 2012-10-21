@@ -93,6 +93,9 @@ public class CamelServlet extends HttpServlet {
             exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
         }
 
+        // we override the classloader before building the HttpMessage just in case the binding
+        // does some class resolution
+        ClassLoader oldTccl = overrideTccl(exchange);
         HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
         exchange.setIn(new HttpMessage(exchange, request, response));
 
@@ -115,6 +118,8 @@ public class CamelServlet extends HttpServlet {
         } catch (Exception e) {
             log.error("Error processing request", e);
             throw new ServletException(e);
+        } finally {
+            restoreTccl(exchange, oldTccl);
         }
     }
 
