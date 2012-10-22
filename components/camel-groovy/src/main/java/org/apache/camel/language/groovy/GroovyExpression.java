@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.util.ExchangeHelper;
@@ -31,11 +31,9 @@ import org.apache.camel.util.ExchangeHelper;
  * @version 
  */
 public class GroovyExpression extends ExpressionSupport {
-    private Class<Script> scriptType;
-    private String text;
+    private final String text;
 
-    public GroovyExpression(Class<Script> scriptType, String text) {
-        this.scriptType = scriptType;
+    public GroovyExpression(String text) {
         this.text = text;
     }
 
@@ -49,15 +47,19 @@ public class GroovyExpression extends ExpressionSupport {
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Script script = ExchangeHelper.newInstance(exchange, scriptType);
-        // lets configure the script
-        configure(exchange, script);
-        Object value = script.run();
+        // use application classloader if given
+        ClassLoader cl = exchange.getContext().getApplicationContextClassLoader();
+        GroovyShell shell = cl != null ? new GroovyShell(cl) : new GroovyShell();
+
+        // need to re-parse script due thread-safe with binding
+        Script script = shell.parse(text);
+        configure(exchange, script.getBinding());
+        Object value = script.evaluate(text);
+
         return exchange.getContext().getTypeConverter().convertTo(type, value);
     }
 
-    private void configure(Exchange exchange, Script script) {
-        final Binding binding = script.getBinding();
+    private void configure(Exchange exchange, final Binding binding) {
         ExchangeHelper.populateVariableMap(exchange, new AbstractMap<String, Object>() {
             @Override
             public Object put(String key, Object value) {
