@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 
@@ -45,10 +46,14 @@ public abstract class DigitalSignatureProcessor implements Processor {
         Object payload = exchange.getIn().getBody();
         if (payload != null) {
             InputStream payloadStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, payload);
-            byte[] buffer = new byte[config.getBufferSize()];
-            int read;
-            while ((read = payloadStream.read(buffer)) > 0) {
-                signer.update(buffer, 0, read);
+            try {
+                byte[] buffer = new byte[config.getBufferSize()];
+                int read;
+                while ((read = payloadStream.read(buffer)) > 0) {
+                    signer.update(buffer, 0, read);
+                }
+            } finally {
+                IOHelper.close(payloadStream);
             }
         }
     }
