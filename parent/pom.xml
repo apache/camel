@@ -311,7 +311,7 @@
     <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
-    <sshd-version>0.7.0</sshd-version>
+    <sshd-version>0.8.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
     <stringtemplate-bundle-version>3.2_5</stringtemplate-bundle-version>
