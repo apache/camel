@@ -142,7 +142,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         custom.setPoolSize(10);
         custom.setMaxPoolSize(30);
         custom.setKeepAliveTime(50L);
-        custom.setMaxQueueSize(-1);
+        custom.setMaxQueueSize(Integer.MAX_VALUE);
 
         context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(custom);
         assertEquals(true, custom.isDefaultProfile().booleanValue());
