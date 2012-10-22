@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.groovy;
 
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.Script;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Language;
 
@@ -35,13 +33,7 @@ public class GroovyLanguage implements Language, IsSingleton {
     }
 
     public GroovyExpression createExpression(String expression) {
-        Class<Script> scriptType = parseExpression(expression);
-        return new GroovyExpression(scriptType, expression);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected Class<Script> parseExpression(String expression) {
-        return new GroovyClassLoader().parseClass(expression);
+        return new GroovyExpression(expression);
     }
 
     public boolean isSingleton() {
