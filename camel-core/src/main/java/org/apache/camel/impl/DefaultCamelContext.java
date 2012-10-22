@@ -993,6 +993,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             // language not known or not singleton, then use resolver
             answer = getLanguageResolver().resolveLanguage(language, this);
+
+            // inject CamelContext if aware
+            if (answer != null && answer instanceof CamelContextAware) {
+                ((CamelContextAware) answer).setCamelContext(this);
+            }
+
             if (answer != null) {
                 languages.put(language, answer);
             }
@@ -2405,7 +2411,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public DataFormat resolveDataFormat(String name) {
-        return dataFormatResolver.resolveDataFormat(name, this);
+        DataFormat answer = dataFormatResolver.resolveDataFormat(name, this);
+
+        // inject CamelContext if aware
+        if (answer != null && answer instanceof CamelContextAware) {
+            ((CamelContextAware) answer).setCamelContext(this);
+        }
+
+        return answer;
     }
 
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
