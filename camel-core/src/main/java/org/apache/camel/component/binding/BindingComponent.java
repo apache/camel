@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 
 /**
- * A composite {@link Component} which creates a {@link BindingEndpoint} from a
+ * A composite {@link org.apache.camel.Component} which creates a {@link BindingEndpoint} from a
  * configured {@link Binding} instance and using the optional {@link #setUriPrefix(String)}
  * and {@link #setUriPostfix(String)} to create the underlying endpoint from the remaining URI
  */
@@ -80,8 +79,7 @@ public class BindingComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Binding bindingValue = getBinding();
         ObjectHelper.notNull(bindingValue, "binding");
         CamelContext camelContext = getCamelContext();
@@ -90,7 +88,7 @@ public class BindingComponent extends DefaultComponent {
         return new BindingEndpoint(uri, this, bindingValue,  delegate);
     }
 
-    protected String createDelegateURI(String remaining, Map<String,Object> parameters) {
+    protected String createDelegateURI(String remaining, Map<String, Object> parameters) {
         return getOrEmpty(uriPrefix) + remaining + getOrEmpty(uriPostfix);
     }
 
