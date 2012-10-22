@@ -30,7 +30,7 @@
   <description>Camel Groovy support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.language.groovy.*</camel.osgi.export.pkg>
+	  <camel.osgi.export.pkg>org.apache.camel.language.groovy.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
