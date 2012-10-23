@@ -103,7 +103,7 @@ public class SnsConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "SnsConfiguration[topicName=" + topicName
-            + ", amazonSQSClient=" + amazonSNSClient
+            + ", amazonSNSClient=" + amazonSNSClient
             + ", accessKey=" + accessKey
             + ", secretKey=xxxxxxxxxxxxxxx" 
             + ", subject=" + subject
