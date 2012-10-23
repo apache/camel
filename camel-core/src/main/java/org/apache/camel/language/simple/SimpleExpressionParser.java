@@ -147,7 +147,10 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             functions.decrementAndGet();
             return new SimpleFunctionEnd(token);
         } else if (token.getType().isUnary()) {
-            return new UnaryExpression(token);
+            // there must be a end function as previous, to let this be a unary function
+            if (!nodes.isEmpty() && nodes.get(nodes.size() - 1) instanceof SimpleFunctionEnd) {
+                return new UnaryExpression(token);
+            }
         }
 
         // by returning null, we will let the parser determine what to do
