@@ -56,7 +56,7 @@ public class SpringBatchProducer extends DefaultProducer {
                 parametersBuilder.addLong(headerKey, (Long) headerValue);
             } else if (headerValue instanceof Double) {
                 parametersBuilder.addDouble(headerKey, (Double) headerValue);
-            } else if (headerValue != null){
+            } else if (headerValue != null) {
                 parametersBuilder.addString(headerKey, headerValue.toString());
             } else {
                 // if the value is null we just put String with null value here to avoid the NPE
