@@ -201,19 +201,21 @@ public class FileOperations implements GenericFileOperations<File> {
 
             // we can optimize and use file based if no charset must be used, and the input body is a file
             File source = null;
+            boolean fileBased = false;
             if (charset == null) {
                 // if no charset, then we can try using file directly (optimized)
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
                     body = ((WrappedFile<?>) body).getFile();
+                    fileBased = true;
                 }
                 if (body instanceof File) {
                     source = (File) body;
                 }
             }
 
-            if (source != null) {
-                // okay we know the body is a file type
+            if (fileBased) {
+                // okay we know the body is a file based
 
                 // so try to see if we can optimize by renaming the local work path file instead of doing
                 // a full file to file copy, as the local work copy is to be deleted afterwards anyway
@@ -230,7 +232,7 @@ public class FileOperations implements GenericFileOperations<File> {
                         // to the target.
                         return true;
                     }
-                } else if (source.exists()) {
+                } else if (source != null && source.exists()) {
                     // no there is no local work file so use file to file copy if the source exists
                     writeFileByFile(source, file);
                     // try to keep last modified timestamp if configured to do so
