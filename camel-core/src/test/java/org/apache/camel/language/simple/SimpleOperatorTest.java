@@ -458,6 +458,24 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         }
     }
 
+    public void testUnaryInc() throws Exception {
+        assertExpression("${in.header.bar}++", 124);
+        assertExpression("+++++++++++++", "+++++++++++++");
+        assertExpression("Logging ++ start ++", "Logging ++ start ++");
+        assertExpression("Logging +++ start +++", "Logging +++ start +++");
+        assertExpression("++ start ++", "++ start ++");
+        assertExpression("+++ start +++", "+++ start +++");
+    }
+
+    public void testUnaryDec() throws Exception {
+        assertExpression("${in.header.bar}--", 122);
+        assertExpression("-------------", "-------------");
+        assertExpression("Logging -- start --", "Logging -- start --");
+        assertExpression("Logging --- start ---", "Logging --- start ---");
+        assertExpression("-- start --", "-- start --");
+        assertExpression("--- start ---", "--- start ---");
+    }
+
     protected String getLanguageName() {
         return "simple";
     }
