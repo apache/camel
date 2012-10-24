@@ -1971,9 +1971,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     private boolean doCheckStartupOrderClash(DefaultRouteStartupOrder answer, Map<Integer, DefaultRouteStartupOrder> inputs) throws FailedToStartRouteException {
-        // TODO: There could potential be routeId clash as well, so we should check for that as well
-
-
         // check for clash by startupOrder id
         DefaultRouteStartupOrder other = inputs.get(answer.getStartupOrder());
         if (other != null && answer != other) {

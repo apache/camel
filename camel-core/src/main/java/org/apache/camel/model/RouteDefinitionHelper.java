@@ -17,13 +17,11 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
@@ -45,10 +43,10 @@ public final class RouteDefinitionHelper {
      * Validates that the target route has no duplicate id's from any of the existing routes.
      *
      * @param target  the target route
-     * @param routes  the other routes
-     * @return <tt>null</tt> if no duplicate id's detected, otherwise the duplicate id is returned.
+     * @param routes  the existing routes
+     * @return <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
      */
-    public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) throws FailedToStartRouteException {
+    public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) {
         Set<String> routesIds = new LinkedHashSet<String>();
         // gather all ids for the existing route, but only include custom ids, and no abstract ids
         // as abstract nodes is cross-cutting functionality such as interceptors etc
@@ -57,13 +55,13 @@ public final class RouteDefinitionHelper {
             if (route == target) {
                 continue;
             }
-            ProcessorDefinitionHelper.getAllIDs(route, routesIds, true, false);
+            ProcessorDefinitionHelper.gatherAllNodeIds(route, routesIds, true, false);
         }
 
         // gather all ids for the target route, but only include custom ids, and no abstract ids
         // as abstract nodes is cross-cutting functionality such as interceptors etc
         Set<String> targetIds = new LinkedHashSet<String>();
-        ProcessorDefinitionHelper.getAllIDs(target, targetIds, true, false);
+        ProcessorDefinitionHelper.gatherAllNodeIds(target, targetIds, true, false);
 
         // now check for clash with the target route
         for (String id : targetIds) {

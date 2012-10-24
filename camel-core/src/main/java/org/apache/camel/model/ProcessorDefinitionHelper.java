@@ -137,7 +137,17 @@ public final class ProcessorDefinitionHelper {
         }
     }
 
-    public static Set<String> getAllIDs(ProcessorDefinition<?> node, Set<String> set, boolean onlyCustomId, boolean includeAbstract) {
+    /**
+     * Traverses the node, including its children (recursive), and gathers all the node ids.
+     *
+     * @param node  the target node
+     * @param set   set to store ids, if <tt>null</tt> a new set will be created
+     * @param onlyCustomId  whether to only store custom assigned ids (ie. {@link org.apache.camel.model.OptionalIdentifiedDefinition#hasCustomIdAssigned()}
+     * @param includeAbstract whether to include abstract nodes (ie. {@link org.apache.camel.model.ProcessorDefinition#isAbstract()}
+     * @return the set with the found ids.
+     */
+    public static Set<String> gatherAllNodeIds(ProcessorDefinition<?> node, Set<String> set,
+                                               boolean onlyCustomId, boolean includeAbstract) {
         if (node == null) {
             return set;
         }
@@ -163,7 +173,7 @@ public final class ProcessorDefinitionHelper {
         if (children != null && !children.isEmpty()) {
             for (ProcessorDefinition child : children) {
                 // traverse children also
-                getAllIDs(child, set, onlyCustomId, includeAbstract);
+                gatherAllNodeIds(child, set, onlyCustomId, includeAbstract);
             }
         }
 
