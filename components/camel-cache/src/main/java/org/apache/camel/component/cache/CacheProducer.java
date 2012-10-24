@@ -95,7 +95,7 @@ public class CacheProducer extends DefaultProducer {
             cache.remove(key);
         } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_GET)) {
             LOG.debug("Quering an element with key {} from the Cache", key);
-            if (cache.isKeyInCache(key) && cache.get(key) != null) {
+            if (cache.get(key) != null) {
                 exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
                 exchange.getIn().setBody(cache.get(key).getValue());
             } else {
