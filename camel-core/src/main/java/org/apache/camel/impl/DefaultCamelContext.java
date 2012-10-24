@@ -79,6 +79,7 @@ import org.apache.camel.model.Constants;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.Delayer;
@@ -717,6 +718,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void startRoute(RouteDefinition route) throws Exception {
+        // validate that the id's is all unique
+        String duplicate = RouteDefinitionHelper.validateUniqueIds(route, routeDefinitions);
+        if (duplicate != null) {
+            throw new FailedToStartRouteException(route.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+        }
+
         // indicate we are staring the route using this thread so
         // we are able to query this if needed
         isStartingRoutes.set(true);
@@ -1965,6 +1972,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     private boolean doCheckStartupOrderClash(DefaultRouteStartupOrder answer, Map<Integer, DefaultRouteStartupOrder> inputs) throws FailedToStartRouteException {
         // TODO: There could potential be routeId clash as well, so we should check for that as well
+
 
         // check for clash by startupOrder id
         DefaultRouteStartupOrder other = inputs.get(answer.getStartupOrder());
