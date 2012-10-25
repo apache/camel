@@ -21,6 +21,8 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
+import org.apache.camel.component.spring.ws.filter.MessageFilter;
+import org.apache.camel.component.spring.ws.filter.impl.BasicFilterStrategy;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -41,6 +43,7 @@ public class SpringWebserviceConfiguration {
     private SSLContextParameters sslContextParameters;
 
     private XmlConverter xmlConverter;
+    private MessageFilter messageFilter;
     
     public WebServiceTemplate getWebServiceTemplate() {
         return webServiceTemplate;
@@ -136,5 +139,30 @@ public class SpringWebserviceConfiguration {
     public static String decode(String uri) {
         int i = uri.lastIndexOf(')');
         return i == -1 ? uri : (uri.subSequence(0, i) + "}" + uri.substring(i + 1)).replaceFirst("\\(", "{");
+    }
+
+
+    /**
+     * Default setter to override failsafe message filter.
+     * 
+     * @param messageFilter non-default MessageFilter
+     */
+    public void setMessageFilter(MessageFilter messageFilter) {
+        this.messageFilter = messageFilter;
+
+    }
+
+    /**
+     * Gets the configured MessageFilter.
+     * 
+     * Note: The only place that sets fail safe strategy.
+     * 
+     * @return instance of MessageFilter that is never null;
+     */
+    public MessageFilter getMessageFilter() {
+        if (this.messageFilter == null) {
+            this.messageFilter = new BasicFilterStrategy();
+        }
+        return this.messageFilter;
     }
 }

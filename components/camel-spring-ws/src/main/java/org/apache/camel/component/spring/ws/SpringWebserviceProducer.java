@@ -32,10 +32,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
@@ -73,7 +71,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         String soapAction = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, String.class);
         URI wsAddressingAction = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, URI.class);
 
-        WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapAction, wsAddressingAction, getEndpoint().getConfiguration());
+        WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapAction, wsAddressingAction, getEndpoint().getConfiguration(), exchange);
         Object body = null;
         if (endpointUri != null) {
             body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(endpointUri, sourcePayload, callback, SOURCE_EXTRACTOR);
@@ -197,11 +195,13 @@ public class SpringWebserviceProducer extends DefaultProducer {
         private final String soapActionHeader;
         private final URI wsAddressingActionHeader;
         private final SpringWebserviceConfiguration configuration;
+        private final Exchange exchange;
 
-        public DefaultWebserviceMessageCallback(String soapAction, URI wsAddressingAction, SpringWebserviceConfiguration configuration) {
+        public DefaultWebserviceMessageCallback(String soapAction, URI wsAddressingAction, SpringWebserviceConfiguration configuration, Exchange exchange) {
             this.soapActionHeader = soapAction;
             this.wsAddressingActionHeader = wsAddressingAction;
             this.configuration = configuration;
+            this.exchange = exchange;
         }
 
         public void doWithMessage(WebServiceMessage message) throws IOException, TransformerException {
@@ -218,6 +218,8 @@ public class SpringWebserviceProducer extends DefaultProducer {
             if (wsAddressingAction != null) {
                 new ActionCallback(wsAddressingAction).doWithMessage(message);
             }
+            
+            configuration.getMessageFilter().filterProducer(exchange, message);
         }
     }
 
