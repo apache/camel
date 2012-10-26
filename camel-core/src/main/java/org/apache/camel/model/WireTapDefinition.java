@@ -201,6 +201,18 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         setCopy(true);
         return this;
     }
+    
+    /**
+     * Uses a copy of the original exchange
+     *
+     * @param copy if it is true camel will copy the original exchange,
+     *             if it is false camel will not copy the original exchange 
+     * @return the builder
+     */
+    public WireTapDefinition<Type> copy(boolean copy) {
+        setCopy(copy);
+        return this;
+    }
 
     /**
      * @deprecated will be removed in Camel 3.0 Instead use {@link #newExchangeBody(org.apache.camel.Expression)}
