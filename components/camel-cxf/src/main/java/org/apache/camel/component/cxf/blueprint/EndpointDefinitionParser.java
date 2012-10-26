@@ -27,7 +27,6 @@ import org.apache.aries.blueprint.ParserContext;
 import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
 import org.apache.camel.component.cxf.CxfBlueprintEndpoint;
 import org.apache.cxf.common.util.StringUtils;
-import org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser;
 import org.apache.cxf.helpers.DOMUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.reflect.Metadata;
@@ -54,12 +53,16 @@ public class EndpointDefinitionParser extends AbstractBeanDefinitionParser {
                 address = val;
             } else if (isAttribute(pre, name)) {
                 if ("endpointName".equals(name) || "serviceName".equals(name)) {
-                    QName q = parseQName(element, val);
-                    endpointConfig.addProperty(name, createValue(context, q));
+                    if (isPlaceHolder(val)) {
+                        endpointConfig.addProperty(name + "String", createValue(context, val));
+                    } else {
+                        QName q = parseQName(element, val);
+                        endpointConfig.addProperty(name, createValue(context, q));
+                    }
                 } else if ("depends-on".equals(name)) {
                     endpointConfig.addDependsOn(val);
                 } else if (!"name".equals(name)) {
-                    endpointConfig.addProperty(name, AbstractBPBeanDefinitionParser.createValue(context, val));
+                    endpointConfig.addProperty(name, createValue(context, val));
                 }
             }
         }
@@ -89,11 +92,19 @@ public class EndpointDefinitionParser extends AbstractBeanDefinitionParser {
 
         endpointConfig.addProperty("bus", getBusRef(context, bus));
         endpointConfig.setDestroyMethod("destroy");
-        endpointConfig.addArgument(AbstractBPBeanDefinitionParser.createValue(context, address), String.class.getName(), 0);
+        endpointConfig.addArgument(createValue(context, address), String.class.getName(), 0);
         endpointConfig.addArgument(createRef(context, "blueprintBundleContext"),
                                    BundleContext.class.getName(), 1);
 
         return endpointConfig;
+    }
+
+    private static boolean isPlaceHolder(String value) {
+        if (value != null && (value.startsWith("${") && value.endsWith("}")
+            || value.startsWith("{{") && value.endsWith("}}"))) {
+            return true;
+        }
+        return false;
     }
     
 }
