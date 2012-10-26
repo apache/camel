@@ -110,9 +110,9 @@
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
-    <felix-compendium-version>1.2.0</felix-compendium-version>
-    <felix-configadmin-version>1.2.4</felix-configadmin-version>
-    <felix-framework-version>2.0.5</felix-framework-version>
+    <felix-compendium-version>1.4.0</felix-compendium-version>
+    <felix-configadmin-version>1.4.0</felix-configadmin-version>
+    <felix-framework-version>3.2.2</felix-framework-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
     <fop-bundle-version>1.0_3</fop-bundle-version>
     <fop-version>1.0</fop-version>
@@ -254,7 +254,7 @@
     <opensaml-version>2.5.1_2</opensaml-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
-    <osgi-version>4.2.0</osgi-version>
+    <osgi-version>4.3.0</osgi-version>
     <paranamer-bundle-version>2.4_1</paranamer-bundle-version>
     <pax-exam-version>2.5.0</pax-exam-version>
     <paxexam-karaf-container-version>1.0.0</paxexam-karaf-container-version>
@@ -1829,7 +1829,7 @@
       <dependency>
         <groupId>org.apache.felix</groupId>
         <artifactId>org.apache.felix.configadmin</artifactId>
-        <version>1.2.4</version>
+        <version>${felix-configadmin-version}</version>
       </dependency>
 
       <!-- need this to use the new 'maven-archetype' packaging type -->
