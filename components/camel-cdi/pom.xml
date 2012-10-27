@@ -34,6 +34,7 @@
         <camel.osgi.import>
             !org.apache.camel.cdi.*,
             !org.apache.deltaspike.cdise.api.*,
+            ${camel.osgi.import.defaults},
             org.apache.deltaspike.core.api.*;resolution:=optional,
             *
         </camel.osgi.import>

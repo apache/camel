@@ -291,8 +291,8 @@
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
     <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
     <shiro-version>1.2.1</shiro-version>
-    <slf4j-api-version>1.6.6</slf4j-api-version>
-    <slf4j-version>1.6.6</slf4j-version>
+    <slf4j-api-version>1.7.2</slf4j-api-version>
+    <slf4j-version>1.7.2</slf4j-version>
     <smack-bundle-version>3.2.1_1</smack-bundle-version>
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
@@ -356,6 +356,8 @@
     <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
     <camel.osgi.import.defaults>
+      org.springframework.ws.*;version="[2,3)",
+      org.springframework.xml.*;version="[2,3)",
       org.springframework.*;version="[3,4)",
       org.apache.commons.logging.*;version="[1.1,2)",
       org.apache.cxf.*;version="${cxf-version-range}",
@@ -365,12 +367,12 @@
       org.apache.velocity.*;version="[1.6.2,2)",
       org.apache.xmlbeans.*;version="[2.4,3)",
       org.eclipse.jetty.*;version="[7.5,8.2)",
-      org.eclipse.jetty.util.ssl;version="[7.6,8.2)";resolution:=optional,
       com.thoughtworks.xstream.*;version="[1.3,2)",
       org.antlr.stringtemplate.*;version="[3.0,4)",
       org.jivesoftware.smack.*;version="[3.0,4)",
       org.ccil.cowan.tagsoup.*;version="[1.2,2)",
       org.mortbay.cometd.*;version="[6.1,7)",
+      org.slf4j.*;version="[1.6,2)",
       net.sf.flatpack.*;version="[3.1.1,4)",
       net.sf.saxon.*;version="[9.3.0,9.5)",
       freemarker.*;version="[2.3.15,3)",

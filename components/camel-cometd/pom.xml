@@ -31,6 +31,12 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.cometd.*</camel.osgi.export.pkg>
+        <camel.osgi.import.pkg>
+            !org.apache.camel.component.cometd.*,
+            org.eclipse.jetty.util.ssl;version="[7.6,8.2)";resolution:=optional,
+            ${camel.osgi.import.defaults},
+            *
+        </camel.osgi.import.pkg>
     </properties>
 
     <dependencies>

@@ -33,6 +33,7 @@
         <camel.osgi.import>
             !org.apache.camel.blueprint.*,
             !org.apache.camel.util.blueprint.*,
+            ${camel.osgi.import.defaults},
             org.apache.camel.*;${camel.osgi.import.strict.version},
             org.osgi.service.event*;resolution:=optional,
             org.apache.aries*;version="[0.3,2)",

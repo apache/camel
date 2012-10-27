@@ -36,6 +36,7 @@
         </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.websocket.*,
+            org.eclipse.jetty.util.ssl;version="[7.6,8.2)";resolution:=optional,
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>
