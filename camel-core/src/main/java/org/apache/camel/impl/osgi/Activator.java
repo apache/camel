@@ -291,7 +291,6 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 super(null);
             }
 
-            @SuppressWarnings("unchecked")
             public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
                 PackageScanFilter test = new AnnotatedWithPackageScanFilter(Converter.class, true);
                 Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
@@ -396,11 +395,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             try {
                 Properties properties = loadProperties(url);
                 String classname = (String) properties.get("class");
-                Class<T> type = bundle.loadClass(classname);
+                Class<?> type = bundle.loadClass(classname);
                 if (!this.type.isAssignableFrom(type)) {
                     throw new IllegalArgumentException("Type is not a " + this.type.getName() + " implementation. Found: " + type.getName());
                 }
-                return injector.newInstance(type);
+                return injector.newInstance((Class<T>) type);
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("Invalid URI, no " + this.type.getName() + " registered for scheme : " + name, e);
             }
@@ -411,7 +410,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     protected abstract static class BaseService {
 
         protected final Bundle bundle;
-        private ServiceRegistration reg;
+        private ServiceRegistration<?> reg;
 
         protected BaseService(Bundle bundle) {
             this.bundle = bundle;
@@ -433,7 +432,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             doRegister(type, null);
         }
 
-        protected void doRegister(Class<?> type, Dictionary<?, ?> props) {
+        protected void doRegister(Class<?> type, Dictionary<String, ?> props) {
             reg = bundle.getBundleContext().registerService(type.getName(), this, props);
         }
 
