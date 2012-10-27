@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -44,17 +43,6 @@ public class GsonMarshalTest extends CamelTestSupport {
         template.sendBody("direct:back", marshalled);
 
         mock.assertIsSatisfied();
-    }
-    
-   
-    @Test
-    @SuppressWarnings("rawtypes")
-    public void testUnmarshalMap() throws Exception {
-        Map unmarshalled = 
-            template.requestBody("direct:json", "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
-        Map map1 = (Map)unmarshalled.get("pointsOfSale");
-        Map map2 = (Map) map1.get("pointOfSale");
-        assertEquals("Don't get the right value", "newpad", map2.get("prodcut"));
     }
 
     @Test
@@ -90,8 +78,6 @@ public class GsonMarshalTest extends CamelTestSupport {
 
                 from("direct:inPojo").marshal(formatPojo);
                 from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");
-                
-                from("direct:json").unmarshal().json(JsonLibrary.Gson, Map.class);
             }
         };
     }
