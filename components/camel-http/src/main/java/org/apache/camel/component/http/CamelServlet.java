@@ -86,6 +86,9 @@ public class CamelServlet extends HttpServlet {
             exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
         }
 
+        // we override the classloader before building the HttpMessage just in case the binding
+        // does some class resolution
+        ClassLoader oldTccl = overrideTccl(exchange);
         HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
         exchange.setIn(new HttpMessage(exchange, request, response));
 
@@ -108,6 +111,8 @@ public class CamelServlet extends HttpServlet {
         } catch (Exception e) {
             log.error("Error processing request", e);
             throw new ServletException(e);
+        } finally {
+            restoreTccl(exchange, oldTccl);
         }
     }
 
@@ -145,6 +150,45 @@ public class CamelServlet extends HttpServlet {
 
     public void setServletName(String servletName) {
         this.servletName = servletName;
+    }
+    
+    /**
+     * Override the Thread Context ClassLoader if need be.
+     * @param exchange
+     * @return old classloader if overridden; otherwise returns null
+     */
+    protected ClassLoader overrideTccl(final Exchange exchange) {
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader appCtxCl = exchange.getContext().getApplicationContextClassLoader();
+        if (oldClassLoader == null || appCtxCl == null) {
+            return null;
+        }
+        
+        if (!oldClassLoader.equals(appCtxCl)) {
+            Thread.currentThread().setContextClassLoader(appCtxCl);
+            if (log.isTraceEnabled()) {
+                log.trace("Overrode TCCL for exchangeId {} to {} on thread {}", 
+                        new Object[] {exchange.getExchangeId(), appCtxCl, Thread.currentThread().getName()});
+            }
+            return oldClassLoader;
+        }
+        return null;
+    }
+
+    /**
+     * Restore the Thread Context ClassLoader if the Old TCCL is not null.
+     * @param exchange
+     * @param oldTccl
+     */
+    protected void restoreTccl(final Exchange exchange, ClassLoader oldTccl) {
+        if (oldTccl == null) {
+            return;
+        }
+        Thread.currentThread().setContextClassLoader(oldTccl);
+        if (log.isTraceEnabled()) {
+            log.trace("Restored TCCL for exchangeId {} to {} on thread {}", 
+                    new String[] {exchange.getExchangeId(), oldTccl.toString(), Thread.currentThread().getName()});
+        }
     }
     
 }
