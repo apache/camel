@@ -27,7 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -281,14 +280,8 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        ServiceHelper.startService(cacheMap);
-        super.doStart();
-    }
-
-    @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(cacheMap);
+        cacheMap.clear();
         super.doStop();
     }
 
