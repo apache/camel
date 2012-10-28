@@ -29,9 +29,10 @@ public class JpaConsumerIdleMessageTest extends CamelTestSupport {
     
     @Test
     public void testConsumeIdleMessages() throws Exception {
-        Thread.sleep(130);
+        Thread.sleep(290);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
+
         assertMockEndpointsSatisfied();
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
@@ -41,7 +42,7 @@ public class JpaConsumerIdleMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("jpa://org.apache.camel.examples.MultiSteps?consumer.nativeQuery=select * from MultiSteps where step = 1"
-                        + "&delay=50&sendEmptyMessageWhenIdle=true")
+                        + "&delay=100&sendEmptyMessageWhenIdle=true")
                     .to("mock:result");
             }
         };
