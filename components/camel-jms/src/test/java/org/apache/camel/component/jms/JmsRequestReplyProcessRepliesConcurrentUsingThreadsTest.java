@@ -37,7 +37,7 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
     @Test
     public void testRequestReplyWithConcurrent() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(5);
+        mock.expectedBodiesReceivedInAnyOrder("Bye A", "Bye B", "Bye C", "Bye D", "Bye E");
 
         log.info("Sending messages ...");
         template.sendBody("seda:start", "A");
@@ -64,6 +64,10 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                from("activemq:queue:foo")
+                    .log("request - ${body}")
+                    .transform(body().prepend("Bye "));
+
                 from("seda:start")
                     .setExchangePattern(ExchangePattern.InOut)
                     .to("activemq:queue:foo")
@@ -73,14 +77,7 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
                     .delay(2000)
                     .log("done    - ${body}")
                     .to("mock:result");
-
-                from("activemq:queue:foo")
-                    .log("request - ${body}")
-                    .transform(body().prepend("Bye "))
-                    .to("mock:bye");
             }
         };
     }
 }
-
-
