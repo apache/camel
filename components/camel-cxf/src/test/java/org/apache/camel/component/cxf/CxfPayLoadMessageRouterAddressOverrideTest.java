@@ -33,8 +33,10 @@ import org.apache.camel.converter.jaxp.XmlConverter;
  * @version 
  */
 public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessageRouterTest {
+
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
     private String serviceEndpointURI = "cxf://http://localhost:9002/badAddress" + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -51,7 +53,6 @@ public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessag
                         Element el = new XmlConverter().toDOMElement(elements.get(0));
                         assertEquals("Get the wrong namespace URI" , el.getNamespaceURI(), "http://cxf.component.camel.apache.org/");
                     }
-                    
                 })
                 .to(serviceEndpointURI);
             }

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.test.patterns;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 
 /**
  *
@@ -25,8 +27,15 @@ public class MyProduceBean {
 
     @Produce(uri = "mock:result")
     MySender sender;
+    
+    @EndpointInject(uri = "direct:start")
+    ProducerTemplate template;
 
     public void doSomething(String body) {
         sender.send(body);
+    }
+    
+    public ProducerTemplate getProducerTemplate() {
+        return template;
     }
 }

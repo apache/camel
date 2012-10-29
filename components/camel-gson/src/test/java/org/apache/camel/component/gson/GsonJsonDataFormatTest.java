@@ -16,10 +16,22 @@
  */
 package org.apache.camel.component.gson;
 
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
+import org.junit.Test;
+
 public class GsonJsonDataFormatTest extends GsonMarshalTest {
+
+    @Test
+    public void testUnmarshalMap() throws Exception {
+        Map<?, ?> unmarshalled = template.requestBody("direct:json", "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
+        Map<?, ?> map1 = (Map<?, ?>) unmarshalled.get("pointsOfSale");
+        Map<?, ?> map2 = (Map<?, ?>) map1.get("pointOfSale");
+        assertEquals("Don't get the right value", "newpad", map2.get("prodcut"));
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -31,6 +43,8 @@ public class GsonJsonDataFormatTest extends GsonMarshalTest {
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Gson);
                 from("direct:backPojo").unmarshal().json(JsonLibrary.Gson, TestPojo.class).to("mock:reversePojo");
+                
+                from("direct:json").unmarshal().json(JsonLibrary.Gson, Map.class);
             }
         };
     }

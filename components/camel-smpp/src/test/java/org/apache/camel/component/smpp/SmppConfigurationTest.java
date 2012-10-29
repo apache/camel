@@ -49,6 +49,7 @@ public class SmppConfigurationTest {
         assertEquals("1717", configuration.getDestAddr());
         assertEquals(0x00, configuration.getDestAddrNpi());
         assertEquals(0x00, configuration.getDestAddrTon());
+        assertEquals("", configuration.getAddressRange());
         assertEquals(new Integer(5000), configuration.getEnquireLinkTimer());
         assertEquals("localhost", configuration.getHost());
         assertEquals("password", configuration.getPassword());
@@ -177,6 +178,7 @@ public class SmppConfigurationTest {
                 + "destAddrTon=0, "
                 + "sourceAddrNpi=0, "
                 + "destAddrNpi=0, "
+                + "addressRange=, "
                 + "protocolId=0, "
                 + "priorityFlag=1, "
                 + "replaceIfPresentFlag=0, "

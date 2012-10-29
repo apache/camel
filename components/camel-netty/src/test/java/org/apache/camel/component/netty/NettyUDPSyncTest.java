@@ -18,20 +18,15 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class NettyUDPSyncTest extends BaseNettyTest {
 
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate producerTemplate;
-
     @Test
     public void testUDPStringInOutWithNettyConsumer() throws Exception {
         for (int i = 0; i < 5; i++) {
-            String response = producerTemplate.requestBody(
+            String response = template.requestBody(
                 "netty:udp://localhost:{{port}}?sync=true",
                 "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ?", String.class);        
             assertEquals("Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.", response);

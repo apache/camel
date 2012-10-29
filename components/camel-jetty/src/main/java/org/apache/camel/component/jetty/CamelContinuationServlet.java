@@ -115,8 +115,11 @@ public class CamelContinuationServlet extends CamelServlet {
             // must suspend before we process the exchange
             continuation.suspend();
 
+            ClassLoader oldTccl = overrideTccl(exchange);
+            
             log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
             // use the asynchronous API to process the exchange
+            
             consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // check if the exchange id is already expired
@@ -132,6 +135,10 @@ public class CamelContinuationServlet extends CamelServlet {
                 }
             });
 
+            if (oldTccl != null) {
+                restoreTccl(exchange, oldTccl);
+            }
+            
             // return to let Jetty continuation to work as it will resubmit and invoke the service
             // method again when its resumed
             return;

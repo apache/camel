@@ -32,18 +32,9 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.spring.ws.*</camel.osgi.export.pkg>
-        <camel.osgi.import>
-        !org.apache.camel.component.spring.ws.*,
-        org.apache.camel.*;${camel.osgi.import.camel.version},
-        org.springframework.ws.*;version="[2,3)",
-        org.springframework.xml.*;version="[2,3)",
-        org.springframework.*;version="[3,4)",
-        *
-        </camel.osgi.import>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

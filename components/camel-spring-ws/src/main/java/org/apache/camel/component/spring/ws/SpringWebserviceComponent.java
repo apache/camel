@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.camel.CamelContext;
@@ -26,11 +27,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
+import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +69,7 @@ public class SpringWebserviceComponent extends DefaultComponent {
         addProducerConfiguration(remaining, parameters, configuration);
         addXmlConverterToConfiguration(parameters, configuration);
         setProperties(configuration, parameters);
+        configureMessageFilter(parameters, configuration); 
         return new SpringWebserviceEndpoint(this, uri, configuration);
     }
 
@@ -153,4 +157,25 @@ public class SpringWebserviceComponent extends DefaultComponent {
         }
         configuration.setXmlConverter(xmlConverter);
     }
+    
+   
+    /**
+     * Configures the messageFilter's factory. The factory is looked up in the endpoint's URI and then in the Spring's context.
+     * The bean search mechanism looks for a bean with the name messageFilter.
+     * The endpoint's URI search mechanism looks for the URI's key parameter name messageFilter, for instance like this:
+     * spring-ws:http://yourdomain.com?messageFilter=<beanName>
+     * 
+     * @param parameters
+     * @param configuration
+     */
+    private void configureMessageFilter(Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
+
+        final MessageFilter globalMessageFilter = EndpointHelper.resolveReferenceParameter(
+                                                      getCamelContext(), "messageFilter", MessageFilter.class, false /*not mandatory*/);
+        final MessageFilter messageFilter = resolveAndRemoveReferenceParameter(
+                                                      parameters, "messageFilter", MessageFilter.class, globalMessageFilter);
+
+        configuration.setMessageFilter(messageFilter);
+    }
+
 }

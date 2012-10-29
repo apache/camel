@@ -51,11 +51,13 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         mock.expectsNoDuplicates(body());
         mock.setResultWaitTime(30000);
 
+        // we need to wait a bit for our slow CI server to make sure the entire file is written on disc
+        Thread.sleep(100);
         context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
 
-        // check the file has 5000 lines
+        // check the file has 500 lines
         String txt = context.getTypeConverter().convertTo(String.class, new File("target/concurrent/outbox/result.txt"));
         assertNotNull(txt);
 

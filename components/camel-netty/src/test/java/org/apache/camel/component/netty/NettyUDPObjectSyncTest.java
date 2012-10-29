@@ -18,20 +18,15 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class NettyUDPObjectSyncTest extends BaseNettyTest {
 
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate producerTemplate;
-    
     @Test
     public void testUDPObjectInOutWithNettyConsumer() throws Exception {
         Poetry poetry = new Poetry();
-        Poetry response = producerTemplate.requestBody("netty:udp://localhost:{{port}}?sync=true", poetry, Poetry.class);
+        Poetry response = template.requestBody("netty:udp://localhost:{{port}}?sync=true", poetry, Poetry.class);
         assertEquals("Dr. Sarojini Naidu", response.getPoet());
     }
     

@@ -33,7 +33,6 @@ import org.junit.Test;
 public class CxfSimpleRouterTest extends CamelTestSupport {    
     
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
-
     
     protected Server server;
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
@@ -42,13 +41,14 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     protected String getRouterAddress() {
         return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/router";
     }
+
     protected String getServiceAddress() {
         return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/helloworld";
     }
     
     protected void configureFactory(ServerFactoryBean svrBean) {
-        
     }
+
     @Override
     public boolean isCreateCamelContextPerClass() {
         return true;
@@ -78,7 +78,9 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI);
+                from(routerEndpointURI)
+                    .to("log:org.apache.camel?level=DEBUG")
+                    .to(serviceEndpointURI);
             }
         };
     }

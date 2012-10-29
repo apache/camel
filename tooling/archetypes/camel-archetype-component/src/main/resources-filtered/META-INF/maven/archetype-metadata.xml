@@ -22,9 +22,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <requiredProperties>
     <requiredProperty key="name"/>
-    <requiredProperty key="scheme">
-      <defaultValue>helloworld</defaultValue>
-    </requiredProperty>
+    <requiredProperty key="scheme"/>
     <requiredProperty key="camel-version">
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
@@ -33,6 +31,9 @@
     </requiredProperty>
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="maven-resources-plugin-version">
+      <defaultValue>${maven-resources-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>

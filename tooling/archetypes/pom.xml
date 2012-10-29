@@ -36,6 +36,7 @@
     <module>camel-archetype-component</module>
     <module>camel-archetype-component-scala</module>
     <module>camel-archetype-dataformat</module>
+    <module>camel-archetype-groovy</module>
     <module>camel-archetype-java</module>
     <module>camel-archetype-scala</module>
     <module>camel-archetype-spring</module>

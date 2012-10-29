@@ -18,7 +18,9 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -133,7 +135,49 @@ public final class ProcessorDefinitionHelper {
             // not found
             return null;
         }
+    }
 
+    /**
+     * Traverses the node, including its children (recursive), and gathers all the node ids.
+     *
+     * @param node  the target node
+     * @param set   set to store ids, if <tt>null</tt> a new set will be created
+     * @param onlyCustomId  whether to only store custom assigned ids (ie. {@link org.apache.camel.model.OptionalIdentifiedDefinition#hasCustomIdAssigned()}
+     * @param includeAbstract whether to include abstract nodes (ie. {@link org.apache.camel.model.ProcessorDefinition#isAbstract()}
+     * @return the set with the found ids.
+     */
+    public static Set<String> gatherAllNodeIds(ProcessorDefinition<?> node, Set<String> set,
+                                               boolean onlyCustomId, boolean includeAbstract) {
+        if (node == null) {
+            return set;
+        }
+
+        // skip abstract
+        if (node.isAbstract() && !includeAbstract) {
+            return set;
+        }
+
+        if (set == null) {
+            set = new LinkedHashSet<String>();
+        }
+
+        // add ourselves
+        if (node.getId() != null) {
+            if (!onlyCustomId || node.hasCustomIdAssigned() && onlyCustomId) {
+                set.add(node.getId());
+            }
+        }
+
+        // traverse outputs and recursive children as well
+        List<ProcessorDefinition<?>> children = node.getOutputs();
+        if (children != null && !children.isEmpty()) {
+            for (ProcessorDefinition child : children) {
+                // traverse children also
+                gatherAllNodeIds(child, set, onlyCustomId, includeAbstract);
+            }
+        }
+
+        return set;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -47,7 +47,7 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
     }
 
     public SortDefinition(Expression expression) {
-        setExpression(new ExpressionDefinition(expression));
+        setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
     }
 
     public SortDefinition(Expression expression, Comparator<? super T> comparator) {

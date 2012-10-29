@@ -152,6 +152,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         context.stop();
     }
 
+    public void restart() throws Exception {
+        context.stop();
+        context.start();
+    }
+
     public void suspend() throws Exception {
         context.suspend();
     }

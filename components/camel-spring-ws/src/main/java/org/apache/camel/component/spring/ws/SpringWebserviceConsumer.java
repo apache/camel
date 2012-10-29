@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
@@ -65,6 +66,9 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             if (responseMessage != null) {
                 Source responseBody = responseMessage.getBody(Source.class);
                 WebServiceMessage response = messageContext.getResponse();
+                
+                configuration.getMessageFilter().filterConsumer(exchange, response);
+                
                 XmlConverter xmlConverter = configuration.getXmlConverter();
                 xmlConverter.toResult(responseBody, response.getPayloadResult());
             }

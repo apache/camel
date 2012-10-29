@@ -122,6 +122,31 @@ public class SmppConsumerTest {
     }
 
     @Test
+    public void addressRangeFromConfigurationIsUsed() throws Exception {
+        resetToNice(endpoint, session);
+
+        configuration.setAddressRange("(111*|222*|333*)");
+
+        expect(session.connectAndBind(
+                "localhost",
+                new Integer(2775),
+                new BindParameter(
+                        BindType.BIND_RX,
+                        "smppclient",
+                        "password",
+                        "cp",
+                        TypeOfNumber.UNKNOWN,
+                        NumberingPlanIndicator.UNKNOWN,
+                        "(111*|222*|333*)"))).andReturn("1");
+
+        replay(endpoint, processor, session);
+
+        consumer.doStart();
+
+        verify(endpoint, processor, session);
+    }
+
+    @Test
     public void getterShouldReturnTheSetValues() {
         assertSame(endpoint, consumer.getEndpoint());
         assertSame(configuration, consumer.getConfiguration());

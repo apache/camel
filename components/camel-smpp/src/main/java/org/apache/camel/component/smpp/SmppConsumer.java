@@ -95,8 +95,9 @@ public class SmppConsumer extends DefaultConsumer {
         session.connectAndBind(this.configuration.getHost(), this.configuration.getPort(),
                 new BindParameter(BindType.BIND_RX, this.configuration.getSystemId(),
                         this.configuration.getPassword(), this.configuration.getSystemType(),
-                        TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, ""));
-        
+                        TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN,
+                                  configuration.getAddressRange()));
+
         return session;
     }
     

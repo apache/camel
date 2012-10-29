@@ -31,7 +31,7 @@
   <name>Camel :: Platforms :: Apache Karaf :: Commands</name>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.karaf.commands*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.karaf.commands.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -79,6 +79,7 @@
               org.apache.felix.service.command;version="[0.6,1)",
               org.apache.felix.gogo.commands;version="[0.6,1)",
               org.apache.karaf.shell.console;version="[2.2,4)",
+              org.slf4j.*;version="[1.6,2)",
               *
             </Import-Package>
             <Private-Package>

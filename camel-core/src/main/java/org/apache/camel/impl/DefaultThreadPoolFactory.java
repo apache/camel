@@ -58,10 +58,9 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
                                          int maxQueueSize, RejectedExecutionHandler rejectedExecutionHandler,
                                          ThreadFactory threadFactory) throws IllegalArgumentException {
 
-        // If we set the corePoolSize to be 0, the whole camel application will hang in JDK5
-        // just add a check here to throw the IllegalArgumentException
+        // the core pool size must be higher than 0
         if (corePoolSize < 1) {
-            throw new IllegalArgumentException("The corePoolSize can't be lower than 1");
+            throw new IllegalArgumentException("CorePoolSize must be >= 1, was " + corePoolSize);
         }
 
         // validate max >= core
@@ -71,16 +70,16 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
 
         BlockingQueue<Runnable> workQueue;
         if (corePoolSize == 0 && maxQueueSize <= 0) {
-            // use a synchronous queue
+            // use a synchronous queue for direct-handover (no tasks stored on the queue)
             workQueue = new SynchronousQueue<Runnable>();
             // and force 1 as pool size to be able to create the thread pool by the JDK
             corePoolSize = 1;
             maxPoolSize = 1;
         } else if (maxQueueSize <= 0) {
-            // unbounded task queue
-            workQueue = new LinkedBlockingQueue<Runnable>();
+            // use a synchronous queue for direct-handover (no tasks stored on the queue)
+            workQueue = new SynchronousQueue<Runnable>();
         } else {
-            // bounded task queue
+            // bounded task queue to store tasks on the queue
             workQueue = new LinkedBlockingQueue<Runnable>(maxQueueSize);
         }
 

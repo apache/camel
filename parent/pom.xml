@@ -102,16 +102,17 @@
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.3.2</dozer-version>
     <easymock-version>3.1</easymock-version>
+    <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-bundle-version>2.6.0_1</ehcache-bundle-version>
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.19.10</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
-    <exec-maven-plugin-version>1.1.1</exec-maven-plugin-version>
+    <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
-    <felix-compendium-version>1.2.0</felix-compendium-version>
-    <felix-configadmin-version>1.2.4</felix-configadmin-version>
-    <felix-framework-version>2.0.5</felix-framework-version>
+    <felix-compendium-version>1.4.0</felix-compendium-version>
+    <felix-configadmin-version>1.4.0</felix-configadmin-version>
+    <felix-framework-version>3.2.2</felix-framework-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
     <fop-bundle-version>1.0_3</fop-bundle-version>
     <fop-version>1.0</fop-version>
@@ -133,6 +134,7 @@
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.2</geronimo-servlet-spec-version>
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
+    <gmaven-plugin-version>1.4</gmaven-plugin-version>
     <google-app-engine-version>1.6.6</google-app-engine-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-guava-bundle-version>11_1</google-guava-bundle-version> <!-- FIXME cmueller: not in sync! -->
@@ -147,8 +149,8 @@
     <hapi-version>2.0</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
-    <hawtdispatch-version>1.11</hawtdispatch-version>
-    <hazelcast-version>2.3</hazelcast-version>
+    <hawtdispatch-version>1.12</hawtdispatch-version>
+    <hazelcast-version>2.4</hazelcast-version>
     <hbase-version>0.90.5</hbase-version>
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
     <hibernate-version>3.6.10.Final</hibernate-version>
@@ -178,7 +180,7 @@
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
     <jaxen-version>1.1.4</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
-    <jclouds-version>1.5.1</jclouds-version>
+    <jclouds-version>1.5.2</jclouds-version>
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
@@ -196,7 +198,7 @@
     <jodatime2-bundle-version>2.1</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
-    <jruby-version>1.6.7.2</jruby-version>
+    <jruby-version>1.7.0</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
     <jsch-bundle-version>0.1.48_1</jsch-bundle-version>
@@ -217,21 +219,26 @@
     <karaf-version>2.2.9</karaf-version>
     <krati-version>0.4.6</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
-    <leveldbjni-version>1.2</leveldbjni-version>
+    <leveldbjni-version>1.3</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
     <lucene-bundle-version>3.6.0_1</lucene-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
+    <maven-bundle-version>2.3.7</maven-bundle-version>
+    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+    <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
+    <maven-resources-plugin-version>2.4.3</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-version>2.0</maven-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.7</mina2-version>
-    <mockito-version>1.9.0</mockito-version>
+    <mock-javamail-version>1.7</mock-javamail-version>
+    <mockito-version>1.9.5</mockito-version>
     <mongo-java-driver-version>2.9.1</mongo-java-driver-version>
-    <mqtt-client-version>1.2</mqtt-client-version>
+    <mqtt-client-version>1.4</mqtt-client-version>
     <mvel-bundle-version>2.0.18_3</mvel-bundle-version>
     <mvel-version>2.0.18</mvel-version>
     <mybatis-version>3.1.1</mybatis-version>
@@ -247,7 +254,7 @@
     <opensaml-version>2.5.1_2</opensaml-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
-    <osgi-version>4.2.0</osgi-version>
+    <osgi-version>4.3.0</osgi-version>
     <paranamer-bundle-version>2.4_1</paranamer-bundle-version>
     <pax-exam-version>2.5.0</pax-exam-version>
     <paxexam-karaf-container-version>1.0.0</paxexam-karaf-container-version>
@@ -278,13 +285,14 @@
     <saxon-version>9.4.0.4</saxon-version>
     <scala-bundle-version>2.9.2_1</scala-bundle-version>
     <scala-version>2.9.2</scala-version>
+    <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
     <scriptengines-version>1.1</scriptengines-version>
     <serp-bundle-version>1.13.1_4</serp-bundle-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
     <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
     <shiro-version>1.2.1</shiro-version>
-    <slf4j-api-version>1.6.6</slf4j-api-version>
-    <slf4j-version>1.6.6</slf4j-version>
+    <slf4j-api-version>1.7.2</slf4j-api-version>
+    <slf4j-version>1.7.2</slf4j-version>
     <smack-bundle-version>3.2.1_1</smack-bundle-version>
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
@@ -293,24 +301,24 @@
     <solr-version>3.6.1</solr-version>
     <spring-batch-version>2.1.9.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
-    <spring-integration-version>2.1.3.RELEASE</spring-integration-version>
+    <spring-integration-version>2.1.4.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-neo4j-version>2.0.2.RELEASE</spring-neo4j-version>
+    <spring-neo4j-version>2.1.0.RELEASE</spring-neo4j-version>
     <spring-version>3.0.7.RELEASE</spring-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>3.1.2.RELEASE</spring-security-version>
+    <spring-security-version>3.1.3.RELEASE</spring-security-version>
     <!-- spring WS 2.0.3 is the last release to support Spring 3.0.x -->
     <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
-    <sshd-version>0.7.0</sshd-version>
+    <sshd-version>0.8.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
     <stringtemplate-bundle-version>3.2_5</stringtemplate-bundle-version>
     <stringtemplate-version>3.2.1</stringtemplate-version>
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
-    <testng-version>6.7</testng-version>
+    <testng-version>6.8</testng-version>
     <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
     <twitter4j-version>2.2.5</twitter4j-version>
     <velocity-bundle-version>1.7_5</velocity-bundle-version>
@@ -348,6 +356,8 @@
     <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
     <camel.osgi.import.defaults>
+      org.springframework.ws.*;version="[2,3)",
+      org.springframework.xml.*;version="[2,3)",
       org.springframework.*;version="[3,4)",
       org.apache.commons.logging.*;version="[1.1,2)",
       org.apache.cxf.*;version="${cxf-version-range}",
@@ -357,12 +367,12 @@
       org.apache.velocity.*;version="[1.6.2,2)",
       org.apache.xmlbeans.*;version="[2.4,3)",
       org.eclipse.jetty.*;version="[7.5,8.2)",
-      org.eclipse.jetty.util.ssl;version="[7.6,8.2)";resolution:=optional,
       com.thoughtworks.xstream.*;version="[1.3,2)",
       org.antlr.stringtemplate.*;version="[3.0,4)",
       org.jivesoftware.smack.*;version="[3.0,4)",
       org.ccil.cowan.tagsoup.*;version="[1.2,2)",
       org.mortbay.cometd.*;version="[6.1,7)",
+      org.slf4j.*;version="[1.6,2)",
       net.sf.flatpack.*;version="[3.1.1,4)",
       net.sf.saxon.*;version="[9.3.0,9.5)",
       freemarker.*;version="[2.3.15,3)",
@@ -1244,6 +1254,11 @@
         <artifactId>jaxb-xjc</artifactId>
         <version>${jaxb-version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.sun.xml.parsers</groupId>
+        <artifactId>jaxp-ri</artifactId>
+        <version>1.4.2</version>
+      </dependency>
 
       <!-- logging -->
       <dependency>
@@ -1816,7 +1831,7 @@
       <dependency>
         <groupId>org.apache.felix</groupId>
         <artifactId>org.apache.felix.configadmin</artifactId>
-        <version>1.2.4</version>
+        <version>${felix-configadmin-version}</version>
       </dependency>
 
       <!-- need this to use the new 'maven-archetype' packaging type -->
@@ -2027,6 +2042,11 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.8.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.3.1</version>
         </plugin>
@@ -2076,7 +2096,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.4.3</version>
+          <version>${maven-resources-plugin-version}</version>
           <configuration>
             <encoding>UTF-8</encoding>
           </configuration>
@@ -2129,6 +2149,11 @@
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <version>0.8</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.servicemix.tooling</groupId>
+          <artifactId>depends-maven-plugin</artifactId>
+          <version>1.2</version>
         </plugin>
         <plugin>  
           <groupId>org.apache.tomcat.maven</groupId>  

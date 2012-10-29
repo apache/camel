@@ -120,6 +120,7 @@ public class PGPDataFormat implements DataFormat {
         } else {
             enc = (PGPEncryptedDataList) pgpF.nextObject();
         }
+        IOHelper.close(in);
 
         PGPPublicKeyEncryptedData pbe = (PGPPublicKeyEncryptedData) enc.get(0);
         InputStream clear = pbe.getDataStream(key, "BC");
@@ -128,7 +129,15 @@ public class PGPDataFormat implements DataFormat {
         PGPCompressedData cData = (PGPCompressedData) pgpFact.nextObject();
         pgpFact = new PGPObjectFactory(cData.getDataStream());
         PGPLiteralData ld = (PGPLiteralData) pgpFact.nextObject();
-        return Streams.readAll(ld.getInputStream());
+
+        byte[] answer;
+        try {
+            answer = Streams.readAll(ld.getInputStream());
+        } finally {
+            IOHelper.close(clear);
+        }
+
+        return answer;
     }
 
     /**

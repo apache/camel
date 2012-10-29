@@ -140,6 +140,7 @@ public class CryptoDataFormat implements DataFormat {
                 }
             } finally {
                 IOHelper.close(cipherStream, "cipher", LOG);
+                IOHelper.close(plaintextStream, "plaintext", LOG);
             }
         }
     }

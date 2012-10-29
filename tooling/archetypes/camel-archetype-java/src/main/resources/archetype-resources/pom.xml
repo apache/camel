@@ -77,12 +77,13 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-
-      <!-- allows the route to be ran via 'mvn camel:run' -->
       <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${camel-version}</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin-version}</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
       </plugin>
 
       <!-- Allows the example to be run via 'mvn compile exec:java' -->

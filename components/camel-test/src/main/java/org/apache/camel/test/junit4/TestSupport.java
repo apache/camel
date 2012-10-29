@@ -545,6 +545,16 @@ public abstract class TestSupport extends Assert {
         String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
         return javaVersion.startsWith("1.6");
     }
+    
+    /**
+     * Is this Java 1.7
+     *
+     * @return <tt>true</tt> if its Java 1.7, <tt>false</tt> if its not (for example Java 1.7 or better)
+     */
+    public static boolean isJava17() {
+        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
+        return javaVersion.startsWith("1.7");
+    }
 
     /**
      * Gets the current test method name

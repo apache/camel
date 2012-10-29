@@ -157,7 +157,7 @@
     <dependency>
       <groupId>org.jvnet.mock-javamail</groupId>
       <artifactId>mock-javamail</artifactId>
-      <version>1.7</version>
+      <version>${mock-javamail-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -226,7 +226,6 @@
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
-      <version>1.2.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -237,7 +236,6 @@
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>3.2.1</version>
       <scope>test</scope>
     </dependency>
 

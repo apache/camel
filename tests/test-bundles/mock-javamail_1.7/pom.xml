@@ -68,7 +68,7 @@
         <dependency>
 	    <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.1</version>
+            <version>${javax-mail-version}</version>
         </dependency>
     </dependencies>
 

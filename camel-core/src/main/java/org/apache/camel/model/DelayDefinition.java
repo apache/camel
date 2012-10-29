@@ -112,7 +112,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      * @return the builder
      */
     public DelayDefinition delayTime(Long delay) {
-        setExpression(new ExpressionDefinition(ExpressionBuilder.constantExpression(delay)));
+        setExpression(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(delay)));
         return this;
     }
 

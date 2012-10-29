@@ -14,27 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.spi;
 
 /**
- * A simple factory used to create new child nodes which allows pluggable extension points
- * such as to add extra DSL helper methods such as for the Groovy or Ruby DSLs
+ * Allows objects such as Endpoints to expose that they have a
+ * <a href="http://camel.apache.org/binding.html">Binding</a>.
  *
- * @version 
+ * For example bean or cxf endpoints can expose the internal binding metadata at runtime
  */
-public class NodeFactory {
+public interface HasBinding {
 
-    // TODO: Make this as SPI interface and add the other createXXX methods
-
-    public FilterDefinition createFilter() {
-        return new FilterDefinition();
-    }
-
-    public LoopDefinition createLoop() {
-        return new LoopDefinition();
-    }
-
-    public RouteDefinition createRoute() {
-        return new RouteDefinition();
-    }
+    /**
+     * Returns the binding for this endpoint if one can be deduced or is associated
+     */
+    Binding getBinding();
 }

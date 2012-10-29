@@ -20,14 +20,16 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StringSource;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
@@ -55,6 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRestletBinding.class);
+    private static final String RFC_2822_DATE_PATTERN = "EEE, dd MMM yyyy HH:mm:ss Z";
     private HeaderFilterStrategy headerFilterStrategy;
 
     public void populateExchangeFromRestletRequest(Request request, Response response, Exchange exchange) throws Exception {
@@ -286,9 +289,14 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
     }
 
-    protected void setResponseHeader(Exchange exchange, org.restlet.Message message, String header, Object value) throws NoTypeConversionAvailableException {
+    protected void setResponseHeader(Exchange exchange, org.restlet.Message message, String header, Object value) {
         // put the header first
         message.getAttributes().put(header, value);
+
+        // there must be a value going forward
+        if (value == null) {
+            return;
+        }
 
         // special for certain headers
         if (message.getEntity() != null) {
@@ -297,9 +305,14 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     message.getEntity().setExpirationDate(((Calendar) value).getTime());
                 } else if (value instanceof Date) {
                     message.getEntity().setExpirationDate((Date) value);
-                } else {
-                    Date date = exchange.getContext().getTypeConverter().mandatoryConvertTo(Date.class, value);
-                    message.getEntity().setExpirationDate(date);
+                } else if (value instanceof String) {
+                    SimpleDateFormat format = new SimpleDateFormat(RFC_2822_DATE_PATTERN, Locale.ENGLISH);
+                    try {
+                        Date date = format.parse((String) value);
+                        message.getEntity().setExpirationDate(date);
+                    } catch (ParseException e) {
+                        LOG.debug("Header {} with value {} cannot be converted as a Date. The value will be ignored.", HeaderConstants.HEADER_EXPIRES, value);
+                    }
                 }
             }
 
@@ -308,9 +321,14 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     message.getEntity().setModificationDate(((Calendar) value).getTime());
                 } else if (value instanceof Date) {
                     message.getEntity().setModificationDate((Date) value);
-                } else {
-                    Date date = exchange.getContext().getTypeConverter().mandatoryConvertTo(Date.class, value);
-                    message.getEntity().setModificationDate(date);
+                } else if (value instanceof String) {
+                    SimpleDateFormat format = new SimpleDateFormat(RFC_2822_DATE_PATTERN, Locale.ENGLISH);
+                    try {
+                        Date date = format.parse((String) value);
+                        message.getEntity().setModificationDate(date);
+                    } catch (ParseException e) {
+                        LOG.debug("Header {} with value {} cannot be converted as a Date. The value will be ignored.", HeaderConstants.HEADER_LAST_MODIFIED, value);
+                    }
                 }
             }
 
@@ -320,8 +338,12 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 } else if (value instanceof Integer) {
                     message.getEntity().setSize((Integer) value);
                 } else {
-                    Long num = exchange.getContext().getTypeConverter().mandatoryConvertTo(Long.class, value);
-                    message.getEntity().setSize(num);
+                    Long num = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, value);
+                    if (num != null) {
+                        message.getEntity().setSize(num);
+                    } else {
+                        LOG.debug("Header {} with value {} cannot be converted as a Long. The value will be ignored.", HeaderConstants.HEADER_CONTENT_LENGTH, value);
+                    }
                 }
             }
 
@@ -334,7 +356,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     if (media != null) {
                         message.getEntity().setMediaType(media);
                     } else {
-                        LOG.debug("Value {} cannot be converted as a MediaType. The value will be ignored.", value);
+                        LOG.debug("Header {} with value {} cannot be converted as a MediaType. The value will be ignored.", HeaderConstants.HEADER_CONTENT_TYPE, value);
                     }
                 }
             }

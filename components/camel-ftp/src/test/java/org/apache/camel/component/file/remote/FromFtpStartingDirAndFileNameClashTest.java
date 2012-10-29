@@ -27,7 +27,7 @@ import org.junit.Test;
 public class FromFtpStartingDirAndFileNameClashTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/hello?password=admin";
+        return "ftp://admin@localhost:" + getPort() + "/hello/?password=admin";
     }
 
     @Override
@@ -51,7 +51,7 @@ public class FromFtpStartingDirAndFileNameClashTest extends FtpServerTestSupport
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
-        exchange.getIn().setHeader(Exchange.FILE_NAME, "hello");
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "hello-world.txt");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);

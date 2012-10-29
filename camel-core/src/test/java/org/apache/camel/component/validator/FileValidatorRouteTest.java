@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.validator;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.FileUtil;
 
 /**
  *
@@ -40,6 +43,10 @@ public class FileValidatorRouteTest extends ContextTestSupport {
                 Exchange.FILE_NAME, "valid.xml");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+
+        // should be able to delete the file
+        oneExchangeDone.matchesMockWaitTime();
+        assertTrue("Should be able to delete the file", FileUtil.deleteFile(new File("target/validator/valid.xml")));
     }
 
     public void testInvalidMessage() throws Exception {
@@ -51,12 +58,15 @@ public class FileValidatorRouteTest extends ContextTestSupport {
                 Exchange.FILE_NAME, "invalid.xml");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+
+        // should be able to delete the file
+        oneExchangeDone.matchesMockWaitTime();
+        assertTrue("Should be able to delete the file", FileUtil.deleteFile(new File("target/validator/invalid.xml")));
     }
 
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/validator");
-
         super.setUp();
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);
         invalidEndpoint = resolveMandatoryEndpoint("mock:invalid", MockEndpoint.class);
@@ -68,7 +78,7 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/validator")
+                from("file:target/validator?noop=true")
                     .doTry()
                         .to("validator:org/apache/camel/component/validator/schema.xsd")
                         .to("mock:valid")

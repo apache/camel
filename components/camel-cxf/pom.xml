@@ -333,12 +333,6 @@
 
   <profiles>
     <profile>
-      <id>fastinstall</id>
-      <properties>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-    </profile>
-    <profile>
       <id>ibm-jdk</id>
       <activation>
         <property>
@@ -354,7 +348,6 @@
         <dependency>
           <groupId>com.sun.xml.parsers</groupId>
           <artifactId>jaxp-ri</artifactId>
-          <version>1.4.2</version>
         </dependency>
       </dependencies>
     </profile>

@@ -17,7 +17,9 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -35,6 +37,40 @@ import org.apache.camel.util.ObjectHelper;
 public final class RouteDefinitionHelper {
 
     private RouteDefinitionHelper() {
+    }
+
+    /**
+     * Validates that the target route has no duplicate id's from any of the existing routes.
+     *
+     * @param target  the target route
+     * @param routes  the existing routes
+     * @return <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
+     */
+    public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) {
+        Set<String> routesIds = new LinkedHashSet<String>();
+        // gather all ids for the existing route, but only include custom ids, and no abstract ids
+        // as abstract nodes is cross-cutting functionality such as interceptors etc
+        for (RouteDefinition route : routes) {
+            // skip target route as we gather ids in a separate set
+            if (route == target) {
+                continue;
+            }
+            ProcessorDefinitionHelper.gatherAllNodeIds(route, routesIds, true, false);
+        }
+
+        // gather all ids for the target route, but only include custom ids, and no abstract ids
+        // as abstract nodes is cross-cutting functionality such as interceptors etc
+        Set<String> targetIds = new LinkedHashSet<String>();
+        ProcessorDefinitionHelper.gatherAllNodeIds(target, targetIds, true, false);
+
+        // now check for clash with the target route
+        for (String id : targetIds) {
+            if (routesIds.contains(id)) {
+                return id;
+            }
+        }
+
+        return null;
     }
 
     public static void initParent(ProcessorDefinition parent) {

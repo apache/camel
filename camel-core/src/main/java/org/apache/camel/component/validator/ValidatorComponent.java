@@ -27,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.validation.ValidatingProcessor;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,8 @@ public class ValidatorComponent extends DefaultComponent {
         // force loading of schema at create time otherwise concurrent
         // processing could cause thread safe issues for the javax.xml.validation.SchemaFactory
         validator.loadSchema();
+        // and make sure to close the input stream after the schema has been loaded
+        IOHelper.close(is);
 
         return new ProcessorEndpoint(uri, this, validator);
     }

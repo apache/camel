@@ -96,7 +96,7 @@ public class QuickfixjEngine extends ServiceSupport {
     private final MessageCorrelator messageCorrelator = new MessageCorrelator();
     private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<QuickfixjEventListener>();
     private final String uri;
-    private ObjectName connectorObjectName;
+    private ObjectName initiatorObjectName;
 
     public enum ThreadModel {
         ThreadPerConnector, ThreadPerSession;
@@ -228,7 +228,7 @@ public class QuickfixjEngine extends ServiceSupport {
         if (initiator != null) {
             initiator.start();
             if (jmxExporter != null) {
-                connectorObjectName = jmxExporter.register(initiator);
+                initiatorObjectName = jmxExporter.register(initiator);
             }
         }
     }
@@ -241,8 +241,8 @@ public class QuickfixjEngine extends ServiceSupport {
         if (initiator != null) {
             initiator.stop();
 
-            if (jmxExporter != null && connectorObjectName != null) {
-                jmxExporter.getMBeanServer().unregisterMBean(connectorObjectName);
+            if (jmxExporter != null && initiatorObjectName != null) {
+                jmxExporter.getMBeanServer().unregisterMBean(initiatorObjectName);
             }
         }
     }
@@ -462,10 +462,11 @@ public class QuickfixjEngine extends ServiceSupport {
                 throw new DispatcherException(e);
             }
         }
-        
-        @SuppressWarnings("unchecked")
+
         private <T extends Exception> void rethrowIfType(Exception e, Class<T> exceptionClass) throws T {
-            throw (T) e;
+            if (e.getClass() == exceptionClass) {
+                throw exceptionClass.cast(e);
+            }
         }
 
         private void dispatch(QuickfixjEventCategory quickfixjEventCategory, SessionID sessionID, Message message) throws Exception {
@@ -477,15 +478,17 @@ public class QuickfixjEngine extends ServiceSupport {
                 listener.onEvent(quickfixjEventCategory, sessionID, message);
             }
         }
-        
-        @SuppressWarnings("serial")
+
         private class DispatcherException extends RuntimeException {
+
+            private static final long serialVersionUID = 1L;
+
             public DispatcherException(Throwable cause) {
                 super(cause);
             }
         }
     }
-        
+
     public String getUri() {
         return uri;
     }
