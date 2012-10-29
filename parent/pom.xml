@@ -198,7 +198,7 @@
     <jodatime2-bundle-version>2.1</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
-    <jruby-version>1.6.8</jruby-version>
+    <jruby-version>1.7.0</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
     <jsch-bundle-version>0.1.48_1</jsch-bundle-version>

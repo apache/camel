@@ -18,10 +18,10 @@ require "java"
 
 module Camel
 
-  include_class "org.apache.camel.impl.DefaultCamelContext"
-  include_class "org.apache.camel.impl.ExpressionSupport"
-  include_class "org.apache.camel.model.RouteDefinition"
-  include_class "org.apache.camel.ruby.ScriptRouteBuilder"
+  java_import "org.apache.camel.impl.DefaultCamelContext"
+  java_import "org.apache.camel.impl.ExpressionSupport"
+  java_import "org.apache.camel.model.RouteDefinition"
+  java_import "org.apache.camel.ruby.ScriptRouteBuilder"
 
   class RubyRouteBuilder < ScriptRouteBuilder
 
