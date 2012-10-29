@@ -68,9 +68,14 @@ public class OsgiComponentResolver implements ComponentResolver {
         LOG.trace("Finding Component: {}", name);
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(ComponentResolver.class.getName(), "(component=" + name + ")");
-            if (refs != null && refs.length > 0) {
-                ComponentResolver resolver = (ComponentResolver) bundleContext.getService(refs[0]);
-                return resolver.resolveComponent(name, context);
+            if (refs != null) {
+                for (ServiceReference ref : refs) {
+                    Object service = bundleContext.getService(ref);
+                    if (ComponentResolver.class.isAssignableFrom(service.getClass())) {
+                        ComponentResolver resolver = (ComponentResolver) service;
+                        return resolver.resolveComponent(name, context);
+                    }
+                }
             }
             return null;
         } catch (InvalidSyntaxException e) {
