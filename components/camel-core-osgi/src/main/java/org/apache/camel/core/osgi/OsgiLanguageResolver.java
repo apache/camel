@@ -90,7 +90,7 @@ public class OsgiLanguageResolver implements LanguageResolver {
             if (refs != null) {
                 for (ServiceReference ref : refs) {
                     Object service = bundleContext.getService(ref);
-                    if (service.getClass().isAssignableFrom(LanguageResolver.class)) {
+                    if (LanguageResolver.class.isAssignableFrom(service.getClass())) {
                         LanguageResolver resolver = (LanguageResolver) service;
                         return resolver;
                     }
