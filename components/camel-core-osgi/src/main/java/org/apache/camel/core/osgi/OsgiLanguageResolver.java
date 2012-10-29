@@ -67,10 +67,16 @@ public class OsgiLanguageResolver implements LanguageResolver {
         LOG.trace("Finding Language: {}", name);
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(language=" + name + ")");
-            if (refs != null && refs.length > 0) {
-                LanguageResolver resolver = (LanguageResolver) bundleContext.getService(refs[0]);
-                return resolver.resolveLanguage(name, context);
+            if (refs != null) {
+                for (ServiceReference ref : refs) {
+                    Object service = bundleContext.getService(ref);
+                    if (LanguageResolver.class.isAssignableFrom(service.getClass())) {
+                        LanguageResolver resolver = (LanguageResolver) service;
+                        return resolver.resolveLanguage(name, context);
+                    }
+                }
             }
+
             return null;
         } catch (InvalidSyntaxException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -81,9 +87,14 @@ public class OsgiLanguageResolver implements LanguageResolver {
         LOG.trace("Finding LanguageResolver: {}", name);
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(resolver=" + name + ")");
-            if (refs != null && refs.length > 0) {
-                LanguageResolver resolver = (LanguageResolver) bundleContext.getService(refs[0]);
-                return resolver;
+            if (refs != null) {
+                for (ServiceReference ref : refs) {
+                    Object service = bundleContext.getService(ref);
+                    if (service.getClass().isAssignableFrom(LanguageResolver.class)) {
+                        LanguageResolver resolver = (LanguageResolver) service;
+                        return resolver;
+                    }
+                }
             }
             return null;
         } catch (InvalidSyntaxException e) {

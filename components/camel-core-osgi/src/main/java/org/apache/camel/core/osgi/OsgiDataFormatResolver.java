@@ -58,9 +58,14 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
         LOG.trace("Finding DataFormat: {}", name);
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(DataFormatResolver.class.getName(), "(dataformat=" + name + ")");
-            if (refs != null && refs.length > 0) {
-                DataFormatResolver resolver = (DataFormatResolver) bundleContext.getService(refs[0]);
-                return resolver.resolveDataFormat(name, context);
+            if (refs != null) {
+                for (ServiceReference ref : refs) {
+                    Object service = bundleContext.getService(ref);
+                    if (DataFormatResolver.class.isAssignableFrom(service.getClass())) {
+                        DataFormatResolver resolver = (DataFormatResolver) service;
+                        return resolver.resolveDataFormat(name, context);
+                    }
+                }
             }
             return null;
         } catch (InvalidSyntaxException e) {
