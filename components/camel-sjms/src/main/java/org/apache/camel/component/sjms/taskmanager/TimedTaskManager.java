@@ -22,18 +22,17 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * TODO Add Class documentation for TimedTaskManager
- *
- * @author sully6768
+ * A thread safe task manager that allows you to add and cancel
+ * {@link TimerTask} objects.
  */
 public class TimedTaskManager {
 
     private final Timer timer = new Timer();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
-    
+
     TimedTaskManager() {
     }
-    
+
     public void addTask(TimerTask task, long delay) {
         try {
             lock.writeLock().lock();
@@ -42,7 +41,7 @@ public class TimedTaskManager {
             lock.writeLock().unlock();
         }
     }
-    
+
     public void cancelTasks() {
         try {
             lock.writeLock().lock();

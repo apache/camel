@@ -17,16 +17,25 @@
 package org.apache.camel.component.sjms.taskmanager;
 
 /**
- * TODO Add Class documentation for TimedTaskManagerFactory
- * 
- * @author sully6768
+ * A thread safe factory that creates an instance of the TimedTaskManager.
  */
 public final class TimedTaskManagerFactory {
 
-    private static class TimedTaskManagerHolder {
-        private final static TimedTaskManager INSTANCE = new TimedTaskManager();
+    /**
+     * Private default constructor for utility class
+     */
+    private TimedTaskManagerFactory() {
     }
 
+    private static class TimedTaskManagerHolder {
+        private static final TimedTaskManager INSTANCE = new TimedTaskManager();
+    }
+
+    /**
+     * Returns the local instance of the {@link TimedTaskManager}.
+     * 
+     * @return TimedTaskManager
+     */
     public static TimedTaskManager getInstance() {
         return TimedTaskManagerHolder.INSTANCE;
     }
