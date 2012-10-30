@@ -17,10 +17,8 @@
 package org.apache.camel.cdi.internal;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -36,8 +34,9 @@ import org.apache.camel.util.ObjectHelper;
  * Configuration options to be applied to a {@link org.apache.camel.CamelContext} by a {@link CamelContextBean}
  */
 public class CamelContextConfig {
-    private final List<Bean<?>> routeBuilderBeans = new ArrayList<Bean<?>>();
-    private final List<ProcessAnnotatedType<?>> patRouteBuilders = new ArrayList<ProcessAnnotatedType<?>>();
+    // use a set to avoid duplicates
+    private final Set<Bean<?>> routeBuilderBeans = new LinkedHashSet<Bean<?>>();
+    private final Set<ProcessAnnotatedType<?>> patRouteBuilders = new LinkedHashSet<ProcessAnnotatedType<?>>();
 
     public void addRouteBuilderBean(Bean<?> bean) {
         routeBuilderBeans.add(bean);

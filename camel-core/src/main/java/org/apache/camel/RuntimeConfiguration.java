@@ -26,7 +26,6 @@ public interface RuntimeConfiguration {
 
     /**
      * Sets whether stream caching is enabled or not (default is disabled).
-     * <p/>
      *
      * @param cache whether stream caching is enabled or not
      */
@@ -35,13 +34,12 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether stream cache is enabled
      *
-     * @return true if stream cache is enabled
+     * @return <tt>true</tt> if stream cache is enabled
      */
     Boolean isStreamCaching();
 
     /**
      * Sets whether tracing is enabled or not (default is disabled).
-     * <p/>
      *
      * @param tracing whether to enable tracing.
      */
@@ -50,13 +48,12 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether tracing enabled
      *
-     * @return true if tracing is enabled
+     * @return <tt>true</tt> if tracing is enabled
      */
     Boolean isTracing();
 
     /**
      * Sets whether fault handling is enabled or not (default is disabled).
-     * <p/>
      *
      * @param handleFault whether to enable fault handling.
      */
@@ -65,7 +62,7 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether fault handling enabled
      *
-     * @return true if fault handling is enabled
+     * @return <tt>true</tt> if fault handling is enabled
      */
     Boolean isHandleFault();
 
@@ -89,9 +86,9 @@ public interface RuntimeConfiguration {
     /**
      * Sets whether the object should automatically start when Camel starts.
      * <p/>
-     * Currently only routes can be disabled, as {@link CamelContext}s are always started.
+     * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started.
      * <br/>
-     * Default is true to always start up.
+     * Default is <tt>true</tt> to always start up.
      *
      * @param autoStartup whether to start up automatically.
      */
@@ -99,8 +96,12 @@ public interface RuntimeConfiguration {
 
     /**
      * Gets whether the object should automatically start when Camel starts.
+     * <p/>
+     * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started.
+     * <br/>
+     * Default is <tt>true</tt> to always start up.
      *
-     * @return true if object should automatically start
+     * @return <tt>true</tt> if object should automatically start
      */
     Boolean isAutoStartup();
 
@@ -120,7 +121,6 @@ public interface RuntimeConfiguration {
 
     /**
      * Sets the ShutdownRunningTask option to use when shutting down a route.
-     * <p/>
      *
      * @param shutdownRunningTask the option to use.
      */
