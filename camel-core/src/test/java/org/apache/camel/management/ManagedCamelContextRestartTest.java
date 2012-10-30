@@ -30,8 +30,8 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class ManagedCamelContextRestartTest extends ManagementTestSupport {
 
-    private int starts = 0;
-    private int stops = 0;
+    private int starts;
+    private int stops;
 
     @Override
     protected void setUp() throws Exception {
