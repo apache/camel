@@ -39,6 +39,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
         template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
+        context.startRoute("FromFilePollThirdTimeOkTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
 
@@ -54,7 +55,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/deletefile?delete=true&initialDelay=0&delay=30")
+                from("file://target/deletefile?delete=true&initialDelay=0&delay=30").noAutoStartup().routeId("FromFilePollThirdTimeOkTest")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
