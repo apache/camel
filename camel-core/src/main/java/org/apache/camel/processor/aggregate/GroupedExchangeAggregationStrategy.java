@@ -16,11 +16,7 @@
  */
 package org.apache.camel.processor.aggregate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
@@ -29,25 +25,17 @@ import org.apache.camel.impl.DefaultExchange;
  *
  * @version 
  */
-public class GroupedExchangeAggregationStrategy implements AggregationStrategy {
+public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 
-    @SuppressWarnings("unchecked")
-    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        List<Exchange> list;
-        Exchange answer = oldExchange;
+    @Override
+    public boolean isStoreAsBodyOnCompletion() {
+        // keep the list as a property to be compatible with old behavior
+        return false;
+    }
 
-        if (oldExchange == null) {
-            answer = new DefaultExchange(newExchange);
-            list = new ArrayList<Exchange>();
-            answer.setProperty(Exchange.GROUPED_EXCHANGE, list);
-        } else {
-            list = oldExchange.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
-        }
-
-        if (newExchange != null) {
-            list.add(newExchange);
-        }
-        return answer;
+    @Override
+    public Exchange getValue(Exchange exchange) {
+        return exchange;
     }
 
 }
