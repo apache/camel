@@ -148,6 +148,33 @@ public class SjmsEndpointTest extends CamelTestSupport {
         assertTrue(qe.getDestinationName().equals("test"));
     }
 
+    @Test
+    public void testTransactedBatchCount() throws Exception {
+        Endpoint endpoint = context.getEndpoint("sjms:queue:test?transacted=true&transactionBatchCount=10");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof SjmsEndpoint);
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
+        assertTrue(qe.getDestinationName().equals("test"));
+    }
+
+    @Test
+    public void testTransactedBatchTimeoutDefault() throws Exception {
+        Endpoint endpoint = context.getEndpoint("sjms:queue:test?transacted=true");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof SjmsEndpoint);
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
+        assertTrue(qe.getDestinationName().equals("test"));
+    }
+
+    @Test
+    public void testTransactedBatchTimeoutModified() throws Exception {
+        Endpoint endpoint = context.getEndpoint("sjms:queue:test?transacted=true&transactionBatchTimeout=3000");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof SjmsEndpoint);
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
+        assertTrue(qe.getDestinationName().equals("test"));
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

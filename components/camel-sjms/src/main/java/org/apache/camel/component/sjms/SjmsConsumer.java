@@ -35,8 +35,10 @@ import org.apache.camel.component.sjms.jms.ObjectPool;
 import org.apache.camel.component.sjms.jms.SessionPool;
 import org.apache.camel.component.sjms.tx.BatchTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
+import org.apache.camel.component.sjms.tx.SessionBatchTransactionSynchronization;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.spi.Synchronization;
 
 /**
  * The SjmsConsumer is the base class for the SJMS MessageListener pool.
@@ -243,17 +245,24 @@ public class SjmsConsumer extends DefaultConsumer {
         } else {
             commitStrategy = new DefaultTransactionCommitStrategy();
         }
+        
+        Synchronization synchronization = null;
+        if (commitStrategy instanceof BatchTransactionCommitStrategy) {
+            synchronization = new SessionBatchTransactionSynchronization(session, commitStrategy, getTransactionBatchTimeout());
+        } else {
+            synchronization = new SessionTransactionSynchronization(session, commitStrategy);
+        }
 
         AbstractMessageHandler messageHandler = null;
         if (getSjmsEndpoint().getExchangePattern().equals(ExchangePattern.InOnly)) {
             if (isTransacted()) {
-                messageHandler = new InOnlyMessageHandler(getEndpoint(), executor, new SessionTransactionSynchronization(session, commitStrategy));
+                messageHandler = new InOnlyMessageHandler(getEndpoint(), executor, synchronization);
             } else {
                 messageHandler = new InOnlyMessageHandler(getEndpoint(), executor);
             }
         } else {
             if (isTransacted()) {
-                messageHandler = new InOutMessageHandler(getEndpoint(), executor, new SessionTransactionSynchronization(session, commitStrategy));
+                messageHandler = new InOutMessageHandler(getEndpoint(), executor, synchronization);
             } else {
                 messageHandler = new InOutMessageHandler(getEndpoint(), executor);
             }
@@ -363,5 +372,14 @@ public class SjmsConsumer extends DefaultConsumer {
      */
     public int getTransactionBatchCount() {
         return getSjmsEndpoint().getTransactionBatchCount();
+    }
+
+    /**
+     * Returns the timeout value for batch transactions.
+     * 
+     * @return long
+     */
+    public long getTransactionBatchTimeout() {
+        return getSjmsEndpoint().getTransactionBatchTimeout();
     }
 }

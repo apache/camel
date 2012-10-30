@@ -55,6 +55,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private long responseTimeOut = 5000;
     private String messageSelector;
     private int transactionBatchCount = -1;
+    private long transactionBatchTimeout = 5000;
     private TransactionCommitStrategy transactionCommitStrategy;
 
     public SjmsEndpoint() {
@@ -386,6 +387,24 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
      */
     public void setTransactionBatchCount(int transactionBatchCount) {
         this.transactionBatchCount = transactionBatchCount;
+    }
+
+    /**
+     * Returns the timeout value for batch transactions.
+     * 
+     * @return long
+     */
+    public long getTransactionBatchTimeout() {
+        return transactionBatchTimeout;
+    }
+
+    /**
+     * Sets timeout value for batch transactions.
+     * 
+     * @param transactionBatchTimeout
+     */
+    public void setTransactionBatchTimeout(long transactionBatchTimeout) {
+        this.transactionBatchTimeout = transactionBatchTimeout;
     }
 
     /**

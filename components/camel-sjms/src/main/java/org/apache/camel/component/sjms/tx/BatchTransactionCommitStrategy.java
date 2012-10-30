@@ -56,5 +56,9 @@ public class BatchTransactionCommitStrategy implements TransactionCommitStrategy
         current.set(0);
         return true;
     }
+    
+    public void reset() {
+        current.set(0);
+    }
 
 }
