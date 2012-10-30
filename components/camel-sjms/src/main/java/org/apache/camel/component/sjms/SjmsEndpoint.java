@@ -404,7 +404,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
      * @param transactionBatchTimeout
      */
     public void setTransactionBatchTimeout(long transactionBatchTimeout) {
-        this.transactionBatchTimeout = transactionBatchTimeout;
+        if (transactionBatchTimeout >= 1000) {
+            this.transactionBatchTimeout = transactionBatchTimeout;
+        }
     }
 
     /**
