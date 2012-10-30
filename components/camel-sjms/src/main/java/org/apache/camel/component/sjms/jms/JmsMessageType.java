@@ -29,10 +29,7 @@ public enum JmsMessageType {
     Bytes,
     Map,
     Object,
-    /**
-     * TODO Write support for Stream Messages
-     */
-    //Stream,
+    Stream,
     Text,
     
     /**

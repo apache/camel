@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
@@ -33,7 +32,9 @@ import javax.jms.Topic;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -77,7 +78,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
     public void handleMessage(final Exchange exchange) {
         try {
             MessageProducer messageProducer = null;
-            Object obj = exchange.getIn().getHeader("JMSReplyTo");
+            Object obj = exchange.getIn().getHeader(JmsMessageHelper.JMS_REPLY_TO);
             if (obj != null) {
                 Destination replyTo = null;
                 if (isDestination(obj)) {
@@ -185,14 +186,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         public void done(boolean sync) {
 
             try {
-                Object body = exchange.getOut().getBody();
-                if (body != null) {
-                    if (body instanceof InputStream) {
-                        byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, body);
-                        exchange.getOut().setBody(bytes);
-                    }
-                }
-                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), true);
+                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), ((SjmsEndpoint)getEndpoint()).getJmsKeyFormatStrategy());
                 response.setJMSCorrelationID(exchange.getIn().getHeader("JMSCorrelationID", String.class));
                 localProducer.send(response);
             } catch (Exception e) {

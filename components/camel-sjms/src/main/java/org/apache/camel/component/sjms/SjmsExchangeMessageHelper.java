@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.sjms;
 
-import java.io.Serializable;
-import java.util.Collection;
+import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -33,6 +32,7 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import org.apache.camel.Endpoint;
@@ -42,7 +42,9 @@ import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.IllegalHeaderException;
 import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.component.sjms.jms.JmsMessageHeaderType;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsMessageType;
+import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -83,7 +85,7 @@ public final class SjmsExchangeMessageHelper {
                 } else {
                     bodyMessage = (DefaultMessage)exchange.getIn();
                 }
-                switch (SjmsExchangeMessageHelper.discoverType(message)) {
+                switch (JmsMessageHelper.discoverJmsMessageType(message)) {
                 case Bytes:
                     BytesMessage bytesMessage = (BytesMessage)message;
                     if (bytesMessage.getBodyLength() > Integer.MAX_VALUE) {
@@ -116,6 +118,18 @@ public final class SjmsExchangeMessageHelper {
                     TextMessage textMsg = (TextMessage)message;
                     bodyMessage.setHeader(JMS_MESSAGE_TYPE, JmsMessageType.Text);
                     bodyMessage.setBody(textMsg.getText());
+                    break;
+                case Stream:
+                    StreamMessage streamMessage = (StreamMessage)message;
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    int next = streamMessage.readByte();
+                    while (next > -1) {
+                        baos.write(next);
+                        next = streamMessage.readByte();
+                    }
+                    baos.flush();
+                    bodyMessage.setHeader(JMS_MESSAGE_TYPE, JmsMessageType.Bytes);
+                    bodyMessage.setBody(baos.toByteArray());
                     break;
                 case Message:
                 default:
@@ -417,47 +431,6 @@ public final class SjmsExchangeMessageHelper {
         return jmsMessage;
     }
 
-    public static JmsMessageType discoverType(Message value) throws Exception {
-        JmsMessageType answer = null;
-        if (value != null) {
-            if (Message.class.isInstance(value)) {
-                if (BytesMessage.class.isInstance(value)) {
-                    answer = JmsMessageType.Bytes;
-                } else if (MapMessage.class.isInstance(value)) {
-                    answer = JmsMessageType.Map;
-                } else if (TextMessage.class.isInstance(value)) {
-                    answer = JmsMessageType.Text;
-                } else if (ObjectMessage.class.isInstance(value)) {
-                    answer = JmsMessageType.Object;
-                } else {
-                    answer = JmsMessageType.Message;
-                }
-            }
-        }
-        return answer;
-    }
-
-    public static JmsMessageType discoverType(final Exchange exchange) {
-        JmsMessageType answer = (JmsMessageType)exchange.getIn().getHeader(JMS_MESSAGE_TYPE);
-        if (answer == null) {
-            final Object value = exchange.getIn().getBody();
-            if (value != null) {
-                if (Byte[].class.isInstance(value)) {
-                    answer = JmsMessageType.Bytes;
-                } else if (Collection.class.isInstance(value)) {
-                    answer = JmsMessageType.Map;
-                } else if (String.class.isInstance(value)) {
-                    answer = JmsMessageType.Text;
-                } else if (Serializable.class.isInstance(value)) {
-                    answer = JmsMessageType.Object;
-                } else {
-                    answer = JmsMessageType.Message;
-                }
-            }
-        }
-        return answer;
-    }
-
     @SuppressWarnings("unchecked")
     public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out) throws JMSException {
         HashMap<String, Object> headers = new HashMap<String, Object>();
@@ -497,59 +470,23 @@ public final class SjmsExchangeMessageHelper {
         }
         return exchange;
     }
-
-    public static Message createMessage(Exchange exchange, Session session) throws Exception {
-        return createMessage(exchange, session, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Message createMessage(Exchange exchange, Session session, boolean out) throws Exception {
+    
+    public static Message createMessage(Exchange exchange, Session session, KeyFormatStrategy keyFormatStrategy) throws Exception {
         Message answer = null;
         Object body = null;
-        try {
-            if (out && exchange.getOut().getBody() != null) {
-                body = exchange.getOut().getBody();
-            } else {
-                body = exchange.getIn().getBody();
-            }
-            JmsMessageType messageType = SjmsExchangeMessageHelper.discoverType(exchange);
+        Map<String, Object> bodyHeaders = null;
 
-            switch (messageType) {
-            case Bytes:
-                BytesMessage bytesMessage = session.createBytesMessage();
-                bytesMessage.writeBytes((byte[])body);
-                answer = bytesMessage;
-                break;
-            case Map:
-                MapMessage mapMessage = session.createMapMessage();
-                Map<String, Object> objMap = (Map<String, Object>)body;
-                Set<String> keys = objMap.keySet();
-                for (String key : keys) {
-                    Object value = objMap.get(key);
-                    mapMessage.setObject(key, value);
-                }
-                answer = mapMessage;
-                break;
-            case Object:
-                ObjectMessage objectMessage = session.createObjectMessage();
-                objectMessage.setObject((Serializable)body);
-                answer = objectMessage;
-                break;
-            case Text:
-                TextMessage textMessage = session.createTextMessage();
-                textMessage.setText((String)body);
-                answer = textMessage;
-                break;
-            default:
-                answer = session.createMessage();
-                break;
-            }
-        } catch (Exception e) {
-            LOGGER.error("TODO Auto-generated catch block", e);
-            throw e;
+        
+        if (exchange.getOut().getBody() != null) {
+            body = exchange.getOut().getBody();
+            bodyHeaders = new HashMap<String, Object>(exchange.getOut().getHeaders());
+        } else {
+            body = exchange.getIn().getBody();
+            bodyHeaders = new HashMap<String, Object>(exchange.getIn().getHeaders());
         }
-
-        answer = SjmsExchangeMessageHelper.setJmsMessageHeaders(exchange, answer);
+        
+        answer = JmsMessageHelper.createMessage(session, body, bodyHeaders, keyFormatStrategy);
+        
         return answer;
     }
 
