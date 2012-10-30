@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -27,7 +29,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * A simple requesr / late reply test using InOptionalOut.
+ * A simple request / late reply test using InOptionalOut.
  */
 public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
 
@@ -68,24 +69,15 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
     protected void doTest(Runnable runnable) throws InterruptedException {
         // use another thread to send the late reply to simulate that we do it later, not
         // from the original route anyway
-        Thread sender = new Thread(runnable);
-        sender.start();
+        new Thread(runnable).start();
 
-        MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        
+        Object body = template.requestBody(getQueueEndpointName(), "Hello World");
 
-        Exchange out = template.request(getQueueEndpointName(), new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // we expect a response so InOut
-                exchange.setPattern(ExchangePattern.InOut);
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        assertMockEndpointsSatisfied();
 
-        result.assertIsSatisfied();
-
-        assertNotNull(out);
-        assertEquals(expectedBody, out.getOut().getBody());
+        assertEquals(expectedBody, body);
     }
 
     private class SendLateReply implements Runnable {
@@ -103,16 +95,10 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
 
             LOG.debug("Sending late reply");
             // use some dummy queue as we override this with the property: JmsConstants.JMS_DESTINATION
-            template.send("activemq:dummy", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.setPattern(ExchangePattern.InOnly);
-
-                    Message in = exchange.getIn();
-                    in.setBody(expectedBody);
-                    in.setHeader(JmsConstants.JMS_DESTINATION, replyDestination);
-                    in.setHeader("JMSCorrelationID", cid);
-                }
-            });
+            Map<String, Object> headers = new HashMap<String, Object>();
+            headers.put(JmsConstants.JMS_DESTINATION, replyDestination);
+            headers.put("JMSCorrelationID", cid);
+            template.sendBodyAndHeaders("activemq:dummy", expectedBody, headers);
         }
     }
 
@@ -134,22 +120,12 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
             try {
                 JmsEndpoint endpoint = JmsEndpoint.newInstance(replyDestination, activeMQComponent);
 
-                template.send(endpoint, new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.setPattern(ExchangePattern.InOnly);
-
-                        Message in = exchange.getIn();
-                        in.setBody(expectedBody);
-                        in.setHeader("JMSCorrelationID", cid);
-                    }
-                });
-
+                template.sendBodyAndHeader(endpoint, expectedBody, "JMSCorrelationID", cid);
             } catch (JMSException e) {
                 LOG.error("Failed to create the endpoint for " + replyDestination);
             }
         }
     }
-
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -166,30 +142,31 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // set the MEP to InOnly as we might not be able to send a reply
-                from(getQueueEndpointName()).setExchangePattern(ExchangePattern.InOnly).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        assertEquals("Hello World", in.getBody());
-
-                        replyDestination = in.getHeader("JMSReplyTo", Destination.class);
-                        cid = in.getHeader("JMSCorrelationID", String.class);
-
-                        LOG.debug("ReplyDestination: " + replyDestination);
-                        LOG.debug("JMSCorrelationID: " + cid);
-
-                        LOG.debug("Ahh I cannot send a reply. Someone else must do it.");
-                        latch.countDown();
-                    }
-                }).to("mock:result");
+                // set the MEP to InOptionalOut as we might not be able to send a reply
+                from(getQueueEndpointName())
+                    .setExchangePattern(ExchangePattern.InOptionalOut)
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            Message in = exchange.getIn();
+                            assertEquals("Hello World", in.getBody());
+    
+                            replyDestination = in.getHeader("JMSReplyTo", Destination.class);
+                            cid = in.getHeader("JMSCorrelationID", String.class);
+    
+                            LOG.debug("ReplyDestination: " + replyDestination);
+                            LOG.debug("JMSCorrelationID: " + cid);
+    
+                            LOG.debug("Ahh I cannot send a reply. Someone else must do it.");
+                            latch.countDown();
+                        }
+                    })
+                    .to("mock:result");
             }
         };
     }
-
 
     protected static String getQueueEndpointName() {
         // lets use a different queue name for each test
         return "activemq:queue:hello.queue" + count;
     }
-
 }
