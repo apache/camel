@@ -23,6 +23,10 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
 
+// TODO: This should be refactored, to unit test the MyRoutes from the src/main/java
+// we should not add new routes and whatnot. This is an example for end-users to use as best practice
+// so we should show them how to unit test their routes from their main source code
+
 /**
  * Lets use a separate {@link org.apache.camel.example.cdi.two.TestRouteBuilder} to test the routes
  */
