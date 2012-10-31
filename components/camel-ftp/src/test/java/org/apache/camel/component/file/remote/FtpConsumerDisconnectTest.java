@@ -17,9 +17,6 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-
-import org.apache.commons.net.ftp.FTPClient;
-
 import org.junit.Test;
 
 public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
@@ -34,7 +31,7 @@ public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
         
         // force the singleton FtpEndpoint to make use of a custom FTPClient
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
-        endpoint.setFtpClient(new FTPClient());
+        endpoint.setFtpClient(endpoint.createFtpClient());
 
         sendFile(getFtpUrl(), "Hello World", "claus.txt");
     }
@@ -54,14 +51,13 @@ public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         assertMockEndpointsSatisfied();
 
-        // give time for ftp consumer to disconnect (delay is 5000 which is long enough to avoid a second poll cycle)
+        // give time for ftp consumer to disconnect (delay is 5000 ms which is long enough to avoid a second poll cycle)
         Thread.sleep(2000);
 
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
+        assertFalse("The FTPClient should be already disconnected", endpoint.getFtpClient().isConnected());
         assertTrue("The FtpEndpoint is configured to disconnect after each poll", endpoint.isDisconnect());
 
-        FTPClient ftpClient = endpoint.getFtpClient();
-        assertFalse("The FTPClient should not be connected", ftpClient.isConnected());
     }
 
 }
