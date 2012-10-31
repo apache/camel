@@ -35,6 +35,10 @@ import org.apache.camel.Exchange;
  * Possible implementations include performing some kind of combining or delta processing, such as adding line items
  * together into an invoice or just using the newest exchange and removing old exchanges such as for state tracking or
  * market data prices; where old values are of little use.
+ * <p/>
+ * If an implementation also implements {@link org.apache.camel.Service} then any <a href="http://camel.apache.org/eip">EIP</a>
+ * that allowing configuring a {@link AggregationStrategy} will invoke the {@link org.apache.camel.Service#start()}
+ * and {@link org.apache.camel.Service#stop()} to control the lifecycle aligned with the EIP itself.
  * 
  * @version 
  */

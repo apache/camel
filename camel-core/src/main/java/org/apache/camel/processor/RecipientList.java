@@ -163,15 +163,15 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         if (producerCache == null) {
             producerCache = new ProducerCache(this, camelContext);
         }
-        ServiceHelper.startService(producerCache);
+        ServiceHelper.startServices(aggregationStrategy, producerCache);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(producerCache);
+        ServiceHelper.stopServices(producerCache, aggregationStrategy);
     }
 
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(producerCache);
+        ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy);
 
         if (shutdownExecutorService && executorService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(executorService);

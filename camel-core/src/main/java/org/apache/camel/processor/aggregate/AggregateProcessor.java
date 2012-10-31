@@ -849,7 +849,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
-        ServiceHelper.startServices(processor, aggregationRepository);
+        ServiceHelper.startServices(aggregationStrategy, processor, aggregationRepository);
 
         // should we use recover checker
         if (aggregationRepository instanceof RecoverableAggregationRepository) {
@@ -966,8 +966,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doShutdown() throws Exception {
-        // shutdown aggregation repository
-        ServiceHelper.stopService(aggregationRepository);
+        // shutdown aggregation repository and the strategy
+        ServiceHelper.stopAndShutdownServices(aggregationRepository, aggregationStrategy);
 
         // cleanup when shutting down
         inProgressCompleteExchanges.clear();

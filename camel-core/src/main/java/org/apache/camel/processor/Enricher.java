@@ -225,11 +225,11 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startService(producer);
+        ServiceHelper.startServices(aggregationStrategy, producer);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(producer);
+        ServiceHelper.stopServices(producer, aggregationStrategy);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {
