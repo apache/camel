@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.CastUtils;
@@ -86,6 +87,12 @@ public class DefaultClassResolver implements ClassResolver {
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         return ObjectHelper.loadResourceAsURL(uri);
+    }
+
+    @Override
+    public Enumeration<URL> loadResourcesAsURL(String uri) {
+        ObjectHelper.notEmpty(uri, "uri");
+        return ObjectHelper.loadResourcesAsURL(uri);
     }
 
     protected Class<?> loadClass(String name, ClassLoader loader) {
