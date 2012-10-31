@@ -14,40 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.reply;
+package org.apache.camel.component.jms;
 
 import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.apache.camel.component.jms.MessageSentCallback;
+import org.apache.camel.Exchange;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
 
 /**
- * Callback to be used when using the option <tt>useMessageIDAsCorrelationID</tt>.
- * <p/>
- * This callback will keep the correlation registration in {@link ReplyManager} up-to-date with
- * the <tt>JMSMessageID</tt> which was assigned and used when the message was sent.
- *
- * @version 
+ * {@link MessageSentCallback} used to enrich the Camel {@link Exchange} with
+ * the actual <tt>JMSMessageID</tt> after sending to a JMS Destination using
+ * {@link org.apache.camel.ExchangePattern#InOnly} style.
  */
-public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSentCallback {
+public class InOnlyMessageSentCallback implements MessageSentCallback {
 
-    private ReplyManager replyManager;
-    private String correlationId;
-    private long requestTimeout;
+    private final Exchange exchange;
 
-    public UseMessageIdAsCorrelationIdMessageSentCallback(ReplyManager replyManager, String correlationId, long requestTimeout) {
-        this.replyManager = replyManager;
-        this.correlationId = correlationId;
-        this.requestTimeout = requestTimeout;
+    public InOnlyMessageSentCallback(Exchange exchange) {
+        this.exchange = exchange;
     }
 
+    @Override
     public void sent(Session session, Message message, Destination destination) {
-        String newCorrelationID = getJMSMessageID(message);
-        if (newCorrelationID != null) {
-            replyManager.updateCorrelationId(correlationId, newCorrelationID, requestTimeout);
+        if (exchange != null) {
+            String id = getJMSMessageID(message);
+            if (id != null) {
+                if (exchange.hasOut()) {
+                    exchange.getOut().setHeader("JMSMessageID", id);
+                } else {
+                    exchange.getIn().setHeader("JMSMessageID", id);
+                }
+            }
         }
     }
+
 }

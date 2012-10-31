@@ -377,6 +377,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setAllowNullBody(allowNullBody);
     }
 
+    public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
+        getConfiguration().setIncludeSentJMSMessageID(includeSentJMSMessageID);
+    }
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
