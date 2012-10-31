@@ -17,10 +17,11 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.commons.net.ftp.FTPClient;
 import org.junit.Test;
 
 public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
-
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/done?password=admin&disconnect=true&delay=5000";
     }
@@ -28,10 +29,11 @@ public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        
-        // force the singleton FtpEndpoint to make use of a custom FTPClient
+
+        // ask the singleton FtpEndpoint to make use of a custom FTPClient
+        // so that we can hold a reference on it inside the test below
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
-        endpoint.setFtpClient(endpoint.createFtpClient());
+        endpoint.setFtpClient(new FTPClient());
 
         sendFile(getFtpUrl(), "Hello World", "claus.txt");
     }
@@ -51,13 +53,14 @@ public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         assertMockEndpointsSatisfied();
 
-        // give time for ftp consumer to disconnect (delay is 5000 ms which is long enough to avoid a second poll cycle)
+        // give time for ftp consumer to disconnect, delay is 5000 ms which is long
+        // enough to avoid a second poll cycle before we are done with the asserts
+        // below inside the main thread
         Thread.sleep(2000);
 
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
         assertFalse("The FTPClient should be already disconnected", endpoint.getFtpClient().isConnected());
-        assertTrue("The FtpEndpoint is configured to disconnect after each poll", endpoint.isDisconnect());
-
+        assertTrue("The FtpEndpoint should be configured to disconnect", endpoint.isDisconnect());
     }
 
 }
