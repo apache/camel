@@ -234,6 +234,22 @@ public final class JmsMessageHelper {
     }
 
     /**
+     * Gets the JMSMessageID from the message.
+     *
+     * @param message  the message
+     * @return the JMSMessageID, or <tt>null</tt> if not able to get
+     */
+    public static String getJMSMessageID(Message message) {
+        try {
+            return message.getJMSMessageID();
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
+        }
+
+        return null;
+    }
+
+    /**
      * Sets the JMSDeliveryMode on the message.
      *
      * @param exchange the exchange

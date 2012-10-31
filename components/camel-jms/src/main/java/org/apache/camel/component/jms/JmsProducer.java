@@ -38,7 +38,6 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.ValueHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
@@ -172,7 +171,6 @@ public class JmsProducer extends DefaultAsyncProducer {
         if (msgIdAsCorrId) {
             messageSentCallback = new UseMessageIdAsCorrelationIdMessageSentCallback(replyManager, provisionalCorrelationId, endpoint.getRequestTimeout());
         }
-        final ValueHolder<MessageSentCallback> sentCallback = new ValueHolder<MessageSentCallback>(messageSentCallback);
 
         final String originalCorrelationId = in.getHeader("JMSCorrelationID", String.class);
         if (ObjectHelper.isEmpty(originalCorrelationId) && !msgIdAsCorrId) {
@@ -201,7 +199,7 @@ public class JmsProducer extends DefaultAsyncProducer {
             }
         };
 
-        doSend(true, destinationName, destination, messageCreator, sentCallback.get());
+        doSend(true, destinationName, destination, messageCreator, messageSentCallback);
 
         // after sending then set the OUT message id to the JMSMessageID so its identical
         setMessageId(exchange);
@@ -260,6 +258,8 @@ public class JmsProducer extends DefaultAsyncProducer {
             destinationName = null;
         }
         final String to = destinationName != null ? destinationName : "" + destination;
+        MessageSentCallback messageSentCallback = getEndpoint().getConfiguration().isIncludeSentJMSMessageID()
+                ? new InOnlyMessageSentCallback(exchange) : null;
 
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
@@ -349,7 +349,7 @@ public class JmsProducer extends DefaultAsyncProducer {
             }
         };
 
-        doSend(false, destinationName, destination, messageCreator, null);
+        doSend(false, destinationName, destination, messageCreator, messageSentCallback);
 
         // after sending then set the OUT message id to the JMSMessageID so its identical
         setMessageId(exchange);
@@ -366,7 +366,7 @@ public class JmsProducer extends DefaultAsyncProducer {
      * @param destinationName the destination name
      * @param destination     the destination (if no name provided)
      * @param messageCreator  the creator to create the {@link Message} to send
-     * @param callback        optional callback for inOut messages
+     * @param callback        optional callback to invoke when message has been sent
      */
     protected void doSend(boolean inOut, String destinationName, Destination destination,
                           MessageCreator messageCreator, MessageSentCallback callback) {
@@ -385,7 +385,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 }
             } else {
                 if (template != null) {
-                    template.send(destination, messageCreator);
+                    template.send(destination, messageCreator, callback);
                 }
             }
         } else if (destinationName != null) {
@@ -395,7 +395,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 }
             } else {
                 if (template != null) {
-                    template.send(destinationName, messageCreator);
+                    template.send(destinationName, messageCreator, callback);
                 }
             }
         } else {
