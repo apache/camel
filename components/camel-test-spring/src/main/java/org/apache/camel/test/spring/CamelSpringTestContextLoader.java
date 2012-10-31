@@ -48,6 +48,8 @@ import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.test.context.support.GenericXmlContextLoader;
 import org.springframework.util.StringUtils;
 
+import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
+
 /**
  * Replacement for the default {@link GenericXmlContextLoader} that provides hooks for
  * processing some class level Camel related test annotations.
@@ -63,7 +65,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      *  pre-post hooks for customization seen in {@link AbstractGenericContextLoader} because
      *  they probably are unnecessary for 90+% of users.
      *  <p/>
-     *  For some functionality, we cannot use {@link TestExecutionListener} because we need
+     *  For some functionality, we cannot use {@link org.springframework.test.context.TestExecutionListener} because we need
      *  to both produce the desired outcome during application context loading, and also cleanup
      *  after ourselves even if the test class never executes.  Thus the listeners, which
      *  only run if the application context is successfully initialized are insufficient to
@@ -71,12 +73,10 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      */
     @Override
     public ApplicationContext loadContext(MergedContextConfiguration mergedConfig) throws Exception {
-        
         Class<?> testClass = getTestClass();
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Loading ApplicationContext for merged context configuration [%s].",
-                mergedConfig));
+            LOG.debug("Loading ApplicationContext for merged context configuration [{}].", mergedConfig);
         }
         
         try {            
@@ -96,7 +96,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      *  pre-post hooks for customization seen in {@link AbstractGenericContextLoader} because
      *  they probably are unnecessary for 90+% of users.
      *  <p/>
-     *  For some functionality, we cannot use {@link TestExecutionListener} because we need
+     *  For some functionality, we cannot use {@link org.springframework.test.context.TestExecutionListener} because we need
      *  to both produce the desired outcome during application context loading, and also cleanup
      *  after ourselves even if the test class never executes.  Thus the listeners, which
      *  only run if the application context is successfully initialized are insufficient to
@@ -108,8 +108,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         Class<?> testClass = getTestClass();
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading ApplicationContext for locations ["
-                    + StringUtils.arrayToCommaDelimitedString(locations) + "].");
+            LOG.debug("Loading ApplicationContext for locations [" + StringUtils.arrayToCommaDelimitedString(locations) + "].");
         }
         
         try {
@@ -134,13 +133,11 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      *
      * @param context the partially configured context.  The context should have the bean definitions loaded, but nothing else.
      * @param testClass the test class being executed
-     *
      * @return the initialized (refreshed) Spring application context
      *
      * @throws Exception if there is an error during initialization/customization
      */
-    protected ApplicationContext loadContext(GenericApplicationContext context, Class<?> testClass)
-        throws Exception {
+    protected ApplicationContext loadContext(GenericApplicationContext context, Class<?> testClass) throws Exception {
             
         AnnotationConfigUtils.registerAnnotationConfigProcessors(context);
         
@@ -195,48 +192,25 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     }
     
     /**
-     * Returns all methods defined in {@code clazz} and its superclasses/interfaces.
-     */
-    protected Collection<Method> getAllMethods(Class<?> clazz)  {
-        
-        Set<Method> methods = new HashSet<Method>();
-        Class<?> currentClass = clazz;
-        
-        while (currentClass != null) {
-            methods.addAll(Arrays.asList(clazz.getMethods()));
-            currentClass = currentClass.getSuperclass(); 
-        }
-                
-        return methods;
-    }
-    
-    /**
      * Creates and starts the Spring context while optionally starting any loaded Camel contexts.
      *
      * @param testClass the test class that is being executed
-     *
      * @return the loaded Spring context
      */
     protected GenericApplicationContext createContext(Class<?> testClass) {
-
         GenericApplicationContext routeExcludingContext = null;
         
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
-            Class<?>[] excludedClasses = testClass.getAnnotation(
-                    ExcludeRoutes.class).value();
+            Class<?>[] excludedClasses = testClass.getAnnotation(ExcludeRoutes.class).value();
             
             if (excludedClasses.length > 0) {
-                
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Setting up package scanning excluded classes as ExcludeRoutes "
-                            + "annotation was found.  Excluding ["
-                            + StringUtils.arrayToCommaDelimitedString(excludedClasses) + "].");
+                            + "annotation was found. Excluding [" + StringUtils.arrayToCommaDelimitedString(excludedClasses) + "].");
                 }
                 
                 routeExcludingContext = new GenericApplicationContext();
-                routeExcludingContext.registerBeanDefinition(
-                        "excludingResolver", new RootBeanDefinition(
-                                ExcludingPackageScanClassResolver.class));
+                routeExcludingContext.registerBeanDefinition("excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
                 routeExcludingContext.refresh();
                 
                 ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
@@ -251,7 +225,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
         
         GenericApplicationContext context;
-        
+
         if (routeExcludingContext != null) {
             context = new GenericApplicationContext(routeExcludingContext);
         } else {
@@ -268,26 +242,18 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      * @param testClass the test class being executed
      */
     protected void handleDisableJmx(GenericApplicationContext context, Class<?> testClass) {
-        CamelSpringTestHelper.setOriginalJmxDisabledValue(
-                System.getProperty(JmxSystemPropertyKeys.DISABLED));
+        CamelSpringTestHelper.setOriginalJmxDisabledValue(System.getProperty(JmxSystemPropertyKeys.DISABLED));
         
         if (testClass.isAnnotationPresent(DisableJmx.class)) {
             if (testClass.getAnnotation(DisableJmx.class).value()) {
-                LOG.info("Disabling Camel JMX globally as DisableJmx annotation was found "
-                        + "and disableJmx is set to true.");
-                
+                LOG.info("Disabling Camel JMX globally as DisableJmx annotation was found and disableJmx is set to true.");
                 System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
-                
             } else {
-                LOG.info("Enabling Camel JMX as DisableJmx annotation was found "
-                        + "and disableJmx is set to false.");
-                
+                LOG.info("Enabling Camel JMX as DisableJmx annotation was found and disableJmx is set to false.");
                 System.clearProperty(JmxSystemPropertyKeys.DISABLED);
             }
         } else {
-            LOG.info("Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to "
-                    + "override the default setting.");
-            
+            LOG.info("Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting.");
             System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
         }
     }
@@ -298,18 +264,14 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      *
      * @param context the initialized Spring context containing the Camel context(s) to insert breakpoints into 
      * @param testClass the test class being processed
-     * @param log the logger to use
-     * @param statics if static methods or instance methods should be processed
      *
      * @throws Exception if there is an error processing the class
      */
     protected void handleProvidesBreakpoint(GenericApplicationContext context, Class<?> testClass) throws Exception {
-            
         Collection<Method> methods = getAllMethods(testClass);
         final List<Breakpoint> breakpoints = new LinkedList<Breakpoint>();
         
         for (Method method : methods) {
-            
             if (AnnotationUtils.findAnnotation(method, ProvidesBreakpoint.class) != null) {
                 Class<?>[] argTypes = method.getParameterTypes();
                 if (argTypes.length != 0) {
@@ -327,7 +289,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 }
                 
                 try {
-                    breakpoints.add((Breakpoint) method.invoke(null, new Object[] {}));
+                    breakpoints.add((Breakpoint) method.invoke(null));
                 } catch (Exception e) {
                     throw new RuntimeException("Method [" + method.getName()
                            + "] threw exception during evaluation.", e);
@@ -336,13 +298,11 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
         
         if (breakpoints.size() != 0) {
-        
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
                 
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    
                     Debugger debugger = camelContext.getDebugger();
                     if (debugger == null) {
                         debugger = new DefaultDebugger();
@@ -350,10 +310,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                     }
                     
                     for (Breakpoint breakpoint : breakpoints) {
-                        LOG.info(
-                                 "Adding Breakpoint [{}] to CamelContext with name [{}].",
-                                 breakpoint, contextName);
-                        
+                        LOG.info("Adding Breakpoint [{}] to CamelContext with name [{}].", breakpoint, contextName);
                         debugger.addBreakpoint(breakpoint);
                     }
                 }
@@ -369,7 +326,6 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      * @param testClass the test class being executed
      */
     protected void handleShutdownTimeout(GenericApplicationContext context, Class<?> testClass) throws Exception {
-        
         final int shutdownTimeout;
         final TimeUnit shutdownTimeUnit;
         if (testClass.isAnnotationPresent(ShutdownTimeout.class)) {
@@ -385,10 +341,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
             @Override
             public void execute(String contextName, SpringCamelContext camelContext)
                 throws Exception {
-                
-                LOG.info(
-                        "Setting shutdown timeout to [{} {}] on CamelContext with name [{}].",
-                        new Object[] {shutdownTimeout, shutdownTimeUnit, contextName});
+                LOG.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", shutdownTimeout, shutdownTimeUnit, contextName);
                 camelContext.getShutdownStrategy().setTimeout(shutdownTimeout);
                 camelContext.getShutdownStrategy().setTimeUnit(shutdownTimeUnit);
             }
@@ -403,19 +356,14 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      */
     protected void handleMockEndpoints(GenericApplicationContext context, Class<?> testClass) throws Exception {
         if (testClass.isAnnotationPresent(MockEndpoints.class)) {
-            
-            final String mockEndpoints = testClass.getAnnotation(
-                    MockEndpoints.class).value();
+            final String mockEndpoints = testClass.getAnnotation(MockEndpoints.class).value();
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
                 
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    
-                    LOG.info("Enabling auto mocking of endpoints matching pattern [{}] on "
-                            + "CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(
-                            new InterceptSendToMockEndpointStrategy(mockEndpoints));
+                    LOG.info("Enabling auto mocking of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
+                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
                 }
             });
         }
@@ -430,19 +378,14 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      */
     protected void handleMockEndpointsAndSkip(GenericApplicationContext context, Class<?> testClass) throws Exception {
         if (testClass.isAnnotationPresent(MockEndpointsAndSkip.class)) {
-            
-            final String mockEndpoints = testClass.getAnnotation(
-                    MockEndpointsAndSkip.class).value();
+            final String mockEndpoints = testClass.getAnnotation(MockEndpointsAndSkip.class).value();
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
                 
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    
-                    LOG.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on "
-                            + "CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(
-                            new InterceptSendToMockEndpointStrategy(mockEndpoints, true));
+                    LOG.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
+                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints, true));
                 }
             });
         }
@@ -464,9 +407,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    
-                    LOG.info("Enabling lazy loading of type converters on "
-                            + "CamelContext with name [{}].", contextName);
+                    LOG.info("Enabling lazy loading of type converters on CamelContext with name [{}].", contextName);
                     camelContext.setLazyLoadTypeConverters(lazy);
                 }
             });
@@ -482,16 +423,13 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     protected void handleCamelContextStartup(GenericApplicationContext context, Class<?> testClass) throws Exception {
         boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
         if (skip) {
-            LOG.info("Skipping starting CamelContext(s) as system property " 
-                    + "skipStartingCamelContext is set to be true.");
+            LOG.info("Skipping starting CamelContext(s) as system property skipStartingCamelContext is set to be true.");
         } else if (testClass.isAnnotationPresent(UseAdviceWith.class)) {
             if (testClass.getAnnotation(UseAdviceWith.class).value()) {
-                LOG.info("Skipping starting CamelContext(s) as UseAdviceWith annotation was found "
-                        + "and isUseAdviceWith is set to true.");
+                LOG.info("Skipping starting CamelContext(s) as UseAdviceWith annotation was found and isUseAdviceWith is set to true.");
                 skip = true;
             } else {
-                LOG.info("Starting CamelContext(s) as UseAdviceWith annotation was found, but "
-                        + "isUseAdviceWith is set to false.");
+                LOG.info("Starting CamelContext(s) as UseAdviceWith annotation was found, but isUseAdviceWith is set to false.");
                 skip = false;
             }
         }

@@ -42,7 +42,8 @@ public @interface UseAdviceWith {
     /**
      * Whether the test annotated with this annotation should be treated as if 
      * {@code adviceWith()} is in use in the test and the Camel contexts should not be started
-     * automatically.  Defaults to {@code true}. 
+     * automatically.
+     * Defaults to {@code true}.
      */
     boolean value() default true;
 }

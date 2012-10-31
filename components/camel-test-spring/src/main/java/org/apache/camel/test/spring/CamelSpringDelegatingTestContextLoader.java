@@ -43,30 +43,25 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.DelegatingSmartContextLoader;
 
+import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
+
 /**
  * Custom TestContextLoader which fixes issues in Camel's JavaConfigContextLoader. (adds support for Camel's test annotations)
  * <br>
  * <em>This loader can handle either classes or locations for configuring the context.</em>
  * <br>
  */
-public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartContextLoader
-{
+public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartContextLoader {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
-    
-    /*
-     * (non-Javadoc)
-     * @see org.springframework.test.context.support.DelegatingSmartContextLoader#loadContext(org.springframework.test.context.MergedContextConfiguration)
-     */
+
     @Override
     public ApplicationContext loadContext(MergedContextConfiguration mergedConfig) throws Exception {
         
         Class<?> testClass = getTestClass();
         
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Loading ApplicationContext for merged context configuration [%s].",
-                mergedConfig));
+            logger.debug("Loading ApplicationContext for merged context configuration [{}].", mergedConfig);
         }
         
         // Pre CamelContext(s) instantiation setup
@@ -88,7 +83,6 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
      *
      * @param context the partially configured context.  The context should have the bean definitions loaded, but nothing else.
      * @param testClass the test class being executed
-     *
      * @return the initialized (refreshed) Spring application context
      *
      * @throws Exception if there is an error during initialization/customization
@@ -131,48 +125,25 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
     }
     
     /**
-     * Returns all methods defined in {@code clazz} and its superclasses/interfaces.
-     */
-    protected Collection<Method> getAllMethods(Class<?> clazz)  {
-        
-        Set<Method> methods = new HashSet<Method>();
-        Class<?> currentClass = clazz;
-        
-        while (currentClass != null) {
-            methods.addAll(Arrays.asList(clazz.getMethods()));
-            currentClass = currentClass.getSuperclass(); 
-        }
-                
-        return methods;
-    }
-
-    /**
      * Handles disabling of JMX on Camel contexts based on {@link DisableJmx}.
      *
      * @param context the initialized Spring context
      * @param testClass the test class being executed
      */
     protected void handleDisableJmx(ConfigurableApplicationContext context, Class<?> testClass) {
-        CamelSpringTestHelper.setOriginalJmxDisabledValue(
-                System.getProperty(JmxSystemPropertyKeys.DISABLED));
+        CamelSpringTestHelper.setOriginalJmxDisabledValue(System.getProperty(JmxSystemPropertyKeys.DISABLED));
         
         if (testClass.isAnnotationPresent(DisableJmx.class)) {
             if (testClass.getAnnotation(DisableJmx.class).value()) {
-                logger.info("Disabling Camel JMX globally as DisableJmx annotation was found "
-                        + "and disableJmx is set to true.");
-                
+                logger.info("Disabling Camel JMX globally as DisableJmx annotation was found and disableJmx is set to true.");
                 System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
                 
             } else {
-                logger.info("Enabling Camel JMX as DisableJmx annotation was found "
-                        + "and disableJmx is set to false.");
-                
+                logger.info("Enabling Camel JMX as DisableJmx annotation was found and disableJmx is set to false.");
                 System.clearProperty(JmxSystemPropertyKeys.DISABLED);
             }
         } else {
-            logger.info("Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to "
-                    + "override the default setting.");
-            
+            logger.info("Disabling Camel JMX globally for tests by default. Use the DisableJMX annotation to override the default setting.");
             System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
         }
     }
@@ -183,18 +154,14 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
      *
      * @param context the initialized Spring context containing the Camel context(s) to insert breakpoints into 
      * @param testClass the test class being processed
-     * @param log the logger to use
-     * @param statics if static methods or instance methods should be processed
      *
      * @throws Exception if there is an error processing the class
      */
     protected void handleProvidesBreakpoint(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
-            
         Collection<Method> methods = getAllMethods(testClass);
         final List<Breakpoint> breakpoints = new LinkedList<Breakpoint>();
         
         for (Method method : methods) {
-            
             if (AnnotationUtils.findAnnotation(method, ProvidesBreakpoint.class) != null) {
                 Class<?>[] argTypes = method.getParameterTypes();
                 if (argTypes.length != 0) {
@@ -212,7 +179,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
                 }
                 
                 try {
-                    breakpoints.add((Breakpoint) method.invoke(null, new Object[] {}));
+                    breakpoints.add((Breakpoint) method.invoke(null));
                 } catch (Exception e) {
                     throw new RuntimeException("Method [" + method.getName()
                            + "] threw exception during evaluation.", e);
@@ -221,12 +188,10 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         }
         
         if (breakpoints.size() != 0) {
-        
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
                 
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    
                     Debugger debugger = camelContext.getDebugger();
                     if (debugger == null) {
                         debugger = new DefaultDebugger();
@@ -234,18 +199,15 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
                     }
                     
                     for (Breakpoint breakpoint : breakpoints) {
-                        logger.info(
-                                 "Adding Breakpoint [{}] to CamelContext with name [{}].",
-                                 breakpoint, contextName);
-                        
+                        logger.info("Adding Breakpoint [{}] to CamelContext with name [{}].", breakpoint, contextName);
                         debugger.addBreakpoint(breakpoint);
                     }
                 }
             });
         }
     }
-    
-    
+
+
     /**
      * Handles updating shutdown timeouts on Camel contexts based on {@link ShutdownTimeout}.
      *
@@ -253,7 +215,6 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
      * @param testClass the test class being executed
      */
     protected void handleShutdownTimeout(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
-        
         final int shutdownTimeout;
         final TimeUnit shutdownTimeUnit;
         if (testClass.isAnnotationPresent(ShutdownTimeout.class)) {
@@ -268,10 +229,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
             
             public void execute(String contextName, SpringCamelContext camelContext)
                 throws Exception {
-                
-                logger.info(
-                        "Setting shutdown timeout to [{} {}] on CamelContext with name [{}].",
-                        new Object[] {shutdownTimeout, shutdownTimeUnit, contextName});
+                logger.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", shutdownTimeout, shutdownTimeUnit, contextName);
                 camelContext.getShutdownStrategy().setTimeout(shutdownTimeout);
                 camelContext.getShutdownStrategy().setTimeUnit(shutdownTimeUnit);
             }
@@ -286,18 +244,13 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
      */
     protected void handleMockEndpoints(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
         if (testClass.isAnnotationPresent(MockEndpoints.class)) {
-            
-            final String mockEndpoints = testClass.getAnnotation(
-                    MockEndpoints.class).value();
+            final String mockEndpoints = testClass.getAnnotation(MockEndpoints.class).value();
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
                 
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    
-                    logger.info("Enabling auto mocking of endpoints matching pattern [{}] on "
-                            + "CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(
-                            new InterceptSendToMockEndpointStrategy(mockEndpoints));
+                    logger.info("Enabling auto mocking of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
+                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
                 }
             });
         }
@@ -312,18 +265,13 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
      */
     protected void handleMockEndpointsAndSkip(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
         if (testClass.isAnnotationPresent(MockEndpoints.class)) {
-            
-            final String mockEndpoints = testClass.getAnnotation(
-                    MockEndpoints.class).value();
+            final String mockEndpoints = testClass.getAnnotation(MockEndpoints.class).value();
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
                 
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    
-                    logger.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on "
-                            + "CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(
-                            new InterceptSendToMockEndpointStrategy(mockEndpoints, true));
+                    logger.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
+                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints, true));
                 }
             });
         }
@@ -338,16 +286,13 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
     protected void handleCamelContextStartup(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
         boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
         if (skip) {
-            logger.info("Skipping starting CamelContext(s) as system property " 
-                    + "skipStartingCamelContext is set to be true.");
+            logger.info("Skipping starting CamelContext(s) as system property skipStartingCamelContext is set to be true.");
         } else if (testClass.isAnnotationPresent(UseAdviceWith.class)) {
             if (testClass.getAnnotation(UseAdviceWith.class).value()) {
-                logger.info("Skipping starting CamelContext(s) as UseAdviceWith annotation was found "
-                        + "and isUseAdviceWith is set to true.");
+                logger.info("Skipping starting CamelContext(s) as UseAdviceWith annotation was found and isUseAdviceWith is set to true.");
                 skip = true;
             } else {
-                logger.info("Starting CamelContext(s) as UseAdviceWith annotation was found, but "
-                        + "isUseAdviceWith is set to false.");
+                logger.info("Starting CamelContext(s) as UseAdviceWith annotation was found, but isUseAdviceWith is set to false.");
                 skip = false;
             }
         }

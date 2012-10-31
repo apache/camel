@@ -20,9 +20,9 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.test.spring.StopWatchTestExecutionListener;
 import org.apache.camel.test.spring.UseAdviceWith;
 import org.apache.camel.util.StopWatch;
-
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -37,8 +37,9 @@ public class CamelSpringJUnit4ClassRunnerUseAdviceWithTest extends CamelSpringJU
         assertEquals(ServiceStatus.Stopped, camelContext2.getStatus());
         camelContext.start();
         camelContext2.start();
-        
-        Thread.sleep(4000);
+
+        // just sleep a little to simulate testing take a bit time
+        Thread.sleep(1000);
     }
     
     @Test
@@ -46,6 +47,8 @@ public class CamelSpringJUnit4ClassRunnerUseAdviceWithTest extends CamelSpringJU
         StopWatch stopWatch = StopWatchTestExecutionListener.getStopWatch();
         
         assertNotNull(stopWatch);
-        assertTrue(stopWatch.taken() < 4100);
+        long taken = stopWatch.taken();
+        assertTrue(taken + " > 0, but was: " + taken, taken > 0);
+        assertTrue(taken + " < 3000, but was: " + taken, taken < 3000);
     }
 }

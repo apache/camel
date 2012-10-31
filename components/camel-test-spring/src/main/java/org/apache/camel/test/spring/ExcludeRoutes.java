@@ -34,8 +34,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface ExcludeRoutes {
+
     /**
-     * The classes to exlcude from resolution when using package scanning. 
+     * The classes to exclude from resolution when using package scanning.
      */
     Class<?>[] value() default {};
 }
