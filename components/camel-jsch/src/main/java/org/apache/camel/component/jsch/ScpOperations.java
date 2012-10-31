@@ -17,6 +17,7 @@
 package org.apache.camel.component.jsch;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -32,8 +33,8 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
@@ -94,9 +95,24 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         ScpConfiguration cfg = endpoint.getConfiguration();
         
         int timeout = cfg.getConnectTimeout();
-        LOG.trace("Opening channel to {} with {} timeout...", cfg.remoteServerInformation(), 
-            timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Opening channel to {} with {} timeout...", cfg.remoteServerInformation(),
+                timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
+        }
         String file = getRemoteFile(name, cfg);
+
+
+        InputStream is = null;
+        if (exchange.getIn().getBody() == null) {
+            // Do an explicit test for a null body and decide what to do
+            if (endpoint.isAllowNullBody()) {
+                LOG.trace("Writing empty file.");
+                is = new ByteArrayInputStream(new byte[]{});
+            } else {
+                throw new GenericFileOperationFailedException("Cannot write null body to file: " + name);
+            }
+        }
+
         try {
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(getScpCommand(cfg, file));
@@ -104,15 +120,20 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
 
             try {
+                if (is == null) {
+                    is = exchange.getIn().getMandatoryBody(InputStream.class);
+                }
                 write(channel, file, exchange.getIn().getMandatoryBody(InputStream.class), cfg);
-            } catch (CamelExchangeException e) {
-                throw new GenericFileOperationFailedException("Failed extract message body as InputStream", e);
+            } catch (InvalidPayloadException e) {
+                throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException("Failed to write file " + file, e);
+            } finally {
+                // must close stream after usage
+                IOHelper.close(is);
             }
         } catch (JSchException e) {
-            LOG.warn("Failed to secure copy file " + file, e);
-            return false;
+            throw new GenericFileOperationFailedException("Failed to write file " + file, e);
         } finally {
             if (channel != null) {
                 LOG.trace("Disconnecting 'exec' scp channel");
