@@ -76,6 +76,7 @@
         </plugin>
       </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>arquillian-weld-ee-embedded</id>
@@ -105,4 +106,5 @@
             </dependencies>
         </profile>
     </profiles>
+
 </project>

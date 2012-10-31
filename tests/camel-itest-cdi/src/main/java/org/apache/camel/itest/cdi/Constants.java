@@ -22,9 +22,7 @@ public final class Constants {
     public static final Object[] EXPECTED_BODIES_B = {"messageB1", "messageB2"};
     public static final Object[] EXPECTED_BODIES_C = {"messageC1", "messageC2"};
     public static final Object[] EXPECTED_BODIES_D = {"messageD1", "messageD2"};
-
-    public static final Object[] EXPECTED_BODIES_E_A = {"messageEa1", "messageEa2"};
-    public static final Object[] EXPECTED_BODIES_E_C = {"messageEc1", "messageEc2"};
+    public static final Object[] EXPECTED_BODIES_D_A = {"messageDa1", "messageDa2"};
 
     private Constants() {
     }
