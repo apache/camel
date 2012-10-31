@@ -34,12 +34,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * for their Spring based applications/routes using the typical Spring Test conventions
  * for test development.
  */
-public class CamelSpringJUnit4ClassRunner extends
-        SpringJUnit4ClassRunner {
+public class CamelSpringJUnit4ClassRunner extends SpringJUnit4ClassRunner {
 
-    public CamelSpringJUnit4ClassRunner(Class<?> clazz)
-        throws InitializationError {
-        
+    public CamelSpringJUnit4ClassRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
     }
 
@@ -71,8 +68,7 @@ public class CamelSpringJUnit4ClassRunner extends
      */
     public static final class CamelTestContextManager extends TestContextManager {
 
-        public CamelTestContextManager(Class<?> testClass,
-                String defaultContextLoaderClassName) {
+        public CamelTestContextManager(Class<?> testClass, String defaultContextLoaderClassName) {
             super(testClass, defaultContextLoaderClassName);
         }
 
@@ -81,19 +77,16 @@ public class CamelSpringJUnit4ClassRunner extends
          * for the Camel testing features.
          */
         @Override
-        protected Set<Class<? extends TestExecutionListener>> 
-        getDefaultTestExecutionListenerClasses() {
-            
-            Set<Class<? extends TestExecutionListener>> classes = 
-                    new LinkedHashSet<Class<? extends TestExecutionListener>>();
-            
+        protected Set<Class<? extends TestExecutionListener>> getDefaultTestExecutionListenerClasses() {
+            Set<Class<? extends TestExecutionListener>> classes = new LinkedHashSet<Class<? extends TestExecutionListener>>();
+
             classes.add(CamelSpringTestContextLoaderTestExecutionListener.class);
-            
             classes.addAll(super.getDefaultTestExecutionListenerClasses());
-            
             classes.add(DisableJmxTestExecutionListener.class);
             classes.add(StopWatchTestExecutionListener.class);
+
             return classes;
         }
     }
+
 }
