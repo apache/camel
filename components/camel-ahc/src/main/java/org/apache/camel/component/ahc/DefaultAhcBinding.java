@@ -55,6 +55,8 @@ public class DefaultAhcBinding implements AhcBinding {
     public Request prepareRequest(AhcEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
         if (endpoint.isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            // Need to remove the Host key as it should be not used 
+            exchange.getIn().getHeaders().remove("host");
         }
 
         RequestBuilder builder = new RequestBuilder();
