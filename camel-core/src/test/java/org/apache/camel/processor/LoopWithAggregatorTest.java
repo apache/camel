@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class LoopWithAggregatorTest extends ContextTestSupport {
+
     public void testLoopCopy() throws Exception {
         getMockEndpoint("mock:loop").expectedBodiesReceived("AB", "AB", "AB");
         getMockEndpoint("mock:result").expectedBodiesReceived("AB");
@@ -67,14 +68,11 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
         public Exchange aggregate(Exchange original, Exchange resource) {
             String originalBody = original.getIn().getBody(String.class);
             if (original.getOut().getBody() != null) {
-                System.out.println("get the out message ");
                 originalBody = original.getOut().getBody(String.class);
             }
             String resourceResponse = resource.getIn().getBody(String.class);
             String mergeResult = originalBody + resourceResponse;
-            System.out.println("The original MEP is " + original.getPattern());
             if (original.getPattern().isOutCapable()) {
-                System.out.println("set the out message ");
                 original.getOut().setBody(mergeResult);
             } else {
                 original.getIn().setBody(mergeResult);
