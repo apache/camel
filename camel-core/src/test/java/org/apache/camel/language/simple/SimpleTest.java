@@ -1086,6 +1086,21 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.substring(${header.min}, ${header.max})}", "me");
     }
 
+    public void testHeaderOgnlOnStringWithOgnlParams() throws Exception {
+        exchange.getIn().setBody(null);
+        exchange.getIn().setHeader("name", "Camel");
+        exchange.getIn().setHeader("max", 4);
+        exchange.getIn().setHeader("min", 2);
+
+        assertExpression("${header.name.substring(${header.min}, ${header.max})}", "me");
+    }
+
+    public void testCamelContextStartRoute() throws Exception {
+        exchange.getIn().setBody(null);
+
+        assertExpression("${camelContext.startRoute('foo')}", null);
+    }
+
     public void testBodyOgnlReplace() throws Exception {
         exchange.getIn().setBody("Kamel is a cool Kamel");
 
