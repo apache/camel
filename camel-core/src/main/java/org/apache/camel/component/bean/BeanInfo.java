@@ -514,7 +514,7 @@ public class BeanInfo {
     }
 
     private MethodInfo chooseMethodWithMatchingParameters(Exchange exchange, String parameters, Collection<MethodInfo> operationList)
-            throws AmbiguousMethodCallException {
+        throws AmbiguousMethodCallException {
         // we have hardcoded parameters so need to match that with the given operations
         Iterator<?> it = ObjectHelper.createIterator(parameters);
         int count = 0;

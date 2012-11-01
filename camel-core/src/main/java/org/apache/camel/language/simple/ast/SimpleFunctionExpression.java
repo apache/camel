@@ -62,6 +62,127 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return answer;
         }
 
+        // body and headers first
+        answer = createSimpleExpressionBodyOrHeader(function, strict);
+        if (answer != null) {
+            return answer;
+        }
+
+        // camelContext OGNL
+        String remainder = ifStartsWithReturnRemainder("camelContext", function);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
+            }
+            return ExpressionBuilder.camelContextOgnlExpression(remainder);
+        }
+
+        // Exception OGNL
+        remainder = ifStartsWithReturnRemainder("exception", function);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${exception.OGNL} was: " + function, token.getIndex());
+            }
+            return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
+        }
+
+        // property
+        remainder = ifStartsWithReturnRemainder("property", function);
+        if (remainder != null) {
+            // remove leading character (dot or ?)
+            if (remainder.startsWith(".") || remainder.startsWith("?")) {
+                remainder = remainder.substring(1);
+            }
+            // remove starting and ending brackets
+            if (remainder.startsWith("[") && remainder.endsWith("]")) {
+                remainder = remainder.substring(1, remainder.length() - 1);
+            }
+
+            // validate syntax
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${property.OGNL} was: " + function, token.getIndex());
+            }
+
+            if (OgnlHelper.isValidOgnlExpression(remainder)) {
+                // ognl based property
+                return ExpressionBuilder.propertyOgnlExpression(remainder);
+            } else {
+                // regular property
+                return ExpressionBuilder.propertyExpression(remainder);
+            }
+        }
+
+        // system property
+        remainder = ifStartsWithReturnRemainder("sys.", function);
+        if (remainder != null) {
+            return ExpressionBuilder.systemPropertyExpression(remainder);
+        }
+        remainder = ifStartsWithReturnRemainder("sysenv.", function);
+        if (remainder != null) {
+            return ExpressionBuilder.systemEnvironmentExpression(remainder);
+        }
+
+        // file: prefix
+        remainder = ifStartsWithReturnRemainder("file:", function);
+        if (remainder != null) {
+            Expression fileExpression = createSimpleFileExpression(remainder);
+            if (function != null) {
+                return fileExpression;
+            }
+        }
+
+        // date: prefix
+        remainder = ifStartsWithReturnRemainder("date:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":");
+            if (parts.length < 2) {
+                throw new SimpleParserException("Valid syntax: ${date:command:pattern} was: " + function, token.getIndex());
+            }
+            String command = ObjectHelper.before(remainder, ":");
+            String pattern = ObjectHelper.after(remainder, ":");
+            return ExpressionBuilder.dateExpression(command, pattern);
+        }
+
+        // bean: prefix
+        remainder = ifStartsWithReturnRemainder("bean:", function);
+        if (remainder != null) {
+            return ExpressionBuilder.beanExpression(remainder);
+        }
+
+        // properties: prefix
+        remainder = ifStartsWithReturnRemainder("properties:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":");
+            if (parts.length > 2) {
+                throw new SimpleParserException("Valid syntax: ${properties:[locations]:key} was: " + function, token.getIndex());
+            }
+
+            String locations = null;
+            String key = remainder;
+            if (parts.length == 2) {
+                locations = ObjectHelper.before(remainder, ":");
+                key = ObjectHelper.after(remainder, ":");
+            }
+            return ExpressionBuilder.propertiesComponentExpression(key, locations);
+        }
+
+        // ref: prefix
+        remainder = ifStartsWithReturnRemainder("ref:", function);
+        if (remainder != null) {
+            return ExpressionBuilder.refExpression(remainder);
+        }
+
+        if (strict) {
+            throw new SimpleParserException("Unknown function: " + function, token.getIndex());
+        } else {
+            return null;
+        }
+    }
+
+    private Expression createSimpleExpressionBodyOrHeader(String function, boolean strict) {
         // bodyAs
         String remainder = ifStartsWithReturnRemainder("bodyAs", function);
         if (remainder != null) {
@@ -94,26 +215,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${body.OGNL} was: " + function, token.getIndex());
             }
             return ExpressionBuilder.bodyOgnlExpression(remainder);
-        }
-
-        // camelContext OGNL
-        remainder = ifStartsWithReturnRemainder("camelContext", function);
-        if (remainder != null) {
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
-            if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
-            }
-            return ExpressionBuilder.camelContextOgnlExpression(remainder);
-        }
-
-        // Exception OGNL
-        remainder = ifStartsWithReturnRemainder("exception", function);
-        if (remainder != null) {
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
-            if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${exception.OGNL} was: " + function, token.getIndex());
-            }
-            return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
         }
 
         // headerAs
@@ -184,100 +285,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.outHeaderExpression(remainder);
         }
 
-        // property
-        remainder = ifStartsWithReturnRemainder("property", function);
-        if (remainder != null) {
-            // remove leading character (dot or ?)
-            if (remainder.startsWith(".") || remainder.startsWith("?")) {
-                remainder = remainder.substring(1);
-            }
-            // remove starting and ending brackets
-            if (remainder.startsWith("[") && remainder.endsWith("]")) {
-                remainder = remainder.substring(1, remainder.length() - 1);
-            }
-
-            // validate syntax
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
-            if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${property.OGNL} was: " + function, token.getIndex());
-            }
-
-            if (OgnlHelper.isValidOgnlExpression(remainder)) {
-                // ognl based property
-                return ExpressionBuilder.propertyOgnlExpression(remainder);
-            } else {
-                // regular property
-                return ExpressionBuilder.propertyExpression(remainder);
-            }
-        }
-
-        // system property
-        remainder = ifStartsWithReturnRemainder("sys.", function);
-        if (remainder != null) {
-            return ExpressionBuilder.systemPropertyExpression(remainder);
-        }
-
-        // system property
-        remainder = ifStartsWithReturnRemainder("sysenv.", function);
-        if (remainder != null) {
-            return ExpressionBuilder.systemEnvironmentExpression(remainder);
-        }
-
-        // file: prefix
-        remainder = ifStartsWithReturnRemainder("file:", function);
-        if (remainder != null) {
-            Expression fileExpression = createSimpleFileExpression(remainder);
-            if (function != null) {
-                return fileExpression;
-            }
-        }
-
-        // date: prefix
-        remainder = ifStartsWithReturnRemainder("date:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":");
-            if (parts.length < 2) {
-                throw new SimpleParserException("Valid syntax: ${date:command:pattern} was: " + function, token.getIndex());
-            }
-            String command = ObjectHelper.before(remainder, ":");
-            String pattern = ObjectHelper.after(remainder, ":");
-            return ExpressionBuilder.dateExpression(command, pattern);
-        }
-
-        // bean: prefix
-        remainder = ifStartsWithReturnRemainder("bean:", function);
-        if (remainder != null) {
-            return ExpressionBuilder.beanExpression(remainder);
-        }
-
-        // properties: prefix
-        remainder = ifStartsWithReturnRemainder("properties:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":");
-            if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${properties:[locations]:key} was: " + function, token.getIndex());
-            }
-
-            String locations = null;
-            String key = remainder;
-            if (parts.length == 2) {
-                locations = ObjectHelper.before(remainder, ":");
-                key = ObjectHelper.after(remainder, ":");
-            }
-            return ExpressionBuilder.propertiesComponentExpression(key, locations);
-        }
-
-        // ref: prefix
-        remainder = ifStartsWithReturnRemainder("ref:", function);
-        if (remainder != null) {
-            return ExpressionBuilder.refExpression(remainder);
-        }
-
-        if (strict) {
-            throw new SimpleParserException("Unknown function: " + function, token.getIndex());
-        } else {
-            return null;
-        }
+        return null;
     }
 
     private Expression createSimpleExpressionDirectly(String expression) {
