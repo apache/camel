@@ -229,7 +229,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
             
             public void execute(String contextName, SpringCamelContext camelContext)
                 throws Exception {
-                logger.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", shutdownTimeout, shutdownTimeUnit, contextName);
+                logger.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", new Object[]{shutdownTimeout, shutdownTimeUnit, contextName});
                 camelContext.getShutdownStrategy().setTimeout(shutdownTimeout);
                 camelContext.getShutdownStrategy().setTimeUnit(shutdownTimeUnit);
             }
