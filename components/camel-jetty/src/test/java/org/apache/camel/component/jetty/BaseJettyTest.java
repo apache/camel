@@ -29,6 +29,8 @@ import org.junit.BeforeClass;
 public abstract class BaseJettyTest extends CamelTestSupport {
 
     private static volatile int port;
+    
+    private static volatile int port2;
 
     private final AtomicInteger counter = new AtomicInteger(1);
 
@@ -36,6 +38,8 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     public static void initPort() throws Exception {
         // start from somewhere in the 23xxx range
         port = AvailablePortFinder.getNextAvailable(23000);
+        // find another ports for proxy route test
+        port2 = AvailablePortFinder.getNextAvailable(24000);
     }
 
     @Override
@@ -51,8 +55,8 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
+        prop.setProperty("port2", "" + getPort2());
         jndi.bind("prop", prop);
-
         return jndi;
     }
 
@@ -67,5 +71,10 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     protected static int getPort() {
         return port;
     }
+    
+    protected static int getPort2() {
+        return port2;
+    }
+
 
 }
