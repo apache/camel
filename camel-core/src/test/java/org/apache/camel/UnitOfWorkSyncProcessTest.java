@@ -36,6 +36,11 @@ public class UnitOfWorkSyncProcessTest extends ContextTestSupport {
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public void testUnitOfWorkSync() throws Exception {
+        // skip test on AIX
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         assertMockEndpointsSatisfied();
