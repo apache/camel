@@ -1165,6 +1165,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("$${body}", "$Something");
     }
 
+    public void testCamelContextOGNL() throws Exception {
+        assertExpression("${camelContext.getName()}", context.getName());
+        assertExpression("${camelContext.version}", context.getVersion());
+    }
+
     protected String getLanguageName() {
         return "simple";
     }

@@ -96,6 +96,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.bodyOgnlExpression(remainder);
         }
 
+        // camelContext OGNL
+        remainder = ifStartsWithReturnRemainder("camelContext", function);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
+            }
+            return ExpressionBuilder.camelContextOgnlExpression(remainder);
+        }
+
         // Exception OGNL
         remainder = ifStartsWithReturnRemainder("exception", function);
         if (remainder != null) {

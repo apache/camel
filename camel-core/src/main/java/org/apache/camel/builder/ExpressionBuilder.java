@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -723,6 +724,29 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "bodyOgnl(" + ognl + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges camelContext invoking methods defined
+     * in a simple OGNL notation
+     *
+     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     */
+    public static Expression camelContextOgnlExpression(final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                CamelContext context = exchange.getContext();
+                if (context == null) {
+                    return null;
+                }
+                return new MethodCallExpression(context, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "camelContextOgnl(" + ognl + ")";
             }
         };
     }
