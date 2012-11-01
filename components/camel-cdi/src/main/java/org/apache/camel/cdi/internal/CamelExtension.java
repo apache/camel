@@ -16,21 +16,16 @@
  */
 package org.apache.camel.cdi.internal;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Consume;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.CdiCamelContext;
-import org.apache.camel.cdi.ContextName;
-import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
-import org.apache.camel.model.RouteContainer;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionHelper;
-import org.apache.deltaspike.core.api.provider.BeanProvider;
-import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
@@ -48,22 +43,28 @@ import javax.enterprise.inject.spi.ProcessInjectionTarget;
 import javax.enterprise.inject.spi.ProcessProducerMethod;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Consume;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CdiCamelContext;
+import org.apache.camel.cdi.ContextName;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
+import org.apache.camel.model.RouteContainer;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
+import org.apache.deltaspike.core.api.provider.BeanProvider;
+import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 
 /**
  * Set of camel specific hooks for CDI.
  */
 public class CamelExtension implements Extension {
-    private static class InjectLiteral extends AnnotationLiteral<Inject> implements Inject {}
+    private static class InjectLiteral extends AnnotationLiteral<Inject> implements Inject { }
 
     CamelContextMap camelContextMap;
 
@@ -106,7 +107,7 @@ public class CamelExtension implements Extension {
     }
 
     protected <T> void detectRouteBuilders(@Observes ProcessAnnotatedType<T> process)
-            throws Exception {
+        throws Exception {
         AnnotatedType<T> annotatedType = process.getAnnotatedType();
         ContextName annotation = annotatedType.getAnnotation(ContextName.class);
         Class<T> javaClass = annotatedType.getJavaClass();
