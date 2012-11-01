@@ -19,6 +19,7 @@ package org.apache.camel.core.osgi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.util.CastUtils;
@@ -70,6 +71,16 @@ public class OsgiClassResolver extends DefaultClassResolver {
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         return bundleContext.getBundle().getResource(uri);
+    }
+
+    @Override
+    public Enumeration<URL> loadResourcesAsURL(String uri) {
+        ObjectHelper.notEmpty(uri, "uri");
+        try {
+            return bundleContext.getBundle().getResources(uri);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot load resource: " + uri, e);
+        }
     }
 
     protected Class<?> doLoadClass(String name, Bundle loader) {

@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.sjms;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 
 import javax.jms.MessageProducer;
@@ -159,19 +155,15 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
-        
-        Object body = exchange.getIn().getBody();
-        if (body != null) {
-            if (body instanceof InputStream) {
-                byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, body);
-                exchange.getIn().setBody(bytes);
-            }
+        if (log.isDebugEnabled()) {
+            log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
         }
         
         try {
             if (!isSynchronous()) {
-                log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
+                if (log.isDebugEnabled()) {
+                    log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
+                }
                 getExecutor().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -183,57 +175,24 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                     }
                 });
             } else {
-                log.debug("  Sending message synchronously: {}", exchange.getIn().getBody());
+                if (log.isDebugEnabled()) {
+                    log.debug("  Sending message synchronously: {}", exchange.getIn().getBody());
+                }
                 sendMessage(exchange, callback);
             }
         } catch (Exception e) {
-            log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - FAILED");
-            log.trace("Exception: " + e.getLocalizedMessage(), e);
+            if (log.isDebugEnabled()) {
+                log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - FAILED");
+            }
+            if (log.isDebugEnabled()) {
+                log.trace("Exception: " + e.getLocalizedMessage(), e);
+            }
             exchange.setException(e);
         }
         log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - SUCCESS");
         
         return isSynchronous();
     }
-    
-    public static byte[] getBytes(InputStream is) throws IOException {
-        int len;
-        int size = 1024;
-        byte[] buf;
-
-        if (is instanceof ByteArrayInputStream) {
-            size = is.available();
-            buf = new byte[size];
-            len = is.read(buf, 0, size);
-        } else {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            buf = new byte[size];
-            while ((len = is.read(buf, 0, size)) != -1) {
-                bos.write(buf, 0, len);
-            }
-            buf = bos.toByteArray();
-        }
-        return buf;
-    }
-    
-//    public static byte[] getBytesFromStream(InputStream is) throws IOException {
-//        BufferedInputStream bis = new BufferedInputStream(is);
-//        bis.available();
-//
-//        // Create the byte array to hold the data
-//        byte[] bytes = new byte[(int)bis.available()];
-//
-//        // Read in the bytes
-//        int offset = 0;
-//        int numRead = 0;
-//        while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-//            offset += numRead;
-//        }
-//
-//        // Close the input stream and return bytes
-//        is.close();
-//        return bytes;
-//    }
     
 
     protected SjmsEndpoint getSjmsEndpoint() {

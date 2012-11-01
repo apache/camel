@@ -171,7 +171,7 @@ public final class ProcessorDefinitionHelper {
         // traverse outputs and recursive children as well
         List<ProcessorDefinition<?>> children = node.getOutputs();
         if (children != null && !children.isEmpty()) {
-            for (ProcessorDefinition child : children) {
+            for (ProcessorDefinition<?> child : children) {
                 // traverse children also
                 gatherAllNodeIds(child, set, onlyCustomId, includeAbstract);
             }

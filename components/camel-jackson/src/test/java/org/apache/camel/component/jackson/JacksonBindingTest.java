@@ -18,7 +18,6 @@ package org.apache.camel.component.jackson;
 
 import javax.naming.Context;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.binding.BindingComponent;
 import org.apache.camel.processor.binding.DataFormatBinding;

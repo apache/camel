@@ -35,12 +35,10 @@ import org.springframework.context.support.GenericApplicationContext;
  * @version 
  */
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
-    protected static ThreadLocal<AbstractApplicationContext> threadAppContext 
-        = new ThreadLocal<AbstractApplicationContext>();
+    protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<AbstractApplicationContext>();
     protected static Object lock = new Object();
     
     protected AbstractApplicationContext applicationContext;
-    
     protected abstract AbstractApplicationContext createApplicationContext();
 
     /**

@@ -27,8 +27,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  * Implemented as a listener as the state can be set on a {@code ThreadLocal} and we are pretty sure
  * that the same thread will be used to initialize the Spring context.
  */
-public class CamelSpringTestContextLoaderTestExecutionListener
-        extends AbstractTestExecutionListener {
+public class CamelSpringTestContextLoaderTestExecutionListener extends AbstractTestExecutionListener {
 
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {

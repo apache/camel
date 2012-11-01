@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 
 /**
  * A class resolver for loading classes in a loosly coupled manner to cater for different platforms such
@@ -117,4 +118,11 @@ public interface ClassResolver {
      */
     URL loadResourceAsURL(String uri);
 
+    /**
+     * Loads the given resources as a URL
+     *
+     * @param uri the uri of the resource
+     * @return the URLs found on the classpath
+     */
+    Enumeration<URL> loadResourcesAsURL(String uri);
 }

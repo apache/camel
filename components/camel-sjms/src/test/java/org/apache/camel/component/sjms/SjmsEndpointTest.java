@@ -145,7 +145,43 @@ public class SjmsEndpointTest extends CamelTestSupport {
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint qe = (SjmsEndpoint)endpoint;
-        assertTrue(qe.getDestinationName().equals("test"));
+        assertTrue(qe.isSynchronous());
+    }
+
+    @Test
+    public void testTransactedBatchCountDefault() throws Exception {
+        Endpoint endpoint = context.getEndpoint("sjms:queue:test?transacted=true");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof SjmsEndpoint);
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
+        assertTrue(qe.getTransactionBatchCount() == -1);
+    }
+
+    @Test
+    public void testTransactedBatchCountModified() throws Exception {
+        Endpoint endpoint = context.getEndpoint("sjms:queue:test?transacted=true&transactionBatchCount=10");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof SjmsEndpoint);
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
+        assertTrue(qe.getTransactionBatchCount() == 10);
+    }
+
+    @Test
+    public void testTransactedBatchTimeoutDefault() throws Exception {
+        Endpoint endpoint = context.getEndpoint("sjms:queue:test?transacted=true");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof SjmsEndpoint);
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
+        assertTrue(qe.getTransactionBatchTimeout() == 5000);
+    }
+
+    @Test
+    public void testTransactedBatchTimeoutModified() throws Exception {
+        Endpoint endpoint = context.getEndpoint("sjms:queue:test?transacted=true&transactionBatchTimeout=3000");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof SjmsEndpoint);
+        SjmsEndpoint qe = (SjmsEndpoint)endpoint;
+        assertTrue(qe.getTransactionBatchTimeout() == 3000);
     }
 
     protected CamelContext createCamelContext() throws Exception {

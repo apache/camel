@@ -16,9 +16,20 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.commons.net.ftp.FTPClient;
 import org.junit.Test;
 
 public class FtpProducerDisconnectTest extends FtpServerTestSupport {
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+
+        // ask the singleton FtpEndpoint to make use of a custom FTPClient
+        // so that we can hold a reference on it inside the test below
+        FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
+        endpoint.setFtpClient(new FTPClient());
+    }
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/done?password=admin&disconnect=true";
@@ -27,6 +38,10 @@ public class FtpProducerDisconnectTest extends FtpServerTestSupport {
     @Test
     public void testDisconnectOnDone() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "claus.txt");
+
+        FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
+        assertFalse("The FTPClient should be already disconnected", endpoint.getFtpClient().isConnected());
+        assertTrue("The FtpEndpoint should be configured to disconnect", endpoint.isDisconnect());
     }
 
 }

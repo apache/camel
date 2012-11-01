@@ -14,30 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.cdi;
-
-import org.apache.camel.builder.RouteBuilder;
+package org.apache.camel.component.sjms.taskmanager;
 
 /**
- * An example configurable {@link RouteBuilder}
+ * A thread safe factory that creates an instance of the TimedTaskManager.
  */
-public class MyRouteBuilder extends RouteBuilder {
-    private final String a;
-    private final String b;
+public final class TimedTaskManagerFactory {
 
-    public MyRouteBuilder(String a, String b) {
-        this.a = a;
-        this.b = b;
+    /**
+     * Private default constructor for utility class
+     */
+    private TimedTaskManagerFactory() {
     }
 
-    @Override
-    public String toString() {
-        return "MyRouteBuilder(" + a + " -> " + b + ")";
-
+    private static class TimedTaskManagerHolder {
+        private static final TimedTaskManager INSTANCE = new TimedTaskManager();
     }
 
-    @Override
-    public void configure() throws Exception {
-        from(a).to(b);
+    /**
+     * Returns the local instance of the {@link TimedTaskManager}.
+     * 
+     * @return TimedTaskManager
+     */
+    public static TimedTaskManager getInstance() {
+        return TimedTaskManagerHolder.INSTANCE;
     }
 }

@@ -932,7 +932,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             String name = getClass().getSimpleName() + "-AggregateTask";
             aggregateExecutorService = createAggregateExecutorService(name);
         }
-        ServiceHelper.startServices(processors);
+        ServiceHelper.startServices(aggregationStrategy, processors);
     }
 
     /**
@@ -949,12 +949,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processors, errorHandlers);
+        ServiceHelper.stopServices(processors, errorHandlers, aggregationStrategy);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(processors, errorHandlers);
+        ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy);
         // only clear error handlers when shutting down
         errorHandlers.clear();
 

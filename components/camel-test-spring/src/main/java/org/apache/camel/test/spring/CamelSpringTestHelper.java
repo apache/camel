@@ -19,7 +19,7 @@ package org.apache.camel.test.spring;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -40,7 +40,6 @@ import org.springframework.context.ApplicationContext;
 public final class CamelSpringTestHelper {
     
     private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<String>();
-    
     private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<Class<?>>();
     
     private CamelSpringTestHelper() {
@@ -66,8 +65,7 @@ public final class CamelSpringTestHelper {
      * Returns all methods defined in {@code clazz} and its superclasses/interfaces.
      */
     public static Collection<Method> getAllMethods(Class<?> clazz)  {
-        
-        Set<Method> methods = new HashSet<Method>();
+        Set<Method> methods = new LinkedHashSet<Method>();
         Class<?> currentClass = clazz;
         
         while (currentClass != null) {
@@ -87,10 +85,8 @@ public final class CamelSpringTestHelper {
      *
      * @throws Exception if there is an error executing any of the strategies
      */
-    public static void doToSpringCamelContexts(ApplicationContext context,
-            DoToSpringCamelContextsStrategy strategy) throws Exception {
-        Map<String, SpringCamelContext> contexts = 
-                context.getBeansOfType(SpringCamelContext.class);
+    public static void doToSpringCamelContexts(ApplicationContext context, DoToSpringCamelContextsStrategy strategy) throws Exception {
+        Map<String, SpringCamelContext> contexts = context.getBeansOfType(SpringCamelContext.class);
         
         for (Entry<String, SpringCamelContext> entry : contexts.entrySet()) {
             strategy.execute(entry.getKey(), entry.getValue());

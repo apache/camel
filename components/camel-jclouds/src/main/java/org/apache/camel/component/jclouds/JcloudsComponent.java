@@ -132,7 +132,7 @@ public class JcloudsComponent extends DefaultComponent {
      */
     private boolean isNameSupportedByContext() {
         try {
-            Context.class.getMethod("getName", null);
+            Context.class.getMethod("getName");
             return true;
         } catch (NoSuchMethodException ex) {
             return false;

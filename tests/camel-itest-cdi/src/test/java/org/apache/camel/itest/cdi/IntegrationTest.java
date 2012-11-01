@@ -57,15 +57,14 @@ public class IntegrationTest {
     @Inject
     RoutesContextD routesD;
 
-    @Inject @Uri(value = "seda:foo", context = "contextE")
-    ProducerTemplate producerE;
+    @Inject @Uri(value = "seda:foo", context = "contextD")
+    ProducerTemplate producerD;
 
     @Test
     public void checkContextsHaveCorrectEndpointsAndRoutes() throws Exception {
         Set<Map.Entry<String, CamelContext>> entries = camelContextMap.getCamelContextMap().entrySet();
         for (Map.Entry<String, CamelContext> entry : entries) {
-            LOG.info("CamelContext " + entry.getKey() + " has endpoints: " + entry.getValue().getEndpointMap()
-                    .keySet());
+            LOG.info("CamelContext " + entry.getKey() + " has endpoints: " + entry.getValue().getEndpointMap().keySet());
         }
 
         CamelContext contextA = assertCamelContext("contextA");
@@ -101,38 +100,22 @@ public class IntegrationTest {
         routesD.sendMessages();
         mockEndpointD.assertIsSatisfied();
 
-        // lets check the 2 routes created using @ContextName on a @Produces method
-        CamelContext contextE = assertCamelContext("contextE");
-        assertHasEndpoints(contextE, "seda://E.a", "mock://E.b", "seda://E.c", "mock://E.d");
-
-        MockEndpoint mockEb = CamelContextHelper
-                .getMandatoryEndpoint(contextE, "mock://E.b", MockEndpoint.class);
-        MockEndpoint mockEd = CamelContextHelper
-                .getMandatoryEndpoint(contextE, "mock://E.d", MockEndpoint.class);
-
-
-        mockEb.expectedBodiesReceived(Constants.EXPECTED_BODIES_E_A);
-        mockEd.expectedBodiesReceived(Constants.EXPECTED_BODIES_E_C);
-
-        for (Object body : Constants.EXPECTED_BODIES_E_A) {
-            producerE.sendBody("seda:E.a", body);
+        CamelContext contextE = assertCamelContext("contextD");
+        assertHasEndpoints(contextE, "seda://D.a", "mock://D.b");
+        MockEndpoint mockDb = CamelContextHelper.getMandatoryEndpoint(contextE, "mock://D.b", MockEndpoint.class);
+        mockDb.reset();
+        mockDb.expectedBodiesReceived(Constants.EXPECTED_BODIES_D_A);
+        for (Object body : Constants.EXPECTED_BODIES_D_A) {
+            producerD.sendBody("seda:D.a", body);
         }
-
-        for (Object body : Constants.EXPECTED_BODIES_E_C) {
-            producerE.sendBody("seda:E.c", body);
-        }
-
-        mockEb.assertIsSatisfied();
-        mockEd.assertIsSatisfied();
+        mockDb.assertIsSatisfied();
     }
 
     public static void assertHasEndpoints(CamelContext context, String... uris) {
         Map<String, Endpoint> endpointMap = context.getEndpointMap();
         for (String uri : uris) {
             Endpoint endpoint = endpointMap.get(uri);
-            assertNotNull(
-                    "CamelContext " + context + " does not have an Endpoint with URI " + uri + " but has "
-                            + endpointMap.keySet(), endpoint);
+            assertNotNull("CamelContext " + context + " does not have an Endpoint with URI " + uri + " but has " + endpointMap.keySet(), endpoint);
         }
     }
 

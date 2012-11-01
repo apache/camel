@@ -193,8 +193,7 @@ public final class IntrospectionSupport {
 
         ClassInfo cache = cacheClass(target.getClass());
 
-        for (int i = 0; i < cache.methods.length; i++) {
-            MethodInfo info = cache.methods[i];
+        for (MethodInfo info : cache.methods) {
             Method method = info.method;
             // we can only get properties if we have both a getter and a setter
             if (info.isGetter && info.hasGetterAndSetter) {

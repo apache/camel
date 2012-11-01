@@ -16,9 +16,19 @@
  */
 package org.apache.camel.util;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
@@ -34,6 +44,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public final class CamelContextHelper {
+    public static final String COMPONENT_DESCRIPTOR = "META-INF/services/org/apache/camel/component.properties";
 
     /**
      * Utility classes should not have a public constructor.
@@ -338,4 +349,45 @@ public final class CamelContextHelper {
         return null;
     }
 
+    /**
+     * Finds all possible Components on the classpath and Registry
+     */
+    public static SortedMap<String, Properties> findComponents(CamelContext camelContext) throws LoadPropertiesException {
+        SortedMap<String,Properties> map = new TreeMap<String, Properties>();
+        Enumeration<URL> iter = camelContext.getClassResolver().loadResourcesAsURL(COMPONENT_DESCRIPTOR);
+        while (iter.hasMoreElements()) {
+            URL url = iter.nextElement();
+            try {
+                Properties properties = new Properties();
+                properties.load(url.openStream());
+                String names = properties.getProperty("components");
+                if (names != null) {
+                    StringTokenizer tok = new StringTokenizer(names);
+                    while (tok.hasMoreTokens()) {
+                        String name = tok.nextToken();
+                        map.put(name, properties);
+                    }
+                }
+            } catch (IOException e) {
+                throw new LoadPropertiesException(url, e);
+            }
+        }
+
+        // lets see what other components are in the registry
+        Map<String,Component> beanMap = camelContext.getRegistry().lookupByType(Component.class);
+        Set<Map.Entry<String,Component>> entries = beanMap.entrySet();
+        for (Map.Entry<String, Component> entry : entries) {
+            String name = entry.getKey();
+            if (!map.containsKey(name)) {
+                Properties properties = new Properties();
+                Component component = entry.getValue();
+                if (component != null) {
+                    properties.put("component", component);
+                    properties.put("class", component.getClass().getName());
+                    map.put(name, properties);
+                }
+            }
+        }
+        return map;
+    }
 }

@@ -1022,8 +1022,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
-    public void setAsyncStopListener(boolean asyncStoptListener) {
-        configuration.setAsyncStopListener(asyncStoptListener);
+    public void setAsyncStopListener(boolean asyncStopListener) {
+        configuration.setAsyncStopListener(asyncStopListener);
     }
 
     @ManagedAttribute
@@ -1041,6 +1041,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         configuration.setAllowNullBody(allowNullBody);
     }
     
+    @ManagedAttribute
+    public boolean isIncludeSentJMSMessageID() {
+        return configuration.isIncludeSentJMSMessageID();
+    }
+
+    @ManagedAttribute
+    public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
+        configuration.setIncludeSentJMSMessageID(includeSentJMSMessageID);
+    }
+
     public MessageListenerContainerFactory getMessageListenerContainerFactory() {
         return configuration.getMessageListenerContainerFactory();
     }

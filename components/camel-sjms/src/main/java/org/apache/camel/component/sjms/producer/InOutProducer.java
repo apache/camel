@@ -271,8 +271,8 @@ public class InOutProducer extends SjmsProducer {
                 if (isEndpointTransacted()) {
                     exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
                 }
-
-                Message request = SjmsExchangeMessageHelper.createMessage(exchange, producer.getSession());
+                
+                Message request = SjmsExchangeMessageHelper.createMessage(exchange, producer.getSession(), getSjmsEndpoint().getJmsKeyFormatStrategy());
                 
                 // TODO just set the correlation id don't get it from the
                 // message

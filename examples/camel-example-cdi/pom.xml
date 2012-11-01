@@ -29,6 +29,7 @@
     <name>Camel :: Example :: CDI</name>
     <description>An example showing how to work with Camel and CDI for dependency injection</description>
 
+	  <!-- TODO this example is packaged as WAR why the osgi imports? -->
     <properties>
         <camel.osgi.export>org.apache.camel.example.cdi.*</camel.osgi.export>
         <camel.osgi.import>

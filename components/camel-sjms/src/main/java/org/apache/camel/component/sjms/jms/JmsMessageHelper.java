@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.jms;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
@@ -91,7 +93,7 @@ public final class JmsMessageHelper {
     @SuppressWarnings("unchecked")
     public static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy) throws Exception {
         Message answer = null;
-        JmsMessageType messageType = JmsMessageHelper.discoverPayloadType(payload);
+        JmsMessageType messageType = JmsMessageHelper.discoverMessgeTypeFromPayload(payload);
         try {
 
             switch (messageType) {
@@ -360,16 +362,44 @@ public final class JmsMessageHelper {
         }
     }
 
-    public static JmsMessageType discoverPayloadType(Object payload) {
+    public static JmsMessageType discoverMessgeTypeFromPayload(final Object payload) {
         JmsMessageType answer = null;
-        if (payload != null) {
+        // Default is a JMS Message since a body is not required
+        if (payload == null) {
+            answer = JmsMessageType.Message;
+        } else {
+            // Something was found in the body so determine
+            // what type of message we need to create
             if (Byte[].class.isInstance(payload)) {
                 answer = JmsMessageType.Bytes;
             } else if (Collection.class.isInstance(payload)) {
                 answer = JmsMessageType.Map;
+            } else if (InputStream.class.isInstance(payload)) {
+                answer = JmsMessageType.Stream;
             } else if (String.class.isInstance(payload)) {
                 answer = JmsMessageType.Text;
             } else if (Serializable.class.isInstance(payload)) {
+                answer = JmsMessageType.Object;
+            } else {
+                answer = JmsMessageType.Message;
+            }
+        }
+
+        return answer;
+    }
+
+    public static JmsMessageType discoverJmsMessageType(Message message) {
+        JmsMessageType answer = null;
+        if (message != null) {
+            if (BytesMessage.class.isInstance(message)) {
+                answer = JmsMessageType.Bytes;
+            } else if (MapMessage.class.isInstance(message)) {
+                answer = JmsMessageType.Map;
+            } else if (TextMessage.class.isInstance(message)) {
+                answer = JmsMessageType.Text;
+            } else if (StreamMessage.class.isInstance(message)) {
+                answer = JmsMessageType.Stream;
+            } else if (ObjectMessage.class.isInstance(message)) {
                 answer = JmsMessageType.Object;
             } else {
                 answer = JmsMessageType.Message;

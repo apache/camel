@@ -22,19 +22,18 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 /**
  * Provides reset to pre-test state behavior for global enable/disable of JMX
- * support in Camel through the use of {@link DisableJmx}.  Tries to ensure that 
- * the pre-test value is restored.
+ * support in Camel through the use of {@link DisableJmx}.
+ * Tries to ensure that the pre-test value is restored.
  */
-public class DisableJmxTestExecutionListener extends
-        AbstractTestExecutionListener {
+public class DisableJmxTestExecutionListener extends AbstractTestExecutionListener {
 
     @Override
     public void afterTestClass(TestContext testContext) throws Exception {
         if (CamelSpringTestHelper.getOriginalJmxDisabled() == null) {
             System.clearProperty(JmxSystemPropertyKeys.DISABLED);
         } else {
-            System.setProperty(JmxSystemPropertyKeys.DISABLED,
-                CamelSpringTestHelper.getOriginalJmxDisabled());
+            System.setProperty(JmxSystemPropertyKeys.DISABLED, CamelSpringTestHelper.getOriginalJmxDisabled());
         }
     }
+
 }

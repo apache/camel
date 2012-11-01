@@ -35,8 +35,10 @@ import java.util.concurrent.TimeUnit;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface ShutdownTimeout {
+
     /**
-     * The shutdown timeout to set on the {@code CamelContext}(s).   Defaults to {@code 10} seconds. 
+     * The shutdown timeout to set on the {@code CamelContext}(s).
+     * Defaults to {@code 10} seconds.
      */
     int value() default 10;
     

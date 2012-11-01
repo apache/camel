@@ -33,6 +33,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
@@ -174,23 +175,25 @@ public class CxfConsumer extends DefaultConsumer {
                 CxfEndpoint endpoint = (CxfEndpoint)getEndpoint();
                 CxfBinding binding = endpoint.getCxfBinding();                
                 
-                checkFailure(camelExchange);
+                checkFailure(camelExchange, cxfExchange);
                 
                 binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
                 
                 // check failure again as fault could be discovered by converter
-                checkFailure(camelExchange);
+                checkFailure(camelExchange, cxfExchange);
 
                 // copy the headers javax.xml.ws header back
                 binding.copyJaxWsContext(cxfExchange, (Map<String, Object>)camelExchange.getProperty(CxfConstants.JAXWS_CONTEXT));
             }
 
-            private void checkFailure(org.apache.camel.Exchange camelExchange) throws Fault {
+            private void checkFailure(org.apache.camel.Exchange camelExchange, Exchange cxfExchange) throws Fault {
                 final Throwable t;
                 if (camelExchange.isFailed()) {
                     t = (camelExchange.hasOut() && camelExchange.getOut().isFault()) ? camelExchange.getOut()
                         .getBody(Throwable.class) : camelExchange.getException();
+                    cxfExchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
                     if (t instanceof Fault) {
+                        cxfExchange.getInMessage().put(FaultMode.class, FaultMode.CHECKED_APPLICATION_FAULT);
                         throw (Fault)t;
                     } else if (t != null) {                        
                         // This is not a CXF Fault. Build the CXF Fault manuallly.

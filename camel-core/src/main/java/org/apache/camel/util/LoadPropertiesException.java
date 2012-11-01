@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,27 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.cdi;
+package org.apache.camel.util;
 
-import javax.enterprise.inject.Produces;
+import org.apache.camel.CamelException;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
+import java.net.URL;
 
 /**
- * Instantiate a number of route builders using
+ * Represents a failure to open a Properties file at a given URL
  */
-public class MyConfig {
+public class LoadPropertiesException extends CamelException {
+    private final URL url;
 
-    @Produces
-    @ContextName("contextE")
-    public RouteBuilder createRouteA() {
-        return new MyRouteBuilder("seda:E.a", "mock:E.b");
+    public LoadPropertiesException(URL url, Exception cause) {
+        super("Failed to load URL: " + url + ". Reason: " + cause,  cause);
+        this.url = url;
     }
 
-    @Produces
-    @ContextName("contextE")
-    public RouteBuilder createRouteB() {
-        return new MyRouteBuilder("seda:E.c", "mock:E.d");
+    public URL getUrl() {
+        return url;
     }
 }

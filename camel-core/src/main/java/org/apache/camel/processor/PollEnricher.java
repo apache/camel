@@ -194,11 +194,11 @@ public class PollEnricher extends ServiceSupport implements Processor {
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startService(consumer);
+        ServiceHelper.startServices(aggregationStrategy, consumer);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(consumer);
+        ServiceHelper.stopServices(consumer, aggregationStrategy);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {
