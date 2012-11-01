@@ -33,13 +33,15 @@ public class UnitOfWorkSyncProcessTest extends ContextTestSupport {
     private static String afterThread;
     private static String taskThread;
     private static String doneThread;
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService;
 
     public void testUnitOfWorkSync() throws Exception {
         // skip test on AIX
         if (isPlatform("aix")) {
             return;
         }
+
+        executorService = Executors.newSingleThreadExecutor();
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
