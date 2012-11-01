@@ -49,7 +49,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
 
     public void testRollbackThrowException() throws Exception {
         // let it run for a little, but it fails all the time
-        Thread.sleep(20);
+        Thread.sleep(200);
 
         // and we should rollback X number of times
         assertTrue(event.startsWith("rollback"));
