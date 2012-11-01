@@ -28,9 +28,7 @@ public class ResequencerEngineTest extends TestCase {
         = Boolean.parseBoolean(System.getProperty("ignore.load.tests", "true"));
     
     private ResequencerEngineSync<Integer> resequencer;
-    
     private ResequencerRunner<Integer> runner;
-    
     private SequenceBuffer<Integer> buffer;
     
     public void setUp() throws Exception {
@@ -70,13 +68,13 @@ public class ResequencerEngineTest extends TestCase {
         assertEquals((Integer)4, resequencer.getLastDelivered());
     }
     
-    public void testTimout4() throws Exception {
+    public void testTimeout4() throws Exception {
         initResequencer(500, 10);
         resequencer.setLastDelivered(2);
         resequencer.insert(4);
         resequencer.insert(3);
-        assertEquals((Integer)3, buffer.poll(125));
-        assertEquals((Integer)4, buffer.poll(125));
+        assertEquals((Integer)3, buffer.poll(250));
+        assertEquals((Integer)4, buffer.poll(250));
         assertEquals((Integer)4, resequencer.getLastDelivered());
     }
     

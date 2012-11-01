@@ -150,7 +150,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello");
 
         // a little delay to let the consumer see it
-        Thread.sleep(200);
+        Thread.sleep(400);
 
         body = consumer.receiveBodyNoWait("seda:foo", String.class);
         assertEquals("Hello", body);
@@ -186,7 +186,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello");
 
         // a little delay to let the consumer see it
-        Thread.sleep(200);
+        Thread.sleep(400);
 
         out = consumer.receiveNoWait(endpoint);
         assertEquals("Hello", out.getIn().getBody());
@@ -249,7 +249,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello");
 
         // a little delay to let the consumer see it
-        Thread.sleep(200);
+        Thread.sleep(400);
 
         out = consumer.receiveBodyNoWait(endpoint, String.class);
         assertEquals("Hello", out);
@@ -265,7 +265,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello");
 
         // a little delay to let the consumer see it
-        Thread.sleep(200);
+        Thread.sleep(400);
 
         out = consumer.receiveBodyNoWait(endpoint);
         assertEquals("Hello", out);
