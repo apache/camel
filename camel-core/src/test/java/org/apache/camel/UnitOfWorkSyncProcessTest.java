@@ -33,15 +33,19 @@ public class UnitOfWorkSyncProcessTest extends ContextTestSupport {
     private static String afterThread;
     private static String taskThread;
     private static String doneThread;
-    private ExecutorService executorService;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    @Override
+    protected void tearDown() throws Exception {
+        executorService.shutdownNow();
+        super.tearDown();
+    }
 
     public void testUnitOfWorkSync() throws Exception {
         // skip test on AIX
         if (isPlatform("aix")) {
             return;
         }
-
-        executorService = Executors.newSingleThreadExecutor();
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -54,8 +58,6 @@ public class UnitOfWorkSyncProcessTest extends ContextTestSupport {
         assertNotSame(doneThread, consumerThread);
         // should be same thread
         assertEquals(consumerThread, doneThread);
-
-        executorService.shutdownNow();
     }
 
     @Override
