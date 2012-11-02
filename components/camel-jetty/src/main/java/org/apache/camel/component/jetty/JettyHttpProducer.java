@@ -147,6 +147,8 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString);
             }
+            // Need to remove the Host key as it should be not used 
+            exchange.getIn().getHeaders().remove("host");
         }
 
         // propagate headers as HTTP headers

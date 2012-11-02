@@ -33,6 +33,8 @@ import org.junit.BeforeClass;
 public abstract class BaseJettyTest extends CamelTestSupport {
 
     private static volatile int port;
+    
+    private static volatile int port2;
 
     private final AtomicInteger counter = new AtomicInteger(1);
 
@@ -52,6 +54,8 @@ public abstract class BaseJettyTest extends CamelTestSupport {
             port++;
         }
 
+        // find another ports for proxy route test
+        port2 = AvailablePortFinder.getNextAvailable(24000);
     }
 
     @AfterClass
@@ -81,8 +85,8 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
+        prop.setProperty("port2", "" + getPort2());
         jndi.bind("prop", prop);
-
         return jndi;
     }
 
@@ -97,5 +101,10 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     protected int getPort() {
         return port;
     }
+    
+    protected static int getPort2() {
+        return port2;
+    }
+
 
 }
