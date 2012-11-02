@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HawtDBAggregateTimeoutCompletionRestartTest extends CamelTestSupport {
@@ -32,6 +33,7 @@ public class HawtDBAggregateTimeoutCompletionRestartTest extends CamelTestSuppor
     }
 
     @Test
+    @Ignore("Can hang CI servers")
     public void testHawtDBAggregateTimeoutCompletionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedMessageCount(0);

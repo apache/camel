@@ -116,6 +116,7 @@
 
   <build>
     <plugins>
+
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -126,6 +127,18 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+
+      <!-- skip sftp tests as they can hang CI servers -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>org/apache/camel/component/file/remote/sftp/**.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
