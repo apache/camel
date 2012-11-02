@@ -193,7 +193,7 @@ public class JettyHttpComponent extends HttpComponent {
             httpClientParameters.remove(key);
         }
 
-        String address = uri.startsWith("jetty:") ? remaining : uri;
+        String address = remaining;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encode(address));
         URI endpointUri = URISupport.createRemainingURI(addressUri, httpClientParameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
