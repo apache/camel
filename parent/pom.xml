@@ -176,7 +176,7 @@
     <jasypt-version>1.9.0</jasypt-version>
     <java-apns-bundle-version>0.1.6_3</java-apns-bundle-version>
     <java-apns-version>0.1.6</java-apns-version>
-    <javacrumbs-version>0.19</javacrumbs-version>
+    <javacrumbs-version>0.22</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
     <javax-mail-version>1.4.5</javax-mail-version>
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
