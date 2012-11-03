@@ -18,11 +18,13 @@ package org.apache.camel.component.controlbus;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.CamelLogger;
 
 /**
  * The control bus endpoint.
@@ -32,6 +34,8 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     private Language language;
     private String routeId;
     private String action;
+    private boolean async;
+    private LoggingLevel loggingLevel = LoggingLevel.INFO;
 
     public ControlBusEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -39,7 +43,8 @@ public class ControlBusEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new ControlBusProducer(this);
+        CamelLogger logger = new CamelLogger(ControlBusProducer.class.getName(), loggingLevel);
+        return new ControlBusProducer(this, logger);
     }
 
     @Override
@@ -51,6 +56,11 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         // we dont want to be enlisted in JMX, so lets just be non-singleton
         return false;
+    }
+
+    @Override
+    public ControlBusComponent getComponent() {
+        return (ControlBusComponent) super.getComponent();
     }
 
     public Language getLanguage() {
@@ -75,5 +85,21 @@ public class ControlBusEndpoint extends DefaultEndpoint {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+
+    public LoggingLevel getLoggingLevel() {
+        return loggingLevel;
+    }
+
+    public void setLoggingLevel(LoggingLevel loggingLevel) {
+        this.loggingLevel = loggingLevel;
     }
 }

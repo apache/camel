@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
@@ -30,8 +31,11 @@ import org.apache.camel.util.ExchangeHelper;
  */
 public class ControlBusProducer extends DefaultAsyncProducer {
 
-    public ControlBusProducer(Endpoint endpoint) {
+    private final CamelLogger logger;
+
+    public ControlBusProducer(Endpoint endpoint, CamelLogger logger) {
         super(endpoint);
+        this.logger = logger;
     }
 
     @Override
@@ -49,7 +53,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
             }
         } else if (getEndpoint().getAction() != null) {
             try {
-                processByAction(exchange, getEndpoint().getRouteId(), getEndpoint().getAction());
+                processByAction(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
             }
@@ -60,28 +64,104 @@ public class ControlBusProducer extends DefaultAsyncProducer {
     }
 
     protected void processByLanguage(Exchange exchange, Language language) throws Exception {
-        // create dummy exchange
-        Exchange dummy = ExchangeHelper.createCopy(exchange, true);
+        LanguageTask task = new LanguageTask(exchange, language);
+        if (getEndpoint().isAsync()) {
+            getEndpoint().getComponent().getExecutorService().submit(task);
+        } else {
+            task.run();
+        }
+    }
 
-        String body = dummy.getIn().getMandatoryBody(String.class);
-        if (body != null) {
-            Expression exp = language.createExpression(body);
-            Object out = exp.evaluate(dummy, Object.class);
-            if (out != null) {
-                exchange.getIn().setBody(out);
+    protected void processByAction(Exchange exchange) throws Exception {
+        ActionTask task = new ActionTask(exchange);
+        if (getEndpoint().isAsync()) {
+            getEndpoint().getComponent().getExecutorService().submit(task);
+        } else {
+            task.run();
+        }
+    }
+
+    /**
+     * Tasks to run when processing by language.
+     */
+    private final class LanguageTask implements Runnable {
+
+        private final Exchange exchange;
+        private final Language language;
+
+        private LanguageTask(Exchange exchange, Language language) {
+            this.exchange = exchange;
+            this.language = language;
+        }
+
+        @Override
+        public void run() {
+            String task = null;
+            Object result = null;
+
+            try {
+                // create dummy exchange
+                Exchange dummy = ExchangeHelper.createCopy(exchange, true);
+
+                task = dummy.getIn().getMandatoryBody(String.class);
+                if (task != null) {
+                    Expression exp = language.createExpression(task);
+                    result = exp.evaluate(dummy, Object.class);
+                }
+
+                if (result != null && !getEndpoint().isAsync()) {
+                    // can only set result on exchange if sync
+                    exchange.getIn().setBody(result);
+                }
+
+                if (task != null) {
+                    logger.log("ControlBus task done [" + task + "] with result -> " + (result != null ? result : "void"));
+                }
+            } catch (Exception e) {
+                logger.log("Error executing ControlBus task [" + task + "]. This exception will be ignored.", e);
             }
         }
     }
 
-    protected void processByAction(Exchange exchange, String id, String action) throws Exception {
-        if ("start".equals(action)) {
-            getEndpoint().getCamelContext().startRoute(id);
-        } else if ("stop".equals(action)) {
-            getEndpoint().getCamelContext().stopRoute(id);
-        } else if ("status".equals(action)) {
-            ServiceStatus status = getEndpoint().getCamelContext().getRouteStatus(id);
-            if (status != null) {
-                exchange.getIn().setBody(status.name());
+    /**
+     * Tasks to run when processing by route action.
+     */
+    private final class ActionTask implements Runnable {
+
+        private final Exchange exchange;
+
+        private ActionTask(Exchange exchange) {
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void run() {
+            String action = getEndpoint().getAction();
+            String id = getEndpoint().getRouteId();
+
+            Object result = null;
+            String task = action + " route " + id;
+
+            try {
+                if ("start".equals(action)) {
+                    getEndpoint().getCamelContext().startRoute(id);
+                } else if ("stop".equals(action)) {
+                    getEndpoint().getCamelContext().stopRoute(id);
+                } else if ("status".equals(action)) {
+                    ServiceStatus status = getEndpoint().getCamelContext().getRouteStatus(id);
+                    if (status != null) {
+                        result = status.name();
+                    }
+                }
+
+                if (result != null && !getEndpoint().isAsync()) {
+                    // can only set result on exchange if sync
+                    exchange.getIn().setBody(result);
+                }
+
+                logger.log("ControlBus task done [" + task + "] with result -> " + (result != null ? result : "void"));
+            } catch (Exception e) {
+                logger.log("Error executing ControlBus task [" + task + "]. This exception will be ignored.", e);
             }
         }
     }

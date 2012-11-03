@@ -22,9 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  *
  */
-public class ControlBusStartRouteTest extends ContextTestSupport {
+public class ControlBusStartRouteAsyncTest extends ContextTestSupport {
 
-    public void testControlBusStartStop() throws Exception {
+    public void testControlBusAsync() throws Exception {
         assertEquals("Stopped", context.getRouteStatus("foo").name());
 
         // store a pending message
@@ -32,38 +32,13 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
 
         // start the route using control bus
-        template.sendBody("controlbus:route?routeId=foo&action=start", null);
+        template.sendBody("controlbus:route?routeId=foo&action=start&async=true", null);
 
         assertMockEndpointsSatisfied();
 
-        // now stop the route, using a header
-        template.sendBody("controlbus:route?routeId=foo&action=stop", null);
-
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
-    }
-
-    public void testControlBusStatus() throws Exception {
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
-
-        String status = template.requestBody("controlbus:route?routeId=foo&action=status", null, String.class);
-        assertEquals("Stopped", status);
-
-        context.startRoute("foo");
-
-        status = template.requestBody("controlbus:route?routeId=foo&action=status", null, String.class);
-        assertEquals("Started", status);
-    }
-
-    public void testControlBusStatusLevelWarn() throws Exception {
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
-
-        String status = template.requestBody("controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
-        assertEquals("Stopped", status);
-
-        context.startRoute("foo");
-
-        status = template.requestBody("controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
-        assertEquals("Started", status);
+        // get status using async, but we cannot get result as we run task async
+        String status = template.requestBody("controlbus:route?routeId=foo&action=status&async=true", null, String.class);
+        assertNull("Cannot get result if async", status);
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.component.controlbus;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -26,10 +27,12 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class ControlBusComponent extends DefaultComponent {
 
-    // TODO: allow to use a thread pool for tasks so you dont have to wait
     // TODO: management command, to use the JMX mbeans easier
     // TODO: Bulk status in POJO / JSON format
     // TODO: a header with the action to do instead of uri, as we may want to be lenient
+    // TODO: JMX stats and operations of in-flight tasks, and history of done etc
+
+    private ExecutorService executorService;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -47,5 +50,21 @@ public class ControlBusComponent extends DefaultComponent {
 
         setProperties(answer, parameters);
         return answer;
+    }
+
+    synchronized ExecutorService getExecutorService() {
+        if (executorService == null) {
+            executorService = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "ControlBus");
+        }
+        return executorService;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            executorService = null;
+        }
+        super.doStop();
     }
 }
