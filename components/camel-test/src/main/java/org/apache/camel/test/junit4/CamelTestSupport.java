@@ -61,22 +61,17 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class CamelTestSupport extends TestSupport {    
+public abstract class CamelTestSupport extends TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
     private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
-    
-    
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<ModelCamelContext>();
     private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<ProducerTemplate>();
     private static ThreadLocal<ConsumerTemplate> threadConsumer = new ThreadLocal<ConsumerTemplate>();
     private static ThreadLocal<Service> threadService = new ThreadLocal<Service>();
-    
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
-
-    
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
@@ -162,19 +157,19 @@ public abstract class CamelTestSupport extends TestSupport {
     public Service getCamelContextService() {
         return camelContextService;
     }
-    
+
     public Service camelContextService() {
         return camelContextService;
     }
-    
+
     public CamelContext context() {
         return context;
     }
-    
+
     public ProducerTemplate template() {
         return template;
     }
-    
+
     public ConsumerTemplate consumer() {
         return consumer;
     }
@@ -259,7 +254,7 @@ public abstract class CamelTestSupport extends TestSupport {
         template.start();
         consumer = context.createConsumerTemplate();
         consumer.start();
-        
+
         threadTemplate.set(template);
         threadConsumer.set(consumer);
 
@@ -285,7 +280,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         postProcessTest();
-        
+
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
             for (RouteBuilder builder : builders) {
@@ -316,7 +311,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
         log.info("********************************************************************************");
         log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
-        log.info("Took: " + TimeUtils.printDuration(time) + " ("  + time + " millis)");
+        log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
@@ -479,7 +474,7 @@ public abstract class CamelTestSupport extends TestSupport {
         if (in != null) {
             log.debug("Using jndi.properties from classpath root");
             properties.load(in);
-        } else {            
+        } else {
             properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
         }
         return new InitialContext(new Hashtable<Object, Object>(properties));
@@ -547,7 +542,7 @@ public abstract class CamelTestSupport extends TestSupport {
         template.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
-                in.setBody(body);                
+                in.setBody(body);
             }
         });
     }
@@ -563,7 +558,7 @@ public abstract class CamelTestSupport extends TestSupport {
         template.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
-                in.setBody(body);                
+                in.setBody(body);
                 for (Map.Entry<String, Object> entry : headers.entrySet()) {
                     in.setHeader(entry.getKey(), entry.getValue());
                 }
