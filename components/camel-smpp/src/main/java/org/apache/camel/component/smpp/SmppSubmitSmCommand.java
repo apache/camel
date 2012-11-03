@@ -123,6 +123,8 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
 
         if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
             submitSm.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, Byte.class));
+        } else if (in.getHeaders().containsKey(SmppConstants.ALPHABET)) {
+            submitSm.setDataCoding(in.getHeader(SmppConstants.ALPHABET, Byte.class));
         } else {
             submitSm.setDataCoding(config.getDataCoding());
         }
