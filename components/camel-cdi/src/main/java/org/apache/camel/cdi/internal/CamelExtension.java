@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +70,6 @@ public class CamelExtension implements Extension {
     private final Set<Bean<?>> eagerBeans = new HashSet<Bean<?>>();
     private final Map<String, CamelContextConfig> camelContextConfigMap = new HashMap<String, CamelContextConfig>();
     private final List<CamelContextBean> camelContextBeans = new ArrayList<CamelContextBean>();
-    private final Collection<ProcessAnnotatedType<?>> routeBuilders = new ArrayList<ProcessAnnotatedType<?>>();
 
     public CamelExtension() {
     }
