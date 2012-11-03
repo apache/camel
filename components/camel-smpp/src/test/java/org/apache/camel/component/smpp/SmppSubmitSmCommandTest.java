@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -42,6 +43,7 @@ import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isNull;
+import static org.easymock.EasyMock.not;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
@@ -200,5 +202,27 @@ public class SmppSubmitSmCommandTest {
         
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+    }
+
+    @Test
+    public void alphabetUpdatesDataCoding() throws Exception {
+        final byte incorrectDataCoding = 0x00;
+        byte[] body = {'A', 'B', 'C'};
+
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(),
+                                                ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
+        exchange.getIn().setHeader(SmppConstants.ALPHABET, Alphabet.ALPHA_8_BIT.value());
+        exchange.getIn().setBody(body);
+        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN),
+                eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1), (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                eq(ReplaceIfPresentFlag.DEFAULT.value()), not(eq(DataCoding.newInstance(incorrectDataCoding))), eq((byte) 0), aryEq(body)))
+                .andReturn("1");
+        
+        replay(session);
+        
+        command.execute(exchange);
+        
+        verify(session);
     }
 }
