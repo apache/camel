@@ -306,7 +306,8 @@
     <spring-integration-version>2.1.4.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-neo4j-version>2.1.0.RELEASE</spring-neo4j-version>
-    <spring-version>3.0.7.RELEASE</spring-version>
+    <spring-version>${spring30-version}</spring-version>
+    <spring30-version>3.0.7.RELEASE</spring30-version>
     <spring31-version>3.1.3.RELEASE</spring31-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.3.RELEASE</spring-security-version>
@@ -2420,7 +2421,7 @@
           <links>
             <link>http://download.oracle.com/javase/6/docs/api/</link>
             <link>http://download.oracle.com/javaee/6/api/</link>
-            <link>http://static.springsource.org/spring/docs/3.0.5.RELEASE/api/</link>
+            <link>http://static.springsource.org/spring/docs/3.0.7.RELEASE/api/</link>
           </links>
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
@@ -2494,10 +2495,17 @@
       </build>
     </profile>
     
+    <!-- profiles for choosing default spring version -->
+    <profile>
+      <id>spring3.0</id>
+      <properties>
+        <spring-version>${spring30-version}</spring-version>
+      </properties>
+    </profile>
     <profile>
       <id>spring3.1</id>
       <properties>
-        <spring-version>3.1.2.RELEASE</spring-version>
+        <spring-version>${spring31-version}</spring-version>
       </properties>
     </profile>
     
