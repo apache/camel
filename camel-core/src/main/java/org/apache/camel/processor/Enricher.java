@@ -140,12 +140,8 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
                     }
                 }
 
-                // set header with the uri of the endpoint enriched so we can use that for tracing etc
-                if (exchange.hasOut()) {
-                    exchange.getOut().setHeader(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
-                } else {
-                    exchange.getIn().setHeader(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
-                }
+                // set property with the uri of the endpoint enriched so we can use that for tracing etc
+                exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
 
                 callback.done(false);
             }
@@ -183,12 +179,8 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
             }
         }
 
-        // set header with the uri of the endpoint enriched so we can use that for tracing etc
-        if (exchange.hasOut()) {
-            exchange.getOut().setHeader(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
-        } else {
-            exchange.getIn().setHeader(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
-        }
+        // set property with the uri of the endpoint enriched so we can use that for tracing etc
+        exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
 
         callback.done(true);
         return true;
