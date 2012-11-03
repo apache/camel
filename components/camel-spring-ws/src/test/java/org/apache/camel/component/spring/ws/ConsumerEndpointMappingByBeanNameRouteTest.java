@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.component.spring.ws.util.FileUtil;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,18 +35,11 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
     private String expectedResponse;
     private WebServiceTemplate webServiceTemplate;
 
-    public ConsumerEndpointMappingByBeanNameRouteTest() throws IOException {
-        expectedResponse = toUnixLineEndings(FileUtil.readFileAsString("/stockquote-response.xml"));
-    }
-
     @Before
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
-    }
-    
-    public String toUnixLineEndings(String inSt) {
-        return inSt.replace("\r\n", "\n");
+        expectedResponse = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/stockquote-response.xml"));
     }
 
     @Test
@@ -58,13 +49,12 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, toUnixLineEndings(sw.toString()));
+        assertEquals(expectedResponse, sw.toString());
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/spring/ws/ConsumerEndpointMappingByBeanNameRouteTest-context.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/ws/ConsumerEndpointMappingByBeanNameRouteTest-context.xml");
     }
 
 }
