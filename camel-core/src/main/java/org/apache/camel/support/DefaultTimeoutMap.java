@@ -208,7 +208,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
                         try {
                             evict = onEviction(entry.getKey(), entry.getValue());
                         } catch (Throwable t) {
-                            log.warn("Exception happened during eviction of entry ID {}, won't evict and will continue trying: ", 
+                            log.warn("Exception happened during eviction of entry ID {}, won't evict and will continue trying: {}", 
                                     entry.getValue(), t);
                         }
                         if (evict) {
