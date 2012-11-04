@@ -165,6 +165,10 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     public void purge() {
         log.trace("There are {} in the timeout map", map.size());
+        if (map.isEmpty()) {
+            return;
+        }
+        
         long now = currentTime();
 
         List<TimeoutMapEntry<K, V>> expired = new ArrayList<TimeoutMapEntry<K, V>>();
@@ -200,7 +204,13 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
                 try {
                     // now fire eviction notification
                     for (TimeoutMapEntry<K, V> entry : expired) {
-                        boolean evict = onEviction(entry.getKey(), entry.getValue());
+                        boolean evict = false;
+                        try {
+                            evict = onEviction(entry.getKey(), entry.getValue());
+                        } catch (Throwable t) {
+                            log.warn("Exception happened during eviction of entry ID {}, won't evict and will continue trying: ", 
+                                    entry.getValue(), t);
+                        }
                         if (evict) {
                             // okay this entry should be evicted
                             evicts.add(entry.getKey());
