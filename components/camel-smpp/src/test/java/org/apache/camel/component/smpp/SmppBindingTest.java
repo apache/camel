@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -33,6 +35,7 @@ import org.jsmpp.util.DeliveryReceiptState;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -199,6 +202,41 @@ public class SmppBindingTest {
         assertEquals((byte) 0, smppMessage.getHeader(SmppConstants.REGISTERED_DELIVERY));
         assertEquals((byte) 0, smppMessage.getHeader(SmppConstants.DATA_CODING));
         assertEquals(SmppMessageType.DataSm.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
+    }
+
+    @Test
+    public void createSmppMessageFrom8bitDataCodingDeliverSmShouldNotModifyBody() throws Exception {
+        final Set<String> encodings = Charset.availableCharsets().keySet();
+
+        final byte[] dataCodings = {
+            (byte)0x02,
+            (byte)0x04,
+            (byte)0xF6,
+            (byte)0xF4
+        };
+
+        byte[] body = {
+            (byte)0xFF, 'A', 'B', (byte)0x00,
+            (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF
+        };
+
+        DeliverSm deliverSm = new DeliverSm();
+
+        for (byte dataCoding : dataCodings) {
+            deliverSm.setDataCoding(dataCoding);
+            deliverSm.setShortMessage(body);
+
+            for (String encoding : encodings) {
+                binding.getConfiguration().setEncoding(encoding);
+                SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+                assertArrayEquals(
+                    String.format("data coding=0x%02X; encoding=%s",
+                                  dataCoding,
+                                  encoding),
+                    body,
+                    smppMessage.getBody(String.class).getBytes());
+            }
+        }
     }
 
     @Test

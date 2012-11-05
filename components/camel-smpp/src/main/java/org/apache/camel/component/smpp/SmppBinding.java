@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
@@ -104,8 +105,12 @@ public class SmppBinding {
         } else {
             smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
             if (deliverSm.getShortMessage() != null) {
-                smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
-                        configuration.getEncoding())));
+                if (SmppUtils.parseAlphabetFromDataCoding(deliverSm.getDataCoding()) == Alphabet.ALPHA_8_BIT) {
+                    smppMessage.setBody(new String(deliverSm.getShortMessage()));
+                } else {
+                    smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
+                                                                  configuration.getEncoding())));
+                }
             } else if (deliverSm.getOptionalParametes() != null && deliverSm.getOptionalParametes().length > 0) {
                 List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
 

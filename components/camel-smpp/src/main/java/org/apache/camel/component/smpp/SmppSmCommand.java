@@ -18,7 +18,6 @@ package org.apache.camel.component.smpp;
 
 import java.nio.charset.Charset;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.session.SMPPSession;
@@ -32,49 +31,10 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         this.charset = Charset.forName(config.getEncoding());
     }
 
-    protected byte getProvidedAlphabet(Exchange exchange) {
-        Message in = exchange.getIn();
+    protected SmppSplitter createSplitter(Message message) {
+        Alphabet alphabet = determineAlphabet(message);
 
-        byte alphabet = config.getAlphabet();
-        if (in.getHeaders().containsKey(SmppConstants.ALPHABET)) {
-            alphabet = in.getHeader(SmppConstants.ALPHABET, Byte.class);
-        }
-
-        return alphabet;
-    }
-
-    protected Charset determineCharset(byte providedAlphabet, byte determinedAlphabet) {
-        if (providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value()) {
-            return Charset.forName(SmppConstants.UCS2_ENCODING); // change charset to use multilang messages
-        }
-        
-        return charset;
-    }
-
-    protected Alphabet determineAlphabet(Exchange exchange) {
-        String body = exchange.getIn().getBody(String.class);
-        byte alphabet = getProvidedAlphabet(exchange);
-
-        Alphabet alphabetObj;
-        if (alphabet == SmppConstants.UNKNOWN_ALPHABET) {
-            byte[] message = body.getBytes(charset);
-            if (SmppUtils.isGsm0338Encodeable(message)) {
-                alphabetObj = Alphabet.ALPHA_DEFAULT;
-            } else {
-                alphabetObj = Alphabet.ALPHA_UCS2;
-            }
-        } else {
-            alphabetObj = Alphabet.valueOf(alphabet);
-        }
-
-        return alphabetObj;
-    }
-
-    protected SmppSplitter createSplitter(Exchange exchange) {
-        Alphabet alphabet = determineAlphabet(exchange);
-
-        Message in = exchange.getIn();
-        String body = in.getBody(String.class);
+        String body = message.getBody(String.class);
 
         SmppSplitter splitter;
         switch (alphabet) {
@@ -91,5 +51,63 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         }
 
         return splitter;
+    }
+
+    protected final byte[] getShortMessage(Message message) {
+        if (has8bitDataCoding(message)) {
+            return message.getBody(byte[].class);
+        } else {
+            byte providedAlphabet = getProvidedAlphabet(message);
+            Alphabet determinedAlphabet = determineAlphabet(message);
+            Charset charset = determineCharset(providedAlphabet, determinedAlphabet.value());
+            String body = message.getBody(String.class);
+            return body.getBytes(charset);
+        }
+    }
+
+    private static boolean has8bitDataCoding(Message message) {
+        Byte dcs = message.getHeader(SmppConstants.DATA_CODING, Byte.class);
+        if (dcs != null) {
+            return SmppUtils.parseAlphabetFromDataCoding(dcs.byteValue()) == Alphabet.ALPHA_8_BIT;
+        } else {
+            Byte alphabet = message.getHeader(SmppConstants.ALPHABET, Byte.class);
+            return alphabet != null && alphabet.equals(Alphabet.ALPHA_8_BIT.value());
+        }
+    }
+
+    private byte getProvidedAlphabet(Message message) {
+        byte alphabet = config.getAlphabet();
+        if (message.getHeaders().containsKey(SmppConstants.ALPHABET)) {
+            alphabet = message.getHeader(SmppConstants.ALPHABET, Byte.class);
+        }
+
+        return alphabet;
+    }
+
+    private Charset determineCharset(byte providedAlphabet, byte determinedAlphabet) {
+        if (providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value()) {
+            return Charset.forName(SmppConstants.UCS2_ENCODING); // change charset to use multilang messages
+        }
+        
+        return charset;
+    }
+
+    private Alphabet determineAlphabet(Message message) {
+        String body = message.getBody(String.class);
+        byte alphabet = getProvidedAlphabet(message);
+
+        Alphabet alphabetObj;
+        if (alphabet == SmppConstants.UNKNOWN_ALPHABET) {
+            byte[] messageBytes = body.getBytes(charset);
+            if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
+                alphabetObj = Alphabet.ALPHA_DEFAULT;
+            } else {
+                alphabetObj = Alphabet.ALPHA_UCS2;
+            }
+        } else {
+            alphabetObj = Alphabet.valueOf(alphabet);
+        }
+
+        return alphabetObj;
     }
 }
