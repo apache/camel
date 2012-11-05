@@ -96,6 +96,18 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
         route.getRouteContext().getCamelContext().startRoute(route.getId());
     }
 
+    protected void resumeRoute(Route route) throws Exception {
+        route.getRouteContext().getCamelContext().resumeRoute(route.getId());
+    }
+
+    protected void suspendRoute(Route route) throws Exception {
+        route.getRouteContext().getCamelContext().suspendRoute(route.getId());
+    }
+
+    protected void suspendRoute(Route route, long timeout, TimeUnit timeUnit) throws Exception {
+        route.getRouteContext().getCamelContext().suspendRoute(route.getId(), timeout, timeUnit);
+    }
+
     protected void stopRoute(Route route) throws Exception {
         route.getRouteContext().getCamelContext().stopRoute(route.getId());
     }
