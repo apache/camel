@@ -35,18 +35,13 @@ public class EnricherTest extends ContextTestSupport {
         mock = getMockEndpoint("mock:mock");
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     // -------------------------------------------------------------
     //  InOnly routes
     // -------------------------------------------------------------
 
     public void testEnrichInOnly() throws InterruptedException {
         mock.expectedBodiesReceived("test:blah");
-        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "direct://enricher-constant-resource");
+        mock.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://mock");
         template.sendBody("direct:enricher-test-1", "test");
         mock.assertIsSatisfied();
     }
@@ -62,7 +57,7 @@ public class EnricherTest extends ContextTestSupport {
         assertEquals("test", exchange.getIn().getBody());
         assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
         assertEquals("failed", exchange.getOut().getBody());
-        assertEquals("direct://enricher-fault-resource", exchange.getOut().getHeader(Exchange.TO_ENDPOINT));
+        assertEquals("direct://enricher-fault-resource", exchange.getProperty(Exchange.TO_ENDPOINT));
         assertNull(exchange.getException());
     }
 
