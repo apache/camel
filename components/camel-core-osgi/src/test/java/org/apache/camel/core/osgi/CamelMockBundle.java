@@ -17,6 +17,7 @@
 package org.apache.camel.core.osgi;
 
 import java.net.URL;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -103,7 +104,7 @@ public class CamelMockBundle extends MockBundle {
     }
 
     @Override
-    public Map<?, ?> getSignerCertificates(int signersType) {
+    public Map<X509Certificate, List<X509Certificate>> getSignerCertificates(int signersType) {
         return null;
     }
 
