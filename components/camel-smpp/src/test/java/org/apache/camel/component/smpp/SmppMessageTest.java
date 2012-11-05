@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.nio.charset.Charset;
+import java.util.Set;
+
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -93,6 +97,40 @@ public class SmppMessageTest {
         assertNotNull(msg);
         assertNull(msg.getCommand());
         assertTrue(msg.getHeaders().isEmpty());
+    }
+
+    @Test
+    public void createBodyShouldNotMangle8bitDataCodingShortMessage() {
+        final Set<String> encodings = Charset.availableCharsets().keySet();
+
+        final byte[] dataCodings = {
+            (byte)0x02,
+            (byte)0x04,
+            (byte)0xF6,
+            (byte)0xF4
+        };
+
+        byte[] body = {
+            (byte)0xFF, 'A', 'B', (byte)0x00,
+            (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF
+        };
+
+        DeliverSm command = new DeliverSm();
+        SmppConfiguration config = new SmppConfiguration();
+
+        for (byte dataCoding : dataCodings) {
+            command.setDataCoding(dataCoding);
+            command.setShortMessage(body);
+            for (String encoding : encodings) {
+                config.setEncoding(encoding);
+                message = new SmppMessage(command, config);
+                assertArrayEquals(
+                    String.format("data coding=0x%02X; encoding=%s",
+                                  dataCoding,
+                                  encoding),
+                    body, ((String) message.createBody()).getBytes());
+            }
+        }
     }
     
     @Test
