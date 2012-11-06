@@ -29,7 +29,7 @@ import org.osgi.framework.ServiceRegistration;
  */
 public class Activator implements BundleActivator {
 
-    private ServiceRegistration<?> registration;
+    private ServiceRegistration registration;
 
     public void start(BundleContext bundleContext) throws Exception {
         Dictionary<String, String> props = new Hashtable<String, String>();

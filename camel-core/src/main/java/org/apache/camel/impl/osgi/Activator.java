@@ -410,7 +410,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     protected abstract static class BaseService {
 
         protected final Bundle bundle;
-        private ServiceRegistration<?> reg;
+        private ServiceRegistration reg;
 
         protected BaseService(Bundle bundle) {
             this.bundle = bundle;

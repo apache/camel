@@ -45,7 +45,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     private static final transient Logger LOG = LoggerFactory.getLogger(PaxLoggingConsumer.class);
     private final PaxLoggingEndpoint endpoint;
     private ExecutorService executor;
-    private ServiceRegistration<?> registration;
+    private ServiceRegistration registration;
 
     public PaxLoggingConsumer(PaxLoggingEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
