@@ -193,8 +193,13 @@ public class EndpointMessageListener implements MessageListener {
                 }
             } else {
                 // process OK so get the reply body if we are InOut and has a body
-                if (sendReply && exchange.getPattern().isOutCapable() && exchange.hasOut()) {
-                    body = exchange.getOut();
+                // If the ppl don't want to send the message back, he should use the InOnly
+                if (sendReply && exchange.getPattern().isOutCapable()) {
+                    if (exchange.hasOut()) {
+                        body = exchange.getOut();
+                    } else {
+                        body = exchange.getIn();
+                    }
                     cause = null;
                 }
             }
