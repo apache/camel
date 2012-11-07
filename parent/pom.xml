@@ -256,7 +256,7 @@
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.0</osgi-version>
     <paranamer-bundle-version>2.4_1</paranamer-bundle-version>
-    <pax-exam-version>2.5.0</pax-exam-version>
+    <pax-exam-version>2.6.0</pax-exam-version>
     <paxexam-karaf-container-version>1.0.0</paxexam-karaf-container-version>
     <pax-runner-version>1.6.1</pax-runner-version>
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
