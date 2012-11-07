@@ -34,12 +34,14 @@
       <to uri="direct:loadbalance"/>
     </route>
 
+		<!-- use failover load balancer in round robin mode, to automatic failover to next server
+		     in case of failure -->
     <route id="loadbalancer">
       <from uri="direct:loadbalance"/>
-      <loadBalance>
-        <roundRobin/>
-        <to uri="mina:tcp://localhost:9991?sync=true&amp;allowDefaultCodec=true"/>
-        <to uri="mina:tcp://localhost:9992?sync=true&amp;allowDefaultCodec=true"/>
+      <loadBalance inheritErrorHandler="false">
+        <failover roundRobin="true"/>
+        <to uri="mina:tcp://localhost:9991?sync=true"/>
+        <to uri="mina:tcp://localhost:9992?sync=true"/>
       </loadBalance>
       <log message="${body}"/>
     </route>
