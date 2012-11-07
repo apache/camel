@@ -31,6 +31,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -74,11 +75,13 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class SingleNodeDeadEndRouteBuilder extends RouteBuilder {
         public void configure() throws Exception {
-            from(endpointUriA).process(new Processor() {
-                public void process(Exchange e) {
-                    // do nothing
-                }
-            });
+            from(endpointUriA)
+                // We are not expect the response here
+                .setExchangePattern(ExchangePattern.InOnly).process(new Processor() {
+                    public void process(Exchange e) {
+                        // do nothing
+                    }
+                });
         }
     };
 
