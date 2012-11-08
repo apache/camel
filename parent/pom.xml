@@ -99,6 +99,7 @@
     <hawtdispatch-version>1.12</hawtdispatch-version>
     <hazelcast-version>2.0.2</hazelcast-version>
     <hbase-version>0.90.5</hbase-version>
+    <hbase-bundle-version>0.90.5_1</hbase-bundle-version>
     <hibernate-version>3.6.10.Final</hibernate-version>
     <hsqldb-version>2.2.8</hsqldb-version>
     <httpunit-version>1.6.2</httpunit-version>
