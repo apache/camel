@@ -264,7 +264,7 @@
     <pdfbox-version>1.6.0</pdfbox-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
-    <pojosr-version>0.2.0</pojosr-version>
+    <pojosr-version>0.2.1</pojosr-version>
     <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-bundle-version>0.16_1</qpid-bundle-version> <!-- FIXME cmueller: not in sync! -->
