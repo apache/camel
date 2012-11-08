@@ -396,7 +396,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty/${jetty6-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-core/${hadoop-bundle-version}</bundle>
-    <bundle>wrap:mvn:org.apache.hbase/hbase/${hbase-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hbase/${hbase-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hbase/${project.version}</bundle>
   </feature>
   <feature name='camel-hdfs' version='${project.version}' resolver='(obr)' start-level='50'>
