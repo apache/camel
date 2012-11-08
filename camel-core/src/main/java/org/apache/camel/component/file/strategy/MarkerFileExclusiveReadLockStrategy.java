@@ -52,7 +52,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         // create a plain file as marker filer for locking (do not use FileLock)
         File lock = new File(lockFileName);
         boolean acquired = lock.createNewFile();
-        exchange.setProperty(Exchange.FILE_LOCK_FILE_GOT, acquired);
+        exchange.setProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, acquired);
 
         return acquired;
     }
@@ -62,7 +62,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         String lockFileName = getLockFileName(file);
         File lock = new File(lockFileName);
         // only release the file if camel get the lock before
-        if (exchange.getProperty(Exchange.FILE_LOCK_FILE_GOT, false, Boolean.class)) {
+        if (exchange.getProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, false, Boolean.class)) {
             LOG.trace("Unlocking file: {}", lockFileName);
             boolean deleted = FileUtil.deleteFile(lock);
             LOG.trace("Lock file: {} was deleted: {}", lockFileName, deleted);
