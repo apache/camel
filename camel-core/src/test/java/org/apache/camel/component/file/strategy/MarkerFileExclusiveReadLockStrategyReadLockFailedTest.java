@@ -18,11 +18,8 @@ package org.apache.camel.component.file.strategy;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.slf4j.Logger;
