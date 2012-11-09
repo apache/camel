@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.Context;
@@ -39,22 +38,23 @@ public class MinaFiltersTest extends BaseMinaTest {
 
     @Test
     public void testFilterListRef() throws Exception {
-        testFilter("mina:tcp://localhost:{{port}}?textline=true&minaLogger=true&sync=false&filters=#myFilters");
+        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilters", getPort()));
     }
 
     @Test
     public void testFilterElementRef() throws Exception {
-        testFilter("mina:tcp://localhost:{{port}}?textline=true&minaLogger=true&sync=false&filters=#myFilter");
+        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilter", getPort()));
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void setUp() throws Exception {
         TestFilter.called = 0;
-        super.tearDown();
+        super.setUp();
     }
 
     private void testFilter(final String uri) throws Exception {
         context.addRoutes(new RouteBuilder() {
+
             public void configure() throws Exception {
                 from(uri).to("mock:result");
             }
@@ -72,16 +72,11 @@ public class MinaFiltersTest extends BaseMinaTest {
         exchange.getIn().setBody("Hello World");
         producer.process(exchange);
 
-        Field field = producer.getClass().getDeclaredField("session");
-        field.setAccessible(true);
-        IoSession session = (IoSession) field.get(producer);
-        assertTrue("There should be a test filter", session.getFilterChain().contains(TestFilter.class.getCanonicalName()));
+        assertMockEndpointsSatisfied();
 
-        assertTrue("The filter should have been called twice (producer and consumer)", TestFilter.called == 2);
+        assertEquals("The filter should have been called twice (producer and consumer)", 2, TestFilter.called);
 
         producer.stop();
-
-        assertMockEndpointsSatisfied();
     }
 
     @Override
