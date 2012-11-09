@@ -40,6 +40,7 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // trigger every second
                 from("timer://kickoff?period=1s").
                     setBody(constant("select * from customer")).
                     to("jdbc:testdb").
