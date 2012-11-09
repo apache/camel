@@ -31,7 +31,7 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
     
     @Test
     public void testTimerInvoked() throws Exception {
-        mock.expectedMessageCount(1);
+        mock.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied();
     }
@@ -40,9 +40,7 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                getContext().setTracing(true);
-                
-                from("timer://kickoff?delay=100&period=10000").
+                from("timer://kickoff?period=1s").
                     setBody(constant("select * from customer")).
                     to("jdbc:testdb").
                     to("mock:result");

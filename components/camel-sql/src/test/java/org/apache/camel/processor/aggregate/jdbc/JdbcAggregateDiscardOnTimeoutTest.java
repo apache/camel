@@ -24,12 +24,6 @@ import org.junit.Test;
 
 public class JdbcAggregateDiscardOnTimeoutTest extends AbstractJdbcAggregationTestSupport {
 
-    @Override
-    void configureJdbcAggregationRepository() {
-        repo.setUseRecovery(true);
-        repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
-    }
-
     @Test
     public void testAggregateDiscardOnTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
