@@ -48,7 +48,6 @@ public class MarkerFileExclusiveReadLockStrategyReadLockFailedTest extends Conte
         mock.expectedFileExists("target/readlock/out/file1.dat");
 
         writeFiles();
-       
 
         assertMockEndpointsSatisfied();
 
@@ -66,6 +65,13 @@ public class MarkerFileExclusiveReadLockStrategyReadLockFailedTest extends Conte
 
         assertFileDoesNotExists("target/readlock/in/file1.dat");
         assertFileExists("target/readlock/in/file2.dat");
+        
+        File lock = new File("target/readlock/in/file2.dat.camelLock");
+        lock.delete();
+        // wait for a while for camel to clean up the file
+        Thread.sleep(500);
+        assertFileExists("target/readlock/out/file2.dat");
+        
       
     }
 
