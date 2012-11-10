@@ -131,11 +131,20 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             Object key = entry.getKey();
             Object value = entry.getValue();
-            // trim string values which can be a problem when loading from a properties file and there
-            // is leading or trailing spaces in the value
+            // trim any trailing spaces which can be a problem when loading from
+            // a properties file, note that java.util.Properties does already this
+            // for any potential leading spaces so there's nothing to do there
             if (value instanceof String) {
                 String s = (String) value;
-                s = s.trim();
+                int endIndex = s.length();
+                for (int index = s.length() - 1; index >= 0; index--) {
+                    if (s.charAt(index) == ' ') {
+                        endIndex = index;
+                    } else {
+                        break;
+                    }
+                }
+                s = s.substring(0, endIndex);
                 value = s;
             }
             answer.put(key, value);
