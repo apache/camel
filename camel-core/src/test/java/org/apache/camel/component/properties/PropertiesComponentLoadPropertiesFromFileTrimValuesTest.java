@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.properties;
 
-import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.CamelContext;
@@ -39,15 +38,27 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
         CamelContext context = super.createCamelContext();
 
         // create space.properties file
-        File file = new File("target/space/space.properties");
-        file.createNewFile();
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write("cool.leading= Leading space\ncool.trailing=Trailing space \ncool.both= Both leading and trailing space ".getBytes());
+        FileOutputStream fos = new FileOutputStream("target/space/space.properties");
+        String cool = "cool.leading= Leading space" + LS + "cool.trailing=Trailing space " + LS + "cool.both= Both leading and trailing space ";
+        fos.write(cool.getBytes());
+        fos.write(LS.getBytes());
+
+        String space = "space.leading=   \\r\\n" + LS + "space.trailing=\\t   " + LS + "space.both=  \\r   \\t  \\n   ";
+        fos.write(space.getBytes());
+        fos.write(LS.getBytes());
+
+        String mixed = "mixed.leading=   Leading space\\r\\n" + LS + "mixed.trailing=Trailing space\\t   " + LS + "mixed.both=  Both leading and trailing space\\r   \\t  \\n   ";
+        fos.write(mixed.getBytes());
+        fos.write(LS.getBytes());
+
+        String empty = "empty.line=                               ";
+        fos.write(empty.getBytes());
+
         fos.close();
 
         PropertiesComponent pc = new PropertiesComponent();
         pc.setCamelContext(context);
-        pc.setLocations(new String[]{"file:target/space/space.properties"});
+        pc.setLocation("file:target/space/space.properties");
         context.addComponent("properties", pc);
 
         return context;
@@ -57,6 +68,16 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
         assertEquals("Leading space", context.resolvePropertyPlaceholders("{{cool.leading}}"));
         assertEquals("Trailing space", context.resolvePropertyPlaceholders("{{cool.trailing}}"));
         assertEquals("Both leading and trailing space", context.resolvePropertyPlaceholders("{{cool.both}}"));
+
+        assertEquals("\r\n", context.resolvePropertyPlaceholders("{{space.leading}}"));
+        assertEquals("\t", context.resolvePropertyPlaceholders("{{space.trailing}}"));
+        assertEquals("\r   \t  \n", context.resolvePropertyPlaceholders("{{space.both}}"));
+
+        assertEquals("Leading space\r\n", context.resolvePropertyPlaceholders("{{mixed.leading}}"));
+        assertEquals("Trailing space\t", context.resolvePropertyPlaceholders("{{mixed.trailing}}"));
+        assertEquals("Both leading and trailing space\r   \t  \n", context.resolvePropertyPlaceholders("{{mixed.both}}"));
+
+        assertEquals("", context.resolvePropertyPlaceholders("{{empty.line}}"));
     }
 
 }
