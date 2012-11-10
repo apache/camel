@@ -120,8 +120,6 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     }
 
     private void updateQueueAttributes(AmazonSQSClient client) {
-        LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
-        
         SetQueueAttributesRequest request = new SetQueueAttributesRequest();
         request.setQueueUrl(queueUrl);
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
@@ -136,9 +134,12 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         if (getConfiguration().getPolicy() != null) {
             request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
         }
-        client.setQueueAttributes(request);
         
-        LOG.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
+        if (!request.getAttributes().isEmpty()) {
+            LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
+            client.setQueueAttributes(request);
+            LOG.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
+        }
     }
 
     @Override
