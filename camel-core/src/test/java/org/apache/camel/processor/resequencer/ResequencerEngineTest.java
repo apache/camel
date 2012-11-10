@@ -148,6 +148,13 @@ public class ResequencerEngineTest extends TestSupport {
         resequencer = new ResequencerEngineSync<Integer>(engine);
         runner = new ResequencerRunner<Integer>(resequencer, 50);
         runner.start();
+
+        // give the runner time to start
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            // ignore
+        }
     }
     
 }
