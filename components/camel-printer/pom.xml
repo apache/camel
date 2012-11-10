@@ -66,7 +66,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -80,5 +79,20 @@
             </plugin>
         </plugins>
     </build>
-    
+
+	<!-- skip tests on AIX -->
+	<profiles>
+		<profile>
+			<id>aix</id>
+			<activation>
+				<os>
+					<family>AIX</family>
+				</os>
+			</activation>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+	</profiles>
+
 </project>
