@@ -27,7 +27,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringAggregateDiscardOnTimeoutTest extends AggregateDiscardOnTimeoutTest {
 
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateSimpleTimeoutTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateDiscardOnTimeoutTest.xml");
     }
 
 }
