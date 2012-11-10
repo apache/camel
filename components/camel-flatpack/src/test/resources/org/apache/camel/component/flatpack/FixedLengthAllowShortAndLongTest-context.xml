@@ -22,17 +22,33 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+  <bean id="df" class="org.apache.camel.component.flatpack.FlatpackDataFormat">
+    <property name="definition" value="PEOPLE-FixedLength.pzmap.xml"/>
+    <property name="fixed" value="true"/>
+    <property name="ignoreExtraColumns" value="true"/>
+    <property name="allowShortLines" value="true"/>
+  </bean>
+
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="file://src/test/data/fixedMixed?noop=true"/>
-      <to uri="flatpack:fixed:PEOPLE-FixedLength.pzmap.xml?ignoreExtraColumns=true&amp;allowShortLines=true"/>
+      <multicast>
+        <to uri="flatpack:fixed:PEOPLE-FixedLength.pzmap.xml?ignoreExtraColumns=true&amp;allowShortLines=true"/>
+        <to uri="direct:df"/>
+      </multicast>
     </route>
 
     <route>
       <from uri="flatpack:fixed:PEOPLE-FixedLength.pzmap.xml?ignoreExtraColumns=true&amp;allowShortLines=true"/>
       <convertBodyTo type="java.util.Map"/>
       <to uri="mock:results"/>
+    </route>
+
+    <route>
+      <from uri="direct:df"/>
+      <unmarshal ref="df"/>
+      <to uri="mock:results-df"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

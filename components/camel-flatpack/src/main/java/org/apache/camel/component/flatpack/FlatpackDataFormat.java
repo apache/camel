@@ -61,6 +61,8 @@ public class FlatpackDataFormat implements DataFormat {
     private char textQualifier = '"';
     private boolean ignoreFirstRecord = true;
     private boolean fixed;
+    private boolean allowShortLines;
+    private boolean ignoreExtraColumns;
     private String definition;
 
     @SuppressWarnings("unchecked")
@@ -158,6 +160,28 @@ public class FlatpackDataFormat implements DataFormat {
         this.parserFactory = parserFactory;
     }
 
+    public boolean isAllowShortLines() {
+        return this.allowShortLines;
+    }
+
+    /**
+     * Allows for lines to be shorter than expected and ignores the extra characters
+     */
+    public void setAllowShortLines(boolean allowShortLines) {
+        this.allowShortLines = allowShortLines;
+    }
+
+    /**
+     * Allows for lines to be longer than expected and ignores the extra characters
+     */
+    public void setIgnoreExtraColumns(boolean ignoreExtraColumns) {
+        this.ignoreExtraColumns = ignoreExtraColumns;
+    }
+
+    public boolean isIgnoreExtraColumns() {
+        return ignoreExtraColumns;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -165,7 +189,16 @@ public class FlatpackDataFormat implements DataFormat {
         if (isFixed()) {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
             InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
-            return getParserFactory().newFixedLengthParser(reader, bodyReader);
+            Parser parser = getParserFactory().newFixedLengthParser(reader, bodyReader);
+            if (allowShortLines) {
+                parser.setHandlingShortLines(true);
+                parser.setIgnoreParseWarnings(true);
+            }
+            if (ignoreExtraColumns) {
+                parser.setIgnoreExtraColumns(true);
+                parser.setIgnoreParseWarnings(true);
+            }
+            return parser;
         } else {
             if (ObjectHelper.isEmpty(getDefinition())) {
                 return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
