@@ -38,7 +38,7 @@
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.7.0</activemq-version>
-    <ahc-version>1.7.6</ahc-version>
+    <ahc-version>1.7.7</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>2.7.7_5</antlr-bundle-version>
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
