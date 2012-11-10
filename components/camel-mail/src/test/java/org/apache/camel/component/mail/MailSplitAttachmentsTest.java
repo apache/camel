@@ -65,10 +65,16 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         Message second = mock.getReceivedExchanges().get(1).getIn();
 
         assertEquals(1, first.getAttachments().size());
-        assertEquals("logo.jpeg", first.getAttachments().keySet().iterator().next());
-
         assertEquals(1, second.getAttachments().size());
-        assertEquals("license.txt", second.getAttachments().keySet().iterator().next());
+
+        String file1 = first.getAttachments().keySet().iterator().next();
+        String file2 = second.getAttachments().keySet().iterator().next();
+
+        boolean logo = file1.equals("logo.jpeg") || file2.equals("logo.jpeg");
+        boolean license = file1.equals("license.txt") || file2.equals("license.txt");
+
+        assertTrue("Should have logo.jpeg file attachment", logo);
+        assertTrue("Should have license.txt file attachment", license);
     }
 
     @Override
