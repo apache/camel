@@ -18,20 +18,22 @@ package org.apache.camel.component.aws.s3;
 
 /**
  * Constants used in Camel AWS S3 module
- *
+ * 
  */
 public interface S3Constants {
 
-    String BUCKET_NAME = "CamelAwsS3BucketName";
-    String CACHE_CONTROL = "CamelAwsS3ContentControl";
+    String BUCKET_NAME         = "CamelAwsS3BucketName";
+    String CACHE_CONTROL       = "CamelAwsS3ContentControl";
     String CONTENT_DISPOSITION = "CamelAwsS3ContentDisposition";
-    String CONTENT_ENCODING = "CamelAwsS3ContentEncoding";
-    String CONTENT_LENGTH = "CamelAwsS3ContentLength";
-    String CONTENT_MD5 = "CamelAwsS3ContentMD5";
-    String CONTENT_TYPE = "CamelAwsS3ContentType";
-    String E_TAG = "CamelAwsS3ETag";
-    String KEY = "CamelAwsS3Key";
-    String LAST_MODIFIED = "CamelAwsS3LastModified";
-    String STORAGE_CLASS = "CamelAwsS3StorageClass";
-    String VERSION_ID = "CamelAwsS3VersionId";
+    String CONTENT_ENCODING    = "CamelAwsS3ContentEncoding";
+    String CONTENT_LENGTH      = "CamelAwsS3ContentLength";
+    String CONTENT_MD5         = "CamelAwsS3ContentMD5";
+    String CONTENT_TYPE        = "CamelAwsS3ContentType";
+    String E_TAG               = "CamelAwsS3ETag";
+    String KEY                 = "CamelAwsS3Key";
+    String LAST_MODIFIED       = "CamelAwsS3LastModified";
+    String STORAGE_CLASS       = "CamelAwsS3StorageClass";
+    String VERSION_ID          = "CamelAwsS3VersionId";
+    String CANNED_ACL          = "CamelAwsS3CannedAcl";
+    String ACL                 = "CamelAwsS3Acl";
 }
