@@ -36,14 +36,15 @@
     <module>camel-itest-standalone</module>
     <module>camel-itest</module>
     <module>camel-itest-cdi</module>
+    <module>camel-itest-spring30</module>
     <module>camel-partial-classpath-test</module>
     <module>camel-typeconverterscan-test</module>
     <module>camel-itest-performance</module>
   </modules>
 
   <profiles>
+    <!-- osgi tests -->
     <profile>
-      <!-- default profile enables checkstyle and Xlint stuff -->
       <id>osgi.test</id>
       <modules>
         <module>camel-itest-karaf</module>
