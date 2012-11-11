@@ -28,7 +28,7 @@
 	http://cxf.apache.org/schemas/configuration/http-conf.xsd ">
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-	<jaxrs:server id="restService" address="https://localhost:8181/CxfRsProducerTest/"
+	<jaxrs:server id="restService" address="https://localhost:${CXFTestSupport.port2}/CxfRsProducerTest/"
 		staticSubresourceResolution="true">
 		<jaxrs:serviceBeans>
 			<ref bean="customerService"/>
@@ -40,13 +40,14 @@
 	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="direct://http"/>
-			<to uri="cxfrs://https://localhost:8181/CxfRsProducerTest/"/>
-			
+			<recipientList>
+				<simple>cxfrs://https://localhost:${header.port}/CxfRsProducerTest/</simple>
+			</recipientList>
 		</route>
 	</camelContext>
 
 	<httpj:engine-factory id="tls-config">
-		<httpj:engine port="8181">
+		<httpj:engine port="${CXFTestSupport.port2}">
 			<httpj:tlsServerParameters>
 				<sec:keyManagers keyPassword="password">
 					<sec:keyStore type="JKS" password="password"  file="src/test/resources/org/apache/camel/component/cxf/jaxrs/Bethal.jks"/>
