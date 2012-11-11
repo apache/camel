@@ -51,8 +51,12 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
+        log.info(payload);
+
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
-        assertTrue(payload.contains("<order:order xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\" xmlns:order=\"http://www.camel.apache.org/jaxb/example/order/1\">"));
+        assertTrue(payload.contains("<order:order"));
+        assertTrue(payload.contains("xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\""));
+        assertTrue(payload.contains("xmlns:order=\"http://www.camel.apache.org/jaxb/example/order/1\">"));
         assertTrue(payload.contains("<order:id>1</order:id>"));
         assertTrue(payload.contains("<address:address>"));
         assertTrue(payload.contains("<address:street>Main Street</address:street>"));
