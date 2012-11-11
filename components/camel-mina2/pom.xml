@@ -81,7 +81,8 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>pertest</forkMode>
+									<forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
+									<forkMode>pertest</forkMode>
                     <excludes>
                         <!-- This test just show the shutdown error -->
                         <exclude>**/Mina2ProducerShutdownTest.*</exclude>
