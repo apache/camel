@@ -38,7 +38,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CxfRsProducerClientFactoryCacheTest extends Assert {
     private static int port1 = CXFTestSupport.getPort1(); 
-    
+    private static int port2 = CXFTestSupport.getPort2();
+
     private CamelContext context1;
     private CamelContext context2;
     private ProducerTemplate template1;
@@ -62,11 +63,15 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
     
     @After
     public void tearDown() throws Exception {
-        context1.stop();
-        template1.stop();
+        if (context1 != null) {
+            context1.stop();
+            template1.stop();
+        }
 
-        context2.stop();
-        template2.stop();
+        if (context2 != null) {
+            context2.stop();
+            template2.stop();
+        }
     }
     
     @Test
@@ -84,6 +89,7 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
                 inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                 inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");                
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
+                inMessage.setHeader("port", getPort2());
                 inMessage.setBody(null);                
             }
         });
@@ -99,5 +105,9 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
 
     public int getPort1() {
         return port1;
+    }
+
+    public int getPort2() {
+        return port2;
     }
 }
