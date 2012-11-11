@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -40,8 +38,8 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
 
-        template.requestBody("activemq:queue:hello", "Hello World");
-        template.requestBody("activemq:queue:hello", "Gooday World");
+        template.sendBody("activemq:queue:hello", "Hello World");
+        template.sendBody("activemq:queue:hello", "Gooday World");
 
         result.assertIsSatisfied();
     }
@@ -49,9 +47,7 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        // use a persistent queue as the consumer is started asynchronously
-        // so we need a persistent store in case no active consumers when we send the messages
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         jms.setAsyncStopListener(true);
         camelContext.addComponent(componentName, jms);
@@ -62,11 +58,7 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:hello").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("activemq:queue:hello").to("mock:result");
             }
         };
     }
