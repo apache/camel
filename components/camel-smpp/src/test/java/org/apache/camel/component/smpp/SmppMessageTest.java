@@ -110,10 +110,7 @@ public class SmppMessageTest {
             (byte)0xF4
         };
 
-        byte[] body = {
-            (byte)0xFF, 'A', 'B', (byte)0x00,
-            (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF
-        };
+        byte[] body = "\u02C7AB\u0000\u02C7\u007F\u02C7".getBytes(Charset.forName("UTF-8"));
 
         DeliverSm command = new DeliverSm();
         SmppConfiguration config = new SmppConfiguration();
