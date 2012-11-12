@@ -39,7 +39,7 @@ public class SpringQuartzPersistentStoreRestartAppTest extends TestSupport {
         assertNotNull(camel);
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMinimumMessageCount(3);
+        mock.expectedMinimumMessageCount(2);
 
         mock.assertIsSatisfied();
 
@@ -65,7 +65,7 @@ public class SpringQuartzPersistentStoreRestartAppTest extends TestSupport {
         assertNotNull(camel2);
 
         MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
-        mock2.expectedMinimumMessageCount(3);
+        mock2.expectedMinimumMessageCount(2);
 
         mock2.assertIsSatisfied();
 
