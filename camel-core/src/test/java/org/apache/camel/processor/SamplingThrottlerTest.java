@@ -44,7 +44,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         sendExchangesThroughDroppingThrottler(sentExchanges, 15);
 
         mock.assertIsSatisfied();
-        validateDroppedExchanges(sentExchanges, 2);
+        validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
     }
 
     public void testBurstySampling() throws Exception {
@@ -62,7 +62,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
 
         mock.assertIsSatisfied();
-        validateDroppedExchanges(sentExchanges, 2);
+        validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
     }
 
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
