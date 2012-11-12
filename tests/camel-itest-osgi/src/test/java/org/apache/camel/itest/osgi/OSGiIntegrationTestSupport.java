@@ -138,6 +138,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
                       KarafDistributionOption.keepRuntimeFolder(),
                       // override the config.properties (to fix pax-exam bug)
                       replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
+                      replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
                       // install the cxf jaxb spec as the karaf doesn't provide it by default
                       scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-test")};
 
