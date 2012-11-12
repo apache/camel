@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,6 +37,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class SamplingThrottlerTest extends ContextTestSupport {
 
     public void testSamplingFromExchangeStream() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(15).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         mock.setResultWaitTime(3000);
@@ -43,11 +46,15 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         List<Exchange> sentExchanges = new ArrayList<Exchange>();
         sendExchangesThroughDroppingThrottler(sentExchanges, 15);
 
+        notify.matchesMockWaitTime();
         mock.assertIsSatisfied();
+
         validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
     }
 
     public void testBurstySampling() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         mock.setResultWaitTime(3000);
@@ -61,7 +68,9 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         // send another 5 now
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
 
+        notify.matchesMockWaitTime();
         mock.assertIsSatisfied();
+
         validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
     }
 
@@ -88,7 +97,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         executor.shutdownNow();
     }
 
-    public void testSamplingUsingmessageFrequency() throws Exception {
+    public void testSamplingUsingMessageFrequency() throws Exception {
         long totalMessages = 100;
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(10);
@@ -101,7 +110,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
     
-    public void testSamplingUsingmessageFrequencyViaDSL() throws Exception {
+    public void testSamplingUsingMessageFrequencyViaDSL() throws Exception {
         long totalMessages = 50;
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(10);
