@@ -38,8 +38,8 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
 
-        template.sendBody("activemq:queue:hello", "Hello World");
-        template.sendBody("activemq:queue:hello", "Gooday World");
+        template.sendBody("activemq:queue:hello2", "Hello World");
+        template.sendBody("activemq:queue:hello2", "Gooday World");
 
         result.assertIsSatisfied();
     }
@@ -58,7 +58,7 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:hello").to("mock:result");
+                from("activemq:queue:hello2").to("mock:result");
             }
         };
     }
