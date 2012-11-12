@@ -243,7 +243,10 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public void shutdown(ExecutorService executorService) {
-        ObjectHelper.notNull(executorService, "executorService");
+        if (executorService == null) {
+            return false;
+        }
+
 
         if (!executorService.isShutdown()) {
             LOG.debug("Shutdown ExecutorService: {}", executorService);
