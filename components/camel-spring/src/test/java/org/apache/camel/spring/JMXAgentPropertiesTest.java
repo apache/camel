@@ -27,6 +27,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JMXAgentPropertiesTest extends JMXAgentTest {
 
     @Override
+    protected int getPort() {
+        return 20009;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfigUsingProperties.xml");
     }

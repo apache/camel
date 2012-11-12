@@ -34,7 +34,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class DefaultJMXAgentTest extends SpringTestSupport {
 
     protected MBeanServerConnection mbsc;
-    protected long sleepForConnection = 2000;
+    protected long sleepForConnection = 3000;
 
     @Override
     protected void setUp() throws Exception {
@@ -46,11 +46,14 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        releaseMBeanServers();
-        mbsc = null;
-        super.tearDown();
+        try {
+            releaseMBeanServers();
+        } finally {
+            mbsc = null;
+            super.tearDown();
+        }
     }
-    
+
     protected void releaseMBeanServers() {
         List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 
@@ -82,5 +85,5 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         }
         return mbsc;
     }
-    
+
 }
