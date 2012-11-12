@@ -17,6 +17,8 @@
 package org.apache.camel.processor;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -31,6 +33,8 @@ import org.apache.camel.util.FileUtil;
  */
 public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
+    private static final CountDownLatch LATCH = new CountDownLatch(1);
+
     public static final class FileRollback implements Synchronization {
 
         public void onComplete(Exchange exchange) {
@@ -41,6 +45,9 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             // delete the file
             String name = exchange.getIn().getHeader(Exchange.FILE_NAME_PRODUCED, String.class);
             FileUtil.deleteFile(new File(name));
+
+            // signal we have deleted the file
+            LATCH.countDown();
         }
 
     }
@@ -55,13 +62,6 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             // simulate fatal error if we refer to a special no
             if (to.equals("FATAL")) {
                 throw new IllegalArgumentException("Simulated fatal error");
-            }
-
-            // simulate CPU processing of the order by sleeping a bit
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException e) {
-                // ignore
             }
         }
 
@@ -93,7 +93,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // onCompletion is async so we gotta wait a bit for the file to be deleted
-        Thread.sleep(250);
+        assertTrue("Should countdown the latch", LATCH.await(5, TimeUnit.SECONDS));
 
         File file = new File("target/mail/backup/");
         String[] files = file.list();
