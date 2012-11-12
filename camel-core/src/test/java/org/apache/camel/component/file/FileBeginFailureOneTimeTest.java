@@ -69,7 +69,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
     private static class MyStrategy implements GenericFileProcessStrategy<File> {
 
-        private int invoked;
+        private volatile int invoked;
 
         public void prepareOnStartup(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint) throws Exception {
         }
