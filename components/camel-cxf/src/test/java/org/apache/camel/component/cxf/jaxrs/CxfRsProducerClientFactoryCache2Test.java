@@ -36,32 +36,33 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  *
  */
-public class CxfRsProducerClientFactoryCacheTest extends Assert {
-    private static int port1 = CXFTestSupport.getPort1(); 
+public class CxfRsProducerClientFactoryCache2Test extends Assert {
+    private static int port2 = CXFTestSupport.getPort("mySecurePort");
 
-    private CamelContext context1;
-    private ProducerTemplate template1;
+    private CamelContext context2;
+    private ProducerTemplate template2;
 
     @Before
     public void setUp() throws Exception {
-        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
-        context1 = SpringCamelContext.springCamelContext(ac, false);
-        context1.start();
-        template1 = context1.createProducerTemplate();
-        template1.start();
+        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest2.xml");
+        context2 = SpringCamelContext.springCamelContext(ac, false);
+        context2.start();
+
+        template2 = context2.createProducerTemplate();
+        template2.start();
     }
     
     @After
     public void tearDown() throws Exception {
-        if (context1 != null) {
-            context1.stop();
-            template1.stop();
+        if (context2 != null) {
+            context2.stop();
+            template2.stop();
         }
     }
     
     @Test
     public void testGetCostumerWithHttpCentralClientAPI() throws Exception {
-        doRunTest(template1, getPort1());
+        doRunTest(template2, getPort2());
     }
 
     private void doRunTest(ProducerTemplate template, final int clientPort) {
@@ -87,8 +88,7 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
-    public int getPort1() {
-        return port1;
+    public int getPort2() {
+        return port2;
     }
-
 }
