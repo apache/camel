@@ -206,7 +206,6 @@ public class SmppBindingTest {
     }
 
     @Test
-    @Ignore("FIXME: cmueller is working on it")
     public void createSmppMessageFrom8bitDataCodingDeliverSmShouldNotModifyBody() throws Exception {
         final Set<String> encodings = Charset.availableCharsets().keySet();
 
@@ -217,7 +216,10 @@ public class SmppBindingTest {
             (byte)0xF4
         };
 
-        byte[] body = "\u02C7AB\u0000\u02C7\u007F\u02C7".getBytes(Charset.forName("UTF-8"));
+        byte[] body = {
+            (byte)0xFF, 'A', 'B', (byte)0x00,
+            (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF
+        };
 
         DeliverSm deliverSm = new DeliverSm();
 
@@ -233,7 +235,7 @@ public class SmppBindingTest {
                                   dataCoding,
                                   encoding),
                     body,
-                    smppMessage.getBody(String.class).getBytes());
+                    smppMessage.getBody(byte[].class));
             }
         }
     }
