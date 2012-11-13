@@ -66,9 +66,10 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
     
     @Test
     public void testConsumer() throws Exception {
-        if (MtomTestHelper.isAwtHeadless(logger, null)) {
+        if (Boolean.getBoolean("java.awt.headless")) {
+            System.out.println("Running headless. Skipping test as Images may not work.");
             return;
-        }
+        }     
 
         // skip test on aix
         if (TestHelper.isPlatform("aix")) {
