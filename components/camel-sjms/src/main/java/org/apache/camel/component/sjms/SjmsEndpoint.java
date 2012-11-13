@@ -69,8 +69,13 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         } else if (getEndpointUri().indexOf("://topic:") > -1) {
             topic = true;
         } else {
-            throw new RuntimeCamelException("Endpoint URI unsupported: " + uri);
+            throw new IllegalArgumentException("Endpoint URI unsupported: " + uri);
         }
+    }
+
+    @Override
+    public SjmsComponent getComponent() {
+        return (SjmsComponent) super.getComponent();
     }
 
     @Override

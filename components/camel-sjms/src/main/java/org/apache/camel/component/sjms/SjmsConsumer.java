@@ -33,6 +33,7 @@ import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.jms.ObjectPool;
 import org.apache.camel.component.sjms.jms.SessionPool;
+import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.component.sjms.tx.BatchTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.SessionBatchTransactionSynchronization;
@@ -62,9 +63,6 @@ public class SjmsConsumer extends DefaultConsumer {
          * Creates a new MessageConsumerResources instance.
          *
          * @see org.apache.camel.component.sjms.jms.ObjectPool#createObject()
-         *
-         * @return
-         * @throws Exception
          */
         @Override
         protected MessageConsumerResources createObject() throws Exception {
@@ -81,9 +79,6 @@ public class SjmsConsumer extends DefaultConsumer {
          * Cleans up the MessageConsumerResources.
          *
          * @see org.apache.camel.component.sjms.jms.ObjectPool#destroyObject(java.lang.Object)
-         *
-         * @param model
-         * @throws Exception
          */
         @Override
         protected void destroyObject(MessageConsumerResources model) throws Exception {
@@ -112,19 +107,12 @@ public class SjmsConsumer extends DefaultConsumer {
         private final Session session;
         private final MessageConsumer messageConsumer;
 
-        /**
-         * @param messageProducer
-         */
         public MessageConsumerResources(MessageConsumer messageConsumer) {
             super();
             this.session = null;
             this.messageConsumer = messageConsumer;
         }
 
-        /**
-         * @param session
-         * @param messageProducer
-         */
         public MessageConsumerResources(Session session, MessageConsumer messageConsumer) {
             super();
             this.session = session;
@@ -158,6 +146,11 @@ public class SjmsConsumer extends DefaultConsumer {
     }
 
     @Override
+    public SjmsEndpoint getEndpoint() {
+        return (SjmsEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         consumers = new MessageConsumerPool();
@@ -173,24 +166,9 @@ public class SjmsConsumer extends DefaultConsumer {
         }
     }
 
-    @Override
-    protected void doResume() throws Exception {
-        super.doResume();
-        doStart();
-    }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        doStop();
-        super.doSuspend();
-    }
-
     /**
      * Creates a {@link MessageConsumerResources} with a dedicated
      * {@link Session} required for transacted and InOut consumers.
-     * 
-     * @return MessageConsumerResources
-     * @throws Exception
      */
     private MessageConsumerResources createConsumerWithDedicatedSession() throws Exception {
         Connection conn = getConnectionResource().borrowConnection();
@@ -210,9 +188,6 @@ public class SjmsConsumer extends DefaultConsumer {
     /**
      * Creates a {@link MessageConsumerResources} with a shared {@link Session}
      * for non-transacted InOnly consumers.
-     * 
-     * @return
-     * @throws Exception
      */
     private MessageConsumerResources createConsumerListener() throws Exception {
         Session queueSession = getSessionPool().borrowObject();
@@ -233,7 +208,7 @@ public class SjmsConsumer extends DefaultConsumer {
      * Helper factory method used to create a MessageListener based on the MEP
      * 
      * @param session a session is only required if we are a transacted consumer
-     * @return
+     * @return the listener
      */
     protected MessageListener createMessageHandler(Session session) {
 
@@ -245,15 +220,16 @@ public class SjmsConsumer extends DefaultConsumer {
         } else {
             commitStrategy = new DefaultTransactionCommitStrategy();
         }
-        
-        Synchronization synchronization = null;
+
+        Synchronization synchronization;
         if (commitStrategy instanceof BatchTransactionCommitStrategy) {
-            synchronization = new SessionBatchTransactionSynchronization(session, commitStrategy, getTransactionBatchTimeout());
+            TimedTaskManager timedTaskManager = getEndpoint().getComponent().getTimedTaskManager();
+            synchronization = new SessionBatchTransactionSynchronization(timedTaskManager, session, commitStrategy, getTransactionBatchTimeout());
         } else {
             synchronization = new SessionTransactionSynchronization(session, commitStrategy);
         }
 
-        AbstractMessageHandler messageHandler = null;
+        AbstractMessageHandler messageHandler;
         if (getSjmsEndpoint().getExchangePattern().equals(ExchangePattern.InOnly)) {
             if (isTransacted()) {
                 messageHandler = new InOnlyMessageHandler(getEndpoint(), executor, synchronization);
@@ -338,9 +314,7 @@ public class SjmsConsumer extends DefaultConsumer {
     }
 
     /**
-     * Sets the JMS Message selector syntax.
-     * 
-     * @param messageSelector Message selector syntax or null
+     * Gets the JMS Message selector syntax.
      */
     public String getMessageSelector() {
         return getSjmsEndpoint().getMessageSelector();
