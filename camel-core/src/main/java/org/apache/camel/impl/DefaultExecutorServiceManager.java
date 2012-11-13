@@ -244,7 +244,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public void shutdown(ExecutorService executorService) {
         if (executorService == null) {
-            return false;
+            return;
         }
 
 
