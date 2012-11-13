@@ -106,7 +106,7 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
             if (deliverSm.getShortMessage() != null) {
                 if (SmppUtils.parseAlphabetFromDataCoding(deliverSm.getDataCoding()) == Alphabet.ALPHA_8_BIT) {
-                    smppMessage.setBody(new String(deliverSm.getShortMessage()));
+                    smppMessage.setBody(deliverSm.getShortMessage());
                 } else {
                     smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
                                                                   configuration.getEncoding())));

@@ -83,8 +83,9 @@ public class SmppMessage extends DefaultMessage {
             if (shortMessage == null || shortMessage.length == 0) {
                 return null;
             }
-            if (SmppUtils.parseAlphabetFromDataCoding(msgRequest.getDataCoding()) != Alphabet.ALPHA_8_BIT
-                && Charset.isSupported(configuration.getEncoding())) {
+            if (SmppUtils.parseAlphabetFromDataCoding(msgRequest.getDataCoding()) == Alphabet.ALPHA_8_BIT) {
+                return shortMessage;
+            } else if (Charset.isSupported(configuration.getEncoding())) {
                 try {
                     return new String(shortMessage, configuration.getEncoding());
                 } catch (UnsupportedEncodingException e) {
