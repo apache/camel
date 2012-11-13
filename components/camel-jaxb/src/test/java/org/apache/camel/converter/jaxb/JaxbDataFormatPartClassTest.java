@@ -55,8 +55,8 @@ public class JaxbDataFormatPartClassTest extends CamelTestSupport {
         assertTrue(payload.contains("</address:address>"));
 
         // the namespaces
-        assertTrue(payload.contains("http://www.camel.apache.org/jaxb/example/address/1"));
-        assertTrue(payload.contains("http://www.camel.apache.org/jaxb/example/order/1"));
+        assertTrue(payload.contains("xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\""));
+        assertTrue(payload.contains("xmlns:order=\"http://www.camel.apache.org/jaxb/example/order/1\""));
     }
 
     @Override

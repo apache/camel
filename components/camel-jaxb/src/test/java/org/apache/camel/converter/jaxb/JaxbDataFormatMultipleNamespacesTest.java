@@ -65,8 +65,8 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
         assertTrue(payload.contains("</order:order>"));
 
         // the namespaces
-        assertTrue(payload.contains("http://www.camel.apache.org/jaxb/example/address/1"));
-        assertTrue(payload.contains("http://www.camel.apache.org/jaxb/example/order/1"));
+        assertTrue(payload.contains("xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\""));
+        assertTrue(payload.contains("xmlns:order=\"http://www.camel.apache.org/jaxb/example/order/1\""));
     }
 
     @Test
