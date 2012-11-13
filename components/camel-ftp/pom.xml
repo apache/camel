@@ -118,24 +118,18 @@
     <plugins>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <excludes>
+            <!-- skip sftp tests as they can hang CI servers -->
+            <exclude>org/apache/camel/component/file/remote/sftp/**.java</exclude>
+          </excludes>
           <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
           <systemPropertyVariables>
             <ftp.enable>${ftp.enable}</ftp.enable>
             <ftp.server>${ftp.url}</ftp.server>
           </systemPropertyVariables>
-        </configuration>
-      </plugin>
-
-      <!-- skip sftp tests as they can hang CI servers -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>org/apache/camel/component/file/remote/sftp/**.java</exclude>
-          </excludes>
         </configuration>
       </plugin>
 
