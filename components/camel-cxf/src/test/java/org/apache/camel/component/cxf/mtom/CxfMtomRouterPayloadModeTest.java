@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -31,6 +30,7 @@ import junit.framework.Assert;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
+import org.apache.camel.component.cxf.TestHelper;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.junit.After;
@@ -41,6 +41,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertNotNull;
+
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  * 
@@ -74,6 +75,11 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
         if (MtomTestHelper.isAwtHeadless(logger, null)) {
+            return;
+        }
+
+        // skip test on aix
+        if (TestHelper.isPlatform("aix")) {
             return;
         }
         

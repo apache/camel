@@ -38,6 +38,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
+import org.apache.camel.component.cxf.TestHelper;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
@@ -65,6 +66,15 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
     
     @Test
     public void testConsumer() throws Exception {
+        if (MtomTestHelper.isAwtHeadless(logger, null)) {
+            return;
+        }
+
+        // skip test on aix
+        if (TestHelper.isPlatform("aix")) {
+            return;
+        }
+
         context.createProducerTemplate().send("cxf:bean:consumerEndpoint", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
