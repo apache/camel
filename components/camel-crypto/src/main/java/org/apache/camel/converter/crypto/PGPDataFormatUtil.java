@@ -46,7 +46,7 @@ public final class PGPDataFormatUtil {
 
     private PGPDataFormatUtil() {
     }
-
+    
     public static PGPPublicKey findPublicKey(CamelContext context, String filename, String userid) throws IOException, PGPException,
             NoSuchProviderException {
 
