@@ -17,13 +17,17 @@
 package org.apache.camel.component.mail;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.mail.search.SearchTerm;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -66,6 +70,15 @@ public class MailComponent extends DefaultComponent {
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);
         endpoint.setContentTypeResolver(contentTypeResolver);
         setProperties(endpoint.getConfiguration(), parameters);
+
+        Map<String, Object> sstParams = IntrospectionSupport.extractProperties(parameters, "searchTerm.");
+        if (!sstParams.isEmpty()) {
+            // use SimpleSearchTerm as POJO to store the configuration and then convert that to the actual SearchTerm
+            SimpleSearchTerm sst = new SimpleSearchTerm();
+            setProperties(sst, sstParams);
+            SearchTerm st = getCamelContext().getTypeConverter().mandatoryConvertTo(SearchTerm.class, sst);
+            endpoint.setSearchTerm(st);
+        }
 
         // sanity check that we know the mail server
         ObjectHelper.notEmpty(config.getHost(), "host");

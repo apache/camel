@@ -18,12 +18,15 @@ package org.apache.camel.component.mail;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.search.SearchTerm;
 
 import org.apache.camel.Converter;
 import org.apache.camel.converter.IOConverter;
@@ -95,6 +98,53 @@ public final class MailConverters {
             return null;
         }
         return IOConverter.toInputStream(s, null);
+    }
+
+    @Converter
+    public static SearchTerm toSearchTerm(SimpleSearchTerm simple) throws ParseException {
+        SearchTermBuilder builder = new SearchTermBuilder();
+        if (simple.isUnseen()) {
+            builder = builder.unseen();
+        }
+
+        if (simple.getSubjectOrBody() != null) {
+            String text = simple.getSubjectOrBody();
+            builder = builder.subject(text).body(SearchTermBuilder.Op.or, text);
+        }
+        if (simple.getSubject() != null) {
+            builder = builder.subject(simple.getSubject());
+        }
+        if (simple.getBody() != null) {
+            builder = builder.body(simple.getBody());
+        }
+        if (simple.getFrom() != null) {
+            builder = builder.from(simple.getFrom());
+        }
+        if (simple.getTo() != null) {
+            builder = builder.recipient(Message.RecipientType.TO, simple.getTo());
+        }
+        if (simple.getFromSentDate() != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+            Date date;
+            if ("now".equals(simple.getFromSentDate())) {
+                date = new Date();
+            } else {
+                date = sdf.parse(simple.getFromSentDate());
+            }
+            builder = builder.sent(SearchTermBuilder.Comparison.GE, date);
+        }
+        if (simple.getToSentDate() != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+            Date date;
+            if ("now".equals(simple.getToSentDate())) {
+                date = new Date();
+            } else {
+                date = sdf.parse(simple.getToSentDate());
+            }
+            builder = builder.sent(SearchTermBuilder.Comparison.LE, date);
+        }
+
+        return builder.build();
     }
 
 }

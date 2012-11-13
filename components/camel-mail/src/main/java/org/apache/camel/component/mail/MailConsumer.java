@@ -38,6 +38,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.mail.SearchTermBuilder.*;
+import static org.apache.camel.component.mail.SearchTermBuilder.Op.and;
+
 /**
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
  * {@link javax.mail.Transport Transport} and dispatches them to the {@link Processor}
@@ -105,10 +108,14 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             if (count > 0) {
                 Message[] messages;
 
-                // should we process all messages or only unseen messages
-                if (getEndpoint().getConfiguration().isUnseen()) {
-                    messages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
+                if (getEndpoint().getSearchTerm() != null) {
+                    // use custom search term
+                    messages = folder.search(getEndpoint().getSearchTerm());
+                } else if (getEndpoint().getConfiguration().isUnseen()) {
+                    // only unseen messages
+                    messages = folder.search(new SearchTermBuilder().unseen().build());
                 } else {
+                    // get all messages
                     messages = folder.getMessages();
                 }
 

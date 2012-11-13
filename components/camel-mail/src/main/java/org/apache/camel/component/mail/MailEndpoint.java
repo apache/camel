@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import javax.mail.Message;
+import javax.mail.search.SearchTerm;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -39,6 +40,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
     private ContentTypeResolver contentTypeResolver;
     private int maxMessagesPerPoll;
+    private SearchTerm searchTerm;
 
     public MailEndpoint() {
     }
@@ -169,4 +171,13 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
+
+    public SearchTerm getSearchTerm() {
+        return searchTerm;
+    }
+
+    public void setSearchTerm(SearchTerm searchTerm) {
+        this.searchTerm = searchTerm;
+    }
+
 }
