@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
@@ -32,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 
+import org.apache.camel.component.cxf.TestHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +40,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
+
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  * 
@@ -76,6 +77,11 @@ public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
             return;
         }
         
+        // skip test on aix
+        if (TestHelper.isPlatform("aix")) {
+            return;
+        }
+
         final Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
         final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
         

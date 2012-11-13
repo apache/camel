@@ -40,6 +40,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfPayload;
+import org.apache.camel.component.cxf.TestHelper;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.cxf.attachment.AttachmentDataSource;
 import org.apache.cxf.binding.soap.SoapHeader;
@@ -79,6 +80,11 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             return;
         }     
         
+        // skip test on aix
+        if (TestHelper.isPlatform("aix")) {
+            return;
+        }
+
         Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint", new Processor() {
 
             public void process(Exchange exchange) throws Exception {

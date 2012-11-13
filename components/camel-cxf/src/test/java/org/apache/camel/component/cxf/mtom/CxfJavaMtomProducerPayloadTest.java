@@ -22,6 +22,7 @@ import javax.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.TestHelper;
 import org.junit.Test;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
@@ -37,6 +38,11 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
             return;
         }        
         
+        // skip test on aix
+        if (TestHelper.isPlatform("aix")) {
+            return;
+        }
+
         final Holder<byte[]> photo = new Holder<byte[]>("RequestFromCXF".getBytes("UTF-8"));
         final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
         
