@@ -37,6 +37,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     private long reconnectDelay = 1000;
     private boolean disconnect;
     private boolean fastExistsCheck;
+    private boolean download = true;
 
     public RemoteFileEndpoint() {
         // no args constructor for spring bean endpoint configuration
@@ -198,5 +199,12 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     public void setFastExistsCheck(boolean fastExistsCheck) {
         this.fastExistsCheck = fastExistsCheck;
     }
+    
+    public boolean isDownload() {
+        return this.download;
+    }
 
+    public void setDownload(boolean download) {
+        this.download = download;
+    }
 }
