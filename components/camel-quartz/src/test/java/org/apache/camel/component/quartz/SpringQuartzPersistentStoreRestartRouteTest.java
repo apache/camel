@@ -34,6 +34,11 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
 
     @Test
     public void testQuartzPersistentStore() throws Exception {
+        // skip testing on aix
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
