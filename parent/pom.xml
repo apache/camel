@@ -230,6 +230,7 @@
     <maven-bundle-version>2.3.7</maven-bundle-version>
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
+    <maven-plugin-plugin-version>3.2</maven-plugin-plugin-version>
     <maven-resources-plugin-version>2.4.3</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
