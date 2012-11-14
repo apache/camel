@@ -44,6 +44,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private String languageName;
     private String script;
     private boolean transform = true;
+    private boolean contentResolvedFromResource = false;
 
     public LanguageEndpoint() {
         // enable cache by default
@@ -118,6 +119,9 @@ public class LanguageEndpoint extends ResourceEndpoint {
     }
 
     public Expression getExpression() {
+        if (isContentResolvedFromResource() && isContentCacheCleared()) {
+            return null;
+        }
         return expression;
     }
 
@@ -158,4 +162,11 @@ public class LanguageEndpoint extends ResourceEndpoint {
         this.script = script;
     }
 
+    public boolean isContentResolvedFromResource() {
+        return contentResolvedFromResource;
+    }
+
+    public void setContentResolvedFromResource(boolean contentResolvedFromResource) {
+        this.contentResolvedFromResource = contentResolvedFromResource;
+    }
 }
