@@ -40,7 +40,9 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
     @Test
     public void httpConnectionNotOk() throws Exception {
         // stop server so there are no connection
+        // and wait for it to terminate
         localServer.stop();
+        localServer.awaitTermination(5000);
 
         Exchange exchange = template.request("direct:start", null);
         assertTrue(exchange.isFailed());
