@@ -111,16 +111,20 @@ public class NagiosTest extends CamelTestSupport {
         assertEquals(2, nagios.getMessagePayloadList().size());
 
         MessagePayload payload = nagios.getMessagePayloadList().get(0);
-        assertEquals("Hello Nagios", payload.getMessage());
-        assertEquals("localhost", payload.getHostname());
-        assertEquals(Level.OK.ordinal(), payload.getLevel());
-        assertEquals(context.getName(), payload.getServiceName());
+        MessagePayload payload2 = nagios.getMessagePayloadList().get(1);
 
-        payload = nagios.getMessagePayloadList().get(1);
-        assertEquals("Bye Nagios", payload.getMessage());
         assertEquals("localhost", payload.getHostname());
         assertEquals(Level.OK.ordinal(), payload.getLevel());
         assertEquals(context.getName(), payload.getServiceName());
+        assertEquals("localhost", payload2.getHostname());
+        assertEquals(Level.OK.ordinal(), payload2.getLevel());
+        assertEquals(context.getName(), payload2.getServiceName());
+
+        // when using async they may arrive in different order
+        boolean hello = "Hello Nagios".equals(payload.getMessage()) || "Hello Nagios".equals(payload2.getMessage());
+        boolean bye = "Bye Nagios".equals(payload.getMessage()) || "Bye Nagios".equals(payload2.getMessage());
+        assertTrue("Should have received Hello Nagios message", hello);
+        assertTrue("Should have received Bye Nagios message", bye);
     }
 
     @Test
