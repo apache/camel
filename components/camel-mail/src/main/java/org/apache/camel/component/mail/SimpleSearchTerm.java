@@ -22,8 +22,8 @@ package org.apache.camel.component.mail;
  * <p/>
  * This POJO has default <tt>true</tt> for the {@link #isUnseen()} option.
  * <p/>
- * The {@link #setFromSentDate(String)} and {@link #setToSentDate(String)} is using the following date pattern
- * <tt>yyyy-MM-dd HH:mm:SS</tt>.
+ * The date options (such as {@link #setFromReceivedDate(String)}) is using
+ * the following date pattern <tt>yyyy-MM-dd HH:mm:SS</tt>.
  */
 public class SimpleSearchTerm {
 
@@ -35,6 +35,8 @@ public class SimpleSearchTerm {
     private String to;
     private String fromSentDate;
     private String toSentDate;
+    private String fromReceivedDate;
+    private String toReceivedDate;
 
     public boolean isUnseen() {
         return unseen;
@@ -98,5 +100,21 @@ public class SimpleSearchTerm {
 
     public void setToSentDate(String toSentDate) {
         this.toSentDate = toSentDate;
+    }
+
+    public String getFromReceivedDate() {
+        return fromReceivedDate;
+    }
+
+    public void setFromReceivedDate(String fromReceivedDate) {
+        this.fromReceivedDate = fromReceivedDate;
+    }
+
+    public String getToReceivedDate() {
+        return toReceivedDate;
+    }
+
+    public void setToReceivedDate(String toReceivedDate) {
+        this.toReceivedDate = toReceivedDate;
     }
 }

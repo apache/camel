@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.Date;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
@@ -23,6 +24,7 @@ import javax.mail.search.SearchTerm;
 import junit.framework.TestCase;
 import org.jvnet.mock_javamail.Mailbox;
 
+import static org.apache.camel.component.mail.SearchTermBuilder.Comparison;
 import static org.apache.camel.component.mail.SearchTermBuilder.Op.or;
 
 /**
@@ -76,13 +78,43 @@ public class SearchTermBuilderTest extends TestCase {
         assertTrue("Should match message, as its from admin", st.match(msg2));
     }
 
+    public void testSearchTermSentLast24Hours() throws Exception {
+        SearchTermBuilder build = new SearchTermBuilder();
+        long offset = -1 * (24 * 60 * 60 * 1000L);
+        SearchTerm st = build.subject("Camel").sentNow(Comparison.GE, offset).build();
+
+        assertNotNull(st);
+
+        // create dummy message
+        Mailbox.clearAll();
+        JavaMailSender sender = new DefaultJavaMailSender();
+
+        MimeMessage msg = new MimeMessage(sender.getSession());
+        msg.setSubject("Yeah Camel rocks");
+        msg.setText("Apache Camel is a cool project. Have a fun ride.");
+        msg.setFrom(new InternetAddress("someone@somewhere.com"));
+        msg.setSentDate(new Date());
+        assertTrue("Should match message", st.match(msg));
+
+        MimeMessage msg2 = new MimeMessage(sender.getSession());
+        msg2.setSubject("Camel in Action");
+        msg2.setText("Hey great book");
+        msg2.setFrom(new InternetAddress("dude@apache.org"));
+        // mark it as sent 2 days ago
+        long twoDays = 2 * 24 * 60 * 60 * 1000L;
+        long time = new Date().getTime() - twoDays;
+        msg2.setSentDate(new Date(time));
+
+        assertFalse("Should not match message as its too old", st.match(msg2));
+    }
+
     public void testComparison() throws Exception {
-        assertEquals(1, SearchTermBuilder.Comparison.LE.asNum());
-        assertEquals(2, SearchTermBuilder.Comparison.LT.asNum());
-        assertEquals(3, SearchTermBuilder.Comparison.EQ.asNum());
-        assertEquals(4, SearchTermBuilder.Comparison.NE.asNum());
-        assertEquals(5, SearchTermBuilder.Comparison.GT.asNum());
-        assertEquals(6, SearchTermBuilder.Comparison.GE.asNum());
+        assertEquals(1, Comparison.LE.asNum());
+        assertEquals(2, Comparison.LT.asNum());
+        assertEquals(3, Comparison.EQ.asNum());
+        assertEquals(4, Comparison.NE.asNum());
+        assertEquals(5, Comparison.GT.asNum());
+        assertEquals(6, Comparison.GE.asNum());
     }
 
 }

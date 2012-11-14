@@ -151,12 +151,32 @@ public class SearchTermBuilder {
         return this;
     }
 
+    public SearchTermBuilder sentNow(Comparison comparison, long offset) {
+        return sentNow(Op.and, comparison, offset);
+    }
+
+    public SearchTermBuilder sentNow(Op op, Comparison comparison, long offset) {
+        NowSearchTerm st = new NowSearchTerm(comparison.asNum(), true, offset);
+        addTerm(op, st);
+        return this;
+    }
+
     public SearchTermBuilder received(Comparison comparison, Date date) {
         return received(Op.and, comparison, date);
     }
 
     public SearchTermBuilder received(Op op, Comparison comparison, Date date) {
         ReceivedDateTerm st = new ReceivedDateTerm(comparison.asNum(), date);
+        addTerm(op, st);
+        return this;
+    }
+
+    public SearchTermBuilder receivedNow(Comparison comparison, long offset) {
+        return sentNow(Op.and, comparison, offset);
+    }
+
+    public SearchTermBuilder receivedNow(Op op, Comparison comparison, long offset) {
+        NowSearchTerm st = new NowSearchTerm(comparison.asNum(), false, offset);
         addTerm(op, st);
         return this;
     }

@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -29,7 +31,11 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * JavaMail specific converters.
@@ -38,7 +44,11 @@ import org.apache.camel.converter.IOConverter;
  */
 @Converter
 public final class MailConverters {
-    
+
+    private static final String NOW_DATE_FORMAT = "yyyy-MM-dd HH:mm:SS";
+    // the now syntax: "now-24h" or "now - 24h" = the last 24 hours etc.
+    private static final Pattern NOW_PATTERN = Pattern.compile("now\\s?(\\+|\\-)\\s?(.*)");
+
     private MailConverters() {
         //Utility Class
     }
@@ -64,7 +74,7 @@ public final class MailConverters {
     }
 
     /**
-     * Converts the given JavaMail multipart to a String body, where the contenttype of the multipart
+     * Converts the given JavaMail multipart to a String body, where the content-type of the multipart
      * must be text based (ie start with text). Can return null.
      */
     @Converter
@@ -101,7 +111,11 @@ public final class MailConverters {
     }
 
     @Converter
-    public static SearchTerm toSearchTerm(SimpleSearchTerm simple) throws ParseException {
+    public static SearchTerm toSearchTerm(SimpleSearchTerm simple, Exchange exchange) throws ParseException, NoTypeConversionAvailableException {
+        return toSearchTerm(simple, exchange != null ? exchange.getContext().getTypeConverter() : null);
+    }
+
+    public static SearchTerm toSearchTerm(SimpleSearchTerm simple, TypeConverter typeConverter) throws ParseException, NoTypeConversionAvailableException {
         SearchTermBuilder builder = new SearchTermBuilder();
         if (simple.isUnseen()) {
             builder = builder.unseen();
@@ -124,27 +138,71 @@ public final class MailConverters {
             builder = builder.recipient(Message.RecipientType.TO, simple.getTo());
         }
         if (simple.getFromSentDate() != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-            Date date;
-            if ("now".equals(simple.getFromSentDate())) {
-                date = new Date();
+            String s = simple.getFromSentDate();
+            if (s.startsWith("now")) {
+                long offset = extractOffset(s, typeConverter);
+                builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.GE.asNum(), true, offset));
             } else {
-                date = sdf.parse(simple.getFromSentDate());
+                SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
+                Date date = sdf.parse(s);
+                builder = builder.sent(SearchTermBuilder.Comparison.GE, date);
             }
-            builder = builder.sent(SearchTermBuilder.Comparison.GE, date);
         }
         if (simple.getToSentDate() != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-            Date date;
-            if ("now".equals(simple.getToSentDate())) {
-                date = new Date();
+            String s = simple.getFromSentDate();
+            if (s.startsWith("now")) {
+                long offset = extractOffset(s, typeConverter);
+                builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.LE.asNum(), true, offset));
             } else {
-                date = sdf.parse(simple.getToSentDate());
+                SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
+                Date date = sdf.parse(s);
+                builder = builder.sent(SearchTermBuilder.Comparison.LE, date);
             }
-            builder = builder.sent(SearchTermBuilder.Comparison.LE, date);
+        }
+        if (simple.getFromReceivedDate() != null) {
+            String s = simple.getFromSentDate();
+            if (s.startsWith("now")) {
+                long offset = extractOffset(s, typeConverter);
+                builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.GE.asNum(), false, offset));
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
+                Date date = sdf.parse(s);
+                builder = builder.received(SearchTermBuilder.Comparison.GE, date);
+            }
+        }
+        if (simple.getToReceivedDate() != null) {
+            String s = simple.getFromSentDate();
+            if (s.startsWith("now")) {
+                long offset = extractOffset(s, typeConverter);
+                builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.LE.asNum(), false, offset));
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
+                Date date = sdf.parse(s);
+                builder = builder.received(SearchTermBuilder.Comparison.LE, date);
+            }
         }
 
         return builder.build();
+    }
+
+    private static long extractOffset(String now, TypeConverter typeConverter) throws NoTypeConversionAvailableException {
+        Matcher matcher = NOW_PATTERN.matcher(now);
+        if (matcher.matches()) {
+            String op = matcher.group(1);
+            String remainder = matcher.group(2);
+
+            // convert remainder to a time millis (eg we have a String -> long converter that supports
+            // syntax with hours, days, minutes: eg 5h30m for 5 hours and 30 minutes).
+            long offset = typeConverter.mandatoryConvertTo(long.class, remainder);
+
+            if ("+".equals(op)) {
+                return offset;
+            } else {
+                return -1 * offset;
+            }
+        }
+
+        return 0;
     }
 
 }

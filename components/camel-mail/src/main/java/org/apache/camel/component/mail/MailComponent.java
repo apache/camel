@@ -76,7 +76,7 @@ public class MailComponent extends DefaultComponent {
             // use SimpleSearchTerm as POJO to store the configuration and then convert that to the actual SearchTerm
             SimpleSearchTerm sst = new SimpleSearchTerm();
             setProperties(sst, sstParams);
-            SearchTerm st = getCamelContext().getTypeConverter().mandatoryConvertTo(SearchTerm.class, sst);
+            SearchTerm st = MailConverters.toSearchTerm(sst, getCamelContext().getTypeConverter());
             endpoint.setSearchTerm(st);
         }
 
