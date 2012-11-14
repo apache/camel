@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Component;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedResourceEndpointMBean;
 import org.apache.camel.converter.IOConverter;
@@ -92,13 +94,19 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
         return ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), uri);
     }
 
+    @ManagedAttribute(description = "Whether the resource is cached")
     public boolean isContentCache() {
         return contentCache;
     }
-    
+
+    @ManagedOperation(description = "Clears the cached resource, forcing to re-load the resource on next request")
     public void clearContentCache() {
         log.debug("Clearing resource: {} from the content cache", resourceUri);
         buffer = null;
+    }
+
+    public boolean isContentCacheCleared() {
+        return buffer == null;
     }
 
     /**

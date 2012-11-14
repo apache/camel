@@ -65,6 +65,8 @@ public class LanguageProducer extends DefaultProducer {
                 }
                 // create the expression from the script
                 exp = getEndpoint().getLanguage().createExpression(script);
+                // expression was resolved from resource
+                getEndpoint().setContentResolvedFromResource(true);
                 // if we cache then set this as expression on endpoint so we don't re-create it again
                 if (getEndpoint().isContentCache()) {
                     getEndpoint().setExpression(exp);
