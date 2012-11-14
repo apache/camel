@@ -31,11 +31,9 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 
 import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * JavaMail specific converters.
@@ -98,7 +96,7 @@ public final class MailConverters {
     }
 
     /**
-     * Converts the given JavaMail multipart to a InputStream body, where the contenttype of the multipart
+     * Converts the given JavaMail multipart to a InputStream body, where the content-type of the multipart
      * must be text based (ie start with text). Can return null.
      */
     @Converter
@@ -108,11 +106,6 @@ public final class MailConverters {
             return null;
         }
         return IOConverter.toInputStream(s, null);
-    }
-
-    @Converter
-    public static SearchTerm toSearchTerm(SimpleSearchTerm simple, Exchange exchange) throws ParseException, NoTypeConversionAvailableException {
-        return toSearchTerm(simple, exchange != null ? exchange.getContext().getTypeConverter() : null);
     }
 
     public static SearchTerm toSearchTerm(SimpleSearchTerm simple, TypeConverter typeConverter) throws ParseException, NoTypeConversionAvailableException {
