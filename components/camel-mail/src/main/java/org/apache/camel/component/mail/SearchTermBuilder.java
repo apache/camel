@@ -21,6 +21,7 @@ import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.search.AndTerm;
 import javax.mail.search.BodyTerm;
+import javax.mail.search.ComparisonTerm;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.FromStringTerm;
 import javax.mail.search.HeaderTerm;
@@ -47,8 +48,22 @@ public class SearchTermBuilder {
         LE, LT, EQ, NE, GT, GE;
 
         int asNum() {
-            // should start from 1
-            return this.ordinal() + 1;
+            switch (this) {
+            case LE :
+                return ComparisonTerm.LE;
+            case LT :
+                return ComparisonTerm.LT;
+            case EQ :
+                return ComparisonTerm.EQ;
+            case NE :
+                return ComparisonTerm.NE;
+            case GT :
+                return ComparisonTerm.GT;
+            case GE :
+                return ComparisonTerm.GE;
+            default :
+                throw new IllegalArgumentException("Unknown comparison " + this);
+            }
         }
     }
 
