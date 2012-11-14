@@ -19,6 +19,8 @@ package org.apache.camel.component.file;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -32,7 +34,7 @@ import org.apache.camel.impl.JndiRegistry;
 public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
     private final String fileUrl = "file://target/directoryfilter/?recursive=true&filter=#myFilter";
-    private final List<String> names = new ArrayList<String>();
+    private final Set<String> names = new TreeSet<String>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -65,12 +67,15 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
         // check names
         assertEquals(4, names.size());
-        Collections.sort(names);
-        assertEquals("okDir", names.get(0));
+        // copy to list so its easier to index
+        List<String> list = new ArrayList<String>(names);
+        Collections.sort(list);
+
+        assertEquals("okDir", list.get(0));
         // windows or unix paths
-        assertTrue(names.get(0), names.get(1).equals("okDir/hello.txt") || names.get(1).equals("okDir\\hello.txt"));
-        assertEquals("skipDir", names.get(2));
-        assertEquals("skipDir2", names.get(3));
+        assertTrue(list.get(0), list.get(1).equals("okDir/hello.txt") || list.get(1).equals("okDir\\hello.txt"));
+        assertEquals("skipDir", list.get(2));
+        assertEquals("skipDir2", list.get(3));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
