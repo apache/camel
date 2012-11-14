@@ -36,11 +36,11 @@
         </route>
     </camelContext>
 
-    <!-- we use the AntPathMatcherRemoteFileFilter to use ant paths for includes and exlucde -->
+    <!-- we use the AntPathMatcherRemoteFileFilter to use ant paths for includes and exclude -->
     <bean id="myAntFilter" class="org.apache.camel.component.file.AntPathMatcherGenericFileFilter">
-        <!-- include and file in the subfolder that has day in the name -->
+        <!-- include any files in the sub folder that has day in the name -->
         <property name="includes" value="**/subfolder/**/*day*"/>
-        <!-- exclude all files with bad in name or .xml files. Use comma to seperate multiple excludes -->
+        <!-- exclude all files with bad in name or .xml files. Use comma to separate multiple excludes -->
         <property name="excludes" value="**/*bad*,**/*.xml"/>
     </bean>
     <!-- END SNIPPET: example -->
