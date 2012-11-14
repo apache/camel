@@ -31,10 +31,9 @@ public class EventNotifierExchangeSentParallelTest extends EventNotifierExchange
 
         template.sendBodyAndHeader("direct:foo", "Hello World", "foo", "direct:cool,direct:start");
 
+        // wait for the message to be fully done using oneExchangeDone
         assertMockEndpointsSatisfied();
-
-        // give it time to complete
-        Thread.sleep(200);
+        assertTrue(oneExchangeDone.matchesMockWaitTime());
 
         assertEquals(12, events.size());
 
