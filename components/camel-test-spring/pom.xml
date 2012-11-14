@@ -31,7 +31,6 @@
     <description>Camel Testing Library using JUnit and Spring</description>
 
     <properties>
-    	<spring-version>${spring31-version}</spring-version>
         <camel.osgi.export.pkg>org.apache.camel.test.*</camel.osgi.export.pkg>
     </properties>
 
