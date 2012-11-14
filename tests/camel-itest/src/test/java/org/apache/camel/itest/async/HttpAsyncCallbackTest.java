@@ -18,6 +18,8 @@ package org.apache.camel.itest.async;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +31,8 @@ import org.junit.Test;
  * @version 
  */
 public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
+
+    private static final CountDownLatch LATCH = new CountDownLatch(3);
 
     @Test
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
@@ -46,12 +50,10 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
         template.asyncCallbackRequestBody(url, "Hadrian", callback);
         template.asyncCallbackRequestBody(url, "Willem", callback);
 
-        // give on completion time to complete properly before we do assertions on its size
-        // TODO: improve MockEndpoint.assertIsSatisfied(long) to make this sleep unnecessary
-        Thread.sleep(2200);
-
         // END SNIPPET: e3
         assertMockEndpointsSatisfied();
+
+        assertTrue("Should get 3 callbacks", LATCH.await(10, TimeUnit.SECONDS));
 
         // assert that we got all the correct data in our callback
         assertEquals(3, callback.getData().size());
@@ -74,6 +76,8 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
             // this method is invoked when the exchange was a success and we can get the response
             String body = exchange.getOut().getBody(String.class);
             data.add(body);
+
+            LATCH.countDown();
         }
 
         public List<String> getData() {
