@@ -17,12 +17,9 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.slf4j.Logger;
@@ -33,8 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MarkerFileExclusiveReadLockStrategyReadLockFailedTest extends ContextTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategyReadLockFailedTest.class);
-    
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/readlock/");
@@ -43,50 +38,33 @@ public class MarkerFileExclusiveReadLockStrategyReadLockFailedTest extends Conte
     }
 
     public void testReadLockFailed() throws Exception {
+        // should only pickup the 2nd file, as we have a marker file for the first file
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/readlock/out/file1.dat");
+        mock.expectedBodiesReceived("Bye World");
 
         writeFiles();
-       
 
+        // wait for files to be fully done using oneExchangeDone
         assertMockEndpointsSatisfied();
+        assertTrue(oneExchangeDone.matchesMockWaitTime());
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/readlock/out/file1.dat").getAbsoluteFile());
-        String[] lines = content.split(LS);
-        for (int i = 0; i < 20; i++) {
-            assertEquals("Line " + i, lines[i]);
-        }
-        
-        // wait for a while for camel to clean up the file
-        Thread.sleep(500);
+        // we should generate an output for the 2nd file
+        assertFileExists("target/readlock/out/file2.dat");
 
-        assertFileDoesNotExists("target/readlock/in/file1.dat.camelLock");
-        assertFileExists("target/readlock/in/file2.dat.camelLock");
-
-        assertFileDoesNotExists("target/readlock/in/file1.dat");
-        assertFileExists("target/readlock/in/file2.dat");
-      
+        // and the marker file from the 1st file is still there, and the 1st file as well
+        assertFileExists("target/readlock/in/file1.dat.camelLock");
+        assertFileExists("target/readlock/in/file1.dat");
     }
 
     private void writeFiles() throws Exception {
-        LOG.debug("Writing files...");
-        // create a camelLock file first
-        File lock = new File("target/readlock/in/file2.dat.camelLock");
-        lock.createNewFile();
-        
-        FileOutputStream fos = new FileOutputStream("target/readlock/in/file1.dat");
-        FileOutputStream fos2 = new FileOutputStream("target/readlock/in/file2.dat");
-        for (int i = 0; i < 20; i++) {
-            fos.write(("Line " + i + LS).getBytes());
-            fos2.write(("Line " + i + LS).getBytes());
-            LOG.debug("Writing line " + i);
-        }
+        log.debug("Writing files...");
 
-        fos.flush();
-        fos.close();
-        fos2.flush();
-        fos2.close();
+        // create a camelLock file first, so file1 will not be picked up
+        File lock = new File("target/readlock/in/file1.dat.camelLock");
+        lock.createNewFile();
+
+        template.sendBodyAndHeader("file:target/readlock/in", "Hello World", Exchange.FILE_NAME, "file1.dat");
+        template.sendBodyAndHeader("file:target/readlock/in", "Bye World", Exchange.FILE_NAME, "file2.dat");
     }
 
     @Override
@@ -95,15 +73,11 @@ public class MarkerFileExclusiveReadLockStrategyReadLockFailedTest extends Conte
             @Override
             public void configure() throws Exception {
                 from("file:target/readlock/in?readLock=markerFile")
-                        .to("file:target/readlock/out", "mock:result");
+                        .to("file:target/readlock/out")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
-    }
-
-   
-    private static void assertFileDoesNotExists(String filename) {
-        File file = new File(filename).getAbsoluteFile();
-        assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
     }
 
 }
