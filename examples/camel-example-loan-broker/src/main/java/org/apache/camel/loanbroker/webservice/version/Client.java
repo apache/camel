@@ -38,7 +38,8 @@ public final class Client {
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(address);
         clientBean.setServiceClass(LoanBrokerWS.class);
-        clientBean.setBus(BusFactory.getDefaultBus());
+        // just create a new bus for use
+        clientBean.setBus(BusFactory.newInstance().createBus());
         return (LoanBrokerWS) proxyFactory.create();
     }
 

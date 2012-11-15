@@ -104,7 +104,7 @@ public class CxfConsumerTest extends CamelTestSupport {
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(SIMPLE_ENDPOINT_ADDRESS);
         clientBean.setServiceClass(HelloService.class);
-        clientBean.setBus(BusFactory.getDefaultBus());
+        clientBean.setBus(BusFactory.newInstance().createBus());
 
         HelloService client = (HelloService) proxyFactory.create();
 
