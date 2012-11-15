@@ -92,11 +92,6 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
             return;
         }     
         
-        // skip test on aix
-        if (TestHelper.isPlatform("aix")) {
-            return;
-        }
-
         // START SNIPPET: producer
 
         Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint", new Processor() {
