@@ -25,6 +25,7 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,6 +67,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
         ClientProxyFactoryBean factory = new ClientProxyFactoryBean();
         factory.setServiceClass(BareSoapService.class);
         factory.setAddress(PROXY_URL);
+        factory.setBus(BusFactory.newInstance().createBus());
         BareSoapService client = (BareSoapService) factory.create();
 
         client.doSomething();

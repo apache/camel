@@ -30,6 +30,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
@@ -145,7 +146,8 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);
-        clientBean.setServiceClass(HelloService.class); 
+        clientBean.setServiceClass(HelloService.class);
+        clientBean.setBus(BusFactory.newInstance().createBus());
         
         HelloService client = (HelloService) proxyFactory.create();
         return client;
