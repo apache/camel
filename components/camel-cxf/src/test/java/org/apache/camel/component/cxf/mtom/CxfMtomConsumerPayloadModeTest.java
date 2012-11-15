@@ -70,11 +70,6 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             return;
         }
 
-        // skip test on aix
-        if (TestHelper.isPlatform("aix")) {
-            return;
-        }
-
         context.createProducerTemplate().send("cxf:bean:consumerEndpoint", new Processor() {
 
             public void process(Exchange exchange) throws Exception {

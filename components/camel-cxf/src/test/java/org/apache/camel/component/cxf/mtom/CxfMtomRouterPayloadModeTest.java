@@ -78,11 +78,6 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
             return;
         }
 
-        // skip test on aix
-        if (TestHelper.isPlatform("aix")) {
-            return;
-        }
-        
         Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
         Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
 

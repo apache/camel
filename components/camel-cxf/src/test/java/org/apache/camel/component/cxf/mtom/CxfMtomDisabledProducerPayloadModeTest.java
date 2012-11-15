@@ -78,11 +78,6 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             return;
         }
 
-        // skip test on aix
-        if (TestHelper.isPlatform("aix")) {
-            return;
-        }
-
         Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint", new Processor() {
 
             public void process(Exchange exchange) throws Exception {

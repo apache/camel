@@ -76,11 +76,6 @@ public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
             return;
         }
 
-        // skip test on aix
-        if (TestHelper.isPlatform("aix")) {
-            return;
-        }
-
         final Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
         final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
         

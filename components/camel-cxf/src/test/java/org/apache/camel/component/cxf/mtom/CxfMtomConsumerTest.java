@@ -100,11 +100,6 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
             return;
         }
 
-        // skip test on aix
-        if (TestHelper.isPlatform("aix")) {
-            return;
-        }
-
         Holder<byte[]> photo = new Holder<byte[]>("RequestFromCXF".getBytes("UTF-8"));
         Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
 
