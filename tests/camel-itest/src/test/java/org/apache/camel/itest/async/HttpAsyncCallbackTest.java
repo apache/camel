@@ -37,7 +37,6 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
     @Test
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(3);
         mock.expectedBodiesReceivedInAnyOrder("Hello Claus", "Hello Hadrian", "Hello Willem");
 
         // START SNIPPET: e3
@@ -56,7 +55,6 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
         assertTrue("Should get 3 callbacks", LATCH.await(10, TimeUnit.SECONDS));
 
         // assert that we got all the correct data in our callback
-        assertEquals(3, callback.getData().size());
         assertTrue("Claus is missing", callback.getData().contains("Hello Claus"));
         assertTrue("Hadrian is missing", callback.getData().contains("Hello Hadrian"));
         assertTrue("Willem is missing", callback.getData().contains("Hello Willem"));
@@ -69,7 +67,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
      */
     private static class MyCallback extends SynchronizationAdapter {
 
-        private List<String> data = new ArrayList<String>();
+        private final List<String> data = new ArrayList<String>();
 
         @Override
         public void onComplete(Exchange exchange) {
@@ -77,6 +75,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
             String body = exchange.getOut().getBody(String.class);
             data.add(body);
 
+            // the latch is used for testing purposes
             LATCH.countDown();
         }
 
@@ -93,7 +92,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // The mocks are here for unit test
-                // Simulate a slow http service (delaying 1 sec) we want to invoke async
+                // Simulate a slow http service (delaying a bit) we want to invoke async
                 from("jetty:http://0.0.0.0:" + getPort() + "/myservice")
                     .delay(300)
                     .transform(body().prepend("Hello "))
