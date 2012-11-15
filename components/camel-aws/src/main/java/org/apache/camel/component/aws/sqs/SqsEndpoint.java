@@ -110,7 +110,10 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         }
         if (getConfiguration().getPolicy() != null) {
             request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
-        }        
+        }
+        if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
+            request.getAttributes().put(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+        }
         LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
         
         CreateQueueResult queueResult = client.createQueue(request);
@@ -134,7 +137,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         if (getConfiguration().getPolicy() != null) {
             request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
         }
-        
+        if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
+            request.getAttributes().put(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+        }
         if (!request.getAttributes().isEmpty()) {
             LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
             client.setQueueAttributes(request);
