@@ -40,9 +40,6 @@ public class DataSetEndpointTest extends ContextTestSupport {
         endpoint.setEndpointUriIfNotSpecified("dataset://foo");
         endpoint.setDataSet(new SimpleDataSet(2));
 
-        endpoint.reset();
-        endpoint.setMinRate(1);
-        assertEquals(1, endpoint.getMinRate());
         assertEquals(0, endpoint.getPreloadSize());
         assertEquals(0, endpoint.getConsumeDelay());
         assertEquals(3, endpoint.getProduceDelay());
@@ -55,7 +52,6 @@ public class DataSetEndpointTest extends ContextTestSupport {
             }
         });
         context.start();
-        endpoint.start();
 
         endpoint.assertIsSatisfied();
     }
@@ -78,7 +74,6 @@ public class DataSetEndpointTest extends ContextTestSupport {
             }
         });
         context.start();
-        endpoint.start();
 
         endpoint.assertIsSatisfied();
     }
@@ -101,7 +96,6 @@ public class DataSetEndpointTest extends ContextTestSupport {
             }
         });
         context.start();
-        endpoint.start();
 
         endpoint.assertIsSatisfied();
         assertTrue(reported.get());
@@ -137,7 +131,6 @@ public class DataSetEndpointTest extends ContextTestSupport {
             }
         });
         context.start();
-        endpoint.start();
 
         endpoint.assertIsSatisfied();
     }
