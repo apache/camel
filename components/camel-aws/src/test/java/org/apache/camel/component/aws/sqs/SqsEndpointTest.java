@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.ListQueuesResult;
+
 import org.apache.camel.impl.DefaultCamelContext;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.ListQueuesResult;
 
 public class SqsEndpointTest {
     
