@@ -43,29 +43,27 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     }
 
     public void testInclude() throws Exception {
-
-        template.sendBodyAndHeader("file://target/files/ant-path-1/x/y/z", "Hello World", Exchange.FILE_NAME, "report.txt");
-
         MockEndpoint mock = getMockEndpoint("mock:result1");
         mock.expectedBodiesReceivedInAnyOrder("Hello World");
 
+        template.sendBodyAndHeader("file://target/files/ant-path-1/x/y/z", "Hello World", Exchange.FILE_NAME, "report.txt");
+
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
     }
 
     public void testExclude() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result2");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World 2");
 
         template.sendBodyAndHeader("file://target/files/ant-path-2/x/y/z", "Hello World 1", Exchange.FILE_NAME, "report.bak");
         template.sendBodyAndHeader("file://target/files/ant-path-2/x/y/z", "Hello World 2", Exchange.FILE_NAME, "report.txt");
 
-        MockEndpoint mock = getMockEndpoint("mock:result2");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World 2");
-
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
     }
 
     public void testIncludesAndExcludes() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result3");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 4");
 
         template.sendBodyAndHeader("file://target/files/ant-path-3/x/y/z", "Hello World 1", Exchange.FILE_NAME, "a.pdf");
         template.sendBodyAndHeader("file://target/files/ant-path-3/x/y/z", "Hello World 2", Exchange.FILE_NAME, "m.pdf");
@@ -74,31 +72,24 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/files/ant-path-3/x/y/z", "Hello World 5", Exchange.FILE_NAME, "b.bak");
         template.sendBodyAndHeader("file://target/files/ant-path-3/x/y/z", "Hello World 6", Exchange.FILE_NAME, "m.bak");
 
-        MockEndpoint mock = getMockEndpoint("mock:result3");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 4");
-
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
     }
 
     public void testIncludesAndExcludesAndFilter() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result4");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World 3");
 
         template.sendBodyAndHeader("file://target/files/ant-path-4/x/y/z", "Hello World 1", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader("file://target/files/ant-path-4/x/y/z", "Hello World 2", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader("file://target/files/ant-path-4/x/y/z", "Hello World 3", Exchange.FILE_NAME, "c.txt");
 
-        MockEndpoint mock = getMockEndpoint("mock:result4");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World 3");
-
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-
                 from("file://target/files/ant-path-1?recursive=true&antInclude=**/*.txt").convertBodyTo(String.class).to("mock:result1");
 
                 from("file://target/files/ant-path-2?recursive=true&antExclude=**/*.bak").convertBodyTo(String.class).to("mock:result2");
