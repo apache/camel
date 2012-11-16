@@ -49,6 +49,7 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
+import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
@@ -93,6 +94,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
     @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
     @XmlElement(required = false, name = "xmljson", type = XmlJsonDataFormat.class),
+    @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
     @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
     @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
     @XmlElement(required = false, name = "zip", type = ZipDataFormat.class)}
