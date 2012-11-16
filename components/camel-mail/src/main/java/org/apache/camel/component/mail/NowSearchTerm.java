@@ -76,20 +76,20 @@ public class NowSearchTerm extends ComparisonTerm {
 
     private static boolean match(Date d1, Date d2, int comparison) {
         switch (comparison) {
-            case LE:
-                return d1.before(d2) || d1.equals(d2);
-            case LT:
-                return d1.before(d2);
-            case EQ:
-                return d1.equals(d2);
-            case NE:
-                return !d1.equals(d2);
-            case GT:
-                return d1.after(d2);
-            case GE:
-                return d1.after(d2) || d1.equals(d2);
-            default:
-                return false;
+        case LE:
+            return d1.before(d2) || d1.equals(d2);
+        case LT:
+            return d1.before(d2);
+        case EQ:
+            return d1.equals(d2);
+        case NE:
+            return !d1.equals(d2);
+        case GT:
+            return d1.after(d2);
+        case GE:
+            return d1.after(d2) || d1.equals(d2);
+        default:
+            return false;
         }
     }
 
@@ -112,6 +112,10 @@ public class NowSearchTerm extends ComparisonTerm {
         }
 
         return true;
+    }
+    
+    public int hashCode() {
+        return comparison;
     }
 
 }
