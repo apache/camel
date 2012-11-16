@@ -19,8 +19,12 @@ package org.apache.camel.component.jmx;
 import java.lang.management.ManagementFactory;
 import java.util.UUID;
 
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
 import javax.management.NotificationFilter;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.management.monitor.CounterMonitor;
 import javax.management.monitor.GaugeMonitor;
 import javax.management.monitor.Monitor;
@@ -52,9 +56,12 @@ public class JMXMonitorConsumer extends JMXConsumer {
         Monitor bean = null;
         if (ep.getMonitorType().equals("counter")) {
             CounterMonitor counter = new CounterMonitor();
-            counter.setInitThreshold(ep.getInitThreshold());
-            counter.setOffset(ep.getOffset());
-            counter.setModulus(ep.getModulus());
+            Number initThreshold = convertNumberToAttributeType(ep.getInitThreshold(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number offset = convertNumberToAttributeType(ep.getOffset(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number modulus = convertNumberToAttributeType(ep.getModulus(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            counter.setInitThreshold(initThreshold);
+            counter.setOffset(offset);
+            counter.setModulus(modulus);
             counter.setDifferenceMode(ep.isDifferenceMode());
             counter.setNotify(true);
             bean = counter;
@@ -63,22 +70,9 @@ public class JMXMonitorConsumer extends JMXConsumer {
             gm.setNotifyHigh(ep.isNotifyHigh());
             gm.setNotifyLow(ep.isNotifyLow());
             gm.setDifferenceMode(ep.isDifferenceMode());
-            Object attr = ManagementFactory.getPlatformMBeanServer().getAttribute(ep.getJMXObjectName(), ep.getObservedAttribute());
-            Double highValue = ep.getThresholdHigh();
-            Double lowValue = ep.getThresholdLow();
-            if (attr instanceof Byte) {
-                gm.setThresholds(highValue.byteValue(), lowValue.byteValue());
-            } else if  (attr instanceof Integer) {
-                gm.setThresholds(highValue.intValue(), lowValue.intValue());
-            } else if (attr instanceof Short) {
-                gm.setThresholds(highValue.shortValue(), lowValue.shortValue());
-            } else if (attr instanceof Long) {
-                gm.setThresholds(highValue.longValue(), lowValue.longValue());
-            } else if (attr instanceof Float) {
-                gm.setThresholds(highValue.floatValue(), lowValue.floatValue());
-            } else {
-                gm.setThresholds(highValue, lowValue);
-            }
+            Number highValue = convertNumberToAttributeType(ep.getThresholdHigh(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number lowValue = convertNumberToAttributeType(ep.getThresholdLow(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            gm.setThresholds(highValue, lowValue);
             bean = gm;
         } else if (ep.getMonitorType().equals("string")) {
             StringMonitor sm = new StringMonitor();
@@ -110,4 +104,21 @@ public class JMXMonitorConsumer extends JMXConsumer {
         ManagementFactory.getPlatformMBeanServer().unregisterMBean(mMonitorObjectName);
     }
 
+    private Number convertNumberToAttributeType(Number toConvert, ObjectName jmxObjectName, String observedAttribute)
+        throws InstanceNotFoundException, ReflectionException, AttributeNotFoundException, MBeanException {
+        Object attr = ManagementFactory.getPlatformMBeanServer().getAttribute(jmxObjectName, observedAttribute);
+        if (attr instanceof Byte) {
+            return toConvert != null ? toConvert.byteValue() : null;
+        } else if (attr instanceof Integer) {
+            return toConvert != null ? toConvert.intValue() : null;
+        } else if (attr instanceof Short) {
+            return toConvert != null ? toConvert.shortValue() : null;
+        } else if (attr instanceof Long) {
+            return toConvert != null ? toConvert.longValue() : null;
+        } else if (attr instanceof Float) {
+            return toConvert != null ? toConvert.floatValue() : null;
+        } else {
+            return toConvert;
+        }
+    }
 }

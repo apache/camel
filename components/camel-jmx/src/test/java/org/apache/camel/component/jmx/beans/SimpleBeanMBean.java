@@ -38,4 +38,7 @@ public interface SimpleBeanMBean extends Serializable {
 
     Integer getMonitorNumber();
     void setMonitorNumber(Integer aMonitorNumber);
+
+    Long getLongNumber();
+    void setLongNumber(Long aMonitorNumber);
 }
