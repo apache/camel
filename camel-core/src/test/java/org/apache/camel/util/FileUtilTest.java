@@ -165,6 +165,15 @@ public class FileUtilTest extends TestCase {
         }
     }
 
+    public void testCompactPathSeparator() {
+        assertEquals(null, FileUtil.compactPath(null, '\''));
+        assertEquals("..\\foo", FileUtil.compactPath("..\\foo", '\\'));
+        assertEquals("../foo", FileUtil.compactPath("../foo", '/'));
+
+        assertEquals("../foo/bar", FileUtil.compactPath("../foo\\bar", '/'));
+        assertEquals("..\\foo\\bar", FileUtil.compactPath("../foo\\bar", '\\'));
+    }
+
     public void testDefaultTempFileSuffixAndPrefix() throws Exception {
         File tmp = FileUtil.createTempFile("tmp-", ".tmp");
         assertNotNull(tmp);

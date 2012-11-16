@@ -206,14 +206,25 @@ public final class FileUtil {
      * and uses OS specific file separators (eg {@link java.io.File#separator}).
      */
     public static String compactPath(String path) {
+        return compactPath(path, File.separatorChar);
+    }
+
+    /**
+     * Compacts a path by stacking it and reducing <tt>..</tt>,
+     * and uses the given separator.
+     */
+    public static String compactPath(String path, char separator) {
         if (path == null) {
             return null;
         }
         
         // only normalize if contains a path separator
-        if (path.indexOf(File.separator) == -1) {
+        if (path.indexOf('/') == -1 && path.indexOf('\\') == -1)  {
             return path;
         }
+
+        // need to normalize path before compacting
+        path = normalizePath(path);
 
         // preserve ending slash if given in input path
         boolean endsWithSlash = path.endsWith("/") || path.endsWith("\\");
@@ -222,11 +233,9 @@ public final class FileUtil {
         boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
         
         Stack<String> stack = new Stack<String>();
-        
-        String separatorRegex = File.separator;
-        if (FileUtil.isWindows()) {
-            separatorRegex = "\\\\";
-        }
+
+        // separator can either be windows or unix style
+        String separatorRegex = "\\\\|/";
         String[] parts = path.split(separatorRegex);
         for (String part : parts) {
             if (part.equals("..") && !stack.isEmpty() && !"..".equals(stack.peek())) {
@@ -243,18 +252,18 @@ public final class FileUtil {
         StringBuilder sb = new StringBuilder();
         
         if (startsWithSlash) {
-            sb.append(File.separator);
+            sb.append(separator);
         }
         
         for (Iterator<String> it = stack.iterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
-                sb.append(File.separator);
+                sb.append(separator);
             }
         }
 
         if (endsWithSlash) {
-            sb.append(File.separator);
+            sb.append(separator);
         }
 
         return sb.toString();
