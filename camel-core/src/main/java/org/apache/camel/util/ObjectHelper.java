@@ -905,7 +905,8 @@ public final class ObjectHelper {
      * @return the modified or unmodified string if there were no changes
      */
     private static String resolveUriPath(String name) {
-        return FileUtil.compactPath(name);
+        // compact the path and use / as separator as that's used for loading resources on the classpath
+        return FileUtil.compactPath(name, '/');
     }
 
     /**
