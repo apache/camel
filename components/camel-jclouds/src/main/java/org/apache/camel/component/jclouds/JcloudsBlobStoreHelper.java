@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jclouds;
 
 import java.io.InputStream;
@@ -35,10 +34,6 @@ public final class JcloudsBlobStoreHelper {
 
     /**
      * Creates all directories that are part of the blobName.
-     *
-     * @param blobStore
-     * @param container
-     * @param blobName
      */
     public static void mkDirs(BlobStore blobStore, String container, String blobName) {
         if (blobStore != null && !Strings.isNullOrEmpty(blobName) && blobName.contains("/")) {
@@ -62,10 +57,6 @@ public final class JcloudsBlobStoreHelper {
 
     /**
      * Returns the {@link Location} that matches the locationId.
-     *
-     * @param blobStore
-     * @param locationId
-     * @return
      */
     public static Location getLocationById(BlobStore blobStore, String locationId) {
         if (blobStore != null && !Strings.isNullOrEmpty(locationId)) {
@@ -80,11 +71,6 @@ public final class JcloudsBlobStoreHelper {
 
     /**
      * Writes {@link Payload} to the the {@link BlobStore}.
-     *
-     * @param blobStore
-     * @param container
-     * @param blobName
-     * @param payload
      */
     public static void writeBlob(BlobStore blobStore, String container, String blobName, Payload payload) {
         if (blobName != null && payload != null) {
@@ -96,10 +82,6 @@ public final class JcloudsBlobStoreHelper {
 
     /**
      * Reads from a {@link BlobStore}. It returns an Object.
-     *
-     * @param container
-     * @param blobName
-     * @return
      */
     public static InputStream readBlob(BlobStore blobStore, String container, String blobName) {
         InputStream is = null;

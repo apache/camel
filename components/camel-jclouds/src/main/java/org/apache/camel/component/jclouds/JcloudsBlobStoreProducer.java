@@ -50,7 +50,9 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         String blobName = getBlobName(exchange);
         String operation = getOperation(exchange);
 
-        LOG.trace("Processing {} operation on '{}'", operation, container + "/" + blobName);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing {} operation on '{}'", operation, container + "/" + blobName);
+        }
         if (JcloudsConstants.GET.equals(operation)) {
             exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName));
         } else {
@@ -61,9 +63,6 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
 
     /**
      * Retrieves the blobName from the URI or from the exchange headers. The header will take precedence over the URI.
-     *
-     * @param exchange
-     * @return
      */
     protected String getBlobName(Exchange exchange) {
         String blobName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getBlobName();
@@ -75,9 +74,6 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
 
     /**
      * Retrieves the containerName from the URI or from the exchange headers. The header will take precedence over the URI.
-     *
-     * @param exchange
-     * @return
      */
     protected String getContainerName(Exchange exchange) {
         String containerName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getContainer();
@@ -89,9 +85,6 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
 
     /**
      * Retrieves the operation from the URI or from the exchange headers. The header will take precedence over the URI.
-     *
-     * @param exchange
-     * @return
      */
     public String getOperation(Exchange exchange) {
         String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getOperation();
@@ -104,9 +97,6 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
 
     /**
      * Retrieves the locationId from the URI or from the exchange headers. The header will take precedence over the URI.
-     *
-     * @param exchange
-     * @return
      */
     public String getLocationId(Exchange exchange) {
         String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getLocationId();

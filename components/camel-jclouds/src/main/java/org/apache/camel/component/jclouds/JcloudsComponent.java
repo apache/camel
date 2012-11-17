@@ -46,20 +46,20 @@ public class JcloudsComponent extends DefaultComponent {
         }
 
         if (JcloudsConstants.BLOBSTORE.endsWith(endpointType)) {
-            if (uriParts.length >= 2) {
+            if (uriParts != null && uriParts.length >= 2) {
                 String provider = uriParts[1];
                 BlobStore blobStore = getBlobStoreForProvider(provider);
                 endpoint = new JcloudsBlobStoreEndpoint(uri, this, blobStore);
             } else {
-                throw new Exception("Invalid Endpoint URI. It should contains a valid provider name");
+                throw new IllegalArgumentException("Invalid Endpoint URI: " + uri + ". It should contains a valid provider name");
             }
         } else if (JcloudsConstants.COMPUTE.endsWith(endpointType)) {
-            if (uriParts.length >= 2) {
+            if (uriParts != null && uriParts.length >= 2) {
                 String provider = uriParts[1];
                 ComputeService computeService = getComputeServiceForProvider(provider);
                 endpoint = new JcloudsComputeEndpoint(uri, this, computeService);
             } else {
-                throw new Exception("Invalid Endpoint URI. It should contains a valid provider name");
+                throw new IllegalArgumentException("Invalid Endpoint URI: " + uri + ". It should contains a valid provider name");
             }
         }
 

@@ -50,9 +50,10 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testListImages() throws InterruptedException {
-        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_IMAGES);
         result.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_IMAGES);
         result.assertIsSatisfied();
+
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
@@ -67,9 +68,10 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testListHardware() throws InterruptedException {
-        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_HARDWARE);
         result.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_HARDWARE);
         result.assertIsSatisfied();
+
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
@@ -84,9 +86,10 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testListNodes() throws InterruptedException {
-        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
         result.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
         result.assertIsSatisfied();
+
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
@@ -98,11 +101,11 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testCreateAndListNodes() throws InterruptedException {
-        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
-
-        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
         result.expectedMessageCount(2);
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
+        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
         result.assertIsSatisfied();
+
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
@@ -115,6 +118,8 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testCreateAndListWithPredicates() throws InterruptedException {
+        result.expectedMessageCount(6);
+
         //Create a node for the default group
         template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
 
@@ -126,10 +131,9 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         template.sendBodyAndHeaders("direct:start", null, listNodeHeaders("3", "other", null));
         template.sendBodyAndHeaders("direct:start", null, listNodeHeaders("3", "other", "RUNNING"));
 
-        result.expectedMessageCount(6);
         result.assertIsSatisfied();
-        List<Exchange> exchanges = result.getExchanges();
 
+        List<Exchange> exchanges = result.getExchanges();
         Exchange exchange = exchanges.get(3);
         Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
         assertEquals("Nodes should be 2", 2, nodeMetadatas.size());
@@ -153,9 +157,10 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testCreateAndDestroyNode() throws InterruptedException {
-        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
         result.expectedMessageCount(1);
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
         result.assertIsSatisfied();
+
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
@@ -171,7 +176,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
     }
 
     @SuppressWarnings("unchecked")
-    @Ignore("For now not possible to combine stub provider with ssh module, requird for runScript")
+    @Ignore("For now not possible to combine stub provider with ssh module, required for runScript")
     @Test
     public void testRunScript() throws InterruptedException {
         Map<String, Object> runScriptHeaders = new HashMap<String, Object>();
@@ -192,7 +197,6 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      *
      * @param imageId The imageId to use for creating the node.
      * @param group   The group to be assigned to the node.
-     * @return
      */
     protected Map<String, Object> createHeaders(String imageId, String group) {
         Map<String, Object> createHeaders = new HashMap<String, Object>();
@@ -208,7 +212,6 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      *
      * @param nodeId The id of the node to destroy.
      * @param group  The group of the node to destroy.
-     * @return
      */
     protected Map<String, Object> destroyHeaders(String nodeId, String group) {
         Map<String, Object> destroyHeaders = new HashMap<String, Object>();
@@ -227,7 +230,6 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
      *
      * @param nodeId The id of the node to destroy.
      * @param group  The group of the node to destroy.
-     * @return
      */
     protected Map<String, Object> listNodeHeaders(String nodeId, String group, Object state) {
         Map<String, Object> listHeaders = new HashMap<String, Object>();
