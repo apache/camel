@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jclouds;
 
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -40,7 +39,6 @@ public class JcloudsComputeEndpoint extends JcloudsEndpoint {
         super(uri, component);
         this.computeService = computeService;
     }
-
 
     @Override
     public Producer createProducer() throws Exception {

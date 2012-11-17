@@ -39,14 +39,10 @@ public class JcloudsMultipleBlobStoreTest extends CamelTestSupport {
     BlobStoreContext blobStoreContext2 = ContextBuilder.newBuilder("transient").name("b2").credentials("identity", "credential").build(BlobStoreContext.class);
     BlobStore blobStore2 = blobStoreContext2.getBlobStore();
 
-
     @Test
     public void testWithMultipleServices() throws InterruptedException {
         String message1 = "Blob 1";
-        JcloudsBlobStoreHelper.writeBlob(blobStore1, TEST_CONTAINER, TEST_BLOB1, new StringPayload(message1));
-
         String message2 = "Blob 2";
-        JcloudsBlobStoreHelper.writeBlob(blobStore2, TEST_CONTAINER, TEST_BLOB2, new StringPayload(message2));
 
         MockEndpoint mockEndpoint1 = resolveMandatoryEndpoint("mock:results1", MockEndpoint.class);
         mockEndpoint1.expectedBodiesReceived(message1);
@@ -54,23 +50,21 @@ public class JcloudsMultipleBlobStoreTest extends CamelTestSupport {
         MockEndpoint mockEndpoint2 = resolveMandatoryEndpoint("mock:results2", MockEndpoint.class);
         mockEndpoint2.expectedBodiesReceived(message2);
 
+        JcloudsBlobStoreHelper.writeBlob(blobStore1, TEST_CONTAINER, TEST_BLOB1, new StringPayload(message1));
+        JcloudsBlobStoreHelper.writeBlob(blobStore2, TEST_CONTAINER, TEST_BLOB2, new StringPayload(message2));
 
         mockEndpoint1.assertIsSatisfied();
         mockEndpoint2.assertIsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-
         blobStore1.createContainerInLocation(null, TEST_CONTAINER);
         blobStore2.createContainerInLocation(null, TEST_CONTAINER);
-
         ((JcloudsComponent) context.getComponent("jclouds")).setBlobStores(Lists.newArrayList(blobStore1, blobStore2));
 
         return new RouteBuilder() {
             public void configure() {
-
                 from("jclouds:blobstore:b1?container=" + TEST_CONTAINER)
                         .convertBodyTo(String.class)
                         .to("mock:results1");

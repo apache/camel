@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.jclouds.blobstore.BlobStore;
 
-
 public class JcloudsBlobStoreEndpoint extends JcloudsEndpoint {
 
     private String locationId;
@@ -32,13 +31,6 @@ public class JcloudsBlobStoreEndpoint extends JcloudsEndpoint {
 
     private BlobStore blobStore;
 
-    /**
-     * Constructor
-     *
-     * @param uri
-     * @param component
-     * @param blobStore
-     */
     public JcloudsBlobStoreEndpoint(String uri, JcloudsComponent component, BlobStore blobStore) {
         super(uri, component);
         this.blobStore = blobStore;

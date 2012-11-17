@@ -46,20 +46,20 @@ public class JcloudsComponent extends DefaultComponent {
         }
 
         if (JcloudsConstants.BLOBSTORE.endsWith(endpointType)) {
-            if (uriParts.length >= 2) {
+            if (uriParts != null && uriParts.length >= 2) {
                 String provider = uriParts[1];
                 BlobStore blobStore = getBlobStore(provider);
                 endpoint = new JcloudsBlobStoreEndpoint(uri, this, blobStore);
             } else {
-                throw new Exception("Invalid Endpoint URI. It should contains a valid provider name");
+                throw new IllegalArgumentException("Invalid Endpoint URI: " + uri + ". It should contains a valid provider name");
             }
         } else if (JcloudsConstants.COMPUTE.endsWith(endpointType)) {
-            if (uriParts.length >= 2) {
+            if (uriParts != null && uriParts.length >= 2) {
                 String provider = uriParts[1];
                 ComputeService computeService = getComputeService(provider);
                 endpoint = new JcloudsComputeEndpoint(uri, this, computeService);
             } else {
-                throw new Exception("Invalid Endpoint URI. It should contains a valid provider name");
+                throw new IllegalArgumentException("Invalid Endpoint URI: \" + uri + \". It should contains a valid provider name");
             }
         }
 
@@ -72,7 +72,7 @@ public class JcloudsComponent extends DefaultComponent {
      * @param predicate The blobstore context name, provider or api.
      * @return The matching {@link BlobStore}
      */
-    protected BlobStore getBlobStore(String predicate) throws Exception {
+    protected BlobStore getBlobStore(String predicate) throws IllegalArgumentException {
         if (blobStores != null && !blobStores.isEmpty()) {
 
             //First try using name and then fallback to the provider or api.
@@ -89,9 +89,9 @@ public class JcloudsComponent extends DefaultComponent {
                     return blobStore;
                 }
             }
-            throw new Exception(String.format("No blobstore found for:%s", predicate));
+            throw new IllegalArgumentException(String.format("No blobstore found for:%s", predicate));
         } else {
-            throw new Exception("No blobstore available.");
+            throw new IllegalArgumentException("No blobstore available.");
         }
     }
 
@@ -100,7 +100,7 @@ public class JcloudsComponent extends DefaultComponent {
      * @param predicate The compute context name, provider or api.
      * @return The matching {@link ComputeService}
      */
-    protected ComputeService getComputeService(String predicate) throws Exception {
+    protected ComputeService getComputeService(String predicate) throws IllegalArgumentException {
 
         if (computeServices != null && !computeServices.isEmpty()) {
             //First try using name and then fallback to the provider or api.
@@ -117,9 +117,9 @@ public class JcloudsComponent extends DefaultComponent {
                     return computeService;
                 }
             }
-            throw new Exception(String.format("No compute service found for :%s", predicate));
+            throw new IllegalArgumentException(String.format("No compute service found for :%s", predicate));
         } else {
-            throw new Exception("No compute service available.");
+            throw new IllegalArgumentException("No compute service available.");
         }
     }
 
@@ -127,8 +127,6 @@ public class JcloudsComponent extends DefaultComponent {
      * Checks if jclouds {@link Context} supports the name.
      * We need this method as getName is not supported in earlier micro version of 1.5.x.
      * So we use this check to fallback to traditional means of looking up contexts and services, if name is not present.
-     *
-     * @return
      */
     private boolean isNameSupportedByContext() {
         try {

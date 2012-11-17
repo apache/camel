@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jclouds;
 
 import java.io.ByteArrayInputStream;
@@ -33,8 +32,6 @@ import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.junit.Test;
-
-
 
 public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
 
@@ -71,10 +68,8 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         assertEquals(MESSAGE, result);
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-
         blobStore.createContainerInLocation(null, TEST_CONTAINER);
         ((JcloudsComponent) context.getComponent("jclouds")).setBlobStores(Lists.newArrayList(blobStore));
 

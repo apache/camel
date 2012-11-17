@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jclouds;
 
 import com.google.common.collect.Lists;
@@ -44,28 +43,25 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     @Test
     public void testBlobStoreGetOneBlob() throws InterruptedException {
         String message = "Some message";
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB1, new StringPayload(message));
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
-        mockEndpoint.expectedMessageCount(1);
-
         mockEndpoint.expectedBodiesReceived(message);
 
-        mockEndpoint.assertIsSatisfied();
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB1, new StringPayload(message));
 
+        mockEndpoint.assertIsSatisfied();
     }
 
     @Test
     public void testBlobStoreGetTwoBlobs() throws InterruptedException {
         String message1 = "Blob 1";
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB1, new StringPayload(message1));
-
         String message2 = "Blob 2";
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB2, new StringPayload(message2));
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
-        mockEndpoint.expectedMessageCount(2);
         mockEndpoint.expectedBodiesReceived(message1, message2);
+
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB1, new StringPayload(message1));
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER, TEST_BLOB2, new StringPayload(message2));
 
         mockEndpoint.assertIsSatisfied();
     }
@@ -73,11 +69,11 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     @Test
     public void testBlobStoreWithDirectory() throws InterruptedException {
         String message1 = "Blob in directory";
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_DIR, new StringPayload(message1));
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results-in-dir", MockEndpoint.class);
-        mockEndpoint.expectedMessageCount(1);
         mockEndpoint.expectedBodiesReceived(message1);
+
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_DIR, new StringPayload(message1));
 
         mockEndpoint.assertIsSatisfied();
     }
@@ -86,26 +82,24 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     public void testBlobStoreWithMultipleDirectories() throws InterruptedException {
         String message1 = "Blob in directory";
         String message2 = "Blob in other directory";
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_DIR, new StringPayload(message1));
-        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_OTHER, new StringPayload(message2));
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results-in-dir", MockEndpoint.class);
-        mockEndpoint.expectedMessageCount(1);
         mockEndpoint.expectedBodiesReceived(message1);
+
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_DIR, new StringPayload(message1));
+        JcloudsBlobStoreHelper.writeBlob(blobStore, TEST_CONTAINER_WITH_DIR, TEST_BLOB_IN_OTHER, new StringPayload(message2));
 
         mockEndpoint.assertIsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-
         blobStore.createContainerInLocation(null, TEST_CONTAINER);
         blobStore.createContainerInLocation(null, TEST_CONTAINER_WITH_DIR);
         ((JcloudsComponent) context.getComponent("jclouds")).setBlobStores(Lists.newArrayList(blobStore));
 
         return new RouteBuilder() {
             public void configure() {
-
                 from("jclouds:blobstore:transient?container=" + TEST_CONTAINER)
                         .convertBodyTo(String.class)
                         .to("mock:results");
