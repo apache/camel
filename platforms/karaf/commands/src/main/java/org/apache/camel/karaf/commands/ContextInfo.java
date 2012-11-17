@@ -19,6 +19,7 @@ package org.apache.camel.karaf.commands;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -40,6 +41,9 @@ public class ContextInfo extends OsgiCommandSupport {
 
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
     String name;
+
+    @Argument(index = 1, name = "mode", description = "Allows for different display modes (--verbose, etc)", required = false, multiValued = false)
+    String mode;
 
     private CamelController camelController;
 
@@ -113,6 +117,21 @@ public class ContextInfo extends OsgiCommandSupport {
                 Date lastExchangeCompletedTimestamp = (Date) lastExchangeCompletedTimestampObj;
                 System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
             }
+
+            long activeRoutes = 0;
+            long inactiveRoutes = 0;
+            List<Route> routeList = camelContext.getRoutes();
+            for (Route route : routeList) {
+                if (camelContext.getRouteStatus(route.getId()).isStarted()) {
+                    activeRoutes++;
+                } else {
+                    inactiveRoutes++;
+                }
+            }
+
+            System.out.println(StringEscapeUtils.unescapeJava("\tNumber of running routes: " + activeRoutes));
+            System.out.println(StringEscapeUtils.unescapeJava("\tNumber of not running routes: " + inactiveRoutes));
+
         }
 
         System.out.println("");
@@ -131,16 +150,21 @@ public class ContextInfo extends OsgiCommandSupport {
         for (String component : camelContext.getComponentNames()) {
             System.out.println(StringEscapeUtils.unescapeJava("\t" + component));
         }
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mEndpoints\u001B[0m"));
-        for (Endpoint endpoint : camelContext.getEndpoints()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + endpoint.getEndpointUri()));
+
+        if (mode != null && mode.equals("--verbose")) {
+            System.out.println("");
+            System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mEndpoints\u001B[0m"));
+            for (Endpoint endpoint : camelContext.getEndpoints()) {
+                System.out.println(StringEscapeUtils.unescapeJava("\t" + endpoint.getEndpointUri()));
+            }
         }
+
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mRoutes\u001B[0m"));
         for (Route route : camelContext.getRoutes()) {
             System.out.println(StringEscapeUtils.unescapeJava("\t" + route.getId()));
         }
+
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mUsed Languages\u001B[0m"));
         for (String language : camelContext.getLanguageNames()) {
