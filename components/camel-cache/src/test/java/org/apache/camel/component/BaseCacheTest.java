@@ -14,32 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cache;
+package org.apache.camel.component;
 
-import java.io.FileInputStream;
+import org.apache.camel.component.cache.CacheComponent;
+import org.apache.camel.component.cache.FileCacheManagerFactory;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
 
-import net.sf.ehcache.CacheManager;
+/**
+ *
+ */
+public class BaseCacheTest extends CamelTestSupport {
 
-import org.apache.camel.RuntimeCamelException;
+    protected CacheComponent cache;
 
-public class FileCacheManagerFactory extends CacheManagerFactory {
-    private String fileName;
-    
-    public FileCacheManagerFactory(String name) {
-        fileName = name;
-    }
-    
-    public void setFileName(String name) {
-        fileName = name;
-    }
-    
     @Override
-    protected CacheManager createCacheManagerInstance() {
-        try {
-            return CacheManager.create(new FileInputStream(fileName));
-        } catch (Exception exception) {
-            throw new RuntimeCamelException("Error creating CacheManager from file: " + fileName, exception);
-        }
-    }
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
 
+        // use a file cache manager factory to load out test configuration
+        cache = new CacheComponent();
+        cache.setCacheManagerFactory(new FileCacheManagerFactory("src/test/resources/test-ehcache.xml"));
+        jndi.bind("cache", cache);
+
+        return jndi;
+    }
 }

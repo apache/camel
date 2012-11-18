@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor.cache;
 
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.BaseCacheTest;
 import org.apache.camel.component.cache.CacheConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CacheBasedXPathElementReplacerTest extends CamelTestSupport {
+public class CacheBasedXPathElementReplacerTest extends BaseCacheTest {
     private static final transient Logger LOG = LoggerFactory.getLogger(CacheBasedXPathElementReplacerTest.class);
 
     @EndpointInject(uri = "mock:result")
