@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cache;
 
 import java.io.FileInputStream;
@@ -30,15 +29,15 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.BaseCacheTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CacheProducerTest extends CamelTestSupport {
+public class CacheProducerTest extends BaseCacheTest {
     private static final Poetry POETRY;
 
     private static final String FILEPATH_UPDATEDTEST_TXT = "./src/test/resources/updatedtest.txt";

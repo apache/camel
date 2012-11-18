@@ -77,7 +77,7 @@ public class CacheManagerFactoryRefTest extends CamelTestSupport {
     public static class TestingCacheManagerFactory extends CacheManagerFactory {
         @Override
         protected CacheManager createCacheManagerInstance() {
-            return CacheManager.create(getClass().getResourceAsStream("/ehcache.xml"));
+            return CacheManager.create(getClass().getResourceAsStream("/test-ehcache.xml"));
         }
     }
 }

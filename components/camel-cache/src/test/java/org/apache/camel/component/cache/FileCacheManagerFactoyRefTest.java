@@ -23,7 +23,7 @@ public class FileCacheManagerFactoyRefTest extends CacheManagerFactoryRefTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = new JndiRegistry(createJndiContext());
-        testingCacheManagerFactory = new FileCacheManagerFactory("src/main/resources/ehcache.xml");
+        testingCacheManagerFactory = new FileCacheManagerFactory("src/test/resources/test-ehcache.xml");
         jndi.bind("testCacheManagerFactory", testingCacheManagerFactory);
         return jndi;
     }
