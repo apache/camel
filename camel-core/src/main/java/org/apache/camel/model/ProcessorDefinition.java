@@ -369,8 +369,28 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition<?> output : outputs) {
 
+            // allow any custom logic before we create the processor
+            output.preCreateProcessor();
+
             // resolve properties before we create the processor
             resolvePropertyPlaceholders(routeContext, output);
+
+            // resolve constant fields (eg Exchange.FILE_NAME)
+            resolveKnownConstantFields(output);
+
+            // also resolve properties and constant fields on embedded expressions
+            ProcessorDefinition<?> me = (ProcessorDefinition<?>) output;
+            if (me instanceof ExpressionNode) {
+                ExpressionNode exp = (ExpressionNode) me;
+                ExpressionDefinition expressionDefinition = exp.getExpression();
+                if (expressionDefinition != null) {
+                    // resolve properties before we create the processor
+                    resolvePropertyPlaceholders(routeContext, expressionDefinition);
+
+                    // resolve constant fields (eg Exchange.FILE_NAME)
+                    resolveKnownConstantFields(expressionDefinition);
+                }
+            }
 
             Processor processor = null;
             // at first use custom factory
@@ -474,10 +494,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // include additional properties which have the Camel placeholder QName
         // and when the definition parameter is this (otherAttributes belong to this)
         if (processorDefinition != null && processorDefinition.getOtherAttributes() != null) {
-            for (Object key : processorDefinition.getOtherAttributes().keySet()) {
-                QName qname = (QName) key;
-                if (Constants.PLACEHOLDER_QNAME.equals(qname.getNamespaceURI())) {
-                    String local = qname.getLocalPart();
+            for (QName key : processorDefinition.getOtherAttributes().keySet()) {
+                if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
+                    String local = key.getLocalPart();
                     Object value = processorDefinition.getOtherAttributes().get(key);
                     if (value != null && value instanceof String) {
                         // value must be enclosed with placeholder tokens
