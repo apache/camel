@@ -241,7 +241,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     // -------------------------------------------------------------------------
 
     /**
-     * Sets the expression result type to boolean
+     * Sets the expression result type to {@link XPathConstants#BOOLEAN}
      *
      * @return the current builder
      */
@@ -251,7 +251,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     /**
-     * Sets the expression result type to boolean
+     * Sets the expression result type to {@link XPathConstants#NODE}
      *
      * @return the current builder
      */
@@ -261,7 +261,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     /**
-     * Sets the expression result type to boolean
+     * Sets the expression result type to {@link XPathConstants#NODESET}
      *
      * @return the current builder
      */
@@ -271,7 +271,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     /**
-     * Sets the expression result type to boolean
+     * Sets the expression result type to {@link XPathConstants#NUMBER}
      *
      * @return the current builder
      */
@@ -281,7 +281,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     /**
-     * Sets the expression result type to boolean
+     * Sets the expression result type to {@link XPathConstants#STRING}
      *
      * @return the current builder
      */
@@ -291,7 +291,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     /**
-     * Sets the expression result type to boolean
+     * Sets the expression result type to the given {@code resultType} 
      *
      * @return the current builder
      */
