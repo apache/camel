@@ -493,9 +493,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // include additional properties which have the Camel placeholder QName
         // and when the definition parameter is this (otherAttributes belong to this)
         if (processorDefinition != null && processorDefinition.getOtherAttributes() != null) {
-            for (QName key : processorDefinition.getOtherAttributes().keySet()) {
-                if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
-                    String local = key.getLocalPart();
+            for (Object key : processorDefinition.getOtherAttributes().keySet()) {
+                QName qname = (QName) key;
+                if (Constants.PLACEHOLDER_QNAME.equals(qname.getNamespaceURI())) {
+                    String local = qname.getLocalPart();
                     Object value = processorDefinition.getOtherAttributes().get(key);
                     if (value != null && value instanceof String) {
                         // value must be enclosed with placeholder tokens
