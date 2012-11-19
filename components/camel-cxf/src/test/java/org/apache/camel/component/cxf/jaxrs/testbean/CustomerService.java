@@ -17,9 +17,10 @@
 package org.apache.camel.component.cxf.jaxrs.testbean;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,9 +40,9 @@ import javax.ws.rs.core.Response;
  */
 @Path("/customerservice/")
 public class CustomerService {
-    long currentId = 123;
-    Map<Long, Customer> customers = new HashMap<Long, Customer>();
-    Map<Long, Order> orders = new HashMap<Long, Order>();
+    private final AtomicLong currentId = new AtomicLong(123L);
+    private final Map<Long, Customer> customers = new ConcurrentHashMap<Long, Customer>();
+    private final Map<Long, Order> orders = new ConcurrentHashMap<Long, Order>();
 
     public CustomerService() {
         init();
@@ -67,8 +68,8 @@ public class CustomerService {
     @Path("/customers/")
     @Produces("application/xml")
     public List<Customer> getCustomers() {
-        List<Customer> l = new ArrayList<Customer>(customers.values());
-        return l;
+        List<Customer> list = new ArrayList<Customer>(customers.values());
+        return list;
     }
     
 
@@ -90,7 +91,7 @@ public class CustomerService {
     @POST
     @Path("/customers/")
     public Response addCustomer(Customer customer) {
-        customer.setId(++currentId);
+        customer.setId(currentId.incrementAndGet());
 
         customers.put(customer.getId(), customer);
         
@@ -100,7 +101,7 @@ public class CustomerService {
     @POST
     @Path("/customersUniqueResponseCode/")
     public Response addCustomerUniqueResponseCode(Customer customer) {
-        customer.setId(++currentId);
+        customer.setId(currentId.incrementAndGet());
 
         customers.put(customer.getId(), customer);
         
@@ -120,8 +121,8 @@ public class CustomerService {
         } else {
             r = Response.notModified().build();
         }
-        if (idNumber == currentId) {
-            --currentId;
+        if (idNumber == currentId.get()) {
+            currentId.decrementAndGet();
         }
         return r;
     }
