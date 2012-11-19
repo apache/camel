@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 /**
@@ -34,6 +35,7 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
     private MyBatisProcessingStrategy processingStrategy;
     private String statement;
     private StatementType statementType;
+    private ExecutorType executorType;
     private int maxMessagesPerPoll;
 
     public MyBatisEndpoint() {
@@ -85,6 +87,18 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
     public void setStatementType(StatementType statementType) {
         this.statementType = statementType;
+    }
+
+    public ExecutorType getExecutorType() {
+        return executorType;
+    }
+
+    public void setExecutorType(ExecutorType executorType) {
+        this.executorType = executorType;
+    }
+
+    public void setExecutorType(String executorType) {
+        this.executorType = ExecutorType.valueOf(executorType.toUpperCase());
     }
 
     public synchronized MyBatisProcessingStrategy getProcessingStrategy() {
