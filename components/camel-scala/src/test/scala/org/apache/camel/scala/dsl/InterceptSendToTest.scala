@@ -26,7 +26,7 @@ import org.apache.camel.processor.intercept.InterceptSendToFaultTest
 class InterceptSendToTest extends ScalaTestSupport {
 
   @Test
-  def testSimpleSendTo = {
+  def testSimpleSendTo() = {
     "mock:bar" expect {_.received("Hello World")}
     "mock:detour" expect {_.received("Hello World")}
     "mock:foo" expect {_.received("Bye World")}
@@ -56,7 +56,8 @@ class InterceptSendToTest extends ScalaTestSupport {
  */
 class InterceptSendToWithPredicateTest extends ScalaTestSupport {
 
-  def testSendToWithWhen = {
+  @Test
+  def testSendToWithWhen() = {
     "mock:bar" expect {_.received("Hello World", "Hi")}
     "mock:detour" expect {_.received("Hello World")}
     "mock:foo" expect {_.received("Bye World", "Hi")}
@@ -86,7 +87,8 @@ class InterceptSendToWithPredicateTest extends ScalaTestSupport {
  */
 class InterceptSendToSkipOriginalTest extends ScalaTestSupport {
 
-  def testSendToAndSkipOriginal = {
+  @Test
+  def testSendToAndSkipOriginal() = {
     "mock:bar" expect {_.received("Hello World")}
     "mock:detour" expect {_.received("Bye World")}
     "mock:foo" expect {_.count = 0}

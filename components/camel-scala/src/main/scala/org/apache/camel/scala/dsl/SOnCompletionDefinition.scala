@@ -19,7 +19,7 @@ package scala.dsl
 
 import java.util.concurrent.ExecutorService
 import model.{WhenDefinition,OnCompletionDefinition}
-import org.apache.camel.scala.dsl.builder.RouteBuilder;
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
  * Scala enrichment for the Camel OnCompletionDefinition 

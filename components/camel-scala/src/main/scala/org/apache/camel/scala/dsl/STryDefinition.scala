@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import org.apache.camel.model.TryDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
@@ -32,7 +32,7 @@ case class STryDefinition(override val target: TryDefinition)(implicit val build
   }
   
   def ensure = {
-    target.doFinally
+    target.doFinally()
     this
   }
  

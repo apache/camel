@@ -17,7 +17,7 @@
 package org.apache.camel.scala.dsl
 
 import builder.RouteBuilder
-import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.FilterDefinition
 
 /**
  * Scala enrichment for Camel's FilterDefinition

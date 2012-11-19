@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.test;
+package org.apache.camel.scala.test
 
 import _root_.scala.reflect.BeanProperty
 

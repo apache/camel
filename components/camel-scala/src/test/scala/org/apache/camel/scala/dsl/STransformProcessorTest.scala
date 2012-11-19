@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import builder.{RouteBuilder, RouteBuilderSupport}
 import org.apache.camel.processor.TransformProcessorTest
@@ -35,7 +35,6 @@ class STransformProcessorSimpleTest extends TransformProcessorTest with RouteBui
 class STransformProcessorBlockTest extends TransformProcessorTest with RouteBuilderSupport {
 
   override def createRouteBuilder = new RouteBuilder {
-
     "direct:start" ==> {
       transform(_.in[String] + " World!")
       to("mock:result")

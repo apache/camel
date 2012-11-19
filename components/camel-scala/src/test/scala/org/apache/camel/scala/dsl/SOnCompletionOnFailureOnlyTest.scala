@@ -33,7 +33,7 @@ class SOnCompletionOnFailureOnlyTest extends OnCompletionOnFailureOnlyTest with 
       to("mock:result")
     }
 
-    def containsHello(exchange: Exchange) = exchange.getIn().getBody(classOf[String]).contains("Hello");
+    def containsHello(exchange: Exchange) = exchange.getIn.getBody(classOf[String]).contains("Hello")
   }
 
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala
 
 import org.apache.camel.component.mock.MockEndpoint
 

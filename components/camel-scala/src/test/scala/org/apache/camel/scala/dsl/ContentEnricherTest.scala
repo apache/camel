@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel
-package scala.dsl;
+package scala.dsl
 
 import org.junit.Test
 import builder.RouteBuilder
 
 class ContentEnricherTest extends ScalaTestSupport {
+
   @Test
-  def testContentEnricherBySimpleProcessor = {
+  def testContentEnricherBySimpleProcessor() = {
     "mock:a" expect { _.received ("James says hello", 
                                   "Hadrian says hello",
                                   "Willem says hello")}
@@ -31,7 +32,7 @@ class ContentEnricherTest extends ScalaTestSupport {
   }
   
   @Test
-  def testContentEnricherByProcessorDef = {
+  def testContentEnricherByProcessorDef() = {
     "mock:b" expect { _.received ("hello from the UK", 
                                   "hallo vanuit Belgie",
                                   "bonjour de la douce France")}
@@ -40,7 +41,7 @@ class ContentEnricherTest extends ScalaTestSupport {
   }
   
   @Test
-  def testContentEnricherWithVelocity = {
+  def testContentEnricherWithVelocity() = {
     "mock:c" expect { _.received ("<hello>James</hello>", 
                                   "<hello>Hadrian</hello>",
                                   "<hello>Willem</hello>")}

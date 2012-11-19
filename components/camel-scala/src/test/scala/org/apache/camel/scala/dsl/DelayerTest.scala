@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import org.junit.Test
 import builder.RouteBuilder
@@ -25,17 +25,18 @@ import builder.RouteBuilder
 class DelayerTest extends ScalaTestSupport {
   
   @Test
-  def testSimpleDelayer = {
+  def testSimpleDelayer() = {
     "mock:a" expect { _.count = 0 }      
     "seda:a" ! "any given message"   
     "mock:a" assert()
     //messages should only arrive after waiting a while 
     "mock:a" expect { _.count = 1 }
     "mock:a" expect { _.setResultWaitTime(2500)}
-    "mock:a" assert();
+    "mock:a" assert()
   }
-  
-  def testBlockDelayer = {
+
+  @Test
+  def testBlockDelayer() = {
     "mock:b" expect { _.count = 1 }
     "mock:c" expect { _.count = 0 }
     "seda:b" ! "any given message"   

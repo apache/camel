@@ -17,10 +17,9 @@
 package org.apache.camel.scala.dsl
 
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import builder.RouteBuilder
-import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.ThreadPoolRejectedPolicy
 import org.apache.camel.model.ThreadsDefinition
 
 

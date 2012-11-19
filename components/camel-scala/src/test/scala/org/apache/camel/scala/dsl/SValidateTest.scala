@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import builder.{RouteBuilder, RouteBuilderSupport}
 import org.apache.camel.processor.{ValidateRegExpTest, ValidateSimpleTest}
 import org.apache.camel.processor.validation.PredicateValidationException
 import org.apache.camel.CamelExecutionException
-import org.apache.camel.TestSupport.{assertIsInstanceOf}
+import org.apache.camel.TestSupport.assertIsInstanceOf
 
 import junit.framework.Assert.{fail, assertTrue}
 
@@ -30,25 +30,25 @@ import junit.framework.Assert.{fail, assertTrue}
 class SValidateSimpleTest extends ValidateSimpleTest with RouteBuilderSupport {
 
   // we need to override the test method because the validation exception looks slightly different in Scala
-  override def testSendNotMatchingMessage = {
-    resultEndpoint.expectedMessageCount(0);
+  override def testSendNotMatchingMessage() = {
+    resultEndpoint.expectedMessageCount(0)
 
     try {
-      template.sendBody(startEndpoint, "1.1.2010");
-      fail("CamelExecutionException expected");
+      template.sendBody(startEndpoint, "1.1.2010")
+      fail("CamelExecutionException expected")
     } catch {
       case e: CamelExecutionException => {
         // expected
-        assertIsInstanceOf(classOf[PredicateValidationException], e.getCause())
+        assertIsInstanceOf(classOf[PredicateValidationException], e.getCause)
         // as the Expression could be different between the DSL and simple language, here we just check part of the message
         assertTrue("Get a wrong exception message",
-                   e.getCause().getMessage().startsWith("Validation failed for Predicate[org.apache.camel.scala.ScalaPredicate"));
+                   e.getCause.getMessage.startsWith("Validation failed for Predicate[org.apache.camel.scala.ScalaPredicate"))
         assertTrue("Get a wrong exception message",
-                   e.getCause().getMessage().endsWith("Exchange[Message: 1.1.2010]"));
+                   e.getCause.getMessage.endsWith("Exchange[Message: 1.1.2010]"))
       }
     }
 
-    assertMockEndpointsSatisfied();
+    assertMockEndpointsSatisfied()
   }  
 
   override def createRouteBuilder = new RouteBuilder {
@@ -62,25 +62,25 @@ class SValidateSimpleTest extends ValidateSimpleTest with RouteBuilderSupport {
 class SValidateRegExpTest extends ValidateRegExpTest with RouteBuilderSupport {
 
   // we need to override the test method because the validation exception looks slightly different in Scala
-  override def testSendNotMatchingMessage = {
-    resultEndpoint.expectedMessageCount(0);
+  override def testSendNotMatchingMessage() = {
+    resultEndpoint.expectedMessageCount(0)
 
     try {
-      template.sendBody(startEndpoint, "1.1.2010");
-      fail("CamelExecutionException expected");
+      template.sendBody(startEndpoint, "1.1.2010")
+      fail("CamelExecutionException expected")
     } catch {
       case e: CamelExecutionException => {
         // expected
-        assertIsInstanceOf(classOf[PredicateValidationException], e.getCause())
+        assertIsInstanceOf(classOf[PredicateValidationException], e.getCause)
         // as the Expression could be different between the DSL and simple language, here we just check part of the message
         assertTrue("Get a wrong exception message",
-                   e.getCause().getMessage().startsWith("Validation failed for Predicate[org.apache.camel.scala.ScalaPredicate"));
+                   e.getCause.getMessage.startsWith("Validation failed for Predicate[org.apache.camel.scala.ScalaPredicate"))
         assertTrue("Get a wrong exception message",
-                   e.getCause().getMessage().endsWith("Exchange[Message: 1.1.2010]"));
+                   e.getCause.getMessage.endsWith("Exchange[Message: 1.1.2010]"))
       }
     }
 
-    assertMockEndpointsSatisfied();
+    assertMockEndpointsSatisfied()
   }
 
   override def createRouteBuilder = new RouteBuilder {

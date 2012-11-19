@@ -21,7 +21,6 @@ import junit.framework.Assert._
 
 import org.apache.camel.model._
 
-
 /**
  * Test using the low level processor definition API from Scala.
  *
@@ -30,14 +29,14 @@ import org.apache.camel.model._
  */
 class UsingModelTest extends TestCase {
 
-  def testUsingModel: Unit = {
+  def testUsingModel() = {
     val routes = new RoutesDefinition
     val route = routes.route
     route.from("seda:foo")
     val bean = new BeanDefinition("myBean", "someMethod")
     route.addOutput(bean)
 
-    assertEquals("Route[[From[seda:foo]] -> [Bean[ref:myBean method: someMethod]]]", route.toString())
+    assertEquals("Route[[From[seda:foo]] -> [Bean[ref:myBean method: someMethod]]]", route.toString)
   }
 
 }

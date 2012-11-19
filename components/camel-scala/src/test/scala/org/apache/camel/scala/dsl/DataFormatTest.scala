@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.scala
-package dsl;
+package dsl
 
 import org.junit.Test
 import builder.RouteBuilder
@@ -27,12 +27,12 @@ import test.Adult
 class DataFormatTest extends ScalaTestSupport {
  
   @Test
-  def testSimpleTrottler = {
+  def testSimpleTrottler() = {
     val person = new Adult("Captain Nemo")
     "mock:a" expect { _.received(person) } 
-	test {
-	  "direct:a" ! person
-	}
+    test {
+      "direct:a" ! person
+    }
   }
     
   val builder =

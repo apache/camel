@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import builder.{RouteBuilderSupport, RouteBuilder}
 import org.apache.camel.Exchange
@@ -32,9 +32,9 @@ class SInterceptFromSimpleRouteTest extends InterceptFromSimpleRouteTest with Ro
   override def createRouteBuilder = new RouteBuilder {
     interceptFrom().when(livingIn("London")) {
       to ("mock:intercepted")
-    } stop 
+    }.stop
 
-    from("seda:a").to("mock:result");
+    from("seda:a").to("mock:result")
   }
 
 }
@@ -60,7 +60,7 @@ class SInterceptFromUriSimpleLogTest extends InterceptFromUriSimpleLogTest with 
 class SInterceptFromWhenWithChoiceTest extends InterceptFromWhenWithChoiceTest with RouteBuilderSupport {
 
   override def createRouteBuilder = new RouteBuilder {
-    context.addInterceptStrategy(new Tracer());
+    context.addInterceptStrategy(new Tracer())
 
     interceptFrom().when(simple("${body} contains 'Goofy'")) {
       choice {

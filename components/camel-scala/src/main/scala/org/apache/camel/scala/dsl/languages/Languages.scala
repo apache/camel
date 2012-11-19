@@ -92,7 +92,7 @@ trait Languages {
 object Languages {
 
   def evaluate(expression: String)(exchange: Exchange)(lang: String) : Any = {
-    val language = exchange.getContext().resolveLanguage(lang)
+    val language = exchange.getContext.resolveLanguage(lang)
     // return a language function as the language should support being
     // evaluated as a predicate or expression depending on its usage
     new LanguageFunction(language, expression)

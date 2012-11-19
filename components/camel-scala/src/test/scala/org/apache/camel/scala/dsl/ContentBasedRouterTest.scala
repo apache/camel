@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import org.junit.Test
 import builder.RouteBuilder
@@ -22,7 +22,7 @@ import builder.RouteBuilder
 class ContentBasedRouterTest extends ScalaTestSupport {
 
   @Test
-  def testSimpleContentBasedRouter = {
+  def testSimpleContentBasedRouter() = {
     "mock:polyglot" expect {_.expectedMessageCount(3)}
     "mock:english" expect {_.received("<hello/>")}
     "mock:dutch" expect {_.received("<hallo/>")}

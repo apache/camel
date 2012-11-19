@@ -31,7 +31,7 @@ class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
 
     template.sendBody("direct:start", "foo")
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
   }
 
   @Test
@@ -41,7 +41,7 @@ class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
 
     template.sendBody("direct:start", "bar")
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
   }
 
   val builder = new RouteBuilder {
