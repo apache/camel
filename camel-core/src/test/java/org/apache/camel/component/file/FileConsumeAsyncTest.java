@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test for consuming the same filename only.
@@ -36,20 +35,16 @@ public class FileConsumeAsyncTest extends ContextTestSupport {
     }
 
     public void testConsumeAsync() throws Exception {
-        MockEndpoint before = getMockEndpoint("mock:before");
-        before.expectedMessageCount(1);
-        before.assertIsSatisfied();
+        getMockEndpoint("mock:before").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // file should still exist as its the async done that will complete it
-        assertTrue("File should not have been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.assertIsSatisfied();
+        assertTrue("File should not have been deleted", new File("target/files/report.txt").exists());
 
         oneExchangeDone.matchesMockWaitTime();
+        assertMockEndpointsSatisfied();
 
-        assertFalse("File should been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
+        assertFalse("File should have been deleted", new File("target/files/report.txt").exists());
     }
 
     @Override
