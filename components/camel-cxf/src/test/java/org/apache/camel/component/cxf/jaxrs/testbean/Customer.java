@@ -18,6 +18,8 @@ package org.apache.camel.component.cxf.jaxrs.testbean;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.util.ObjectHelper;
+
 /**
  *
  * @version 
@@ -26,6 +28,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Customer {
     private long id;
     private String name;
+
+    public Customer() {
+    }
+
+    public Customer(long id, String name) {
+        setId(id);
+        setName(name);
+    }
 
     public long getId() {
         return id;
@@ -42,4 +52,28 @@ public class Customer {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Customer)) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        Customer other = (Customer) obj;
+        return id == other.id && ObjectHelper.equal(name, other.name);
+    }
+
 }
