@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.http.HttpResponse;
@@ -47,10 +48,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 @ContextConfiguration
 public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>113</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
+    private static final String POST2_REQUEST = "<Customer><name>James</name></Customer>";
     private static final int PORT1 = CXFTestSupport.getPort("CxfBeanTest.1");
     private static final int PORT2 = CXFTestSupport.getPort("CxfBeanTest.2");
     
@@ -176,7 +179,8 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         try {
             HttpResponse response = httpclient.execute(post);
             assertEquals(200, response.getStatusLine().getStatusCode());
-            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
+            String id = getCustomerId("Jack");
+            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>" + id + "</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
         } finally {
             httpclient.getConnectionManager().shutdown();
@@ -187,7 +191,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     public void testPostConsumerUniqueResponseCode() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT1 + "/customerservice/customersUniqueResponseCode");
         post.addHeader("Accept" , "text/xml");
-        StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
+        StringEntity entity = new StringEntity(POST2_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
         HttpClient httpclient = new DefaultHttpClient();
@@ -195,8 +199,26 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         try {
             HttpResponse response = httpclient.execute(post);
             assertEquals(201, response.getStatusLine().getStatusCode());
-            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>125</id><name>Jack</name></Customer>",
+            String id = getCustomerId("James");
+            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>" + id + "</id><name>James</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+    }
+
+    private String getCustomerId(String name) throws Exception {
+        HttpGet get = new HttpGet("http://localhost:" + PORT1 + "/customerservice/customers/");
+        get.addHeader("Accept", "application/xml");
+        HttpClient httpclient = new DefaultHttpClient();
+
+        try {
+            HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String customers = EntityUtils.toString(response.getEntity());
+            String before = ObjectHelper.before(customers, "</id><name>" + name + "</name></Customer>");
+            String answer = before.substring(before.lastIndexOf(">") + 1, before.length());
+            return answer;
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
