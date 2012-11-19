@@ -19,11 +19,13 @@ package org.apache.camel.component.jmx;
 import java.io.File;
 
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
 public class JMXMonitorTypeLongCounterTest extends SimpleBeanFixture {
     
+    @Ignore("monitorNotificationLong.xml is missing!")
     @Test
     public void counter() throws Exception {
 
