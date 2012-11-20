@@ -96,7 +96,9 @@ public class DefaultAhcBinding implements AhcBinding {
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             String headerValue = exchange.getIn().getHeader(entry.getKey(), String.class);
             if (strategy != null && !strategy.applyFilterToCamelHeaders(entry.getKey(), headerValue, exchange)) {
-                log.trace("Adding header {} = {}", entry.getKey(), headerValue);
+                if (log.isTraceEnabled()) {
+                    log.trace("Adding header {} = {}", entry.getKey(), headerValue);
+                }
                 builder.addHeader(entry.getKey(), headerValue);
             }
         }
@@ -120,7 +122,7 @@ public class DefaultAhcBinding implements AhcBinding {
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
                         // write object to output stream
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream(endpoint.getBufferSize());
                         AhcHelper.writeObjectToStream(bos, obj);
                         byte[] bytes = bos.toByteArray();
                         body = new ByteArrayBodyGenerator(bytes);

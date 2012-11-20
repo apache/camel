@@ -80,8 +80,9 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
             }
             
             // set and validate additional parameters on client config
-            IntrospectionSupport.setProperties(builder, parameters, CLIENT_CONFIG_PREFIX, true);
-            validateParameters(uri, parameters, CLIENT_CONFIG_PREFIX);
+            Map<String, Object> clientParams = IntrospectionSupport.extractProperties(parameters, CLIENT_CONFIG_PREFIX);
+            setProperties(builder, clientParams);
+            validateParameters(uri, clientParams, null);
             
             endpoint.setClientConfig(builder.build());
         }
