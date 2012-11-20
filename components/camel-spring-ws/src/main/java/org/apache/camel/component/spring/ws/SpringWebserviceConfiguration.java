@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
-import org.apache.camel.component.spring.ws.filter.impl.BasicFilterStrategy;
+import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -161,7 +161,7 @@ public class SpringWebserviceConfiguration {
      */
     public MessageFilter getMessageFilter() {
         if (this.messageFilter == null) {
-            this.messageFilter = new BasicFilterStrategy();
+            this.messageFilter = new BasicMessageFilter();
         }
         return this.messageFilter;
     }

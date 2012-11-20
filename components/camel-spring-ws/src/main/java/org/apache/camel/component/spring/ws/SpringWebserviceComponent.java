@@ -68,8 +68,8 @@ public class SpringWebserviceComponent extends DefaultComponent {
         addConsumerConfiguration(remaining, parameters, configuration);
         addProducerConfiguration(remaining, parameters, configuration);
         addXmlConverterToConfiguration(parameters, configuration);
-        setProperties(configuration, parameters);
         configureMessageFilter(parameters, configuration); 
+        setProperties(configuration, parameters);
         return new SpringWebserviceEndpoint(this, uri, configuration);
     }
 
