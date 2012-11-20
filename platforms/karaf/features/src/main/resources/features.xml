@@ -866,6 +866,14 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-xmljson/${project.version}</bundle>
   </feature>
+  <feature name='camel-xmlrpc' version='${project.version}' resolver='(obr)' start-level='50'>
+   <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+   <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
+   <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlrpc-client/${xmlrpc-client-bundle-version}</bundle>
+   <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ws-commons-util/${ws-commons-util-bundle-version}</bundle>
+   <feature version='${project.version}'>camel-core</feature>
+   <bundle>mvn:org.apache.camel/camel-xmlrpc/${project.version}</bundle>
+  </feature>
   <feature name='camel-xmlsecurity' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.santuario/xmlsec/${xmlsec-version}</bundle>
