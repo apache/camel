@@ -52,14 +52,14 @@ public class XmlRpcComponentTest extends CamelTestSupport {
         mock.reset();
         mock.expectedBodiesReceived("GreetMe!");
         
-        template.requestBodyAndHeader(uri, new Object[]{"me"}, XmlRpcConstants.OPERATION_NAME, "hello");
+        template.requestBodyAndHeader(uri, new Object[]{"me"}, XmlRpcConstants.METHOD_NAME, "hello");
         
         assertMockEndpointsSatisfied();
     }
     
     private void invokeServiceFaultResponse(String uri) throws Exception {
         try {
-            template.requestBodyAndHeader(uri, new Object[]{"me"}, XmlRpcConstants.OPERATION_NAME, "hello");
+            template.requestBodyAndHeader(uri, new Object[]{"me"}, XmlRpcConstants.METHOD_NAME, "hello");
             fail("Expects the exception here");
         } catch (Exception ex) {
             assertTrue("Get a wrong exception.", ex instanceof CamelExecutionException);

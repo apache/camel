@@ -34,7 +34,7 @@ public final class XmlRpcConverter {
     @Converter
     public static XmlRpcRequest toXmlRpcRequest(final Object[] parameters, Exchange exchange) {
         // get the message operation name
-        String operationName = exchange.getIn().getHeader(XmlRpcConstants.OPERATION_NAME, String.class);
+        String operationName = exchange.getIn().getHeader(XmlRpcConstants.METHOD_NAME, String.class);
         
         // create the request object here
         XmlRpcRequest request = new XmlRpcRequestImpl(operationName, parameters);
@@ -45,7 +45,7 @@ public final class XmlRpcConverter {
     @Converter
     public static XmlRpcRequest toXmlRpcRequest(final List<?> parameters, Exchange exchange) {
         // get the message operation name
-        String operationName = exchange.getIn().getHeader(XmlRpcConstants.OPERATION_NAME, String.class);
+        String operationName = exchange.getIn().getHeader(XmlRpcConstants.METHOD_NAME, String.class);
         
         // create the request object here
         XmlRpcRequest request = new XmlRpcRequestImpl(operationName, parameters);

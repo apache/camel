@@ -17,7 +17,7 @@
 package org.apache.camel.component.xmlrpc;
 
 public final class XmlRpcConstants {
-    public static final String OPERATION_NAME = "CamelXmlRpcOperationName";
+    public static final String METHOD_NAME = "CamelXmlRpcMethodName";
     public static final String ERROR_CODE = "CamelXmlRpcErrorCode";
     public static final String ERROR_MESSAGE = "CamelXmlRpcErrorMessage";
     

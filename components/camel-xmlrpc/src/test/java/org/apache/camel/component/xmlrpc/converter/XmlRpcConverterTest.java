@@ -32,7 +32,7 @@ public class XmlRpcConverterTest extends Assert {
     public void testToXmlRpcRequest() throws Exception {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(XmlRpcConstants.OPERATION_NAME, "greet");
+        exchange.getIn().setHeader(XmlRpcConstants.METHOD_NAME, "greet");
         exchange.getIn().setBody(new Object[] {"me", "you"});
         XmlRpcRequest request = exchange.getIn().getBody(XmlRpcRequest.class);
         
