@@ -18,13 +18,12 @@ package org.apache.camel.itest.async;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class HttpSyncTest extends CamelTestSupport {
+public class HttpSyncTest extends HttpAsyncTestSupport {
 
     @Test
     public void testSyncAndSyncAtSameTimeWithHttp() throws Exception {
@@ -34,7 +33,7 @@ public class HttpSyncTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Bye World", "Claus");
 
         // Send a sync request/reply message to the http endpoint
-        String response = template.requestBody("http://0.0.0.0:9080/myservice", "Hello World", String.class);
+        String response = template.requestBody("http://0.0.0.0:" + getPort() + "/myservice", "Hello World", String.class);
         assertEquals("Bye World", response);
 
         // Send a sync request/reply message to the direct endpoint
@@ -57,7 +56,7 @@ public class HttpSyncTest extends CamelTestSupport {
                 from("direct:name").transform(constant("Claus")).to("mock:result");
 
                 // Simulate a slow http service (delaying 1 sec) we want to invoke async
-                from("jetty:http://0.0.0.0:9080/myservice")
+                fromF("jetty:http://0.0.0.0:%s/myservice", getPort())
                     .delay(1000)
                     .transform(constant("Bye World"))
                     .to("mock:result");
