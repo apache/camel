@@ -70,8 +70,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * Creates an XQuery builder.
  * <p/>
@@ -149,12 +147,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public List<?> evaluateAsList(Exchange exchange) throws Exception {
+        LOG.debug("evaluateAsList: {} for exchange: {}", expression, exchange);
         initialize(exchange);
 
         return getExpression().evaluate(createDynamicContext(exchange));
     }
 
     public Object evaluateAsStringSource(Exchange exchange) throws Exception {
+        LOG.debug("evaluateAsString: {} for exchange: {}", expression, exchange);
         initialize(exchange);
 
         String text = evaluateAsString(exchange);
@@ -162,6 +162,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public Object evaluateAsBytesSource(Exchange exchange) throws Exception {
+        LOG.debug("evaluateAsBytesSource: {} for exchange: {}", expression, exchange);
         initialize(exchange);
 
         byte[] bytes = evaluateAsBytes(exchange);
@@ -169,6 +170,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public Node evaluateAsDOM(Exchange exchange) throws Exception {
+        LOG.debug("evaluateAsDOM: {} for exchange: {}", expression, exchange);
         initialize(exchange);
 
         DOMResult result = new DOMResult();
@@ -179,6 +181,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public byte[] evaluateAsBytes(Exchange exchange) throws Exception {
+        LOG.debug("evaluateAsBytes: {} for exchange: {}", expression, exchange);
         initialize(exchange);
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -191,6 +194,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public String evaluateAsString(Exchange exchange) throws Exception {
+        LOG.debug("evaluateAsString: {} for exchange: {}", expression, exchange);
         initialize(exchange);
 
         StringWriter buffer = new StringWriter();
@@ -205,6 +209,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public boolean matches(Exchange exchange) {
+        LOG.debug("Matches: {} for exchange: {}", expression, exchange);
         try {
             List<?> list = evaluateAsList(exchange);
             return matches(exchange, list);
@@ -213,6 +218,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         }
     }
 
+    @Deprecated
     public void assertMatches(String text, Exchange exchange) throws AssertionError {
         List<?> list;
 

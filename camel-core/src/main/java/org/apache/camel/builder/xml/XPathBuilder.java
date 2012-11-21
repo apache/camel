@@ -433,7 +433,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
         if (objectModelUri != null) {
             xpathFactory = XPathFactory.newInstance(objectModelUri);
-            LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", defaultXPathFactory);
+            LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", xpathFactory);
             return xpathFactory;
         }
 
@@ -1096,7 +1096,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         if (defaultXPathFactory == null) {
             if (objectModelUri != null) {
                 defaultXPathFactory = XPathFactory.newInstance(objectModelUri);
-                LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", defaultXPathFactory);
+                LOG.info("Using objectModelUri " + objectModelUri + " when created default XPathFactory {}", defaultXPathFactory);
             }
 
             if (defaultXPathFactory == null) {
@@ -1108,7 +1108,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
                         String uri = ObjectHelper.after(key, ":");
                         if (uri != null) {
                             defaultXPathFactory = XPathFactory.newInstance(uri);
-                            LOG.info("Using system property {} with value {} when created XPathFactory {}", new Object[]{key, uri, defaultXPathFactory});
+                            LOG.info("Using system property {} with value {} when created default XPathFactory {}", new Object[]{key, uri, defaultXPathFactory});
                         }
                     }
                 }
