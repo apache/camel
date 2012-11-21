@@ -282,9 +282,16 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         org.apache.camel.Message response;
         if (camelExchange.getPattern().isOutCapable()) {
-            response = camelExchange.getOut();
+            if (camelExchange.hasOut()) {
+                response = camelExchange.getOut();
+                LOG.debug("Get the response from the out message");
+            } else { // Take the in message as a fall back
+                response = camelExchange.getIn();
+                LOG.debug("Get the response from the in message as a fallback");
+            }
         } else {
             response = camelExchange.getIn();
+            LOG.debug("Get the response from the in message");
         }
         
         // propagate response context
