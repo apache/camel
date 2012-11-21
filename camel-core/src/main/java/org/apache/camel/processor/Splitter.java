@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
@@ -146,7 +148,13 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                                 IOHelper.close((Closeable) value, value.getClass().getName(), LOG);
                             } else if (value instanceof Scanner) {
                                 // special for Scanner as it does not implement Closeable
-                                ((Scanner) value).close();
+                                Scanner scanner = (Scanner) value;
+                                scanner.close();
+                                
+                                IOException ioException = scanner.ioException();
+                                if (ioException != null) {
+                                    throw new RuntimeCamelException("Scanner aborted because of an IOException!", ioException);
+                                }
                             }
                         }
                         return answer;
