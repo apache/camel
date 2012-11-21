@@ -60,7 +60,7 @@ public class HttpJmsAsyncTimeoutTest extends HttpAsyncTestSupport {
                 // a lot of timeouts in the play :)
 
                 // jetty will timeout after 2 seconds
-                from("jetty:http://0.0.0.0:" + getPort() + "/myservice?continuationTimeout=2000")
+                fromF("jetty:http://0.0.0.0:%s/myservice?continuationTimeout=2000", getPort())
                     // jms request/reply will timeout after 5 seconds
                     .to("jms:queue:foo?requestTimeout=5000");
 
