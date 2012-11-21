@@ -81,7 +81,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
             unique.add(future.get());
         }
 
-        // should be 10 unique responses
+        // should be 'files' unique responses
         assertEquals("Should be " + files + " unique responses", files, unique.size());
         executor.shutdownNow();
     }

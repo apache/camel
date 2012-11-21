@@ -77,7 +77,7 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
             unique.add(reply);
         }
 
-        // should be 10 unique responses
+        // should be 1000 unique responses
         assertEquals("Should be " + size + " unique responses", size, unique.size());
         executor.shutdownNow();
     }
