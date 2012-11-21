@@ -174,8 +174,10 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(1);
-        answer.setMaxConcurrentConsumers(1);
+        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
+        if (endpoint.getMaxConcurrentConsumers() > 0) {
+            answer.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
+        }
         answer.setConnectionFactory(endpoint.getConnectionFactory());
         String clientId = endpoint.getClientId();
         if (clientId != null) {
@@ -205,8 +207,20 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
 
         // setup a bean name which is used ny Spring JMS as the thread name
         String name = "PersistentQueueReplyManager[" + answer.getDestinationName() + "]";
-        name = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName(name);
-        answer.setBeanName(name);
+        String beanName = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName(name);
+        answer.setBeanName(beanName);
+
+        if (answer.getConcurrentConsumers() > 1) {
+            if (ReplyToType.Shared == type) {
+                // warn if using concurrent consumer with shared reply queue as that may not work properly
+                log.warn("Using {}-{} concurrent consumer on {} with shared queue {} may not work properly with all message brokers.",
+                        new Object[]{answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name, endpoint.getReplyTo()});
+            } else {
+                // log that we are using concurrent consumers
+                log.info("Using {}-{} concurrent consumers on {}",
+                        new Object[]{answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name});
+            }
+        }
 
         return answer;
     }
