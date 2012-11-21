@@ -44,7 +44,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         consumer.stop();
 
         // the directory should now exists
-        File dir = new File("target/file/foo").getAbsoluteFile();
+        File dir = new File("target/file/foo");
         assertTrue("Directory should be created", dir.exists());
         assertTrue("Directory should be a directory", dir.isDirectory());
     }
@@ -65,7 +65,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         consumer.stop();
 
         // the directory should now exists
-        File dir = new File(base).getAbsoluteFile();
+        File dir = new File(base);
         assertTrue("Directory should be created", dir.exists());
         assertTrue("Directory should be a directory", dir.isDirectory());
     }
@@ -84,7 +84,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         consumer.stop();
 
         // the directory should NOT exists
-        File dir = new File("target/file/foo").getAbsoluteFile();
+        File dir = new File("target/file/foo");
         assertFalse("Directory should NOT be created", dir.exists());
     }
 
@@ -102,7 +102,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         consumer.stop();
 
         // the directory should exist
-        File dir = new File("target/file/foo.bar").getAbsoluteFile();
+        File dir = new File("target/file/foo.bar");
         assertTrue("Directory should be created", dir.exists());
         assertTrue("Directory should be a directory", dir.isDirectory());
     }
@@ -123,7 +123,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         }
 
         // the directory should NOT exists
-        File dir = new File("target/file/foo").getAbsoluteFile();
+        File dir = new File("target/file/foo");
         assertFalse("Directory should NOT be created", dir.exists());
     }
 
