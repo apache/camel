@@ -284,14 +284,14 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (camelExchange.getPattern().isOutCapable()) {
             if (camelExchange.hasOut()) {
                 response = camelExchange.getOut();
-                LOG.debug("Get the response from the out message");
+                LOG.trace("Get the response from the out message");
             } else { // Take the in message as a fall back
                 response = camelExchange.getIn();
-                LOG.debug("Get the response from the in message as a fallback");
+                LOG.trace("Get the response from the in message as a fallback");
             }
         } else {
             response = camelExchange.getIn();
-            LOG.debug("Get the response from the in message");
+            LOG.trace("Get the response from the in message");
         }
         
         // propagate response context
