@@ -20,7 +20,6 @@ import java.io.File;
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.TestSupport;
@@ -73,20 +72,18 @@ public class CamelGreeterFileDomTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    public void testMocksAreValid() throws Exception {
+    public void testCamelGreeter() throws Exception {
         TestSupport.deleteDirectory("target/greeter/response");
         assertNotNull(camelContext);
         
         ProducerTemplate template = camelContext.createProducerTemplate();
-        
-        Object result = template.sendBody("direct:start", ExchangePattern.InOut , 
-                                                   REQUEST);
-        
+        Object result = template.requestBody("direct:start", REQUEST);
+        template.stop();
+
         assertEquals("The result is wrong.", "Hello Willem", result);
         
         File file = new File("target/greeter/response/response.txt");
         assertTrue("File " + file + " should be there.", file.exists());
     }
-
 
 }
