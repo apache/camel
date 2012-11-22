@@ -99,6 +99,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             }
         });
         answer.setAutoStartup(true);
+        if (endpoint.getMaxMessagesPerTask() >= 0) {
+            answer.setMaxMessagesPerTask(endpoint.getMaxMessagesPerTask());
+        }
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
