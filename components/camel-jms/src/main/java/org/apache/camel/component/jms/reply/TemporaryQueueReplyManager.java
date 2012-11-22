@@ -25,6 +25,7 @@ import javax.jms.TemporaryQueue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
@@ -86,7 +87,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
         // Use DefaultMessageListenerContainer as it supports reconnects (see CAMEL-3193)
-        DefaultMessageListenerContainer answer = new DefaultMessageListenerContainer();
+        DefaultMessageListenerContainer answer = new DefaultJmsMessageListenerContainer(endpoint);
 
         answer.setDestinationName("temporary");
         answer.setDestinationResolver(new DestinationResolver() {
@@ -136,12 +137,16 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getRecoveryInterval() >= 0) {
             answer.setRecoveryInterval(endpoint.getRecoveryInterval());
         }
-        // do not use a task executor for reply as we are are always a single threaded task
+        if (endpoint.getTaskExecutor() != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
+            }
+            answer.setTaskExecutor(endpoint.getTaskExecutor());
+        }
 
         // setup a bean name which is used ny Spring JMS as the thread name
         String name = "TemporaryQueueReplyManager[" + answer.getDestinationName() + "]";
-        String beanName = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName(name);
-        answer.setBeanName(beanName);
+        answer.setBeanName(name);
 
         if (answer.getConcurrentConsumers() > 1) {
             // log that we are using concurrent consumers

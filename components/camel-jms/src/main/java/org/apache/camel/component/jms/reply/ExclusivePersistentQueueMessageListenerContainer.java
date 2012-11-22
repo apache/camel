@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.jms.reply;
 
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
+import org.apache.camel.component.jms.JmsEndpoint;
 
 /**
  * This {@link org.springframework.jms.listener.DefaultMessageListenerContainer} is used for persistent reply queues
@@ -31,8 +32,11 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  *
  * @see SharedPersistentQueueMessageListenerContainer
  */
-public class ExclusivePersistentQueueMessageListenerContainer extends DefaultMessageListenerContainer {
+public class ExclusivePersistentQueueMessageListenerContainer extends DefaultJmsMessageListenerContainer {
 
     // no need to override any methods currently
 
+    public ExclusivePersistentQueueMessageListenerContainer(JmsEndpoint endpoint) {
+        super(endpoint);
+    }
 }
