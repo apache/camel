@@ -19,11 +19,15 @@ package org.apache.camel.component.xmlrpc;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xmlrpc.XmlRpcException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class XmlRpcComponentTest extends CamelTestSupport {
+    private static volatile int port;
+    
     private static final String RESPONSE = 
           "<methodResponse><params>"
           + "<param><value><string>GreetMe!</string></value></param>" 
@@ -34,6 +38,12 @@ public class XmlRpcComponentTest extends CamelTestSupport {
         + "<struct><member><name>faultCode</name><value><int>4</int></value></member>"
         + "<member><name>faultString</name><value><string>Too many parameters.</string></value></member>"
         + "</struct></value></fault></methodResponse>";
+    
+    @BeforeClass
+    public static void initPort() throws Exception {
+        // start from somewhere in the 22xxx range
+        port = AvailablePortFinder.getNextAvailable(22000);
+    }
 
     @Test
     public void testXmlRpcResponseMessage() throws Exception {
@@ -43,8 +53,8 @@ public class XmlRpcComponentTest extends CamelTestSupport {
     
     @Test
     public void testXmlRpcFaultMessage() throws Exception {
-        invokeServiceFaultResponse("xmlrpc:http://localhost:9000/xmlrpc/fault");
-        invokeServiceFaultResponse("xmlrpc:http://localhost:9000/xmlrpc/fault?synchronous=true");
+        invokeServiceFaultResponse("xmlrpc:http://localhost:" + port + "/xmlrpc/fault");
+        invokeServiceFaultResponse("xmlrpc:http://localhost:" + port + "/xmlrpc/fault?synchronous=true");
     }
     
     private void invokeService(String uri) throws Exception {
@@ -75,19 +85,19 @@ public class XmlRpcComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:async")
-                    .to("xmlrpc:http://localhost:9000/xmlrpc/test")
+                    .to("xmlrpc:http://localhost:" + port + "/xmlrpc/test")
                     .to("mock:result");
                 from("direct:sync")
-                    .to("xmlrpc:http://localhost:9000/xmlrpc/test?synchronous=true")
+                    .to("xmlrpc:http://localhost:" + port + "/xmlrpc/test?synchronous=true")
                     .to("mock:result");
                 // setup a mock test server for testing
-                from("jetty:http://localhost:9000/xmlrpc/test")
+                from("jetty:http://localhost:" + port + "/xmlrpc/test")
                     .convertBodyTo(String.class)
                     // here print out the message that we get 
                     .to("log:org.apache.camel.component.xmlrpc")
                     .transform().constant(RESPONSE);
                 // setup a mock test server for falt message
-                from("jetty:http://localhost:9000/xmlrpc/fault")
+                from("jetty:http://localhost:" + port + "/xmlrpc/fault")
                     .convertBodyTo(String.class)
                     // here print out the message that we get 
                     .to("log:org.apache.camel.component.xmlrpc")
