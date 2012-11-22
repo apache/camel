@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.smpp;
 
-import java.nio.charset.Charset;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
