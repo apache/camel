@@ -16,8 +16,8 @@
  */
 package org.apache.camel.itest.async;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -67,7 +67,10 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
      */
     private static class MyCallback extends SynchronizationAdapter {
 
-        private final List<String> data = new ArrayList<String>();
+        // below the String elements are added in the context of different threads so that we should make
+        // sure that this's done in a thread-safe manner, that's no two threads should call the data.add()
+        // method below concurrently, so why we use Vector here and not e.g. ArrayList
+        private final List<String> data = new Vector<String>();
 
         @Override
         public void onComplete(Exchange exchange) {
