@@ -104,6 +104,7 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
         } else {
             smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
+
             if (deliverSm.getShortMessage() != null) {
                 if (SmppUtils.parseAlphabetFromDataCoding(deliverSm.getDataCoding()) == Alphabet.ALPHA_8_BIT) {
                     smppMessage.setBody(deliverSm.getShortMessage());
@@ -125,7 +126,11 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.SEQUENCE_NUMBER, deliverSm.getSequenceNumber());
             smppMessage.setHeader(SmppConstants.COMMAND_ID, deliverSm.getCommandId());
             smppMessage.setHeader(SmppConstants.SOURCE_ADDR, deliverSm.getSourceAddr());
+            smppMessage.setHeader(SmppConstants.SOURCE_ADDR_NPI, deliverSm.getSourceAddrNpi());
+            smppMessage.setHeader(SmppConstants.SOURCE_ADDR_TON, deliverSm.getSourceAddrTon());
             smppMessage.setHeader(SmppConstants.DEST_ADDR, deliverSm.getDestAddress());
+            smppMessage.setHeader(SmppConstants.DEST_ADDR_NPI, deliverSm.getDestAddrNpi());
+            smppMessage.setHeader(SmppConstants.DEST_ADDR_TON, deliverSm.getDestAddrTon());
             smppMessage.setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, deliverSm.getScheduleDeliveryTime());
             smppMessage.setHeader(SmppConstants.VALIDITY_PERIOD, deliverSm.getValidityPeriod());
             smppMessage.setHeader(SmppConstants.SERVICE_TYPE, deliverSm.getServiceType());
