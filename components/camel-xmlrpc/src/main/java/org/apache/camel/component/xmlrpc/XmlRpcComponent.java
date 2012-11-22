@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 /**
  * Represents the component that manages {@link XmlRpcEndpoint}.
@@ -28,8 +29,13 @@ public class XmlRpcComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // current we just use the uri as the server address
-        Endpoint endpoint = new XmlRpcEndpoint(uri, this, remaining);
-        setProperties(endpoint, parameters);
+        XmlRpcEndpoint endpoint = new XmlRpcEndpoint(uri, this, remaining);
+        XmlRpcClientConfigImpl clientConfig = endpoint.getClientConfig();
+        // find out the clientConfigurer first
+        XmlRpcClientConfigurer clientConfigurer = resolveAndRemoveReferenceParameter(parameters, "clientConfigurer", XmlRpcClientConfigurer.class);
+        endpoint.setClientConfigurer(clientConfigurer);
+        // we just use the XmlRpcClientConfig to take the parameters
+        setProperties(clientConfig, parameters);
         return endpoint;
     }
 }

@@ -32,6 +32,8 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
  */
 public class XmlRpcEndpoint extends DefaultEndpoint {
     private String address;
+    private XmlRpcClientConfigurer clientConfigurer;
+    private XmlRpcClientConfigImpl clientConfig = new XmlRpcClientConfigImpl();
 
     public XmlRpcEndpoint() {
     }
@@ -62,9 +64,13 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
     public XmlRpcClient createClient() throws MalformedURLException {
         XmlRpcClient client = new XmlRpcClient();
         // setup the client with the configuration from the XmlRpcEndpoint
-        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+        XmlRpcClientConfigImpl config = clientConfig.cloneMe();
+        // setup the server url
         config.setServerURL(new URL(getAddress()));
         client.setConfig(config);
+        if (clientConfigurer != null) {
+            clientConfigurer.configureXmlRpcClient(client);
+        }
         return client;
     }
 
@@ -75,6 +81,24 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public XmlRpcClientConfigurer getClientConfigurer() {
+        return clientConfigurer;
+    }
+
+    public void setClientConfigurer(XmlRpcClientConfigurer configurer) {
+        this.clientConfigurer = configurer;
+    }
+    
+    public void setClientConfig(XmlRpcClientConfigImpl config) {
+        this.clientConfig = config;
+    }
+    
+    public XmlRpcClientConfigImpl getClientConfig() {
+        return clientConfig;
+    }
+    
+    
     
     
 }
