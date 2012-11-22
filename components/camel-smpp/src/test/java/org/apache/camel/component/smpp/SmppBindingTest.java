@@ -33,7 +33,6 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -128,18 +127,26 @@ public class SmppBindingTest {
         deliverSm.setSequenceNumber(1);
         deliverSm.setCommandId(1);
         deliverSm.setSourceAddr("1818");
+        deliverSm.setSourceAddrNpi(NumberingPlanIndicator.NATIONAL.value());
+        deliverSm.setSourceAddrTon(TypeOfNumber.NATIONAL.value());
         deliverSm.setDestAddress("1919");
+        deliverSm.setDestAddrNpi(NumberingPlanIndicator.INTERNET.value());
+        deliverSm.setDestAddrTon(TypeOfNumber.NETWORK_SPECIFIC.value());
         deliverSm.setScheduleDeliveryTime("090831230627004+");
         deliverSm.setValidityPeriod("090901230627004+");
         deliverSm.setServiceType("WAP");
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(8, smppMessage.getHeaders().size());
+        assertEquals(12, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
+        assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_NPI));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_TON));
         assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
+        assertEquals((byte) 20, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
+        assertEquals((byte) 3, smppMessage.getHeader(SmppConstants.DEST_ADDR_TON));
         assertEquals("090831230627004+", smppMessage.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppConstants.VALIDITY_PERIOD));
         assertEquals("WAP", smppMessage.getHeader(SmppConstants.SERVICE_TYPE));
@@ -152,7 +159,11 @@ public class SmppBindingTest {
         deliverSm.setSequenceNumber(1);
         deliverSm.setCommandId(1);
         deliverSm.setSourceAddr("1818");
+        deliverSm.setSourceAddrNpi(NumberingPlanIndicator.NATIONAL.value());
+        deliverSm.setSourceAddrTon(TypeOfNumber.NATIONAL.value());
         deliverSm.setDestAddress("1919");
+        deliverSm.setDestAddrNpi(NumberingPlanIndicator.INTERNET.value());
+        deliverSm.setDestAddrTon(TypeOfNumber.NETWORK_SPECIFIC.value());
         deliverSm.setScheduleDeliveryTime("090831230627004+");
         deliverSm.setValidityPeriod("090901230627004+");
         deliverSm.setServiceType("WAP");
@@ -160,11 +171,15 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(8, smppMessage.getHeaders().size());
+        assertEquals(12, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
+        assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_NPI));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_TON));
         assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
+        assertEquals((byte) 20, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
+        assertEquals((byte) 3, smppMessage.getHeader(SmppConstants.DEST_ADDR_TON));
         assertEquals("090831230627004+", smppMessage.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppConstants.VALIDITY_PERIOD));
         assertEquals("WAP", smppMessage.getHeader(SmppConstants.SERVICE_TYPE));
