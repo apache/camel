@@ -18,35 +18,33 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
-       xmlns:type="http://apache.org/hello_world_soap_http/types"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
- <import resource="classpath:META-INF/cxf/cxf.xml"/>
- <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
- 
- <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CamelGreeterFileDomTest.port}/SoapContext/SoapPort"
-            wsdlURL="wsdl/hello_world.wsdl"
-    		serviceClass="org.apache.hello_world_soap_http.Greeter"
-    		endpointName="s:SoapOverHttp"
-    		serviceName="s:SOAPService"
-    	    xmlns:s="http://apache.org/hello_world_soap_http"
-    	    loggingFeatureEnabled="true">
- </cxf:cxfEndpoint>
-  
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CamelGreeterFileDomTest.port}/SoapContext/SoapPort"
+                   wsdlURL="wsdl/hello_world.wsdl"
+                   serviceClass="org.apache.hello_world_soap_http.Greeter"
+                   endpointName="s:SoapOverHttp"
+                   serviceName="s:SOAPService"
+                   xmlns:s="http://apache.org/hello_world_soap_http">
+  </cxf:cxfEndpoint>
+
   <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring" xmlns:types="http://apache.org/hello_world_soap_http/types">
     <route streamCache="true">
-        <from uri="direct:start" />        
-        <to uri="cxf://bean:serviceEndpoint?dataFormat=MESSAGE"/>
-        <to uri="file:target/greeter/response/response.txt"/>
-        <convertBodyTo type="org.w3c.dom.Document" />
-        <setBody>
-        	<xpath resultType="java.lang.String">//type:responseType</xpath>
-        </setBody>
+      <from uri="direct:start"/>
+      <to uri="cxf://bean:serviceEndpoint?dataFormat=MESSAGE"/>
+      <to uri="file:target/greeter/response/?fileName=response.txt"/>
+      <convertBodyTo type="org.w3c.dom.Document"/>
+      <to uri="log:xml"/>
+      <setBody>
+        <xpath resultType="java.lang.String">//types:responseType</xpath>
+      </setBody>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
