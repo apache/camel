@@ -171,6 +171,8 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         answer.setDestinationName(endpoint.getReplyTo());
 
         answer.setAutoStartup(true);
+        answer.setIdleConsumerLimit(endpoint.getIdleConsumerLimit());
+        answer.setIdleTaskExecutionLimit(endpoint.getIdleTaskExecutionLimit());
         if (endpoint.getMaxMessagesPerTask() >= 0) {
             answer.setMaxMessagesPerTask(endpoint.getMaxMessagesPerTask());
         }
