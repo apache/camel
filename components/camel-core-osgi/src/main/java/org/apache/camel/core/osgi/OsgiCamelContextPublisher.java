@@ -18,8 +18,8 @@ package org.apache.camel.core.osgi;
 
 import java.util.Dictionary;
 import java.util.EventObject;
+import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
@@ -53,7 +53,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         if (event instanceof CamelContextStartedEvent) {
             CamelContext context = ((CamelContextStartedEvent) event).getContext();
 
-            Properties props = new Properties();
+            Dictionary<String, Object > props = new Hashtable<String, Object>();
             props.put(CONTEXT_SYMBOLIC_NAME_PROPERTY, bundleContext.getBundle().getSymbolicName());
             props.put(CONTEXT_VERSION_PROPERTY, getBundleVersion(bundleContext.getBundle()));
             props.put(CONTEXT_NAME_PROPERTY, context.getName());

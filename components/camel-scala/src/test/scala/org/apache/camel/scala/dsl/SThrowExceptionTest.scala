@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import builder.{RouteBuilder, RouteBuilderSupport}
 import org.apache.camel.processor.ThrowExceptionTest
@@ -28,7 +28,7 @@ class SThrowExceptionTest extends ThrowExceptionTest with RouteBuilderSupport {
     "direct:start" ==> {
        to("mock:start")
        throwException(new IllegalArgumentException("Forced"))
-       to("mock:result");
+       to("mock:result")
     }
   }
 }

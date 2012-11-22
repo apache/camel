@@ -40,11 +40,9 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 
-
 public abstract class AbstractFeatureTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractFeatureTest.class);
-    protected transient Logger log = LoggerFactory.getLogger(getClass());
 
     @Inject
     protected BundleContext bundleContext;
@@ -157,12 +155,13 @@ public abstract class AbstractFeatureTest {
                 karafDistributionConfiguration().frameworkUrl(
                     maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                     //This version doesn't affect the version of karaf we use 
-                    .karafVersion("2.2.9").name("Apache Karaf")
+                    .karafVersion("2.3.0").name("Apache Karaf")
                     .unpackDirectory(new File("target/paxexam/unpack/")),
                 
                 KarafDistributionOption.keepRuntimeFolder(),
-                // override the jre.properties
-                replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/org/apache/camel/itest/karaf/jre.properties")),
+                // override the config.properties (to fix pax-exam bug)
+                replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
+                replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
                 // install the cxf jaxb spec as the karaf doesn't provide it by default
                 scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)};
 

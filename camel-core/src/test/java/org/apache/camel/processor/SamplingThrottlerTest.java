@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,20 +37,26 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class SamplingThrottlerTest extends ContextTestSupport {
 
     public void testSamplingFromExchangeStream() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(15).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+        mock.expectedMinimumMessageCount(2);
         mock.setResultWaitTime(3000);
 
         List<Exchange> sentExchanges = new ArrayList<Exchange>();
         sendExchangesThroughDroppingThrottler(sentExchanges, 15);
 
+        notify.matchesMockWaitTime();
         mock.assertIsSatisfied();
-        validateDroppedExchanges(sentExchanges, 2);
+
+        validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
     }
 
     public void testBurstySampling() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+        mock.expectedMinimumMessageCount(2);
         mock.setResultWaitTime(3000);
 
         List<Exchange> sentExchanges = new ArrayList<Exchange>();
@@ -61,13 +68,15 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         // send another 5 now
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
 
+        notify.matchesMockWaitTime();
         mock.assertIsSatisfied();
-        validateDroppedExchanges(sentExchanges, 2);
+
+        validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
     }
 
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(3);
+        mock.expectedMinimumMessageCount(3);
         mock.setResultWaitTime(4000);
 
         final List<Exchange> sentExchanges = Collections.synchronizedList(new ArrayList<Exchange>());
@@ -88,10 +97,10 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         executor.shutdownNow();
     }
 
-    public void testSamplingUsingmessageFrequency() throws Exception {
+    public void testSamplingUsingMessageFrequency() throws Exception {
         long totalMessages = 100;
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(10);
+        mock.expectedMinimumMessageCount(10);
         mock.setResultWaitTime(100);
 
         for (int i = 0; i < totalMessages; i++) {
@@ -101,10 +110,10 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
     
-    public void testSamplingUsingmessageFrequencyViaDSL() throws Exception {
+    public void testSamplingUsingMessageFrequencyViaDSL() throws Exception {
         long totalMessages = 50;
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(10);
+        mock.expectedMinimumMessageCount(10);
         mock.setResultWaitTime(100);
 
         for (int i = 0; i < totalMessages; i++) {

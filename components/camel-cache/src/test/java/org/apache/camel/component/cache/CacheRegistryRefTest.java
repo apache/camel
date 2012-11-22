@@ -37,11 +37,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.BaseCacheTest;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class CacheRegistryRefTest extends CamelTestSupport {
+public class CacheRegistryRefTest extends BaseCacheTest {
     private static final String CACHE_ENDPOINT_URI = "cache://foo"
         + "?eventListenerRegistry=#eventListenerRegistry&cacheLoaderRegistry=#cacheLoaderRegistry";
 

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.component.twitter.consumer.streaming.StreamingConsumer;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
@@ -42,6 +43,22 @@ public class TwitterConsumerPolling extends ScheduledPollConsumer {
         setInitialDelay(1);
         setDelay(delay);
         setTimeUnit(TimeUnit.SECONDS);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (twitter4jConsumer instanceof StreamingConsumer) {
+            ((StreamingConsumer) twitter4jConsumer).doStart();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (twitter4jConsumer instanceof StreamingConsumer) {
+            ((StreamingConsumer) twitter4jConsumer).doStop();
+        }
     }
 
     protected int poll() throws Exception {

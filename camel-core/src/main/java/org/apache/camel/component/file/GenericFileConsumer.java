@@ -310,19 +310,25 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // must use full name when downloading so we have the correct path
         final String name = target.getAbsoluteFilePath();
         try {
-            // retrieve the file using the stream
-            log.trace("Retrieving file: {} from: {}", name, endpoint);
-
-            // retrieve the file and check it was a success
-            boolean retrieved = operations.retrieveFile(name, exchange);
-            if (!retrieved) {
-                // throw exception to handle the problem with retrieving the file
-                // then if the method return false or throws an exception is handled the same in here
-                // as in both cases an exception is being thrown
-                throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint);
+            
+            if (isRetrieveFile()) {
+                // retrieve the file using the stream
+                log.trace("Retrieving file: {} from: {}", name, endpoint);
+    
+                // retrieve the file and check it was a success
+                boolean retrieved = operations.retrieveFile(name, exchange);
+                if (!retrieved) {
+                    // throw exception to handle the problem with retrieving the file
+                    // then if the method return false or throws an exception is handled the same in here
+                    // as in both cases an exception is being thrown
+                    throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint);
+                }
+    
+                log.trace("Retrieved file: {} from: {}", name, endpoint);                
+            } else {
+                log.trace("Skiped retrieval of file: {} from: {}", name, endpoint);
+                exchange.getIn().setBody(null);
             }
-
-            log.trace("Retrieved file: {} from: {}", name, endpoint);
 
             // register on completion callback that does the completion strategies
             // (for instance to move the file after we have processed it)
@@ -352,6 +358,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             String msg = "Error processing file " + file + " due to " + e.getMessage();
             handleException(msg, e);
         }
+    }
+
+    /**
+     * Override if required.  Files are retrieved / returns true by default
+     *
+     * @return <tt>true</tt> to retrieve files, <tt>false</tt> to skip retrieval of files.
+     */
+    protected boolean isRetrieveFile() {
+        return true;
     }
 
     /**

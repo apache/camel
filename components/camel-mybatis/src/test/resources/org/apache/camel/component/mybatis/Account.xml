@@ -89,9 +89,28 @@ aliases to match the properties of the target result class. -->
         ACC_ID = #{id}
     </update>
 
+    <update id="batchUpdateAccount" parameterType="java.util.Map">
+        update ACCOUNT set
+        ACC_EMAIL = #{emailAddress}
+        where
+        ACC_ID in
+        <foreach item="Account" collection="list" open="(" close=")" separator=",">
+            #{Account.id}
+        </foreach>
+    </update>
+
     <!-- Delete example, using an integer as the parameter class -->
     <delete id="deleteAccountById" parameterType="int">
         delete from ACCOUNT where ACC_ID = #{id}
+    </delete>
+
+    <delete id="batchDeleteAccountById" parameterType="java.util.List">
+        delete from ACCOUNT
+        where
+        ACC_ID in
+        <foreach item="AccountID" collection="list" open="(" close=")" separator=",">
+            #{AccountID}
+        </foreach>
     </delete>
 
     <!-- START SNIPPET: e1 -->

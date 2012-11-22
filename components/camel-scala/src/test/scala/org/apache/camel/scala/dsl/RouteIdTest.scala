@@ -24,29 +24,29 @@ import org.junit.Assert.assertEquals
 class RouteIdTest extends ScalaTestSupport {
 
   @Test
-  def testRouteA = {
+  def testRouteA() = {
     "mock:a" expect { _.expectedMessageCount(1)}
 
     test {
       "direct:a" ! "Hello World"
     }
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
 
-    assertEquals("route-a", context.getRouteDefinitions.get(0).getId());
+    assertEquals("route-a", context.getRouteDefinitions.get(0).getId)
   }
 
   @Test
-  def testRouteB = {
+  def testRouteB() = {
     "mock:b" expect { _.expectedMessageCount(1)}
 
     test {
       "direct:b" ! "Hello World"
     }
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
 
-    assertEquals("route-b", context.getRouteDefinitions.get(1).getId());
+    assertEquals("route-b", context.getRouteDefinitions.get(1).getId)
   }
 
   val builder = new RouteBuilder {

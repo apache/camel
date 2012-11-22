@@ -45,6 +45,7 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean throwExceptionOnFailure = true;
     private boolean transferException;
     private SSLContextParameters sslContextParameters;
+    private int bufferSize = 4 * 1024;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -150,6 +151,14 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
     }
 
     @Override

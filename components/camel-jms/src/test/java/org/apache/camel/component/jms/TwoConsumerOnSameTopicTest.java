@@ -84,13 +84,12 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         template.sendBody("activemq:topic:foo", "Bye World");
         assertMockEndpointsSatisfied();
 
-        // now start route A
-        context.startRoute("a");
-
         // send new message should go to both A and B
         resetMocks();
         getMockEndpoint("mock:a").expectedBodiesReceived("Hi Camel");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hi Camel");
+        // now start route A
+        context.startRoute("a");
         template.sendBody("activemq:topic:foo", "Hi Camel");
         assertMockEndpointsSatisfied();
     }

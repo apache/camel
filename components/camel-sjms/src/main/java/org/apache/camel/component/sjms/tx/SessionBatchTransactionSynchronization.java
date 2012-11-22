@@ -24,28 +24,27 @@ import javax.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
-import org.apache.camel.component.sjms.taskmanager.TimedTaskManagerFactory;
+import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * SessionTransactionSynchronization is called at the completion of each
- * {@link org.apache.camel.Exhcnage}.
+ * {@link org.apache.camel.Exchange}.
  */
 public class SessionBatchTransactionSynchronization implements Synchronization {
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(SessionBatchTransactionSynchronization.class);
     private Session session;
     private final TransactionCommitStrategy commitStrategy;
     private long batchTransactionTimeout = 5000;
     private TimeoutTask currentTask;
     private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final TimedTaskManager timedTaskManager;
 
-    public SessionBatchTransactionSynchronization(Session session, TransactionCommitStrategy commitStrategy) {
-        this(session, commitStrategy, 5000);
-    }
-
-    public SessionBatchTransactionSynchronization(Session session, TransactionCommitStrategy commitStrategy, long batchTransactionTimeout) {
+    public SessionBatchTransactionSynchronization(TimedTaskManager timedTaskManager,
+                                                  Session session, TransactionCommitStrategy commitStrategy, long batchTransactionTimeout) {
+        this.timedTaskManager = timedTaskManager;
         this.session = session;
         if (commitStrategy == null) {
             this.commitStrategy = new DefaultTransactionCommitStrategy();
@@ -58,43 +57,39 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
         }
     }
 
-    /**
-     * @see org.apache.camel.spi.Synchronization#onFailure(org.apache.camel.Exchange)
-     * @param exchange
-     */
     @Override
     public void onFailure(Exchange exchange) {
         try {
             lock.readLock().lock();
             if (commitStrategy.rollback(exchange)) {
-                log.debug("Processing failure of Exchange id:{}", exchange.getExchangeId());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Processing failure of Exchange id:{}", exchange.getExchangeId());
+                }
                 if (session != null && session.getTransacted()) {
                     session.rollback();
                 }
             }
         } catch (Exception e) {
-            log.warn("Failed to rollback the session: {}", e.getMessage());
+            LOG.warn("Failed to rollback the session: " + e.getMessage() + ". This exception will be ignored.", e);
         } finally {
             lock.readLock().unlock();
         }
     }
 
-    /**
-     * @see org.apache.camel.spi.Synchronization#onComplete(org.apache.camel.Exchange)
-     * @param exchange
-     */
     @Override
     public void onComplete(Exchange exchange) {
         try {
             lock.readLock().lock();
             if (commitStrategy.commit(exchange)) {
-                log.debug("Processing completion of Exchange id:{}", exchange.getExchangeId());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Processing completion of Exchange id:{}", exchange.getExchangeId());
+                }
                 if (session != null && session.getTransacted()) {
                     session.commit();
                 }
             }
         } catch (Exception e) {
-            log.warn("Failed to commit the session: {}", e.getMessage());
+            LOG.warn("Failed to commit the session: " + e.getMessage() + ". This exception will be ignored.", e);
             exchange.setException(e);
         } finally {
             lock.readLock().unlock();
@@ -119,17 +114,12 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
         } finally {
             lock.writeLock().unlock();
         }
-        TimedTaskManagerFactory.getInstance().addTask(currentTask, batchTransactionTimeout);
+        timedTaskManager.addTask(currentTask, batchTransactionTimeout);
     }
 
-    public class TimeoutTask extends TimerTask {
+    public final class TimeoutTask extends TimerTask {
 
-        /**
-         * Default constructor
-         * 
-         * @param str
-         */
-        TimeoutTask() {
+        private TimeoutTask() {
         }
 
         /**
@@ -137,17 +127,17 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
          * transaction.
          */
         public void run() {
-            log.info("Batch Transaction Timer expired:");
+            LOG.debug("Batch Transaction Timer expired");
             try {
                 lock.writeLock().lock();
-                log.debug("Committing the current transactions");
+                LOG.trace("Committing the current transactions");
                 try {
                     if (session != null && session.getTransacted()) {
                         session.commit();
                     }
                     ((BatchTransactionCommitStrategy)commitStrategy).reset();
                 } catch (Exception e) {
-                    log.warn("Failed to commit the session during timeout: {}", e.getMessage());
+                    LOG.warn("Failed to commit the session during timeout: " + e.getMessage() + ". This exception will be ignored.", e);
                 }
             } finally {
                 lock.writeLock().unlock();
@@ -156,9 +146,7 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
 
         @Override
         public boolean cancel() {
-            if (log.isTraceEnabled()) {
-                log.trace("Cancelling the TimeoutTask");
-            }
+            LOG.trace("Cancelling the TimeoutTask");
             return super.cancel();
         }
     }

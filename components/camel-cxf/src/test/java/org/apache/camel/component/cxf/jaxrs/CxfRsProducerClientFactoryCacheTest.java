@@ -38,11 +38,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CxfRsProducerClientFactoryCacheTest extends Assert {
     private static int port1 = CXFTestSupport.getPort1(); 
-    
+
     private CamelContext context1;
-    private CamelContext context2;
     private ProducerTemplate template1;
-    private ProducerTemplate template2;
 
     @Before
     public void setUp() throws Exception {
@@ -51,31 +49,22 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
         context1.start();
         template1 = context1.createProducerTemplate();
         template1.start();
-
-        ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest2.xml");
-        context2 = SpringCamelContext.springCamelContext(ac, false);
-        context2.start();
-
-        template2 = context2.createProducerTemplate();
-        template2.start();
     }
     
     @After
     public void tearDown() throws Exception {
-        context1.stop();
-        template1.stop();
-
-        context2.stop();
-        template2.stop();
+        if (context1 != null) {
+            context1.stop();
+            template1.stop();
+        }
     }
     
     @Test
     public void testGetCostumerWithHttpCentralClientAPI() throws Exception {
-        doRunTest(template2);
-        doRunTest(template1);
+        doRunTest(template1, getPort1());
     }
 
-    private void doRunTest(ProducerTemplate template) {
+    private void doRunTest(ProducerTemplate template, final int clientPort) {
         Exchange exchange = template.send("direct://http", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
@@ -84,6 +73,7 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
                 inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                 inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");                
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
+                inMessage.setHeader("clientPort", clientPort);
                 inMessage.setBody(null);                
             }
         });
@@ -100,4 +90,5 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
     public int getPort1() {
         return port1;
     }
+
 }

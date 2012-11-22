@@ -33,7 +33,7 @@ public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
 
         Future<String> future = service.asText(4);
         log.info("Got future");
-        assertFalse("Should not be done", future.isDone());
+
         log.info("Waiting for future to be done ...");
         try {
             assertEquals("Four", future.get(5, TimeUnit.SECONDS));
@@ -50,7 +50,7 @@ public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:echo")
-                    .delay(2000)
+                    .delay(250)
                     .throwException(new IllegalArgumentException("Forced"));
             }
         };

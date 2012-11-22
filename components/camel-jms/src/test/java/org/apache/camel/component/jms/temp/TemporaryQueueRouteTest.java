@@ -18,16 +18,12 @@ package org.apache.camel.component.jms.temp;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -35,40 +31,22 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * @version 
  */
 public class TemporaryQueueRouteTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TemporaryQueueRouteTest.class);
-
     protected String endpointUri = "activemq:temp:queue:cheese";
-    protected Object expectedBody = "<hello>world!</hello>";
-    protected MyBean myBean = new MyBean();
 
     @Test
     public void testSendMessage() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
-        endpoint.expectedBodiesReceived("Result");
+        endpoint.expectedBodiesReceived("Hello World");
 
-        Thread.sleep(1000);
-        log.info("Sending: " + expectedBody + " to: " + endpointUri);
-        template.sendBody(endpointUri, expectedBody);
+        template.sendBody(endpointUri, "Hello World");
 
         endpoint.assertIsSatisfied();
-
-        Message message = myBean.getMessage();
-        assertNotNull("should have received a message", message);
-
-        LOG.info("Received: " + message);
-        Object header = message.getHeader("JMSDestination");
-        isValidDestination(header);
-    }
-
-    protected void isValidDestination(Object header) {
-        ActiveMQTempQueue destination = assertIsInstanceOf(ActiveMQTempQueue.class, header);
-        LOG.info("Received message has a temporary queue: " + destination);
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -77,22 +55,9 @@ public class TemporaryQueueRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(endpointUri).bean(myBean).to("mock:result");
+                from(endpointUri).to("mock:result");
             }
         };
     }
 
-    public static class MyBean {
-        private Message message;
-
-        public String onMessage(Message message) {
-            this.message = message;
-            LOG.info("Invoked bean with: " + message);
-            return "Result";
-        }
-
-        public Message getMessage() {
-            return message;
-        }
-    }
 }

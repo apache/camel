@@ -24,6 +24,4 @@ package org.apache.camel.scala
  */
 class Frequency(val count: Int, val period: Period) {
 
-
-
 }

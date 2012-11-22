@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.component.spring.ws.util.FileUtil;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,18 +38,11 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
     private String expectedResponse;
     private WebServiceTemplate webServiceTemplate;
 
-    public ConsumerEndpointMappingResponseHandlingRouteTest() throws IOException {
-        expectedResponse = toUnixLineEndings(FileUtil.readFileAsString("/stockquote-response.xml"));
-    }
-
     @Before
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
-    }
-    
-    public String toUnixLineEndings(String inSt) {
-        return inSt.replace("\r\n", "\n");
+        expectedResponse = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/stockquote-response.xml"));
     }
 
     @Test
@@ -61,7 +52,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, toUnixLineEndings(sw.toString()));
+        assertEquals(expectedResponse, sw.toString());
     }
 
     @Test
@@ -71,7 +62,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, new SoapActionCallback("http://www.webserviceX.NET/GetQuote"), result);
         assertNotNull(result);
-        assertEquals(expectedResponse, toUnixLineEndings(sw.toString()));
+        assertEquals(expectedResponse, sw.toString());
     }
 
     @Test
@@ -81,7 +72,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult("http://localhost/stockquote2", source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, toUnixLineEndings(sw.toString()));
+        assertEquals(expectedResponse, sw.toString());
     }
 
     @Test
@@ -91,12 +82,11 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, toUnixLineEndings(sw.toString()));
+        assertEquals(expectedResponse, sw.toString());
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/spring/ws/ConsumerEndpointMappingResponseHandlingRouteTest-context.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/ws/ConsumerEndpointMappingResponseHandlingRouteTest-context.xml");
     }
 }

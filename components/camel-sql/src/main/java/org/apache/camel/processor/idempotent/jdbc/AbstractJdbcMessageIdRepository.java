@@ -18,14 +18,14 @@ package org.apache.camel.processor.idempotent.jdbc;
 
 import javax.sql.DataSource;
 
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -43,7 +43,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * <p/>
  * These methods should perform the named database operation.
  */
-@ManagedResource("JDBC IdempotentRepository")
+@ManagedResource(description = "JDBC IdempotentRepository")
 public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport implements IdempotentRepository<T> {
 
     protected JdbcTemplate jdbcTemplate;

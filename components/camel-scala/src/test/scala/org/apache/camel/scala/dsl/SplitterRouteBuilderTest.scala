@@ -27,14 +27,14 @@ import org.junit.Test
 class SplitterRouteBuilderTest extends ScalaTestSupport {
 
   @Test
-  def testSimpleSplitter = {
+  def testSimpleSplitter() = {
     "mock:a" expect { _.count = 3}
     "direct:a" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
     "mock:a" assert()
   }
   
   @Test
-  def testBlockSplitter = {
+  def testBlockSplitter() = {
     "mock:b" expect { _.count = 3}
     "mock:c" expect { _.count = 3}
     "direct:b" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>

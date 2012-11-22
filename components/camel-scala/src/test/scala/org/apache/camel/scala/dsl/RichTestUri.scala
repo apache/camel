@@ -24,8 +24,8 @@ class RichTestUri(uri: String, support: ScalaTestSupport) {
   def !(messages: Any*) = {
     messages.foreach { 
       _ match {
-        case exchange: Exchange => support.getTemplate().send(uri, exchange)
-        case anything: Any => support.getTemplate().sendBody(uri, anything)
+        case exchange: Exchange => support.getTemplate.send(uri, exchange)
+        case anything: Any => support.getTemplate.sendBody(uri, anything)
       }
     }
   }

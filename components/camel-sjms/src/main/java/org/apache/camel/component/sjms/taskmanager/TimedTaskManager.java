@@ -28,9 +28,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class TimedTaskManager {
 
     private final Timer timer = new Timer();
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    TimedTaskManager() {
+    public TimedTaskManager() {
     }
 
     public void addTask(TimerTask task, long delay) {

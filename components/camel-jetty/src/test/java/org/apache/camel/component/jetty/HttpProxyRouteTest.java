@@ -47,6 +47,12 @@ public class HttpProxyRouteTest extends BaseJettyTest {
         out = template.requestBody("http://localhost:{{port}}/proxy/path", null, String.class);
         assertEquals("/otherEndpoint/path", out);
     }
+    
+    @Test
+    public void testHttpProxyHostHeader() throws Exception {
+        String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
+        assertEquals("Get a wrong host header", "localhost:" + getPort2(), out);
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -60,6 +66,11 @@ public class HttpProxyRouteTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/bye").transform(header("foo").prepend("Bye "));
                 
                 from("jetty://http://localhost:{{port}}/otherEndpoint?matchOnUriPrefix=true").transform(header(Exchange.HTTP_PATH));
+                
+                from("jetty://http://localhost:{{port}}/proxyServer")
+                    .to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
+                
+                from("jetty://http://localhost:{{port2}}/host").transform(header("host"));
             }
         };
     }    

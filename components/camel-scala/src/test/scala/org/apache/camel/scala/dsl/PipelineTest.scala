@@ -25,7 +25,7 @@ import org.junit.Assert.assertNotNull
 /**
  * Unit tests for the explicit 'pipeline' DSL keyword 
  */
-class SPipelineTest extends ScalaTestSupport {
+class PipelineTest extends ScalaTestSupport {
 
   val increment = (exchange: Exchange) => {
     val integer = exchange.getIn.getBody(classOf[Int])
@@ -36,8 +36,8 @@ class SPipelineTest extends ScalaTestSupport {
     val out = exchange.getOut
     out.copyFrom(exchange.getIn)
 
-    out.setHeader("test", "testValue");
-    out.addAttachment("test1.xml", new DataHandler(new FileDataSource("pom.xml")));
+    out.setHeader("test", "testValue")
+    out.addAttachment("test1.xml", new DataHandler(new FileDataSource("pom.xml")))
   }
 
   val removeHeaderAndAttachment = (exchange: Exchange) => {
@@ -51,7 +51,7 @@ class SPipelineTest extends ScalaTestSupport {
   }  
 
   @Test
-  def testIncrementSimple = {
+  def testIncrementSimple() = {
     "mock:result" expect { _.received(new java.lang.Integer(4))}
     test {
       "direct:a" ! 1
@@ -59,7 +59,7 @@ class SPipelineTest extends ScalaTestSupport {
   }
 
   @Test
-  def testIncrementBlock = {
+  def testIncrementBlock() = {
     "mock:result" expect { _.received(new java.lang.Integer(4))}
     test {
       "direct:b" ! 1
@@ -67,7 +67,7 @@ class SPipelineTest extends ScalaTestSupport {
   }
 
   @Test
-  def testExplicitPipeline = {
+  def testExplicitPipeline() = {
     test {
       "direct:start" ! "Hello world"
     }
@@ -90,8 +90,8 @@ class SPipelineTest extends ScalaTestSupport {
 
     "direct:start" ==> {
       pipeline {
-        process(setHeaderAndAttachment);
-        process(removeHeaderAndAttachment);
+        process(setHeaderAndAttachment)
+        process(removeHeaderAndAttachment)
       }
     }
   }

@@ -38,15 +38,13 @@
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.7.0</activemq-version>
-    <ahc-version>1.7.6</ahc-version>
+    <ahc-version>1.7.7</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>2.7.7_5</antlr-bundle-version>
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
     <apacheds-version>1.5.7</apacheds-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
-    <aries-blueprint-version>0.3</aries-blueprint-version>
-    <!-- POJOsr does not yet work with Aries 1.0.0 -->
-    <aries-blueprint-test-version>0.3</aries-blueprint-test-version>
+    <aries-blueprint-version>1.0.0</aries-blueprint-version>
     <arquillian-junit-container-version>1.0.0.CR7</arquillian-junit-container-version>
     <arquillian-weld-ee-embedded-version>1.0.0.CR3</arquillian-weld-ee-embedded-version>
     <asm-bundle-version>3.3_2</asm-bundle-version>
@@ -58,7 +56,7 @@
     <avro-version>1.6.2</avro-version>
     <avro-bundle-version>1.6.1_1</avro-bundle-version>
     <aws-java-sdk-bundle-version>1.3.14_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.3.14</aws-java-sdk-version>
+    <aws-java-sdk-version>1.3.25</aws-java-sdk-version>
     <axiom-version>1.2.12</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
@@ -154,6 +152,7 @@
     <hawtdispatch-version>1.12</hawtdispatch-version>
     <hazelcast-version>2.4</hazelcast-version>
     <hbase-version>0.90.5</hbase-version>
+    <hbase-bundle-version>0.90.5_1</hbase-bundle-version>
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
     <hibernate-version>3.6.10.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
@@ -170,13 +169,14 @@
     <isorelax-version>20050913</isorelax-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.10</jackson-version>
+    <jackson2-version>2.1.0</jackson2-version>
     <jackrabbit-version>2.2.12</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasypt-bundle-version>1.9.0_1</jasypt-bundle-version>
     <jasypt-version>1.9.0</jasypt-version>
     <java-apns-bundle-version>0.1.6_3</java-apns-bundle-version>
     <java-apns-version>0.1.6</java-apns-version>
-    <javacrumbs-version>0.19</javacrumbs-version>
+    <javacrumbs-version>0.22</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
     <javax-mail-version>1.4.5</javax-mail-version>
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
@@ -186,7 +186,7 @@
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
-    <jetty-version>7.6.7.v20120910</jetty-version>
+    <jetty-version>7.6.8.v20121106</jetty-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
     <jettison-version>1.3.2</jettison-version>
@@ -218,7 +218,7 @@
     <junit-version>4.10</junit-version>
     <jython-engine-version>20080611</jython-engine-version>
     <jython-version>2.2.1</jython-version>
-    <karaf-version>2.2.9</karaf-version>
+    <karaf-version>2.3.0</karaf-version>
     <krati-version>0.4.6</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.3</leveldbjni-version>
@@ -230,6 +230,7 @@
     <maven-bundle-version>2.3.7</maven-bundle-version>
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
+    <maven-plugin-plugin-version>3.2</maven-plugin-plugin-version>
     <maven-resources-plugin-version>2.4.3</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
@@ -247,18 +248,19 @@
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <!-- transitive dependency from avro, to use older netty bundle -->
     <netty-bundle-version>3.2.7.Final_1</netty-bundle-version>
-    <netty-version>3.5.9.Final</netty-version>
+    <netty-version>3.5.10.Final</netty-version>
     <ode-version>1.3.4</ode-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
     <ognl-version>3.0.5_1</ognl-version>
     <openejb-version>3.1.4</openejb-version>
+    <openjpa-version>2.2.1</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
-    <osgi-version>4.2.0</osgi-version>
+    <osgi-version>4.3.0</osgi-version>
     <paranamer-bundle-version>2.4_1</paranamer-bundle-version>
-    <pax-exam-version>2.5.0</pax-exam-version>
+    <pax-exam-version>2.6.0</pax-exam-version>
     <paxexam-karaf-container-version>1.0.0</paxexam-karaf-container-version>
     <pax-runner-version>1.6.1</pax-runner-version>
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
@@ -266,7 +268,7 @@
     <pdfbox-version>1.6.0</pdfbox-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
-    <pojosr-version>0.1.8</pojosr-version>
+    <pojosr-version>0.2.1</pojosr-version>
     <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-bundle-version>0.16_1</qpid-bundle-version> <!-- FIXME cmueller: not in sync! -->
@@ -306,7 +308,11 @@
     <spring-integration-version>2.1.4.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-neo4j-version>2.1.0.RELEASE</spring-neo4j-version>
-    <spring-version>3.0.7.RELEASE</spring-version>
+    <!-- CAMEL-5768 using spring3.1.x by default -->
+    <spring-version>${spring31-version}</spring-version>
+    <spring30-version>3.0.7.RELEASE</spring30-version>
+    <spring31-version>3.1.3.RELEASE</spring31-version>
+    <spring32-version>3.2.0.RC1</spring32-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.3.RELEASE</spring-security-version>
     <!-- spring WS 2.0.3 is the last release to support Spring 3.0.x -->
@@ -331,6 +337,7 @@
     <weld-version>1.1.5.Final</weld-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <woodstox-version>4.1.4</woodstox-version>
+    <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
     <wss4j-version>1.6.5</wss4j-version>
     <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
@@ -342,6 +349,8 @@
     <xmlbeans-bundle-version>2.5.0_2</xmlbeans-bundle-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
     <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
+    <xmlrpc-version>3.1.3</xmlrpc-version>
+    <xmlrpc-client-bundle-version>3.1.3_1-SNAPSHOT</xmlrpc-client-bundle-version>
     <xmlschema-version>2.0</xmlschema-version>
     <xmlsec-version>1.5.1</xmlsec-version>
     <xmlunit-version>1.3</xmlunit-version>
@@ -1050,6 +1059,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xmljson</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xmlrpc</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2419,7 +2433,7 @@
           <links>
             <link>http://download.oracle.com/javase/6/docs/api/</link>
             <link>http://download.oracle.com/javaee/6/api/</link>
-            <link>http://static.springsource.org/spring/docs/3.0.5.RELEASE/api/</link>
+            <link>http://static.springsource.org/spring/docs/3.0.7.RELEASE/api/</link>
           </links>
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
@@ -2493,13 +2507,26 @@
       </build>
     </profile>
     
+    <!-- profiles for choosing default spring version -->
+    <profile>
+      <id>spring3.0</id>
+      <properties>
+        <spring-version>${spring30-version}</spring-version>
+      </properties>
+    </profile>
     <profile>
       <id>spring3.1</id>
       <properties>
-        <spring-version>3.1.2.RELEASE</spring-version>
+        <spring-version>${spring31-version}</spring-version>
       </properties>
     </profile>
-    
+    <profile>
+      <id>spring3.2</id>
+      <properties>
+        <spring-version>${spring32-version}</spring-version>
+      </properties>
+    </profile>
+
     <profile>
       <id>jdk1.7</id>
       <activation>
@@ -2518,4 +2545,12 @@
       </dependencies>
     </profile>
   </profiles>
+  
+  <repositories>
+    <repository>
+      <id>repository.springframework.maven.milestone</id>
+      <name>Spring Framework Maven Milestone Repository</name>
+      <url>http://maven.springframework.org/milestone</url>
+    </repository>
+  </repositories>
 </project>

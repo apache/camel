@@ -30,6 +30,14 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     protected String getKeyFileNameSec() {
         return "org/apache/camel/component/crypto/secring.gpg";
     }
+    
+    protected String getKeyUserId() {
+        return "sdude@nowhere.net";
+    }
+    
+    protected String getKeyPassword() {
+        return "sdude";
+    }
 
     @Test
     public void testEncryption() throws Exception {
@@ -55,9 +63,9 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 // Private Key FileName
                 String keyFileNameSec = getKeyFileNameSec();
                 // Keyring Userid Used to Encrypt
-                String keyUserid = "sdude@nowhere.net";
+                String keyUserid = getKeyUserId();
                 // Private key password
-                String keyPassword = "sdude";
+                String keyPassword = getKeyPassword();
 
                 from("direct:inline")
                         .marshal().pgp(keyFileName, keyUserid)

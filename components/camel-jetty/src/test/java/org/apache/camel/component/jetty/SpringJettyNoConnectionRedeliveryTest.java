@@ -54,7 +54,9 @@ public class SpringJettyNoConnectionRedeliveryTest extends CamelSpringTestSuppor
 
         assertTrue(exchange.isFailed());
 
-        assertIsInstanceOf(ConnectException.class, exchange.getException());
+        // there should be a connect exception as cause
+        ConnectException ce = exchange.getException(ConnectException.class);
+        assertNotNull(ce);
 
         assertEquals(true, exchange.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(4, exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER));

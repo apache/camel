@@ -27,14 +27,16 @@ import org.junit.Test
 class WiretapTest extends ScalaTestSupport {
   
   @Test
-  def testSimpleTap = doTestWiretap("direct:a", "mock:a")
+  def testSimpleTap() = doTestWiretap("direct:a", "mock:a")
+
   @Test
-  def testBlockTap = doTestWiretap("direct:b", "mock:b")
+  def testBlockTap() = doTestWiretap("direct:b", "mock:b")
   
   @Test
-  def testSimpleTapWithBody = doTestWiretapWithBody("direct:c", "mock:c")
+  def testSimpleTapWithBody() = doTestWiretapWithBody("direct:c", "mock:c")
+
   @Test
-  def testBlockTapWithBody = doTestWiretapWithBody("direct:d", "mock:d")
+  def testBlockTapWithBody() = doTestWiretapWithBody("direct:d", "mock:d")
   
   def doTestWiretap(from: String, to: String) = {
     to expect { _.received("Calling Elvis", "Calling Paul")}

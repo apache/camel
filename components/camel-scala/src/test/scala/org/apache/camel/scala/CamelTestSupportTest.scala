@@ -17,7 +17,6 @@
 package org.apache.camel.scala
 
 import org.apache.camel.test.junit4.CamelTestSupport
-import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.scala.dsl.builder.{RouteBuilder,RouteBuilderSupport}
 import org.junit.Test
 
@@ -26,13 +25,13 @@ class CamelTestSupportTest extends CamelTestSupport with RouteBuilderSupport {
   override protected def createRouteBuilder = builder
   
   @Test
-  def testValidRequest{
+  def testValidRequest() {
     val mock = getMockEndpoint("mock:output")
 
     val message = "HelloWorld"
     mock.expectedBodiesReceived(message)
     template.sendBody("direct:start", message)
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
   }
   
   val builder = new RouteBuilder {

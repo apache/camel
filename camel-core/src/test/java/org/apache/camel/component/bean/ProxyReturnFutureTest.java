@@ -34,9 +34,7 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
         Future<String> future = service.asText(4);
         log.info("Got future");
 
-        assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
-
         String reply = future.get(5, TimeUnit.SECONDS);
         assertEquals("Four", reply);
     }
@@ -47,13 +45,13 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
 
         Future<String> future = service.asText(4);
         log.info("Got future");
-        assertFalse("Should not be done", future.isDone());
+
         log.info("Waiting for future to be done ...");
         assertEquals("Four", future.get(5, TimeUnit.SECONDS));
 
         future = service.asText(5);
         log.info("Got future");
-        assertFalse("Should not be done", future.isDone());
+
         log.info("Waiting for future to be done ...");
         assertEquals("Four", future.get(5, TimeUnit.SECONDS));
     }
@@ -64,7 +62,7 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:echo")
-                    .delay(2000)
+                    .delay(250)
                     .transform().constant("Four");
             }
         };

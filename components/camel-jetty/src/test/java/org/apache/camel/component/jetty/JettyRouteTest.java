@@ -35,6 +35,12 @@ public class JettyRouteTest extends BaseJettyTest {
         String body = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("<html><body>Book 123 is Camel in Action</body></html>", body);
     }
+    
+    @Test
+    public void testHttpProxyHostHeader() throws Exception {
+        String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
+        assertEquals("Get a wrong host header", "localhost:" + getPort2(), out);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -43,6 +49,11 @@ public class JettyRouteTest extends BaseJettyTest {
                 // START SNIPPET: e1
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
                 // END SNIPPET: e1
+                
+                from("jetty://http://localhost:{{port}}/proxyServer")
+                    .to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
+            
+                from("jetty://http://localhost:{{port2}}/host").transform(header("host"));
             }
         };
     }

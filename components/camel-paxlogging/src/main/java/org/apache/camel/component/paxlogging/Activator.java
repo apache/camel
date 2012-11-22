@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.paxlogging;
 
-import java.util.Properties;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.apache.camel.spi.ComponentResolver;
 import org.osgi.framework.BundleActivator;
@@ -31,7 +32,7 @@ public class Activator implements BundleActivator {
     private ServiceRegistration registration;
 
     public void start(BundleContext bundleContext) throws Exception {
-        Properties props = new Properties();
+        Dictionary<String, String> props = new Hashtable<String, String>();
         props.put("component", PaxLoggingComponent.NAME);
         registration = bundleContext.registerService(
                             ComponentResolver.class.getName(),

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
+import org.apache.camel.component.jms.JmsEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
@@ -32,7 +34,7 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  *
  * @see ExclusivePersistentQueueMessageListenerContainer
  */
-public class SharedPersistentQueueMessageListenerContainer extends DefaultMessageListenerContainer {
+public class SharedPersistentQueueMessageListenerContainer extends DefaultJmsMessageListenerContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedPersistentQueueMessageListenerContainer.class);
 
@@ -42,18 +44,22 @@ public class SharedPersistentQueueMessageListenerContainer extends DefaultMessag
     /**
      * Use a fixed JMS message selector
      *
+     * @param endpoint the endpoint
      * @param fixedMessageSelector the fixed selector
      */
-    public SharedPersistentQueueMessageListenerContainer(String fixedMessageSelector) {
+    public SharedPersistentQueueMessageListenerContainer(JmsEndpoint endpoint, String fixedMessageSelector) {
+        super(endpoint);
         this.fixedMessageSelector = fixedMessageSelector;
     }
 
     /**
      * Use a dynamic JMS message selector
      *
+     * @param endpoint the endpoint
      * @param creator the create to create the dynamic selector
      */
-    public SharedPersistentQueueMessageListenerContainer(MessageSelectorCreator creator) {
+    public SharedPersistentQueueMessageListenerContainer(JmsEndpoint endpoint, MessageSelectorCreator creator) {
+        super(endpoint);
         this.creator = creator;
     }
 

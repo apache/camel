@@ -29,9 +29,9 @@ abstract class ScalaTestSupport extends CamelTestSupport with RouteBuilderSuppor
   implicit def mockWrapper(endpoint: MockEndpoint) = new RichMockEndpoint(endpoint)
   val endpoints = new ArrayBuffer[MockEndpoint]()
 
-  def assert(uri: String) = getMockEndpoint(uri).assertIsSatisfied
+  def assert(uri: String) = getMockEndpoint(uri).assertIsSatisfied()
 
-  protected[scala] def getTemplate() = template
+  protected[scala] def getTemplate = template
 
   protected[scala] def mock(uri: String) = {
     val mock = getMockEndpoint(uri)
@@ -45,14 +45,14 @@ abstract class ScalaTestSupport extends CamelTestSupport with RouteBuilderSuppor
   
   override protected def createRouteBuilder = builder
   
-  override def setUp = {
-    super.setUp
+  override def setUp() = {
+    super.setUp()
     endpoints.foreach(_.reset())
   }
   
   def test(block : => Unit) = {
     block
-    endpoints.foreach(_.assertIsSatisfied)
+    endpoints.foreach(_.assertIsSatisfied())
   }
 
   override def createJndiContext = {

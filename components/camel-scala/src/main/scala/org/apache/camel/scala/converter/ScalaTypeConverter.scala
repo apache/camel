@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.converter;
+package org.apache.camel.scala.converter
 
 import java.io.InputStream
 
@@ -33,7 +33,7 @@ object ScalaTypeConverter {
 
    @Converter
    def convertToDocument(xml: Elem, exchange : Exchange) : Document = {
-     exchange.getContext.getTypeConverter.convertTo(classOf[Document], exchange, xml.toString)
+     exchange.getContext.getTypeConverter.convertTo(classOf[Document], exchange, xml.toString())
    }
 
    @Converter

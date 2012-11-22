@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.test;
+package org.apache.camel.scala.test
 
 /**
  * Just a simple envelope test class

@@ -17,6 +17,8 @@
 package org.apache.camel
 package scala.dsl.languages
 
+import language.tokenizer.TokenizeLanguage
+
 /**
  * Trait to support the different expression languages available in Camel 
  */
@@ -48,6 +50,8 @@ trait Languages {
     def xpath(expression: String) =      Languages.this.xpath(expression)(exchange)
     def xquery(expression: String) =     Languages.this.xquery(expression)(exchange)
     def language(language: String, expression: String) = Languages.this.language(language)(expression)(exchange)
+
+    def tokenizeXML(tagName: String, inheritNamespaceTagName : String = null) = Languages.this.tokenizeXML(tagName, inheritNamespaceTagName)(exchange)
   }
   
   // a set of methods to allow direct use of the language as an expression
@@ -76,6 +80,10 @@ trait Languages {
   // general purpose language
   def language(language: String)(expression: String)(exchange : Exchange) = Languages.evaluate(expression)(exchange)(language)
 
+  def tokenizeXML(tagName: String, inheritNamespaceTagName : String = null)(exchange : Exchange) : Any = {
+    TokenizeLanguage.tokenizeXML(tagName, inheritNamespaceTagName).evaluate(exchange, classOf[Object])
+  }
+
 }
 
 /**
@@ -84,7 +92,7 @@ trait Languages {
 object Languages {
 
   def evaluate(expression: String)(exchange: Exchange)(lang: String) : Any = {
-    val language = exchange.getContext().resolveLanguage(lang)
+    val language = exchange.getContext.resolveLanguage(lang)
     // return a language function as the language should support being
     // evaluated as a predicate or expression depending on its usage
     new LanguageFunction(language, expression)

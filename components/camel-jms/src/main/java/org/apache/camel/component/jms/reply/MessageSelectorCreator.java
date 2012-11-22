@@ -29,7 +29,7 @@ public class MessageSelectorCreator implements CorrelationListener {
     protected static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);
     protected final CorrelationTimeoutMap timeoutMap;
     protected final ConcurrentSkipListSet<String> correlationIds;
-    protected boolean dirty = true;
+    protected volatile boolean dirty = true;
     protected StringBuilder expression;
 
     public MessageSelectorCreator(CorrelationTimeoutMap timeoutMap) {

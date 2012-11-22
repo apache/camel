@@ -23,5 +23,5 @@ package org.apache.camel.component.mybatis;
  */
 public enum StatementType {
 
-    SelectOne, SelectList, Insert, InsertList, Update, Delete
+    SelectOne, SelectList, Insert, InsertList, Update, UpdateList, Delete, DeleteList
 }

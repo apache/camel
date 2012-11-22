@@ -132,14 +132,14 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
                 // create a random selector value we will use for the persistent reply queue
                 replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
                 String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
-                answer = new SharedPersistentQueueMessageListenerContainer(fixedMessageSelector);
+                answer = new SharedPersistentQueueMessageListenerContainer(endpoint, fixedMessageSelector);
                 // must use cache level consumer for fixed message selector
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
                 log.debug("Using shared queue: " + endpoint.getReplyTo() + " with fixed message selector [" + fixedMessageSelector + "] as reply listener: " + answer);
             } else {
                 // use a dynamic message selector which will select the message we want to receive as reply
                 dynamicMessageSelector = new MessageSelectorCreator(correlation);
-                answer = new SharedPersistentQueueMessageListenerContainer(dynamicMessageSelector);
+                answer = new SharedPersistentQueueMessageListenerContainer(endpoint, dynamicMessageSelector);
                 // must use cache level session for dynamic message selector,
                 // as otherwise the dynamic message selector will not be updated on-the-fly
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
@@ -149,7 +149,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             log.warn("{} is using a shared reply queue, which is not as fast as alternatives."
                     + " See more detail at the section 'Request-reply over JMS' at http://camel.apache.org/jms", endpoint);
         } else if (ReplyToType.Exclusive == type) {
-            answer = new ExclusivePersistentQueueMessageListenerContainer();
+            answer = new ExclusivePersistentQueueMessageListenerContainer(endpoint);
             // must use cache level consumer for exclusive as there is no message selector
             answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
             log.debug("Using exclusive queue:" + endpoint.getReplyTo() + " as reply listener: " + answer);
@@ -171,11 +171,18 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         answer.setDestinationName(endpoint.getReplyTo());
 
         answer.setAutoStartup(true);
+        answer.setIdleConsumerLimit(endpoint.getIdleConsumerLimit());
+        answer.setIdleTaskExecutionLimit(endpoint.getIdleTaskExecutionLimit());
+        if (endpoint.getMaxMessagesPerTask() >= 0) {
+            answer.setMaxMessagesPerTask(endpoint.getMaxMessagesPerTask());
+        }
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(1);
-        answer.setMaxConcurrentConsumers(1);
+        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
+        if (endpoint.getMaxConcurrentConsumers() > 0) {
+            answer.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
+        }
         answer.setConnectionFactory(endpoint.getConnectionFactory());
         String clientId = endpoint.getClientId();
         if (clientId != null) {
@@ -201,12 +208,29 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getRecoveryInterval() >= 0) {
             answer.setRecoveryInterval(endpoint.getRecoveryInterval());
         }
-        // do not use a task executor for reply as we are are always a single threaded task
+        // set task executor
+        if (endpoint.getTaskExecutor() != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
+            }
+            answer.setTaskExecutor(endpoint.getTaskExecutor());
+        }
 
         // setup a bean name which is used ny Spring JMS as the thread name
         String name = "PersistentQueueReplyManager[" + answer.getDestinationName() + "]";
-        name = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName(name);
         answer.setBeanName(name);
+
+        if (answer.getConcurrentConsumers() > 1) {
+            if (ReplyToType.Shared == type) {
+                // warn if using concurrent consumer with shared reply queue as that may not work properly
+                log.warn("Using {}-{} concurrent consumer on {} with shared queue {} may not work properly with all message brokers.",
+                        new Object[]{answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name, endpoint.getReplyTo()});
+            } else {
+                // log that we are using concurrent consumers
+                log.info("Using {}-{} concurrent consumers on {}",
+                        new Object[]{answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name});
+            }
+        }
 
         return answer;
     }

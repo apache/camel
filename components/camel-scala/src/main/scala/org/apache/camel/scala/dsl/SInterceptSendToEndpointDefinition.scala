@@ -17,7 +17,7 @@
 package org.apache.camel.scala.dsl
 
 import builder.RouteBuilder
-import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition
 
 /**
  * Scala enrichment for Camel's InterceptSendToEndpointDefinition

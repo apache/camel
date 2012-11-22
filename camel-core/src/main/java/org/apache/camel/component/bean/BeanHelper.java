@@ -30,6 +30,62 @@ public final class BeanHelper {
     }
 
     /**
+     * Determines and maps the given value is valid according to the supported
+     * values by the bean component.
+     *
+     * @param value the value
+     * @return the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
+     */
+    public static Class<?> getValidParameterType(String value) {
+        if (ObjectHelper.isEmpty(value)) {
+            return null;
+        }
+
+        // trim value
+        value = value.trim();
+
+        // single quoted is valid
+        if (value.startsWith("'") && value.endsWith("'")) {
+            return String.class;
+        }
+
+        // double quoted is valid
+        if (value.startsWith("\"") && value.endsWith("\"")) {
+            return String.class;
+        }
+
+        // true or false is valid (boolean)
+        if (value.equals("true") || value.equals("false")) {
+            return Boolean.class;
+        }
+
+        // null is valid (to force a null value)
+        if (value.equals("null")) {
+            return Object.class;
+        }
+
+        // simple language tokens is valid
+        if (StringHelper.hasStartToken(value, "simple")) {
+            return Object.class;
+        }
+
+        // numeric is valid
+        boolean numeric = true;
+        for (char ch : value.toCharArray()) {
+            if (!Character.isDigit(ch)) {
+                numeric = false;
+                break;
+            }
+        }
+        if (numeric) {
+            return Number.class;
+        }
+
+        // not valid
+        return null;
+    }
+
+    /**
      * Determines if the given value is valid according to the supported
      * values by the bean component.
      *
@@ -42,43 +98,7 @@ public final class BeanHelper {
             return true;
         }
 
-        // trim value
-        value = value.trim();
-
-        // single quoted is valid
-        if (value.startsWith("'") && value.endsWith("'")) {
-            return true;
-        }
-
-        // double quoted is valid
-        if (value.startsWith("\"") && value.endsWith("\"")) {
-            return true;
-        }
-
-        // true or false is valid (boolean)
-        if (value.equals("true") || value.equals("false")) {
-            return true;
-        }
-
-        // null is valid (to force a null value)
-        if (value.equals("null")) {
-            return true;
-        }
-
-        // simple language tokens is valid
-        if (StringHelper.hasStartToken(value, "simple")) {
-            return true;
-        }
-
-        // numeric is valid
-        boolean numeric = true;
-        for (char ch : value.toCharArray()) {
-            if (!Character.isDigit(ch)) {
-                numeric = false;
-                break;
-            }
-        }
-        return numeric;
+        return getValidParameterType(value) != null;
     }
 
     /**

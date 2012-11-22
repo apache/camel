@@ -30,7 +30,7 @@ public class LifecycleStrategyInjectionTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/lifecycleStrategyInjection.xml");
     }
-    
+
     public void testInjectedStrategy() throws Exception {
         assertEquals(2, context.getLifecycleStrategies().size());
         assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(1));

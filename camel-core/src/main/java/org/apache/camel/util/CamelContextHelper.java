@@ -353,7 +353,7 @@ public final class CamelContextHelper {
      * Finds all possible Components on the classpath and Registry
      */
     public static SortedMap<String, Properties> findComponents(CamelContext camelContext) throws LoadPropertiesException {
-        SortedMap<String,Properties> map = new TreeMap<String, Properties>();
+        SortedMap<String, Properties> map = new TreeMap<String, Properties>();
         Enumeration<URL> iter = camelContext.getClassResolver().loadResourcesAsURL(COMPONENT_DESCRIPTOR);
         while (iter.hasMoreElements()) {
             URL url = iter.nextElement();
@@ -374,8 +374,8 @@ public final class CamelContextHelper {
         }
 
         // lets see what other components are in the registry
-        Map<String,Component> beanMap = camelContext.getRegistry().lookupByType(Component.class);
-        Set<Map.Entry<String,Component>> entries = beanMap.entrySet();
+        Map<String, Component> beanMap = camelContext.getRegistry().lookupByType(Component.class);
+        Set<Map.Entry<String, Component>> entries = beanMap.entrySet();
         for (Map.Entry<String, Component> entry : entries) {
             String name = entry.getKey();
             if (!map.containsKey(name)) {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
  
 import builder.RouteBuilder
 import org.apache.camel.scala.test.Cat
@@ -27,11 +27,13 @@ class SetBodyTest extends ScalaTestSupport {
 
   @Test
   def testSimpleSetBody() = doTestConstant("direct:a", "mock:a")
+
   @Test
   def testBlockSetBody() = doTestConstant("direct:b", "mock:b")
   
   @Test
   def testSimpleExpression() = doTestExpression("direct:c", "mock:c")
+
   @Test
   def testBodyExpression() = doTestExpression("direct:d", "mock:d")
   

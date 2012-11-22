@@ -24,7 +24,7 @@ import org.junit.Assert._
 class RouteErrorHandlerTest extends ScalaTestSupport {
 
   @Test
-  def testRouteHandlerActive {
+  def testRouteHandlerActive() {
     "mock:deadLetter" expect {
       _.expectedMessageCount(1)
     }
@@ -36,7 +36,7 @@ class RouteErrorHandlerTest extends ScalaTestSupport {
   }
 
   @Test
-  def testContextHandlerStillActive {
+  def testContextHandlerStillActive() {
     try {
       test {
         "direct:noHandler" ! "hello world"
@@ -53,5 +53,5 @@ class RouteErrorHandlerTest extends ScalaTestSupport {
     "direct:hasHandler" errorHandler (deadLetterChannel("mock:deadLetter")) process (causeError _) to "mock:hasHandler"
   }
 
-  def causeError(exch: Exchange) = throw new Exception("Error in route.")
+  def causeError(exchange: Exchange) = throw new Exception("Error in route.")
 }

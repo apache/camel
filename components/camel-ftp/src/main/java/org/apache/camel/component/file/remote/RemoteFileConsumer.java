@@ -93,6 +93,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         exchange.setProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC, Boolean.TRUE);
         super.processExchange(exchange);
     }
+    
+    @Override
+    protected boolean isRetrieveFile() {
+        return getEndpoint().isDownload();
+    }
 
     @Override
     protected void doStop() throws Exception {

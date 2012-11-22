@@ -75,19 +75,19 @@ class SOnExceptionRetryUntilWithDefaultErrorHandlerTest extends ScalaTestSupport
   var invoked = 0
 
   @Test
-  def testRetryUntil = {
-    val out = template.requestBody("direct:start", "Hello World");
-    assertEquals("Sorry", out);
-    assertEquals(3, invoked);
+  def testRetryUntil() = {
+    val out = template.requestBody("direct:start", "Hello World")
+    assertEquals("Sorry", out)
+    assertEquals(3, invoked)
   }
 
   def threeTimes(exchange: Exchange) = {
-    invoked += 1;
+    invoked += 1
 
-    assertEquals("Hello World", exchange.in);
-    assertTrue(exchange.getException.isInstanceOf[MyFunctionalException]);
+    assertEquals("Hello World", exchange.in)
+    assertTrue(exchange.getException.isInstanceOf[MyFunctionalException])
 
-    exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, classOf[Int]) < 3;
+    exchange.getIn.getHeader(Exchange.REDELIVERY_COUNTER, classOf[Int]) < 3
   }
 
   val builder = new RouteBuilder {

@@ -23,11 +23,11 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to uri="aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&amp;messageRetentionPeriod=1209600&amp;maximumMessageSize=65536&amp;policy="/>
+            <to uri="aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&amp;messageRetentionPeriod=1209600&amp;maximumMessageSize=65536&amp;receiveMessageWaitTimeSeconds=20&amp;policy="/>
         </route>
 
         <route>
-            <from uri="aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&amp;messageRetentionPeriod=1209600&amp;maximumMessageSize=65536&amp;policy="/>
+            <from uri="aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&amp;messageRetentionPeriod=1209600&amp;maximumMessageSize=65536&amp;receiveMessageWaitTimeSeconds=20&amp;policy="/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

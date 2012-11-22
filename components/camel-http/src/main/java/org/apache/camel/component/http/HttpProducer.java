@@ -85,6 +85,8 @@ public class HttpProducer extends DefaultProducer {
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString);
             }
+            // Need to remove the Host key as it should be not used 
+            exchange.getIn().getHeaders().remove("host");
         }
         HttpMethod method = createMethod(exchange);
         Message in = exchange.getIn();

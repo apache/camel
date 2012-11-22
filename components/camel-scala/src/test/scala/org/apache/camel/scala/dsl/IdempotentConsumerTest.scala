@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import org.junit.Test
 import builder.RouteBuilder
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository
 import org.apache.camel.spi.IdempotentRepository
-import org.apache.camel.{Processor, Exchange};
+import org.apache.camel.{Processor, Exchange}
 
 /**
  * Test for an idempotent consumer
@@ -29,10 +29,10 @@ class IdempotentConsumerTest extends ScalaTestSupport {
 
   @Test
   def testSimple() = doTest("direct:a", "mock:a")
+
   @Test
   def testBlock() = doTest("direct:b", "mock:b")
-  
-  
+
   def doTest(from: String, to: String) = {
     to expect { _.received("message 1", "message 2", "message 3")}
     def send = sendMessage(from, _:String, _:String)
@@ -49,7 +49,7 @@ class IdempotentConsumerTest extends ScalaTestSupport {
   def sendMessage(from: String, header: String, body: String) = {
     template.send(from, new Processor() {
       def process(exchange: Exchange) = {
-        val in = exchange.getIn()
+        val in = exchange.getIn
         in.setBody(body)
         in.setHeader("messageId", header)
       }
@@ -77,7 +77,7 @@ class IdempotentConsumerTest extends ScalaTestSupport {
  */
 class IdempotentConsumerEagerTest extends ScalaTestSupport {
 
-  def testEagerIdempotentConsumer = {
+  def testEagerIdempotentConsumer() = {
     "mock:result" expect { _.received("one", "two", "three")}
     test {
       sendMessage("1", "one")
@@ -90,21 +90,20 @@ class IdempotentConsumerEagerTest extends ScalaTestSupport {
       template.send("direct:start", new Processor() {
           def process(exchange: Exchange) {
               // now lets fire in a message
-              val in = exchange.getIn();
-              in.setBody(body);
-              in.setHeader("messageId", messageId);
+              val in = exchange.getIn
+              in.setBody(body)
+              in.setHeader("messageId", messageId)
           }
-      });
+      })
   }
 
   val builder = new RouteBuilder {
-    val repo : IdempotentRepository[String] = MemoryIdempotentRepository.memoryIdempotentRepository(200);
-
+    val repo : IdempotentRepository[String] = MemoryIdempotentRepository.memoryIdempotentRepository(200)
 
     "direct:start" ==> {
-      idempotentConsumer(_.getIn().getHeader("messageId")).repository(repo).eager(true) {
+      idempotentConsumer(_.getIn.getHeader("messageId")).repository(repo).eager(true) {
         process((exchange : Exchange) =>
-          if (repo.contains(exchange.getIn().getHeader("messageId").asInstanceOf[String])) {
+          if (repo.contains(exchange.getIn.getHeader("messageId").asInstanceOf[String])) {
             // this is OK with the eager = true
           } else {
             throw new RuntimeException("IdemPotentConsumer eager handling is not working properly")

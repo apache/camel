@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.util.concurrent.CamelThreadFactory;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 /**
@@ -40,4 +43,22 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
         // do not run if we have been stopped
         return endpoint.isRunning();
     }
+
+    /**
+     * Create a default TaskExecutor. Called if no explicit TaskExecutor has been specified.
+     * <p>The default implementation builds a {@link org.springframework.core.task.SimpleAsyncTaskExecutor}
+     * with the specified bean name and using Camel's {@link org.apache.camel.spi.ExecutorServiceManager}
+     * to resolve the thread name.
+     * @see org.springframework.core.task.SimpleAsyncTaskExecutor#SimpleAsyncTaskExecutor(String)
+     */
+    @Override
+    protected TaskExecutor createDefaultTaskExecutor() {
+        String pattern = endpoint.getCamelContext().getExecutorServiceManager().getThreadNamePattern();
+        String beanName = getBeanName();
+
+        SimpleAsyncTaskExecutor answer = new SimpleAsyncTaskExecutor(beanName);
+        answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+        return answer;
+    }
+
 }

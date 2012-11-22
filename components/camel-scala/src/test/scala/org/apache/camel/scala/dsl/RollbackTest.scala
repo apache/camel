@@ -26,24 +26,24 @@ import junit.framework.Assert._
  */
 class RollbackTest extends ScalaTestSupport {
   
-  var handled = false;
+  var handled = false
   
   @Test
-  def testSimple = {
+  def testSimple() = {
     test {
       try {
         template.requestBody("direct:a", "The Joker")
         fail("Expected a RollbackExchangeException")
       } catch {
         // oh no, not the Joker again, let's send Batman
-        case e: RuntimeCamelException if (e.getCause().isInstanceOf[RollbackExchangeException]) => template.requestBody("direct:a", "Batman")
+        case e: RuntimeCamelException if (e.getCause.isInstanceOf[RollbackExchangeException]) => template.requestBody("direct:a", "Batman")
         case unknown => fail("We didn't expect " + unknown)
       }
     }
   }
   
   @Test
-  def testBlock = {
+  def testBlock() = {
     "mock:b" expect { _.count = 2 }
     "mock:ok" expect { _.count = 1 }
     test {
@@ -52,7 +52,7 @@ class RollbackTest extends ScalaTestSupport {
         fail("Expected a RollbackExchangeException")
       } catch {
         // oh no, not Lex Luthor again, let's send Superman
-        case e: RuntimeCamelException if (e.getCause().isInstanceOf[RollbackExchangeException]) => template.requestBody("direct:b", "Superman")
+        case e: RuntimeCamelException if (e.getCause.isInstanceOf[RollbackExchangeException]) => template.requestBody("direct:b", "Superman")
         case unknown => fail("We didn't expect " + unknown)
       }
     }
@@ -61,7 +61,7 @@ class RollbackTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        //START SNIPPET: simple
-       "direct:a" to("mock:a") when(_.in != "Batman") rollback;
+       "direct:a" to("mock:a") when(_.in != "Batman") rollback
        //END SNIPPET: simple
       
        //START SNIPPET: block

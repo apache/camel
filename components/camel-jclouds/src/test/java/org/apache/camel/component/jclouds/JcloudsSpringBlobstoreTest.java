@@ -50,22 +50,22 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
 
     @Test
     public void testBlobStorePut() throws InterruptedException {
-        template.sendBody("direct:start", "Some message");
         resultFoo.expectedMessageCount(1);
+        template.sendBody("direct:start", "Some message");
         resultFoo.assertIsSatisfied();
     }
 
     @Test
     public void testBlobStoreGet() throws InterruptedException {
-        template.sendBody("direct:start", "Some message");
         resultFoo.expectedMessageCount(1);
+        template.sendBody("direct:start", "Some message");
         resultFoo.assertIsSatisfied();
     }
 
     @Test
     public void testProduceWithUrlParametes() throws InterruptedException {
-        template.sendBody("direct:start-with-url-parameters", "Some message");
         resultBar.expectedMessageCount(1);
+        template.sendBody("direct:start-with-url-parameters", "Some message");
         resultBar.assertIsSatisfied();
     }
 }

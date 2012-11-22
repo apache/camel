@@ -40,6 +40,13 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-neo4j-rest</artifactId>
       <version>${spring-neo4j-version}</version>
+      <!-- exclude this JAR as its not in central repo and not needed -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.neo4j</groupId>
+          <artifactId>neo4j-cypher-dsl</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

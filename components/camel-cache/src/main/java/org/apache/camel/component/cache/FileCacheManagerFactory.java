@@ -38,7 +38,7 @@ public class FileCacheManagerFactory extends CacheManagerFactory {
         try {
             return CacheManager.create(new FileInputStream(fileName));
         } catch (Exception exception) {
-            throw new RuntimeCamelException(exception);
+            throw new RuntimeCamelException("Error creating CacheManager from file: " + fileName, exception);
         }
     }
 

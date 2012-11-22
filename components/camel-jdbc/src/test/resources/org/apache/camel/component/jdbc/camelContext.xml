@@ -27,7 +27,8 @@
   <!-- START SNIPPET: example -->  
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
-       <from uri="timer://kickoff?period=10000"/>
+			 <!-- trigger every second -->
+       <from uri="timer://kickoff?period=1s"/>
        <setBody>
          <constant>select * from customer</constant>
        </setBody>

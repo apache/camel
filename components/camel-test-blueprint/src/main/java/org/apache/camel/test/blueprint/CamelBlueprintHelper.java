@@ -84,11 +84,16 @@ public final class CamelBlueprintHelper {
 
     public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
                                                     String bundleFilter, String testBundleVersion) throws Exception {
+        return createBundleContext(name, descriptors, includeTestBundle, bundleFilter, testBundleVersion, null);
+    }
+    
+    public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
+                                                    String bundleFilter, String testBundleVersion, String testBundleDirectives) throws Exception {
         TinyBundle bundle = null;
 
         if (includeTestBundle) {
             // add ourselves as a bundle
-            bundle = createTestBundle(name, testBundleVersion, descriptors);
+            bundle = createTestBundle(testBundleDirectives == null ? name : name + ';' + testBundleDirectives, testBundleVersion, descriptors);
         }
 
         return createBundleContext(name, bundleFilter, bundle);

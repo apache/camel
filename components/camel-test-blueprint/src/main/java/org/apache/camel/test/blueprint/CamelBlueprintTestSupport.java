@@ -39,7 +39,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     public void setUp() throws Exception {
         String symbolicName = getClass().getSimpleName();
         this.bundleContext = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
-                true, getBundleFilter(), getBundleVersion());
+                true, getBundleFilter(), getBundleVersion(), getBundleDirectives());
 
         // must register override properties early in OSGi containers
         Properties extra = useOverridePropertiesWithPropertiesComponent();
@@ -102,6 +102,15 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return CamelBlueprintHelper.BUNDLE_VERSION;
     }
 
+    /**
+     * Gets the bundle directives.
+     * Modify this method if you wish to add some directives.
+     * @return
+     */
+    protected String getBundleDirectives() {
+        return null;
+    }
+    
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext answer = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);

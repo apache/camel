@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf;
 
 
-import java.io.StringReader;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -35,15 +34,11 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
-import org.apache.camel.wsdl_first.UnknownPersonFault;
-import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.message.Message;
 import org.junit.Before;
 import org.junit.Test;
 

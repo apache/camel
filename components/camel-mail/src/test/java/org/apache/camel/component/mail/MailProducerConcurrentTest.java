@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -49,6 +50,8 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
     private void doSendMessages(int files, int poolSize) throws Exception {
         Mailbox.clearAll();
 
+        NotifyBuilder builder = new NotifyBuilder(context).whenDone(files).create();
+
         getMockEndpoint("mock:result").expectedMessageCount(files);
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
@@ -66,9 +69,10 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
         }
 
         // wait first for all the exchanges above to be thoroughly sent asynchronously
-        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
+        assertTrue(builder.matchesMockWaitTime());
 
         Mailbox box = Mailbox.get("someone@localhost");
         assertEquals(files, box.size());

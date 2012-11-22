@@ -124,6 +124,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+			<groupId>net.javacrumbs</groupId>
+			<artifactId>smock-springws</artifactId>
+			<version>0.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easytesting</groupId>
+			<artifactId>fest-assert</artifactId>
+			<version>1.4</version>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>

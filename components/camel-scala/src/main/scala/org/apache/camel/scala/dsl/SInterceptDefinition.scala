@@ -17,7 +17,7 @@
 package org.apache.camel.scala.dsl
 
 import builder.RouteBuilder
-import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptDefinition
 
 /**
  * Scala enrichment for Camel's InterceptFromDefinition

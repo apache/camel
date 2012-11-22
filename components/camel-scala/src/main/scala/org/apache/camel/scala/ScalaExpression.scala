@@ -34,7 +34,7 @@ class ScalaExpression(val expression: Exchange => Any) extends Expression {
 
   def evaluate[Target](exchange: Exchange, toType: Class[Target]) = {
     val value = evaluate(exchange)
-    exchange.getContext().getTypeConverter().convertTo(toType, value)
+    exchange.getContext.getTypeConverter.convertTo(toType, value)
   }
 
 }

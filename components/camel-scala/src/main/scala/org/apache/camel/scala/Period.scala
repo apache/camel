@@ -85,7 +85,7 @@ class SimplePeriod(var milliseconds: Long) extends Period {
  * "2 hours 15 minutes"
  */
 class CompositePeriod(val left: Period, val right: SimplePeriod) extends Period {
-  def ref = right;
+  def ref = right
 
   def milliseconds = left.milliseconds + right.milliseconds
 }

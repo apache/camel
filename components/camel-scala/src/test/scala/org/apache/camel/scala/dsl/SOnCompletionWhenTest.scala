@@ -31,7 +31,7 @@ class SOnCompletionWhenTest extends OnCompletionWhenTest with RouteBuilderSuppor
       to("mock:result")
     }
 
-    def containsHello(exchange: Exchange) = exchange.getIn().getBody(classOf[String]).contains("Hello");
+    def containsHello(exchange: Exchange) = exchange.getIn.getBody(classOf[String]).contains("Hello")
   }
 
 }

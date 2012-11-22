@@ -42,6 +42,7 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
 
     private String mStringValue;
     private int mMonitorNumber;
+    private long mLongNumber;
 
     public String getStringValue() {
         return mStringValue;
@@ -61,6 +62,13 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
     }
     public void setMonitorNumber(Integer aNumber) {
         mMonitorNumber = aNumber;
+    }
+
+    public Long getLongNumber() {
+        return mLongNumber;
+    }
+    public void setLongNumber(Long aNumber) {
+        mLongNumber = aNumber;
     }
 
 

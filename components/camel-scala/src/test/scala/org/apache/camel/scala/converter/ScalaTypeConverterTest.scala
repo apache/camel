@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.converter;
+package org.apache.camel.scala.converter
 
 import javax.xml.parsers.DocumentBuilderFactory
 import org.apache.camel.test.junit4.CamelTestSupport
@@ -24,7 +24,6 @@ import org.junit.Test
 import org.w3c.dom.Document
 
 import scala.xml.Elem
-
 
 /**
  * Test case for ScalaTypeConverter
@@ -40,6 +39,7 @@ class ScalaTypeConverterTest extends CamelTestSupport {
     assertNotNull(result.getElementsByTagName("persons"))
   }
 
+  @Test
   def testXmlStringToElemConverter = {
     val exchange = context.getEndpoint("direct:start").createExchange
 

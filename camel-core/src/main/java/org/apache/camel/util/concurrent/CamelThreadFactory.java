@@ -42,7 +42,7 @@ public final class CamelThreadFactory implements ThreadFactory {
         Thread answer = new Thread(runnable, threadName);
         answer.setDaemon(daemon);
 
-        LOG.trace("Created thread[{}]: {}", name, answer);
+        LOG.trace("Created thread[{}] -> {}", threadName, answer);
         return answer;
     }
 

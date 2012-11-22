@@ -30,7 +30,6 @@ public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
 
     private MyCustomStrategy strategy = new MyCustomStrategy();
 
-    @SuppressWarnings("unchecked")
     public void testCustomAggregationStrategy() throws Exception {
         assertTrue("Should be started", strategy.start);
         assertFalse("Should not be stopped", strategy.stop);

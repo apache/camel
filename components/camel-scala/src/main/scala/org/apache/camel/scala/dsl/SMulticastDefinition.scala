@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import java.util.concurrent.ExecutorService
 import org.apache.camel.model.MulticastDefinition
@@ -46,9 +46,7 @@ case class SMulticastDefinition(override val target: MulticastDefinition)(implic
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
   
   def timeout(timeout: Long) = wrap(target.timeout(timeout))
-  
-  
- 
+
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SMulticastDefinition]
   
 }

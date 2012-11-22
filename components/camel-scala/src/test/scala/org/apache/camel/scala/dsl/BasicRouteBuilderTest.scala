@@ -24,6 +24,7 @@ class BasicRouteBuilderTest extends ScalaTestSupport {
 
   @Test
   def testBasicRouteArrowSyntax() = assertBasicRoute("direct:a", "mock:a")
+
   @Test
   def testBasicRouteTextSyntax() = assertBasicRoute("direct:b", "mock:b")
 

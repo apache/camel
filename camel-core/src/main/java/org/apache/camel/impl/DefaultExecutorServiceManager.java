@@ -278,7 +278,10 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     }
 
     private boolean doShutdown(ExecutorService executorService, long shutdownAwaitTermination, boolean failSafe) {
-        ObjectHelper.notNull(executorService, "executorService");
+        if (executorService == null) {
+            return false;
+        }
+
         boolean warned = false;
 
         // shutting down a thread pool is a 2 step process. First we try graceful, and if that fails, then we go more aggressively

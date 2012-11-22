@@ -48,6 +48,9 @@ import org.bouncycastle.util.io.Streams;
  */
 public class PGPDataFormat implements DataFormat {
 
+    public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";
+    public static final String KEY_USERID = "CamelPGPDataFormatKeyUserid";
+    public static final String KEY_PASSWORD = "CamelPGPDataFormatKeyPassword";
     private String keyUserid;
     private String password;
     private String keyFileName;
@@ -59,9 +62,21 @@ public class PGPDataFormat implements DataFormat {
             Security.addProvider(new BouncyCastleProvider());
         }
     }
+    
+    protected String findKeyFileName(Exchange exchange) {
+        return exchange.getIn().getHeader(KEY_FILE_NAME, keyFileName, String.class);
+    }
+    
+    protected String findKeyUserid(Exchange exchange) {
+        return exchange.getIn().getHeader(KEY_USERID, keyUserid, String.class);
+    }
+    
+    protected String findKeyPassword(Exchange exchange) {
+        return exchange.getIn().getHeader(KEY_PASSWORD, password, String.class);
+    }
 
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), this.keyFileName, this.keyUserid);
+        PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findKeyFileName(exchange), findKeyUserid(exchange));
         if (key == null) {
             throw new IllegalArgumentException("Public key is null, cannot proceed");
         }
@@ -96,7 +111,7 @@ public class PGPDataFormat implements DataFormat {
             return null;
         }
 
-        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), keyFileName, encryptedStream, password);
+        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), findKeyFileName(exchange), encryptedStream, findKeyPassword(exchange));
         if (key == null) {
             throw new IllegalArgumentException("Private key is null, cannot proceed");
         }

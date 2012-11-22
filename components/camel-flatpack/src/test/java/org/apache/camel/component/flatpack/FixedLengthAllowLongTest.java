@@ -43,6 +43,9 @@ public class FixedLengthAllowLongTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;
 
+    @EndpointInject(uri = "mock:results-df")
+    protected MockEndpoint resultsdf;
+
     protected String[] expectedFirstName = {"JOHN-LONG", "JIMMY-LONG", "JANE-LONG", "FRED-LONG"};
 
     @Test
@@ -59,6 +62,20 @@ public class FixedLengthAllowLongTest extends AbstractJUnit4SpringContextTests {
             assertNotNull("Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()), body);
             assertEquals("FIRSTNAME", expectedFirstName[counter], body.get("FIRSTNAME"));
             LOG.info("Result: " + counter + " = " + body);
+            counter++;
+        }
+    }
+
+    @Test
+    public void testFlatpackDataFormat() throws Exception {
+        resultsdf.expectedMessageCount(1);
+        resultsdf.assertIsSatisfied();
+
+        Exchange exchange = resultsdf.getReceivedExchanges().get(0);
+        DataSetList data = exchange.getIn().getBody(DataSetList.class);
+        int counter = 0;
+        for (Map<String, Object> map : data) {
+            assertEquals("FIRSTNAME", expectedFirstName[counter], map.get("FIRSTNAME"));
             counter++;
         }
     }

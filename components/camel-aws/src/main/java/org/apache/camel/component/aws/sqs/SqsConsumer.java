@@ -69,7 +69,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         request.setMaxNumberOfMessages(getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : null);
         request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout() != null ? getConfiguration().getVisibilityTimeout() : null);
         request.setAttributeNames(getConfiguration().getAttributeNames() != null ? getConfiguration().getAttributeNames() : null);
-        
+        request.setWaitTimeSeconds(getConfiguration().getWaitTimeSeconds() != null ? getConfiguration().getWaitTimeSeconds() : null);
+
         LOG.trace("Receiving messages with request [{}]...", request);
         
         ReceiveMessageResult messageResult = getClient().receiveMessage(request);
@@ -113,8 +114,11 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 int period = visibilityTimeout.intValue();
                 LOG.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {} period (seconds) to extend exchangeId: {}",
                         new Object[]{delay, period, exchange.getExchangeId()});
+                int repeatSeconds = new Double(visibilityTimeout.doubleValue() * 1.5).intValue();   //
+                LOG.debug("period :" + period);
+                LOG.debug("repeatSeconds :" + repeatSeconds);
                 final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(
-                        new TimeoutExtender(exchange, visibilityTimeout), delay, period, TimeUnit.SECONDS);
+                        new TimeoutExtender(exchange, repeatSeconds), delay, period, TimeUnit.SECONDS);
                 exchange.addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {

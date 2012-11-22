@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel
-package scala.dsl;
+package scala.dsl
 
 import org.junit.Test
 import builder.RouteBuilder
@@ -26,10 +26,10 @@ import junit.framework.Assert._
  */
 class ExceptionHandlerTest extends ScalaTestSupport {
 
-  var handled = false;
+  var handled = false
 
   @Test
-  def testTryCatchFinally = {
+  def testTryCatchFinally() = {
     "mock:a" expect { _.count = 1 }
     "mock:b" expect { _.count = 1 }
     "mock:c" expect { _.count = 1 }
@@ -52,7 +52,7 @@ class ExceptionHandlerTest extends ScalaTestSupport {
 
        val catchProcessor = (exchange: Exchange) => {
           // we shouldn't get any Strings here
-          assertFalse(exchange.getIn().getBody().getClass().equals(classOf[String]))
+          assertFalse(exchange.getIn.getBody.getClass.equals(classOf[String]))
           // the exchange shouldn't have been marked failed
           assertFalse(exchange.isFailed)
        }

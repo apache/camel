@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
  
 import builder.RouteBuilder
 import org.junit.Test
@@ -22,13 +22,16 @@ import org.junit.Test
 class PipelineAndMulticastTest extends ScalaTestSupport {
 
   @Test
-  def testArrowRoute = testRoute("direct:a", "mock:c", "mock:a", "mock:b")
+  def testArrowRoute() = testRoute("direct:a", "mock:c", "mock:a", "mock:b")
+
   @Test
-  def testToRoute = testRoute("direct:d", "mock:f", "mock:d", "mock:e")
+  def testToRoute() = testRoute("direct:d", "mock:f", "mock:d", "mock:e")
+
   @Test
-  def testArrowBlockRoute = testRoute("direct:g", "mock:i", "mock:g", "mock:h")
+  def testArrowBlockRoute() = testRoute("direct:g", "mock:i", "mock:g", "mock:h")
+
   @Test
-  def testToBlockRoute = testRoute("direct:j", "mock:l", "mock:j", "mock:k")
+  def testToBlockRoute() = testRoute("direct:j", "mock:l", "mock:j", "mock:k")
 
   def testRoute(from: String, end: String, multis: String*) = {
     multis.foreach ( _.expect { _.received("<hello/>")})
@@ -36,7 +39,7 @@ class PipelineAndMulticastTest extends ScalaTestSupport {
 
     val exchange = in("<hello/>")
     exchange.out = "<olleh/>"
-    getTemplate().send(from, exchange)
+    getTemplate.send(from, exchange)
 
     multis.foreach( _.assert())
     end assert()

@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.paxlogging;
 
-import java.util.Properties;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
@@ -86,7 +87,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Properties props = new Properties();
+        Dictionary<String, String> props = new Hashtable<String, String>();
         props.put("org.ops4j.pax.logging.appender.name", endpoint.getName());
         registration = endpoint.getComponent().getBundleContext().registerService(PaxAppender.class.getName(), this, props);
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "PaxLoggingEventTask");

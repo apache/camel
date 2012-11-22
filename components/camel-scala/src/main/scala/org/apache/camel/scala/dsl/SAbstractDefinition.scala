@@ -18,16 +18,15 @@ package org.apache.camel
 package scala
 package dsl
 
-import languages.LanguageFunction
 import org.apache.camel.Exchange
 import org.apache.camel.model._
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
+import spi.Policy
 
 import reflect.Manifest
 import java.lang.String
 import java.util.Comparator
-import spi.{Language, Policy}
 
 abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with Wrapper[P] with Block {
 
@@ -57,7 +56,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) = SAggregateDefinition(target.aggregate(expression, strategy))
   def as[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
-  def attempt: STryDefinition = STryDefinition(target.doTry)
+  def attempt: STryDefinition = STryDefinition(target.doTry())
 
   def bean(bean: Any) = bean match {
     case cls: Class[_] => wrap(target.bean(cls))

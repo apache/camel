@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.eventadmin;
 
-import java.util.Properties;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -59,7 +60,7 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Properties props = new Properties();
+        Dictionary<String, String> props = new Hashtable<String, String>();
         props.put(EventConstants.EVENT_TOPIC, endpoint.getTopic());
         registration = endpoint.getComponent().getBundleContext().registerService(EventHandler.class.getName(), this, props);
     }

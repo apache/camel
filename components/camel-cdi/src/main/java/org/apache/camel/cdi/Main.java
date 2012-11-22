@@ -16,19 +16,20 @@
  */
 package org.apache.camel.cdi;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.main.MainSupport;
-import org.apache.camel.view.ModelFileGenerator;
-import org.apache.deltaspike.core.api.provider.BeanProvider;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.main.MainSupport;
+import org.apache.camel.view.ModelFileGenerator;
+import org.apache.deltaspike.core.api.provider.BeanProvider;
 
 /**
  * Allows Camel and CDI applications to be booted up on the command line as a Java Application
@@ -43,7 +44,7 @@ public abstract class Main extends MainSupport { // abstract to prevent cdi mana
     }
 
     public static void main(String... args) throws Exception {
-        Main main = new Main() {};
+        Main main = new Main() { };
         instance = main;
         main.enableHangupSupport();
         main.run(args);

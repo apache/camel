@@ -18,6 +18,8 @@ package org.apache.camel.itest.async;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,10 +32,11 @@ import org.junit.Test;
  */
 public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
 
+    private static final CountDownLatch LATCH = new CountDownLatch(3);
+
     @Test
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(3);
         mock.expectedBodiesReceivedInAnyOrder("Hello Claus", "Hello Hadrian", "Hello Willem");
 
         // START SNIPPET: e3
@@ -46,15 +49,12 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
         template.asyncCallbackRequestBody(url, "Hadrian", callback);
         template.asyncCallbackRequestBody(url, "Willem", callback);
 
-        // give on completion time to complete properly before we do assertions on its size
-        // TODO: improve MockEndpoint.assertIsSatisfied(long) to make this sleep unnecessary
-        Thread.sleep(3000);
-
         // END SNIPPET: e3
         assertMockEndpointsSatisfied();
 
+        assertTrue("Should get 3 callbacks", LATCH.await(10, TimeUnit.SECONDS));
+
         // assert that we got all the correct data in our callback
-        assertEquals(3, callback.getData().size());
         assertTrue("Claus is missing", callback.getData().contains("Hello Claus"));
         assertTrue("Hadrian is missing", callback.getData().contains("Hello Hadrian"));
         assertTrue("Willem is missing", callback.getData().contains("Hello Willem"));
@@ -67,13 +67,16 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
      */
     private static class MyCallback extends SynchronizationAdapter {
 
-        private List<String> data = new ArrayList<String>();
+        private final List<String> data = new ArrayList<String>();
 
         @Override
         public void onComplete(Exchange exchange) {
             // this method is invoked when the exchange was a success and we can get the response
             String body = exchange.getOut().getBody(String.class);
             data.add(body);
+
+            // the latch is used for testing purposes
+            LATCH.countDown();
         }
 
         public List<String> getData() {
@@ -89,7 +92,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // The mocks are here for unit test
-                // Simulate a slow http service (delaying 1 sec) we want to invoke async
+                // Simulate a slow http service (delaying a bit) we want to invoke async
                 from("jetty:http://0.0.0.0:" + getPort() + "/myservice")
                     .delay(300)
                     .transform(body().prepend("Hello "))

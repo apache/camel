@@ -110,7 +110,10 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         }
         if (getConfiguration().getPolicy() != null) {
             request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
-        }        
+        }
+        if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
+            request.getAttributes().put(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+        }
         LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
         
         CreateQueueResult queueResult = client.createQueue(request);
@@ -120,8 +123,6 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     }
 
     private void updateQueueAttributes(AmazonSQSClient client) {
-        LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
-        
         SetQueueAttributesRequest request = new SetQueueAttributesRequest();
         request.setQueueUrl(queueUrl);
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
@@ -136,9 +137,14 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         if (getConfiguration().getPolicy() != null) {
             request.getAttributes().put(QueueAttributeName.Policy.name(), String.valueOf(getConfiguration().getPolicy()));
         }
-        client.setQueueAttributes(request);
-        
-        LOG.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
+        if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
+            request.getAttributes().put(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+        }
+        if (!request.getAttributes().isEmpty()) {
+            LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
+            client.setQueueAttributes(request);
+            LOG.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
+        }
     }
 
     @Override

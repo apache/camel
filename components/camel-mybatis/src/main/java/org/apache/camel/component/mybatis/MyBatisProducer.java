@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,15 @@ public class MyBatisProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        SqlSession session = endpoint.getSqlSessionFactory().openSession();
+        SqlSession session;
+
+        ExecutorType executorType = endpoint.getExecutorType();
+        if (executorType == null) {
+            session = endpoint.getSqlSessionFactory().openSession();
+        } else {
+            session = endpoint.getSqlSessionFactory().openSession(executorType);
+        }
+
         try {
             switch (endpoint.getStatementType()) {
             case SelectOne:
@@ -61,8 +70,14 @@ public class MyBatisProducer extends DefaultProducer {
             case Update:
                 doUpdate(exchange, session);
                 break;
+            case UpdateList:
+                doUpdateList(exchange, session);
+                break;
             case Delete:
                 doDelete(exchange, session);
+                break;
+            case DeleteList:
+                doDeleteList(exchange, session);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported statementType: " + endpoint.getStatementType());
@@ -160,6 +175,21 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
+    private void doUpdateList(Exchange exchange, SqlSession session) throws Exception {
+        Object result;
+        Object in = exchange.getIn().getBody();
+        if (in != null) {
+            // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
+            LOG.trace("Updating: {} using statement: {}", in, statement);
+            result = session.update(statement, in);
+            doProcessResult(exchange, result);
+        } else {
+            LOG.trace("Updating using statement: {}", statement);
+            result = session.update(statement);
+            doProcessResult(exchange, result);
+        }
+    }
+
     private void doDelete(Exchange exchange, SqlSession session) throws Exception {
         Object result;
         Object in = exchange.getIn().getBody();
@@ -172,6 +202,21 @@ public class MyBatisProducer extends DefaultProducer {
                 result = session.delete(statement, value);
                 doProcessResult(exchange, result);
             }
+        } else {
+            LOG.trace("Deleting using statement: {}", statement);
+            result = session.delete(statement);
+            doProcessResult(exchange, result);
+        }
+    }
+
+    private void doDeleteList(Exchange exchange, SqlSession session) throws Exception {
+        Object result;
+        Object in = exchange.getIn().getBody();
+        if (in != null) {
+            // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
+            LOG.trace("Deleting: {} using statement: {}", in, statement);
+            result = session.delete(statement, in);
+            doProcessResult(exchange, result);
         } else {
             LOG.trace("Deleting using statement: {}", statement);
             result = session.delete(statement);

@@ -90,6 +90,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
+        assertTrue(oneExchangeDone.matchesMockWaitTime());
 
         assertEquals(11, events.size());
 
@@ -124,8 +125,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
-
-        Thread.sleep(250);
+        assertTrue(oneExchangeDone.matchesMockWaitTime());
 
         assertEquals(11, events.size());
 

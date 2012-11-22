@@ -564,12 +564,9 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(ScreenLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
 
-        // TODO: just from time to time the following assert fails on JDK 7
-        if (!isJava17()) {
-            MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-            Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Acceptor,*"), null);
-            assertTrue("QFJ mbean should not have been registered", names.isEmpty());
-        }
+        MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+        Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.quickfixj:*"), null);
+        assertTrue("QFJ Connector/Initiator mbeans should not have been registered", names.isEmpty());
     }
 
     private void writeSettings() throws IOException {

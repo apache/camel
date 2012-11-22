@@ -31,13 +31,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JMXAgentTest extends DefaultJMXAgentTest {
 
-    protected static final String JMXSERVICEURL = "service:jmx:rmi:///jndi/rmi://localhost:20008/jmxrmi/camel";
+    protected final String jmxServiceUrl = "service:jmx:rmi:///jndi/rmi://localhost:" + getPort() + "/jmxrmi/camel";
     protected JMXConnector clientConnector;
 
-    @Override
-    protected void setUp() throws Exception {
-        sleepForConnection = 2000;
-        super.setUp();
+    protected int getPort() {
+        return 20008;
     }
 
     @Override
@@ -62,7 +60,7 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
             if (clientConnector == null) {
-                clientConnector = JMXConnectorFactory.connect(new JMXServiceURL(JMXSERVICEURL), null);
+                clientConnector = JMXConnectorFactory.connect(new JMXServiceURL(jmxServiceUrl), null);
             }
             mbsc = clientConnector.getMBeanServerConnection();
         }

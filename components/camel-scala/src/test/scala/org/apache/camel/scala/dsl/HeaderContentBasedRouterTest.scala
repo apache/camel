@@ -25,7 +25,7 @@ import builder.RouteBuilder
 class HeaderContentBasedRouterTest extends ScalaTestSupport {
 
   @Test
-  def testXPathContentBasedRouter = {
+  def testXPathContentBasedRouter() = {
     "mock:foo" expect {_.expectedBodiesReceived("Hello Foo")}
     "mock:bar" expect {_.expectedBodiesReceived("Hello Bar")}
     "mock:other" expect {_.expectedBodiesReceived("Hello World")}

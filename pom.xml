@@ -49,7 +49,6 @@
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
-    <openjpa-version>2.2.0</openjpa-version>
   </properties>
 
   <mailingLists>
@@ -358,17 +357,6 @@
                   <groupId>org.apache.ant</groupId>
                   <artifactId>ant-nodeps</artifactId>
                   <version>1.8.1</version>
-                </dependency>
-                <dependency>
-                  <groupId>org.apache.openjpa</groupId>
-                  <artifactId>openjpa-persistence-jdbc</artifactId>
-                  <version>${openjpa-version}</version>
-                  <exclusions>
-                    <exclusion>
-                      <groupId>ant</groupId>
-                      <artifactId>ant</artifactId>
-                    </exclusion>
-                  </exclusions>
                 </dependency>
                 <dependency>
                   <groupId>com.sun</groupId>

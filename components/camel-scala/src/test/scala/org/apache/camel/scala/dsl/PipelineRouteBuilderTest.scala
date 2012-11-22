@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import builder.RouteBuilder
 import org.junit.Test
@@ -22,10 +22,13 @@ import org.junit.Test
 class PipelineRouteBuilderTest extends ScalaTestSupport {
   @Test
   def testPipelineWithArrows() = testPipeline("direct:a", "mock:a", "mock:b")
+
   @Test
   def testPipelineWithTos() = testPipeline("direct:c", "mock:c", "mock:d")
+
   @Test
   def testPipelineBlockWithArrows() = testPipeline("direct:e", "mock:e", "mock:f")
+
   @Test
   def testPipelineBlockWithTos() = testPipeline("direct:g", "mock:g", "mock:h")
 

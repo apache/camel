@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import org.junit.Test
 import builder.RouteBuilder
@@ -25,7 +25,7 @@ import builder.RouteBuilder
 class LoadBalancerTest extends ScalaTestSupport {
   
   @Test
-  def testSimpleTrottler = {
+  def testSimpleTrottler() = {
     "mock:a" expect { _.received("message 1", "message 4") } 
     "mock:b" expect { _.received("message 2", "message 5") }
     "mock:c" expect { _.received("message 3", "message 6") }

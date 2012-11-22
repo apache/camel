@@ -51,7 +51,7 @@ public class AhcProducer extends DefaultAsyncProducer {
             // AHC supports async processing
             Request request = getEndpoint().getBinding().prepareRequest(getEndpoint(), exchange);
             log.debug("Executing request {} ", request);
-            client.prepareRequest(request).execute(new AhcAsyncHandler(exchange, callback, request.getUrl()));
+            client.prepareRequest(request).execute(new AhcAsyncHandler(exchange, callback, request.getUrl(), getEndpoint().getBufferSize()));
             return false;
         } catch (Exception e) {
             exchange.setException(e);
@@ -73,36 +73,43 @@ public class AhcProducer extends DefaultAsyncProducer {
         private int statusCode;
         private String statusText;
 
-        private AhcAsyncHandler(Exchange exchange, AsyncCallback callback, String url) {
+        private AhcAsyncHandler(Exchange exchange, AsyncCallback callback, String url, int bufferSize) {
             this.exchange = exchange;
             this.callback = callback;
             this.url = url;
-            this.os = new ByteArrayOutputStream();
+            this.os = new ByteArrayOutputStream(bufferSize);
         }
 
         @Override
         public void onThrowable(Throwable t) {
-            log.trace("{} onThrowable {}", exchange.getExchangeId(), t);
+            if (log.isTraceEnabled()) {
+                log.trace("{} onThrowable {}", exchange.getExchangeId(), t);
+            }
             try {
                 getEndpoint().getBinding().onThrowable(getEndpoint(), exchange, t);
             } catch (Exception e) {
                 exchange.setException(e);
+            } finally {
+                callback.done(false);
             }
-            callback.done(false);
         }
 
         @Override
         public STATE onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
             // write body parts to stream, which we will bind to the Camel Exchange in onComplete
             int wrote = bodyPart.writeTo(os);
-            log.trace("{} onBodyPartReceived {} bytes", exchange.getExchangeId(), wrote);
+            if (log.isTraceEnabled()) {
+                log.trace("{} onBodyPartReceived {} bytes", exchange.getExchangeId(), wrote);
+            }
             contentLength += wrote;
             return STATE.CONTINUE;
         }
 
         @Override
         public STATE onStatusReceived(HttpResponseStatus responseStatus) throws Exception {
-            log.trace("{} onStatusReceived {}", exchange.getExchangeId(), responseStatus);
+            if (log.isTraceEnabled()) {
+                log.trace("{} onStatusReceived {}", exchange.getExchangeId(), responseStatus);
+            }
             try {
                 statusCode = responseStatus.getStatusCode();
                 statusText = responseStatus.getStatusText();
@@ -115,7 +122,9 @@ public class AhcProducer extends DefaultAsyncProducer {
 
         @Override
         public STATE onHeadersReceived(HttpResponseHeaders headers) throws Exception {
-            log.trace("{} onHeadersReceived {}", exchange.getExchangeId(), headers);
+            if (log.isTraceEnabled()) {
+                log.trace("{} onHeadersReceived {}", exchange.getExchangeId(), headers);
+            }
             try {
                 getEndpoint().getBinding().onHeadersReceived(getEndpoint(), exchange, headers);
             } catch (Exception e) {
@@ -126,7 +135,9 @@ public class AhcProducer extends DefaultAsyncProducer {
 
         @Override
         public Exchange onCompleted() throws Exception {
-            log.trace("{} onCompleted", exchange.getExchangeId());
+            if (log.isTraceEnabled()) {
+                log.trace("{} onCompleted", exchange.getExchangeId());
+            }
             try {
                 getEndpoint().getBinding().onComplete(getEndpoint(), exchange, url, os, contentLength, statusCode, statusText);
             } catch (Exception e) {

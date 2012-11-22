@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl.builder;
+package org.apache.camel.scala.dsl.builder
  
 import org.apache.camel.scala.Wrapper
 import org.apache.camel.scala.test.{Person,Adult}
@@ -28,7 +28,7 @@ class RouteBuilderUnwrapTest extends Assert {
     
     val person = new PersonWrapper
     
-    def testUnwrap = {
+    def testUnwrap() = {
       //access the wrapper
       assertEquals("Apache Camel", person.vote)
       
@@ -39,7 +39,7 @@ class RouteBuilderUnwrapTest extends Assert {
   }
 
   @Test
-  def testUnwrapWhenNecessary() = builder.testUnwrap
+  def testUnwrapWhenNecessary() = builder.testUnwrap()
   
   class PersonWrapper extends Wrapper[Person] {
     

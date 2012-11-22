@@ -40,8 +40,8 @@ public class JmsAsyncStartListenerTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
 
-        template.requestBody("activemq:queue:hello", "Hello World");
-        template.requestBody("activemq:queue:hello", "Gooday World");
+        template.sendBody("activemq:queue:hello", "Hello World");
+        template.sendBody("activemq:queue:hello", "Gooday World");
 
         result.assertIsSatisfied();
     }
@@ -62,11 +62,7 @@ public class JmsAsyncStartListenerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:hello").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("activemq:queue:hello").to("mock:result");
             }
         };
     }

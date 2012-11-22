@@ -32,13 +32,13 @@ class IdTest extends ScalaTestSupport {
       "direct:a" ! "Hello World"
     }
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
 
-    assertEquals("foo", context.getRouteDefinition("route-a").getOutputs.get(0).getId())
+    assertEquals("foo", context.getRouteDefinition("route-a").getOutputs.get(0).getId)
   }
 
   @Test
-  def testRouteB = {
+  def testRouteB() = {
     "mock:b" expect { _.expectedMessageCount(1)}
     "mock:result" expect { _.expectedMessageCount(1)}
 
@@ -46,9 +46,9 @@ class IdTest extends ScalaTestSupport {
       "direct:b" ! "Hello World"
     }
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
 
-    assertEquals("bar", context.getRouteDefinition("route-b").getOutputs.get(0).getId())
+    assertEquals("bar", context.getRouteDefinition("route-b").getOutputs.get(0).getId)
   }
 
   val builder = new RouteBuilder {

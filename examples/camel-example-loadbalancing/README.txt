@@ -8,12 +8,14 @@ separate JVMs. The load balancer pattern of Camel which is used on top of them a
 sending in Round Robin mode the messages created from a Camel Bean component
 alternatively between each server running on localhost:9991 and localhost:9992.
 
-Within this demo every five seconds, a Report object is created from the Camel load balancer server.
+Within this demo every ten seconds, a Report object is created from the Camel load balancer server.
 This object is sent by the Camel load balancer to a MINA server where the object is then serialized.
 One of the two MINA servers (localhost:9991 and localhost:9992) receives the object and enriches 
 the message by setting the field reply of the Report object. The reply is sent back by the MINA 
 server to the client, which then logs the reply on the console.
 
+If any of the two MINA servers is not running, then the load balancer will automatic failover
+to the next server.
 
 Running the example
 ===================

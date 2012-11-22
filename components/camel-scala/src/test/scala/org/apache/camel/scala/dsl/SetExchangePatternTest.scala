@@ -48,7 +48,7 @@ class SetExchangePatternTest extends ScalaTestSupport {
     test {
       from ! exchange
     }
-    assertEquals(expected, getMockEndpoint(to).getReceivedExchanges().get(0).getPattern())
+    assertEquals(expected, getMockEndpoint(to).getReceivedExchanges.get(0).getPattern)
   }
 
   val builder = new RouteBuilder {

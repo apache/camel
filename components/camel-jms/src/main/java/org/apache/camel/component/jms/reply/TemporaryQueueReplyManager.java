@@ -25,6 +25,7 @@ import javax.jms.TemporaryQueue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
@@ -53,7 +54,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 
         ReplyHandler handler = correlation.remove(correlationId);
-        correlation.put(newCorrelationId, handler, requestTimeout);
+        if (handler != null) {
+            correlation.put(newCorrelationId, handler, requestTimeout);
+        }
     }
 
     @Override
@@ -84,7 +87,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
         // Use DefaultMessageListenerContainer as it supports reconnects (see CAMEL-3193)
-        DefaultMessageListenerContainer answer = new DefaultMessageListenerContainer();
+        DefaultMessageListenerContainer answer = new DefaultJmsMessageListenerContainer(endpoint);
 
         answer.setDestinationName("temporary");
         answer.setDestinationResolver(new DestinationResolver() {
@@ -97,11 +100,18 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             }
         });
         answer.setAutoStartup(true);
+        if (endpoint.getMaxMessagesPerTask() >= 0) {
+            answer.setMaxMessagesPerTask(endpoint.getMaxMessagesPerTask());
+        }
+        answer.setIdleConsumerLimit(endpoint.getIdleConsumerLimit());
+        answer.setIdleTaskExecutionLimit(endpoint.getIdleTaskExecutionLimit());
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(1);
-        answer.setMaxConcurrentConsumers(1);
+        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
+        if (endpoint.getMaxConcurrentConsumers() > 0) {
+            answer.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
+        }
         answer.setConnectionFactory(endpoint.getConnectionFactory());
         String clientId = endpoint.getClientId();
         if (clientId != null) {
@@ -127,13 +137,22 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getRecoveryInterval() >= 0) {
             answer.setRecoveryInterval(endpoint.getRecoveryInterval());
         }
-        // do not use a task executor for reply as we are are always a single threaded task
+        if (endpoint.getTaskExecutor() != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
+            }
+            answer.setTaskExecutor(endpoint.getTaskExecutor());
+        }
 
         // setup a bean name which is used ny Spring JMS as the thread name
         String name = "TemporaryQueueReplyManager[" + answer.getDestinationName() + "]";
-        name = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName(name);
         answer.setBeanName(name);
 
+        if (answer.getConcurrentConsumers() > 1) {
+            // log that we are using concurrent consumers
+            log.info("Using {}-{} concurrent consumers on {}",
+                    new Object[]{answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name});
+        }
         return answer;
     }
 

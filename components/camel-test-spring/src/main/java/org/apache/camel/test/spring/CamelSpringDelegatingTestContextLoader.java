@@ -18,12 +18,9 @@ package org.apache.camel.test.spring;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.impl.DefaultDebugger;
@@ -229,7 +226,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
             
             public void execute(String contextName, SpringCamelContext camelContext)
                 throws Exception {
-                logger.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", shutdownTimeout, shutdownTimeUnit, contextName);
+                logger.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", new Object[]{shutdownTimeout, shutdownTimeUnit, contextName});
                 camelContext.getShutdownStrategy().setTimeout(shutdownTimeout);
                 camelContext.getShutdownStrategy().setTimeUnit(shutdownTimeUnit);
             }

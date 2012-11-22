@@ -16,27 +16,16 @@
  */
 package org.apache.camel.component.velocity;
 
-import java.io.FileInputStream;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 public class VelocityOverridesPropertiesTest extends CamelTestSupport {
     
     @Test
     public void testOverridingProperties() throws Exception {
-        Logger logger = Logger.getLogger("org.apache.camel.component.velocity");
-        FileHandler fh = new FileHandler("target/camel-velocity-jdk-test.log");
-        logger.addHandler(fh);
-        logger.setLevel(Level.ALL);
-        
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -48,10 +37,6 @@ public class VelocityOverridesPropertiesTest extends CamelTestSupport {
 
         assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getOut().getBody());
         assertEquals("Christian", exchange.getOut().getHeader("name"));
-        
-        String logContent = IOUtils.toString(new FileInputStream("target/camel-velocity-jdk-test.log"), "UTF-8");
-        assertTrue(logContent.contains("JdkLogChute will use logger 'org.apache.camel.component.velocity.VelocityEndpoint' at level 'FINEST'"));
-        assertTrue(logContent.contains("Using logger class org.apache.velocity.runtime.log.JdkLogChute"));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

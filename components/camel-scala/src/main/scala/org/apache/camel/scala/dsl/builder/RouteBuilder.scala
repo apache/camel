@@ -45,7 +45,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
     }
   }
 
-  val stack = new Stack[DSL];
+  val stack = new Stack[DSL]
 
   val serialization = new org.apache.camel.model.dataformat.SerializationDataFormat
 
@@ -153,7 +153,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def onCompletion = {
     stack.size match {
       case 0 => SOnCompletionDefinition(builder.onCompletion)(this)
-      case _ => stack.top.onCompletion;
+      case _ => stack.top.onCompletion
     }
   }
   def onCompletion(predicate: Exchange => Boolean) = stack.top.onCompletion(predicate)
