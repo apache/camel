@@ -81,11 +81,11 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive&concurrentConsumers=5&maxConcurrentConsumers=10")
+                    .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive&concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
                     .to("log:reply")
                     .to("mock:reply");
 
-                from("activemq:queue:foo?concurrentConsumers=5&maxConcurrentConsumers=10")
+                from("activemq:queue:foo?concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
                     .transform(body().prepend("Hello "));
             }
         };
