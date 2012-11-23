@@ -181,11 +181,12 @@ public class StreamProducer extends DefaultProducer {
         // never close a standard stream (system.out or system.err)
         // always close a 'header' stream (unless it's a system stream)
         boolean systemStream = outputStream != System.out || outputStream != System.err;
-        boolean headerStream = "header".equals(uri) && !systemStream;
+        boolean headerStream = "header".equals(uri);
         boolean reachedLimit = endpoint.getAutoCloseCount() > 0 && count.decrementAndGet() <= 0;
         boolean expiredStream = force || headerStream || reachedLimit;  // evaluation order is important!
 
-        if (expiredStream) {
+        // never ever close a system stream
+        if (!systemStream && expiredStream) {
             outputStream.close();
             outputStream = null;
             LOG.debug("Closed stream '{}'", endpoint.getEndpointKey());
