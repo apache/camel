@@ -72,7 +72,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase);
+        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
         
         return new RouteBuilder() {
             @SuppressWarnings("unchecked")

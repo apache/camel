@@ -37,7 +37,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
     @Override
     protected void setUp() throws Exception {
         validating = new ValidatingProcessor();
-        validating.setSchemaFile(new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd").getAbsoluteFile());
+        validating.setSchemaFile(new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd"));
         validating.setUseSharedSchema(false);
 
         super.setUp();

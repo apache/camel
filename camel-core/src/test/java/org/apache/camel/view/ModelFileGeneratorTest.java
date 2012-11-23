@@ -47,7 +47,7 @@ public class ModelFileGeneratorTest extends ContextTestSupport {
             }
         }
 
-        File out = new File(outputDirectory + "/route.xml").getAbsoluteFile();
+        File out = new File(outputDirectory + "/route.xml");
         assertTrue("File should have been generated", out.exists());
 
         String content = context.getTypeConverter().convertTo(String.class, out);

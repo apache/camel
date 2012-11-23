@@ -42,8 +42,7 @@ public class BaseMinaTest extends CamelTestSupport {
 
     @AfterClass
     public static void savePort() throws Exception {
-        File file = new File("./target/minaport.txt");
-        file = file.getAbsoluteFile();
+        File file = new File("target/minaport.txt");
 
         // save to file, do not append
         FileOutputStream fos = new FileOutputStream(file, false);

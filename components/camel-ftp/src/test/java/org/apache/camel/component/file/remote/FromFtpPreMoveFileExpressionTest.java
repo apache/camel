@@ -67,7 +67,6 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/movefile/hello.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
     
@@ -78,7 +77,6 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // assert the file is pre moved
                         File file = new File(FTP_ROOT_DIR + "/inprogress/hello.bak");
-                        file = file.getAbsoluteFile();
                         assertTrue("The file should have been moved", file.exists());
                     }
                 }).to("mock:result");

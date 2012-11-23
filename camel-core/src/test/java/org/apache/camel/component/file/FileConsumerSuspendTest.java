@@ -47,7 +47,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // the route is suspended by the policy so we should only receive one
-        String[] files = new File("target/suspended/").getAbsoluteFile().list();
+        String[] files = new File("target/suspended/").list();
         assertNotNull(files);
         assertEquals("The file should exists", 1, files.length);
     }

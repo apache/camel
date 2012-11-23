@@ -54,13 +54,13 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file1.dat").getAbsoluteFile());
+        String content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file1.dat"));
         String[] lines = content.split(LS);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
         }
 
-        content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file2.dat").getAbsoluteFile());
+        content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file2.dat"));
         lines = content.split(LS);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
@@ -124,7 +124,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     }
 
     private static void assertFileDoesNotExists(String filename) {
-        File file = new File(filename).getAbsoluteFile();
+        File file = new File(filename);
         assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
     }
 

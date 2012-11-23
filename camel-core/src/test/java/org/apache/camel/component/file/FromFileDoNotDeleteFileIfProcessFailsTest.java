@@ -33,7 +33,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/deletefile");
+        deleteDirectory("target/deletefile");
         super.setUp();
     }
 
@@ -49,8 +49,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
         oneExchangeDone.matchesMockWaitTime();
 
         // assert the file is deleted
-        File file = new File("./target/deletefile/hello.txt");
-        file = file.getAbsoluteFile();
+        File file = new File("target/deletefile/hello.txt");
         assertTrue("The file should NOT have been deleted", file.exists());
     }
 

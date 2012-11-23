@@ -57,7 +57,7 @@ public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
-        exchange.getIn().setHeader(Exchange.FILE_NAME, "./foo/bar/message.txt");
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "foo/bar/message.txt");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
@@ -65,7 +65,6 @@ public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/tempfile/foo/bar/message.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
 

@@ -37,8 +37,8 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("./target/cachedir");
-        createDirectory("./target/cachedir");
+        deleteDirectory("target/cachedir");
+        createDirectory("target/cachedir");
         super.setUp();
     }
 
@@ -48,7 +48,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         assertEquals("Bye World", out);
 
         // the temporary files should have been deleted
-        File file = new File("./target/cachedir");
+        File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("There should be no files", 0, files.length);
     }
@@ -65,7 +65,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         }
 
         // the temporary files should have been deleted
-        File file = new File("./target/cachedir");
+        File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("There should be no files", 0, files.length);
     }
@@ -76,7 +76,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // enable stream caching and use a low threshold so its forced to write to file
-                context.getProperties().put(CachedOutputStream.TEMP_DIR, "./target/cachedir");
+                context.getProperties().put(CachedOutputStream.TEMP_DIR, "target/cachedir");
                 context.getProperties().put(CachedOutputStream.THRESHOLD, "16");
                 context.setStreamCaching(true);
 

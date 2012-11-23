@@ -44,10 +44,10 @@ public class ZipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
 
         event.matchesMockWaitTime();
 
-        File in = new File("target/zip/hello.txt").getAbsoluteFile();
+        File in = new File("target/zip/hello.txt");
         assertFalse("Should have been deleted " + in, in.exists());
 
-        File out = new File("target/zip/out/hello.txt.zip").getAbsoluteFile();
+        File out = new File("target/zip/out/hello.txt.zip");
         assertFalse("Should have been deleted " + out, out.exists());
     }
 

@@ -45,8 +45,7 @@ public class HttpToFileTest extends BaseJettyTest {
         // give file some time to save
         Thread.sleep(500);
 
-        File file = new File("./target/myworld/hello.txt");
-        file = file.getAbsoluteFile();
+        File file = new File("target/myworld/hello.txt");
         assertTrue("File should exists", file.exists());
 
         String content = IOConverter.toString(file, null);

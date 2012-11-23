@@ -38,11 +38,9 @@ public class CamelContextTest extends CamelSpringTestSupport {
         Thread.sleep(3000);
 
         File file = new File("target/messages/emea/hr_pickup");
-        file = file.getAbsoluteFile();
         assertTrue("The pickup folder should exists", file.exists());
         assertEquals("There should be 1 dumped files", 1, file.list().length);
         file = new File("target/messages/amer/hr_pickup");
-        file = file.getAbsoluteFile();
         assertTrue("The pickup folder should exists", file.exists());
         assertEquals("There should be 2 dumped files", 2, file.list().length);    
     }

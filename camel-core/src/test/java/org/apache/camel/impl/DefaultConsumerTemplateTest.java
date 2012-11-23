@@ -344,7 +344,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
         // file should still exists
-        File file = new File("target/foo/hello.txt").getAbsoluteFile();
+        File file = new File("target/foo/hello.txt");
         assertTrue("File should exist " + file, file.exists());
 
         // done the exchange

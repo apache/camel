@@ -63,7 +63,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
 
         // the original file should have been deleted, as the file consumer should be resilient against
         // end users deleting headers
-        assertFalse("File should been deleted", new File("target/files/hello.txt").getAbsoluteFile().exists());
+        assertFalse("File should been deleted", new File("target/files/hello.txt").exists());
     }
 
     public void testConsumeAndDeleteChangeFileHeader() throws Exception {
@@ -89,7 +89,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
 
         // the original file should have been deleted, as the file consumer should be resilient against
         // end users changing headers
-        assertFalse("File should been deleted", new File("target/files/hello.txt").getAbsoluteFile().exists());
+        assertFalse("File should been deleted", new File("target/files/hello.txt").exists());
     }
 
     public void testConsumeAndMoveRemoveAllHeaders() throws Exception {
@@ -116,7 +116,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
 
         // the original file should have been moved, as the file consumer should be resilient against
         // end users deleting headers
-        assertTrue("File should been moved", new File("target/files/.camel/hello.txt").getAbsoluteFile().exists());
+        assertTrue("File should been moved", new File("target/files/.camel/hello.txt").exists());
     }
 
     public void testConsumeAndMoveChangeFileHeader() throws Exception {
@@ -142,7 +142,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
 
         // the original file should have been moved, as the file consumer should be resilient against
         // end users changing headers
-        assertTrue("File should been moved", new File("target/files/.camel/hello.txt").getAbsoluteFile().exists());
+        assertTrue("File should been moved", new File("target/files/.camel/hello.txt").exists());
     }
 
 }

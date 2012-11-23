@@ -34,10 +34,10 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         
-        context.getProperties().put(CachedOutputStream.TEMP_DIR, "./target/cachedir");
+        context.getProperties().put(CachedOutputStream.TEMP_DIR, "target/cachedir");
         context.getProperties().put(CachedOutputStream.THRESHOLD, "16");
-        deleteDirectory("./target/cachedir");
-        createDirectory("./target/cachedir");
+        deleteDirectory("target/cachedir");
+        createDirectory("target/cachedir");
     }
 
     @Test
@@ -46,7 +46,7 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
         String response = template.requestBody("http://localhost:8201/clipboard/download/file", "   ", String.class);
         assertEquals("should get the right response", TEST_STRING, response);
         
-        File file = new File("./target/cachedir");
+        File file = new File("target/cachedir");
         String[] files = file.list();
         assertTrue("There should not have any temp file", files.length == 0);
         

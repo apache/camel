@@ -41,7 +41,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("./target/done/paris.bak", "Hello Paris");
+        mock.expectedFileExists("target/done/paris.bak", "Hello Paris");
 
         template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 

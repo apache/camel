@@ -34,7 +34,7 @@ public class FileProducerFilenameConstantTest extends ContextTestSupport {
     public void testFileProducerFilenameConstant() throws Exception {
         template.sendBody("file://target/constant?fileName=header.txt", "Hello World");
 
-        File file = new File("./target/constant/header.txt").getAbsoluteFile();
+        File file = new File("target/constant/header.txt");
         assertTrue("File should exists " + file, file.exists());
     }
 }

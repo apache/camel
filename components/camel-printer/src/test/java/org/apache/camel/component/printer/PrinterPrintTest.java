@@ -70,7 +70,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream("./src/test/resources/test.txt"));
+                InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/test.txt"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
@@ -91,7 +91,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream("./src/test/resources/asf-logo.gif"));
+                InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/asf-logo.gif"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
@@ -112,7 +112,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream("./src/test/resources/asf-logo.JPG"));
+                InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/asf-logo.JPG"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();

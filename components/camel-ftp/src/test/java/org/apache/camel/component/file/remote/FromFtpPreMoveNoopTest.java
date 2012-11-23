@@ -54,7 +54,6 @@ public class FromFtpPreMoveNoopTest extends FtpServerTestSupport {
         // and file should be kept there
         Thread.sleep(1000);
         File file = new File(FTP_ROOT_DIR + "/movefile/work/hello.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
 
@@ -78,7 +77,6 @@ public class FromFtpPreMoveNoopTest extends FtpServerTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // assert the file is pre moved
                         File file = new File(FTP_ROOT_DIR + "/movefile/work/hello.txt");
-                        file = file.getAbsoluteFile();
                         assertTrue("The file should have been moved", file.exists());
                     }
                 }).to("mock:result");

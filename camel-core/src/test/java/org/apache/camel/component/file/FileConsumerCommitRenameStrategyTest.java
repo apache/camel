@@ -40,7 +40,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("./target/done/paris.txt", "Hello Paris");
+        mock.expectedFileExists("target/done/paris.txt", "Hello Paris");
 
         template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
@@ -51,7 +51,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         // create a file in done to let there be a duplicate file
         File file = new File("target/done");
         file.mkdirs();
-        FileWriter fw = new FileWriter("./target/done/london.txt");
+        FileWriter fw = new FileWriter("target/done/london.txt");
         try {
             fw.write("I was there once in London");
             fw.flush();
@@ -69,7 +69,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // content of file should be Hello London
-        String content = IOConverter.toString(new File("./target/done/london.txt"), null);
+        String content = IOConverter.toString(new File("target/done/london.txt"), null);
         assertEquals("The file should have been renamed replacing any existing files", "Hello London", content);
     }
 

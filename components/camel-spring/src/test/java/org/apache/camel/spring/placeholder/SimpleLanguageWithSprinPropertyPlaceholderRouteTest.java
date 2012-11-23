@@ -72,7 +72,7 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends Abstrac
     }
     
     private void assertFileExists(String filename) {
-        File file = new File(filename).getAbsoluteFile();
+        File file = new File(filename);
         assertTrue("File " + filename + " should exist", file.exists());
     }
 }

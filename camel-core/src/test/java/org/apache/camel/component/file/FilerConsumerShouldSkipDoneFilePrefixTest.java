@@ -47,7 +47,7 @@ public class FilerConsumerShouldSkipDoneFilePrefixTest extends ContextTestSuppor
         oneExchangeDone.reset();
 
         // done file should exist
-        File file = new File("target/done/done-hello.txt").getAbsoluteFile();
+        File file = new File("target/done/done-hello.txt");
         assertTrue("Done file should exist: " + file, file.exists());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

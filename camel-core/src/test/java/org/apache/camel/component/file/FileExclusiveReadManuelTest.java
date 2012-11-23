@@ -29,7 +29,7 @@ public class FileExclusiveReadManuelTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/exclusiveread");
+        deleteDirectory("target/exclusiveread");
         disableJMX();
         super.setUp();
     }

@@ -29,14 +29,14 @@ public class SpringRenameFileOnCommitIssueTest extends SpringTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/renameissue");
+        deleteDirectory("target/renameissue");
         super.setUp();
     }
 
     public void testFileRenameFileOnCommitIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("./target/renameissue/.camel/hello.xml");
+        mock.expectedFileExists("target/renameissue/.camel/hello.xml");
 
         String body = "<?xml version=\"1.0\"?><persons xmlns=\"http://foo.com/bar\"><person name=\"James\"/><person name=\"Claus\"/></persons>";
 

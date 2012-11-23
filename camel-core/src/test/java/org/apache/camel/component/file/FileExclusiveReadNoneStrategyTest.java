@@ -37,8 +37,8 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
+        deleteDirectory("target/exclusiveread");
+        createDirectory("target/exclusiveread/slowfile");
         super.setUp();
     }
 
@@ -71,7 +71,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
         public void process(Exchange exchange) throws Exception {
             LOG.info("Creating a slow file with no locks...");
-            File file = new File("./target/exclusiveread/slowfile/hello.txt");
+            File file = new File("target/exclusiveread/slowfile/hello.txt");
             FileOutputStream fos = new FileOutputStream(file);
             fos.write("Hello World".getBytes());
             for (int i = 0; i < 3; i++) {

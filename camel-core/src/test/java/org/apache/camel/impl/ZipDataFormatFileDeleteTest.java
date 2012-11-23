@@ -41,10 +41,10 @@ public class ZipDataFormatFileDeleteTest extends ContextTestSupport {
         // wait till the exchange is done which means the file should then have been deleted
         oneExchangeDone.matchesMockWaitTime();
 
-        File in = new File("target/zip/hello.txt").getAbsoluteFile();
+        File in = new File("target/zip/hello.txt");
         assertFalse("Should have been deleted " + in, in.exists());
 
-        File out = new File("target/zip/out/hello.txt.zip").getAbsoluteFile();
+        File out = new File("target/zip/out/hello.txt.zip");
         assertTrue("Should have been created " + out, out.exists());
     }
 

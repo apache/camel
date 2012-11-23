@@ -62,16 +62,14 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
-        String tempFileName = producer.createTempFileName(exchange, "./");
-        assertDirectoryEquals("./inprogress.claus.txt", tempFileName);
+        String tempFileName = producer.createTempFileName(exchange, ".");
+        assertDirectoryEquals("inprogress.claus.txt", tempFileName);
     }
 
     public void testTempPrefix() throws Exception {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/tempandrename/hello.txt");
-        // use absolute file to let unittest pass on all platforms
-        file = file.getAbsoluteFile();
         assertEquals("The generated file should exists: " + file, true, file.exists());
     }
 

@@ -108,8 +108,7 @@ public class FileConsumerJpaIdempotentTest extends CamelTestSupport {
         // move file back
         File file = new File("target/idempotent/done/report.txt");
         File renamed = new File("target/idempotent/report.txt");
-        file = file.getAbsoluteFile();
-        file.renameTo(renamed.getAbsoluteFile());
+        file.renameTo(renamed);
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         Thread.sleep(2000);

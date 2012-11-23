@@ -36,7 +36,7 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
 
     public void testAllowNullBodyTrue() throws Exception {
         template.sendBody("file://target/allow?allowNullBody=true&fileName=allowNullBody.txt", null);
-        assertFileExists("./target/allow/allowNullBody.txt");
+        assertFileExists("target/allow/allowNullBody.txt");
     }
     
     public void testAllowNullBodyFalse() throws Exception {
@@ -48,6 +48,6 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
             assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
         }
         
-        assertFalse("allowNullBody set to false with null body should not create a new file", new File("./target/allow/allowNullBody.txt").exists());
+        assertFalse("allowNullBody set to false with null body should not create a new file", new File("target/allow/allowNullBody.txt").exists());
     }
 }

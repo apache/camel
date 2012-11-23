@@ -29,14 +29,14 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/renameissue");
+        deleteDirectory("target/renameissue");
         super.setUp();
     }
 
     public void testFileRenameFileOnCommitIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("./target/renameissue/.camel/hello.txt");
+        mock.expectedFileExists("target/renameissue/.camel/hello.txt");
 
         template.sendBodyAndHeader("file://target/renameissue", "World", Exchange.FILE_NAME, "hello.txt");
 

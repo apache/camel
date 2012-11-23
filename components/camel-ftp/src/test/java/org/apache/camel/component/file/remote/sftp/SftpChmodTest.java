@@ -39,7 +39,7 @@ public class SftpChmodTest extends SftpServerTestSupport {
 
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&chmod=777", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/hello.txt");
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }

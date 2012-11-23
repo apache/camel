@@ -54,7 +54,6 @@ public class FromFtpPreMoveDeleteTest extends FtpServerTestSupport {
         // and file should be deleted
         Thread.sleep(1000);
         File file = new File(FTP_ROOT_DIR + "/movefile/work/hello.txt");
-        file = file.getAbsoluteFile();
         assertFalse("The file should have been deleted", file.exists());
     }
 
@@ -78,7 +77,6 @@ public class FromFtpPreMoveDeleteTest extends FtpServerTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // assert the file is pre moved
                         File file = new File(FTP_ROOT_DIR + "/movefile/work/hello.txt");
-                        file = file.getAbsoluteFile();
                         assertTrue("The file should have been moved", file.exists());
                     }
                 }).to("mock:result");

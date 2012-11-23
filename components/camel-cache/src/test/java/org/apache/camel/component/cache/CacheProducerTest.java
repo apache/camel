@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
 public class CacheProducerTest extends BaseCacheTest {
     private static final Poetry POETRY;
 
-    private static final String FILEPATH_UPDATEDTEST_TXT = "./src/test/resources/updatedtest.txt";
+    private static final String FILEPATH_UPDATEDTEST_TXT = "src/test/resources/updatedtest.txt";
 
-    private static final String FILEPATH_TEST_TXT = "./src/test/resources/test.txt";
+    private static final String FILEPATH_TEST_TXT = "src/test/resources/test.txt";
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CacheProducerTest.class);
 
@@ -67,7 +67,7 @@ public class CacheProducerTest extends BaseCacheTest {
         template.send("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream(path)); // "./src/test/resources/test.txt"));
+                InputStream is = IOHelper.buffered(new FileInputStream(path));
 
                 byte buffer[] = IOConverter.toBytes(is);
                 is.close();

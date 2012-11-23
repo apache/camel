@@ -39,7 +39,7 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // assert file deleted
-        File file = new File("target/xslt/xsltme.xml").getAbsoluteFile();
+        File file = new File("target/xslt/xsltme.xml");
         assertFalse("File should be deleted", file.exists());
     }
 

@@ -28,7 +28,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/exclude");
+        deleteDirectory("target/exclude");
         super.setUp();
     }
 

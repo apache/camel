@@ -37,8 +37,7 @@ public class BaseNettyTest extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        File file = new File("./target/nettyport.txt");
-        file = file.getAbsoluteFile();
+        File file = new File("target/nettyport.txt");
 
         if (!file.exists()) {
             // start from somewhere in the 25xxx range
@@ -55,8 +54,7 @@ public class BaseNettyTest extends CamelTestSupport {
 
     @AfterClass
     public static void savePort() throws Exception {
-        File file = new File("./target/nettyport.txt");
-        file = file.getAbsoluteFile();
+        File file = new File("target/nettyport.txt");
 
         // save to file, do not append
         FileOutputStream fos = new FileOutputStream(file, false);

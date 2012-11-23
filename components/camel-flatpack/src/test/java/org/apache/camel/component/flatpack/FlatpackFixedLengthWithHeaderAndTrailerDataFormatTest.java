@@ -39,7 +39,7 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
         mock.message(0).header("MyFirstHeader").isEqualTo("1");
         mock.message(0).header("MySecondHeader").isEqualTo("2");
 
-        String data = IOConverter.toString(new File("src/test/data/headerandtrailer/PEOPLE-HeaderAndTrailer.txt").getAbsoluteFile(), null);
+        String data = IOConverter.toString(new File("src/test/data/headerandtrailer/PEOPLE-HeaderAndTrailer.txt"), null);
 
         template.sendBody("direct:unmarshal", data);
         assertMockEndpointsSatisfied();

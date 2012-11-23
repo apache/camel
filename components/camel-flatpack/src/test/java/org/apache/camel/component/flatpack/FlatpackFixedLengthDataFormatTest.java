@@ -40,7 +40,7 @@ public class FlatpackFixedLengthDataFormatTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(DataSetList.class);
 
-        String data = IOConverter.toString(new File("src/test/data/fixed/PEOPLE-FixedLength.txt").getAbsoluteFile(), null);
+        String data = IOConverter.toString(new File("src/test/data/fixed/PEOPLE-FixedLength.txt"), null);
 
         template.sendBody("direct:unmarshal", data);
         assertMockEndpointsSatisfied();

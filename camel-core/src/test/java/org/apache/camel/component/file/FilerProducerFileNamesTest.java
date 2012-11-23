@@ -45,13 +45,13 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
 
         template.send("direct:report", exchange);
 
-        File file = new File("target/reports/" + id).getAbsoluteFile();
+        File file = new File("target/reports/" + id);
         assertEquals("File should exists", true, file.exists());
     }
 
     public void testProducerWithHeaderFileName() throws Exception {
         template.sendBody("direct:report2", "This is super good report");
-        File file = new File("target/report-super.txt").getAbsoluteFile();
+        File file = new File("target/report-super.txt");
         assertEquals("File should exists", true, file.exists());
     }
 

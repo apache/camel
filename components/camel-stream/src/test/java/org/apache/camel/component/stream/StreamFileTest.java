@@ -48,7 +48,6 @@ public class StreamFileTest extends CamelTestSupport {
         createDirectory("target/stream");
 
         File file = new File("target/stream/streamfile.txt");
-        file = file.getAbsoluteFile();
         file.createNewFile();
 
         fos = new FileOutputStream(file);

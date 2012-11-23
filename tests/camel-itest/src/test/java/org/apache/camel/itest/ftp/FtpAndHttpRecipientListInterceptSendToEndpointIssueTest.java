@@ -96,7 +96,7 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
         FtpServerFactory serverFactory = new FtpServerFactory();
 
         // setup user management to read our users.properties and use clear text passwords
-        File file = new File("./src/test/resources/users.properties").getAbsoluteFile();
+        File file = new File("src/test/resources/users.properties");
         UserManager uman = new PropertiesUserManager(new ClearTextPasswordEncryptor(), file, "admin");
         serverFactory.setUserManager(uman);
 

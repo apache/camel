@@ -52,7 +52,6 @@ public class NewFileProduceTest extends ContextTestSupport {
         });
 
         File file = new File("target/producefile/bye.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The file should have been created", file.exists());
     }
 

@@ -41,7 +41,6 @@ public class FtpThrowExceptionOnConnectionFailedTest extends FtpServerTestSuppor
 
         // assert file NOT created
         File file = new File(FTP_ROOT_DIR + "login/report.txt");
-        file = file.getAbsoluteFile();
         assertFalse("The file should NOT exists", file.exists());
     }
 

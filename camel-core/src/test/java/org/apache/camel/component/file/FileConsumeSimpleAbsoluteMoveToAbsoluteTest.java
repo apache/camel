@@ -33,7 +33,7 @@ public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupp
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/move");
+        deleteDirectory("target/move");
         // use current dir as base as absolute path
         base = new File("").getAbsolutePath() + "/target/move";
         super.setUp();

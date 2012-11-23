@@ -50,8 +50,7 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
 
         notify.matchesMockWaitTime();
 
-        File file = new File("./target/file2file/out/hello.txt");
-        file = file.getAbsoluteFile();
+        File file = new File("target/file2file/out/hello.txt");
         assertTrue("The file should exists", file.exists());
     }
 

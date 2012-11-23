@@ -38,7 +38,7 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream("./src/test/resources/test.txt"));
+                InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/test.txt"));
 
                 byte buffer[] = IOConverter.toBytes(is);
                 is.close();

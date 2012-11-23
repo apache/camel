@@ -76,7 +76,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
     public static class MyPreMoveCheckerProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            File pre = new File("target/premove/work/work-hello.txt").getAbsoluteFile();
+            File pre = new File("target/premove/work/work-hello.txt");
             assertTrue("Pre move file should exist", pre.exists());
         }
     }

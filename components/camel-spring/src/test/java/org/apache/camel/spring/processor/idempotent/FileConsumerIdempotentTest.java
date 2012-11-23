@@ -62,8 +62,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         // move file back
         File file = new File("target/fileidempotent/done/report.txt");
         File renamed = new File("target/fileidempotent/report.txt");
-        file = file.getAbsoluteFile();
-        file.renameTo(renamed.getAbsoluteFile());
+        file.renameTo(renamed);
 
         // sleep to let the consumer try to poll the file
         Thread.sleep(2000);

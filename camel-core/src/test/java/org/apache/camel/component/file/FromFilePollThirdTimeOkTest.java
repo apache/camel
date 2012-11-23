@@ -31,7 +31,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/deletefile");
+        deleteDirectory("target/deletefile");
         super.setUp();
     }
 
@@ -48,7 +48,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         assertEquals(3, counter);
 
         // assert the file is deleted
-        File file = new File("./target/deletefile/hello.txt").getAbsoluteFile();
+        File file = new File("target/deletefile/hello.txt");
         assertFalse("The file should have been deleted", file.exists());
     }
 
@@ -61,7 +61,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
                             counter++;
                             if (counter < 3) {
                                 // file should exists
-                                File file = new File("./target/deletefile/hello.txt").getAbsoluteFile();
+                                File file = new File("target/deletefile/hello.txt");
                                 assertTrue("The file should NOT have been deleted", file.exists());
                                 throw new IllegalArgumentException("Forced by unittest");
                             }

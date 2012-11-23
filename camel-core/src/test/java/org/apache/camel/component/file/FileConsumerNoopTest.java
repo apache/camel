@@ -46,7 +46,7 @@ public class FileConsumerNoopTest extends ContextTestSupport {
 
         notify.matchesMockWaitTime();
 
-        File file = new File("target/filenoop").getAbsoluteFile();
+        File file = new File("target/filenoop");
         assertEquals("There should be 2 files", 2, file.list().length);
     }
 

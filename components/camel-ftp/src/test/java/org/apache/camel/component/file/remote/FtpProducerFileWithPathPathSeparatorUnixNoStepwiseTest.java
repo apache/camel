@@ -40,7 +40,6 @@ public class FtpProducerFileWithPathPathSeparatorUnixNoStepwiseTest extends FtpS
         assertNotNull(out);
 
         File file = new File(FTP_ROOT_DIR + "/upload/hello/claus.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The uploaded file should exists", file.exists());
         assertEquals("Hello World", IOConverter.toString(file, null));
 

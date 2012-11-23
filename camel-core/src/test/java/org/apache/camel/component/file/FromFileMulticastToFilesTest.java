@@ -28,7 +28,7 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/multicast");
+        deleteDirectory("target/multicast");
         super.setUp();
     }
 
@@ -56,15 +56,15 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
 
         MockEndpoint header = getMockEndpoint("mock:header");
         header.expectedBodiesReceived("HEADER:foo");
-        header.expectedFileExists("./target/multicast/out/header.txt");
+        header.expectedFileExists("target/multicast/out/header.txt");
 
         MockEndpoint footer = getMockEndpoint("mock:footer");
         footer.expectedBodiesReceived("FOOTER:foo");
-        footer.expectedFileExists("./target/multicast/out/footer.txt");
+        footer.expectedFileExists("target/multicast/out/footer.txt");
 
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
-        end.expectedFileExists("./target/multicast/.camel/foo.txt");
+        end.expectedFileExists("target/multicast/.camel/foo.txt");
 
         template.sendBodyAndHeader("file://target/multicast", "foo", Exchange.FILE_NAME, "foo.txt");
 
@@ -95,15 +95,15 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
 
         MockEndpoint header = getMockEndpoint("mock:header");
         header.expectedBodiesReceived("HEADER:foo");
-        header.expectedFileExists("./target/multicast/out/header.txt");
+        header.expectedFileExists("target/multicast/out/header.txt");
 
         MockEndpoint footer = getMockEndpoint("mock:footer");
         footer.expectedBodiesReceived("FOOTER:foo");
-        footer.expectedFileExists("./target/multicast/out/footer.txt");
+        footer.expectedFileExists("target/multicast/out/footer.txt");
 
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
-        end.expectedFileExists("./target/multicast/.camel/foo.txt");
+        end.expectedFileExists("target/multicast/.camel/foo.txt");
 
         template.sendBodyAndHeader("file://target/multicast", "foo", Exchange.FILE_NAME, "foo.txt");
 

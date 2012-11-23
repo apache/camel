@@ -68,7 +68,6 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/filelanguage/" + id + ".bak");
-        file = file.getAbsoluteFile();
         assertTrue("File should have been renamed", file.exists());
     }
 
@@ -92,7 +91,6 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/filelanguage/backup-" + id + "-report2.bak");
-        file = file.getAbsoluteFile();
         assertTrue("File should have been renamed", file.exists());
     }
 
