@@ -104,6 +104,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute(required = false)
     private String managementNamePattern;
     @XmlAttribute(required = false)
+    private String threadNamePattern;
+    @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
     private ShutdownRunningTask shutdownRunningTask;
@@ -514,6 +516,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setManagementNamePattern(String managementNamePattern) {
         this.managementNamePattern = managementNamePattern;
+    }
+
+    public String getThreadNamePattern() {
+        return threadNamePattern;
+    }
+
+    public void setThreadNamePattern(String threadNamePattern) {
+        this.threadNamePattern = threadNamePattern;
     }
 
     @Deprecated

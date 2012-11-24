@@ -476,6 +476,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getManagementNamePattern();
 
+    public abstract String getThreadNamePattern();
+
     /**
      * @deprecated this option is no longer supported, will be removed in a future Camel release.
      */
@@ -540,6 +542,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getManagementNamePattern() != null) {
             ctx.getManagementNameStrategy().setNamePattern(getManagementNamePattern());
+        }
+        if (getThreadNamePattern() != null) {
+            ctx.getExecutorServiceManager().setThreadNamePattern(getThreadNamePattern());
         }
         if (getShutdownRoute() != null) {
             ctx.setShutdownRoute(getShutdownRoute());
