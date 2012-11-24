@@ -506,6 +506,14 @@ public abstract class TestSupport extends TestCase {
         return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
     }
 
+    /**
+     * Is this version the given Java version.
+     * <p/>
+     * Uses <tt>java.version</tt> from the system properties to determine the version.
+     *
+     * @param vendor such as IBM
+     * @return <tt>true</tt> if its that vendor.
+     */
     public static boolean isJavaVersion(String version) {
         String javaVersion = System.getProperty("java.version");
         return javaVersion.indexOf(version.toLowerCase(Locale.US)) > -1;
