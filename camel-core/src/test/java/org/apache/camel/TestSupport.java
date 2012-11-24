@@ -506,4 +506,8 @@ public abstract class TestSupport extends TestCase {
         return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
     }
 
+    public static boolean isJavaVersion(String version) {
+        String javaVersion = System.getProperty("java.version");
+        return javaVersion.indexOf(version.toLowerCase(Locale.US)) > -1;
+    }
 }
