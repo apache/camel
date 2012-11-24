@@ -718,7 +718,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void startRoute(RouteDefinition route) throws Exception {
-        // validate that the id's is all unique
+        // assign ids to the routes and validate that the id's is all unique
+        RouteDefinitionHelper.forceAssignIds(this, routeDefinitions);
         String duplicate = RouteDefinitionHelper.validateUniqueIds(route, routeDefinitions);
         if (duplicate != null) {
             throw new FailedToStartRouteException(route.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");

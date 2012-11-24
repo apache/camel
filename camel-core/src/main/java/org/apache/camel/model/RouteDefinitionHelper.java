@@ -40,6 +40,26 @@ public final class RouteDefinitionHelper {
     }
 
     /**
+     * Force assigning ids to the routes
+     *
+     * @param context the camel context
+     * @param routes  the routes
+     * @throws Exception is thrown if error force assign ids to the routes
+     */
+    public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
+        for (RouteDefinition route : routes) {
+            // force id on the route
+            route.idOrCreate(context.getNodeIdFactory());
+
+            // if there was a custom id assigned, then make sure to support property placeholders
+            if (route.hasCustomIdAssigned()) {
+                String id = route.getId();
+                route.setId(context.resolvePropertyPlaceholders(id));
+            }
+        }
+    }
+
+    /**
      * Validates that the target route has no duplicate id's from any of the existing routes.
      *
      * @param target  the target route
@@ -407,6 +427,16 @@ public final class RouteDefinitionHelper {
     public static void forceAssignIds(CamelContext context, ProcessorDefinition processor) {
         // force id on the child
         processor.idOrCreate(context.getNodeIdFactory());
+
+        // if there was a custom id assigned, then make sure to support property placeholders
+        if (processor.hasCustomIdAssigned()) {
+            String id = processor.getId();
+            try {
+                processor.setId(context.resolvePropertyPlaceholders(id));
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
 
         List<ProcessorDefinition> children = processor.getOutputs();
         if (children != null && !children.isEmpty()) {
