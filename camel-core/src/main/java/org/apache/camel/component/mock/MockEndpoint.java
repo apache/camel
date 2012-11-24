@@ -732,7 +732,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * @param content content of file to compare, can be <tt>null</tt> to not compare content
      */
     public void expectedFileExists(final String name, final String content) {
-        final File file = new File(FileUtil.normalizePath(name)).getAbsoluteFile();
+        final File file = new File(FileUtil.normalizePath(name));
 
         expects(new Runnable() {
             public void run() {

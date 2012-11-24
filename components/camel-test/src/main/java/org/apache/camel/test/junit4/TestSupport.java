@@ -486,7 +486,7 @@ public abstract class TestSupport extends Assert {
      * To be used to check is a file is found in the file system
      */
     public static void assertFileExists(String filename) {
-        File file = new File(filename).getAbsoluteFile();
+        File file = new File(filename);
         assertTrue("File " + filename + " should exist", file.exists());
     }
 
@@ -494,7 +494,7 @@ public abstract class TestSupport extends Assert {
      * To be used to check is a file is <b>not</b> found in the file system
      */
     public static void assertFileNotExists(String filename) {
-        File file = new File(filename).getAbsoluteFile();
+        File file = new File(filename);
         assertFalse("File " + filename + " should not exist", file.exists());
     }
 
