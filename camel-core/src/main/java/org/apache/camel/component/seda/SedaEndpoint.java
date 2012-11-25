@@ -43,6 +43,8 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a
@@ -51,8 +53,9 @@ import org.apache.camel.util.URISupport;
  */
 @ManagedResource(description = "Managed SedaEndpoint")
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
+    private static final transient Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
     private volatile BlockingQueue<Exchange> queue;
-    private int size;
+    private int size = Integer.MAX_VALUE;
     private int concurrentConsumers = 1;
     private volatile ExecutorService multicastExecutor;
     private boolean multipleConsumers;
@@ -75,7 +78,9 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         super(endpointUri, component);
         this.queue = queue;
-        this.size = queue.remainingCapacity();
+        if (queue != null) {
+            this.size = queue.remainingCapacity();
+        }
         this.concurrentConsumers = concurrentConsumers;
     }
 
@@ -98,10 +103,20 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             // then the existing queue from the component can be used, so new producers and consumers
             // can use the already existing queue referenced from the component
             if (getComponent() != null) {
-                queue = getComponent().getOrCreateQueue(getEndpointUri(), getSize());
+                // use null to indicate default size (= use what the existing queue has been configured with)
+                Integer size = getSize() == Integer.MAX_VALUE ? null : getSize();
+                SedaComponent.QueueReference ref = getComponent().getOrCreateQueue(getEndpointUri(), size);
+                queue = ref.getQueue();
+                String key = getComponent().getQueueKey(getEndpointUri());
+                LOG.info("Endpoint {} is using shared queue: {} with size: {}", new Object[]{this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE});
+                // and set the size we are using
+                if (ref.getSize() != null) {
+                    setSize(ref.getSize());
+                }
             } else {
                 // fallback and create queue (as this endpoint has no component)
                 queue = createQueue();
+                LOG.info("Endpoint {} is using queue: {} with size: {}", new Object[]{this, getEndpointUri(), getSize()});
             }
         }
         return queue;
@@ -357,6 +372,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // force creating queue when starting
+        if (queue == null) {
+            queue = getQueue();
+        }
 
         // special for unit testing where we can set a system property to make seda poll faster
         // and therefore also react faster upon shutdown, which makes overall testing faster of the Camel project

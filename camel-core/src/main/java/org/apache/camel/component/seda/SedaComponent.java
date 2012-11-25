@@ -24,6 +24,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/seda.html">SEDA components</a>
@@ -32,6 +34,7 @@ import org.apache.camel.impl.DefaultComponent;
  * @version 
  */
 public class SedaComponent extends DefaultComponent {
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final int maxConcurrentConsumers = 500;
     protected int queueSize;
     protected int defaultConcurrentConsumers = 1;
@@ -53,14 +56,25 @@ public class SedaComponent extends DefaultComponent {
         return defaultConcurrentConsumers;
     }
 
-    public synchronized BlockingQueue<Exchange> getOrCreateQueue(String uri, Integer size) {
+    public synchronized QueueReference getOrCreateQueue(String uri, Integer size) {
         String key = getQueueKey(uri);
 
         QueueReference ref = getQueues().get(key);
         if (ref != null) {
+
+            // if the given size is not provided, we just use the existing queue as is
+            if (size != null && ref.getSize() != size) {
+                // there is already a queue, so make sure the size matches
+                throw new IllegalArgumentException("Cannot use existing queue " + key + " as the existing queue size "
+                        + (ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE) + " does not match given queue size " + size);
+            }
             // add the reference before returning queue
             ref.addReference();
-            return ref.getQueue();
+
+            if (log.isDebugEnabled()) {
+                log.debug("Reusing existing queue {} with size {} and reference count {}", new Object[]{key, size, ref.getCount()});
+            }
+            return ref;
         }
 
         // create queue
@@ -69,18 +83,20 @@ public class SedaComponent extends DefaultComponent {
             queue = new LinkedBlockingQueue<Exchange>(size);
         } else {
             if (getQueueSize() > 0) {
+                size = getQueueSize();
                 queue = new LinkedBlockingQueue<Exchange>(getQueueSize());
             } else {
                 queue = new LinkedBlockingQueue<Exchange>();
             }
         }
+        log.debug("Created queue {} with size {}", key, size);
 
         // create and add a new reference queue
-        ref = new QueueReference(queue);
+        ref = new QueueReference(queue, size);
         ref.addReference();
         getQueues().put(key, ref);
 
-        return queue;
+        return ref;
     }
 
     public Map<String, QueueReference> getQueues() {
@@ -95,8 +111,8 @@ public class SedaComponent extends DefaultComponent {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
                     + maxConcurrentConsumers + " was " + consumers);
         }
-        Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
-        SedaEndpoint answer = new SedaEndpoint(uri, this, getOrCreateQueue(uri, size), consumers);
+        // defer creating queue till endpoint is started, so we pass in null
+        SedaEndpoint answer = new SedaEndpoint(uri, this, null, consumers);
         answer.configureProperties(parameters);
         return answer;
     }
@@ -143,9 +159,11 @@ public class SedaComponent extends DefaultComponent {
         
         private final BlockingQueue<Exchange> queue;
         private volatile int count;
+        private Integer size;
 
-        private QueueReference(BlockingQueue<Exchange> queue) {
+        private QueueReference(BlockingQueue<Exchange> queue, Integer size) {
             this.queue = queue;
+            this.size = size;
         }
         
         void addReference() {
@@ -161,6 +179,15 @@ public class SedaComponent extends DefaultComponent {
          */
         public int getCount() {
             return count;
+        }
+
+        /**
+         * Gets the queue size
+         *
+         * @return <tt>null</tt> if unbounded
+         */
+        public Integer getSize() {
+            return size;
         }
 
         /**

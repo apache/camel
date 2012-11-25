@@ -37,7 +37,7 @@ public class VmUseSameQueueTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:foo").to("mock:result");
+                from("vm:foo?size=500").to("mock:result");
             }
         };
     }
@@ -47,7 +47,7 @@ public class VmUseSameQueueTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("vm:foo?size=500");
+                from("direct:start").to("vm:foo");
             }
         };
     }

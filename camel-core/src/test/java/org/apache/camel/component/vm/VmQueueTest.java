@@ -49,7 +49,7 @@ public class VmQueueTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:foo?concurrentConsumers=2").to("mock:result");
+                from("vm:foo?size=20&concurrentConsumers=2").to("mock:result");
             }
         };
     }

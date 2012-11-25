@@ -37,7 +37,7 @@ public class AdviceWithMockEndpointsHavingParameterTest extends ContextTestSuppo
     public void testAdvisedMockEndpoints() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        context.getRouteDefinitions().get(1).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // mock all endpoints (will mock in all routes)
@@ -74,16 +74,16 @@ public class AdviceWithMockEndpointsHavingParameterTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                from("seda:foo?size=20")
+                        .transform(constant("Bye World"))
+                        .log("We transformed ${body}")
+                        .to("log:foo?showHeaders=false")
+                        .to("mock:foo");
+
                 from("direct:start")
                     .to("seda:foo")
                     .to("log:start?showAll=true")
                     .to("mock:result");
-
-                from("seda:foo?size=20")
-                    .transform(constant("Bye World"))
-                    .log("We transformed ${body}")
-                    .to("log:foo?showHeaders=false")
-                    .to("mock:foo");
             }
         };
     }
