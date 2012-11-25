@@ -47,23 +47,23 @@ import org.apache.camel.util.ServiceHelper;
  * @version 
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
-    private final CamelContext context;
+    private final CamelContext camelContext;
     private volatile ProducerCache producerCache;
     private volatile ExecutorService executor;
     private Endpoint defaultEndpoint;
     private int maximumCacheSize;
 
-    public DefaultProducerTemplate(CamelContext context) {
-        this.context = context;
+    public DefaultProducerTemplate(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
-    public DefaultProducerTemplate(CamelContext context, ExecutorService executor) {
-        this.context = context;
+    public DefaultProducerTemplate(CamelContext camelContext, ExecutorService executor) {
+        this.camelContext = camelContext;
         this.executor = executor;
     }
 
-    public DefaultProducerTemplate(CamelContext context, Endpoint defaultEndpoint) {
-        this(context);
+    public DefaultProducerTemplate(CamelContext camelContext, Endpoint defaultEndpoint) {
+        this(camelContext);
         this.defaultEndpoint = defaultEndpoint;
     }
 
@@ -302,37 +302,37 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public <T> T requestBody(Object body, Class<T> type) {
         Object answer = requestBody(body);
-        return context.getTypeConverter().convertTo(type, answer);
+        return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBody(Endpoint endpoint, Object body, Class<T> type) {
         Object answer = requestBody(endpoint, body);
-        return context.getTypeConverter().convertTo(type, answer);
+        return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBody(String endpointUri, Object body, Class<T> type) {
         Object answer = requestBody(endpointUri, body);
-        return context.getTypeConverter().convertTo(type, answer);
+        return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type) {
         Object answer = requestBodyAndHeader(endpoint, body, header, headerValue);
-        return context.getTypeConverter().convertTo(type, answer);
+        return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type) {
         Object answer = requestBodyAndHeader(endpointUri, body, header, headerValue);
-        return context.getTypeConverter().convertTo(type, answer);
+        return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) {
         Object answer = requestBodyAndHeaders(endpointUri, body, headers);
-        return context.getTypeConverter().convertTo(type, answer);
+        return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type) {
         Object answer = requestBodyAndHeaders(endpoint, body, headers);
-        return context.getTypeConverter().convertTo(type, answer);
+        return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     // Methods using the default endpoint
@@ -365,8 +365,16 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     // Properties
     // -----------------------------------------------------------------------
 
+    /**
+     * @deprecated use {@link #getCamelContext()}
+     */
+    @Deprecated
     public CamelContext getContext() {
-        return context;
+        return getCamelContext();
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     public Endpoint getDefaultEndpoint() {
@@ -381,11 +389,15 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
      * Sets the default endpoint to use if none is specified
      */
     public void setDefaultEndpointUri(String endpointUri) {
-        setDefaultEndpoint(getContext().getEndpoint(endpointUri));
+        setDefaultEndpoint(getCamelContext().getEndpoint(endpointUri));
     }
 
+    /**
+     * @deprecated use {@link CamelContext#getEndpoint(String, Class)}
+     */
+    @Deprecated
     public <T extends Endpoint> T getResolvedEndpoint(String endpointUri, Class<T> expectedClass) {
-        return context.getEndpoint(endpointUri, expectedClass);
+        return camelContext.getEndpoint(endpointUri, expectedClass);
     }
 
     // Implementation methods
@@ -421,7 +433,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
-        Endpoint endpoint = context.getEndpoint(endpointUri);
+        Endpoint endpoint = camelContext.getEndpoint(endpointUri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(endpointUri);
         }
@@ -483,11 +495,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public <T> T extractFutureBody(Future<Object> future, Class<T> type) {
-        return ExchangeHelper.extractFutureBody(context, future, type);
+        return ExchangeHelper.extractFutureBody(camelContext, future, type);
     }
 
     public <T> T extractFutureBody(Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
-        return ExchangeHelper.extractFutureBody(context, future, timeout, unit, type);
+        return ExchangeHelper.extractFutureBody(camelContext, future, timeout, unit, type);
     }
 
     public Future<Object> asyncCallbackSendBody(String uri, Object body, Synchronization onCompletion) {
@@ -691,7 +703,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             if (executor != null) {
                 return executor;
             }
-            executor = context.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
+            executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
         }
 
         ObjectHelper.notNull(executor, "ExecutorService");
@@ -701,9 +713,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     protected void doStart() throws Exception {
         if (producerCache == null) {
             if (maximumCacheSize > 0) {
-                producerCache = new ProducerCache(this, context, maximumCacheSize);
+                producerCache = new ProducerCache(this, camelContext, maximumCacheSize);
             } else {
-                producerCache = new ProducerCache(this, context);
+                producerCache = new ProducerCache(this, camelContext);
             }
         }
         ServiceHelper.startService(producerCache);
@@ -714,7 +726,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         producerCache = null;
 
         if (executor != null) {
-            context.getExecutorServiceManager().shutdownNow(executor);
+            camelContext.getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
     }
