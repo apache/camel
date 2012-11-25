@@ -50,6 +50,13 @@ package org.apache.camel;
  */
 public interface ConsumerTemplate extends Service {
 
+    /**
+     * Get the {@link CamelContext}
+     *
+     * @return camelContext the Camel context
+     */
+    CamelContext getCamelContext();
+
     // Configuration methods
     // -----------------------------------------------------------------------
 

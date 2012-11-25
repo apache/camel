@@ -43,6 +43,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals("Bye World", result);
+
+        assertSame(context, template.getCamelContext());
     }
 
     public void testInOut() throws Exception {
