@@ -29,6 +29,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.log.LogEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedBeanProcessor;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
@@ -49,12 +50,14 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThrottler;
+import org.apache.camel.management.mbean.ManagedThroughputLogger;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
+import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.EventNotifier;
@@ -177,7 +180,19 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
             } else if (target instanceof SendProcessor) {
-                answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
+                SendProcessor sp = (SendProcessor) target;
+                // special for sending to throughput logger
+                if (sp.getDestination() instanceof LogEndpoint) {
+                    LogEndpoint le = (LogEndpoint) sp.getDestination();
+                    if (le.getLogger() instanceof ThroughputLogger) {
+                        ThroughputLogger tl = (ThroughputLogger) le.getLogger();
+                        answer = new ManagedThroughputLogger(context, tl, definition);
+                    }
+                }
+                // regular send processor
+                if (answer == null) {
+                    answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
+                }
             } else if (target instanceof BeanProcessor) {
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
             } else if (target instanceof IdempotentConsumer) {

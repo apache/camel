@@ -57,6 +57,10 @@ public class LogEndpoint extends ProcessorEndpoint {
         setProcessor(this.logger);
     }
 
+    public Processor getLogger() {
+        return logger;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         return new LogProducer(this, this.logger);

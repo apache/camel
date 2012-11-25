@@ -44,4 +44,8 @@ public class LogProducer extends DefaultAsyncProducer {
         }
         return true;
     }
+
+    public Processor getLogger() {
+        return logger;
+    }
 }

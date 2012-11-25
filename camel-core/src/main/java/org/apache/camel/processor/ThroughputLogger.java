@@ -51,6 +51,9 @@ public class ThroughputLogger extends ServiceSupport implements Processor {
     private CamelContext camelContext;
     private ScheduledExecutorService logSchedulerService;
     private CamelLogger log;
+    private String lastLogMessage;
+    private double rate;
+    private double average;
 
     public ThroughputLogger(CamelLogger log) {
         this.log = log;
@@ -81,7 +84,8 @@ public class ThroughputLogger extends ServiceSupport implements Processor {
         //only process if groupSize is set...otherwise we're in groupInterval mode
         if (groupSize != null) {
             if (receivedCount % groupSize == 0) {
-                log.log(createLogMessage(exchange, receivedCount));
+                lastLogMessage = createLogMessage(exchange, receivedCount);
+                log.log(lastLogMessage);
             }
         }
     }
@@ -139,7 +143,33 @@ public class ThroughputLogger extends ServiceSupport implements Processor {
     public void setAction(String action) {
         this.action = action;
     }
-    
+
+    public void reset() {
+        startTime = 0;
+        receivedCounter.set(0);
+        groupStartTime = 0;
+        groupReceivedCount = 0;
+        average = 0.0d;
+        rate = 0.0d;
+        lastLogMessage = null;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public int getReceivedCounter() {
+        return receivedCounter.get();
+    }
+
+    public String getLastLogMessage() {
+        return lastLogMessage;
+    }
+
     @Override
     public void doStart() throws Exception {
         // if an interval was specified, create a background thread
@@ -168,8 +198,8 @@ public class ThroughputLogger extends ServiceSupport implements Processor {
             groupStartTime = startTime;
         }
 
-        double rate = messagesPerSecond(groupSize, groupStartTime, time);
-        double average = messagesPerSecond(receivedCount, startTime, time);
+        rate = messagesPerSecond(groupSize, groupStartTime, time);
+        average = messagesPerSecond(receivedCount, startTime, time);
 
         long duration = time - groupStartTime;
         groupStartTime = time;
@@ -216,16 +246,16 @@ public class ThroughputLogger extends ServiceSupport implements Processor {
 
         long duration = time - groupStartTime;
         long currentCount = receivedCount - groupReceivedCount;
-        double rate = messagesPerSecond(currentCount, groupStartTime, time);
-        double average = messagesPerSecond(receivedCount, startTime, time);
+        rate = messagesPerSecond(currentCount, groupStartTime, time);
+        average = messagesPerSecond(receivedCount, startTime, time);
 
         groupStartTime = time;
         groupReceivedCount = receivedCount;
 
-        String message = getAction() + ": " + currentCount + " new messages, with total " + receivedCount + " so far. Last group took: " + duration
+        lastLogMessage = getAction() + ": " + currentCount + " new messages, with total " + receivedCount + " so far. Last group took: " + duration
                 + " millis which is: " + numberFormat.format(rate)
                 + " messages per second. average: " + numberFormat.format(average);
-        log.log(message);
+        log.log(lastLogMessage);
     }
 
     protected double messagesPerSecond(long messageCount, long startTime, long endTime) {
