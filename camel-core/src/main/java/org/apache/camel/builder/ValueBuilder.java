@@ -60,10 +60,6 @@ public class ValueBuilder implements Expression, Predicate {
     // Predicate builders
     // -------------------------------------------------------------------------
 
-    public Predicate matches(Predicate predicate) {
-        return onNewPredicate(predicate);
-    }
-
     public Predicate matches(Expression expression) {
         return onNewPredicate(ExpressionToPredicateAdapter.toPredicate(expression));
     }

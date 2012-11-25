@@ -19,7 +19,6 @@ package org.apache.camel.builder;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -81,12 +80,6 @@ public class ValueBuilderTest extends ContextTestSupport {
                 String body = exchange.getIn().getBody(String.class);
                 Boolean answer = body.contains("Camel");
                 return type.cast(answer);
-            }
-        });
-        mock.message(0).body().matches(new Predicate() {
-            public boolean matches(Exchange exchange) {
-                String body = exchange.getIn().getBody(String.class);
-                return body.contains("Camel");
             }
         });
 
