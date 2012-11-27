@@ -101,7 +101,7 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 mappingStrategy.applyScanResults(exchange.getOut(), new HBaseData(scanOperationResult));
             }
         } finally {
-            table.close();
+            tablePool.putTable(table);
         }
     }
 
