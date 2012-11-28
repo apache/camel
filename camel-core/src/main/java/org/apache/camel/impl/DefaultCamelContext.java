@@ -1874,21 +1874,28 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         routeService.setRemovingRoutes(removingRoutes);
         stopRouteService(routeService);
     }
+    
+    protected void logRouteState(Route route, String state) {
+        if (log.isInfoEnabled()) {
+            if (route.getConsumer() != null) {
+                log.info("Route: {} {}, was consuming from: {}", route.getId(), state, route.getConsumer().getEndpoint());
+            } else {
+                log.info("Route: {} {}.", route.getId(), state);
+            }
+        }
+    }
+    
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
         for (Route route : routeService.getRoutes()) {
-            if (log.isInfoEnabled()) {
-                log.info("Route: " + route.getId() + " stopped, was consuming from: " + route.getConsumer().getEndpoint());
-            }
+            logRouteState(route, "stoped");
         }
     }
 
     protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
         routeService.shutdown();
         for (Route route : routeService.getRoutes()) {
-            if (log.isInfoEnabled()) {
-                log.info("Route: " + route.getId() + " shutdown and removed, was consuming from: " + route.getConsumer().getEndpoint());
-            }
+            logRouteState(route, "shutdown and removed");
         }
     }
 
@@ -1896,9 +1903,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         routeService.setRemovingRoutes(false);
         routeService.suspend();
         for (Route route : routeService.getRoutes()) {
-            if (log.isInfoEnabled()) {
-                log.info("Route: " + route.getId() + " suspended, was consuming from: " + route.getConsumer().getEndpoint());
-            }
+            logRouteState(route, "suspended");
         }
     }
 
