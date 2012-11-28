@@ -304,8 +304,11 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
         File f = deleteStack.pollLast();
         if (f != null) {
             if (f.isDirectory()) {
-                for (File child : f.listFiles()) {
-                    deleteStack.addLast(child);
+                File[] files = f.listFiles();
+                if (files != null) {
+                    for (File child : files) {
+                        deleteStack.addLast(child);
+                    }
                 }
             }
             deleteDir(deleteStack);
