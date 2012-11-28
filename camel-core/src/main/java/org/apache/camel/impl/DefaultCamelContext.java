@@ -1878,7 +1878,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     protected void logRouteState(Route route, String state) {
         if (log.isInfoEnabled()) {
             if (route.getConsumer() != null) {
-                log.info("Route: {} {}, was consuming from: {}", route.getId(), state, route.getConsumer().getEndpoint());
+                log.info("Route: {} {}, was consuming from: {}", new Object[]{route.getId(), state, route.getConsumer().getEndpoint()});
             } else {
                 log.info("Route: {} {}.", route.getId(), state);
             }
