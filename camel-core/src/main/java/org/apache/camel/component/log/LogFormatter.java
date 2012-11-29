@@ -167,12 +167,24 @@ public class LogFormatter implements ExchangeFormatter {
                 }
             }
 
-            // get rid of the leading space comma if needed
-            return "Exchange[" + (multiline ? answer.append(']').toString() : answer.toString().substring(2) + "]");
+            // switch string buffer
+            sb = answer;
         }
 
-        // get rid of the leading space comma if needed
-        return "Exchange[" + (multiline ? sb.append(']').toString() : sb.toString().substring(2) + "]");
+        if (multiline) {
+            sb.insert(0, "Exchange[");
+            sb.append("]");
+            return sb.toString();
+        } else {
+            // get rid of the leading space comma if needed
+            if (sb.length() > 0 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
+                sb.replace(0, 2, "");
+            }
+            sb.insert(0, "Exchange[");
+            sb.append("]");
+
+            return sb.toString();
+        }
     }
 
     public boolean isShowExchangeId() {
