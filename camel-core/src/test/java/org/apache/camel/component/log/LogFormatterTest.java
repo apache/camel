@@ -34,6 +34,10 @@ public class LogFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST", "Hello World");
     }
 
+    public void testSendMessageToLogAllOff() throws Exception {
+        template.sendBody("log:org.apache.camel.TEST?showBody=false&showBodyType=false&showExchangePattern=false", "Hello World");
+    }
+
     public void testSendMessageToLogSingleOptions() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showExchangeId=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showExchangePattern=true", "Hello World");
