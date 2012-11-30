@@ -131,7 +131,7 @@ public class ZooKeeperConfiguration implements Cloneable {
         return awaitExistence;
     }
 
-    public void setAwaitExistance(boolean awaitExistence) {
+    public void setAwaitExistence(boolean awaitExistence) {
         this.awaitExistence = awaitExistence;
     }
 
