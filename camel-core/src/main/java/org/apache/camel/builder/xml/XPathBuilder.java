@@ -1085,6 +1085,14 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         if (xpathFactory == null) {
             initDefaultXPathFactory();
         }
+
+        // force lazy creating default functions
+        getBodyFunction();
+        getHeaderFunction();
+        getOutBodyFunction();
+        getOutHeaderFunction();
+        getPropertiesFunction();
+        getSimpleFunction();
     }
 
     public void stop() throws Exception {
