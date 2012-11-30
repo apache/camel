@@ -37,7 +37,7 @@ public class ZooKeeperConfiguration implements Cloneable {
     private int sessionId;
     private byte[] password;
     private String path;
-    private boolean awaitCreation = true;
+    private boolean awaitExistence = true;
     private boolean repeat;
     private boolean listChildren;
     private boolean shouldCreate;
@@ -86,7 +86,6 @@ public class ZooKeeperConfiguration implements Cloneable {
     }
 
     public String getConnectString() {
-        // return StringHelper.toStringCommaSeparated(servers);
         StringBuilder b = new StringBuilder();
         for (String server : servers) {
             b.append(server).append(",");
@@ -129,11 +128,11 @@ public class ZooKeeperConfiguration implements Cloneable {
     }
 
     public boolean shouldAwaitExistence() {
-        return awaitCreation;
+        return awaitExistence;
     }
 
-    public void setAwaitExistance(boolean awaitCreation) {
-        this.awaitCreation = awaitCreation;
+    public void setAwaitExistance(boolean awaitExistence) {
+        this.awaitExistence = awaitExistence;
     }
 
     public long getBackoff() {
