@@ -84,7 +84,6 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Set<String> getImplementationsInBundle(PackageScanFilter test, String packageName) {
         Bundle[] bundles;
         if (bundle.getBundleContext() != null) {

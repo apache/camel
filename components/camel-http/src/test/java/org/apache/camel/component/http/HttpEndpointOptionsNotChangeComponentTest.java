@@ -83,9 +83,6 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
     }
     
     private static class MyHeaderFilterStrategy extends HttpHeaderFilterStrategy {
-        MyHeaderFilterStrategy() {
-            super();
-        }
     }
 
 }

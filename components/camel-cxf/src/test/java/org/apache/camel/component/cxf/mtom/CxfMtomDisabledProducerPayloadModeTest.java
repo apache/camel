@@ -40,7 +40,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.component.cxf.TestHelper;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.cxf.attachment.AttachmentDataSource;
 import org.apache.cxf.binding.soap.SoapHeader;

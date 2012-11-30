@@ -35,6 +35,6 @@ public enum SessionAcknowledgementType {
     }
     
     public int intValue() {
-        return this.intValue;
+        return intValue;
     }
 }

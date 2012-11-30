@@ -86,7 +86,6 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         }
 
         public MessageProducerResources(Session session, MessageProducer messageProducer, TransactionCommitStrategy commitStrategy) {
-            super();
             this.session = session;
             this.messageProducer = messageProducer;
             this.commitStrategy = commitStrategy;

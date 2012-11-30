@@ -116,7 +116,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
                 if (isTransacted() || isSynchronous()) {
                     // must process synchronous if transacted or configured to
                     // do so
-                    log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
+                    log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
                     try {
                         AsyncProcessorHelper.process(getProcessor(), exchange);
                     } catch (Exception e) {
@@ -126,7 +126,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
                     }
                 } else {
                     // process asynchronous using the async routing engine
-                    log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
+                    log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
                     boolean sync = AsyncProcessorHelper.process(getProcessor(), exchange, callback);
                     if (!sync) {
                         // will be done async so return now
@@ -177,7 +177,6 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         private MessageProducer localProducer;
 
         public MessageHanderAsyncCallback(Exchange exchange, MessageProducer localProducer) {
-            super();
             this.exchange = exchange;
             this.localProducer = localProducer;
         }

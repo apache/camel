@@ -18,28 +18,14 @@
 package org.apache.camel.component.cxf;
 
 import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.processor.ErrorHandler;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.Before;
 import org.junit.Test;

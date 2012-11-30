@@ -22,7 +22,6 @@ import javax.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.TestHelper;
 import org.junit.Test;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {

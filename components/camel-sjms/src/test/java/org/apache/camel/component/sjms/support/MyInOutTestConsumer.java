@@ -58,8 +58,8 @@ public class MyInOutTestConsumer implements MessageListener {
             Destination adminQueue = session.createQueue(clientQueueName);
 
             //Setup a message producer to send message to the queue the server is consuming from
-            this.producer = session.createProducer(adminQueue);
-            this.producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+            producer = session.createProducer(adminQueue);
+            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
             //Create a temporary queue that this client will listen for responses on then create a consumer
             //that consumes message from this temporary queue...for a real application a client should reuse
@@ -83,9 +83,9 @@ public class MyInOutTestConsumer implements MessageListener {
             //same correlation ID can be used for all the messages...if there is more than one outstanding
             //message to the server you would presumably want to associate the correlation ID with this
             //message somehow...a Map works good
-            String correlationId = this.createRandomString();
+            String correlationId = createRandomString();
             txtMessage.setJMSCorrelationID(correlationId);
-            this.producer.send(txtMessage);
+            producer.send(txtMessage);
         } catch (JMSException e) {
             //Handle the exception appropriately
         }

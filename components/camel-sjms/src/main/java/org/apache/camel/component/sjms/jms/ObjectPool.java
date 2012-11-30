@@ -118,7 +118,7 @@ public abstract class ObjectPool<T> {
      * @throws Exception
      */
     public void returnObject(T object) throws Exception {
-        this.objects.add(object);
+        objects.add(object);
     }
 
     /**

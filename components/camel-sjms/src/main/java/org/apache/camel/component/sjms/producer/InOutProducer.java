@@ -149,7 +149,6 @@ public class InOutProducer extends SjmsProducer {
          * @param messageConsumer
          */
         public MessageConsumerResource(Session session, MessageConsumer messageConsumer, Destination replyToDestination) {
-            super();
             this.session = session;
             this.messageConsumer = messageConsumer;
             this.replyToDestination = replyToDestination;
@@ -178,7 +177,6 @@ public class InOutProducer extends SjmsProducer {
          * @param exchanger
          */
         public InternalTempDestinationListener(Exchanger<Object> exchanger) {
-            super();
             this.exchanger = exchanger;
         }
 

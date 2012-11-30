@@ -55,8 +55,8 @@ public class InOnlyProducer extends SjmsProducer {
         TransactionCommitStrategy commitStrategy = null;
         Session session = null;
         if (isEndpointTransacted()) {
-            if (this.getCommitStrategy() != null) {
-                commitStrategy = this.getCommitStrategy();
+            if (getCommitStrategy() != null) {
+                commitStrategy = getCommitStrategy();
             } else {
                 commitStrategy = new DefaultTransactionCommitStrategy();
             }

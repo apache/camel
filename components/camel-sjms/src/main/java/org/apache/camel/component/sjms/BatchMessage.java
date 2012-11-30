@@ -33,7 +33,6 @@ public class BatchMessage<T> {
      * @param headers may be null
      */
     public BatchMessage(T payload, Map<String, Object> headers) {
-        super();
         if (payload == null) {
             throw new IllegalArgumentException("Payload may not be null");
         } else {
