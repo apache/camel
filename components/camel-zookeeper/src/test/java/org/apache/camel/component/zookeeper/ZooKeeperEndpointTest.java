@@ -19,18 +19,18 @@ package org.apache.camel.component.zookeeper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class ZookeeperEndpointTest extends CamelTestSupport {
+public class ZooKeeperEndpointTest extends CamelTestSupport {
 
     @Test
-    public void testAwaitExistenceOptionOnEndpoint() {
+    public void awaitExistenceOptionOnEndpoint() {
         ZooKeeperEndpoint endpoint = context.getEndpoint("zookeeper:someserver/zoo", ZooKeeperEndpoint.class);
-        assertTrue("The awaitExistance option defaults to true", endpoint.getAwaitExistence());
+        assertTrue("The awaitExistence option defaults to true", endpoint.getAwaitExistence());
 
         endpoint = context.getEndpoint("zookeeper:someserver/zoo?awaitExistence=true", ZooKeeperEndpoint.class);
-        assertTrue("The awaitExistance option should be true", endpoint.getAwaitExistence());
+        assertTrue("The awaitExistence option should be true", endpoint.getAwaitExistence());
 
         endpoint = context.getEndpoint("zookeeper:someserver/zoo?awaitExistence=false", ZooKeeperEndpoint.class);
-        assertFalse("The awaitExistance option should be false", endpoint.getAwaitExistence());
+        assertFalse("The awaitExistence option should be false", endpoint.getAwaitExistence());
     }
 
 }
