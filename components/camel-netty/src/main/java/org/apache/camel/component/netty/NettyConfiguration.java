@@ -79,7 +79,7 @@ public class NettyConfiguration implements Cloneable {
     private int maximumPoolSize = 16;
     private boolean orderedThreadPoolExecutor = true;
     private int producerPoolMaxActive = -1;
-    private int producerPoolMinIdle = 0;
+    private int producerPoolMinIdle;
     private int producerPoolMaxIdle = 100;
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     

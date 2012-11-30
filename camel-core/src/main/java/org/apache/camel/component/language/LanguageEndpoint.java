@@ -44,7 +44,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private String languageName;
     private String script;
     private boolean transform = true;
-    private boolean contentResolvedFromResource = false;
+    private boolean contentResolvedFromResource;
 
     public LanguageEndpoint() {
         // enable cache by default
