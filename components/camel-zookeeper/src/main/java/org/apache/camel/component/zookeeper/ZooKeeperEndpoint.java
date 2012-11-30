@@ -151,7 +151,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
 
     @ManagedAttribute
     public void setAwaitExistence(boolean awaitExistence) {
-        getConfiguration().setAwaitExistance(awaitExistence);
+        getConfiguration().setAwaitExistence(awaitExistence);
     }
 
     @ManagedOperation
