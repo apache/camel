@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMSource;
@@ -78,7 +79,10 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  * sure that one XPath object is not used from more than one thread at any given time, and while the evaluate method
  * is invoked, applications may not recursively call the evaluate method.
  * <p/>
- * This implementation is thread safe by using thread locals and pooling to allow concurrency
+ * This implementation is thread safe by using thread locals and pooling to allow concurrency.
+ * <p/>
+ * <b>Important:</b> After configuring the {@link XPathBuilder} its adviced to invoke {@link #start()}
+ * to prepare the builder before using; though the builder will auto-start on first use.
  *
  * @see XPathConstants#NODESET
  */
@@ -87,32 +91,36 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
     private static final String OBTAIN_ALL_NS_XPATH = "//*/namespace::*";
 
-    private static XPathFactory defaultXPathFactory;
+    private static volatile XPathFactory defaultXPathFactory;
 
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
     private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
     private final MessageVariableResolver variableResolver = new MessageVariableResolver(exchange);
-    private XPathFactory xpathFactory;
-    private Class<?> documentType = Document.class;
+    private final Map<String, String> namespaces = new ConcurrentHashMap<String, String>();
+    private volatile XPathFactory xpathFactory;
+    private volatile Class<?> documentType = Document.class;
     // For some reason the default expression of "a/b" on a document such as
     // <a><b>1</b><b>2</b></a>
     // will evaluate as just "1" by default which is bizarre. So by default
     // let's assume XPath expressions result in nodesets.
-    private Class<?> resultType;
-    private QName resultQName = XPathConstants.NODESET;
-    private String objectModelUri;
-    private DefaultNamespaceContext namespaceContext;
-    private boolean logNamespaces;
-    private XPathFunctionResolver functionResolver;
-    private XPathFunction bodyFunction;
-    private XPathFunction headerFunction;
-    private XPathFunction outBodyFunction;
-    private XPathFunction outHeaderFunction;
-    private XPathFunction propertiesFunction;
-    private XPathFunction simpleFunction;
+    private volatile Class<?> resultType;
+    private volatile QName resultQName = XPathConstants.NODESET;
+    private volatile String objectModelUri;
+    private volatile DefaultNamespaceContext namespaceContext;
+    private volatile boolean logNamespaces;
+    private volatile XPathFunctionResolver functionResolver;
+    private volatile XPathFunction bodyFunction;
+    private volatile XPathFunction headerFunction;
+    private volatile XPathFunction outBodyFunction;
+    private volatile XPathFunction outHeaderFunction;
+    private volatile XPathFunction propertiesFunction;
+    private volatile XPathFunction simpleFunction;
 
+    /**
+     * @param text The XPath expression
+     */
     public XPathBuilder(String text) {
         this.text = text;
     }
@@ -289,7 +297,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * @return the current builder
      */
     public XPathBuilder objectModel(String uri) {
-        // TODO: Careful! Setting the Object Model URI this way will set the *Default* XPath Factory, which since is a static field,
+        // Careful! Setting the Object Model URI this way will set the *Default* XPath Factory, which since is a static field,
         // will set the XPath Factory system-wide. Decide what to do, as changing this behaviour can break compatibility. Provided the setObjectModel which changes
         // this instance's XPath Factory rather than the static field
         this.objectModelUri = uri;
@@ -328,7 +336,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * @return the current builder
      */
     public XPathBuilder namespace(String prefix, String uri) {
-        getNamespaceContext().add(prefix, uri);
+        namespaces.put(prefix, uri);
         return this;
     }
 
@@ -409,21 +417,17 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     // Properties
     // -------------------------------------------------------------------------
-    public XPathFactory getXPathFactory() throws XPathFactoryConfigurationException {
-        if (xpathFactory != null) {
-            return xpathFactory;
-        }
 
-        if (objectModelUri != null) {
-            xpathFactory = XPathFactory.newInstance(objectModelUri);
-            LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", xpathFactory);
-            return xpathFactory;
-        }
-
-        if (defaultXPathFactory == null) {
-            initDefaultXPathFactory();
-        }
-        return defaultXPathFactory;
+    /**
+     * Gets the xpath factory, can be <tt>null</tt> if no custom factory has been assigned.
+     * <p/>
+     * A default factory will be assigned (if no custom assigned) when either starting this builder
+     * or on first evaluation.
+     *
+     * @return the factory, or <tt>null</tt> if this builder has not been started/used before.
+     */
+    public XPathFactory getXPathFactory() {
+        return xpathFactory;
     }
 
     public void setXPathFactory(XPathFactory xpathFactory) {
@@ -450,16 +454,15 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         this.resultQName = resultQName;
     }
 
+    /**
+     * Gets the namespace context, can be <tt>null</tt> if no custom context has been assigned.
+     * <p/>
+     * A default context will be assigned (if no custom assigned) when either starting this builder
+     * or on first evaluation.
+     *
+     * @return the context, or <tt>null</tt> if this builder has not been started/used before.
+     */
     public DefaultNamespaceContext getNamespaceContext() {
-        if (namespaceContext == null) {
-            try {
-                DefaultNamespaceContext defaultNamespaceContext = new DefaultNamespaceContext(getXPathFactory());
-                populateDefaultNamespaces(defaultNamespaceContext);
-                namespaceContext = defaultNamespaceContext;
-            } catch (XPathFactoryConfigurationException e) {
-                throw new RuntimeExpressionException(e);
-            }
-        }
         return namespaceContext;
     }
 
@@ -476,142 +479,198 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     public void setNamespaces(Map<String, String> namespaces) {
-        getNamespaceContext().setNamespaces(namespaces);
+        this.namespaces.clear();
+        this.namespaces.putAll(namespaces);
     }
 
+    /**
+     * Gets the {@link XPathFunction} for getting the input message body.
+     * <p/>
+     * A default function will be assigned (if no custom assigned) when either starting this builder
+     * or on first evaluation.
+     *
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
+     */
     public XPathFunction getBodyFunction() {
-        if (bodyFunction == null) {
-            bodyFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
-                public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange == null) {
-                        return null;
-                    }
-                    return exchange.get().getIn().getBody();
-                }
-            };
-        }
         return bodyFunction;
+    }
+
+    private XPathFunction createBodyFunction() {
+        return new XPathFunction() {
+            @SuppressWarnings("rawtypes")
+            public Object evaluate(List list) throws XPathFunctionException {
+                if (exchange == null) {
+                    return null;
+                }
+                return exchange.get().getIn().getBody();
+            }
+        };
     }
 
     public void setBodyFunction(XPathFunction bodyFunction) {
         this.bodyFunction = bodyFunction;
     }
 
+    /**
+     * Gets the {@link XPathFunction} for getting the input message header.
+     * <p/>
+     * A default function will be assigned (if no custom assigned) when either starting this builder
+     * or on first evaluation.
+     *
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
+     */
     public XPathFunction getHeaderFunction() {
-        if (headerFunction == null) {
-            headerFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
-                public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange != null && !list.isEmpty()) {
-                        Object value = list.get(0);
-                        if (value != null) {
-                            String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                            return exchange.get().getIn().getHeader(text);
-                        }
-                    }
-                    return null;
-                }
-            };
-        }
         return headerFunction;
+    }
+
+    private XPathFunction createHeaderFunction() {
+        return new XPathFunction() {
+            @SuppressWarnings("rawtypes")
+            public Object evaluate(List list) throws XPathFunctionException {
+                if (exchange != null && !list.isEmpty()) {
+                    Object value = list.get(0);
+                    if (value != null) {
+                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        return exchange.get().getIn().getHeader(text);
+                    }
+                }
+                return null;
+            }
+        };
     }
 
     public void setHeaderFunction(XPathFunction headerFunction) {
         this.headerFunction = headerFunction;
     }
 
+    /**
+     * Gets the {@link XPathFunction} for getting the output message body.
+     * <p/>
+     * A default function will be assigned (if no custom assigned) when either starting this builder
+     * or on first evaluation.
+     *
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
+     */
     public XPathFunction getOutBodyFunction() {
-        if (outBodyFunction == null) {
-            outBodyFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
-                public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange.get() != null && exchange.get().hasOut()) {
-                        return exchange.get().getOut().getBody();
-                    }
-                    return null;
-                }
-            };
-        }
         return outBodyFunction;
+    }
+
+    private XPathFunction createOutBodyFunction() {
+        return new XPathFunction() {
+            @SuppressWarnings("rawtypes")
+            public Object evaluate(List list) throws XPathFunctionException {
+                if (exchange.get() != null && exchange.get().hasOut()) {
+                    return exchange.get().getOut().getBody();
+                }
+                return null;
+            }
+        };
     }
 
     public void setOutBodyFunction(XPathFunction outBodyFunction) {
         this.outBodyFunction = outBodyFunction;
     }
 
+    /**
+     * Gets the {@link XPathFunction} for getting the output message header.
+     * <p/>
+     * A default function will be assigned (if no custom assigned) when either starting this builder
+     * or on first evaluation.
+     *
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
+     */
     public XPathFunction getOutHeaderFunction() {
-        if (outHeaderFunction == null) {
-            outHeaderFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
-                public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange.get() != null && !list.isEmpty()) {
-                        Object value = list.get(0);
-                        if (value != null) {
-                            String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                            return exchange.get().getOut().getHeader(text);
-                        }
-                    }
-                    return null;
-                }
-            };
-        }
         return outHeaderFunction;
+    }
+
+    private XPathFunction createOutHeaderFunction() {
+        return new XPathFunction() {
+            @SuppressWarnings("rawtypes")
+            public Object evaluate(List list) throws XPathFunctionException {
+                if (exchange.get() != null && !list.isEmpty()) {
+                    Object value = list.get(0);
+                    if (value != null) {
+                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        return exchange.get().getOut().getHeader(text);
+                    }
+                }
+                return null;
+            }
+        };
     }
 
     public void setOutHeaderFunction(XPathFunction outHeaderFunction) {
         this.outHeaderFunction = outHeaderFunction;
     }
 
+    /**
+     * Gets the {@link XPathFunction} for getting the exchange properties.
+     * <p/>
+     * A default function will be assigned (if no custom assigned) when either starting this builder
+     * or on first evaluation.
+     *
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
+     */
     public XPathFunction getPropertiesFunction() {
-        if (propertiesFunction == null) {
-            propertiesFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
-                public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange != null && !list.isEmpty()) {
-                        Object value = list.get(0);
-                        if (value != null) {
-                            String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                            try {
-                                // use the property placeholder resolver to lookup the property for us
-                                Object answer = exchange.get().getContext().resolvePropertyPlaceholders("{{" + text + "}}");
-                                return answer;
-                            } catch (Exception e) {
-                                throw new XPathFunctionException(e);
-                            }
+        return propertiesFunction;
+    }
+
+    private XPathFunction createPropertiesFunction() {
+        return new XPathFunction() {
+            @SuppressWarnings("rawtypes")
+            public Object evaluate(List list) throws XPathFunctionException {
+                if (exchange != null && !list.isEmpty()) {
+                    Object value = list.get(0);
+                    if (value != null) {
+                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        try {
+                            // use the property placeholder resolver to lookup the property for us
+                            Object answer = exchange.get().getContext().resolvePropertyPlaceholders("{{" + text + "}}");
+                            return answer;
+                        } catch (Exception e) {
+                            throw new XPathFunctionException(e);
                         }
                     }
-                    return null;
                 }
-            };
-        }
-        return propertiesFunction;
+                return null;
+            }
+        };
     }
 
     public void setPropertiesFunction(XPathFunction propertiesFunction) {
         this.propertiesFunction = propertiesFunction;
     }
 
+    /**
+     * Gets the {@link XPathFunction} for executing <a href="http://camel.apache.org/simple">simple</a>
+     * language as xpath function.
+     * <p/>
+     * A default function will be assigned (if no custom assigned) when either starting this builder
+     * or on first evaluation.
+     *
+     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
+     */
     public XPathFunction getSimpleFunction() {
-        if (simpleFunction == null) {
-            simpleFunction = new XPathFunction() {
-                @SuppressWarnings("rawtypes")
-                public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange != null && !list.isEmpty()) {
-                        Object value = list.get(0);
-                        if (value != null) {
-                            String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                            Language simple = exchange.get().getContext().resolveLanguage("simple");
-                            Expression exp = simple.createExpression(text);
-                            Object answer = exp.evaluate(exchange.get(), Object.class);
-                            return answer;
-                        }
-                    }
-                    return null;
-                }
-            };
-        }
         return simpleFunction;
+    }
+
+    private XPathFunction createSimpleFunction() {
+        return new XPathFunction() {
+            @SuppressWarnings("rawtypes")
+            public Object evaluate(List list) throws XPathFunctionException {
+                if (exchange != null && !list.isEmpty()) {
+                    Object value = list.get(0);
+                    if (value != null) {
+                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        Language simple = exchange.get().getContext().resolveLanguage("simple");
+                        Expression exp = simple.createExpression(text);
+                        Object answer = exp.evaluate(exchange.get(), Object.class);
+                        return answer;
+                    }
+                }
+                return null;
+            }
+        };
     }
 
     public void setSimpleFunction(XPathFunction simpleFunction) {
@@ -824,7 +883,20 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return answer;
     }
 
+    /**
+     * Creates a new xpath expression as there we no available in the pool.
+     * <p/>
+     * This implementation must be synchronized to ensure thread safety, as this XPathBuilder instance may not have been
+     * started prior to being used.
+     */
     protected synchronized XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
+        // ensure we are started
+        try {
+            start();
+        } catch (Exception e) {
+            throw new RuntimeExpressionException("Error starting XPathBuilder", e);
+        }
+
         // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
 
@@ -848,6 +920,12 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
         return xPath.compile(OBTAIN_ALL_NS_XPATH);
+    }
+
+    protected DefaultNamespaceContext createNamespaceContext(XPathFactory factory) {
+        DefaultNamespaceContext context = new DefaultNamespaceContext(factory);
+        populateDefaultNamespaces(context);
+        return context;
     }
 
     /**
@@ -1012,16 +1090,34 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     public void start() throws Exception {
         if (xpathFactory == null) {
-            initDefaultXPathFactory();
+            xpathFactory = createXPathFactory();
+        }
+        if (namespaceContext == null) {
+            namespaceContext = createNamespaceContext(xpathFactory);
+        }
+        for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+            namespaceContext.add(entry.getKey(), entry.getValue());
         }
 
-        // force lazy creating default functions
-        getBodyFunction();
-        getHeaderFunction();
-        getOutBodyFunction();
-        getOutHeaderFunction();
-        getPropertiesFunction();
-        getSimpleFunction();
+        // create default functions if no custom assigned
+        if (bodyFunction == null) {
+            bodyFunction = createBodyFunction();
+        }
+        if (headerFunction == null) {
+            headerFunction = createHeaderFunction();
+        }
+        if (outBodyFunction == null) {
+            outBodyFunction = createOutBodyFunction();
+        }
+        if (outHeaderFunction == null) {
+            outHeaderFunction = createOutHeaderFunction();
+        }
+        if (propertiesFunction == null) {
+            propertiesFunction = createPropertiesFunction();
+        }
+        if (simpleFunction == null) {
+            simpleFunction = createSimpleFunction();
+        }
     }
 
     public void stop() throws Exception {
@@ -1029,7 +1125,20 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         poolLogNamespaces.clear();
     }
 
-    protected synchronized void initDefaultXPathFactory() throws XPathFactoryConfigurationException {
+    protected synchronized XPathFactory createXPathFactory() throws XPathFactoryConfigurationException {
+        if (objectModelUri != null) {
+            xpathFactory = XPathFactory.newInstance(objectModelUri);
+            LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", xpathFactory);
+            return xpathFactory;
+        }
+
+        if (defaultXPathFactory == null) {
+            initDefaultXPathFactory();
+        }
+        return defaultXPathFactory;
+    }
+
+    protected void initDefaultXPathFactory() throws XPathFactoryConfigurationException {
         if (defaultXPathFactory == null) {
             if (objectModelUri != null) {
                 defaultXPathFactory = XPathFactory.newInstance(objectModelUri);
