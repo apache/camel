@@ -60,11 +60,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
@@ -121,15 +116,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <excludes>
-            <!-- skip sftp tests as they can hang CI servers -->
-            <exclude>org/apache/camel/component/file/remote/sftp/**.java</exclude>
-          </excludes>
+          <!-- The default timeout of 5 minutes through the parent pom is not long enough -->
           <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-          <systemPropertyVariables>
-            <ftp.enable>${ftp.enable}</ftp.enable>
-            <ftp.server>${ftp.url}</ftp.server>
-          </systemPropertyVariables>
         </configuration>
       </plugin>
 
