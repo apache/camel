@@ -1878,9 +1878,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     protected void logRouteState(Route route, String state) {
         if (log.isInfoEnabled()) {
             if (route.getConsumer() != null) {
-                log.info("Route: {} {}, was consuming from: {}", new Object[]{route.getId(), state, route.getConsumer().getEndpoint()});
+                log.info("Route: {} is {}, was consuming from: {}", new Object[]{route.getId(), state, route.getConsumer().getEndpoint()});
             } else {
-                log.info("Route: {} {}.", route.getId(), state);
+                log.info("Route: {} is {}.", route.getId(), state);
             }
         }
     }
@@ -1888,7 +1888,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
         for (Route route : routeService.getRoutes()) {
-            logRouteState(route, "stoped");
+            logRouteState(route, "stopped");
         }
     }
 
