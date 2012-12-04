@@ -25,6 +25,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -195,6 +196,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             sslContextParameters = getSslContextParameters();
         }
         
+        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        
         boolean secure = HttpHelper.isSecureConnection(uri);
 
         // create the configurer to use for this endpoint
@@ -226,7 +229,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             }
         }
         endpoint.setHttpUri(httpUri);
-        setEndpointHeaderFilterStrategy(endpoint);
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        } else {
+            setEndpointHeaderFilterStrategy(endpoint);
+        }
         endpoint.setBinding(getHttpBinding());
         if (httpBinding != null) {
             endpoint.setHttpBinding(httpBinding);
