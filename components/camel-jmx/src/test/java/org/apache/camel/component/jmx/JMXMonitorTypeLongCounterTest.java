@@ -25,7 +25,6 @@ import org.junit.Test;
 
 public class JMXMonitorTypeLongCounterTest extends SimpleBeanFixture {
     
-    @Ignore("monitorNotificationLong.xml is missing!")
     @Test
     public void counter() throws Exception {
 
