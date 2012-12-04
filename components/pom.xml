@@ -132,6 +132,7 @@
     <module>camel-protobuf</module>
     <module>camel-quartz</module>
     <module>camel-quickfix</module>
+    <module>camel-redis</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>

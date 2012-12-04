@@ -121,6 +121,7 @@
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-quickfix</include>
+        <include>org.apache.camel:camel-redis</include>
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-routebox</include>

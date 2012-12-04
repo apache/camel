@@ -648,6 +648,11 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quickfix/${quickfix-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-quickfix/${project.version}</bundle>
   </feature>
+  <feature name='camel-redis' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.springframework.data/spring-data-redis/${spring-data-redis-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-redis/${project.version}</bundle>
+  </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:http://maven.restlet.org!org.restlet.jse/org.restlet/${restlet-version}</bundle>
