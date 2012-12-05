@@ -16,13 +16,22 @@
  */
 package org.apache.camel.component.mongodb.converters;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Map;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
+import com.mongodb.util.JSONCallback;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
+import org.bson.BSONCallback;
+import org.bson.BasicBSONDecoder;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +69,47 @@ public final class MongoDbBasicConverters {
         return answer;
     }
    
+    @Converter
+    public static DBObject fromFileToDBObject(File f, Exchange exchange) throws FileNotFoundException {
+        return fromInputStreamToDBObject(new FileInputStream(f), exchange);
+    }
+    
+    @Converter
+    public static DBObject fromInputStreamToDBObject(InputStream is, Exchange exchange) {
+        DBObject answer = null;
+        try {
+            byte[] input = IOConverter.toBytes(is);
+            
+            if (isBson(input)) {
+                BSONCallback callback = new JSONCallback();
+                new BasicBSONDecoder().decode(input, callback);
+                answer = (DBObject) callback.get();
+            } else {
+                answer = (DBObject) JSON.parse(IOConverter.toString(input, exchange));
+            }
+        } catch (Exception e) {
+            LOG.warn("String -> DBObject conversion selected, but the following exception occurred. Returning null.", e);
+        }
+        
+        return answer;
+    }
+   
+    /** 
+     * If the input starts with any number of whitespace characters and then a '{' character, we
+     * assume it is JSON rather than BSON. There are probably no useful BSON blobs that fit this pattern
+     */
+    private static boolean isBson(byte[] input) {
+        int i = 0;
+        while (i < input.length) {
+            if (input[i] == '{') {
+                return false;
+            } else if (!Character.isWhitespace(input[i])) {
+                return true;
+            }
+        }
+        return true;
+    }
+
     @Converter
     public static DBObject fromAnyObjectToDBObject(Object value) {
         BasicDBObject answer;
