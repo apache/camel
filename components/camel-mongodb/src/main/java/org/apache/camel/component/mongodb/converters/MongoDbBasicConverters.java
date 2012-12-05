@@ -19,6 +19,7 @@ package org.apache.camel.component.mongodb.converters;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import com.mongodb.util.JSONCallback;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.IOHelper;
 import org.bson.BSONCallback;
 import org.bson.BasicBSONDecoder;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -89,8 +91,10 @@ public final class MongoDbBasicConverters {
             }
         } catch (Exception e) {
             LOG.warn("String -> DBObject conversion selected, but the following exception occurred. Returning null.", e);
+        } finally {
+            // we need to make sure to close the input stream
+            IOHelper.close(is, "InputStream", LOG);
         }
-        
         return answer;
     }
    
