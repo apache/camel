@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.DefaultDBEncoder;
 import com.mongodb.WriteResult;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.converter.IOConverter;
+import org.bson.BSONObject;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -69,6 +72,30 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         assertTrue(result instanceof WriteResult);
         DBObject b = testCollection.findOne("testInsertJsonString");
         assertNotNull("No record with 'testInsertJsonString' _id", b);
+    }
+    
+    @Test
+    public void testInsertJsonInputStream() throws Exception {
+        assertEquals(0, testCollection.count());
+        Object result = template.requestBody("direct:insertJsonString", 
+                        IOConverter.toInputStream("{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n", null));
+        assertTrue(result instanceof WriteResult);
+        DBObject b = testCollection.findOne("testInsertJsonString");
+        assertNotNull("No record with 'testInsertJsonString' _id", b);
+    }
+    
+    @Test
+    public void testInsertBsonInputStream() {
+        assertEquals(0, testCollection.count());
+        
+        DefaultDBEncoder encoder = new DefaultDBEncoder();
+        BSONObject bsonObject = new BasicDBObject();
+        bsonObject.put("_id", "testInsertBsonString");
+        
+        Object result = template.requestBody("direct:insertJsonString", new ByteArrayInputStream(encoder.encode(bsonObject)));
+        assertTrue(result instanceof WriteResult);
+        DBObject b = testCollection.findOne("testInsertBsonString");
+        assertNotNull("No record with 'testInsertBsonString' _id", b);
     }
     
     @Override
