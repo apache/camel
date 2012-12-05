@@ -21,6 +21,7 @@ import static java.lang.String.format;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.zookeeper.operations.CreateOperation;
+import org.apache.camel.component.zookeeper.operations.DeleteOperation;
 import org.apache.camel.component.zookeeper.operations.GetChildrenOperation;
 import org.apache.camel.component.zookeeper.operations.OperationResult;
 import org.apache.camel.component.zookeeper.operations.SetDataOperation;
@@ -28,6 +29,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 
 import org.apache.zookeeper.AsyncCallback.StatCallback;
+import org.apache.zookeeper.AsyncCallback.VoidCallback;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.ZooKeeper;
@@ -47,6 +49,8 @@ import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getVersionFrom
  */
 @SuppressWarnings("rawtypes")
 public class ZookeeperProducer extends DefaultProducer {
+    public static final String ZK_OPERATION_WRITE  = "WRITE";
+    public static final String ZK_OPERATION_DELETE = "DELETE";
 
     private ZooKeeperConfiguration configuration;
 
@@ -63,20 +67,46 @@ public class ZookeeperProducer extends DefaultProducer {
         ZooKeeper connection = zkm.getConnection();
         ProductionContext context = new ProductionContext(connection, exchange);
 
+        String operation = exchange.getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_OPERATION, String.class);
+        boolean isDelete = ZK_OPERATION_DELETE.equals(operation);
+        
         if (ExchangeHelper.isOutCapable(exchange)) {
-            if (log.isDebugEnabled()) {
-                log.debug(format("Storing data to znode '%s', waiting for confirmation", context.node));
-            }
+            if (isDelete) {
+                if (log.isDebugEnabled()) {
+                    log.debug(format("Deleting znode '%s', waiting for confirmation", context.node));
+                }
 
-            OperationResult result = synchronouslySetData(context);
-            if (configuration.listChildren()) {
-                result = listChildren(context);
-            }
+                OperationResult result = synchronouslyDelete(context);
+                if (configuration.listChildren()) {
+                    result = listChildren(context);
+                }
+                updateExchangeWithResult(context, result);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug(format("Storing data to znode '%s', waiting for confirmation", context.node));
+                }
 
-            updateExchangeWithResult(context, result);
+                OperationResult result = synchronouslySetData(context);
+                if (configuration.listChildren()) {
+                    result = listChildren(context);
+                }
+                updateExchangeWithResult(context, result);
+            }
         } else {
-            asynchronouslySetDataOnNode(connection, context);
+            if (isDelete) {
+                asynchronouslyDeleteNode(connection, context);
+            } else {
+                asynchronouslySetDataOnNode(connection, context);
+            }
         }
+    }
+
+    private void asynchronouslyDeleteNode(ZooKeeper connection, ProductionContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug(format("Deleting node '%s', not waiting for confirmation", context.node));
+        }
+        connection.delete(context.node, context.version, new AsyncDeleteCallback(), context);
+
     }
 
     private void asynchronouslySetDataOnNode(ZooKeeper connection, ProductionContext context) {
@@ -144,6 +174,19 @@ public class ZookeeperProducer extends DefaultProducer {
         }
     }
 
+    private class AsyncDeleteCallback implements VoidCallback {
+        @Override
+        public void processResult(int rc, String path, Object ctx) {
+            if (log.isDebugEnabled()) {
+                if (log.isTraceEnabled()) {
+                    log.trace(format("Removed data node '%s'", path));
+                } else {
+                    log.debug(format("Removed data node '%s'", path));
+                }
+            }
+        }
+    }
+    
     private OperationResult<String> createNode(ProductionContext ctx) throws Exception {
         CreateOperation create = new CreateOperation(ctx.connection, ctx.node);
         create.setPermissions(getAclListFromMessage(ctx.exchange.getIn()));
@@ -180,6 +223,20 @@ public class ZookeeperProducer extends DefaultProducer {
         return result;
     }
 
+    private OperationResult synchronouslyDelete(ProductionContext ctx) throws Exception {
+        DeleteOperation setData = new DeleteOperation(ctx.connection, ctx.node);
+        setData.setVersion(ctx.version);
+
+        OperationResult result = setData.get();
+
+        if (!result.isOk() && configuration.shouldCreate() && result.failedDueTo(Code.NONODE)) {
+            log.warn(format("Node '%s' did not exist, creating it.", ctx.node));
+            result = createNode(ctx);
+        }
+        return result;
+    }
+
+    
     private void logStoreComplete(String path, Stat statistics) {
         if (log.isDebugEnabled()) {
             if (log.isTraceEnabled()) {
