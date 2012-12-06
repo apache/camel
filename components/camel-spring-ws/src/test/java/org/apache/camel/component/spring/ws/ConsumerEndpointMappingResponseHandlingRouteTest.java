@@ -18,15 +18,20 @@ package org.apache.camel.component.spring.ws;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
+
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.component.spring.ws.utils.TestUtil;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.addressing.client.ActionCallback;
+import org.springframework.ws.soap.addressing.version.Addressing10;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
 public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSpringTestSupport {
@@ -52,7 +57,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, sw.toString());
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
     }
 
     @Test
@@ -62,7 +67,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, new SoapActionCallback("http://www.webserviceX.NET/GetQuote"), result);
         assertNotNull(result);
-        assertEquals(expectedResponse, sw.toString());
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
     }
 
     @Test
@@ -72,7 +77,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult("http://localhost/stockquote2", source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, sw.toString());
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
     }
 
     @Test
@@ -82,7 +87,28 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, sw.toString());
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
+    }
+
+    @Test
+    public void testAction() throws Exception {
+        StreamSource source = new StreamSource(new StringReader(xmlRequestForGoogleStockQuoteNoNamespace));
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        webServiceTemplate.sendSourceAndReceiveToResult(source, new ActionCallback("http://www.webserviceX.NET/GetQuote"), result);
+        assertNotNull(result);
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
+    }
+
+    @Test
+    public void testTo() throws Exception {
+        StreamSource source = new StreamSource(new StringReader(xmlRequestForGoogleStockQuoteNoNamespace));
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        webServiceTemplate.sendSourceAndReceiveToResult(source, new ActionCallback(new URI("http://action-does-not-matter-here"), new Addressing10(), new URI("http://url.to")),
+                                                        result);
+        assertNotNull(result);
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
     }
 
     @Override

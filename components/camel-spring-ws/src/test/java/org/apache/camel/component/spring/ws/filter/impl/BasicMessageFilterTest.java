@@ -86,6 +86,10 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     public void removeCamelInternalHeaderAttributes() throws Exception {
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, "mustBeRemoved");
+        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, "mustBeRemoved");
+        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, "mustBeRemoved");
+        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION, "mustBeRemoved");
+        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, "mustBeRemoved");
 
         exchange.getOut().getHeaders().put("breadcrumbId", "mustBeRemoved");

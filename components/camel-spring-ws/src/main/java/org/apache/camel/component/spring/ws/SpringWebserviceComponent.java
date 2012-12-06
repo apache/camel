@@ -26,7 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
-import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
+import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
@@ -68,7 +68,7 @@ public class SpringWebserviceComponent extends DefaultComponent {
         addConsumerConfiguration(remaining, parameters, configuration);
         addProducerConfiguration(remaining, parameters, configuration);
         addXmlConverterToConfiguration(parameters, configuration);
-        configureMessageFilter(parameters, configuration); 
+        configureMessageFilter(parameters, configuration);
         setProperties(configuration, parameters);
         return new SpringWebserviceEndpoint(this, uri, configuration);
     }
@@ -88,8 +88,7 @@ public class SpringWebserviceComponent extends DefaultComponent {
         }
     }
 
-    private void addProducerConfiguration(String remaining, Map<String, Object> parameters,
-                                          SpringWebserviceConfiguration configuration) throws URISyntaxException {
+    private void addProducerConfiguration(String remaining, Map<String, Object> parameters, SpringWebserviceConfiguration configuration) throws URISyntaxException {
         if (configuration.getEndpointMapping() == null && configuration.getEndpointDispatcher() == null) {
             LOG.debug("Building Spring Web Services producer");
             URI webServiceEndpointUri = new URI(UnsafeUriCharactersEncoder.encode(remaining));
@@ -134,11 +133,11 @@ public class SpringWebserviceComponent extends DefaultComponent {
 
     private void addEndpointMappingToConfiguration(Map<String, Object> parameters,
                                                    SpringWebserviceConfiguration configuration) {
-        // Obtain generic CamelEndpointMapping from registry
-        CamelEndpointMapping endpointMapping = resolveAndRemoveReferenceParameter(parameters, "endpointMapping", CamelEndpointMapping.class, null);
+        // Obtain generic CamelSpringWSEndpointMapping from registry
+        CamelSpringWSEndpointMapping endpointMapping = resolveAndRemoveReferenceParameter(parameters, "endpointMapping", CamelSpringWSEndpointMapping.class, null);
         if (endpointMapping == null && configuration.getEndpointDispatcher() == null) {
-            throw new IllegalArgumentException("No CamelEndpointMapping found in Spring ApplicationContext."
-                    + " This bean is required for Spring-WS consumer support (unless the 'spring-ws:beanname:' URI scheme is used)");
+            throw new IllegalArgumentException("No instance of CamelSpringWSEndpointMapping found in Spring ApplicationContext."
+                                               + " This bean is required for Spring-WS consumer support (unless the 'spring-ws:beanname:' URI scheme is used)");
         }
         configuration.setEndpointMapping(endpointMapping);
     }
@@ -157,8 +156,7 @@ public class SpringWebserviceComponent extends DefaultComponent {
         }
         configuration.setXmlConverter(xmlConverter);
     }
-    
-   
+
     /**
      * Configures the messageFilter's factory. The factory is looked up in the endpoint's URI and then in the Spring's context.
      * The bean search mechanism looks for a bean with the name messageFilter.

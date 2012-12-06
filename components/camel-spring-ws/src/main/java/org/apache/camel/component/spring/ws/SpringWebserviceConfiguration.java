@@ -20,31 +20,37 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
-import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
+import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.springframework.util.StringUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.addressing.server.annotation.Action;
 
 public class SpringWebserviceConfiguration {
-    
+
     /* Producer configuration */
     private WebServiceTemplate webServiceTemplate;
     private String soapAction;
     private URI wsAddressingAction;
+    private URI outputAction;
+    private URI faultAction;
+    private URI faultTo;
+    private URI replyTo;
     private int timeout = -1;
 
     /* Consumer configuration */
-    private CamelEndpointMapping endpointMapping;
+    private CamelSpringWSEndpointMapping endpointMapping;
     private CamelEndpointDispatcher endpointDispatcher;
     private EndpointMappingKey endpointMappingKey;
     private SSLContextParameters sslContextParameters;
 
     private XmlConverter xmlConverter;
     private MessageFilter messageFilter;
-    
+
     public WebServiceTemplate getWebServiceTemplate() {
         return webServiceTemplate;
     }
@@ -80,7 +86,9 @@ public class SpringWebserviceConfiguration {
     }
 
     public void setWsAddressingAction(String wsAddressingAction) throws URISyntaxException {
-        setWsAddressingAction(new URI(wsAddressingAction));
+        if (StringUtils.hasText(wsAddressingAction)) {
+            setWsAddressingAction(new URI(wsAddressingAction));
+        }
     }
 
     public int getTimeout() {
@@ -91,11 +99,11 @@ public class SpringWebserviceConfiguration {
         this.timeout = timeout;
     }
 
-    public CamelEndpointMapping getEndpointMapping() {
+    public CamelSpringWSEndpointMapping getEndpointMapping() {
         return endpointMapping;
     }
 
-    public void setEndpointMapping(CamelEndpointMapping endpointMapping) {
+    public void setEndpointMapping(CamelSpringWSEndpointMapping endpointMapping) {
         this.endpointMapping = endpointMapping;
     }
 
@@ -106,7 +114,7 @@ public class SpringWebserviceConfiguration {
     public void setEndpointMappingKey(EndpointMappingKey endpointMappingKey) {
         this.endpointMappingKey = endpointMappingKey;
     }
-    
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
@@ -141,7 +149,6 @@ public class SpringWebserviceConfiguration {
         return i == -1 ? uri : (uri.subSequence(0, i) + "}" + uri.substring(i + 1)).replaceFirst("\\(", "{");
     }
 
-
     /**
      * Default setter to override failsafe message filter.
      * 
@@ -165,4 +172,85 @@ public class SpringWebserviceConfiguration {
         }
         return this.messageFilter;
     }
+
+    /**
+     * Signifies the value for the response WS-Addressing <code>Action</code>
+     * header that is provided by the method.
+     * 
+     * @see {@link Action}
+     */
+    public URI getOutputAction() {
+        return outputAction;
+    }
+
+    public void setOutputAction(String output) throws URISyntaxException {
+        if (StringUtils.hasText(output)) {
+            setOutputAction(new URI(output));
+        }
+    }
+
+    public void setOutputAction(URI outputAction) {
+        this.outputAction = outputAction;
+    }
+
+    /**
+     * Signifies the value for the faultAction response WS-Addressing
+     * <code>Fault Action</code> header that is provided by the method.
+     * 
+     * @see {@link Action}
+     */
+    public URI getFaultAction() {
+        return faultAction;
+    }
+
+    public void setFaultAction(String fault) throws URISyntaxException {
+        if (StringUtils.hasText(fault)) {
+            setFaultAction(new URI(fault));
+        }
+    }
+
+    public void setFaultAction(URI fault) {
+        this.faultAction = fault;
+    }
+
+    /**
+     * Signifies the value for the faultAction response WS-Addressing
+     * <code>FaultTo</code> header that is provided by the method.
+     * 
+     * @see {@link Action}
+     */
+    public URI getFaultTo() {
+        return faultTo;
+    }
+
+    public void setFaultTo(String faultTo) throws URISyntaxException {
+        if (StringUtils.hasText(faultTo)) {
+            setFaultTo(new URI(faultTo));
+        }
+    }
+
+    public void setFaultTo(URI faultTo) {
+        this.faultTo = faultTo;
+    }
+
+    /**
+     * Signifies the value for the replyTo response WS-Addressing
+     * <code>ReplyTo</code> header that is provided by the method.
+     * 
+     * @see {@link Action}
+     */
+    public URI getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(String replyToAction) throws URISyntaxException {
+        if (StringUtils.hasText(replyToAction)) {
+            setReplyTo(new URI(replyToAction));
+        }
+    }
+
+    public void setReplyTo(URI replyToAction) {
+        this.replyTo = replyToAction;
+    }
+
 }
