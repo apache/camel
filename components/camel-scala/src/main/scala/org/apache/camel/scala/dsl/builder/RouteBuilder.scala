@@ -40,7 +40,7 @@ import org.slf4j.{Logger, LoggerFactory}
 class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages with Functions {
 
   val builder = new org.apache.camel.builder.RouteBuilder {
-    override def configure() = {
+    override def configure() {
       onJavaBuilder(this)
     }
   }
@@ -50,17 +50,17 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   val serialization = new org.apache.camel.model.dataformat.SerializationDataFormat
 
   val failureOnly = new Config[SOnCompletionDefinition] {
-    def configure(target: SOnCompletionDefinition) = target.onFailureOnly()
+    def configure(target: SOnCompletionDefinition) { target.onFailureOnly() }
   }
 
   val completeOnly = new Config[SOnCompletionDefinition] {
-    def configure(target: SOnCompletionDefinition) = target.onCompleteOnly()
+    def configure(target: SOnCompletionDefinition) { target.onCompleteOnly() }
   }
 
   /**
    * Callback method to allow people to interact with the Java DSL builder directly
    */
-  def onJavaBuilder(builder: org.apache.camel.builder.RouteBuilder) = {}
+  def onJavaBuilder(builder: org.apache.camel.builder.RouteBuilder) {}
 
   implicit def stringToRoute(target: String) : SRouteDefinition = new SRouteDefinition(builder.from(target), this)  
   implicit def unwrap[W](wrapper: Wrapper[W]) = wrapper.unwrap
@@ -93,7 +93,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def getContext = builder.getContext
 
   // implementing the Routes interface to allow RouteBuilder to be discovered by Spring
-  def addRoutesToCamelContext(context: CamelContext) = builder.addRoutesToCamelContext(context)
+  def addRoutesToCamelContext(context: CamelContext) { builder.addRoutesToCamelContext(context) }
 
   // EIPs
   //-----------------------------------------------------------------
@@ -109,7 +109,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def dynamicRouter(expression: Exchange => Any) = stack.top.dynamicRouter(expression)
 
   def enrich(uri: String, strategy: AggregationStrategy) = stack.top.enrich(uri, strategy)
-  def errorHandler(error: ErrorHandlerBuilder) = builder.setErrorHandlerBuilder(error)
+  def errorHandler(error: ErrorHandlerBuilder) { builder.setErrorHandlerBuilder(error) }
   def deadLetterChannel(uri: String) = {
     val dlc = new DeadLetterChannelBuilder
     dlc.setDeadLetterUri(uri)
