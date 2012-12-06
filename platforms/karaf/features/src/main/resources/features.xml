@@ -586,7 +586,7 @@
     <feature version='${project.version}'>camel-core</feature>
   </feature>
   <feature name='camel-mvel' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mvel/${mvel-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mvel/${project.version}</bundle>
   </feature>
