@@ -137,7 +137,6 @@
     <gmaven-plugin-version>1.4</gmaven-plugin-version>
     <google-app-engine-version>1.6.6</google-app-engine-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
-    <google-guava-bundle-version>11_1</google-guava-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <google-guava-version>13.0.1</google-guava-version>
     <groovy-version>2.0.5</groovy-version>
     <gson-version>2.2.2</gson-version>
