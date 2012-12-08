@@ -335,12 +335,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <excludes>
-                      <!-- TODO FIXME ASAP -->
-                      <exclude>**/XXXTest.*</exclude>
-                      <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsTest.*</exclude>
-                      <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsXaTest.*</exclude>
-                    </excludes>
                     <systemProperties>
                	      <property>
                         <name>java.util.logging.config.file</name>
@@ -350,6 +344,10 @@
                         <name>org.apache.activemq.default.directory.prefix</name>
                         <value>target/</value>
                	      </property>
+                      <property>
+                        <name>derby.stream.error.file</name>
+                        <value>target/derby.log</value>
+                      </property>
                   </systemProperties>
                 </configuration>
             </plugin>

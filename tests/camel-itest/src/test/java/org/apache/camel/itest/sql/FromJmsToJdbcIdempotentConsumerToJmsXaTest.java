@@ -16,13 +16,45 @@
  */
 package org.apache.camel.itest.sql;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import org.junit.After;
+import org.junit.Before;
+
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Jms with JDBC idempotent consumer using XA test.
+ * Jms with JDBC idempotent consumer test using XA.
  */
 public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIdempotentConsumerToJmsTest {
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory("target/testdb");
+
+        super.setUp();
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        // shutdown the embedded Derby database so that the next test becomes a clean initial state 
+        try {
+            DriverManager.getConnection("jdbc:derby:target/testdb;shutdown=true");
+        } catch (SQLException e) {
+            // a successful shutdown always results in an SQLException to indicate that Derby has shut down and that there is no other exception.
+        }
+    }
+
+    @Override
+    protected String getDatasourceName() {
+        return "myXADataSource";
+    }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

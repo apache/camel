@@ -24,9 +24,9 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
            http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-           http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
+           http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-    <!-- jdbc idempotent repository -->
+    <!-- jdbc idempotent repository, per default creates the table CAMEL_MESSAGEPROCESSED if not already existing -->
     <bean id="messageIdRepository" class="org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository">
         <constructor-arg index="0" ref="myNonXADataSource"/>
         <constructor-arg index="1" value="myProcessor"/>
@@ -67,7 +67,5 @@
     </broker:broker>
 
     <!-- datasource used to create the database tables -->
-    <jdbc:embedded-database id="myNonXADataSource" type="DERBY">
-    	<jdbc:script location="classpath:sql/init2.sql" />
-    </jdbc:embedded-database>
+    <jdbc:embedded-database id="myNonXADataSource" type="DERBY"/>
 </beans>

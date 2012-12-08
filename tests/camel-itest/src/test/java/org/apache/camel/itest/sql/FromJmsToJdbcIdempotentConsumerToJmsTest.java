@@ -51,9 +51,13 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     public void setUp() throws Exception {
         super.setUp();
 
-        dataSource = context.getRegistry().lookup("myNonXADataSource", DataSource.class);
+        dataSource = context.getRegistry().lookup(getDatasourceName(), DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
+    }
+
+    protected String getDatasourceName() {
+        return "myNonXADataSource";
     }
 
     @Test
@@ -74,7 +78,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue("Should complete 1 message", notify.matchesMockWaitTime());
 
         // check that there is a message in the database and JMS queue
-        assertEquals(1, jdbcTemplate.queryForInt("select count(*) from  CAMEL_MESSAGEPROCESSED"));
+        assertEquals(1, jdbcTemplate.queryForInt("select count(*) from CAMEL_MESSAGEPROCESSED"));
         Object out = consumer.receiveBody("activemq:queue:outbox", 3000);
         assertEquals("DONE-A", out);
     }
@@ -86,6 +90,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         // use a notify to know that after 1+6 (1 original + 6 redelivery) attempts from AcitveMQ
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(7).create();
 
+        // TODO: occasionally we get only 6 instead of 7 expected exchanges which's most probably an issue in AcitveMQ itself
         getMockEndpoint("mock:a").expectedMessageCount(7);
         // force exception to occur at mock a
         getMockEndpoint("mock:a").whenAnyExchangeReceived(new Processor() {
@@ -103,7 +108,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue("Should complete 7 message", notify.matchesMockWaitTime());
 
         // check that there is a message in the database and JMS queue
-        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from  CAMEL_MESSAGEPROCESSED"));
+        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from CAMEL_MESSAGEPROCESSED"));
         assertNull(consumer.receiveBody("activemq:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
@@ -134,7 +139,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue("Should complete 7 messages", notify.matchesMockWaitTime());
 
         // check that there is a message in the database and JMS queue
-        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from  CAMEL_MESSAGEPROCESSED"));
+        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from CAMEL_MESSAGEPROCESSED"));
         assertNull(consumer.receiveBody("activemq:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
@@ -162,17 +167,17 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue("Should complete 3 messages", notify.matchesMockWaitTime());
 
         // check that there is two messages in the database and JMS queue
-        assertEquals(2, jdbcTemplate.queryForInt("select count(*) from  CAMEL_MESSAGEPROCESSED"));
+        assertEquals(2, jdbcTemplate.queryForInt("select count(*) from CAMEL_MESSAGEPROCESSED"));
         assertEquals("DONE-D", consumer.receiveBody("activemq:queue:outbox", 3000));
         assertEquals("DONE-E", consumer.receiveBody("activemq:queue:outbox", 3000));
     }
-    
+
     @Test
     public void testRetryAfterException() throws Exception {
         checkInitialState();
-        
+
         final AtomicInteger counter = new AtomicInteger();
-        
+
         // use a notify to know when the message is done
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(4).create();
 
@@ -198,25 +203,24 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue("Should complete 4 messages", notify.matchesMockWaitTime());
 
         // check that there is two messages in the database and JMS queue
-        assertEquals(3, jdbcTemplate.queryForInt("select count(*) from  CAMEL_MESSAGEPROCESSED"));
+        assertEquals(3, jdbcTemplate.queryForInt("select count(*) from CAMEL_MESSAGEPROCESSED"));
         assertEquals("DONE-D", consumer.receiveBody("activemq:queue:outbox", 3000));
         assertEquals("DONE-E", consumer.receiveBody("activemq:queue:outbox", 3000));
         assertEquals("DONE-F", consumer.receiveBody("activemq:queue:outbox", 3000));
     }
-    
+
     protected void checkInitialState() {
         // check there are no messages in the database and JMS queue
-        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from  CAMEL_MESSAGEPROCESSED"));
+        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from CAMEL_MESSAGEPROCESSED"));
         assertNull(consumer.receiveBody("activemq:queue:outbox", 2000));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @SuppressWarnings("unchecked")
             @Override
             public void configure() throws Exception {
-                IdempotentRepository<String> repository = context.getRegistry().lookup("messageIdRepository", IdempotentRepository.class);
+                IdempotentRepository<?> repository = context.getRegistry().lookup("messageIdRepository", IdempotentRepository.class);
 
                 from("activemq:queue:inbox")
                     .transacted("required")

@@ -24,11 +24,11 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
            http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-           http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
+           http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-    <!-- jdbc idempotent repository -->
+    <!-- jdbc idempotent repository, per default creates the table CAMEL_MESSAGEPROCESSED if not already existing -->
     <bean id="messageIdRepository" class="org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository">
-        <constructor-arg index="0" ref="myDataSource"/>
+        <constructor-arg index="0" ref="myXADataSource"/>
         <constructor-arg index="1" ref="requiredTemplate"/>
         <constructor-arg index="2" value="myProcessor"/>
     </bean>
@@ -89,17 +89,10 @@
             <broker:transportConnector uri="tcp://localhost:61616"/>
         </broker:transportConnectors>
     </broker:broker>
-    
-    <!-- datasource used to create the database tables -->
-    <jdbc:embedded-database id="myNonXADataSource" type="DERBY">
-    	<jdbc:script location="classpath:sql/init.sql" />
-    </jdbc:embedded-database>
 
-    <!-- define the datasource to the database - in this example we use an in memory database using Derby -->
-    <bean id="myDataSource" class="org.apache.derby.jdbc.EmbeddedXADataSource" depends-on="myNonXADataSource">
-        <property name="databaseName" value="testdb"/>
-        <property name="createDatabase" value="true"/>
-        <property name="shutdownDatabase" value="true"/>
+    <!-- XA datasource used to create the database tables -->
+    <bean id="myXADataSource" class="org.apache.derby.jdbc.EmbeddedXADataSource">
+        <property name="databaseName" value="target/testdb;create=true"/>
         <property name="user" value="sa"/>
         <property name="password" value=""/>
     </bean>
