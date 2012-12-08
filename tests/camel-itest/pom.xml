@@ -350,12 +350,6 @@
         <configuration>
           <forkMode>pertest</forkMode>
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
-          <excludes>
-            <!-- TODO FIXME ASAP -->
-            <exclude>**/XXXTest.*</exclude>
-            <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsTest.*</exclude>
-            <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsXaTest.*</exclude>
-          </excludes>
           <systemProperties>
    	        <property>
               <name>java.util.logging.config.file</name>
