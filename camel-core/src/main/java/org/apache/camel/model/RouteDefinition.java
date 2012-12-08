@@ -38,6 +38,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StatefulService;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
@@ -266,8 +267,13 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         // log the merged route at info level to make it easier to end users to spot any mistakes they may have made
         log.info("AdviceWith route after: " + merged);
 
-        // and start it
-        camelContext.startRoute(merged);
+        // If the camel context is started then we start the route
+        if (camelContext instanceof StatefulService) {
+            StatefulService service = (StatefulService) camelContext;
+            if (service.isStarted()) {
+                camelContext.startRoute(merged);
+            }
+        }
         return merged;
     }
 
