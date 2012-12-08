@@ -48,6 +48,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIde
             DriverManager.getConnection("jdbc:derby:target/testdb;shutdown=true");
         } catch (SQLException e) {
             // a successful shutdown always results in an SQLException to indicate that Derby has shut down and that there is no other exception.
+            assertEquals("Database 'target/testdb' shutdown.", e.getMessage());
         }
     }
 
