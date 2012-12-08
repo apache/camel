@@ -357,11 +357,9 @@
         <configuration>
           <forkMode>pertest</forkMode>
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
-          <excludes>
-            <!-- TODO FIXME ASAP -->
-            <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsTest.*</exclude>
-            <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsXaTest.*</exclude>
-          </excludes>
+          <systemPropertyVariables>
+            <derby.stream.error.file>target/derby.log</derby.stream.error.file>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
