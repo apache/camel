@@ -74,11 +74,19 @@ public class AntPathMatcher {
     }
 
     public boolean match(String pattern, String path) {
-        return doMatch(pattern, path, true);
+        return match(pattern, path, true);
     }
 
     public boolean matchStart(String pattern, String path) {
-        return doMatch(pattern, path, false);
+        return matchStart(pattern, path, true);
+    }
+
+    public boolean match(String pattern, String path, boolean isCaseSensitive) {
+        return doMatch(pattern, path, true, isCaseSensitive);
+    }
+
+    public boolean matchStart(String pattern, String path, boolean isCaseSensitive) {
+        return doMatch(pattern, path, false, isCaseSensitive);
     }
 
     /**
@@ -89,10 +97,12 @@ public class AntPathMatcher {
      * @param path the path String to test
      * @param fullMatch whether a full pattern match is required (else a pattern
      *            match as far as the given base path goes is sufficient)
+     * @param isCaseSensitive Whether or not matching should be performed
+     *                        case sensitively.
      * @return <code>true</code> if the supplied <code>path</code> matched,
      *         <code>false</code> if it didn't
      */
-    protected boolean doMatch(String pattern, String path, boolean fullMatch) {
+    protected boolean doMatch(String pattern, String path, boolean fullMatch, boolean isCaseSensitive) {
         if (path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
             return false;
         }
@@ -111,7 +121,7 @@ public class AntPathMatcher {
             if ("**".equals(patDir)) {
                 break;
             }
-            if (!matchStrings(patDir, pathDirs[pathIdxStart])) {
+            if (!matchStrings(patDir, pathDirs[pathIdxStart], isCaseSensitive)) {
                 return false;
             }
             pattIdxStart++;
@@ -151,7 +161,7 @@ public class AntPathMatcher {
             if (patDir.equals("**")) {
                 break;
             }
-            if (!matchStrings(patDir, pathDirs[pathIdxEnd])) {
+            if (!matchStrings(patDir, pathDirs[pathIdxEnd], isCaseSensitive)) {
                 return false;
             }
             pattIdxEnd--;
@@ -191,7 +201,7 @@ public class AntPathMatcher {
                 for (int j = 0; j < patLength; j++) {
                     String subPat = pattDirs[pattIdxStart + j + 1];
                     String subStr = pathDirs[pathIdxStart + i + j];
-                    if (!matchStrings(subPat, subStr)) {
+                    if (!matchStrings(subPat, subStr, isCaseSensitive)) {
                         continue strLoop;
                     }
                 }
@@ -225,10 +235,12 @@ public class AntPathMatcher {
      * @param pattern pattern to match against. Must not be <code>null</code>.
      * @param str string which must be matched against the pattern. Must not be
      *            <code>null</code>.
+     * @param caseSensitive Whether or not matching should be performed
+     *                      case sensitively.
      * @return <code>true</code> if the string matches against the pattern, or
      *         <code>false</code> otherwise.
      */
-    private boolean matchStrings(String pattern, String str) {
+    private boolean matchStrings(String pattern, String str, boolean caseSensitive) {
         char[] patArr = pattern.toCharArray();
         char[] strArr = str.toCharArray();
         int patIdxStart = 0;
@@ -253,7 +265,7 @@ public class AntPathMatcher {
             for (int i = 0; i <= patIdxEnd; i++) {
                 ch = patArr[i];
                 if (ch != '?') {
-                    if (ch != strArr[i]) {
+                    if (different(caseSensitive, ch, strArr[i])) {
                         return false;
                         // Character mismatch
                     }
@@ -269,7 +281,7 @@ public class AntPathMatcher {
         // Process characters before first star
         while ((ch = patArr[patIdxStart]) != '*' && strIdxStart <= strIdxEnd) {
             if (ch != '?') {
-                if (ch != strArr[strIdxStart]) {
+                if (different(caseSensitive, ch, strArr[strIdxStart])) {
                     return false;
                     // Character mismatch
                 }
@@ -291,7 +303,7 @@ public class AntPathMatcher {
         // Process characters after last star
         while ((ch = patArr[patIdxEnd]) != '*' && strIdxStart <= strIdxEnd) {
             if (ch != '?') {
-                if (ch != strArr[strIdxEnd]) {
+                if (different(caseSensitive, ch, strArr[strIdxEnd])) {
                     return false;
                     // Character mismatch
                 }
@@ -335,7 +347,7 @@ public class AntPathMatcher {
                 for (int j = 0; j < patLength; j++) {
                     ch = patArr[patIdxStart + j + 1];
                     if (ch != '?') {
-                        if (ch != strArr[strIdxStart + i + j]) {
+                        if (different(caseSensitive, ch, strArr[strIdxStart + i + j])) {
                             continue strLoop;
                         }
                     }
@@ -453,4 +465,7 @@ public class AntPathMatcher {
         return tokens.toArray(new String[tokens.size()]);
     }
 
+    private static boolean different(boolean caseSensitive, char ch, char other) {
+        return caseSensitive ? ch != other : Character.toUpperCase(ch) != Character.toUpperCase(other);
+    }
 }

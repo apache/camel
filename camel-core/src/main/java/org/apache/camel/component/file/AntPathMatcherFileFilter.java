@@ -34,6 +34,7 @@ public class AntPathMatcherFileFilter implements FileFilter {
     private AntPathMatcher matcher = new AntPathMatcher();
     private String[] excludes;
     private String[] includes;
+    private boolean caseSensitive = true;
 
     public boolean accept(File pathname) {
         return acceptPathName(pathname.getPath());
@@ -54,7 +55,7 @@ public class AntPathMatcherFileFilter implements FileFilter {
         // excludes take precedence
         if (excludes != null) {
             for (String exclude : excludes) {
-                if (matcher.match(exclude, path)) {
+                if (matcher.match(exclude, path, caseSensitive)) {
                     // something to exclude so we cant accept it
                     LOG.trace("File is excluded: {}", path);
                     return false;
@@ -64,7 +65,7 @@ public class AntPathMatcherFileFilter implements FileFilter {
 
         if (includes != null) {
             for (String include : includes) {
-                if (matcher.match(include, path)) {
+                if (matcher.match(include, path, caseSensitive)) {
                     // something to include so we accept it
                     LOG.trace("File is included: {}", path);
                     return true;
@@ -79,6 +80,25 @@ public class AntPathMatcherFileFilter implements FileFilter {
 
         // nothing to include so we can't accept it
         return false;
+    }
+
+    /**
+     *
+     * @return <tt>true</tt> if case sensitive pattern matching is on,
+     * <tt>false</tt> if case sensitive pattern matching is off.
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    /**
+     * Sets Whether or not pattern matching should be case sensitive
+     * <p/>
+     * Is by default turned on <tt>true</tt>.
+     * @param caseSensitive <tt>false</tt> to disable case sensitive pattern matching
+     */
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
     }
 
     public String[] getExcludes() {

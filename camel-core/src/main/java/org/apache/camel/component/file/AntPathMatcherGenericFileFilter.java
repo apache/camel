@@ -74,4 +74,17 @@ public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> 
     public void setIncludes(String includes) {
         filter.setIncludes(includes);
     }
+
+    /**
+     * Sets case sensitive flag on {@link org.apache.camel.component.file.AntPathMatcherFileFilter}
+     * <p/>
+     * Is by default turned on <tt>true</tt>.
+     */
+    public void setCaseSensitive(boolean caseSensitive) {
+        filter.setCaseSensitive(caseSensitive);
+    }
+
+    public boolean isCaseSensitive() {
+        return filter.isCaseSensitive();
+    }
 }
