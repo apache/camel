@@ -73,10 +73,14 @@ public class TradeExecutor {
     private int orderID;
     private int execID;
     
-    @SuppressWarnings("serial")
     public TradeExecutor() throws ConfigError, FieldConvertError {
         setAlwaysFillLimitOrders(true);
-        setValidOrderTypes(new HashSet<String>() { { add(OrdType.LIMIT + ""); add(OrdType.MARKET + ""); } });
+
+        Set<String> validOrderTypes = new HashSet<String>();
+        validOrderTypes.add(OrdType.LIMIT + "");
+        validOrderTypes.add(OrdType.MARKET + "");
+        setValidOrderTypes(validOrderTypes);
+
         setMarketQuoteProvider(new DefaultMarketQuoteProvider(10.00));
     }
     

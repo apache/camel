@@ -19,6 +19,8 @@ package org.apache.camel.component.quickfixj;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.util.ObjectHelper;
+
 import quickfix.Field;
 import quickfix.FieldMap;
 import quickfix.FieldNotFound;
@@ -41,7 +43,7 @@ public class MessagePredicate {
     }
     
     private void addHeaderFieldIfPresent(int tag, String value) {
-        if (value != null && !"".equals(value)) {
+        if (!ObjectHelper.isEmpty(value)) {
             withHeaderField(tag, value);
         }
     }
@@ -58,7 +60,7 @@ public class MessagePredicate {
                     value = fieldMap.getString(c.getField());
                 }
             } catch (FieldNotFound e) {
-                // ignored, shouldn't happen
+                ObjectHelper.wrapRuntimeCamelException(e);
             }
             if (!c.getObject().equals(value)) {
                 return false;

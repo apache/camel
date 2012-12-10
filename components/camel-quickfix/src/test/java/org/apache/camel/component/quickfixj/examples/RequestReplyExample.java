@@ -18,8 +18,8 @@ package org.apache.camel.component.quickfixj.examples;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.quickfixj.MessagePredicate;
-import org.apache.camel.component.quickfixj.QuickfixjComponent;
 import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
 import org.apache.camel.component.quickfixj.QuickfixjEventCategory;
 import org.apache.camel.component.quickfixj.QuickfixjProducer;
@@ -59,7 +58,7 @@ import quickfix.fix42.ExecutionReport;
 import quickfix.fix42.OrderStatusRequest;
 
 public class RequestReplyExample {
-    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RequestReplyExample.class);
 
     public static void main(String[] args) throws Exception {
         new RequestReplyExample().run();
@@ -104,7 +103,7 @@ public class RequestReplyExample {
         // Verify that the response is a JSON response.
         
         URL orderStatusUrl = new URL(orderStatusServiceUrl + "?sessionID=FIX.4.2:TRADER->MARKET&orderID=abc");
-        HttpURLConnection connection = (HttpURLConnection) orderStatusUrl.openConnection();
+        URLConnection connection = orderStatusUrl.openConnection();
         BufferedReader orderStatusReply = IOHelper.buffered(new InputStreamReader(connection.getInputStream()));
         String line = orderStatusReply.readLine();
         if (!line.equals("\"message\": {")) {
@@ -128,8 +127,10 @@ public class RequestReplyExample {
         
     public static class OrderStatusRequestTransformer {
         public void transform(Exchange exchange) throws FieldNotFound {
-            String sessionID = (String) exchange.getIn().getHeader("sessionID");
-            String orderID = (String) exchange.getIn().getHeader("orderID");
+            // For the reply take the reverse sessionID into the account, that's the reverse of
+            // exchange.getIn().getHeader("sessionID", String.class) which is equal to "FIX.4.2:TRADER->MARKET"
+            String sessionID = "FIX.4.2:MARKET->TRADER";
+            String orderID = exchange.getIn().getHeader("orderID", String.class);
 
             OrderStatusRequest request = new OrderStatusRequest(new ClOrdID("XYZ"), new Symbol("GOOG"), new Side(Side.BUY));
             request.set(new OrderID(orderID));
@@ -138,14 +139,14 @@ public class RequestReplyExample {
             // and having the requested OrderID. This is a loose correlation but the best
             // we can do with FIX 4.2. Newer versions of FIX have an optional explicit correlation field.
             exchange.setProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY, new MessagePredicate(
-                new SessionID(sessionID), MsgType.EXECUTION_REPORT).withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
+                new SessionID(sessionID), MsgType.ORDER_STATUS_REQUEST).withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
             
             exchange.getIn().setBody(request);
         }
     }
     
     public static class MarketOrderStatusService {
-        private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
+        private static final Logger LOG = LoggerFactory.getLogger(MarketOrderStatusService.class);
         
         public ExecutionReport getOrderStatus(OrderStatusRequest request) throws FieldNotFound {
             LOG.info("Received order status request for orderId=" + request.getOrderID().getValue());

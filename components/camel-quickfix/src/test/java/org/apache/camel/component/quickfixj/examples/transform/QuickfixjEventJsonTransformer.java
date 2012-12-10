@@ -33,7 +33,7 @@ public class QuickfixjEventJsonTransformer {
     }
     
     public String transform(Exchange exchange) {
-        SessionID sessionID = (SessionID) exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY);
+        SessionID sessionID = exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY, SessionID.class);
         Session session = Session.lookupSession(sessionID);
         DataDictionary dataDictionary = session.getDataDictionary();
         
