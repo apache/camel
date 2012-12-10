@@ -17,11 +17,18 @@
 
 package org.apache.camel.component.cxf;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.CxfEndpoint.CamelCxfClientImpl;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.CXFBusImpl;
+import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -77,6 +84,32 @@ public class CxfEndpointTest extends Assert {
         endpoint.setBus(newBus);
         client = (CamelCxfClientImpl)endpoint.createClient();
         assertEquals("CamelCxfClientImpl should has the same bus with CxfEndpoint", newBus, client.getBus());
+    }
+    
+    @Test
+    public void testCxfEndpointConfigurer() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        CxfEndpointConfigurer configurer = EasyMock.createMock(CxfEndpointConfigurer.class);
+        Processor processor = EasyMock.createMock(Processor.class);
+        registry.put("myConfigurer", configurer);
+        CamelContext camelContext = new DefaultCamelContext(registry);
+        CxfComponent cxfComponent = new CxfComponent(camelContext);
+        CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfEndpointConfigurer=#myConfigurer");
+        
+        configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
+        EasyMock.expectLastCall();
+        EasyMock.replay(configurer);
+        endpoint.createConsumer(processor);
+        EasyMock.verify(configurer);
+        
+        EasyMock.reset(configurer);
+        configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
+        EasyMock.expectLastCall();
+        EasyMock.replay(configurer);
+        Producer producer = endpoint.createProducer();
+        producer.start();
+        EasyMock.verify(configurer);
+        
     }
 
 }
