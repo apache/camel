@@ -156,6 +156,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;
     private ReflectionServiceFactoryBean serviceFactoryBean;
+    private CxfEndpointConfigurer configurer;
     
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
@@ -323,6 +324,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         sfb.setBus(getBus());
         sfb.setStart(false);
+        if (getCxfEndpointConfigurer() != null) {
+            getCxfEndpointConfigurer().configure(sfb);
+        }
     }
 
     /**
@@ -494,6 +498,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         factoryBean.setBus(getBus());
+        if (getCxfEndpointConfigurer() != null) {
+            getCxfEndpointConfigurer().configure(factoryBean);
+        }
     }
 
     // Package private methods
@@ -1074,6 +1081,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setServiceFactoryBean(ReflectionServiceFactoryBean serviceFactoryBean) {
         this.serviceFactoryBean = serviceFactoryBean;
+    }
+
+    public CxfEndpointConfigurer getCxfEndpointConfigurer() {
+        return configurer;
+    }
+
+    public void setCxfEndpointConfigurer(CxfEndpointConfigurer configurer) {
+        this.configurer = configurer;
     }
 
     
