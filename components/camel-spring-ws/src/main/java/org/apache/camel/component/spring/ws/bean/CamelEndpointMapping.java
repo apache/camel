@@ -45,6 +45,7 @@ import org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping;
 import org.springframework.ws.server.endpoint.support.PayloadRootUtils;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.server.SoapEndpointInvocationChain;
+import org.springframework.ws.soap.server.SoapEndpointMapping;
 import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.context.TransportContext;
 import org.springframework.ws.transport.context.TransportContextHolder;
@@ -80,7 +81,7 @@ import org.springframework.xml.xpath.XPathExpression;
  * @see org.springframework.ws.server.endpoint.mapping.XPathPayloadEndpointMapping
  * @see org.springframework.ws.soap.server.endpoint.mapping.SoapActionEndpointMapping
  */
-public class CamelEndpointMapping extends AbstractEndpointMapping implements InitializingBean, CamelSpringWSEndpointMapping {
+public class CamelEndpointMapping extends AbstractEndpointMapping implements InitializingBean, CamelSpringWSEndpointMapping, SoapEndpointMapping {
 
     private static final String DOUBLE_QUOTE = "\"";
     private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<EndpointMappingKey, MessageEndpoint>();

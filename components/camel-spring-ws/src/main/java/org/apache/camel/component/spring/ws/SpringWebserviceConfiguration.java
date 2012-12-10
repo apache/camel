@@ -28,7 +28,9 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
 import org.springframework.ws.soap.addressing.server.annotation.Action;
+import org.springframework.ws.transport.WebServiceMessageSender;
 
 public class SpringWebserviceConfiguration {
 
@@ -40,6 +42,8 @@ public class SpringWebserviceConfiguration {
     private URI faultAction;
     private URI faultTo;
     private URI replyTo;
+    private WebServiceMessageSender replyToMessageSender;
+    private MessageIdStrategy messageIdStrategy;
     private int timeout = -1;
 
     /* Consumer configuration */
@@ -253,4 +257,30 @@ public class SpringWebserviceConfiguration {
         this.replyTo = replyToAction;
     }
 
+    /** * @return Returns the replyToMessageSender for wsa:replyTo.
+     */
+    public WebServiceMessageSender getMessageSender() {
+        return replyToMessageSender;
+    }
+
+    /**
+     * @param replyToMessageSender The replyToMessageSender for wsa:replyTo to set.
+     */
+    public void setMessageSender(WebServiceMessageSender messageSender) {
+        this.replyToMessageSender = messageSender;
+    }
+
+    /** * @return Returns the messageIdStrategy.
+     */
+    public MessageIdStrategy getMessageIdStrategy() {
+        return messageIdStrategy;
+    }
+
+    /**
+     * @param messageIdStrategy The messageIdStrategy to set.
+     */
+    public void setMessageIdStrategy(MessageIdStrategy messageIdStrategy) {
+        this.messageIdStrategy = messageIdStrategy;
+    }
+    
 }

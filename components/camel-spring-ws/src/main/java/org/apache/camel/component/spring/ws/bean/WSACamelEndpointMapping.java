@@ -29,7 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
+import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
 import org.springframework.ws.soap.addressing.server.AbstractAddressingEndpointMapping;
+import org.springframework.ws.soap.addressing.server.AbstractAddressingEndpointMappingHacked;
 import org.springframework.ws.soap.addressing.server.AnnotationActionEndpointMapping;
 import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.WebServiceMessageSender;
@@ -42,7 +44,7 @@ import org.springframework.ws.transport.WebServiceMessageSender;
  * uses the camel uri to map to a WS-Addressing {@code Action} header.
  * <p/>
  */
-public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping implements CamelSpringWSEndpointMapping {
+public class WSACamelEndpointMapping extends AbstractAddressingEndpointMappingHacked implements CamelSpringWSEndpointMapping {
 
     private static final Logger LOG = LoggerFactory.getLogger(WSACamelEndpointMapping.class);
 
@@ -54,7 +56,6 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
 
     @Override
     protected Object getEndpointInternal(MessageAddressingProperties map) {
-
         for (EndpointMappingKey key : endpoints.keySet()) {
             String compositeOrSimpleKey = null;
             String simpleKey = null;
@@ -146,12 +147,42 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     @Override
     protected URI getResponseAction(Object endpoint, MessageAddressingProperties requestMap) {
         SpringWebserviceEndpoint camelEndpoint = getSpringWebserviceEndpoint(endpoint);
-        
+
         URI actionUri = camelEndpoint.getConfiguration().getOutputAction();
         if (actionUri == null) {
             actionUri = getDefaultResponseAction(camelEndpoint, requestMap);
         }
         return actionUri;
+    }
+
+    /**
+     * Configure message sender for wsa:replyTo from a camel route definition.
+     * The route definition has priority over this endpoint.
+     */
+    @Override
+    protected WebServiceMessageSender[] getMessageSenders(Object endpoint) {
+        SpringWebserviceEndpoint camelEndpoint = getSpringWebserviceEndpoint(endpoint);
+
+        if (camelEndpoint.getConfiguration().getMessageSender() != null) {
+            return new WebServiceMessageSender[] {camelEndpoint.getConfiguration().getMessageSender()};
+        }
+
+        return super.getMessageSenders(endpoint);
+    }
+
+    /**
+     * Configure message id strategy for wsa:replyTo The route definition has
+     * priority over this endpoint.
+     */
+    @Override
+    protected MessageIdStrategy getMessageStrategy(Object endpoint) {
+        SpringWebserviceEndpoint camelEndpoint = getSpringWebserviceEndpoint(endpoint);
+
+        if (camelEndpoint.getConfiguration().getMessageIdStrategy() != null) {
+            return camelEndpoint.getConfiguration().getMessageIdStrategy();
+        }
+
+        return super.getMessageStrategy(endpoint);
     }
 
     /**
@@ -175,8 +206,6 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
         SpringWebserviceConsumer springWebserviceConsumer = (SpringWebserviceConsumer)endpoint;
         return (SpringWebserviceEndpoint)springWebserviceConsumer.getEndpoint();
     }
-
-  
 
     protected URI getDefaultResponseAction(Object endpoint, MessageAddressingProperties requestMap) {
         URI requestAction = requestMap.getAction();
