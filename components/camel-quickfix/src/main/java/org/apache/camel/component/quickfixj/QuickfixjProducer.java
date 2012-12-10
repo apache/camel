@@ -31,11 +31,13 @@ public class QuickfixjProducer extends DefaultProducer {
     public static final String CORRELATION_TIMEOUT_KEY = "CorrelationTimeout";
     public static final String CORRELATION_CRITERIA_KEY = "CorrelationCriteria";
     
-    private final SessionID sessionID;
-    
     public QuickfixjProducer(Endpoint endpoint) {
         super(endpoint);
-        sessionID = ((QuickfixjEndpoint) getEndpoint()).getSessionID();
+    }
+
+    @Override
+    public QuickfixjEndpoint getEndpoint() {
+        return (QuickfixjEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -50,7 +52,7 @@ public class QuickfixjProducer extends DefaultProducer {
         Message message = camelMessage.getBody(Message.class);
         log.debug("Sending FIX message: {}", message);
 
-        SessionID messageSessionID = sessionID;
+        SessionID messageSessionID = getEndpoint().getSessionID();
         if (messageSessionID == null) {
             messageSessionID = MessageUtils.getSessionID(message);
         }
@@ -63,9 +65,8 @@ public class QuickfixjProducer extends DefaultProducer {
         Callable<Message> callable = null;
 
         if (exchange.getPattern().isOutCapable()) {
-            QuickfixjEndpoint endpoint = (QuickfixjEndpoint) getEndpoint();
-            MessageCorrelator messageCorrelator = endpoint.getEngine().getMessageCorrelator();
-            callable = messageCorrelator.getReply(endpoint.getSessionID(), exchange);
+            MessageCorrelator messageCorrelator = getEndpoint().getEngine().getMessageCorrelator();
+            callable = messageCorrelator.getReply(getEndpoint().getSessionID(), exchange);
         }
 
         if (!session.send(message)) {

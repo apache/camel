@@ -75,9 +75,8 @@ public class QuickfixjProducerTest {
         producer = Mockito.spy(new QuickfixjProducer(mockEndpoint));
     }
     
-    @SuppressWarnings("serial")
     public class TestException extends RuntimeException {
-        
+        private static final long serialVersionUID = 1L;
     }
     
     @Test

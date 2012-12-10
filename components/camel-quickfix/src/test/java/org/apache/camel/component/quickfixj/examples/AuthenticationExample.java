@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.quickfixj.QuickfixjComponent;
 import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
 import org.apache.camel.component.quickfixj.QuickfixjEventCategory;
 import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecrementer;
@@ -45,7 +44,7 @@ import quickfix.field.RawDataLength;
  * 
  */
 public class AuthenticationExample {
-    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationExample.class);
 
     public static void main(String[] args) throws Exception {
         new AuthenticationExample().run();
