@@ -122,6 +122,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         // use a notify to know that after 1+6 (1 original + 6 redelivery) attempts from AcitveMQ
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(7).create();
 
+        // TODO: occasionally we get only 6 instead of 7 expected exchanges which's most probably an issue in ActiveMQ itself
         getMockEndpoint("mock:a").expectedMessageCount(7);
         getMockEndpoint("mock:b").expectedMessageCount(7);
         // force exception to occur at mock b
