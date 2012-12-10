@@ -86,7 +86,7 @@ public class RequestReplyExample {
                 from("jetty:" + orderStatusServiceUrl)
                     .bean(new OrderStatusRequestTransformer())
                     .routingSlip(method(FixSessionRouter.class, "route"))
-                    .bean(new QuickfixjMessageJsonTransformer());
+                    .bean(new QuickfixjMessageJsonTransformer(), "transform(${body})");
             }
         };
         
