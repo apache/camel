@@ -51,12 +51,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.Service;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
@@ -85,7 +85,7 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  *
  * @see XPathConstants#NODESET
  */
-public class XPathBuilder implements Expression, Predicate, NamespaceAware, Service {
+public class XPathBuilder extends ServiceSupport implements Expression, Predicate, NamespaceAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
     private static final String OBTAIN_ALL_NS_XPATH = "//*/namespace::*";
@@ -1155,7 +1155,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return variableResolver;
     }
 
-    public void start() throws Exception {
+    @Override
+    public void doStart() throws Exception {
         if (xpathFactory == null) {
             xpathFactory = createXPathFactory();
         }
@@ -1187,7 +1188,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
     }
 
-    public void stop() throws Exception {
+    @Override
+    public void doStop() throws Exception {
         pool.clear();
         poolLogNamespaces.clear();
     }
