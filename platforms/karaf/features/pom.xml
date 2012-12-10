@@ -45,7 +45,6 @@
       <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
       <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
       <commons-csv-version>1.0-r706900_3</commons-csv-version>
-      <commons-configuration-version>1.6</commons-configuration-version>
       <commons-daemon-version>1.0.5</commons-daemon-version>
       <commons-digester-version>2.1</commons-digester-version>
       <commons-httpclient-bundle-version>3.1_7</commons-httpclient-bundle-version>

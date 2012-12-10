@@ -54,7 +54,11 @@
     <cometd-java-server>2.3.1</cometd-java-server>
     <commons-codec-version>1.6</commons-codec-version>
     <commons-collections-version>3.2.1</commons-collections-version>
+    <commons-configuration-version>1.8</commons-configuration-version>
     <commons-csv>1.0-r706899_3</commons-csv>
+    <commons-csv-bundle-version>1.0-r706900_3</commons-csv-bundle-version>
+    <commons-cli-version>1.2</commons-cli-version>
+    <commons-dbcp-bundle-version>1.4_3</commons-dbcp-bundle-version>
     <commons-dbcp-version>1.4</commons-dbcp-version>
     <commons-exec-version>1.0.1</commons-exec-version>
     <commons-io-version>1.4</commons-io-version>
