@@ -84,7 +84,6 @@ public final class NettyHelper {
      */
     public static void writeBodyAsync(Logger log, Channel channel, SocketAddress remoteAddress, Object body,
                                       Exchange exchange, ChannelFutureListener listener) {
-        // the write operation is asynchronous. Use future to wait until the session has been written
         ChannelFuture future;
         if (remoteAddress != null) {
             if (log.isDebugEnabled()) {
@@ -98,18 +97,20 @@ public final class NettyHelper {
             future = channel.write(body);
         }
 
-        future.addListener(listener);
+        if (listener != null) {
+            future.addListener(listener);
+        }
     }
 
     /**
-     * Closes the given channel
+     * Closes the given channel asynchronously
      *
      * @param channel the channel to close
      */
     public static void close(Channel channel) {
         if (channel != null) {
             LOG.trace("Closing channel: {}", channel);
-            channel.close().awaitUninterruptibly();
+            channel.close();
         }
     }
 
