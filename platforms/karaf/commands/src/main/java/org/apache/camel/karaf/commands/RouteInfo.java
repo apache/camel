@@ -29,6 +29,7 @@ import org.apache.camel.Route;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
@@ -71,59 +72,66 @@ public class RouteInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mStatistics\u001B[0m"));
         CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
         if (camelContext != null) {
-            MBeanServer mBeanServer = camelContext.getManagementStrategy().getManagementAgent().getMBeanServer();
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=routes,name=\"" + route + "\",*"), null);
-            Iterator<ObjectName> iterator = set.iterator();
-            if (iterator.hasNext()) {
-                ObjectName routeMBean = iterator.next();
-                Long exchangesTotal = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesTotal");
-                System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Total: " + exchangesTotal));
-                Long exchangesCompleted = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesCompleted");
-                System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Completed: " + exchangesCompleted));
-                Long exchangesFailed = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesFailed");
-                System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Failed: " + exchangesFailed));
-                Long minProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MinProcessingTime");
-                System.out.println(StringEscapeUtils.unescapeJava("\tMin Processing Time: " + minProcessingTime + "ms"));
-                Long maxProcessingTime = (Long) mBeanServer.getAttribute(routeMBean,  "MaxProcessingTime");
-                System.out.println(StringEscapeUtils.unescapeJava("\tMax Processing Time: " + maxProcessingTime + "ms"));
-                Long meanProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MeanProcessingTime");
-                System.out.println(StringEscapeUtils.unescapeJava("\tMean Processing Time: " + meanProcessingTime + "ms"));
-                Long totalProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "TotalProcessingTime");
-                System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + "ms"));
-                Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
-                System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + "ms"));
-                String load01 = (String) mBeanServer.getAttribute(routeMBean, "Load01");
-                String load05 = (String) mBeanServer.getAttribute(routeMBean, "Load05");
-                String load15 = (String) mBeanServer.getAttribute(routeMBean, "Load15");
-                System.out.println(StringEscapeUtils.unescapeJava("\tLoad Avg: " + load01 + ", " + load05 + ", " + load15));
-                
-                // Test for null to see if a any exchanges have been processed first to avoid NPE
-                Object firstExchangeTimestampObj = mBeanServer.getAttribute(routeMBean, "FirstExchangeCompletedTimestamp");
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                if (firstExchangeTimestampObj == null) {
-                    // Print an empty value for scripting
-                    System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date:"));
-                } else {
-                    Date firstExchangeTimestamp = (Date) firstExchangeTimestampObj;
-                    System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date: " + format.format(firstExchangeTimestamp)));
-                }
+            ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
+            if (agent != null) {
+                MBeanServer mBeanServer = agent.getMBeanServer();
+                Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=routes,name=\"" + route + "\",*"), null);
+                Iterator<ObjectName> iterator = set.iterator();
+                if (iterator.hasNext()) {
+                    ObjectName routeMBean = iterator.next();
+                    Long exchangesTotal = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesTotal");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Total: " + exchangesTotal));
+                    Long exchangesCompleted = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesCompleted");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Completed: " + exchangesCompleted));
+                    Long exchangesFailed = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesFailed");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Failed: " + exchangesFailed));
+                    Long minProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MinProcessingTime");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tMin Processing Time: " + minProcessingTime + "ms"));
+                    Long maxProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MaxProcessingTime");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tMax Processing Time: " + maxProcessingTime + "ms"));
+                    Long meanProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MeanProcessingTime");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tMean Processing Time: " + meanProcessingTime + "ms"));
+                    Long totalProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "TotalProcessingTime");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + "ms"));
+                    Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + "ms"));
+                    String load01 = (String) mBeanServer.getAttribute(routeMBean, "Load01");
+                    String load05 = (String) mBeanServer.getAttribute(routeMBean, "Load05");
+                    String load15 = (String) mBeanServer.getAttribute(routeMBean, "Load15");
+                    System.out.println(StringEscapeUtils.unescapeJava("\tLoad Avg: " + load01 + ", " + load05 + ", " + load15));
 
-                // Again, check for null to avoid NPE
-                Object lastExchangeCompletedTimestampObj = mBeanServer.getAttribute(routeMBean, "LastExchangeCompletedTimestamp");
-                if (lastExchangeCompletedTimestampObj == null) {
-                    // Print an empty value for scripting
-                    System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date:"));
-                } else {
-                    Date lastExchangeCompletedTimestamp = (Date) lastExchangeCompletedTimestampObj;
-                    System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
+                    // Test for null to see if a any exchanges have been processed first to avoid NPE
+                    Object firstExchangeTimestampObj = mBeanServer.getAttribute(routeMBean, "FirstExchangeCompletedTimestamp");
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    if (firstExchangeTimestampObj == null) {
+                        // Print an empty value for scripting
+                        System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date:"));
+                    } else {
+                        Date firstExchangeTimestamp = (Date) firstExchangeTimestampObj;
+                        System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date: " + format.format(firstExchangeTimestamp)));
+                    }
+
+                    // Again, check for null to avoid NPE
+                    Object lastExchangeCompletedTimestampObj = mBeanServer.getAttribute(routeMBean, "LastExchangeCompletedTimestamp");
+                    if (lastExchangeCompletedTimestampObj == null) {
+                        // Print an empty value for scripting
+                        System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date:"));
+                    } else {
+                        Date lastExchangeCompletedTimestamp = (Date) lastExchangeCompletedTimestampObj;
+                        System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
+                    }
                 }
+            } else {
+                System.out.println("");
+                System.out.println(StringEscapeUtils.unescapeJava("\u001B[31mJMX Agent of Camel is not reachable. Maybe it has been disabled on the camel Context"));
+                System.out.println(StringEscapeUtils.unescapeJava("In consequence, the statistics are not available.\u001B[0m"));
             }
+
+            System.out.println("");
+            System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mDefinition\u001B[0m"));
+            RouteDefinition definition = camelController.getRouteDefinition(route, camelRoute.getRouteContext().getCamelContext().getName());
+            System.out.println(StringEscapeUtils.unescapeJava(ModelHelper.dumpModelAsXml(definition)));
         }
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mDefinition\u001B[0m"));
-        RouteDefinition definition = camelController.getRouteDefinition(route, camelRoute.getRouteContext().getCamelContext().getName());
-        System.out.println(StringEscapeUtils.unescapeJava(ModelHelper.dumpModelAsXml(definition)));
         return null;
     }
-
 }

@@ -19,6 +19,7 @@ package org.apache.camel.karaf.commands;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.management.DefaultManagementAgent;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
@@ -61,58 +63,81 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tStatus: " + camelContext.getStatus()));
         System.out.println(StringEscapeUtils.unescapeJava("\tUptime: " + camelContext.getUptime()));
 
-        // the statistics are in the mbenas
+        // the statistics are in the mbeans
         ObjectName contextMBean = null;
-        MBeanServer mBeanServer = camelContext.getManagementStrategy().getManagementAgent().getMBeanServer();
-        Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=context,name=\"" + name + "\",*"), null);
-        Iterator<ObjectName> iterator = set.iterator();
-        if (iterator.hasNext()) {
-            contextMBean = iterator.next();
-        }
+        ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
+        if (agent != null) {
+            MBeanServer mBeanServer = agent.getMBeanServer();
 
-        if (mBeanServer.isRegistered(contextMBean)) {
-            Long exchangesTotal = (Long) mBeanServer.getAttribute(contextMBean, "ExchangesTotal");
-            System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Total: " + exchangesTotal));
-            Long exchangesCompleted = (Long) mBeanServer.getAttribute(contextMBean, "ExchangesCompleted");
-            System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Completed: " + exchangesCompleted));
-            Long exchangesFailed = (Long) mBeanServer.getAttribute(contextMBean, "ExchangesFailed");
-            System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Failed: " + exchangesFailed));
-            Long minProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "MinProcessingTime");
-            System.out.println(StringEscapeUtils.unescapeJava("\tMin Processing Time: " + minProcessingTime + "ms"));
-            Long maxProcessingTime = (Long) mBeanServer.getAttribute(contextMBean,  "MaxProcessingTime");
-            System.out.println(StringEscapeUtils.unescapeJava("\tMax Processing Time: " + maxProcessingTime + "ms"));
-            Long meanProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "MeanProcessingTime");
-            System.out.println(StringEscapeUtils.unescapeJava("\tMean Processing Time: " + meanProcessingTime + "ms"));
-            Long totalProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "TotalProcessingTime");
-            System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + "ms"));
-            Long lastProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "LastProcessingTime");
-            System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + "ms"));
-
-            String load01 = (String) mBeanServer.getAttribute(contextMBean, "Load01");
-            String load05 = (String) mBeanServer.getAttribute(contextMBean, "Load05");
-            String load15 = (String) mBeanServer.getAttribute(contextMBean, "Load15");
-            System.out.println(StringEscapeUtils.unescapeJava("\tLoad Avg: " + load01 + ", " + load05 + ", " + load15));
-
-            // Test for null to see if a any exchanges have been processed first to avoid NPE
-            Object firstExchangeTimestampObj = mBeanServer.getAttribute(contextMBean, "FirstExchangeCompletedTimestamp");
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            if (firstExchangeTimestampObj == null) {
-                // Print an empty value for scripting
-                System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date:"));
-            } else {
-                Date firstExchangeTimestamp = (Date) firstExchangeTimestampObj;
-                System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date: " + format.format(firstExchangeTimestamp)));
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=context,name=\"" + name + "\",*"), null);
+            Iterator<ObjectName> iterator = set.iterator();
+            if (iterator.hasNext()) {
+                contextMBean = iterator.next();
             }
 
-            // Again, check for null to avoid NPE
-            Object lastExchangeCompletedTimestampObj = mBeanServer.getAttribute(contextMBean, "LastExchangeCompletedTimestamp");
-            if (lastExchangeCompletedTimestampObj == null) {
-                // Print an empty value for scripting
-                System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date:"));
-            } else {
-                Date lastExchangeCompletedTimestamp = (Date) lastExchangeCompletedTimestampObj;
-                System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
+            if (mBeanServer.isRegistered(contextMBean)) {
+                Long exchangesTotal = (Long) mBeanServer.getAttribute(contextMBean, "ExchangesTotal");
+                System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Total: " + exchangesTotal));
+                Long exchangesCompleted = (Long) mBeanServer.getAttribute(contextMBean, "ExchangesCompleted");
+                System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Completed: " + exchangesCompleted));
+                Long exchangesFailed = (Long) mBeanServer.getAttribute(contextMBean, "ExchangesFailed");
+                System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Failed: " + exchangesFailed));
+                Long minProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "MinProcessingTime");
+                System.out.println(StringEscapeUtils.unescapeJava("\tMin Processing Time: " + minProcessingTime + "ms"));
+                Long maxProcessingTime = (Long) mBeanServer.getAttribute(contextMBean,  "MaxProcessingTime");
+                System.out.println(StringEscapeUtils.unescapeJava("\tMax Processing Time: " + maxProcessingTime + "ms"));
+                Long meanProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "MeanProcessingTime");
+                System.out.println(StringEscapeUtils.unescapeJava("\tMean Processing Time: " + meanProcessingTime + "ms"));
+                Long totalProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "TotalProcessingTime");
+                System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + "ms"));
+                Long lastProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "LastProcessingTime");
+                System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + "ms"));
+
+                String load01 = (String) mBeanServer.getAttribute(contextMBean, "Load01");
+                String load05 = (String) mBeanServer.getAttribute(contextMBean, "Load05");
+                String load15 = (String) mBeanServer.getAttribute(contextMBean, "Load15");
+                System.out.println(StringEscapeUtils.unescapeJava("\tLoad Avg: " + load01 + ", " + load05 + ", " + load15));
+
+                // Test for null to see if a any exchanges have been processed first to avoid NPE
+                Object firstExchangeTimestampObj = mBeanServer.getAttribute(contextMBean, "FirstExchangeCompletedTimestamp");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                if (firstExchangeTimestampObj == null) {
+                    // Print an empty value for scripting
+                    System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date:"));
+                } else {
+                    Date firstExchangeTimestamp = (Date) firstExchangeTimestampObj;
+                    System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date: " + format.format(firstExchangeTimestamp)));
+                }
+
+                // Again, check for null to avoid NPE
+                Object lastExchangeCompletedTimestampObj = mBeanServer.getAttribute(contextMBean, "LastExchangeCompletedTimestamp");
+                if (lastExchangeCompletedTimestampObj == null) {
+                    // Print an empty value for scripting
+                    System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date:"));
+                } else {
+                    Date lastExchangeCompletedTimestamp = (Date) lastExchangeCompletedTimestampObj;
+                    System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
+                }
+
+                long activeRoutes = 0;
+                long inactiveRoutes = 0;
+                List<Route> routeList = camelContext.getRoutes();
+                for (Route route : routeList) {
+                    if (camelContext.getRouteStatus(route.getId()).isStarted()) {
+                        activeRoutes++;
+                    } else {
+                        inactiveRoutes++;
+                    }
+                }
+
+                System.out.println(StringEscapeUtils.unescapeJava("\tNumber of running routes: " + activeRoutes));
+                System.out.println(StringEscapeUtils.unescapeJava("\tNumber of not running routes: " + inactiveRoutes));
             }
+
+        } else {
+            System.out.println("");
+            System.out.println(StringEscapeUtils.unescapeJava("\u001B[31mJMX Agent of Camel is not reachable. Maybe it has been disabled on the camel Context"));
+            System.out.println(StringEscapeUtils.unescapeJava("In consequence, the statistics are not available.\u001B[0m"));
         }
 
         System.out.println("");
