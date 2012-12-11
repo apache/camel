@@ -123,8 +123,8 @@ public class RouteInfo extends OsgiCommandSupport {
                 }
             } else {
                 System.out.println("");
-                System.out.println(StringEscapeUtils.unescapeJava("\u001B[31mJMX Agent of Camel is not reachable. Maybe it has been disabled on the camel Context"));
-                System.out.println(StringEscapeUtils.unescapeJava("In consequence, the statistics are not available.\u001B[0m"));
+                System.out.println(StringEscapeUtils.unescapeJava("\u001B[31mJMX Agent of Camel is not reachable. Maybe it has been disabled on the Camel context"));
+                System.out.println(StringEscapeUtils.unescapeJava("In consequence, some statistics are not available.\u001B[0m"));
             }
 
             System.out.println("");

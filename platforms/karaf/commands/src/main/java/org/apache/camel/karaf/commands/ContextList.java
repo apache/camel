@@ -68,7 +68,7 @@ public class ContextList extends OsgiCommandSupport {
 
     private static Map<String, Integer> computeColumnWidths(final Iterable<CamelContext> camelContexts) throws Exception {
         if (camelContexts == null) {
-            throw new IllegalArgumentException("unable to determine column widths from null Iterable<CamelContext>");
+            throw new IllegalArgumentException("Unable to determine column widths from null Iterable<CamelContext>");
         } else {
             int maxNameLen = 0;
             int maxStatusLen = 0;
