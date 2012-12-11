@@ -64,6 +64,8 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tUptime: " + camelContext.getUptime()));
 
         // the statistics are in the mbeans
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mStatistics\u001B[0m"));
         ObjectName contextMBean = null;
         ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
         if (agent != null) {
@@ -136,8 +138,8 @@ public class ContextInfo extends OsgiCommandSupport {
 
         } else {
             System.out.println("");
-            System.out.println(StringEscapeUtils.unescapeJava("\u001B[31mJMX Agent of Camel is not reachable. Maybe it has been disabled on the camel Context"));
-            System.out.println(StringEscapeUtils.unescapeJava("In consequence, the statistics are not available.\u001B[0m"));
+            System.out.println(StringEscapeUtils.unescapeJava("\u001B[31mJMX Agent of Camel is not reachable. Maybe it has been disabled on the Camel context"));
+            System.out.println(StringEscapeUtils.unescapeJava("In consequence, some statistics are not available.\u001B[0m"));
         }
 
         System.out.println("");
