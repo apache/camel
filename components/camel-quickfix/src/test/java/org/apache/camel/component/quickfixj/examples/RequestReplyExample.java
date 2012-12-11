@@ -126,10 +126,14 @@ public class RequestReplyExample {
     }
         
     public static class OrderStatusRequestTransformer {
+        private static final Logger LOG = LoggerFactory.getLogger(OrderStatusRequestTransformer.class);
+
         public void transform(Exchange exchange) throws FieldNotFound {
-            // For the reply take the reverse sessionID into the account, that's the reverse of
-            // exchange.getIn().getHeader("sessionID", String.class) which is equal to "FIX.4.2:TRADER->MARKET"
-            String sessionID = "FIX.4.2:MARKET->TRADER";
+            // For the reply take the reverse sessionID into the account, see org.apache.camel.component.quickfixj.MessagePredicate
+            String requestSessionID = exchange.getIn().getHeader("sessionID", String.class);
+            String replySessionID = "FIX.4.2:MARKET->TRADER";
+            LOG.info("Given the requestSessionID '{}' calculated the replySessionID as '{}'", requestSessionID, replySessionID);
+
             String orderID = exchange.getIn().getHeader("orderID", String.class);
 
             OrderStatusRequest request = new OrderStatusRequest(new ClOrdID("XYZ"), new Symbol("GOOG"), new Side(Side.BUY));
@@ -139,7 +143,7 @@ public class RequestReplyExample {
             // and having the requested OrderID. This is a loose correlation but the best
             // we can do with FIX 4.2. Newer versions of FIX have an optional explicit correlation field.
             exchange.setProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY, new MessagePredicate(
-                new SessionID(sessionID), MsgType.ORDER_STATUS_REQUEST).withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
+                new SessionID(replySessionID), MsgType.ORDER_STATUS_REQUEST).withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
             
             exchange.getIn().setBody(request);
         }
