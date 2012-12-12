@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -83,6 +84,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertEquals("DONE-A", out);
     }
 
+    @Ignore("see the TODO below")
     @Test
     public void testJmsToJdbcJmsRollbackAtA() throws Exception {
         checkInitialState();
@@ -115,6 +117,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertEquals("A", consumer.receiveBody("activemq:queue:ActiveMQ.DLQ", 3000));
     }
 
+    @Ignore("see the TODO below")
     @Test
     public void testJmsToJdbcJmsRollbackAtB() throws Exception {
         checkInitialState();
