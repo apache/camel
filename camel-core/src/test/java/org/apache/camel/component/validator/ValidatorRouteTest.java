@@ -49,6 +49,16 @@ public class ValidatorRouteTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
+    
+    public void testInvalideBytesMessage() throws Exception {
+        invalidEndpoint.expectedMessageCount(1);
+        finallyEndpoint.expectedMessageCount(1);
+
+        template.sendBody("direct:start",
+                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>".getBytes());
+
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+    }
 
     @Override
     protected void setUp() throws Exception {
