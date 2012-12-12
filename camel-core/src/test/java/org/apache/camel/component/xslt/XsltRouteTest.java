@@ -24,17 +24,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
-/**
- *
- */
 public class XsltRouteTest extends ContextTestSupport {
+    public void testSendStringMessage() throws Exception {
+        sendMessageAndHaveItTransformed("<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+    }
+    
+    public void testSendBytesMessage() throws Exception {
+        sendMessageAndHaveItTransformed("<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
+    }
 
-    public void testSendMessageAndHaveItTransformed() throws Exception {
+    private void sendMessageAndHaveItTransformed(Object body) throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+        template.sendBody("direct:start", body);
 
         assertMockEndpointsSatisfied();
 

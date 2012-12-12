@@ -458,7 +458,7 @@ public class XsltBuilder implements Processor {
         if (body != null) {
             TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass());
             if (tc != null) {
-                source = tc.convertTo(Source.class, body);
+                source = tc.convertTo(Source.class, exchange, body);
             }
         }
 
