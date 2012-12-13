@@ -107,7 +107,7 @@
           <instructions>
             <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
             <Private-Package>${package}.*</Private-Package>
-            <Import-Package>*,org.apache.camel.osgi</Import-Package>
+            <Import-Package>*</Import-Package>
           </instructions>
         </configuration>
       </plugin>
