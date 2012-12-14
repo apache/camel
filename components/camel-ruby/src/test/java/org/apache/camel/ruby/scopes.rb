@@ -16,7 +16,7 @@
 ## ------------------------------------------------------------------------
 require 'camel'
 
-include_class "org.apache.camel.ruby.RubyCamel"
+java_import "org.apache.camel.ruby.RubyCamel"
 
 class MyScopesRoute < Camel::RubyRouteBuilder
 
