@@ -18,7 +18,6 @@ package org.apache.camel.management;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.Traceable;
 import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.processor.DelegateAsyncProcessor;
@@ -32,7 +31,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class InstrumentationProcessor extends DelegateAsyncProcessor implements Traceable {
+public class InstrumentationProcessor extends DelegateAsyncProcessor {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(InstrumentationProcessor.class);
     private PerformanceCounter counter;
@@ -108,15 +107,5 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor implements 
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    @Override
-    public String getTraceLabel() {
-        if (processor instanceof Traceable) {
-            return ((Traceable)processor).getTraceLabel();
-        } else {
-            return "";
-        }
-        
     }
 }
