@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Body;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,7 +66,7 @@ public class RequestReplyExample {
     }
     
     public void run() throws Exception {        
-        DefaultCamelContext context = new DefaultCamelContext();
+        final CamelContext context = new DefaultCamelContext();
         final CountDownLatch logonLatch = new CountDownLatch(1);
         final String orderStatusServiceUrl = "http://localhost:9123/order/status";
         
@@ -170,7 +170,7 @@ public class RequestReplyExample {
     }
     
     public static class FixSessionRouter {
-        public String route(@Header("sessionID") String sessionID, @Body Object body) {
+        public String route(@Header("sessionID") String sessionID) {
             return String.format("quickfix:examples/inprocess.cfg?sessionID=%s", sessionID);
         }
     }
