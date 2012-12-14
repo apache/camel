@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultClientPipelineFactory.class);
 
-    private NettyProducer producer;
+    private final NettyProducer producer;
 
     public DefaultClientPipelineFactory(NettyProducer producer) {
         this.producer = producer;

@@ -51,7 +51,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         // create a file in inprogress to let there be a duplicate file
         File file = new File("target/inprogress");
         file.mkdirs();
-        FileWriter fw = new FileWriter("./target/inprogress/london.txt");
+        FileWriter fw = new FileWriter("target/inprogress/london.txt");
         try {
             fw.write("I was there once in London");
             fw.flush();

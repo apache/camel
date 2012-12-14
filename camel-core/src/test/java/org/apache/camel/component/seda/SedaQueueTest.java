@@ -40,7 +40,7 @@ public class SedaQueueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?concurrentConsumers=2").to("mock:result");
+                from("seda:foo?size=20&concurrentConsumers=2").to("mock:result");
 
                 from("seda:bar").to("mock:result");
             }

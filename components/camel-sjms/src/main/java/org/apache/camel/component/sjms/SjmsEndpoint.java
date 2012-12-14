@@ -22,7 +22,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
@@ -59,7 +58,6 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private TransactionCommitStrategy transactionCommitStrategy;
 
     public SjmsEndpoint() {
-        super();
     }
 
     public SjmsEndpoint(String uri, Component component) {
@@ -109,7 +107,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     @Override
     public Producer createProducer() throws Exception {
         SjmsProducer producer = null;
-        if (this.getExchangePattern().equals(ExchangePattern.InOnly)) {
+        if (getExchangePattern().equals(ExchangePattern.InOnly)) {
             producer = new InOnlyProducer(this);
         } else {
             producer = new InOutProducer(this);
@@ -140,20 +138,16 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return answer;
     }
 
-    public SjmsComponent getSjmsComponent() {
-        return (SjmsComponent)this.getComponent();
-    }
-
     public ConnectionResource getConnectionResource() {
-        return this.getSjmsComponent().getConnectionResource();
+        return getComponent().getConnectionResource();
     }
 
     public HeaderFilterStrategy getSjmsHeaderFilterStrategy() {
-        return getSjmsComponent().getHeaderFilterStrategy();
+        return getComponent().getHeaderFilterStrategy();
     }
 
     public KeyFormatStrategy getJmsKeyFormatStrategy() {
-        return getSjmsComponent().getKeyFormatStrategy();
+        return getComponent().getKeyFormatStrategy();
     }
 
     /**

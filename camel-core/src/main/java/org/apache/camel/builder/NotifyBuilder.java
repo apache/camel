@@ -1205,7 +1205,7 @@ public class NotifyBuilder {
     }
 
     /**
-     * Does all the expression match?
+     * Does all the expressions match?
      * <p/>
      * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur
      * which means <tt>false</tt> will be returned.

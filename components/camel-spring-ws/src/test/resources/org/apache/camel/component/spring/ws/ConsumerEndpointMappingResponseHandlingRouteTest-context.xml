@@ -24,6 +24,7 @@
     <!-- ============================== -->
     <!-- Camel routes -->
     <!-- ============================== -->
+    
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="spring-ws:rootqname:{http://www.webserviceX.NET/}GetQuote?endpointMapping=#endpointMapping"/>
@@ -41,13 +42,31 @@
             <from uri="spring-ws:xpathresult:GRABME?expression=//GetQuote&amp;endpointMapping=#endpointMapping"/>
             <to uri="responseProcessor"/>
         </route>
+        <route>
+            <from uri="spring-ws:action:http://www.webserviceX.NET/GetQuote?endpointMapping=#wsaEndpointMapping"/>
+            <to uri="wsaResponseProcessor"/>
+        </route>
+        <route>
+		    <from uri="spring-ws:to:http://url.to?endpointMapping=#wsaEndpointMapping"/>
+            <to uri="wsaResponseProcessor"/>
+        </route>
     </camelContext>
 
     <bean id="endpointMapping"
           class="org.apache.camel.component.spring.ws.bean.CamelEndpointMapping"/>
+          
+    <bean id="wsaEndpointMapping"
+		class="org.apache.camel.component.spring.ws.bean.WSACamelEndpointMapping">
+		 <property name="messageSender">
+            <bean class="net.javacrumbs.springws.test.helper.InMemoryWebServiceMessageSender"/>
+        </property>
+	</bean>
 
     <bean id="responseProcessor"
           class="org.apache.camel.component.spring.ws.StockQuoteResponseProcessor"/>
+          
+    <bean id="wsaResponseProcessor"
+          class="org.apache.camel.component.spring.ws.processor.OkResponseProcessor"/>
 
     <!-- ============================== -->
     <!-- Supporting Spring-WS beans -->

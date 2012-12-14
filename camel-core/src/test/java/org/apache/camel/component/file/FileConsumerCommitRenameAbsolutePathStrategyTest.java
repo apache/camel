@@ -42,7 +42,7 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("./target/done/paris.txt", "Hello Paris");
+        mock.expectedFileExists("target/done/paris.txt", "Hello Paris");
 
         template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 

@@ -46,6 +46,8 @@ public class ZooKeeperMessage extends DefaultMessage {
 
     public static final String ZOOKEEPER_EVENT_TYPE = "CamelZookeeperEventType";
 
+    public static final String ZOOKEEPER_OPERATION = "CamelZookeeperOperation";
+
     public ZooKeeperMessage(String node, Stat statistics, WatchedEvent watchedEvent) {
         this(node, statistics, Collections.<String, Object>emptyMap(), watchedEvent);
     }

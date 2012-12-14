@@ -72,7 +72,7 @@ public class QuickfixjSpringTest extends CamelSpringTestSupport {
         }
     }
 
-    @SuppressWarnings("serial")
     public static class CustomNewOrderSingle extends NewOrderSingle {
+        private static final long serialVersionUID = 1L;
     }
 }

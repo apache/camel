@@ -41,7 +41,7 @@ public class CwComponentTest extends CamelTestSupport {
 
     @Test
     public void sendMetricFromHeaderValues() throws Exception {
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+        template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(CwConstants.METRIC_NAMESPACE, "camel.apache.org/overriden");
                 exchange.getIn().setHeader(CwConstants.METRIC_NAME, "OverridenMetric");
@@ -64,7 +64,7 @@ public class CwComponentTest extends CamelTestSupport {
 
     @Test
     public void sendManuallyCreatedMetric() throws Exception {
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+        template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 MetricDatum metricDatum = new MetricDatum()
                         .withMetricName("errorCount")
@@ -84,7 +84,7 @@ public class CwComponentTest extends CamelTestSupport {
 
     @Test
     public void useDefaultValuesForMetricUnitAndMetricValue() throws Exception {
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+        template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(CwConstants.METRIC_NAME, "errorCount");
             }

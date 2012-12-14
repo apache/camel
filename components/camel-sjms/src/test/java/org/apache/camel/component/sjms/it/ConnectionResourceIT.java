@@ -112,7 +112,6 @@ public class ConnectionResourceIT extends JmsTestSupport {
         private PooledConnectionFactory pcf;
 
         public AMQConnectionResource(String connectString, int maxConnections) {
-            super();
             pcf = new PooledConnectionFactory(connectString);
             pcf.setMaxConnections(maxConnections);
             pcf.start();

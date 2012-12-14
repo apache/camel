@@ -40,7 +40,7 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(DataSetList.class);
 
-        String data = IOConverter.toString(new File("src/test/data/delim/INVENTORY-CommaDelimitedWithQualifier.txt").getAbsoluteFile(), null);
+        String data = IOConverter.toString(new File("src/test/data/delim/INVENTORY-CommaDelimitedWithQualifier.txt"), null);
 
         template.sendBody("direct:unmarshal", data);
         assertMockEndpointsSatisfied();

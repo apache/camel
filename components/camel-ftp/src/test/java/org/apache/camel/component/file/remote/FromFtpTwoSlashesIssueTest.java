@@ -64,7 +64,6 @@ public class FromFtpTwoSlashesIssueTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
 

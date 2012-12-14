@@ -39,4 +39,17 @@ public class AntPathMatcherTest extends TestCase {
         assertFalse(matcher.match("foo/**/*.txt", "blah/blah.txt"));
     }
 
+    public void testCaseSensitive() {
+        AntPathMatcher matcher = new AntPathMatcher();
+        assertTrue(matcher.match("foo/**/*.txt", "foo/blah.txt", true));
+        assertTrue(matcher.match("foo/**/*.txt", "foo/blah.txt", false));
+        assertTrue(matcher.match("foo/**/*.txt", "foo/BLAH.txt"));
+        assertFalse(matcher.match("FOO/**/*.txt", "foo/blah.txt"));
+        assertFalse(matcher.match("foo/**/*.TXT", "foo/blah.txt"));
+        assertTrue(matcher.match("foo/**/*.TXT", "foo/blah.txt", false));
+        assertTrue(matcher.match("FOO/**/*.txt", "foo/blah.txt", false));
+        assertFalse(matcher.match("FOO/**/*.txt", "foo/blah.txt", true));
+        assertFalse(matcher.match("FOO/**/*.txt", "foo/blah.txt", true));
+    }
+
 }

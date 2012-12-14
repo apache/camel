@@ -34,7 +34,6 @@ public class ConnectionFactoryResource extends ObjectPool<Connection> implements
      * Default Constructor
      */
     public ConnectionFactoryResource() {
-        super();
     }
 
     /**
@@ -76,12 +75,12 @@ public class ConnectionFactoryResource extends ObjectPool<Connection> implements
 
     @Override
     public Connection borrowConnection() throws Exception {
-        return this.borrowObject();
+        return borrowObject();
     }
 
     @Override
     public Connection borrowConnection(long timeout) throws Exception {
-        return this.borrowObject(timeout);
+        return borrowObject(timeout);
     }
 
     @Override

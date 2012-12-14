@@ -29,7 +29,7 @@ public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/movefile");
+        deleteDirectory("target/movefile");
         super.setUp();
     }
 

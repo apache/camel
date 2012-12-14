@@ -35,6 +35,7 @@ public class XPathWithNamespacesFromDomTest extends ContextTestSupport {
         XPathBuilder builder = XPathBuilder.xpath("//y:foo[@id='z']");
         Namespaces ns = new Namespaces(element);
         ns.configure(builder);
+        builder.start();
         DefaultNamespaceContext namespaceContext = builder.getNamespaceContext();
         assertEquals("y namespace", "n3", namespaceContext.getNamespaceURI("y"));
 

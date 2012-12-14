@@ -29,6 +29,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
     public void testDefaultNamespaceContextEmpty() throws Exception {
         XPathBuilder builder = XPathBuilder.xpath("/foo");
+        builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
         assertNotNull(context);
 
@@ -44,6 +45,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
     public void testDefaultNamespaceContextPre() throws Exception {
         XPathBuilder builder = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese");
+        builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
         assertNotNull(context);
 
@@ -60,6 +62,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
     public void testDefaultNamespaceContextDualNamespaces() throws Exception {
         XPathBuilder builder = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese").namespace("bar", "http://acme/bar");
+        builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
         assertNotNull(context);
 
@@ -84,6 +87,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
     public void testDefaultNamespaceContextParent() throws Exception {
         XPathBuilder builder = XPathBuilder.xpath("/foo");
+        builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
         assertNotNull(context);
 

@@ -33,7 +33,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/movefile");
+        deleteDirectory("target/movefile");
         super.setUp();
     }
 
@@ -49,8 +49,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         oneExchangeDone.matchesMockWaitTime();
 
         // assert the file is not moved
-        File file = new File("./target/movefile/hello.txt");
-        file = file.getAbsoluteFile();
+        File file = new File("target/movefile/hello.txt");
         assertTrue("The file should NOT have been moved", file.exists());
     }
 

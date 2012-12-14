@@ -44,10 +44,10 @@ public class GzipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         notify.matchesMockWaitTime();
 
-        File in = new File("target/gzip/hello.txt").getAbsoluteFile();
+        File in = new File("target/gzip/hello.txt");
         assertFalse("Should have been deleted " + in, in.exists());
 
-        File out = new File("target/gzip/out/hello.txt.gz").getAbsoluteFile();
+        File out = new File("target/gzip/out/hello.txt.gz");
         assertFalse("Should have been deleted " + out, out.exists());
     }
 

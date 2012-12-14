@@ -39,7 +39,6 @@ public class ScanStreamFileTest extends CamelTestSupport {
         createDirectory("target/stream");
 
         file = new File("target/stream/scanstreamfile.txt");
-        file = file.getAbsoluteFile();
         file.createNewFile();
 
         super.setUp();

@@ -54,7 +54,6 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
         // assert the file is deleted
         File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
-        file = file.getAbsoluteFile();
         assertFalse("The file should have been deleted", file.exists());
     }
 
@@ -72,7 +71,6 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
 

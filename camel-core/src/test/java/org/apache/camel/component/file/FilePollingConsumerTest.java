@@ -57,7 +57,7 @@ public class FilePollingConsumerTest extends ContextTestSupport {
         // sleep a bit to ensure polling consumer would not have picked up that file
         Thread.sleep(1000);
 
-        File file = new File("target/enrich/bye.txt").getAbsoluteFile();
+        File file = new File("target/enrich/bye.txt");
         assertTrue("File should exist " + file, file.exists());
 
         consumer.stop();

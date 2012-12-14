@@ -40,7 +40,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.component.cxf.TestHelper;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;

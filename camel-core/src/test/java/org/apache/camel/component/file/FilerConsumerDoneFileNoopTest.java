@@ -54,11 +54,11 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // done file should be kept now
-        File file = new File("target/done/done").getAbsoluteFile();
+        File file = new File("target/done/done");
         assertTrue("Done file should be not be deleted: " + file, file.exists());
 
         // as well the original file should be kept due noop
-        file = new File("target/done/hello.txt").getAbsoluteFile();
+        file = new File("target/done/hello.txt");
         assertTrue("Original file should be kept: " + file, file.exists());
     }
 

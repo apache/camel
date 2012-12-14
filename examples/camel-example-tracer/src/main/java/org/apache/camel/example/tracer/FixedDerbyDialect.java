@@ -27,7 +27,6 @@ import org.hibernate.dialect.DerbyDialect;
 public class FixedDerbyDialect extends DerbyDialect {
 
     public FixedDerbyDialect() {
-        super();
         registerColumnType(Types.CLOB, "clob");
     }
 }

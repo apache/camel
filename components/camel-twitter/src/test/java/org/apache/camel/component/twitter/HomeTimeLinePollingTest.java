@@ -16,40 +16,20 @@
  */
 package org.apache.camel.component.twitter;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * consumes tweets
  */
-public class HomeTimeLinePollingTest extends CamelTwitterTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(HomeTimeLinePollingTest.class);
-
-    @Test
-    public void testReadHomeTimeLine() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.assertIsSatisfied();
-        List<Exchange> tweets = mock.getExchanges();
-        if (LOG.isInfoEnabled()) {
-            for (Exchange e : tweets) {
-                LOG.info("Tweet: " + e.getIn().getBody(String.class));
-            }
-        }
+public class HomeTimeLinePollingTest extends CamelTwitterConsumerTestSupport {
+    @Override
+    protected String getUri() {
+        return "twitter://timeline/home?type=polling&";
     }
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("twitter://timeline/home?type=polling&" + getUriTokens())
-                        .transform(body().convertToString()).to("mock:result");
-            }
-        };
+    @Override
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(HomeTimeLinePollingTest.class);
     }
 }

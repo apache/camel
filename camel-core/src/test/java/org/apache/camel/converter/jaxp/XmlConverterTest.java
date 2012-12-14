@@ -249,7 +249,7 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToStreamSourceByFile() throws Exception {
         XmlConverter conv = new XmlConverter();
         
-        File file = new File("org/apache/camel/converter/stream/test.xml").getAbsoluteFile();
+        File file = new File("org/apache/camel/converter/stream/test.xml");
         StreamSource source = conv.toStreamSource(file);
         StreamSource out = conv.toStreamSource(source, null);
         assertSame(source, out);
@@ -456,7 +456,7 @@ public class XmlConverterTest extends ContextTestSupport {
 
     public void testToDocumentFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
-        File file = new File("./src/test/resources/org/apache/camel/converter/stream/test.xml").getAbsoluteFile();
+        File file = new File("src/test/resources/org/apache/camel/converter/stream/test.xml");
 
         Document out = conv.toDOMDocument(file);
         assertNotNull(out);
@@ -486,7 +486,7 @@ public class XmlConverterTest extends ContextTestSupport {
     
     public void testToInputSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
-        File file = new File("./src/test/resources/org/apache/camel/converter/stream/test.xml").getAbsoluteFile();
+        File file = new File("src/test/resources/org/apache/camel/converter/stream/test.xml");
 
         InputSource out = conv.toInputSource(file, null);
         assertNotNull(out);

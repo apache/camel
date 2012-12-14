@@ -39,7 +39,7 @@ public class SftpSimpleProduceNotStepwiseTest extends SftpServerTestSupport {
 
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&stepwise=false", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/hello.txt");
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -52,7 +52,7 @@ public class SftpSimpleProduceNotStepwiseTest extends SftpServerTestSupport {
 
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin&stepwise=false", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/mysub/bye.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/mysub/bye.txt");
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -66,7 +66,7 @@ public class SftpSimpleProduceNotStepwiseTest extends SftpServerTestSupport {
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin&stepwise=false", 
             "Farewell World", Exchange.FILE_NAME, "farewell.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/mysub/myother/farewell.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/mysub/myother/farewell.txt");
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Farewell World", context.getTypeConverter().convertTo(String.class, file));
     }

@@ -37,40 +37,40 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     public void testProducerConstantDoneFileName() throws Exception {
         template.sendBodyAndHeader("file:target/done?doneFileName=done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/done/hello.txt").getAbsoluteFile();
+        File file = new File("target/done/hello.txt");
         assertEquals("File should exists", true, file.exists());
 
-        File done = new File("target/done/done").getAbsoluteFile();
+        File done = new File("target/done/done");
         assertEquals("Done file should exists", true, done.exists());
     }
 
     public void testProducerPrefixDoneFileName() throws Exception {
         template.sendBodyAndHeader("file:target/done?doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/done/hello.txt").getAbsoluteFile();
+        File file = new File("target/done/hello.txt");
         assertEquals("File should exists", true, file.exists());
 
-        File done = new File("target/done/done-hello.txt").getAbsoluteFile();
+        File done = new File("target/done/done-hello.txt");
         assertEquals("Done file should exists", true, done.exists());
     }
 
     public void testProducerExtDoneFileName() throws Exception {
         template.sendBodyAndHeader("file:target/done?doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/done/hello.txt").getAbsoluteFile();
+        File file = new File("target/done/hello.txt");
         assertEquals("File should exists", true, file.exists());
 
-        File done = new File("target/done/hello.txt.done").getAbsoluteFile();
+        File done = new File("target/done/hello.txt.done");
         assertEquals("Done file should exists", true, done.exists());
     }
 
     public void testProducerReplaceExtDoneFileName() throws Exception {
         template.sendBodyAndHeader("file:target/done?doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/done/hello.txt").getAbsoluteFile();
+        File file = new File("target/done/hello.txt");
         assertEquals("File should exists", true, file.exists());
 
-        File done = new File("target/done/hello.done").getAbsoluteFile();
+        File done = new File("target/done/hello.done");
         assertEquals("Done file should exists", true, done.exists());
     }
 

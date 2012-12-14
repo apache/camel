@@ -39,6 +39,7 @@ import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
+import org.springframework.ws.soap.addressing.core.EndpointReference;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.WebServiceMessageSender;
@@ -67,14 +68,17 @@ public class SpringWebserviceProducer extends DefaultProducer {
         Source sourcePayload = exchange.getIn().getMandatoryBody(Source.class);
 
         // Extract optional headers
-        String endpointUri = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, String.class);
-        String soapAction = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, String.class);
-        URI wsAddressingAction = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, URI.class);
+        String endpointUriHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, String.class);
+        String soapActionHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, String.class);
+        URI wsAddressingActionHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, URI.class);
+        URI wsReplyToHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, URI.class);
+        URI wsFaultToHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, URI.class);
 
-        WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapAction, wsAddressingAction, getEndpoint().getConfiguration(), exchange);
+        WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapActionHeader, wsAddressingActionHeader, wsReplyToHeader, 
+                                                                                  wsFaultToHeader, getEndpoint().getConfiguration(), exchange);
         Object body = null;
-        if (endpointUri != null) {
-            body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(endpointUri, sourcePayload, callback, SOURCE_EXTRACTOR);
+        if (endpointUriHeader != null) {
+            body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(endpointUriHeader, sourcePayload, callback, SOURCE_EXTRACTOR);
         } else {
             body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(sourcePayload, callback, SOURCE_EXTRACTOR);
         }
@@ -194,12 +198,16 @@ public class SpringWebserviceProducer extends DefaultProducer {
     protected static class DefaultWebserviceMessageCallback implements WebServiceMessageCallback {
         private final String soapActionHeader;
         private final URI wsAddressingActionHeader;
+        private final URI wsReplyToHeader;
+        private final URI wsFaultToHeader;
         private final SpringWebserviceConfiguration configuration;
         private final Exchange exchange;
 
-        public DefaultWebserviceMessageCallback(String soapAction, URI wsAddressingAction, SpringWebserviceConfiguration configuration, Exchange exchange) {
+        public DefaultWebserviceMessageCallback(String soapAction, URI wsAddressingAction, URI wsReplyTo, URI wsFaultTo, SpringWebserviceConfiguration configuration, Exchange exchange) {
             this.soapActionHeader = soapAction;
             this.wsAddressingActionHeader = wsAddressingAction;
+            this.wsReplyToHeader = wsReplyTo;
+            this.wsFaultToHeader = wsFaultTo;
             this.configuration = configuration;
             this.exchange = exchange;
         }
@@ -215,8 +223,19 @@ public class SpringWebserviceProducer extends DefaultProducer {
             // 'to' header will default to the URL of the connection).
             // Note that exchange header takes precedence over endpoint option
             URI wsAddressingAction = wsAddressingActionHeader != null ? wsAddressingActionHeader : configuration.getWsAddressingAction();
+            URI wsReplyTo = wsReplyToHeader != null ? wsReplyToHeader : configuration.getReplyTo();
+            URI wsFaultTo = wsFaultToHeader != null ? wsFaultToHeader : configuration.getFaultTo();
+            
             if (wsAddressingAction != null) {
-                new ActionCallback(wsAddressingAction).doWithMessage(message);
+                ActionCallback actionCallback = new ActionCallback(wsAddressingAction);
+                if (wsReplyTo != null) {
+                    actionCallback.setReplyTo(new EndpointReference(wsReplyTo));
+                }
+
+                if (wsFaultTo != null) {
+                    actionCallback.setFaultTo(new EndpointReference(wsFaultTo));
+                }
+                actionCallback.doWithMessage(message);
             }
             
             configuration.getMessageFilter().filterProducer(exchange, message);

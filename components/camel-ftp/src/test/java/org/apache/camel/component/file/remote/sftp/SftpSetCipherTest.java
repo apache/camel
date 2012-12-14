@@ -43,7 +43,7 @@ public class SftpSetCipherTest extends SftpServerTestSupport {
         template.sendBodyAndHeader(uri , "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // test setting the cipher doesn't interfere with message payload
-        File file = new File(FTP_ROOT_DIR + "/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/hello.txt");
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 

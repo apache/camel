@@ -30,7 +30,6 @@ public class IllegalHeaderException extends RuntimeCamelException {
     /**
      */
     public IllegalHeaderException() {
-        super();
     }
 
     /**

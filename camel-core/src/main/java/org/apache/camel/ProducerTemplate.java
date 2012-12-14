@@ -60,6 +60,13 @@ import org.apache.camel.spi.Synchronization;
  */
 public interface ProducerTemplate extends Service {
 
+    /**
+     * Get the {@link CamelContext}
+     *
+     * @return camelContext the Camel context
+     */
+    CamelContext getCamelContext();
+
     // Configuration methods
     // -----------------------------------------------------------------------
 

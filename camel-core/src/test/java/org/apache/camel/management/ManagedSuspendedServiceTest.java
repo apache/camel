@@ -68,7 +68,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         assertEquals(true, suspended.booleanValue());
 
         // the route is suspended by the policy so we should only receive one
-        String[] files = new File("target/suspended/").getAbsoluteFile().list();
+        String[] files = new File("target/suspended/").list();
         assertNotNull(files);
         assertEquals("The file should exists", 1, files.length);
 
@@ -87,7 +87,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         Thread.sleep(500);
 
         // and the file is now deleted
-        files = new File("target/suspended/").getAbsoluteFile().list();
+        files = new File("target/suspended/").list();
         assertNotNull(files);
         assertEquals("The file should exists", 0, files.length);
     }

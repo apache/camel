@@ -57,7 +57,7 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
         String body = "<?xml version=\"1.0\"?><portal agent=\"123\"><id>456</id><name>Cool Portal</name></portal>";
 
         // create local file
-        deleteDirectory("./target/files");
+        deleteDirectory("target/files");
         template.sendBodyAndHeader("file://target/files/123", body, Exchange.FILE_NAME, "agent.xml");
 
         MockEndpoint filter = getMockEndpoint("mock:filterxml");

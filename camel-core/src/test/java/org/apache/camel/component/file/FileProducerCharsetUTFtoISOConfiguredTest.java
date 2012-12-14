@@ -64,7 +64,7 @@ public class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSuppor
     public void testFileProducerCharsetUTFtoISO() throws Exception {
         oneExchangeDone.matchesMockWaitTime();
 
-        File file = new File("target/charset/output.txt").getAbsoluteFile();
+        File file = new File("target/charset/output.txt");
         assertTrue("File should exist", file.exists());
 
         InputStream fis = IOHelper.buffered(new FileInputStream(file));

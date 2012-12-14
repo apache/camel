@@ -16,40 +16,21 @@
  */
 package org.apache.camel.component.twitter;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * consumes tweets
  */
-public class SearchDirectTest extends CamelTwitterTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SearchDirectTest.class);
-
-    @Test
-    public void testSearchTimeline() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.assertIsSatisfied();
-        List<Exchange> tweets = mock.getExchanges();
-        if (LOG.isInfoEnabled()) {
-            for (Exchange e : tweets) {
-                LOG.info("Tweet: " + e.getIn().getBody(String.class));
-            }
-        }
+public class SearchDirectTest extends CamelTwitterConsumerTestSupport {
+    
+    @Override
+    protected String getUri() {
+        return "twitter://search?type=direct&keywords=java&";
     }
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("twitter://search?type=direct&keywords=java&" + getUriTokens())
-                        .transform(body().convertToString()).to("mock:result");
-            }
-        };
+    @Override
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(SearchDirectTest.class);
     }
 }

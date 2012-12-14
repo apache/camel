@@ -49,7 +49,7 @@ public class JmsRouteToFileTest extends CamelTestSupport {
         result.assertIsSatisfied();
         
         // do file assertions
-        File dir = new File("./target/routetofile");
+        File dir = new File("target/routetofile");
         assertTrue("Should be directory", dir.isDirectory());
         File file = dir.listFiles()[0];
         assertTrue("File should exists", file.exists());

@@ -55,7 +55,7 @@ public class FtpConsumerDoneFileNameFixedTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         // done file should be deleted now
-        File file = new File(FTP_ROOT_DIR + "done/fin.dat").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "done/fin.dat");
         assertFalse("Done file should be deleted: " + file, file.exists());
     }
 

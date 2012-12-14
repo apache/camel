@@ -47,11 +47,11 @@ public class XPathToFileTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        File first = new File("target/xpath/xpath-0.xml").getAbsoluteFile();
+        File first = new File("target/xpath/xpath-0.xml");
         assertTrue("File xpath-0.xml should exists", first.exists());
         assertEquals("<person id=\"1\">Claus<country>SE</country></person>", context.getTypeConverter().convertTo(String.class, first));
 
-        File second = new File("target/xpath/xpath-1.xml").getAbsoluteFile();
+        File second = new File("target/xpath/xpath-1.xml");
         assertTrue("File xpath-1.xml should exists", second.exists());
         assertEquals("<person id=\"2\">Jonathan<country>CA</country></person>", context.getTypeConverter().convertTo(String.class, second));
     }

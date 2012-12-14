@@ -17,6 +17,8 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -73,6 +75,16 @@ public class MyServiceProxyTest extends ContextTestSupport {
             assertEquals(7, e.getCode());
         }
     }
+    
+    public void testRequestAndResponse() throws Exception {
+        MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:request"), MyService.class);
+        MyRequest in = new MyRequest();
+        in.id = 100;
+        in.request = "Camel";
+        MyResponse response = myService.call(in);
+        assertEquals("Get a wrong response id.", 100, response.id);
+        assertEquals("Get a wrong response", "Hi Camel", response.response);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -86,6 +98,20 @@ public class MyServiceProxyTest extends ContextTestSupport {
                         .when(body().isEqualTo("Elephant in Action")).throwException(new MyCustomException("Damn", new MyApplicationException("No elephants", 7)))
                         .when(body().isEqualTo("Kaboom")).throwException(new IllegalArgumentException("Damn"))
                         .otherwise().transform(constant("Camel in Action"));
+                
+                from("direct:request").process(new Processor() {
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        MyRequest request = exchange.getIn().getBody(MyRequest.class);
+                        MyResponse response = new MyResponse();
+                        response.id = request.id;
+                        response.response = "Hi " + request.request;
+                        // we need to setup the body as a response
+                        exchange.getOut().setBody(response);
+                    }
+
+                });
             }
         };
     }

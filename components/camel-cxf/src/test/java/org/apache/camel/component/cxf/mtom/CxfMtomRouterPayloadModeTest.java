@@ -30,7 +30,6 @@ import junit.framework.Assert;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.component.cxf.TestHelper;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.junit.After;

@@ -96,7 +96,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         Permission permission = new WildcardPermission("zone1:readwrite:*");
         permissionsList.add(permission);
         
-        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase, true, permissionsList);
+        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase, true, permissionsList);
         
         return new RouteBuilder() {
             public void configure() {

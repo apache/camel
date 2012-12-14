@@ -67,7 +67,6 @@ public class BlueprintContainerRegistry implements Registry {
         return lookupByType(blueprintContainer, type);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {
         Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
         Map<String, T> objects = new LinkedHashMap<String, T>();

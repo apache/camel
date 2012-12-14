@@ -171,7 +171,6 @@ public class ObjectPoolTest {
     class TestPool extends ObjectPool<MyPooledObject> {
 
         public TestPool() {
-            super();
         }
 
         public TestPool(int poolSize) {
@@ -190,7 +189,7 @@ public class ObjectPoolTest {
 
     }
 
-    class MyPooledObject {
+    static class MyPooledObject {
         private int objectId = -1;
 
         public MyPooledObject(int objectId) {
@@ -205,7 +204,7 @@ public class ObjectPoolTest {
         }
     }
 
-    class BadTestPool extends ObjectPool<Object> {
+    static class BadTestPool extends ObjectPool<Object> {
         @Override
         protected Object createObject() throws Exception {
             throw new Exception();
@@ -213,8 +212,6 @@ public class ObjectPoolTest {
 
         @Override
         protected void destroyObject(Object t) throws Exception {
-            // TODO Auto-generated method stub
-
         }
 
     }

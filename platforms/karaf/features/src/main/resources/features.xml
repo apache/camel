@@ -215,8 +215,8 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty/${netty-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.snappy-java/${snappy-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.netty/${netty-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.paranamer/${paranamer-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.avro/${avro-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.avro-ipc/${avro-bundle-version}</bundle>
@@ -286,13 +286,13 @@
   <feature name="camel-elasticsearch" version="${project.version}" resolver="(obr)" start-level="50">
     <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guava/${google-guava-bundle-version}</bundle>
+    <bundle dependency="true">mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.protobuf-java/${protobuf-java-bundle-version}</bundle>
     <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency="true">mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/${jackson2-version}</bundle>
     <bundle dependency="true">mvn:joda-time/joda-time/${jodatime-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.regexp/${regexp-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mvel/${mvel-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene/${lucene-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch/${elasticsearch-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-elasticsearch/${project.version}</bundle>
@@ -592,7 +592,7 @@
     <bundle>mvn:org.apache.camel/camel-msv/${project.version}</bundle>
   </feature>
   <feature name='camel-mvel' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mvel/${mvel-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mvel/${project.version}</bundle>
   </feature>
@@ -647,6 +647,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quickfix/${quickfix-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-quickfix/${project.version}</bundle>
+  </feature>
+  <feature name='camel-redis' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.springframework.data/spring-data-redis/${spring-data-redis-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-redis/${project.version}</bundle>
   </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

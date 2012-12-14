@@ -35,7 +35,6 @@ public class BatchTransactionCommitStrategy implements TransactionCommitStrategy
      * @param count
      */
     public BatchTransactionCommitStrategy(int count) {
-        super();
         this.count = count;
     }
 

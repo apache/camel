@@ -46,7 +46,7 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // file should not exists
-        assertFalse("File should been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
+        assertFalse("File should been deleted", new File("target/files/report.txt").exists());
     }
 
     @Override

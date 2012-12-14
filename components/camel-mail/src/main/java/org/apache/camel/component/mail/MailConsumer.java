@@ -27,7 +27,6 @@ import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
-import javax.mail.search.FlagTerm;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -37,9 +36,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.mail.SearchTermBuilder.*;
-import static org.apache.camel.component.mail.SearchTermBuilder.Op.and;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.quickfixj;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -29,7 +30,7 @@ import quickfix.SessionID;
 
 public class MessageCorrelator implements QuickfixjEventListener {
     public static final long DEFAULT_CORRELATION_TIMEOUT = 1000L;
-    private final CopyOnWriteArrayList<MessageCorrelationRule> rules = new CopyOnWriteArrayList<MessageCorrelationRule>();
+    private final List<MessageCorrelationRule> rules = new CopyOnWriteArrayList<MessageCorrelationRule>();
 
     public Callable<Message> getReply(SessionID sessionID, Exchange exchange)
         throws InterruptedException, ExchangeTimedOutException {

@@ -51,7 +51,7 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
         // create a file in inprogress to let there be a duplicate file
         File file = new File("target/inprogress");
         file.mkdirs();
-        FileWriter fw = new FileWriter("./target/inprogress/london.bak");
+        FileWriter fw = new FileWriter("target/inprogress/london.bak");
         try {
             fw.write("I was there once in London");
             fw.flush();

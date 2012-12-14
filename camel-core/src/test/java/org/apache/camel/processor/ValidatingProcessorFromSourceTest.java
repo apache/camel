@@ -30,7 +30,7 @@ public class ValidatingProcessorFromSourceTest extends ValidatingProcessorTest {
     protected void setUp() throws Exception {
         super.setUp();
 
-        File file = new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd").getAbsoluteFile();
+        File file = new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd");
         String body = context.getTypeConverter().convertTo(String.class, file);
 
         validating = new ValidatingProcessor();

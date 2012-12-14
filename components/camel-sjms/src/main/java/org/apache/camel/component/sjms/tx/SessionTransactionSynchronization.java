@@ -52,7 +52,7 @@ public class SessionTransactionSynchronization implements Synchronization {
             if (commitStrategy.rollback(exchange)) {
                 log.debug("Processing failure of Exchange id:{}", exchange.getExchangeId());
                 if (session != null && session.getTransacted()) {
-                    this.session.rollback();
+                    session.rollback();
                 }
             }
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class SessionTransactionSynchronization implements Synchronization {
             if (commitStrategy.commit(exchange)) {
                 log.debug("Processing completion of Exchange id:{}", exchange.getExchangeId());
                 if (session != null && session.getTransacted()) {
-                    this.session.commit();
+                    session.commit();
                 }
             }
         } catch (Exception e) {

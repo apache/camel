@@ -75,7 +75,7 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
 
     public void testXsltFile() throws Exception {
-        File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl").getAbsoluteFile();
+        File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
 
@@ -88,7 +88,7 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
     
     public void testXsltTransformerFile() throws Exception {
-        File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl").getAbsoluteFile();
+        File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
         XsltBuilder builder = new XsltBuilder();
         builder.setTransformerFile(styleSheet);
@@ -102,7 +102,7 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
 
     public void testXsltInputStream() throws Exception {
-        File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl").getAbsoluteFile();
+        File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(new FileInputStream(styleSheet));
 
@@ -115,7 +115,7 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
 
     public void testXsltTransformerInputStream() throws Exception {
-        File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl").getAbsoluteFile();
+        File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
         XsltBuilder builder = new XsltBuilder();
         builder.setTransformerInputStream(new FileInputStream(styleSheet));
@@ -129,7 +129,7 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
 
     public void testXsltSource() throws Exception {
-        File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl").getAbsoluteFile();
+        File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
         Source styleSheet = new SAXSource(new InputSource(new FileInputStream(file)));
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
@@ -143,7 +143,7 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
 
     public void testXsltTemplates() throws Exception {
-        File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl").getAbsoluteFile();
+        File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
         Source source = new SAXSource(new InputSource(new FileInputStream(file)));
 
         XmlConverter converter = new XmlConverter();
@@ -213,7 +213,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         builder.process(exchange);
         assertIsInstanceOf(File.class, exchange.getOut().getBody());
 
-        File file = new File("target/xslt/xsltout.xml").getAbsoluteFile();
+        File file = new File("target/xslt/xsltout.xml");
         assertTrue("Output file should exist", file.exists());
 
         String body = exchange.getOut().getBody(String.class);
@@ -232,7 +232,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         builder.process(exchange);
         assertIsInstanceOf(File.class, exchange.getOut().getBody());
 
-        File file = new File("target/xslt/xsltout.xml").getAbsoluteFile();
+        File file = new File("target/xslt/xsltout.xml");
         assertTrue("Output file should exist", file.exists());
 
         String body = exchange.getOut().getBody(String.class);

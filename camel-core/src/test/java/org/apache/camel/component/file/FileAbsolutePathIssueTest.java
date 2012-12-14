@@ -37,8 +37,8 @@ public class FileAbsolutePathIssueTest extends ContextTestSupport {
         deleteDirectory("target/issue");
         deleteDirectory("target/done");
 
-        start = new File("target/issue").getAbsoluteFile().getAbsolutePath();
-        done = new File("target/done").getAbsoluteFile().getAbsolutePath();
+        start = new File("target/issue").getAbsolutePath();
+        done = new File("target/done").getAbsolutePath();
         uri = "file:" + start + "?move=" + done + "/${file:name}";
 
         super.setUp();

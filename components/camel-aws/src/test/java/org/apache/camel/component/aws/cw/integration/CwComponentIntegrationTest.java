@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws.cw.integration;
 
-import java.util.Date;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -30,7 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
-//@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class CwComponentIntegrationTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -40,7 +39,7 @@ public class CwComponentIntegrationTest extends CamelTestSupport {
     public void sendInOnly() throws Exception {
         mock.expectedMessageCount(1);
 
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+        template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(CwConstants.METRIC_NAME, "ExchangesCompleted");
                 exchange.getIn().setHeader(CwConstants.METRIC_VALUE, "2.0");

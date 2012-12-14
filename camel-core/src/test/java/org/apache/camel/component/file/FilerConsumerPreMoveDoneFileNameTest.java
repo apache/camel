@@ -54,7 +54,7 @@ public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // done file should be deleted now
-        File file = new File("target/done/ready").getAbsoluteFile();
+        File file = new File("target/done/ready");
         assertFalse("Done file should be deleted: " + file, file.exists());
     }
 

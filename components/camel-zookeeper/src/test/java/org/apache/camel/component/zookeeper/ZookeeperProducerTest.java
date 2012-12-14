@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_CREATE_MODE;
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_NODE;
+import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_OPERATION;;
 
 public class ZookeeperProducerTest extends ZooKeeperTestSupport {
 
@@ -59,6 +60,10 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:create-mode").to("zookeeper://localhost:39913/persistent?create=true&createMode=PERSISTENT").to("mock:create-mode");
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:delete").to("zookeeper://localhost:39913/to-be-deleted").to("mock:delete");
             }
         }};
     }
@@ -131,6 +136,20 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         
         Stat s = mock.getReceivedExchanges().get(0).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS, Stat.class);
         assertEquals(s.getEphemeralOwner(), 0);
+    }
+
+    public void deleteNode() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:delete");
+        mock.expectedMessageCount(1);
+
+        client.createPersistent("/to-be-deleted", "to be deleted");
+        Exchange e = createExchangeWithBody(null);
+        e.setPattern(ExchangePattern.InOut);
+        e.getIn().setHeader(ZOOKEEPER_OPERATION, "DELETE");
+        template.send("direct:delete", e);
+
+        mock.await(5, TimeUnit.SECONDS);
+        assertNull(client.getConnection().exists("/to-be-deleted", false));
     }
 
     @Test

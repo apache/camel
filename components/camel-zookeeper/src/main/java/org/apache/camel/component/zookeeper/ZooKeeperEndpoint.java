@@ -114,11 +114,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         getConfiguration().setServers(servers);
     }
 
-    // TODO: check how to allow should to indicate getter of an attribute pair
-//    public boolean shouldListChildren() {
-//        return getConfiguration().listChildren();
-//    }
-
     @ManagedAttribute
     public boolean getListChildren() {
         return getConfiguration().listChildren();
@@ -128,10 +123,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     public void setListChildren(boolean listChildren) {
         getConfiguration().setListChildren(listChildren);
     }
-
-//    public boolean shouldCreate() {
-//        return getConfiguration().shouldCreate();
-//    }
 
     @ManagedAttribute
     public boolean getCreate() {
@@ -153,10 +144,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         getConfiguration().setBackoff(backoff);
     }
 
-//    public boolean shouldAwaitExistence() {
-//        return getConfiguration().shouldAwaitExistence();
-//    }
-
     @ManagedAttribute
     public boolean getAwaitExistence() {
         return getConfiguration().shouldAwaitExistence();
@@ -164,7 +151,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
 
     @ManagedAttribute
     public void setAwaitExistence(boolean awaitExistence) {
-        getConfiguration().setAwaitExistance(awaitExistence);
+        getConfiguration().setAwaitExistence(awaitExistence);
     }
 
     @ManagedOperation

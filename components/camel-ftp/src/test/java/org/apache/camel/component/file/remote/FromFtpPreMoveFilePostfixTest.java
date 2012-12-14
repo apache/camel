@@ -53,7 +53,6 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
 
         // assert the file is moved
         File file = new File(FTP_ROOT_DIR + "/movefile/hello.txt.old");
-        file = file.getAbsoluteFile();
         assertTrue("The file should have been moved", file.exists());
     }
     
@@ -71,7 +70,6 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/movefile/hello.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
 

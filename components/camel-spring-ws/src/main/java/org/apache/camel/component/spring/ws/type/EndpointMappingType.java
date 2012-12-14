@@ -21,6 +21,8 @@ package org.apache.camel.component.spring.ws.type;
  */
 public enum EndpointMappingType {
     ROOT_QNAME("rootqname:"),
+    ACTION("action:"),
+    TO("to:"),
     SOAP_ACTION("soapaction:"),
     XPATHRESULT("xpathresult:"),
     URI("uri:"),

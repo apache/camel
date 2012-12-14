@@ -30,7 +30,7 @@ public class FileInputStreamCacheTest extends ContextTestSupport {
 
     public void testFileInputStreamCache() throws Exception {
        
-        File file = new File(TEST_FILE).getAbsoluteFile();
+        File file = new File(TEST_FILE);
         FileInputStreamCache cache = new FileInputStreamCache(file);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

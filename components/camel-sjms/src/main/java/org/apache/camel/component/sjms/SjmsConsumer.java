@@ -67,7 +67,7 @@ public class SjmsConsumer extends DefaultConsumer {
         @Override
         protected MessageConsumerResources createObject() throws Exception {
             MessageConsumerResources model = null;
-            if (isTransacted() || getSjmsEndpoint().getExchangePattern().equals(ExchangePattern.InOut)) {
+            if (isTransacted() || getEndpoint().getExchangePattern().equals(ExchangePattern.InOut)) {
                 model = createConsumerWithDedicatedSession();
             } else {
                 model = createConsumerListener();
@@ -108,13 +108,11 @@ public class SjmsConsumer extends DefaultConsumer {
         private final MessageConsumer messageConsumer;
 
         public MessageConsumerResources(MessageConsumer messageConsumer) {
-            super();
             this.session = null;
             this.messageConsumer = messageConsumer;
         }
 
         public MessageConsumerResources(Session session, MessageConsumer messageConsumer) {
-            super();
             this.session = session;
             this.messageConsumer = messageConsumer;
         }
@@ -213,10 +211,10 @@ public class SjmsConsumer extends DefaultConsumer {
     protected MessageListener createMessageHandler(Session session) {
 
         TransactionCommitStrategy commitStrategy = null;
-        if (this.getTransactionCommitStrategy() != null) {
-            commitStrategy = this.getTransactionCommitStrategy();
-        } else if (this.getTransactionBatchCount() > 0) {
-            commitStrategy = new BatchTransactionCommitStrategy(this.getTransactionBatchCount());
+        if (getTransactionCommitStrategy() != null) {
+            commitStrategy = getTransactionCommitStrategy();
+        } else if (getTransactionBatchCount() > 0) {
+            commitStrategy = new BatchTransactionCommitStrategy(getTransactionBatchCount());
         } else {
             commitStrategy = new DefaultTransactionCommitStrategy();
         }
@@ -230,7 +228,7 @@ public class SjmsConsumer extends DefaultConsumer {
         }
 
         AbstractMessageHandler messageHandler;
-        if (getSjmsEndpoint().getExchangePattern().equals(ExchangePattern.InOnly)) {
+        if (getEndpoint().getExchangePattern().equals(ExchangePattern.InOnly)) {
             if (isTransacted()) {
                 messageHandler = new InOnlyMessageHandler(getEndpoint(), executor, synchronization);
             } else {
@@ -251,20 +249,16 @@ public class SjmsConsumer extends DefaultConsumer {
         return messageHandler;
     }
 
-    protected SjmsEndpoint getSjmsEndpoint() {
-        return (SjmsEndpoint)this.getEndpoint();
-    }
-
     protected ConnectionResource getConnectionResource() {
-        return getSjmsEndpoint().getConnectionResource();
+        return getEndpoint().getConnectionResource();
     }
 
     protected SessionPool getSessionPool() {
-        return getSjmsEndpoint().getSessions();
+        return getEndpoint().getSessions();
     }
 
     public int getAcknowledgementMode() {
-        return getSjmsEndpoint().getAcknowledgementMode().intValue();
+        return getEndpoint().getAcknowledgementMode().intValue();
     }
 
     /**
@@ -273,7 +267,7 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return true if transacted, otherwise false
      */
     public boolean isTransacted() {
-        return getSjmsEndpoint().isTransacted();
+        return getEndpoint().isTransacted();
     }
 
     /**
@@ -282,7 +276,7 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return true if synchronous
      */
     public boolean isSynchronous() {
-        return getSjmsEndpoint().isSynchronous();
+        return getEndpoint().isSynchronous();
     }
 
     /**
@@ -291,7 +285,7 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return String
      */
     public String getDestinationName() {
-        return getSjmsEndpoint().getDestinationName();
+        return getEndpoint().getDestinationName();
     }
 
     /**
@@ -300,7 +294,7 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return the consumerCount
      */
     public int getConsumerCount() {
-        return getSjmsEndpoint().getConsumerCount();
+        return getEndpoint().getConsumerCount();
     }
 
     /**
@@ -310,14 +304,14 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return the topic true if consumer is a JMS Topic, default is false
      */
     public boolean isTopic() {
-        return getSjmsEndpoint().isTopic();
+        return getEndpoint().isTopic();
     }
 
     /**
      * Gets the JMS Message selector syntax.
      */
     public String getMessageSelector() {
-        return getSjmsEndpoint().getMessageSelector();
+        return getEndpoint().getMessageSelector();
     }
 
     /**
@@ -326,7 +320,7 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return the durableSubscriptionId
      */
     public String getDurableSubscriptionId() {
-        return getSjmsEndpoint().getDurableSubscriptionId();
+        return getEndpoint().getDurableSubscriptionId();
     }
 
     /**
@@ -335,7 +329,7 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return the transactionCommitStrategy
      */
     public TransactionCommitStrategy getTransactionCommitStrategy() {
-        return getSjmsEndpoint().getTransactionCommitStrategy();
+        return getEndpoint().getTransactionCommitStrategy();
     }
 
     /**
@@ -345,7 +339,7 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return the transactionBatchCount
      */
     public int getTransactionBatchCount() {
-        return getSjmsEndpoint().getTransactionBatchCount();
+        return getEndpoint().getTransactionBatchCount();
     }
 
     /**
@@ -354,6 +348,6 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return long
      */
     public long getTransactionBatchTimeout() {
-        return getSjmsEndpoint().getTransactionBatchTimeout();
+        return getEndpoint().getTransactionBatchTimeout();
     }
 }

@@ -44,7 +44,7 @@ public class FileConsumerTemplateTest extends ContextTestSupport {
         assertEquals("Hello World", body);
 
         // file should be deleted
-        File file = new File("target/consumer/hello.txt").getAbsoluteFile();
+        File file = new File("target/consumer/hello.txt");
         assertFalse("File should be deleted " + file, file.exists());
     }
 

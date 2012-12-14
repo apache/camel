@@ -274,6 +274,18 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.antFilter.setExcludes(antExclude);
     }
 
+    /**
+     * Sets case sensitive flag on {@link org.apache.camel.component.file.AntPathMatcherFileFilter}
+     * <p/>
+     * Is by default turned on <tt>true</tt>.
+     */
+    public void setAntFilterCaseSensitive(boolean antFilterCaseSensitive) {
+        if (this.antFilter == null) {
+            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
+        }
+        this.antFilter.setCaseSensitive(antFilterCaseSensitive);
+    }
+
     public GenericFileFilter<T> getAntFilter() {
         return antFilter;
     }

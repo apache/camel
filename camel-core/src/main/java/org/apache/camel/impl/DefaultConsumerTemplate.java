@@ -42,12 +42,12 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultConsumerTemplate.class);
-    private final CamelContext context;
+    private final CamelContext camelContext;
     private ConsumerCache consumerCache;
     private int maximumCacheSize;
 
-    public DefaultConsumerTemplate(CamelContext context) {
-        this.context = context;
+    public DefaultConsumerTemplate(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public int getMaximumCacheSize() {
@@ -65,8 +65,16 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return consumerCache.size();
     }
 
+    /**
+     * @deprecated use {@link #getCamelContext()}
+     */
+    @Deprecated
+    public CamelContext getContext() {
+        return getCamelContext();
+    }
+
     public CamelContext getCamelContext() {
-        return context;
+        return camelContext;
     }
 
     public Exchange receive(String endpointUri) {
@@ -147,7 +155,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         Exchange exchange = receive(endpointUri);
         try {
             answer = extractResultBody(exchange);
-            answer = context.getTypeConverter().convertTo(type, answer);
+            answer = camelContext.getTypeConverter().convertTo(type, answer);
         } finally {
             doneUoW(exchange);
         }
@@ -164,7 +172,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         Exchange exchange = receive(endpointUri, timeout);
         try {
             answer = extractResultBody(exchange);
-            answer = context.getTypeConverter().convertTo(type, answer);
+            answer = camelContext.getTypeConverter().convertTo(type, answer);
         } finally {
             doneUoW(exchange);
         }
@@ -181,7 +189,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         Exchange exchange = receiveNoWait(endpointUri);
         try {
             answer = extractResultBody(exchange);
-            answer = context.getTypeConverter().convertTo(type, answer);
+            answer = camelContext.getTypeConverter().convertTo(type, answer);
         } finally {
             doneUoW(exchange);
         }
@@ -213,7 +221,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     }
 
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
-        return CamelContextHelper.getMandatoryEndpoint(context, endpointUri);
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, endpointUri);
     }
 
     /**
@@ -255,9 +263,9 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             if (maximumCacheSize > 0) {
-                consumerCache = new ConsumerCache(this, context, maximumCacheSize);
+                consumerCache = new ConsumerCache(this, camelContext, maximumCacheSize);
             } else {
-                consumerCache = new ConsumerCache(this, context);
+                consumerCache = new ConsumerCache(this, camelContext);
             }
         }
         ServiceHelper.startService(consumerCache);

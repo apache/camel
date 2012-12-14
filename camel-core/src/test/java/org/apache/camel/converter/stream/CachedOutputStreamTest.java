@@ -41,10 +41,10 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         
-        context.getProperties().put(CachedOutputStream.TEMP_DIR, "./target/cachedir");
+        context.getProperties().put(CachedOutputStream.TEMP_DIR, "target/cachedir");
         context.getProperties().put(CachedOutputStream.THRESHOLD, "16");
-        deleteDirectory("./target/cachedir");
-        createDirectory("./target/cachedir");
+        deleteDirectory("target/cachedir");
+        createDirectory("target/cachedir");
 
         exchange = new DefaultExchange(context);
         UnitOfWork uow = new DefaultUnitOfWork(exchange);
@@ -67,7 +67,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
-        File file = new File("./target/cachedir");
+        File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
@@ -98,7 +98,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
-        File file = new File("./target/cachedir");
+        File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
@@ -124,7 +124,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
-        File file = new File("./target/cachedir");
+        File file = new File("target/cachedir");
         String[] files = file.list();
 
         assertEquals("we should have no temp file", files.length, 0);
@@ -141,7 +141,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
-        File file = new File("./target/cachedir");
+        File file = new File("target/cachedir");
         String[] files = file.list();
 
         assertEquals("we should have no temp file", files.length, 0);
@@ -163,7 +163,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("we should have a custom buffer size", cos.getBufferSize(), 4096);
         
         // make sure things still work after custom buffer size set
-        File file = new File("./target/cachedir");
+        File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));              

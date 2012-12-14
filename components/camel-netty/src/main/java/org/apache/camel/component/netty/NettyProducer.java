@@ -24,6 +24,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultAsyncProducer;
@@ -39,7 +40,6 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.ChannelLocal;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
@@ -60,7 +60,6 @@ public class NettyProducer extends DefaultAsyncProducer {
     private CamelLogger noReplyLogger;
     private ExecutorService bossExecutor;
     private ExecutorService workerExecutor;
-    private final ChannelLocal<NettyCamelState> state = new ChannelLocal<NettyCamelState>();
     private ObjectPool<Channel> pool;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
@@ -207,13 +206,19 @@ public class NettyProducer extends DefaultAsyncProducer {
             return true;
         }
 
+        // we must have a channel
+        if (existing == null) {
+            exchange.setException(new CamelExchangeException("Cannot get channel from pool", exchange));
+            callback.done(true);
+            return true;
+        }
+
         // need to declare as final
         final Channel channel = existing;
         final AsyncCallback producerCallback = new NettyProducerCallback(channel, callback);
 
-        // setup state now we have the channel we can do this because
-        // this producer is not thread safe, but pooled using ServicePoolAware
-        state.set(channel, new NettyCamelState(producerCallback, exchange));
+        // setup state as attachment on the channel, so we can access the state later when needed
+        channel.setAttachment(new NettyCamelState(producerCallback, exchange));
 
         // write body
         NettyHelper.writeBodyAsync(LOG, channel, null, body, exchange, new ChannelFutureListener() {
@@ -261,18 +266,18 @@ public class NettyProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * To get the {@link NettyCamelState} from this producer.
+     * To get the {@link NettyCamelState} from the given channel.
      */
     public NettyCamelState getState(Channel channel) {
-        return state.get(channel);
+        return (NettyCamelState) channel.getAttachment();
     }
 
     /**
-     * To remove the {@link NettyCamelState} stored on this producer,
+     * To remove the {@link NettyCamelState} stored on the channel,
      * when no longer needed
      */
     public void removeState(Channel channel) {
-        state.remove(channel);
+        channel.setAttachment(null);
     }
 
     protected void setupTCPCommunication() throws Exception {
@@ -302,6 +307,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         ChannelFuture answer;
 
         if (isTcp()) {
+            // its okay to create a new bootstrap for each new channel
             ClientBootstrap clientBootstrap = new ClientBootstrap(channelFactory);
             clientBootstrap.setOption("keepAlive", configuration.isKeepAlive());
             clientBootstrap.setOption("tcpNoDelay", configuration.isTcpNoDelay());
@@ -314,6 +320,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             LOG.trace("Created new TCP client bootstrap connecting to {}:{}", configuration.getHost(), configuration.getPort());
             return answer;
         } else {
+            // its okay to create a new bootstrap for each new channel
             ConnectionlessBootstrap connectionlessClientBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
             connectionlessClientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
             connectionlessClientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());

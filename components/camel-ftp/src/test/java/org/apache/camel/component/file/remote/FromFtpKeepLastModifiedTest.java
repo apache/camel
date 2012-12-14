@@ -54,13 +54,13 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("./target/keep/out/hello.txt");
+        mock.expectedFileExists("target/keep/out/hello.txt");
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class).getTime();
-        long t2 = new File("./target/keep/out/hello.txt").lastModified();
+        long t2 = new File("target/keep/out/hello.txt").lastModified();
 
         assertEquals("Timestamp should have been kept", t1, t2);
     }
@@ -78,13 +78,13 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("./target/keep/out/hello.txt");
+        mock.expectedFileExists("target/keep/out/hello.txt");
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class).getTime();
-        long t2 = new File("./target/keep/out/hello.txt").lastModified();
+        long t2 = new File("target/keep/out/hello.txt").lastModified();
 
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
     }
@@ -102,13 +102,13 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("./target/keep/out/hello.txt");
+        mock.expectedFileExists("target/keep/out/hello.txt");
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class).getTime();
-        long t2 = new File("./target/keep/out/hello.txt").lastModified();
+        long t2 = new File("target/keep/out/hello.txt").lastModified();
 
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
     }

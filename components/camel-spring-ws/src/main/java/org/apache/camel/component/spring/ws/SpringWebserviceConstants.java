@@ -22,6 +22,12 @@ public final class SpringWebserviceConstants {
     public static final String SPRING_WS_ENDPOINT_URI = "CamelSpringWebserviceEndpointUri";
     public static final String SPRING_WS_SOAP_ACTION = "CamelSpringWebserviceSoapAction";
     public static final String SPRING_WS_ADDRESSING_ACTION = "CamelSpringWebserviceAddressingAction";
+    public static final String SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO =  "CamelSpringWebserviceAddressingFaultTo";
+    public static final String SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO = "CamelSpringWebserviceAddressingReplyTo";
+    
+    /* Consumers constants (reserved, not impl. yet) */    
+    public static final String SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION = "CamelSpringWebserviceAddressingOutputAction";
+    public static final String SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION = "CamelSpringWebserviceAddressingFaultAction";
 
     private SpringWebserviceConstants() {
     }

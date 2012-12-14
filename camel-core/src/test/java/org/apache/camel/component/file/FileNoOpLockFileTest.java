@@ -73,7 +73,6 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         filename += "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
 
         File file = new File(filename);
-        file = file.getAbsoluteFile();
         assertEquals("Lock file should " + (expected ? "exists" : "not exists"), expected, file.exists());
     }
 

@@ -41,7 +41,6 @@ public class FtpLoginTest extends FtpServerTestSupport {
 
         // assert file NOT created
         File file = new File(FTP_ROOT_DIR + "/login/report.txt");
-        file = file.getAbsoluteFile();
         assertFalse("The file should NOT exists", file.exists());
     }
 
@@ -51,7 +50,6 @@ public class FtpLoginTest extends FtpServerTestSupport {
 
         // assert file created
         File file = new File(FTP_ROOT_DIR + "/login/report.txt");
-        file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
 

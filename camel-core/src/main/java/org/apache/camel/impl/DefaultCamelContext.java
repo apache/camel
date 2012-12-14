@@ -718,7 +718,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void startRoute(RouteDefinition route) throws Exception {
-        // validate that the id's is all unique
+        // assign ids to the routes and validate that the id's is all unique
+        RouteDefinitionHelper.forceAssignIds(this, routeDefinitions);
         String duplicate = RouteDefinitionHelper.validateUniqueIds(route, routeDefinitions);
         if (duplicate != null) {
             throw new FailedToStartRouteException(route.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
@@ -1873,21 +1874,28 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         routeService.setRemovingRoutes(removingRoutes);
         stopRouteService(routeService);
     }
+    
+    protected void logRouteState(Route route, String state) {
+        if (log.isInfoEnabled()) {
+            if (route.getConsumer() != null) {
+                log.info("Route: {} is {}, was consuming from: {}", new Object[]{route.getId(), state, route.getConsumer().getEndpoint()});
+            } else {
+                log.info("Route: {} is {}.", route.getId(), state);
+            }
+        }
+    }
+    
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
         for (Route route : routeService.getRoutes()) {
-            if (log.isInfoEnabled()) {
-                log.info("Route: " + route.getId() + " stopped, was consuming from: " + route.getConsumer().getEndpoint());
-            }
+            logRouteState(route, "stopped");
         }
     }
 
     protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
         routeService.shutdown();
         for (Route route : routeService.getRoutes()) {
-            if (log.isInfoEnabled()) {
-                log.info("Route: " + route.getId() + " shutdown and removed, was consuming from: " + route.getConsumer().getEndpoint());
-            }
+            logRouteState(route, "shutdown and removed");
         }
     }
 
@@ -1895,9 +1903,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         routeService.setRemovingRoutes(false);
         routeService.suspend();
         for (Route route : routeService.getRoutes()) {
-            if (log.isInfoEnabled()) {
-                log.info("Route: " + route.getId() + " suspended, was consuming from: " + route.getConsumer().getEndpoint());
-            }
+            logRouteState(route, "suspended");
         }
     }
 

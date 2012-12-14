@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerExcludeNameTest extends ContextTestSupport {
 
     public void testExludePreAndPostfixes() throws Exception {
-        deleteDirectory("./target/exclude");
+        deleteDirectory("target/exclude");
         prepareFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:result");

@@ -74,12 +74,12 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
         Thread.sleep(6000);
 
         // and the out file should exists
-        File out = new File("target/out/hello.txt").getAbsoluteFile();
+        File out = new File("target/out/hello.txt");
         assertTrue("file should exists", out.exists());
         assertEquals("Hello World", IOConverter.toString(out, null));
 
         // now the lwd file should be deleted
-        File local = new File("target/lwd/hello.txt").getAbsoluteFile();
+        File local = new File("target/lwd/hello.txt");
         assertFalse("Local work file should have been deleted", local.exists());
     }
 

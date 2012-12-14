@@ -28,7 +28,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/include");
+        deleteDirectory("target/include");
         super.setUp();
     }
 

@@ -59,7 +59,6 @@ public abstract class AbstractMessageHandler implements MessageListener {
     }
 
     public AbstractMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
-        super();
         this.synchronization = synchronization;
         this.endpoint = endpoint;
         this.executor = executor;

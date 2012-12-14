@@ -50,6 +50,8 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         Exchange out = consumer.receive("seda:foo");
         assertNotNull(out);
         assertEquals("Hello", out.getIn().getBody());
+
+        assertSame(context, consumer.getCamelContext());
     }
 
     public void testConsumeTwiceReceive() throws Exception {
@@ -344,7 +346,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
         // file should still exists
-        File file = new File("target/foo/hello.txt").getAbsoluteFile();
+        File file = new File("target/foo/hello.txt");
         assertTrue("File should exist " + file, file.exists());
 
         // done the exchange

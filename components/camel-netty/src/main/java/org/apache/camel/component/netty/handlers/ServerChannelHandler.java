@@ -27,7 +27,6 @@ import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
@@ -67,6 +66,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel closed: {}", e.getChannel());
         }
+        consumer.getAllChannels().remove(e.getChannel());
     }
 
     @Override
@@ -134,7 +134,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
 
     private void sendResponse(MessageEvent messageEvent, Exchange exchange) throws Exception {
         Object body;
-        if (ExchangeHelper.isOutCapable(exchange)) {
+        if (exchange.hasOut()) {
             body = NettyPayloadHelper.getOut(consumer.getEndpoint(), exchange);
         } else {
             body = NettyPayloadHelper.getIn(consumer.getEndpoint(), exchange);
@@ -194,14 +194,13 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         public void operationComplete(ChannelFuture future) throws Exception {
             // if it was not a success then thrown an exception
             if (!future.isSuccess()) {
-                future.getCause().printStackTrace();
                 Exception e = new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.getCause());
                 consumer.getExceptionHandler().handleException(e);
             }
 
             // should channel be closed after complete?
             Boolean close;
-            if (ExchangeHelper.isOutCapable(exchange)) {
+            if (exchange.hasOut()) {
                 close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
             } else {
                 close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);

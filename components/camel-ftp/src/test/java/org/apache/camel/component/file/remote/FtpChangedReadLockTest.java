@@ -46,7 +46,7 @@ public class FtpChangedReadLockTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/changed/out/slowfile.dat").getAbsoluteFile());
+        String content = context.getTypeConverter().convertTo(String.class, new File("target/changed/out/slowfile.dat"));
         String[] lines = content.split(LS);
         assertEquals("There should be 20 lines in the file", 20, lines.length);
         for (int i = 0; i < 20; i++) {

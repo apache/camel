@@ -24,7 +24,6 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.junit.Test;

@@ -26,7 +26,7 @@ public class SimpleJmsComponentTest extends CamelTestSupport {
 
     @Test
     public void testHelloWorld() throws Exception {
-        SjmsComponent component = (SjmsComponent)this.context.getComponent("sjms");
+        SjmsComponent component = context.getComponent("sjms", SjmsComponent.class);
         assertNotNull(component);
     }
 

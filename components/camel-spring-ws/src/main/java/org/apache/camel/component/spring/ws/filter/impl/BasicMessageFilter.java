@@ -105,8 +105,12 @@ public class BasicMessageFilter implements MessageFilter {
         HashSet<String> headerKeySet = new HashSet<String>(headers.keySet());
 
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION.toLowerCase());
-        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION.toLowerCase());
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI.toLowerCase());
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION.toLowerCase());
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO.toLowerCase());
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO.toLowerCase());
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION.toLowerCase());
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION.toLowerCase());
 
         headerKeySet.remove(LOWERCASE_BREADCRUMB_ID);
 

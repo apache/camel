@@ -19,14 +19,14 @@ package org.apache.camel.processor;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Traceable;
 import org.apache.camel.util.ServiceHelper;
 
 /**
  * A processor which ensures wrapping processors is having lifecycle handled.
- *
- * @version 
  */
-public class WrapProcessor extends DelegateAsyncProcessor {
+public class WrapProcessor extends DelegateAsyncProcessor implements Traceable {
+
     private final Processor wrapped;
 
     public WrapProcessor(Processor processor, Processor wrapped) {
@@ -37,6 +37,10 @@ public class WrapProcessor extends DelegateAsyncProcessor {
     @Override
     public String toString() {
         return "Wrap[" + wrapped + "] -> " + processor;
+    }
+    
+    public String getTraceLabel() {
+        return "wrap[" + wrapped + "]";
     }
 
     @Override

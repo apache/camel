@@ -47,7 +47,7 @@ public class FilePollEnrichTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // file should be moved
-        File file = new File("target/pollenrich/hello.txt").getAbsoluteFile();
+        File file = new File("target/pollenrich/hello.txt");
         assertFalse("File should have been moved", file.exists());
     }
 

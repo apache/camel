@@ -296,6 +296,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:fail", "E");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // ignore
         }
@@ -321,6 +322,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:fail", "G");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // ignore
         }
@@ -424,12 +426,14 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:fail", "D");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // ignore
         }
 
         try {
             template.sendBody("direct:fail", "E");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // ignore
         }
@@ -500,6 +504,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:fail", "D");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // ignore
         }
@@ -509,6 +514,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:fail", "F");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // ignore
         }
@@ -519,6 +525,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:fail", "H");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // ignore
         }

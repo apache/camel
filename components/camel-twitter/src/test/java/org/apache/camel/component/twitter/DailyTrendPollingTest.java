@@ -16,42 +16,24 @@
  */
 package org.apache.camel.component.twitter;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+ 
 /**
  * consumes tweets
  */
-public class DailyTrendPollingTest extends CamelTwitterTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DailyTrendPollingTest.class);
-
-    @Test
-    public void testDailyTrendPoll() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.assertIsSatisfied();
-        List<Exchange> tweets = mock.getExchanges();
-        if (LOG.isInfoEnabled()) {
-            for (Exchange e : tweets) {
-                LOG.info("Tweet: " + e.getIn().getBody(String.class));
-            }
-        }
+public class DailyTrendPollingTest extends CamelTwitterConsumerTestSupport {
+    
+    @Override
+    protected String getUri() {
+        // DO NOT test with 'date='.  Twitter only allows dates up to
+        // a certain limit, so we can't have that as a long-term test
+        return "twitter://trends/daily?type=polling&";
     }
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                // DO NOT test with 'date='.  Twitter only allows dates up to
-                // a certain limit, so we can't have that as a long-term test.
-                from("twitter://trends/daily?type=polling&" + getUriTokens())
-                        .transform(body().convertToString()).to("mock:result");
-            }
-        };
+    @Override
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(DailyTrendPollingTest.class);
     }
+
 }

@@ -63,7 +63,7 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
                 // must process synchronous if transacted or configured to
                 // do so
                 if (log.isDebugEnabled()) {
-                    log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
+                    log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
                 }
                 try {
                     AsyncProcessorHelper.process(getProcessor(), exchange);
@@ -74,7 +74,7 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
                 }
             } else {
                 // process asynchronous using the async routing engine
-                log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), this.getEndpoint().getEndpointUri());
+                log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
                 boolean sync = false;
 
                 sync = AsyncProcessorHelper.process(getProcessor(), exchange, callback);

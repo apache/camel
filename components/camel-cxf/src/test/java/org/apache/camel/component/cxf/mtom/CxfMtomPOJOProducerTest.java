@@ -31,7 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 
-import org.apache.camel.component.cxf.TestHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

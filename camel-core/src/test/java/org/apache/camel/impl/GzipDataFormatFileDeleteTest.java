@@ -42,10 +42,10 @@ public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
 
         oneExchangeDone.matchesMockWaitTime();
 
-        File in = new File("target/gzip/hello.txt").getAbsoluteFile();
+        File in = new File("target/gzip/hello.txt");
         assertFalse("Should have been deleted " + in, in.exists());
 
-        File out = new File("target/gzip/out/hello.txt.gz").getAbsoluteFile();
+        File out = new File("target/gzip/out/hello.txt.gz");
         assertTrue("Should have been created " + out, out.exists());
     }
 

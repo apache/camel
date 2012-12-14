@@ -41,7 +41,7 @@ public class SftpProduceTempFileTest extends SftpServerTestSupport {
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
                 + "?username=admin&password=admin&tempFileName=temp-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/hello.txt");
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -55,7 +55,7 @@ public class SftpProduceTempFileTest extends SftpServerTestSupport {
         template.sendBodyAndHeader("sftp://localhost:" + getPort()
                 + "/?username=admin&password=admin&tempFileName=temp-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("./hello.txt").getAbsoluteFile();
+        File file = new File("hello.txt");
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 

@@ -277,6 +277,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     public void populateCxfResponseFromExchange(Exchange camelExchange, 
             org.apache.cxf.message.Exchange cxfExchange) {
         
+        if (cxfExchange.isOneWay()) {
+            return;
+        }
+        
         // create response context
         Map<String, Object> responseContext = new HashMap<String, Object>();
         

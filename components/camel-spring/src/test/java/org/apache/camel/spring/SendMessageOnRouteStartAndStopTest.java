@@ -40,7 +40,7 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
 
         // the event notifier should have send a message to the file endpoint
         // so the start file is created on startup
-        File start = new File("target/startandstop/start.txt").getAbsoluteFile();
+        File start = new File("target/startandstop/start.txt");
         assertTrue("Start file should exist on startup", start.exists());
     }
 
@@ -50,7 +50,7 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
 
         // the event notifier should have send a message to the file endpoint
         // so the stop file is created on shutdown
-        File start = new File("target/startandstop/stop.txt").getAbsoluteFile();
+        File start = new File("target/startandstop/stop.txt");
         assertTrue("Stop file should exist on shutdown", start.exists());
     }
 

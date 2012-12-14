@@ -45,7 +45,6 @@ public class JmsFilenameHeaderTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         File file = new File("target/" + filename);
-        file = file.getAbsoluteFile();
         assertTrue("The file should have been produced with filename: " + filename, file.exists());
     }
 

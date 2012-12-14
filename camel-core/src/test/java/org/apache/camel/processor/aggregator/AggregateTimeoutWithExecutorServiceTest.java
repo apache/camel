@@ -57,7 +57,7 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
         Thread[] threads = new Thread[threadGroup.activeCount()];
         threadGroup.enumerate(threads);
         for (Thread thread : threads) {
-            if (thread.getName().contains(AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER)) {
+            if (thread != null && thread.getName().contains(AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER)) {
                 ++count;
             }
         }

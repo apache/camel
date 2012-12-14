@@ -45,7 +45,7 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
 
         oneExchangeDone.matchesMockWaitTime();
 
-        File pre = new File("target/premove/work/hello.txt").getAbsoluteFile();
+        File pre = new File("target/premove/work/hello.txt");
         assertTrue("Pre move file should exist", pre.exists());
     }
 
@@ -68,7 +68,7 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
-        File pre = new File("target/premove/work/hello.txt").getAbsoluteFile();
+        File pre = new File("target/premove/work/hello.txt");
         assertTrue("Pre move file should exist", pre.exists());
     }
 
@@ -87,7 +87,7 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
     public static class MyPreMoveCheckerProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            File pre = new File("target/premove/work/hello.txt").getAbsoluteFile();
+            File pre = new File("target/premove/work/hello.txt");
             assertTrue("Pre move file should exist", pre.exists());
         }
     }

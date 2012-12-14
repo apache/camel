@@ -468,7 +468,7 @@ public abstract class TestSupport extends TestCase {
      * To be used to check is a file is found in the file system
      */
     public static void assertFileExists(String filename) {
-        File file = new File(filename).getAbsoluteFile();
+        File file = new File(filename);
         assertTrue("File " + filename + " should exist", file.exists());
     }
 
@@ -476,7 +476,7 @@ public abstract class TestSupport extends TestCase {
      * To be used to check is a file is <b>not</b> found in the file system
      */
     public static void assertFileNotExists(String filename) {
-        File file = new File(filename).getAbsoluteFile();
+        File file = new File(filename);
         assertFalse("File " + filename + " should not exist", file.exists());
     }
 
@@ -506,4 +506,16 @@ public abstract class TestSupport extends TestCase {
         return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
     }
 
+    /**
+     * Is this version the given Java version.
+     * <p/>
+     * Uses <tt>java.version</tt> from the system properties to determine the version.
+     *
+     * @param vendor such as IBM
+     * @return <tt>true</tt> if its that vendor.
+     */
+    public static boolean isJavaVersion(String version) {
+        String javaVersion = System.getProperty("java.version");
+        return javaVersion.indexOf(version.toLowerCase(Locale.US)) > -1;
+    }
 }

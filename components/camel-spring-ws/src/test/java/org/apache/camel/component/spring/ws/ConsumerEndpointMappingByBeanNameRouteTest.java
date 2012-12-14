@@ -18,9 +18,11 @@ package org.apache.camel.component.spring.ws;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.component.spring.ws.utils.TestUtil;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +51,7 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, sw.toString());
+        TestUtil.assertEqualsIgnoreNewLinesSymbol(expectedResponse, sw.toString());
     }
 
     @Override
