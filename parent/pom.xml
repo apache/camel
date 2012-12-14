@@ -57,7 +57,8 @@
     <avro-bundle-version>1.7.1_1</avro-bundle-version>
     <aws-java-sdk-bundle-version>1.3.14_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.3.25</aws-java-sdk-version>
-    <axiom-version>1.2.12</axiom-version>
+    <!--we must use axiom 1.2.10 with abdera 1.1.2, CAMEL-5109 has more details-->
+    <axiom-version>1.2.10</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
     <beanio-version>2.0.2</beanio-version>
