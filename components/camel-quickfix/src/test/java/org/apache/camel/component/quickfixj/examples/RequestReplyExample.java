@@ -32,6 +32,7 @@ import org.apache.camel.component.quickfixj.MessagePredicate;
 import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
 import org.apache.camel.component.quickfixj.QuickfixjEventCategory;
 import org.apache.camel.component.quickfixj.QuickfixjProducer;
+import org.apache.camel.component.quickfixj.examples.transform.QuickfixjMessageJsonPrinter;
 import org.apache.camel.component.quickfixj.examples.transform.QuickfixjMessageJsonTransformer;
 import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecrementer;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -77,11 +78,12 @@ public class RequestReplyExample {
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon)).
                     bean(new CountDownLatchDecrementer("logon", logonLatch));
 
-                // Incoming status requests are converted to InOut exchange pattern and passed to the
-                // order status service. The response is sent back to the session making the request.
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
+                // Incoming status requests are passed to the order status service and afterwards we print out that
+                // order status being delivered using the json printer.
+                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER")
                     .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
-                    .bean(new MarketOrderStatusService());
+                    .bean(new MarketOrderStatusService())
+                    .bean(new QuickfixjMessageJsonPrinter());
                 
                 from("jetty:" + orderStatusServiceUrl)
                     .bean(new OrderStatusRequestTransformer())
@@ -115,7 +117,7 @@ public class RequestReplyExample {
                 sb.append('\n');
                 line = orderStatusReply.readLine();
             }
-            LOG.info("Web request response:\n" + sb);
+            LOG.info("Web request:\n" + sb);
         }
         orderStatusReply.close();
         

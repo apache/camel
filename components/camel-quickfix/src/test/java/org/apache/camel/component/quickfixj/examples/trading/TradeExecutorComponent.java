@@ -35,6 +35,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,7 +118,7 @@ public class TradeExecutorComponent extends DefaultComponent {
                 }
 
                 private void setOptionalField(Header header, SessionID sessionID, int tag, String value) {
-                    if (value != null && value.length() > 0) {
+                    if (!ObjectHelper.isEmpty(value)) {
                         header.setString(tag, value);
                     }
                 }
