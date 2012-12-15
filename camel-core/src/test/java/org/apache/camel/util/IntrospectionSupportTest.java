@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -355,6 +356,24 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Method setupSomething = bean.getClass().getMethod("setupSomething", Object.class);
         assertEquals(false, IntrospectionSupport.isGetter(setupSomething));
         assertEquals(false, IntrospectionSupport.isSetter(setupSomething));
+    }
+
+    public void testExtractProperties() throws Exception {
+        Map<String, Object> params = new LinkedHashMap<String, Object>();
+        params.put("foo.name", "Camel");
+        params.put("foo.age", 5);
+        params.put("bar", "yes");
+
+        // extract all "foo." properties
+        // and their keys should have the prefix removed
+        Map<String, Object> foo = IntrospectionSupport.extractProperties(params, "foo.");
+        assertEquals(2, foo.size());
+        assertEquals("Camel", foo.get("name"));
+        assertEquals(5, foo.get("age"));
+
+        // the extracted properties should be removed from original
+        assertEquals(1, params.size());
+        assertEquals("yes", params.get("bar"));
     }
 }
 
