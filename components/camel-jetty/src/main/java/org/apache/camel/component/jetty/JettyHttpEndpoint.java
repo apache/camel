@@ -18,15 +18,19 @@ package org.apache.camel.component.jetty;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.Filter;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.server.Handler;
@@ -49,6 +53,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private Long continuationTimeout;
     private Boolean useContinuation;
     private SSLContextParameters sslContextParameters;
+    private Map<String, Object> httpClientParameters;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -63,15 +68,32 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     public Producer createProducer() throws Exception {
         JettyHttpProducer answer = new JettyHttpProducer(this);
         if (client != null) {
-            // use shared client
+            // use shared client, and ensure its started so we can use it
+            client.start();
             answer.setSharedClient(client);
         } else {
             // create a new client
             // thread pool min/max from endpoint take precedence over from component
             Integer min = httpClientMinThreads != null ? httpClientMinThreads : getComponent().getHttpClientMinThreads();
             Integer max = httpClientMaxThreads != null ? httpClientMaxThreads : getComponent().getHttpClientMaxThreads();
-            answer.setClient(JettyHttpComponent.createHttpClient(min, max, sslContextParameters));
+            HttpClient httpClient = JettyHttpComponent.createHttpClient(min, max, sslContextParameters);
+
+            // set optional http client parameters
+            if (httpClientParameters != null) {
+                // copy parameters as we need to re-use them again if creating a new producer later
+                Map<String, Object> params = new HashMap<String, Object>(httpClientParameters);
+                IntrospectionSupport.setProperties(httpClient, params);
+                // validate we could set all parameters
+                if (params.size() > 0) {
+                    throw new ResolveEndpointFailedException(getEndpointUri(), "There are " + params.size()
+                            + " parameters that couldn't be set on the endpoint."
+                            + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                            + " Unknown parameters=[" + params + "]");
+                }
+            }
+            answer.setClient(httpClient);
         }
+
         answer.setBinding(getJettyBinding());
         if (isSynchronous()) {
             return new SynchronousDelegateProducer(answer);
@@ -109,6 +131,11 @@ public class JettyHttpEndpoint extends HttpEndpoint {
      * Sets a shared {@link HttpClient} to use for all producers
      * created by this endpoint. By default each producer will
      * use a new http client, and not share.
+     * <p/>
+     * <b>Important: </b> Make sure to handle the lifecycle of the shared
+     * client, such as stopping the client, when it is no longer in use.
+     * Camel will call the <tt>start</tt> method on the client to ensure
+     * its started when this endpoint creates a producer.
      * <p/>
      * This options should only be used in special circumstances.
      */
@@ -186,19 +213,28 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         this.sslContextParameters = sslContextParameters;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        if (client != null) {
-            client.start();
-        }
-        super.doStart();
+    public Integer getHttpClientMinThreads() {
+        return httpClientMinThreads;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (client != null) {
-            client.stop();
-        }
+    public void setHttpClientMinThreads(Integer httpClientMinThreads) {
+        this.httpClientMinThreads = httpClientMinThreads;
     }
+
+    public Integer getHttpClientMaxThreads() {
+        return httpClientMaxThreads;
+    }
+
+    public void setHttpClientMaxThreads(Integer httpClientMaxThreads) {
+        this.httpClientMaxThreads = httpClientMaxThreads;
+    }
+
+    public Map<String, Object> getHttpClientParameters() {
+        return httpClientParameters;
+    }
+
+    public void setHttpClientParameters(Map<String, Object> httpClientParameters) {
+        this.httpClientParameters = httpClientParameters;
+    }
+
 }

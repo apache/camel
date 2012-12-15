@@ -127,8 +127,7 @@ public class JettyHttpComponent extends HttpComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
-        
+
         // must extract well known parameters before we create the endpoint
         List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
@@ -147,40 +146,20 @@ public class JettyHttpComponent extends HttpComponent {
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
-
-        // configure http client if we have url configuration for it
-        // http client is only used for jetty http producer (hence not very commonly used)
-        HttpClient client = null;
-        if (IntrospectionSupport.hasProperties(parameters, "httpClient.") || sslContextParameters != null) {
-            client = createHttpClient(httpClientMinThreads, httpClientMaxThreads, ssl);
-
-            if (IntrospectionSupport.hasProperties(parameters, "httpClient.")) {
-                // set additional parameters on http client
-                IntrospectionSupport.setProperties(client, parameters, "httpClient.");
-                // validate that we could resolve all httpClient. parameters as this component is lenient
-                validateParameters(uri, parameters, "httpClient.");
-            }
-            
-            if (ssl != null) {
-                ((CamelHttpClient) client).setSSLContext(ssl.createSSLContext());
-            }
-        }
-        // keep the configure parameters for the http client
-        for (String key : parameters.keySet()) {
-            httpClientParameters.remove(key);
-        }
+        // extract httpClient. parameters
+        Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
 
         String address = remaining;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encode(address));
-        URI endpointUri = URISupport.createRemainingURI(addressUri, httpClientParameters);
+        URI endpointUri = URISupport.createRemainingURI(addressUri, parameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
         setEndpointHeaderFilterStrategy(endpoint);
 
-        if (client != null) {
-            endpoint.setClient(client);
+        if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
+            endpoint.setHttpClientParameters(httpClientParameters);
         }
         if (handlerList.size() > 0) {
             endpoint.setHandlers(handlerList);
