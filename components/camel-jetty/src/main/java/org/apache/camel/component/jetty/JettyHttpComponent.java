@@ -131,8 +131,7 @@ public class JettyHttpComponent extends HttpComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
-        
+
         // must extract well known parameters before we create the endpoint
         List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
@@ -149,57 +148,21 @@ public class JettyHttpComponent extends HttpComponent {
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
-        
-        
-        // configure http client if we have url configuration for it
-        // http client is only used for jetty http producer (hence not very commonly used)
-        HttpClient client = null;
-        if (IntrospectionSupport.hasProperties(parameters, "httpClient.") || sslContextParameters != null) {
-            client = getNewHttpClient();
-            
-            if (IntrospectionSupport.hasProperties(parameters, "httpClient.")) {
-                if (isExplicitHttpClient) {
-                    LOG.warn("The user explicitly set an HttpClient instance on the component, "
-                             + "but this endpoint provides HttpClient configuration.  Are you sure that "
-                             + "this is what was intended?  Applying endpoint configuration to a new HttpClient instance "
-                             + "to avoid altering existing HttpClient instances.");
-                }
-            
-                // set additional parameters on http client
-                IntrospectionSupport.setProperties(client, parameters, "httpClient.");
-                // validate that we could resolve all httpClient. parameters as this component is lenient
-                validateParameters(uri, parameters, "httpClient.");
-            }
-            
-            // Note that the component level instance is already configured in getNewHttpClient.
-            // We replace it here for endpoint level config.
-            if (sslContextParameters != null) {
-                if (isExplicitHttpClient) {
-                    LOG.warn("The user explicitly set an HttpClient instance on the component, "
-                             + "but this endpoint provides SSLContextParameters configuration.  Are you sure that "
-                             + "this is what was intended?  Applying endpoint configuration to a new HttpClient instance "
-                             + "to avoid altering existing HttpClient instances.");
-                }
-                
-                ((CamelHttpClient) client).setSSLContext(sslContextParameters.createSSLContext());
-            }
-        }
-        // keep the configure parameters for the http client
-        for (String key : parameters.keySet()) {
-            httpClientParameters.remove(key);
-        }
+        SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
+        // extract httpClient. parameters
+        Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
 
         String address = remaining;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encode(address));
-        URI endpointUri = URISupport.createRemainingURI(addressUri, httpClientParameters);
+        URI endpointUri = URISupport.createRemainingURI(addressUri, parameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
         setEndpointHeaderFilterStrategy(endpoint);
 
-        if (client != null) {
-            endpoint.setClient(client);
+        if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
+            endpoint.setHttpClientParameters(httpClientParameters);
         }
         if (handlerList.size() > 0) {
             endpoint.setHandlers(handlerList);
@@ -242,12 +205,10 @@ public class JettyHttpComponent extends HttpComponent {
         }
         
         endpoint.setEnableMultipartFilter(enableMultipartFilter);
-        
         if (multipartFilter != null) {
             endpoint.setMultipartFilter(multipartFilter);
             endpoint.setEnableMultipartFilter(true);
         }
-        
         if (filters != null) {
             endpoint.setFilters(filters);
         }
@@ -258,11 +219,9 @@ public class JettyHttpComponent extends HttpComponent {
         if (useContinuation != null) {
             endpoint.setUseContinuation(useContinuation);
         }
-        
-        if (sslContextParameters == null) {
-            sslContextParameters = this.sslContextParameters;
+        if (ssl != null) {
+            endpoint.setSslContextParameters(ssl);
         }
-        endpoint.setSslContextParameters(sslContextParameters);
 
         setProperties(endpoint, parameters);
         return endpoint;
