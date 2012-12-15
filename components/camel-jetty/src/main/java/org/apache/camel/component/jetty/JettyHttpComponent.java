@@ -184,10 +184,6 @@ public class JettyHttpComponent extends HttpComponent {
                 
                 ((CamelHttpClient) client).setSSLContext(sslContextParameters.createSSLContext());
             }
-        } else {
-            // Either we use the default one created by the component or we are using
-            // one explicitly set by the end user, either way, we just use it as is.
-            client = getHttpClient();
         }
         // keep the configure parameters for the http client
         for (String key : parameters.keySet()) {
@@ -654,6 +650,19 @@ public class JettyHttpComponent extends HttpComponent {
     }
     
     public CamelHttpClient getNewHttpClient() throws Exception {
+        return createHttpClient(httpClientMinThreads, httpClientMaxThreads, sslContextParameters);
+    }
+
+
+    /**
+     * Creates a new {@link HttpClient} and configures its proxy/thread pool and SSL based on this
+     * component settings.
+     *
+     * @param minThreads optional minimum number of threads in client thread pool
+     * @param maxThreads optional maximum number of threads in client thread pool
+     * @param ssl        option SSL parameters
+     */
+    public static CamelHttpClient createHttpClient(Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
         CamelHttpClient httpClient = new CamelHttpClient();
         httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
 
@@ -666,15 +675,18 @@ public class JettyHttpComponent extends HttpComponent {
             httpClient.setProxy(new Address(host, port));
         }
 
-        // use QueueThreadPool as the default bounded is deprecated (see SMXCOMP-157)
-        if (getHttpClientThreadPool() == null) {
+        // must have both min and max
+        if (minThreads != null || maxThreads != null) {
+
+            // must have both options
+            if (minThreads == null || maxThreads == null) {
+                throw new IllegalArgumentException("Both min and max thread pool sizes must be provided.");
+            }
+
+            // use QueueThreadPool as the default bounded is deprecated (see SMXCOMP-157)
             QueuedThreadPool qtp = new QueuedThreadPool();
-            if (httpClientMinThreads != null) {
-                qtp.setMinThreads(httpClientMinThreads.intValue());
-            }
-            if (httpClientMaxThreads != null) {
-                qtp.setMaxThreads(httpClientMaxThreads.intValue());
-            }
+            qtp.setMinThreads(minThreads.intValue());
+            qtp.setMaxThreads(maxThreads.intValue());
             // let the thread names indicate they are from the client
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
             try {
@@ -682,14 +694,21 @@ public class JettyHttpComponent extends HttpComponent {
             } catch (Exception e) {
                 throw new RuntimeCamelException("Error starting JettyHttpClient thread pool: " + qtp, e);
             }
-            setHttpClientThreadPool(qtp);
+            httpClient.setThreadPool(qtp);
         }
-        httpClient.setThreadPool(getHttpClientThreadPool());
-        
-        if (this.sslContextParameters != null) {
-            httpClient.setSSLContext(this.sslContextParameters.createSSLContext());
+
+        if (ssl != null) {
+            httpClient.setSSLContext(ssl.createSSLContext());
         }
-        
+
+        if (LOG.isDebugEnabled()) {
+            if (minThreads != null) {
+                LOG.debug("Created HttpClient with thread pool {}-{} -> {}", new Object[]{minThreads, maxThreads, httpClient});
+            } else {
+                LOG.debug("Created HttpClient with default thread pool size -> {}", httpClient);
+            }
+        }
+
         return httpClient;
     }
 

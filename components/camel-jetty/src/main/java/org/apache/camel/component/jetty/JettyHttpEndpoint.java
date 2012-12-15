@@ -60,7 +60,17 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        JettyHttpProducer answer = new JettyHttpProducer(this, getClient());
+        JettyHttpProducer answer = new JettyHttpProducer(this);
+        if (client != null) {
+            // use shared client
+            answer.setSharedClient(client);
+        } else {
+            // create a new client
+            // thread pool min/max from endpoint take precedence over from component
+            Integer min = getComponent().getHttpClientMinThreads();
+            Integer max = getComponent().getHttpClientMaxThreads();
+            answer.setClient(JettyHttpComponent.createHttpClient(min, max, sslContextParameters));
+        }
         answer.setBinding(getJettyBinding());
         if (isSynchronous()) {
             return new SynchronousDelegateProducer(answer);
@@ -170,4 +180,21 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (client != null) {
+            client.start();
+        }
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (client != null) {
+            client.stop();
+        }
+    }
+
 }
