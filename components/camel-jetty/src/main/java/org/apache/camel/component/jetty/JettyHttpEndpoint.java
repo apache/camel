@@ -19,7 +19,6 @@ package org.apache.camel.component.jetty;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-
 import javax.servlet.Filter;
 
 import org.apache.camel.Consumer;
@@ -40,6 +39,8 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private boolean sessionSupport;
     private List<Handler> handlers;
     private HttpClient client;
+    private Integer httpClientMinThreads;
+    private Integer httpClientMaxThreads;
     private JettyHttpBinding jettyBinding;
     private boolean enableJmx;
     private boolean enableMultipartFilter;
@@ -60,7 +61,17 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        JettyHttpProducer answer = new JettyHttpProducer(this, getClient());
+        JettyHttpProducer answer = new JettyHttpProducer(this);
+        if (client != null) {
+            // use shared client
+            answer.setSharedClient(client);
+        } else {
+            // create a new client
+            // thread pool min/max from endpoint take precedence over from component
+            Integer min = httpClientMinThreads != null ? httpClientMinThreads : getComponent().getHttpClientMinThreads();
+            Integer max = httpClientMaxThreads != null ? httpClientMaxThreads : getComponent().getHttpClientMaxThreads();
+            answer.setClient(JettyHttpComponent.createHttpClient(min, max, sslContextParameters));
+        }
         answer.setBinding(getJettyBinding());
         if (isSynchronous()) {
             return new SynchronousDelegateProducer(answer);
@@ -91,12 +102,16 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     }
 
     public HttpClient getClient() throws Exception {
-        if (client == null) {
-            return getComponent().getHttpClient();
-        }
         return client;
     }
 
+    /**
+     * Sets a shared {@link HttpClient} to use for all producers
+     * created by this endpoint. By default each producer will
+     * use a new http client, and not share.
+     * <p/>
+     * This options should only be used in special circumstances.
+     */
     public void setClient(HttpClient client) {
         this.client = client;
     }
@@ -169,5 +184,21 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (client != null) {
+            client.start();
+        }
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (client != null) {
+            client.stop();
+        }
     }
 }

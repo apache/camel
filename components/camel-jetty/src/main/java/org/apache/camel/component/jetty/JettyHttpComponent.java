@@ -59,7 +59,6 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.MultiPartFilter;
-import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -88,8 +87,6 @@ public class JettyHttpComponent extends HttpComponent {
     protected Map<Integer, SelectChannelConnector> socketConnectors;
     protected Map<String, Object> sslSocketConnectorProperties;
     protected Map<String, Object> socketConnectorProperties;
-    protected HttpClient httpClient;
-    protected ThreadPool httpClientThreadPool;
     protected Integer httpClientMinThreads;
     protected Integer httpClientMaxThreads;
     protected Integer minThreads;
@@ -101,7 +98,6 @@ public class JettyHttpComponent extends HttpComponent {
     protected Long continuationTimeout;
     protected boolean useContinuation = true;
     protected SSLContextParameters sslContextParameters;
-    protected boolean isExplicitHttpClient;
 
     class ConnectorRef {
         Server server;
@@ -150,44 +146,24 @@ public class JettyHttpComponent extends HttpComponent {
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
-        
-        
+        SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
+
         // configure http client if we have url configuration for it
         // http client is only used for jetty http producer (hence not very commonly used)
         HttpClient client = null;
         if (IntrospectionSupport.hasProperties(parameters, "httpClient.") || sslContextParameters != null) {
-            client = getNewHttpClient();
-            
+            client = createHttpClient(httpClientMinThreads, httpClientMaxThreads, ssl);
+
             if (IntrospectionSupport.hasProperties(parameters, "httpClient.")) {
-                if (isExplicitHttpClient) {
-                    LOG.warn("The user explicitly set an HttpClient instance on the component, "
-                             + "but this endpoint provides HttpClient configuration.  Are you sure that "
-                             + "this is what was intended?  Applying endpoint configuration to a new HttpClient instance "
-                             + "to avoid altering existing HttpClient instances.");
-                }
-            
                 // set additional parameters on http client
                 IntrospectionSupport.setProperties(client, parameters, "httpClient.");
                 // validate that we could resolve all httpClient. parameters as this component is lenient
                 validateParameters(uri, parameters, "httpClient.");
             }
             
-            // Note that the component level instance is already configured in getNewHttpClient.
-            // We replace it here for endpoint level config.
-            if (sslContextParameters != null) {
-                if (isExplicitHttpClient) {
-                    LOG.warn("The user explicitly set an HttpClient instance on the component, "
-                             + "but this endpoint provides SSLContextParameters configuration.  Are you sure that "
-                             + "this is what was intended?  Applying endpoint configuration to a new HttpClient instance "
-                             + "to avoid altering existing HttpClient instances.");
-                }
-                
-                ((CamelHttpClient) client).setSSLContext(sslContextParameters.createSSLContext());
+            if (ssl != null) {
+                ((CamelHttpClient) client).setSSLContext(ssl.createSSLContext());
             }
-        } else {
-            // Either we use the default one created by the component or we are using
-            // one explicitly set by the end user, either way, we just use it as is.
-            client = getHttpClient();
         }
         // keep the configure parameters for the http client
         for (String key : parameters.keySet()) {
@@ -247,12 +223,10 @@ public class JettyHttpComponent extends HttpComponent {
         }
         
         endpoint.setEnableMultipartFilter(enableMultipartFilter);
-        
         if (multipartFilter != null) {
             endpoint.setMultipartFilter(multipartFilter);
             endpoint.setEnableMultipartFilter(true);
         }
-        
         if (filters != null) {
             endpoint.setFilters(filters);
         }
@@ -263,15 +237,12 @@ public class JettyHttpComponent extends HttpComponent {
         if (useContinuation != null) {
             endpoint.setUseContinuation(useContinuation);
         }
-
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
         }
-        
-        if (sslContextParameters == null) {
-            sslContextParameters = this.sslContextParameters;
+        if (ssl != null) {
+            endpoint.setSslContextParameters(ssl);
         }
-        endpoint.setSslContextParameters(sslContextParameters);
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -648,14 +619,15 @@ public class JettyHttpComponent extends HttpComponent {
         this.socketConnectors = socketConnectors;
     }
 
-    public synchronized HttpClient getHttpClient() throws Exception {
-        if (httpClient == null) {
-            httpClient = this.getNewHttpClient();
-        }
-        return httpClient;
-    }
-    
-    public CamelHttpClient getNewHttpClient() throws Exception {
+    /**
+     * Creates a new {@link HttpClient} and configures its proxy/thread pool and SSL based on this
+     * component settings.
+     *
+     * @param minThreads optional minimum number of threads in client thread pool
+     * @param maxThreads optional maximum number of threads in client thread pool
+     * @param ssl        option SSL parameters
+     */
+    public static CamelHttpClient createHttpClient(Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
         CamelHttpClient httpClient = new CamelHttpClient();
         httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
 
@@ -668,15 +640,18 @@ public class JettyHttpComponent extends HttpComponent {
             httpClient.setProxy(new Address(host, port));
         }
 
-        // use QueueThreadPool as the default bounded is deprecated (see SMXCOMP-157)
-        if (getHttpClientThreadPool() == null) {
+        // must have both min and max
+        if (minThreads != null || maxThreads != null) {
+
+            // must have both options
+            if (minThreads == null || maxThreads == null) {
+                throw new IllegalArgumentException("Both min and max thread pool sizes must be provided.");
+            }
+
+            // use QueueThreadPool as the default bounded is deprecated (see SMXCOMP-157)
             QueuedThreadPool qtp = new QueuedThreadPool();
-            if (httpClientMinThreads != null) {
-                qtp.setMinThreads(httpClientMinThreads.intValue());
-            }
-            if (httpClientMaxThreads != null) {
-                qtp.setMaxThreads(httpClientMaxThreads.intValue());
-            }
+            qtp.setMinThreads(minThreads.intValue());
+            qtp.setMaxThreads(maxThreads.intValue());
             // let the thread names indicate they are from the client
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
             try {
@@ -684,32 +659,22 @@ public class JettyHttpComponent extends HttpComponent {
             } catch (Exception e) {
                 throw new RuntimeCamelException("Error starting JettyHttpClient thread pool: " + qtp, e);
             }
-            setHttpClientThreadPool(qtp);
+            httpClient.setThreadPool(qtp);
         }
-        httpClient.setThreadPool(getHttpClientThreadPool());
-        
-        if (this.sslContextParameters != null) {
-            httpClient.setSSLContext(this.sslContextParameters.createSSLContext());
+
+        if (ssl != null) {
+            httpClient.setSSLContext(ssl.createSSLContext());
+        }
+
+        if (LOG.isDebugEnabled()) {
+            if (minThreads != null) {
+                LOG.debug("Created HttpClient with thread pool {}-{} -> {}", new Object[]{minThreads, maxThreads, httpClient});
+            } else {
+                LOG.debug("Created HttpClient with default thread pool size -> {}", httpClient);
+            }
         }
         
         return httpClient;
-    }
-
-    public void setHttpClient(HttpClient httpClient) {
-        if (httpClient != null) {
-            this.isExplicitHttpClient = true;
-        } else {
-            this.isExplicitHttpClient = false;
-        }
-        this.httpClient = httpClient;
-    }
-
-    public ThreadPool getHttpClientThreadPool() {
-        return httpClientThreadPool;
-    }
-
-    public void setHttpClientThreadPool(ThreadPool httpClientThreadPool) {
-        this.httpClientThreadPool = httpClientThreadPool;
     }
 
     public Integer getHttpClientMinThreads() {
@@ -953,14 +918,6 @@ public class JettyHttpComponent extends HttpComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (httpClientThreadPool != null && httpClientThreadPool instanceof LifeCycle) {
-            LifeCycle lc = (LifeCycle) httpClientThreadPool;
-            lc.start();
-        }
-        if (httpClient != null && !httpClient.isStarted()) {
-            httpClient.start();
-        }
-        
         startMbContainer();
     }
 
@@ -984,15 +941,9 @@ public class JettyHttpComponent extends HttpComponent {
                 }
             }
         }
-        if (httpClient != null) {
-            httpClient.stop();
-        }
-        if (httpClientThreadPool != null && httpClientThreadPool instanceof LifeCycle) {
-            LifeCycle lc = (LifeCycle) httpClientThreadPool;
-            lc.stop();
-        }
         if (mbContainer != null) {
             mbContainer.stop();
+            mbContainer = null;
         }
     }
 }

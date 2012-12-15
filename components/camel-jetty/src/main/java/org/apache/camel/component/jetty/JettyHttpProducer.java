@@ -52,13 +52,31 @@ import org.slf4j.LoggerFactory;
  */
 public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor {
     private static final transient Logger LOG = LoggerFactory.getLogger(JettyHttpProducer.class);
-    private final HttpClient client;
+    private HttpClient client;
+    private boolean sharedClient;
     private JettyHttpBinding binding;
 
+    /**
+     * Creates this producer.
+     * <p/>
+     * A client must be set before use, eg either {@link #setClient(org.eclipse.jetty.client.HttpClient)}
+     * or {@link #setSharedClient(org.eclipse.jetty.client.HttpClient)}.
+     *
+     * @param endpoint  the endpoint
+     */
+    public JettyHttpProducer(Endpoint endpoint) {
+        super(endpoint);
+    }
+
+    /**
+     * Creates this producer
+     *
+     * @param endpoint  the endpoint
+     * @param client    the non-shared client to use
+     */
     public JettyHttpProducer(Endpoint endpoint, HttpClient client) {
         super(endpoint);
-        this.client = client;
-        ObjectHelper.notNull(client, "HttpClient", this);
+        setClient(client);
     }
 
     @Override
@@ -240,15 +258,43 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         this.binding = binding;
     }
 
+    public HttpClient getClient() {
+        return client;
+    }
+
+    public void setClient(HttpClient client) {
+        this.client = client;
+        this.sharedClient = false;
+    }
+
+    public HttpClient getSharedClient() {
+        if (sharedClient) {
+            return client;
+        } else {
+            return null;
+        }
+    }
+
+    public void setSharedClient(HttpClient sharedClient) {
+        this.client = sharedClient;
+        this.sharedClient = true;
+    }
+
     @Override
     protected void doStart() throws Exception {
-        client.start();
+        // only start non-shared client
+        if (!sharedClient && client != null) {
+            client.start();
+        }
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        client.stop();
+        // only stop non-shared client
+        if (!sharedClient && client != null) {
+            client.stop();
+        }
     }
 }
