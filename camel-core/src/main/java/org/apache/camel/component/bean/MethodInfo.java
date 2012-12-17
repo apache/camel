@@ -464,7 +464,7 @@ public class MethodInfo {
                 Object answer = null;
 
                 // convert the parameter value to a String
-                String exp = exchange.getContext().getTypeConverter().convertTo(String.class, parameterValue);
+                String exp = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, parameterValue);
                 if (exp != null) {
                     // must trim first as there may be spaces between parameters
                     exp = exp.trim();

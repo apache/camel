@@ -210,7 +210,7 @@ public final class DefaultExchange implements Exchange {
         }
 
         // fallback to use type converter
-        return context.getTypeConverter().convertTo(type, in);
+        return context.getTypeConverter().convertTo(type, this, in);
     }
 
     public void setIn(Message in) {
@@ -242,7 +242,7 @@ public final class DefaultExchange implements Exchange {
         }
 
         // fallback to use type converter
-        return context.getTypeConverter().convertTo(type, out);
+        return context.getTypeConverter().convertTo(type, this, out);
     }
 
     public boolean hasOut() {

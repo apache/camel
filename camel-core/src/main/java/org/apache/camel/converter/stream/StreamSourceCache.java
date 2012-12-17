@@ -46,7 +46,7 @@ public class StreamSourceCache extends StreamSource implements StreamCache {
             setSystemId(source.getSystemId());
             stream = (InputStream) streamCache;
         } else if (source.getReader() != null) {
-            String data = exchange.getContext().getTypeConverter().convertTo(String.class, source.getReader());
+            String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source.getReader());
             readCache = new ReaderCache(data);
             streamCache = null;
             setReader(readCache);

@@ -29,7 +29,7 @@ import org.apache.camel.util.IOHelper;
 public class GzipDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
+        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
         GZIPOutputStream zipOutput = new GZIPOutputStream(stream);
         try {

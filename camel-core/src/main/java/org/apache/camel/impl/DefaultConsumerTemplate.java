@@ -155,7 +155,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         Exchange exchange = receive(endpointUri);
         try {
             answer = extractResultBody(exchange);
-            answer = camelContext.getTypeConverter().convertTo(type, answer);
+            answer = camelContext.getTypeConverter().convertTo(type, exchange, answer);
         } finally {
             doneUoW(exchange);
         }
@@ -172,7 +172,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         Exchange exchange = receive(endpointUri, timeout);
         try {
             answer = extractResultBody(exchange);
-            answer = camelContext.getTypeConverter().convertTo(type, answer);
+            answer = camelContext.getTypeConverter().convertTo(type, exchange, answer);
         } finally {
             doneUoW(exchange);
         }
@@ -189,7 +189,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         Exchange exchange = receiveNoWait(endpointUri);
         try {
             answer = extractResultBody(exchange);
-            answer = camelContext.getTypeConverter().convertTo(type, answer);
+            answer = camelContext.getTypeConverter().convertTo(type, exchange, answer);
         } finally {
             doneUoW(exchange);
         }
