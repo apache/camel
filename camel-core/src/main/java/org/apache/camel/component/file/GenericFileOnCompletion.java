@@ -109,8 +109,10 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             endpoint.getIdempotentRepository().add(absoluteFileName);
         }
 
+        // must be last in batch to delete the done file name
         // delete done file if used (and not noop=true)
-        if (endpoint.getDoneFileName() != null && !endpoint.isNoop()) {
+        boolean complete = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
+        if (endpoint.getDoneFileName() != null && !endpoint.isNoop() && complete) {
             // done file must be in same path as the original input file
             String doneFileName = endpoint.createDoneFileName(absoluteFileName);
             ObjectHelper.notEmpty(doneFileName, "doneFileName", endpoint);
