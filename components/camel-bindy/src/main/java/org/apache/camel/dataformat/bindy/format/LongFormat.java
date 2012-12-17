@@ -16,9 +16,8 @@
  */
 package org.apache.camel.dataformat.bindy.format;
 
-import org.apache.camel.dataformat.bindy.Format;
 
-public class LongFormat implements Format<Long> {
+public class LongFormat extends AbstractNumberFormat<Long> {
 
     public String format(Long object) throws Exception {
         return object.toString();

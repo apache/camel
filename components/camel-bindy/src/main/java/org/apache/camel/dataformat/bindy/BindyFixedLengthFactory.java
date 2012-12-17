@@ -28,12 +28,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,7 +217,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             pattern = dataField.pattern();
 
             // Create format object to format the field
-            format = FormatFactory.getFormat(field.getType(), pattern, getLocale(), dataField.precision());
+            format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
 
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
@@ -320,7 +322,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
 
                     // Create format
-                    Format<?> format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
+                    Format<?> format = FormatFactory.getFormat(type, getLocale(), datafield);
 
                     // Get field value
                     Object value = field.get(obj);

@@ -287,7 +287,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                 String pattern = keyValuePairField.pattern();
 
                                 // Create format object to format the field
-                                Format<?> format = FormatFactory.getFormat(field.getType(), pattern, getLocale(), keyValuePairField.precision());
+                                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField);
 
                                 // format the value of the key received
                                 result = formatField(format, value, key, line);
@@ -326,7 +326,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                     String pattern = keyValuePairField.pattern();
 
                                     // Create format object to format the field
-                                    Format<?> format = FormatFactory.getFormat(field.getType(), pattern, getLocale(), keyValuePairField.precision());
+                                    Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField);
 
                                     // format the value of the key received
                                     Object result = formatField(format, value, key, line);
@@ -456,7 +456,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
             // Create format
             @SuppressWarnings("unchecked")
-            Format<Object> format = (Format<Object>)FormatFactory.getFormat(type, pattern, getLocale(), precision);
+            Format<Object> format = (Format<Object>)FormatFactory.getFormat(type, getLocale(), keyValuePairField);
 
             // Get object to be formatted
             Object obj = model.get(field.getDeclaringClass().getName());

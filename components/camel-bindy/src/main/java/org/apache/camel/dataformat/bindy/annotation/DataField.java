@@ -101,4 +101,9 @@ public @interface DataField {
      * Field's default value in case no value is set 
      */
     String defaultValue() default "";
+
+    /**
+     * Indicates if there is a decimal point implied at a specified location
+     */
+    boolean impliedDecimalSeparator() default false;
 }

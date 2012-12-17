@@ -71,6 +71,13 @@ public @interface KeyValuePairField {
      */
     int precision() default 0;
 
+    /**
+     * Indicates if the field is mandatory
+     */
     boolean required() default false;
 
+    /**
+     * Indicates if there is a decimal point implied at a specified location
+     */
+    boolean impliedDecimalSeparator() default false;
 }

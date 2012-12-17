@@ -17,39 +17,30 @@
 package org.apache.camel.dataformat.bindy.format;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
-import org.apache.camel.dataformat.bindy.Format;
 
-public class BigDecimalFormat implements Format<BigDecimal> {
+public class BigDecimalFormat extends AbstractNumberFormat<BigDecimal> {
 
-    private int precision = -1;
-
-    public BigDecimalFormat(int precision) {
-        this.precision = precision;
-    }
-
-    public BigDecimalFormat() {
+    public BigDecimalFormat(boolean impliedDecimalPosition, int precision, Locale locale) {
+        super(impliedDecimalPosition, precision, locale);
     }
 
     public String format(BigDecimal object) throws Exception {
-        return object.toString();
+        return !super.hasImpliedDecimalPosition()
+            ? super.getFormat().format(object)
+            : super.getFormat().format(object.multiply(new BigDecimal(super.getMultiplier())));
     }
 
     public BigDecimal parse(String string) throws Exception {
-        BigDecimal result = new BigDecimal(string);
-        // only set precision if defined
-        if (precision != -1) {
-            result = result.setScale(precision);
+        BigDecimal result = new BigDecimal(string.trim());
+        if (super.hasImpliedDecimalPosition()) {
+            result = result.divide(new BigDecimal(super.getMultiplier()));
         }
+        if (super.getPrecision() != -1) {
+            result = result.setScale(super.getPrecision());
+        }
+
         return result;
     }
-
-    public int getPrecision() {
-        return precision;
-    }
-
-    public void setPrecision(int precision) {
-        this.precision = precision;
-    }
-
 }
