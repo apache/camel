@@ -628,7 +628,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         } else if (expectedValue != null) {
             String from = actualValue.getClass().getName();
             String to = expectedValue.getClass().getName();
-            actualValue = getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), actualValue);
+            actualValue = getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), exchange, actualValue);
             assertTrue("There is no type conversion possible from " + from + " to " + to, actualValue != null);
         }
         return actualValue;
