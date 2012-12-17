@@ -182,6 +182,13 @@ public class NettyConsumer extends DefaultConsumer {
         serverBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
+        if (configuration.getBacklog() > 0) {
+            serverBootstrap.setOption("backlog", configuration.getBacklog());
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Created ServerBootstrap {} with options: {}", serverBootstrap, serverBootstrap.getOptions());
+        }
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
         serverBootstrap.setPipelineFactory(pipelineFactory);
@@ -211,6 +218,13 @@ public class NettyConsumer extends DefaultConsumer {
         if (configuration.getReceiveBufferSizePredictor() > 0) {
             connectionlessServerBootstrap.setOption("receiveBufferSizePredictorFactory",
                 new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
+        }
+        if (configuration.getBacklog() > 0) {
+            serverBootstrap.setOption("backlog", configuration.getBacklog());
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Created ConnectionlessBootstrap {} with options: {}", connectionlessServerBootstrap, connectionlessServerBootstrap.getOptions());
         }
 
         // set the pipeline factory, which creates the pipeline for each newly created channels

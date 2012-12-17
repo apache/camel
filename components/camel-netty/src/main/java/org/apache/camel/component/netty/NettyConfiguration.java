@@ -82,6 +82,7 @@ public class NettyConfiguration implements Cloneable {
     private int producerPoolMinIdle;
     private int producerPoolMaxIdle = 100;
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
+    private int backlog;
     
     /**
      * Returns a copy of this configuration
@@ -571,6 +572,14 @@ public class NettyConfiguration implements Cloneable {
 
     public void setProducerPoolMinEvictableIdle(long producerPoolMinEvictableIdle) {
         this.producerPoolMinEvictableIdle = producerPoolMinEvictableIdle;
+    }
+
+    public int getBacklog() {
+        return backlog;
+    }
+
+    public void setBacklog(int backlog) {
+        this.backlog = backlog;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
