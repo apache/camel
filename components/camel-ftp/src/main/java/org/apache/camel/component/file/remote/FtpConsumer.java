@@ -108,7 +108,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
             if (file.isDirectory()) {
                 RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
-                if (endpoint.isRecursive() && isValidFile(remote, true) && depth < endpoint.getMaxDepth()) {
+                if (endpoint.isRecursive() && isValidFile(remote, true, files) && depth < endpoint.getMaxDepth()) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getName();
                     String path = absolutePath + "/" + subDirectory;
@@ -119,7 +119,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 }
             } else if (file.isFile()) {
                 RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
-                if (isValidFile(remote, false) && depth >= endpoint.getMinDepth()) {
+                if (isValidFile(remote, false, files) && depth >= endpoint.getMinDepth()) {
                     if (isInProgress(remote)) {
                         log.trace("Skipping as file is already in progress: {}", remote.getFileName());
                     } else {
@@ -133,6 +133,20 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
 
         return true;
+    }
+
+    @Override
+    protected boolean isMatched(GenericFile<FTPFile> file, String doneFileName, List<FTPFile> files) {
+        String onlyName = FileUtil.stripPath(doneFileName);
+
+        for (FTPFile f : files) {
+            if (f.getName().equals(onlyName)) {
+                return true;
+            }
+        }
+
+        log.trace("Done file: {} does not exist", doneFileName);
+        return false;
     }
 
     private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file) {

@@ -441,10 +441,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      *
      * @param file        the file
      * @param isDirectory whether the file is a directory or a file
+     * @param files       files in the directory
      * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
-    protected boolean isValidFile(GenericFile<T> file, boolean isDirectory) {
-        if (!isMatched(file, isDirectory)) {
+    protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, List<T> files) {
+        if (!isMatched(file, isDirectory, files)) {
             log.trace("File did not match. Will skip this file: {}", file);
             return false;
         } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getAbsoluteFilePath())) {
@@ -468,9 +469,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      *
      * @param file        the file
      * @param isDirectory whether the file is a directory or a file
+     * @param files       files in the directory
      * @return <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected boolean isMatched(GenericFile<T> file, boolean isDirectory) {
+    protected boolean isMatched(GenericFile<T> file, boolean isDirectory, List<T> files) {
         String name = file.getFileNameOnly();
 
         // folders/names starting with dot is always skipped (eg. ".", ".camel", ".camelLock")
@@ -528,7 +530,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 return false;
             }
 
-            if (!isMatched(file, doneFileName)) {
+            if (!isMatched(file, doneFileName, files)) {
                 return false;
             }
         }
@@ -540,19 +542,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * Strategy to perform file matching based on endpoint configuration in terms of done file name.
      *
      * @param file         the file
-     * @param doneFileName the done file name
+     * @param doneFileName the done file name (without any paths)
+     * @param files        files in the directory
      * @return <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected boolean isMatched(GenericFile<T> file, String doneFileName) {
-        // the file is only valid if the done file exist
-        if (!operations.existsFile(doneFileName)) {
-            log.trace("Done file: {} does not exist", doneFileName);
-            return false;
-        }
-
-        // assume matched
-        return true;
-    }
+    protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, List<T> files);
 
     /**
      * Is the given file already in progress.

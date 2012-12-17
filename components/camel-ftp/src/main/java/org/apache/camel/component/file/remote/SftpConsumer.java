@@ -105,7 +105,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
             if (file.getAttrs().isDir()) {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
-                if (endpoint.isRecursive() && isValidFile(remote, true) && depth < endpoint.getMaxDepth()) {
+                if (endpoint.isRecursive() && isValidFile(remote, true, files) && depth < endpoint.getMaxDepth()) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();
                     String path = absolutePath + "/" + subDirectory;
@@ -118,7 +118,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 // just assuming its a file we should poll
             } else {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
-                if (isValidFile(remote, false) && depth >= endpoint.getMinDepth()) {
+                if (isValidFile(remote, false, files) && depth >= endpoint.getMinDepth()) {
                     if (isInProgress(remote)) {
                         if (log.isTraceEnabled()) {
                             log.trace("Skipping as file is already in progress: {}", remote.getFileName());
@@ -132,6 +132,20 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         }
 
         return true;
+    }
+
+    @Override
+    protected boolean isMatched(GenericFile<ChannelSftp.LsEntry> file, String doneFileName, List<ChannelSftp.LsEntry> files) {
+        String onlyName = FileUtil.stripPath(doneFileName);
+
+        for (ChannelSftp.LsEntry f : files) {
+            if (f.getFilename().equals(onlyName)) {
+                return true;
+            }
+        }
+
+        log.trace("Done file: {} does not exist", doneFileName);
+        return false;
     }
 
     private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String absolutePath, ChannelSftp.LsEntry file) {
