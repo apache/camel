@@ -20,10 +20,8 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.util.FileUtil;
 
 /**
  * Base class for remote file consumers.
@@ -155,14 +153,4 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         return ((RemoteFileEndpoint<?>) endpoint).remoteServerInformation();
     }
 
-    @Override
-    protected boolean isMatched(GenericFile<T> file, String doneFileName) {
-        // ftp specific as we need to cater for stepwise
-        if (getEndpoint().getConfiguration().isStepwise()) {
-            // stepwise enabled, so done file should always be without path
-            doneFileName = FileUtil.stripPath(doneFileName);
-        }
-
-        return super.isMatched(file, doneFileName);
-    }
 }

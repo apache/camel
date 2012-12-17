@@ -794,7 +794,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (ObjectHelper.isNotEmpty(path) && ObjectHelper.isNotEmpty(pattern)) {
             // done file must always be in same directory as the real file name
             answer = path + getFileSeparator() + pattern;
-            answer = path + File.separator + pattern;
         }
 
         if (getConfiguration().needToNormalize()) {
