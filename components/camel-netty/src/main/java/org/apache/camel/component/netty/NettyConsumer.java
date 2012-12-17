@@ -220,7 +220,7 @@ public class NettyConsumer extends DefaultConsumer {
                 new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
         }
         if (configuration.getBacklog() > 0) {
-            serverBootstrap.setOption("backlog", configuration.getBacklog());
+            connectionlessServerBootstrap.setOption("backlog", configuration.getBacklog());
         }
 
         if (log.isDebugEnabled()) {
