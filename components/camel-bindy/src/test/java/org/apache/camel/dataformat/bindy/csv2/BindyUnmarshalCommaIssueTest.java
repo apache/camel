@@ -86,7 +86,7 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
     }
 
     @Test
-    //@Ignore
+    @Ignore("To fix CAMEL-5871. doesn't support the signle quote test case any more")
     public void testBindyUnmarshalSingleQuoteCommaIssueTwo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
