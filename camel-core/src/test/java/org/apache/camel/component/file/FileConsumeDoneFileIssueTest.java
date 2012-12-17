@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -26,6 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
 
     public void testFileConsumeDoneFileIssue() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
+
         template.sendBodyAndHeader("file:target/done", "A", Exchange.FILE_NAME, "foo-a.txt");
         template.sendBodyAndHeader("file:target/done", "B", Exchange.FILE_NAME, "foo-b.txt");
         template.sendBodyAndHeader("file:target/done", "C", Exchange.FILE_NAME, "foo-c.txt");
@@ -33,11 +38,19 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/done", "E", Exchange.FILE_NAME, "foo-e.txt");
         template.sendBodyAndHeader("file:target/done", "E", Exchange.FILE_NAME, "foo.done");
 
+        assertTrue("Done file should exists", new File("target/done/foo.done").exists());
+
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A", "B", "C", "D", "E");
 
         context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
+        assertTrue(notify.matchesMockWaitTime());
+
+        Thread.sleep(250);
+
+        // the done file should be deleted
+        assertFalse("Done file should be deleted", new File("target/done/foo.done").exists());
     }
 
     @Override
