@@ -20,23 +20,23 @@ import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
 import org.apache.camel.component.jms.JmsEndpoint;
 
 /**
- * This {@link org.springframework.jms.listener.DefaultMessageListenerContainer} is used for persistent reply queues
+ * This {@link org.springframework.jms.listener.DefaultMessageListenerContainer} is used for reply queues
  * which are exclusive.
  * <p/>
- * Mind that exclusive persistent reply queues is per producer, so if you run in a clustered environment then
+ * Mind that exclusive reply queues is per producer, so if you run in a clustered environment then
  * each producer should use an unique reply queue destination name. If not then other nodes may steal reply
- * messages which was intended for another. For clustered environments it may be safer to use shared persistent queues
+ * messages which was intended for another. For clustered environments it may be safer to use shared queues
  * as each node will only consume reply messages which are intended for itself.
  * <p/>
  * See more details at <a href="http://camel.apache.org/jms">camel-jms</a>.
  *
- * @see SharedPersistentQueueMessageListenerContainer
+ * @see SharedQueueMessageListenerContainer
  */
-public class ExclusivePersistentQueueMessageListenerContainer extends DefaultJmsMessageListenerContainer {
+public class ExclusiveQueueMessageListenerContainer extends DefaultJmsMessageListenerContainer {
 
     // no need to override any methods currently
 
-    public ExclusivePersistentQueueMessageListenerContainer(JmsEndpoint endpoint) {
+    public ExclusiveQueueMessageListenerContainer(JmsEndpoint endpoint) {
         super(endpoint);
     }
 }

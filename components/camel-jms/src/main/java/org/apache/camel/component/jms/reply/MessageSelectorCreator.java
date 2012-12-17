@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A creator which can build the JMS message selector query string to use
- * with a shared persistent reply-to queue, so we can select the correct messages we expect as replies.
+ * with a shared reply-to queue, so we can select the correct messages we expect as replies.
  */
 public class MessageSelectorCreator implements CorrelationListener {
     protected static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);

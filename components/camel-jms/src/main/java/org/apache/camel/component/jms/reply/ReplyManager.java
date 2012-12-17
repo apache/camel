@@ -57,7 +57,7 @@ public interface ReplyManager extends MessageListener {
     Destination getReplyTo();
 
     /**
-     * To be used when a persistent reply queue is used with a custom JMS selector is being used.
+     * To be used when a reply queue is used with a custom JMS selector is being used.
      */
     void setReplyToSelectorHeader(org.apache.camel.Message camelMessage, Message jmsMessage) throws JMSException;
 

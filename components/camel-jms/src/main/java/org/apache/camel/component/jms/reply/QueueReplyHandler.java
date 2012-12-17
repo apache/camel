@@ -20,14 +20,14 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 
 /**
- * {@link ReplyHandler} to handle processing replies when using persistent queues.
+ * {@link ReplyHandler} to handle processing replies when using regular queues.
  *
  * @version 
  */
-public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
+public class QueueReplyHandler extends TemporaryQueueReplyHandler {
 
-    public PersistentQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                       String originalCorrelationId, String correlationId, long timeout) {
+    public QueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                             String originalCorrelationId, String correlationId, long timeout) {
         super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
     }
 

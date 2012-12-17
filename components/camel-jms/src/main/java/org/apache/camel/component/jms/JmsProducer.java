@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
-import org.apache.camel.component.jms.reply.PersistentQueueReplyManager;
+import org.apache.camel.component.jms.reply.QueueReplyManager;
 import org.apache.camel.component.jms.reply.ReplyManager;
 import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.component.jms.reply.UseMessageIdAsCorrelationIdMessageSentCallback;
@@ -506,8 +506,8 @@ public class JmsProducer extends DefaultAsyncProducer {
     }
 
     protected ReplyManager createReplyManager(String replyTo) throws Exception {
-        // use a persistent queue
-        ReplyManager replyManager = new PersistentQueueReplyManager(getEndpoint().getCamelContext());
+        // use a regular queue
+        ReplyManager replyManager = new QueueReplyManager(getEndpoint().getCamelContext());
         replyManager.setEndpoint(getEndpoint());
 
         String name = "JmsReplyManagerTimeoutChecker[" + replyTo + "]";

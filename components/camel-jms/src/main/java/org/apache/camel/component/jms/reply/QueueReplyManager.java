@@ -33,23 +33,23 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
- * A {@link ReplyManager} when using persistent queues.
+ * A {@link ReplyManager} when using regular queues.
  *
  * @version 
  */
-public class PersistentQueueReplyManager extends ReplyManagerSupport {
+public class QueueReplyManager extends ReplyManagerSupport {
 
     private String replyToSelectorValue;
     private MessageSelectorCreator dynamicMessageSelector;
 
-    public PersistentQueueReplyManager(CamelContext camelContext) {
+    public QueueReplyManager(CamelContext camelContext) {
         super(camelContext);
     }
 
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
         // add to correlation map
-        PersistentQueueReplyHandler handler = new PersistentQueueReplyHandler(replyManager, exchange, callback,
+        QueueReplyHandler handler = new QueueReplyHandler(replyManager, exchange, callback,
                 originalCorrelationId, correlationId, requestTimeout);
         correlation.put(correlationId, handler, requestTimeout);
         return correlationId;
@@ -105,7 +105,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
 
         public Destination resolveDestinationName(Session session, String destinationName,
                                                   boolean pubSubDomain) throws JMSException {
-            synchronized (PersistentQueueReplyManager.this) {
+            synchronized (QueueReplyManager.this) {
                 // resolve the reply to destination
                 if (destination == null) {
                     destination = delegate.resolveDestinationName(session, destinationName, pubSubDomain);
@@ -121,7 +121,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
 
         ReplyToType type = endpoint.getConfiguration().getReplyToType();
         if (type == null) {
-            // use shared by default for persistent reply queues
+            // use shared by default for reply queues
             type = ReplyToType.Shared;
         }
 
@@ -129,17 +129,17 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             // shared reply to queues support either a fixed or dynamic JMS message selector
             String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
             if (replyToSelectorName != null) {
-                // create a random selector value we will use for the persistent reply queue
+                // create a random selector value we will use for the reply queue
                 replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
                 String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
-                answer = new SharedPersistentQueueMessageListenerContainer(endpoint, fixedMessageSelector);
+                answer = new SharedQueueMessageListenerContainer(endpoint, fixedMessageSelector);
                 // must use cache level consumer for fixed message selector
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
                 log.debug("Using shared queue: " + endpoint.getReplyTo() + " with fixed message selector [" + fixedMessageSelector + "] as reply listener: " + answer);
             } else {
                 // use a dynamic message selector which will select the message we want to receive as reply
                 dynamicMessageSelector = new MessageSelectorCreator(correlation);
-                answer = new SharedPersistentQueueMessageListenerContainer(endpoint, dynamicMessageSelector);
+                answer = new SharedQueueMessageListenerContainer(endpoint, dynamicMessageSelector);
                 // must use cache level session for dynamic message selector,
                 // as otherwise the dynamic message selector will not be updated on-the-fly
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
@@ -149,12 +149,12 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             log.warn("{} is using a shared reply queue, which is not as fast as alternatives."
                     + " See more detail at the section 'Request-reply over JMS' at http://camel.apache.org/jms", endpoint);
         } else if (ReplyToType.Exclusive == type) {
-            answer = new ExclusivePersistentQueueMessageListenerContainer(endpoint);
+            answer = new ExclusiveQueueMessageListenerContainer(endpoint);
             // must use cache level consumer for exclusive as there is no message selector
             answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
             log.debug("Using exclusive queue:" + endpoint.getReplyTo() + " as reply listener: " + answer);
         } else {
-            throw new IllegalArgumentException("ReplyToType " + type + " is not supported for persistent reply queues");
+            throw new IllegalArgumentException("ReplyToType " + type + " is not supported for reply queues");
         }
         
         String replyToCacheLevelName = endpoint.getConfiguration().getReplyToCacheLevelName();
@@ -200,7 +200,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getErrorHandler() != null) {
             answer.setErrorHandler(endpoint.getErrorHandler());
         } else {
-            answer.setErrorHandler(new DefaultSpringErrorHandler(PersistentQueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
+            answer.setErrorHandler(new DefaultSpringErrorHandler(QueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
         }
         if (endpoint.getReceiveTimeout() >= 0) {
             answer.setReceiveTimeout(endpoint.getReceiveTimeout());
@@ -217,7 +217,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         }
 
         // setup a bean name which is used ny Spring JMS as the thread name
-        String name = "PersistentQueueReplyManager[" + answer.getDestinationName() + "]";
+        String name = "QueueReplyManager[" + answer.getDestinationName() + "]";
         answer.setBeanName(name);
 
         if (answer.getConcurrentConsumers() > 1) {
