@@ -73,6 +73,11 @@ public @interface CsvRecord {
     /**
      * Whether to marshal columns with the given quote character (optional)
      */
-    String quote() default "";
+    String quote() default "\"";
+
+    /**
+     * Indicate if the values must be quoted when marshaling (optional)
+     */
+    boolean quoting() default false;
 
 }

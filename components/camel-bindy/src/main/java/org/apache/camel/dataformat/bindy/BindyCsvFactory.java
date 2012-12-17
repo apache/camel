@@ -64,6 +64,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean generateHeaderColumnNames;
     private boolean messageOrdered;
     private String quote;
+    private boolean quoting;
 
     public BindyCsvFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
         super(resolver, packageNames);
@@ -300,11 +301,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     String res = itx.next();
                     if (res != null) {
                         // the field may be enclosed in quotes if a quote was configured
-                        if (quote != null) {
+                        if (quoting && quote != null) {
                             buffer.append(quote);
                         }
                         buffer.append(res);
-                        if (quote != null) {
+                        if (quoting && quote != null) {
                             buffer.append(quote);
                         }
                     }
@@ -557,6 +558,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         quote = record.quote();
                         LOG.debug("Quoting columns with: {}", quote);
                     }
+
+                    quoting = record.quoting();
+                    LOG.debug("CSV will be quoted: {}", messageOrdered);
                 }
 
                 if (section != null) {
@@ -621,5 +625,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      */
     public boolean isMessageOrdered() {
         return messageOrdered;
+    }
+
+    public String getQuote() {
+        return quote;
     }
 }

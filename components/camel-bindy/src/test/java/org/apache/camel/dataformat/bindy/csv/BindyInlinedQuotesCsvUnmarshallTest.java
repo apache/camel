@@ -24,6 +24,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -56,14 +57,14 @@ public class BindyInlinedQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCon
         result.assertIsSatisfied();
 
         Map<?, ?> map = (Map<?, ?>) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        BindyDoubleQuotesCsvUnmarshallTest.Order order = (BindyDoubleQuotesCsvUnmarshallTest.Order) map.values().iterator().next();
+        Order order = (Order) map.values().iterator().next();
         Assert.assertEquals(10, order.getOrderNr());
         Assert.assertEquals("Pauline", order.getFirstName());
         Assert.assertEquals("O'Donald", order.getLastName());
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.csv");
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote");
 
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);

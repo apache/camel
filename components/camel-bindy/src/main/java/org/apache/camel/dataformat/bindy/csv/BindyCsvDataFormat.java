@@ -121,6 +121,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
         // Retrieve the separator defined to split the record
         String separator = factory.getSeparator();
+        String quote = factory .getQuote();
         ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
 
         int count = 0;
@@ -155,7 +156,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 String[] tokens = line.split(separator, -1);
                 List<String> result = Arrays.asList(tokens);
                 // must unquote tokens before use
-                result = unquoteTokens(result, separator);
+                result = unquoteTokens(result, separator, quote);
 
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
@@ -199,7 +200,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
      * as will handling fixing broken tokens which may have been split
      * by a separator inside a quote.
      */
-    private List<String> unquoteTokens(List<String> result, String separator) {
+    private List<String> unquoteTokens(List<String> result, String separator, String quote) {
         // a current quoted token which we assemble from the broken pieces
         // we need to do this as we use the split method on the String class
         // to split the line using regular expression, and it does not handle
@@ -211,11 +212,11 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         for (String s : result) {
             boolean startQuote = false;
             boolean endQuote = false;
-            if (s.startsWith("\"") || s.startsWith("'")) {
+            if (s.startsWith(quote)) {
                 s = s.substring(1);
                 startQuote = true;
             }
-            if (s.endsWith("\"") || s.endsWith("'")) {
+            if (s.endsWith(quote)) {
                 s = s.substring(0, s.length() - 1);
                 endQuote = true;
             }
