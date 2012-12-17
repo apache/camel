@@ -77,6 +77,7 @@ public class NettyConfiguration implements Cloneable {
     private ServerPipelineFactory serverPipelineFactory;
     private SSLContextParameters sslContextParameters;
     private boolean needClientAuth;
+    private int backlog;
     
     /**
      * Returns a copy of this configuration
@@ -518,6 +519,14 @@ public class NettyConfiguration implements Cloneable {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public int getBacklog() {
+        return backlog;
+    }
+
+    public void setBacklog(int backlog) {
+        this.backlog = backlog;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
