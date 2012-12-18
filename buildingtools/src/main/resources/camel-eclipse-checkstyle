@@ -17,14 +17,11 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<fileset-config file-format-version="1.1.0" simple-config="false">
-    <fileset name="all" enabled="true" check-config-name="Camel Checks" type="external" description="">
-        <file-match-pattern match-pattern="^src[/\\]." include-pattern="true"/>
+<fileset-config file-format-version="1.2.0" simple-config="false" sync-formatter="false">
+    <fileset name="all" enabled="true" check-config-name="Camel Checks" local="false">
+        <file-match-pattern match-pattern="^src[/\\].*java$" include-pattern="true"/>
         <file-match-pattern match-pattern="^src[/\\]main[/\\]generated[/\\]." include-pattern="false"/>
         <file-match-pattern match-pattern="^src[/\\]test[/\\]generated[/\\]." include-pattern="false"/>
         <file-match-pattern match-pattern="^src[/\\]main[/\\]resources[/\\]archetype-resources[/\\]." include-pattern="false"/>
     </fileset>
-    <filter name="FileTypesFilter" enabled="true">
-        <filter-data value="java"/>
-    </filter>
 </fileset-config>
