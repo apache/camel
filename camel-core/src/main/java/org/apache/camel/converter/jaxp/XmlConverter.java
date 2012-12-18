@@ -513,7 +513,7 @@ public class XmlConverter {
     @Converter
     public StreamSource toStreamSource(byte[] in, Exchange exchange) throws TransformerException {
         if (in != null) {
-            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, in);
+            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
             return new StreamSource(is);
         }
         return null;
@@ -522,7 +522,7 @@ public class XmlConverter {
     @Converter
     public StreamSource toStreamSource(ByteBuffer in, Exchange exchange) throws TransformerException {
         if (in != null) {
-            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, in);
+            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
             return new StreamSource(is);
         }
         return null;

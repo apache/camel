@@ -64,7 +64,7 @@ public final class StreamCacheConverter {
 
     @Converter
     public static StreamCache convertToStreamCache(SAXSource source, Exchange exchange) throws TransformerException {
-        String data = exchange.getContext().getTypeConverter().convertTo(String.class, source);
+        String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source);
         return new SourceCache(data);
     }
 
@@ -77,7 +77,7 @@ public final class StreamCacheConverter {
 
     @Converter
     public static StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
-        String data = exchange.getContext().getTypeConverter().convertTo(String.class, reader);
+        String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, reader);
         return new ReaderCache(data);
     }
 

@@ -59,7 +59,7 @@ public class LanguageProducer extends DefaultProducer {
                 String script;
                 InputStream is = getEndpoint().getResourceAsInputStream();
                 try {
-                    script = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, is);
+                    script = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, exchange, is);
                 } finally {
                     IOHelper.close(is);
                 }

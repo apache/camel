@@ -734,7 +734,7 @@ public final class ExchangeHelper {
         if (result instanceof Exchange) {
             Exchange exchange = (Exchange) result;
             Object answer = ExchangeHelper.extractResultBody(exchange, exchange.getPattern());
-            return context.getTypeConverter().convertTo(type, answer);
+            return context.getTypeConverter().convertTo(type, exchange, answer);
         }
         return context.getTypeConverter().convertTo(type, result);
     }

@@ -159,7 +159,7 @@ public final class MessageHelper {
         if (message.getExchange() != null) {
             String property = message.getExchange().getContext().getProperties().get(Exchange.LOG_DEBUG_BODY_STREAMS);
             if (property != null) {
-                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, property);
+                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(), property);
             }
         }
 
@@ -230,7 +230,7 @@ public final class MessageHelper {
         String body = null;
         if (message.getExchange() != null) {
             try {
-                body = message.getExchange().getContext().getTypeConverter().convertTo(String.class, obj);
+                body = message.getExchange().getContext().getTypeConverter().convertTo(String.class, message.getExchange(), obj);
             } catch (Exception e) {
                 // ignore as the body is for logging purpose
             }
@@ -296,7 +296,8 @@ public final class MessageHelper {
                 // to String
                 if (value != null) {
                     try {
-                        String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, value);
+                        String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, 
+                                message.getExchange(), value);
                         if (xml != null) {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
