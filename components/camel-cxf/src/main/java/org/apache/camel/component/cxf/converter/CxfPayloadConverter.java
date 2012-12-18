@@ -147,7 +147,8 @@ public final class CxfPayloadConverter {
         if (CxfPayload.class.isAssignableFrom(value.getClass())) {
             CxfPayload<?> payload = (CxfPayload<?>) value;
             
-            if (payload.getBodySources().size() == 1) {
+            if (payload.getBodySources() != null 
+                && payload.getBodySources().size() == 1) {
                 if (type.isAssignableFrom(Document.class)) {
                     Source s = payload.getBodySources().get(0);
                     Document d;
