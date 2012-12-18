@@ -219,7 +219,8 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             } else {
                 marshaller.marshal(value, buffer);
             }
-            answer = parentTypeConverter.convertTo(type, buffer.toString());
+            // we need to pass the exchange
+            answer = parentTypeConverter.convertTo(type, exchange, buffer.toString());
         }
 
         return answer;

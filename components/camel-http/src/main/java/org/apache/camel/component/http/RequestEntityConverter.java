@@ -48,7 +48,7 @@ public final class RequestEntityConverter {
 
     @Converter
     public static RequestEntity toRequestEntity(String str, Exchange exchange) throws Exception {
-        if (GZIPHelper.isGzip(exchange.getIn())) {
+        if (exchange != null && GZIPHelper.isGzip(exchange.getIn())) {
             byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, str);
             return asRequestEntity(data, exchange);
         } else {
