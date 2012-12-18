@@ -23,7 +23,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.CxfEndpoint.CamelCxfClientImpl;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.CXFBusImpl;
