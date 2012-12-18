@@ -17,6 +17,8 @@
 package org.apache.camel.component.cxf.converter;
 
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,11 +115,32 @@ public final class CxfPayloadConverter {
         // CxfPayloads from other types
         if (type.isAssignableFrom(CxfPayload.class)) {
             if (!value.getClass().isArray()) {
-                TypeConverter tc = registry.lookup(Source.class, value.getClass());
-                if (tc != null) {
-                    Source src = tc.convertTo(Source.class, exchange, value);
+                Source src = null;
+                // many of the common format that can have a Source created directly
+                if (value instanceof InputStream) {
+                    src = new StreamSource((InputStream)value);
+                } else if (value instanceof Reader) {
+                    src = new StreamSource((Reader)value);
+                } else if (value instanceof String) {
+                    src = new StreamSource(new StringReader((String)value));                    
+                } else if (value instanceof Node) {
+                    src = new DOMSource((Node)value);
+                } else if (value instanceof Source) {
+                    src = (Source)src;
+                }
+                if (src == null) {
+                    // assuming staxsource is preferred, otherwise use the one preferred
+                    TypeConverter tc = registry.lookup(javax.xml.transform.stax.StAXSource.class, value.getClass());
+                    if (tc == null) {
+                        tc = registry.lookup(Source.class, value.getClass());
+                    }
+                    if (tc != null) {
+                        src = tc.convertTo(Source.class, exchange, value);
+                    }
+                }
+                if (src != null) {
                     return (T) sourceToCxfPayload(src, exchange);
-                }                
+                }
             }
             TypeConverter tc = registry.lookup(NodeList.class, value.getClass());
             if (tc != null) {
