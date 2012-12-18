@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceProvider;
@@ -931,7 +932,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else if (source instanceof StAXSource) {
                 StAXSource s = (StAXSource)source;
                 r = s.getXMLStreamReader();
-            } else if (source instanceof StreamSource) {
+            } else if (source instanceof StreamSource || source instanceof SAXSource) {
                 //flip to stax so we can get the name
                 r = StaxUtils.createXMLStreamReader(source);
                 StaxSource src2 = new StaxSource(r);
