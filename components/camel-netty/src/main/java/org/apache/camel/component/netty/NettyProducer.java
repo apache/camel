@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -374,8 +375,8 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         });
         // blocking for channel to be done
-        LOG.trace("Waiting for operation to complete {}", channelFuture);
-        latch.await();
+        LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
+        latch.await(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
 
         if (!channelFuture.isSuccess()) {
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
