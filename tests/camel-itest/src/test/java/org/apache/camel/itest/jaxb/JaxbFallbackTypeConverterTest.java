@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.itest.jaxb.example.Bar;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -37,6 +38,7 @@ public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
         String result = template.requestBody("direct:start", bar, String.class);
         assertNotNull(result);
         assertTrue("Get a wrong xml string", result.indexOf("<bar name=\"camel\" value=\"cool\"/>") > 0);
+        assertTrue("The pretty print setting is not working",  result.indexOf("><bar") > 0);
     }
     
     @Override
@@ -45,6 +47,8 @@ public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // setup the camel property for the PrettyPrint
+                context.getProperties().put(FallbackTypeConverter.PRETTY_PRINT, "false");
 
                 from("direct:start").process(new Processor() {
 

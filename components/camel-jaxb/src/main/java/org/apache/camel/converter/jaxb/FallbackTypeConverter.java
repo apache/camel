@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware {
+    public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint"; 
     private static final transient Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
     private final Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
     private final StaxConverter staxConverter = new StaxConverter();
@@ -206,7 +207,19 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             // must create a new instance of marshaller as its not thread safe
             Marshaller marshaller = context.createMarshaller();
             Writer buffer = new StringWriter();
-            if (isPrettyPrint()) {
+            boolean prettyPrint = isPrettyPrint();
+            // check the camel context property to decide the value of PrettyPrint
+            if (exchange != null) {
+                String property = exchange.getContext().getProperty(PRETTY_PRINT);
+                if (property != null) {
+                    if (property.equalsIgnoreCase("false")) {
+                        prettyPrint = false;
+                    } else {
+                        prettyPrint = true;
+                    }
+                }
+            }
+            if (prettyPrint) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             }
             if (exchange != null && exchange.getProperty(Exchange.CHARSET_NAME, String.class) != null) {
