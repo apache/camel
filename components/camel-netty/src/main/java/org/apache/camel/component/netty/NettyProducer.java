@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
@@ -314,10 +315,20 @@ public class NettyProducer extends DefaultAsyncProducer {
             clientBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
             clientBootstrap.setOption("connectTimeoutMillis", configuration.getConnectTimeout());
 
+            // set any additional netty options
+            if (configuration.getOptions() != null) {
+                for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
+                    clientBootstrap.setOption(entry.getKey(), entry.getValue());
+                }
+            }
+
             // set the pipeline factory, which creates the pipeline for each newly created channels
             clientBootstrap.setPipelineFactory(pipelineFactory);
             answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            LOG.trace("Created new TCP client bootstrap connecting to {}:{}", configuration.getHost(), configuration.getPort());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
+                        new Object[]{configuration.getHost(), configuration.getPort(), clientBootstrap.getOptions()});
+            }
             return answer;
         } else {
             // its okay to create a new bootstrap for each new channel
@@ -330,13 +341,24 @@ public class NettyProducer extends DefaultAsyncProducer {
             connectionlessClientBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
             connectionlessClientBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
 
+            // set any additional netty options
+            if (configuration.getOptions() != null) {
+                for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
+                    connectionlessClientBootstrap.setOption(entry.getKey(), entry.getValue());
+                }
+            }
+
             // set the pipeline factory, which creates the pipeline for each newly created channels
             connectionlessClientBootstrap.setPipelineFactory(pipelineFactory);
             // bind and store channel so we can close it when stopping
             Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
             ALL_CHANNELS.add(channel);
             answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            LOG.trace("Created new UDP client bootstrap connecting to {}:{}", configuration.getHost(), configuration.getPort());
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
+                       new Object[]{configuration.getHost(), configuration.getPort(), connectionlessClientBootstrap.getOptions()});
+            }
             return answer;
         }
     }
@@ -347,7 +369,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         channelFuture.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                LOG.debug("Operation complete {}", channelFuture);
+                LOG.trace("Operation complete {}", channelFuture);
                 latch.countDown();
             }
         });

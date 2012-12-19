@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -83,6 +84,7 @@ public class NettyConfiguration implements Cloneable {
     private int producerPoolMaxIdle = 100;
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     private int backlog;
+    private Map<String, Object> options;
     
     /**
      * Returns a copy of this configuration
@@ -160,6 +162,12 @@ public class NettyConfiguration implements Cloneable {
         // then set parameters with the help of the camel context type converters
         EndpointHelper.setReferenceProperties(component.getCamelContext(), this, parameters);
         EndpointHelper.setProperties(component.getCamelContext(), this, parameters);
+
+        // additional netty options, we don't want to store an empty map, so set it as null if empty
+        options = IntrospectionSupport.extractProperties(parameters, "option.");
+        if (options !=  null && options.isEmpty()) {
+            options = null;
+        }
 
         // add default encoders and decoders
         if (encoders.isEmpty() && decoders.isEmpty()) {
@@ -580,6 +588,17 @@ public class NettyConfiguration implements Cloneable {
 
     public void setBacklog(int backlog) {
         this.backlog = backlog;
+    }
+
+    public Map<String, Object> getOptions() {
+        return options;
+    }
+
+    /**
+     * Additional options to set on Netty.
+     */
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
