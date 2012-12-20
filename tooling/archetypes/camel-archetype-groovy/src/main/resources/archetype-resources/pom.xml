@@ -84,41 +84,45 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin-version}</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>${maven-resources-plugin-version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-
-			<!-- to compile groovy -->
 			<plugin>
-				<groupId>org.codehaus.gmaven</groupId>
-				<artifactId>gmaven-plugin</artifactId>
-				<version>${gmaven-plugin-version}</version>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin-version}</version>
 				<configuration>
-					<providerSelection>1.8</providerSelection>
+					<source>1.6</source>
+					<target>1.6</target>				  
+					<compilerId>groovy-eclipse-compiler</compilerId>
+				    <!-- set verbose to be true if you want lots of uninteresting messages -->
+				    <!-- <verbose>true</verbose> -->
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generateStubs</goal>
-							<goal>compile</goal>
-							<goal>generateTestStubs</goal>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
+				<dependencies>
+				    <dependency>
+					   <groupId>org.codehaus.groovy</groupId>
+					   <artifactId>groovy-eclipse-compiler</artifactId>
+					   <version>2.7.0-01</version>
+				    </dependency>
+				</dependencies>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>${maven-eclipse-plugin-version}</version>
+				<configuration>
+					<additionalProjectnatures>
+						<projectnature>org.eclipse.jdt.groovy.core.groovyNature</projectnature>
+					</additionalProjectnatures>
+					<classpathContainers>
+						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+						<classpathContainer>GROOVY_DSL_SUPPORT</classpathContainer>
+					</classpathContainers>              
+				</configuration>
+			</plugin>	  
+
 
 			<!-- Allows the example to be run via 'mvn compile exec:java' -->
 			<plugin>
