@@ -18,10 +18,8 @@ package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -303,7 +301,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
     }
 
-    private ChannelFuture openConnection() throws Exception {
+    protected ChannelFuture openConnection() throws Exception {
         ChannelFuture answer;
 
         if (isTcp()) {
@@ -363,20 +361,13 @@ public class NettyProducer extends DefaultAsyncProducer {
     }
 
     private Channel openChannel(ChannelFuture channelFuture) throws Exception {
-        // wait until until the operation is complete
-        final CountDownLatch latch = new CountDownLatch(1);
-        channelFuture.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                LOG.trace("Operation complete {}", channelFuture);
-                latch.countDown();
-            }
-        });
         // blocking for channel to be done
-        LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
-        latch.await(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
+        }
+        channelFuture.awaitUninterruptibly(configuration.getConnectTimeout());
 
-        if (!channelFuture.isSuccess()) {
+        if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
         }
         Channel answer = channelFuture.getChannel();
