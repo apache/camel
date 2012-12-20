@@ -50,6 +50,9 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
     @Override
     public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent channelStateEvent) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Channel open: {}", ctx.getChannel());
+        }
         // to keep track of open sockets
         producer.getAllChannels().add(channelStateEvent.getChannel());
     }
@@ -90,13 +93,18 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        LOG.trace("Channel closed: {}", ctx.getChannel());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Channel closed: {}", ctx.getChannel());
+        }
 
         Exchange exchange = getExchange(ctx);
         AsyncCallback callback = getAsyncCallback(ctx);
 
         // remove state
         producer.removeState(ctx.getChannel());
+
+        // to keep track of open sockets
+        producer.getAllChannels().remove(ctx.getChannel());
 
         if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
             // session was closed but no message received. This could be because the remote server had an internal error
