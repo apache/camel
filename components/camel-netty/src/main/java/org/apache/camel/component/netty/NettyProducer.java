@@ -91,20 +91,32 @@ public class NettyProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
-        GenericObjectPool.Config config = new GenericObjectPool.Config();
-        config.maxActive = configuration.getProducerPoolMaxActive();
-        config.minIdle = configuration.getProducerPoolMinIdle();
-        config.maxIdle = configuration.getProducerPoolMaxIdle();
-        // we should test on borrow to ensure the channel is still valid
-        config.testOnBorrow = true;
-        // only evict channels which are no longer valid
-        config.testWhileIdle = true;
-        // run eviction every 30th second
-        config.timeBetweenEvictionRunsMillis = 30 * 1000L;
-        config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
-        config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
-        pool = new GenericObjectPool<Channel>(new NettyProducerPoolableObjectFactory(), config);
+        if (configuration.isProducerPoolEnabled()) {
+            // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
+            GenericObjectPool.Config config = new GenericObjectPool.Config();
+            config.maxActive = configuration.getProducerPoolMaxActive();
+            config.minIdle = configuration.getProducerPoolMinIdle();
+            config.maxIdle = configuration.getProducerPoolMaxIdle();
+            // we should test on borrow to ensure the channel is still valid
+            config.testOnBorrow = true;
+            // only evict channels which are no longer valid
+            config.testWhileIdle = true;
+            // run eviction every 30th second
+            config.timeBetweenEvictionRunsMillis = 30 * 1000L;
+            config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
+            config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
+            pool = new GenericObjectPool<Channel>(new NettyProducerPoolableObjectFactory(), config);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
+                        new Object[]{config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool});
+            }
+        } else {
+            pool = new SharedSingletonObjectPool<Channel>(new NettyProducerPoolableObjectFactory());
+            if (LOG.isDebugEnabled()) {
+                LOG.info("Created NettyProducer shared singleton pool -> {}", pool);
+            }
+        }
 
         // setup pipeline factory
         ClientPipelineFactory factory = configuration.getClientPipelineFactory();
@@ -122,7 +134,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         if (!configuration.isLazyChannelCreation()) {
             // ensure the connection can be established when we start up
-            openAndCloseConnection();
+            Channel channel = pool.borrowObject();
+            pool.returnObject(channel);
         }
     }
 
@@ -149,10 +162,13 @@ public class NettyProducer extends DefaultAsyncProducer {
             workerExecutor = null;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+        if (pool != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+            }
+            pool.close();
+            pool = null;
         }
-        pool.close();
 
         super.doStop();
     }
@@ -362,7 +378,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
     }
 
-    private Channel openChannel(ChannelFuture channelFuture) throws Exception {
+    protected Channel openChannel(ChannelFuture channelFuture) throws Exception {
         // blocking for channel to be done
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
@@ -380,13 +396,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             LOG.debug("Creating connector to address: {}", configuration.getAddress());
         }
         return answer;
-    }
-
-    private void openAndCloseConnection() throws Exception {
-        ChannelFuture future = openConnection();
-        Channel channel = openChannel(future);
-        NettyHelper.close(channel);
-        ALL_CHANNELS.remove(channel);
     }
 
     public NettyConfiguration getConfiguration() {
