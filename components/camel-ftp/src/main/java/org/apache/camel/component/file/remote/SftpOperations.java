@@ -383,8 +383,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             return;
         }
 
-        // must compact path so FTP server can traverse correctly
-        path = FileUtil.compactPath(path);
+        // must compact path so SFTP server can traverse correctly, make use of the '/'
+        // separator because JSch expects this as the file separator even on Windows
+        path = FileUtil.compactPath(path, '/');
 
         // not stepwise should change directory in one operation
         if (!endpoint.getConfiguration().isStepwise()) {
