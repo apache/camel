@@ -88,6 +88,10 @@
           <groupId>edu.ucar</groupId>
           <artifactId>netcdf</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -125,7 +129,17 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
+      <artifactId>groovy</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-jsr223</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-xml</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

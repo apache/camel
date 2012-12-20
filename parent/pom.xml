@@ -1537,13 +1537,18 @@
       <!-- optional scripting support -->
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
+        <artifactId>groovy</artifactId>
+        <version>${groovy-version}</version>
+      </dependency>
+	  <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-xml</artifactId>
         <version>${groovy-version}</version>
       </dependency>
       <dependency>
-        <groupId>com.sun.script</groupId>
-        <artifactId>groovy-engine</artifactId>
-        <version>20070112</version>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-jsr223</artifactId>
+        <version>${groovy-version}</version>
       </dependency>
 
       <!-- optional ognl support -->

@@ -30,7 +30,7 @@
   <description>Camel Groovy support</description>
 
   <properties>
-	  <camel.osgi.export.pkg>org.apache.camel.language.groovy.*</camel.osgi.export.pkg>
+	  <camel.osgi.export.pkg>org.apache.camel.language.groovy.*,org.apache.camel.groovy.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -41,9 +41,13 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
+      <artifactId>groovy</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-xml</artifactId>
+    </dependency>
+    
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -61,5 +65,47 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+  
+  <build>
+	<plugins>
+	  <plugin>
+	    <artifactId>maven-compiler-plugin</artifactId>
+	    <configuration>
+	      <compilerId>groovy-eclipse-compiler</compilerId>
+	      <!-- set verbose to be true if you want lots of uninteresting messages -->
+	      <!-- <verbose>true</verbose> -->
+	    </configuration>
+	    <dependencies>
+	      <dependency>
+	        <groupId>org.codehaus.groovy</groupId>
+	        <artifactId>groovy-eclipse-compiler</artifactId>
+	        <version>2.7.0-01</version>
+	      </dependency>
+	    </dependencies>
+	  </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <configuration>
+              <additionalProjectnatures>
+                  <projectnature>org.eclipse.jdt.groovy.core.groovyNature</projectnature>
+              </additionalProjectnatures>
+              <classpathContainers>
+                 <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+                 <classpathContainer>GROOVY_DSL_SUPPORT</classpathContainer>
+              </classpathContainers>              
+          </configuration>
+      </plugin>	  
+	</plugins>
+	<!-- Need to explicitly specify test resources, otherwise maven eclipse plugin
+	     does not include src/test/groovy as source folder -->
+    <testResources>
+      <testResource>
+        <directory>src/test/groovy</directory>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
+  </build>
 </project>
