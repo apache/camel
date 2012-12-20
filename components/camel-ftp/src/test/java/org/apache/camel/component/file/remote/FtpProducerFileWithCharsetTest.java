@@ -26,7 +26,7 @@ import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 public class FtpProducerFileWithCharsetTest extends FtpServerTestSupport {
-    private String payload = "æøå ©";
+    private String payload = "\u00e6\u00f8\u00e5 \u00a9";
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/upload?charset=iso-8859-1&password=admin";
