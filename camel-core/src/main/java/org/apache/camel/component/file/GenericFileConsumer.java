@@ -121,7 +121,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         // sort using build in sorters so we can use expressions
-        // use a linked list so we can deque the exchanges
+        // use a linked list so we can dequeue the exchanges
         LinkedList<Exchange> exchanges = new LinkedList<Exchange>();
         for (GenericFile<T> file : files) {
             Exchange exchange = endpoint.createExchange(file);
