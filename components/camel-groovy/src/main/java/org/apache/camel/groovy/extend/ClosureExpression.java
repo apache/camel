@@ -14,22 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.groovy;
+package org.apache.camel.groovy.extend;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import groovy.lang.Closure;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.support.ExpressionSupport;
 
 /**
- * @deprecated the standard {@link RouteBuilder} can be used to write
- * Groovy routes.
+ * Bridges a closure to ExpressionSupport
  */
-public abstract class GroovyRouteBuilder extends RouteBuilder {
-    public GroovyRouteBuilder() {
+class ClosureExpression extends ExpressionSupport {
+
+    private Closure<?> closure;
+
+    ClosureExpression(Closure<?> closure) {
         super();
+        this.closure = closure;
     }
 
-    public GroovyRouteBuilder(CamelContext context) {
-        super(context);
+    @Override
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        Object result = ClosureSupport.call(closure, exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, result);
+    }
+
+    @Override
+    protected String assertionFailureMessage(Exchange exchange) {
+        return closure.toString();
     }
 
 }

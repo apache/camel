@@ -1,0 +1,4 @@
+moduleName=camel-groovy
+moduleVersion=2.11
+extensionClasses=org.apache.camel.groovy.extend.CamelGroovyMethods
+staticExtensionClasses=

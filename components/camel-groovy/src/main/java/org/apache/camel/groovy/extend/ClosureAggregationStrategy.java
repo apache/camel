@@ -14,22 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.groovy;
+package org.apache.camel.groovy.extend;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import groovy.lang.Closure;
 
-/**
- * @deprecated the standard {@link RouteBuilder} can be used to write
- * Groovy routes.
- */
-public abstract class GroovyRouteBuilder extends RouteBuilder {
-    public GroovyRouteBuilder() {
+import org.apache.camel.Exchange;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+
+class ClosureAggregationStrategy implements AggregationStrategy {
+
+    private Closure<Exchange> closure;
+
+    ClosureAggregationStrategy(Closure<Exchange> closure) {
         super();
+        this.closure = closure;
     }
 
-    public GroovyRouteBuilder(CamelContext context) {
-        super(context);
+    @Override
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        return ClosureSupport.call(closure, oldExchange, newExchange);
     }
+
 
 }

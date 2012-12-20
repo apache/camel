@@ -14,22 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.groovy;
+package org.apache.camel.groovy.extend;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import groovy.lang.Closure;
 
-/**
- * @deprecated the standard {@link RouteBuilder} can be used to write
- * Groovy routes.
- */
-public abstract class GroovyRouteBuilder extends RouteBuilder {
-    public GroovyRouteBuilder() {
-        super();
+import org.codehaus.groovy.runtime.InvokerInvocationException;
+
+final class ClosureSupport {
+
+    private ClosureSupport() {
     }
 
-    public GroovyRouteBuilder(CamelContext context) {
-        super(context);
+    static <T> T call(Closure<T> closure, Object... args) {
+        try {
+            return closure.call(args);
+        } catch (InvokerInvocationException e) {
+            if (e.getCause() instanceof RuntimeException) {
+                throw (RuntimeException) e.getCause();
+            } else {
+                throw e;
+            }
+        }
     }
-
 }
