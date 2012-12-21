@@ -50,7 +50,6 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             throw new IllegalArgumentException(String.format("Resource: %s refers an invalid resource without SystemId."
                     + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s", resourceUri, type, namespaceURI, publicId, systemId, baseURI));
         }
-        
         return new DefaultLSInput(publicId, systemId, baseURI);
     }
     
@@ -89,13 +88,18 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             String answer = "";
             if (ObjectHelper.isNotEmpty(base)) {
                 try {
-                    userDir = FileUtil.getUserDir().toString();
+                    userDir = FileUtil.getUserDir().toURI().toString();
                 } catch (Exception ex) {
                     // do nothing here
                 }
                 // get the relative path from the userdir
-                if (ObjectHelper.isNotEmpty(base) && base.startsWith("file") && base.startsWith(userDir)) {
-                    answer = FileUtil.onlyPath(base.substring(userDir.length())) + "/";
+                if (ObjectHelper.isNotEmpty(base) && base.startsWith("file://") && userDir.startsWith("file:")) {
+                    // skip the protocol part
+                    base = base.substring(7);
+                    userDir = userDir.substring(5);
+                    if (base.startsWith(userDir)) {
+                        answer = FileUtil.onlyPath(base.substring(userDir.length())) + "/";
+                    }
                 }
             }
             return answer;
