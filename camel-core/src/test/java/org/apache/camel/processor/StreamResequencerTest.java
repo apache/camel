@@ -82,7 +82,7 @@ public class StreamResequencerTest extends ContextTestSupport {
     @Override
     protected boolean useJmx() {
         boolean enable = "testStreamResequencerTypeWithJmx".equals(getName());
-        log.info("Going to {} JMX for the test {}", (enable ? "enable" : "disable"), getName());
+        log.info("Going to {} JMX for the test {}", enable ? "enable" : "disable", getName());
 
         return enable;
     }

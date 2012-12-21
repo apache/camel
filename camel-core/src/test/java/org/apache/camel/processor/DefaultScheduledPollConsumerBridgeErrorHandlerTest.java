@@ -67,7 +67,7 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
         // END SNIPPET: e1
     }
 
-    public class MyComponent extends DefaultComponent {
+    public static class MyComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -75,7 +75,7 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
         }
     }
 
-    public class MyEndpoint extends DefaultEndpoint {
+    public static class MyEndpoint extends DefaultEndpoint {
 
         public MyEndpoint(String endpointUri, Component component) {
             super(endpointUri, component);
@@ -99,7 +99,7 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
         }
     }
 
-    public class MyConsumer extends ScheduledPollConsumer {
+    public static class MyConsumer extends ScheduledPollConsumer {
 
         public MyConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);
