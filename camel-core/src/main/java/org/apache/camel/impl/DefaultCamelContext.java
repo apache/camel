@@ -690,7 +690,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
-        this.routeDefinitions.removeAll(routeDefinitions);
         for (RouteDefinition routeDefinition : routeDefinitions) {
             removeRouteDefinition(routeDefinition);
         }
@@ -700,6 +699,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         String id = routeDefinition.idOrCreate(nodeIdFactory);
         stopRoute(id);
         removeRoute(id);
+        this.routeDefinitions.remove(routeDefinition);
     }
 
     public ServiceStatus getRouteStatus(String key) {
