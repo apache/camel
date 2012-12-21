@@ -82,12 +82,15 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         assertEquals(0, context.getRoutes().size());
 
         context.addRouteDefinition(route);
+        assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
         assertTrue("Route should be started", context.getRouteStatus("foo").isStarted());
 
         context.removeRouteDefinition(route);
         assertEquals(0, context.getRoutes().size());
         assertNull(context.getRouteStatus("foo"));
+
+        assertEquals(0, context.getRouteDefinitions().size());
     }
 
     public void testAddRouteDefinitionsFromXml2() throws Exception {
