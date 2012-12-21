@@ -334,7 +334,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             EndpointHelper.setReferenceProperties(getCamelContext(), consumer, copy);
             EndpointHelper.setProperties(getCamelContext(), consumer, copy);
 
-            // special consumer.routeExceptionHandler option
+            // special consumer.bridgeErrorHandler option
             Object bridge = copy.remove("bridgeErrorHandler");
             if (bridge != null && "true".equals(bridge)) {
                 if (consumer instanceof DefaultConsumer) {
