@@ -88,7 +88,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             String answer = "";
             if (ObjectHelper.isNotEmpty(base)) {
                 try {
-                    userDir = FileUtil.getUserDir().toURI().toString();
+                    userDir = FileUtil.getUserDir().toURI().toASCIIString();
                 } catch (Exception ex) {
                     // do nothing here
                 }
