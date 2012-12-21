@@ -16,13 +16,14 @@
  */
 package org.apache.camel.spring.processor;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.StreamResequencerTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-
 public class SpringStreamResequencerTest extends StreamResequencerTest {
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/streamResequencer.xml");
     }
