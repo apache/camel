@@ -57,7 +57,13 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
 
         Producer producer = endpoint.createProducer();
         producer.start();
-        producer.process(exchange);
+
+        // ensure to stop producer after usage
+        try {
+            producer.process(exchange);
+        } finally {
+            producer.stop();
+        }
 
         return exchange;
     }
