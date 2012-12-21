@@ -17,8 +17,8 @@
 package org.apache.camel.processor;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
@@ -28,15 +28,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.util.ServiceHelper;
 
 public class StreamResequencerTest extends ContextTestSupport {
 
-    protected MockEndpoint resultEndpoint;
-
-    protected void sendBodyAndHeader(String endpointUri, final Object body,
-                                     final String headerName, final Object headerValue) {
+    protected void sendBodyAndHeader(String endpointUri, final Object body, final String headerName, final Object headerValue) {
         template.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -48,44 +45,46 @@ public class StreamResequencerTest extends ContextTestSupport {
     }
 
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
-        resultEndpoint.expectedBodiesReceived("msg1", "msg2", "msg3", "msg4");
+        getMockEndpoint("mock:result").expectedBodiesReceived("msg1", "msg2", "msg3", "msg4");
+
         sendBodyAndHeader("direct:start", "msg4", "seqnum", 4L);
         sendBodyAndHeader("direct:start", "msg1", "seqnum", 1L);
         sendBodyAndHeader("direct:start", "msg3", "seqnum", 3L);
         sendBodyAndHeader("direct:start", "msg2", "seqnum", 2L);
-        resultEndpoint.assertIsSatisfied();
+
+        assertMockEndpointsSatisfied();
     }
 
     public void testMultithreaded() throws Exception {
         int numMessages = 100;
 
-        ExecutorService service = Executors.newFixedThreadPool(2);
-        service.execute(new Sender(context.createProducerTemplate(), 0, numMessages, 2));
-        service.execute(new Sender(context.createProducerTemplate(), 1, numMessages + 1, 2));
+        ProducerTemplate producerTemplate = context.createProducerTemplate();
+        ProducerTemplate producerTemplate2 = context.createProducerTemplate();
+
+        ExecutorService service = context.getExecutorServiceManager().newFixedThreadPool(this, getName(), 2);
+
+        service.execute(new Sender(producerTemplate, 0, numMessages, 2));
+        service.execute(new Sender(producerTemplate2, 1, numMessages, 2));
 
         Object[] bodies = new Object[numMessages];
         for (int i = 0; i < numMessages; i++) {
             bodies[i] = "msg" + i;
         }
 
-        resultEndpoint.expectedBodiesReceived(bodies);
-        resultEndpoint.setResultWaitTime(20000);
-        resultEndpoint.assertIsSatisfied();
+        getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder(bodies);
+        getMockEndpoint("mock:result").setResultWaitTime(20000);
 
-        service.shutdownNow();
-    }
-    
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        disableJMX();
-        resultEndpoint = getMockEndpoint("mock:result");
+        assertMockEndpointsSatisfied();
+
+        ServiceHelper.stopServices(producerTemplate, producerTemplate2);
     }
 
     @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        enableJMX();
+    protected boolean useJmx() {
+        boolean enable = "testStreamResequencerTypeWithJmx".equals(getName());
+        log.info("Going to {} JMX for the test {}", (enable ? "enable" : "disable"), getName());
+
+        return enable;
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -103,8 +102,6 @@ public class StreamResequencerTest extends ContextTestSupport {
     }
 
     public void testStreamResequencerTypeWithoutJmx() throws Exception {
-        log.debug("This will now fail");
-        disableJMX();
         doTestStreamResequencerType();
     }
 
@@ -120,34 +117,36 @@ public class StreamResequencerTest extends ContextTestSupport {
         assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());
         assertIsInstanceOf(StreamResequencer.class, channel.getNextProcessor());
     }
-    
-    private static class Sender extends Thread {
-        
-        ProducerTemplate template;
 
-        int start;
-        int end;
-        int increment;
-        
+    private static class Sender implements Runnable {
+
+        private final ProducerTemplate template;
+        private final int start;
+        private final int end;
+        private final int increment;
+        private final Random random;
+
         public Sender(ProducerTemplate template, int start, int end, int increment) {
             this.template = template;
             this.start = start;
             this.end = end;
             this.increment = increment;
+            random = new Random();
         }
 
         @Override
         public void run() {
             for (long i = start; i < end; i += increment) {
                 try {
-                    Thread.sleep(4);
+                    // let's sleep randomly
+                    Thread.sleep(random.nextInt(20));
                 } catch (InterruptedException e) {
-                    // ignore
+                    Thread.currentThread().interrupt();
                 }
+
                 template.sendBodyAndHeader("direct:start", "msg" + i, "seqnum", i);
             }
         }
-        
+
     }
 }
-
