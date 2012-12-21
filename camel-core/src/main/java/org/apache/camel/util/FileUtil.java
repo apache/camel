@@ -16,10 +16,13 @@
  */
 package org.apache.camel.util;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.Locale;
@@ -39,8 +42,149 @@ public final class FileUtil {
     private static final transient Logger LOG = LoggerFactory.getLogger(FileUtil.class);
     private static final int RETRY_SLEEP_MILLIS = 10;
     private static File defaultTempDir;
-
+    
+    // current value of the "user.dir" property
+    private static String gUserDir;
+    // cached URI object for the current value of the escaped "user.dir" property stored as a URI
+    private static URI gUserDirURI;
+    // which ASCII characters need to be escaped
+    private static boolean gNeedEscaping[] = new boolean[128];
+    // the first hex character if a character needs to be escaped
+    private static char gAfterEscaping1[] = new char[128];
+    // the second hex character if a character needs to be escaped
+    private static char gAfterEscaping2[] = new char[128];
+    private static char[] gHexChs = {'0', '1', '2', '3', '4', '5', '6', '7',
+                                     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    // initialize the above 3 arrays
+    static {
+        for (int i = 0; i <= 0x1f; i++) {
+            gNeedEscaping[i] = true;
+            gAfterEscaping1[i] = gHexChs[i >> 4];
+            gAfterEscaping2[i] = gHexChs[i & 0xf];
+        }
+        gNeedEscaping[0x7f] = true;
+        gAfterEscaping1[0x7f] = '7';
+        gAfterEscaping2[0x7f] = 'F';
+        char[] escChs = {' ', '<', '>', '#', '%', '"', '{', '}',
+                         '|', '\\', '^', '~', '[', ']', '`'};
+        int len = escChs.length;
+        char ch;
+        for (int i = 0; i < len; i++) {
+            ch = escChs[i];
+            gNeedEscaping[ch] = true;
+            gAfterEscaping1[ch] = gHexChs[ch >> 4];
+            gAfterEscaping2[ch] = gHexChs[ch & 0xf];
+        }
+    }
+    
     private FileUtil() {
+        // Utils method
+    }
+    
+
+    // To escape the "user.dir" system property, by using %HH to represent
+    // special ASCII characters: 0x00~0x1F, 0x7F, ' ', '<', '>', '#', '%'
+    // and '"'. It's a static method, so needs to be synchronized.
+    // this method looks heavy, but since the system property isn't expected
+    // to change often, so in most cases, we only need to return the URI
+    // that was escaped before.
+    // According to the URI spec, non-ASCII characters (whose value >= 128)
+    // need to be escaped too.
+    // REVISIT: don't know how to escape non-ASCII characters, especially
+    // which encoding to use. Leave them for now.
+    public static synchronized URI getUserDir() throws URISyntaxException {
+        // get the user.dir property
+        String userDir = "";
+        try {
+            userDir = System.getProperty("user.dir");
+        } catch (SecurityException se) {
+        }
+
+        // return empty string if property value is empty string.
+        if (userDir.length() == 0) {
+            return new URI("file", "", "", null, null);
+        }
+        // compute the new escaped value if the new property value doesn't
+        // match the previous one
+        if (gUserDirURI != null && userDir.equals(gUserDir)) {
+            return gUserDirURI;
+        }
+
+        // record the new value as the global property value
+        gUserDir = userDir;
+
+        char separator = java.io.File.separatorChar;
+        userDir = userDir.replace(separator, '/');
+
+        int len = userDir.length(); 
+        int ch;
+        StringBuffer buffer = new StringBuffer(len * 3);
+        // change C:/blah to /C:/blah
+        if (len >= 2 && userDir.charAt(1) == ':') {
+            ch = Character.toUpperCase(userDir.charAt(0));
+            if (ch >= 'A' && ch <= 'Z') {
+                buffer.append('/');
+            }
+        }
+
+        // for each character in the path
+        int i = 0;
+        for (; i < len; i++) {
+            ch = userDir.charAt(i);
+            // if it's not an ASCII character, break here, and use UTF-8 encoding
+            if (ch >= 128) {
+                break;
+            }
+            if (gNeedEscaping[ch]) {
+                buffer.append('%');
+                buffer.append(gAfterEscaping1[ch]);
+                buffer.append(gAfterEscaping2[ch]);
+                // record the fact that it's escaped
+            } else {
+                buffer.append((char)ch);
+            }
+        }
+
+        // we saw some non-ascii character
+        if (i < len) {
+            // get UTF-8 bytes for the remaining sub-string
+            byte[] bytes = null;
+            byte b;
+            try {
+                bytes = userDir.substring(i).getBytes("UTF-8");
+            } catch (java.io.UnsupportedEncodingException e) {
+                // should never happen
+                return new URI("file", "", userDir, null, null);
+            }
+            len = bytes.length;
+
+            // for each byte
+            for (i = 0; i < len; i++) {
+                b = bytes[i];
+                // for non-ascii character: make it positive, then escape
+                if (b < 0) {
+                    ch = b + 256;
+                    buffer.append('%');
+                    buffer.append(gHexChs[ch >> 4]);
+                    buffer.append(gHexChs[ch & 0xf]);
+                } else if (gNeedEscaping[b]) {
+                    buffer.append('%');
+                    buffer.append(gAfterEscaping1[b]);
+                    buffer.append(gAfterEscaping2[b]);
+                } else {
+                    buffer.append((char)b);
+                }
+            }
+        }
+
+        // change blah/blah to blah/blah/
+        if (!userDir.endsWith("/")) {
+            buffer.append('/');
+        }
+
+        gUserDirURI = new URI("file", "", buffer.toString(), null, null);
+
+        return gUserDirURI;
     }
 
     /**
