@@ -18,8 +18,6 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.jsse.ClientAuthentication;
@@ -31,9 +29,7 @@ import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.Test;
 
 public class NettySSLContextParametersTest extends BaseNettyTest {
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate producerTemplate;
-    
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         
@@ -68,14 +64,6 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
         return false;
     }
 
-    private void sendRequest() throws Exception {
-        String response = producerTemplate.requestBody(
-            "netty:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters",
-            "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);        
-        assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
-    }
- 
-    
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
         // ibm jdks dont have sun security algorithms
@@ -94,9 +82,11 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
             }
         });
         context.start();
-        
-        sendRequest();
-        context.stop();
-    }    
+
+        String response = template.requestBody(
+                "netty:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters",
+                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
+        assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
+    }
 
 }
