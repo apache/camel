@@ -28,6 +28,13 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/done");
+
+        super.setUp();
+    }
+
     public void testFileConsumeDoneFileIssue() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
