@@ -39,15 +39,13 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
+    <!-- must use groovy-all as otherwise may have weird class loading issues
+         when evaluating groovy expressions -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy</artifactId>
+      <artifactId>groovy-all</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-xml</artifactId>
-    </dependency>
-    
+
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
