@@ -17,15 +17,6 @@
 -->
 <component>
   <!--<id>common-bin</id>-->
-  <fileSets>
-
-    <!-- copy the website docs
-    <fileSet>
-      <directory>${basedir}/target/website</directory>
-      <outputDirectory>/doc/website</outputDirectory>
-    </fileSet>
-    -->
-  </fileSets>
 
   <dependencySets>
     <dependencySet>
@@ -170,44 +161,12 @@
         <include>org.slf4j:slf4j-api</include>
       </includes>
     </dependencySet>
-    <dependencySet>
-      <outputDirectory>/lib/spring</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <includes>
-        <!-- spring is used by several camel components -->
-        <include>commons-logging:commons-logging</include>
-        <include>aopalliance:aopalliance</include>
-        <include>org.springframework:spring-aop</include>
-        <include>org.springframework:spring-asm</include>
-        <include>org.springframework:spring-beans</include>
-        <include>org.springframework:spring-context</include>
-        <include>org.springframework:spring-context-support</include>
-        <include>org.springframework:spring-core</include>
-        <include>org.springframework:spring-expression</include>
-        <include>org.springframework:spring-jdbc</include>
-        <include>org.springframework:spring-jms</include>
-        <include>org.springframework:spring-orm</include>
-        <include>org.springframework:spring-test</include>
-        <include>org.springframework:spring-tx</include>
-        <include>org.springframework:spring-web</include>
-      </includes>
-    </dependencySet>
+    <!-- this is needed for the jasypt tooling -->
     <dependencySet>
       <outputDirectory>/lib/optional</outputDirectory>
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
-        <include>log4j:log4j</include>
-        <include>org.slf4j:slf4j-log4j12</include>
-        <include>commons-beanutils:commons-beanutils</include>
-        <include>commons-collections:commons-collections</include>
-        <include>commons-dbcp:commons-dbcp</include>
-        <include>commons-pool:commons-pool</include>
-        <include>commons-lang:commons-lang</include>
-        <include>org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec</include>
-        <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
-        <include>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec</include>
         <include>org.jasypt:jasypt</include>
       </includes>
     </dependencySet>
