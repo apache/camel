@@ -266,6 +266,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exception) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exception);
+        answer.setRouteScoped(false);
         getOnExceptions().add(answer);
         return answer;
     }

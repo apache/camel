@@ -102,6 +102,10 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         exceptionClasses.add(exceptionType);
     }
 
+    public void setRouteScoped(boolean routeScoped) {
+        this.routeScoped = routeScoped;
+    }
+
     public boolean isRouteScoped() {
         // is context scoped by default
         return routeScoped != null ? routeScoped : false;
