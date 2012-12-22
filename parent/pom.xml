@@ -139,7 +139,7 @@
     <google-app-engine-version>1.6.6</google-app-engine-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-guava-version>13.0.1</google-guava-version>
-    <groovy-version>2.0.5</groovy-version>
+    <groovy-version>2.0.6</groovy-version>
     <gson-version>2.2.2</gson-version>
     <guice-bundle-version>2.0_2</guice-bundle-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
