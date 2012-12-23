@@ -71,7 +71,7 @@ public class StreamResequencerTest extends ContextTestSupport {
             bodies[i] = "msg" + i;
         }
 
-        getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder(bodies);
+        getMockEndpoint("mock:result").expectedBodiesReceived(bodies);
         getMockEndpoint("mock:result").setResultWaitTime(20000);
 
         assertMockEndpointsSatisfied();
