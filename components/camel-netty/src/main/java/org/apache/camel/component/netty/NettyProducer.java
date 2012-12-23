@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.CountDownLatch;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -91,20 +91,32 @@ public class NettyProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
-        GenericObjectPool.Config config = new GenericObjectPool.Config();
-        config.maxActive = configuration.getProducerPoolMaxActive();
-        config.minIdle = configuration.getProducerPoolMinIdle();
-        config.maxIdle = configuration.getProducerPoolMaxIdle();
-        // we should test on borrow to ensure the channel is still valid
-        config.testOnBorrow = true;
-        // only evict channels which are no longer valid
-        config.testWhileIdle = true;
-        // run eviction every 30th second
-        config.timeBetweenEvictionRunsMillis = 30 * 1000L;
-        config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
-        config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
-        pool = new GenericObjectPool<Channel>(new NettyProducerPoolableObjectFactory(), config);
+        if (configuration.isProducerPoolEnabled()) {
+            // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
+            GenericObjectPool.Config config = new GenericObjectPool.Config();
+            config.maxActive = configuration.getProducerPoolMaxActive();
+            config.minIdle = configuration.getProducerPoolMinIdle();
+            config.maxIdle = configuration.getProducerPoolMaxIdle();
+            // we should test on borrow to ensure the channel is still valid
+            config.testOnBorrow = true;
+            // only evict channels which are no longer valid
+            config.testWhileIdle = true;
+            // run eviction every 30th second
+            config.timeBetweenEvictionRunsMillis = 30 * 1000L;
+            config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
+            config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
+            pool = new GenericObjectPool<Channel>(new NettyProducerPoolableObjectFactory(), config);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
+                        new Object[]{config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool});
+            }
+        } else {
+            pool = new SharedSingletonObjectPool<Channel>(new NettyProducerPoolableObjectFactory());
+            if (LOG.isDebugEnabled()) {
+                LOG.info("Created NettyProducer shared singleton pool -> {}", pool);
+            }
+        }
 
         // setup pipeline factory
         ClientPipelineFactory factory = configuration.getClientPipelineFactory();
@@ -122,7 +134,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         if (!configuration.isLazyChannelCreation()) {
             // ensure the connection can be established when we start up
-            openAndCloseConnection();
+            Channel channel = pool.borrowObject();
+            pool.returnObject(channel);
         }
     }
 
@@ -149,10 +162,13 @@ public class NettyProducer extends DefaultAsyncProducer {
             workerExecutor = null;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+        if (pool != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+            }
+            pool.close();
+            pool = null;
         }
-        pool.close();
 
         super.doStop();
     }
@@ -303,7 +319,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
     }
 
-    private ChannelFuture openConnection() throws Exception {
+    protected ChannelFuture openConnection() throws Exception {
         ChannelFuture answer;
 
         if (isTcp()) {
@@ -314,10 +330,20 @@ public class NettyProducer extends DefaultAsyncProducer {
             clientBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
             clientBootstrap.setOption("connectTimeoutMillis", configuration.getConnectTimeout());
 
+            // set any additional netty options
+            if (configuration.getOptions() != null) {
+                for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
+                    clientBootstrap.setOption(entry.getKey(), entry.getValue());
+                }
+            }
+
             // set the pipeline factory, which creates the pipeline for each newly created channels
             clientBootstrap.setPipelineFactory(pipelineFactory);
             answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            LOG.trace("Created new TCP client bootstrap connecting to {}:{}", configuration.getHost(), configuration.getPort());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
+                        new Object[]{configuration.getHost(), configuration.getPort(), clientBootstrap.getOptions()});
+            }
             return answer;
         } else {
             // its okay to create a new bootstrap for each new channel
@@ -330,32 +356,36 @@ public class NettyProducer extends DefaultAsyncProducer {
             connectionlessClientBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
             connectionlessClientBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
 
+            // set any additional netty options
+            if (configuration.getOptions() != null) {
+                for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
+                    connectionlessClientBootstrap.setOption(entry.getKey(), entry.getValue());
+                }
+            }
+
             // set the pipeline factory, which creates the pipeline for each newly created channels
             connectionlessClientBootstrap.setPipelineFactory(pipelineFactory);
             // bind and store channel so we can close it when stopping
             Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
             ALL_CHANNELS.add(channel);
             answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            LOG.trace("Created new UDP client bootstrap connecting to {}:{}", configuration.getHost(), configuration.getPort());
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
+                       new Object[]{configuration.getHost(), configuration.getPort(), connectionlessClientBootstrap.getOptions()});
+            }
             return answer;
         }
     }
 
-    private Channel openChannel(ChannelFuture channelFuture) throws Exception {
-        // wait until until the operation is complete
-        final CountDownLatch latch = new CountDownLatch(1);
-        channelFuture.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                LOG.debug("Operation complete {}", channelFuture);
-                latch.countDown();
-            }
-        });
+    protected Channel openChannel(ChannelFuture channelFuture) throws Exception {
         // blocking for channel to be done
-        LOG.trace("Waiting for operation to complete {}", channelFuture);
-        latch.await();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
+        }
+        channelFuture.awaitUninterruptibly(configuration.getConnectTimeout());
 
-        if (!channelFuture.isSuccess()) {
+        if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
         }
         Channel answer = channelFuture.getChannel();
@@ -366,13 +396,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             LOG.debug("Creating connector to address: {}", configuration.getAddress());
         }
         return answer;
-    }
-
-    private void openAndCloseConnection() throws Exception {
-        ChannelFuture future = openConnection();
-        Channel channel = openChannel(future);
-        NettyHelper.close(channel);
-        ALL_CHANNELS.remove(channel);
     }
 
     public NettyConfiguration getConfiguration() {

@@ -18,9 +18,7 @@ package org.apache.camel.dataformat.bindy.format;
 
 import java.math.BigInteger;
 
-import org.apache.camel.dataformat.bindy.Format;
-
-public class BigIntegerFormat implements Format<BigInteger> {
+public class BigIntegerFormat extends AbstractNumberFormat<BigInteger> {
 
     public String format(BigInteger object) throws Exception {
         return object.toString();

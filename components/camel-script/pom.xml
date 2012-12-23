@@ -95,6 +95,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-jsr223</artifactId>
+            <scope>test</scope>
+        </dependency>		
+        <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby</artifactId>
             <scope>test</scope>

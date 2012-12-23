@@ -38,7 +38,7 @@
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.7.0</activemq-version>
-    <ahc-version>1.7.8</ahc-version>
+    <ahc-version>1.7.9</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>2.7.7_5</antlr-bundle-version>
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
@@ -57,7 +57,8 @@
     <avro-bundle-version>1.7.1_1</avro-bundle-version>
     <aws-java-sdk-bundle-version>1.3.14_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.3.25</aws-java-sdk-version>
-    <axiom-version>1.2.12</axiom-version>
+    <!--we must use axiom 1.2.10 with abdera 1.1.2, CAMEL-5109 has more details-->
+    <axiom-version>1.2.10</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
     <beanio-version>2.0.2</beanio-version>
@@ -93,7 +94,7 @@
     <commons-pool-version>1.6</commons-pool-version>
     <commons-jxpath-version>1.3</commons-jxpath-version>
     <concurrentlinkedhashmap.version>1.3.1</concurrentlinkedhashmap.version>
-    <cxf-version>2.7.0</cxf-version>
+    <cxf-version>2.7.1</cxf-version>
     <cxf-version-range>[2.4,2.8)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
@@ -138,7 +139,7 @@
     <google-app-engine-version>1.6.6</google-app-engine-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-guava-version>13.0.1</google-guava-version>
-    <groovy-version>2.0.5</groovy-version>
+    <groovy-version>2.0.6</groovy-version>
     <gson-version>2.2.2</gson-version>
     <guice-bundle-version>2.0_2</guice-bundle-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
@@ -153,7 +154,7 @@
     <hbase-version>0.90.5</hbase-version>
     <hbase-bundle-version>0.90.5_1</hbase-bundle-version>
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
-    <hibernate-version>3.6.10.Final</hibernate-version>
+    <hibernate-version>4.1.9.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.2.2</httpcore4-version> <!-- FIXME cmueller: rename to httpcore4-version -->
     <httpclient4-version>4.2.2</httpclient4-version> <!-- FIXME cmueller: rename to commons-httpclient4-version -->
@@ -199,7 +200,7 @@
     <jodatime2-bundle-version>2.1</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
-    <jruby-version>1.7.0</jruby-version>
+    <jruby-version>1.7.1</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
     <jsch-bundle-version>0.1.48_1</jsch-bundle-version>
@@ -1540,9 +1541,9 @@
         <version>${groovy-version}</version>
       </dependency>
       <dependency>
-        <groupId>com.sun.script</groupId>
-        <artifactId>groovy-engine</artifactId>
-        <version>20070112</version>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-jsr223</artifactId>
+        <version>${groovy-version}</version>
       </dependency>
 
       <!-- optional ognl support -->

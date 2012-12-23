@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.aries.blueprint.ExtendedBlueprintContainer;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
@@ -261,7 +260,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
         // add filter to class resolver which then will filter
         getContext().getPackageScanClassResolver().addFilter(filter);
-        ClassLoader classLoader = new BundleDelegatingClassLoader(((ExtendedBlueprintContainer) blueprintContainer).getBundleContext().getBundle());
+        ClassLoader classLoader = new BundleDelegatingClassLoader(bundleContext.getBundle());
         PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, classLoader,
                                                                                  getContext().getPackageScanClassResolver());
         finder.appendBuilders(builders);
@@ -280,7 +279,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
         // setup the application context classloader with the bundle delegating classloader
-        ClassLoader cl = new BundleDelegatingClassLoader(((ExtendedBlueprintContainer) blueprintContainer).getBundleContext().getBundle());
+        ClassLoader cl = new BundleDelegatingClassLoader(bundleContext.getBundle());
         LOG.debug("Set the application context classloader to: {}", cl);
         getContext().setApplicationContextClassLoader(cl);
         getContext().getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));

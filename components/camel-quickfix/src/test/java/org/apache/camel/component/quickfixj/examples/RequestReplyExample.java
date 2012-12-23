@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Body;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,6 +32,7 @@ import org.apache.camel.component.quickfixj.MessagePredicate;
 import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
 import org.apache.camel.component.quickfixj.QuickfixjEventCategory;
 import org.apache.camel.component.quickfixj.QuickfixjProducer;
+import org.apache.camel.component.quickfixj.examples.transform.QuickfixjMessageJsonPrinter;
 import org.apache.camel.component.quickfixj.examples.transform.QuickfixjMessageJsonTransformer;
 import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecrementer;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -65,7 +66,7 @@ public class RequestReplyExample {
     }
     
     public void run() throws Exception {        
-        DefaultCamelContext context = new DefaultCamelContext();
+        final CamelContext context = new DefaultCamelContext();
         final CountDownLatch logonLatch = new CountDownLatch(1);
         final String orderStatusServiceUrl = "http://localhost:9123/order/status";
         
@@ -77,11 +78,13 @@ public class RequestReplyExample {
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon)).
                     bean(new CountDownLatchDecrementer("logon", logonLatch));
 
-                // Incoming status requests are converted to InOut exchange pattern and passed to the
-                // order status service. The response is sent back to the session making the request.
+                // Incoming status requests are passed to the order status service and afterwards we print out that
+                // order status being delivered using the json printer.
                 from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
                     .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
-                    .bean(new MarketOrderStatusService());
+                    .to("log://OrderStatusRequestLog?showAll=true&showOut=true&multiline=true")
+                    .bean(new MarketOrderStatusService())
+                    .bean(new QuickfixjMessageJsonPrinter());
                 
                 from("jetty:" + orderStatusServiceUrl)
                     .bean(new OrderStatusRequestTransformer())
@@ -115,7 +118,7 @@ public class RequestReplyExample {
                 sb.append('\n');
                 line = orderStatusReply.readLine();
             }
-            LOG.info("Web request response:\n" + sb);
+            LOG.info("Web request:\n" + sb);
         }
         orderStatusReply.close();
         
@@ -168,7 +171,7 @@ public class RequestReplyExample {
     }
     
     public static class FixSessionRouter {
-        public String route(@Header("sessionID") String sessionID, @Body Object body) {
+        public String route(@Header("sessionID") String sessionID) {
             return String.format("quickfix:examples/inprocess.cfg?sessionID=%s", sessionID);
         }
     }

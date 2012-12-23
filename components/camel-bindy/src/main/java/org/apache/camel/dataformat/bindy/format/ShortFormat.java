@@ -16,9 +16,8 @@
  */
 package org.apache.camel.dataformat.bindy.format;
 
-import org.apache.camel.dataformat.bindy.Format;
 
-public class ShortFormat implements Format<Short> {
+public class ShortFormat extends AbstractNumberFormat<Short> {
 
     public String format(Short object) throws Exception {
         return object.toString();

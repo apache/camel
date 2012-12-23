@@ -18,8 +18,6 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
@@ -35,12 +33,9 @@ import org.junit.Test;
 
 public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
 
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate producerTemplate;
     private volatile boolean clientInvoked;
     private volatile boolean serverInvoked;
-    private String response;
-    
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -50,34 +45,26 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
     }
     
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("netty:tcp://localhost:{{port}}?serverPipelineFactory=#spf&sync=true&textline=true")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getOut().setBody("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
+                            }
+                        });
+            }
+        };
     }
 
-    private void sendRequest() throws Exception {
-        // Async request
-        response = (String) producerTemplate.requestBody(
-            "netty:tcp://localhost:{{port}}?clientPipelineFactory=#cpf&sync=true&textline=true",
-            "Forest Gump describing Vietnam...");        
-    }
-    
     @Test
     public void testCustomClientPipelineFactory() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from("netty:tcp://localhost:{{port}}?serverPipelineFactory=#spf&sync=true&textline=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");                           
-                        }
-                    });                
-            }
-        });
-        context.start();
-        
-        sendRequest();
-        context.stop();
-        
+        String response = (String) template.requestBody(
+                "netty:tcp://localhost:{{port}}?clientPipelineFactory=#cpf&sync=true&textline=true",
+                "Forest Gump describing Vietnam...");
+
         assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);
         assertEquals(true, clientInvoked);
         assertEquals(true, serverInvoked);

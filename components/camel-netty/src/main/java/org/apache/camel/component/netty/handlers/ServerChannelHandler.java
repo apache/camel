@@ -19,16 +19,13 @@ package org.apache.camel.component.netty.handlers;
 import java.net.SocketAddress;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.IOHelper;
-import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -66,6 +63,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel closed: {}", e.getChannel());
         }
+        // to keep track of open sockets
         consumer.getAllChannels().remove(e.getChannel());
     }
 
@@ -167,7 +165,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             }
 
             // we got a body to write
-            ChannelFutureListener listener = new ResponseFutureListener(exchange, messageEvent.getRemoteAddress());
+            ChannelFutureListener listener = createResponseFutureListener(consumer, exchange, messageEvent.getRemoteAddress());
             if (consumer.getConfiguration().isTcp()) {
                 NettyHelper.writeBodyAsync(LOG, messageEvent.getChannel(), null, body, exchange, listener);
             } else {
@@ -177,47 +175,15 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     }
 
     /**
-     * A {@link ChannelFutureListener} that performs the disconnect logic when
-     * sending the response is complete.
+     * Creates the {@link ChannelFutureListener} to execute when writing the response is complete.
+     *
+     * @param consumer          the netty consumer
+     * @param exchange          the exchange
+     * @param remoteAddress     the remote address of the message
+     * @return the listener.
      */
-    private final class ResponseFutureListener implements ChannelFutureListener {
-
-        private final Exchange exchange;
-        private final SocketAddress remoteAddress;
-
-        private ResponseFutureListener(Exchange exchange, SocketAddress remoteAddress) {
-            this.exchange = exchange;
-            this.remoteAddress = remoteAddress;
-        }
-
-        @Override
-        public void operationComplete(ChannelFuture future) throws Exception {
-            // if it was not a success then thrown an exception
-            if (!future.isSuccess()) {
-                Exception e = new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.getCause());
-                consumer.getExceptionHandler().handleException(e);
-            }
-
-            // should channel be closed after complete?
-            Boolean close;
-            if (exchange.hasOut()) {
-                close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-            } else {
-                close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-            }
-
-            // should we disconnect, the header can override the configuration
-            boolean disconnect = consumer.getConfiguration().isDisconnect();
-            if (close != null) {
-                disconnect = close;
-            }
-            if (disconnect) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Closing channel when complete at address: {}", remoteAddress);
-                }
-                NettyHelper.close(future.getChannel());
-            }
-        }
+    protected ChannelFutureListener createResponseFutureListener(NettyConsumer consumer, Exchange exchange, SocketAddress remoteAddress) {
+        return new ServerResponseFutureListener(consumer, exchange, remoteAddress);
     }
 
 }

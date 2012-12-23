@@ -18,19 +18,14 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class NettyTCPSyncNotLazyChannelTest extends BaseNettyTest {
 
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate producerTemplate;
-
     @Test
     public void testTCPStringInOutWithNettyConsumer() throws Exception {
-        String response = producerTemplate.requestBody(
+        String response = template.requestBody(
             "netty:tcp://localhost:{{port}}?sync=true&lazyChannelCreation=false",
             "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
@@ -39,7 +34,7 @@ public class NettyTCPSyncNotLazyChannelTest extends BaseNettyTest {
     @Test
     public void testTCPObjectInOutWithNettyConsumer() throws Exception {
         Poetry poetry = new Poetry();
-        Poetry response = (Poetry) producerTemplate.requestBody("netty:tcp://localhost:{{port}}?sync=true&lazyChannelCreation=false", poetry);
+        Poetry response = (Poetry) template.requestBody("netty:tcp://localhost:{{port}}?sync=true&lazyChannelCreation=false", poetry);
         assertEquals("Dr. Sarojini Naidu", response.getPoet());
     }
 

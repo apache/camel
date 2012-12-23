@@ -66,6 +66,10 @@ public final class AdviceWithTasks {
         }
 
         public boolean match(ProcessorDefinition<?> processor) {
+            if (id.equals("*")) {
+                // make sure the processor which id isn't be set is matched.
+                return true;
+            }
             return EndpointHelper.matchPattern(processor.getId(), id);
         }
     }

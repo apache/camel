@@ -14,21 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.reply;
+package org.apache.camel.groovy.extend;
 
-import org.apache.camel.AsyncCallback;
+import groovy.lang.Closure;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ExpressionSupport;
 
 /**
- * {@link ReplyHandler} to handle processing replies when using persistent queues.
- *
- * @version 
+ * Bridges a closure to ExpressionSupport
  */
-public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
+class ClosureExpression extends ExpressionSupport {
 
-    public PersistentQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                       String originalCorrelationId, String correlationId, long timeout) {
-        super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+    private Closure<?> closure;
+
+    ClosureExpression(Closure<?> closure) {
+        super();
+        this.closure = closure;
+    }
+
+    @Override
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        Object result = ClosureSupport.call(closure, exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, result);
+    }
+
+    @Override
+    protected String assertionFailureMessage(Exchange exchange) {
+        return closure.toString();
     }
 
 }

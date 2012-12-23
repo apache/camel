@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
@@ -182,6 +183,18 @@ public class NettyConsumer extends DefaultConsumer {
         serverBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
         serverBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
+        if (configuration.getBacklog() > 0) {
+            serverBootstrap.setOption("backlog", configuration.getBacklog());
+        }
+
+        // set any additional netty options
+        if (configuration.getOptions() != null) {
+            for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
+                serverBootstrap.setOption(entry.getKey(), entry.getValue());
+            }
+        }
+
+        log.info("Created ServerBootstrap {} with options: {}", serverBootstrap, serverBootstrap.getOptions());
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
         serverBootstrap.setPipelineFactory(pipelineFactory);
@@ -212,6 +225,18 @@ public class NettyConsumer extends DefaultConsumer {
             connectionlessServerBootstrap.setOption("receiveBufferSizePredictorFactory",
                 new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
         }
+        if (configuration.getBacklog() > 0) {
+            connectionlessServerBootstrap.setOption("backlog", configuration.getBacklog());
+        }
+
+        // set any additional netty options
+        if (configuration.getOptions() != null) {
+            for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
+                connectionlessServerBootstrap.setOption(entry.getKey(), entry.getValue());
+            }
+        }
+
+        log.info("Created ConnectionlessBootstrap {} with options: {}", connectionlessServerBootstrap, connectionlessServerBootstrap.getOptions());
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
         connectionlessServerBootstrap.setPipelineFactory(pipelineFactory);

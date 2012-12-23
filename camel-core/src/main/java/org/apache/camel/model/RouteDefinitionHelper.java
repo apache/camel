@@ -243,7 +243,11 @@ public final class RouteDefinitionHelper {
                                          List<OnExceptionDefinition> onExceptions) {
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
-            abstracts.addAll(onExceptions);
+            for (OnExceptionDefinition output : onExceptions) {
+                // these are context scoped on exceptions so set this flag
+                output.setRouteScoped(false);
+                abstracts.add(output);
+            }
         }
 
         // now add onExceptions to the route

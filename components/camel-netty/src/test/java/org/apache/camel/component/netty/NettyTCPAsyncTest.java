@@ -23,8 +23,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
@@ -35,11 +33,9 @@ import org.junit.Test;
 public class NettyTCPAsyncTest extends BaseNettyTest {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate producerTemplate;
-    
+
     private void sendFile(String uri) throws Exception {
-        producerTemplate.send(uri, new Processor() {
+        template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
                 InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/test.txt"));

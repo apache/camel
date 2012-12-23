@@ -166,7 +166,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         try {
             Object result = evaluate(exchange);
-            return exchange.getContext().getTypeConverter().convertTo(type, result);
+            return exchange.getContext().getTypeConverter().convertTo(type, exchange, result);
         } finally {
             // remove the thread local after usage
             this.exchange.remove();
@@ -1122,11 +1122,11 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
             // let's try coercing some common types into something JAXP work with the best for special types
             if (body instanceof WrappedFile) {
                 // special for files so we can work with them out of the box
-                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
+                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, body);
                 answer = new InputSource(is);
             } else if (body instanceof BeanInvocation) {
                 // if its a null bean invocation then handle that specially
-                BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, body);
+                BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, exchange, body);
                 if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
                     // its a null argument from the bean invocation so use null as answer
                     answer = null;

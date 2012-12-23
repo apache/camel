@@ -516,7 +516,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         try {
             if (is == null) {
-                is = exchange.getIn().getMandatoryBody(InputStream.class);
+                String charset = endpoint.getCharset();
+                if (charset != null) {
+                    // charset configured so we must convert to the desired
+                    // charset so we can write with encoding
+                    is = new ByteArrayInputStream(exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
+                    log.trace("Using InputStream {} with charset {}.", is, charset);
+                } else {
+                    is = exchange.getIn().getMandatoryBody(InputStream.class);
+                }
             }
             if (endpoint.getFileExist() == GenericFileExist.Append) {
                 log.trace("Client appendFile: {}", targetName);

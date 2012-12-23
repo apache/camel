@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    targetNamespace="org.health.check.common"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="commonElement" type="common:commonType" xmlns:common="org.health.check.common"/>
+    <xs:complexType name="commonType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="element1"/>
+            <xs:element type="xs:string" name="element2"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

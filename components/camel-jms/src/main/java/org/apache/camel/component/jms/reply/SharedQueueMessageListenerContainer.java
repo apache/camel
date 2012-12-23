@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 /**
- * This {@link DefaultMessageListenerContainer} is used for persistent reply queues which are shared.
+ * This {@link DefaultMessageListenerContainer} is used for reply queues which are shared.
  * <p/>
  * This implementation supports using a fixed or dynamic JMS Message Selector to pickup the
  * designated reply messages from the shared queue. Since the queue is shared, then we can only
@@ -32,11 +32,11 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  * <p/>
  * See more details at <a href="http://camel.apache.org/jms">camel-jms</a>.
  *
- * @see ExclusivePersistentQueueMessageListenerContainer
+ * @see ExclusiveQueueMessageListenerContainer
  */
-public class SharedPersistentQueueMessageListenerContainer extends DefaultJmsMessageListenerContainer {
+public class SharedQueueMessageListenerContainer extends DefaultJmsMessageListenerContainer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SharedPersistentQueueMessageListenerContainer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SharedQueueMessageListenerContainer.class);
 
     private String fixedMessageSelector;
     private MessageSelectorCreator creator;
@@ -47,7 +47,7 @@ public class SharedPersistentQueueMessageListenerContainer extends DefaultJmsMes
      * @param endpoint the endpoint
      * @param fixedMessageSelector the fixed selector
      */
-    public SharedPersistentQueueMessageListenerContainer(JmsEndpoint endpoint, String fixedMessageSelector) {
+    public SharedQueueMessageListenerContainer(JmsEndpoint endpoint, String fixedMessageSelector) {
         super(endpoint);
         this.fixedMessageSelector = fixedMessageSelector;
     }
@@ -58,7 +58,7 @@ public class SharedPersistentQueueMessageListenerContainer extends DefaultJmsMes
      * @param endpoint the endpoint
      * @param creator the create to create the dynamic selector
      */
-    public SharedPersistentQueueMessageListenerContainer(JmsEndpoint endpoint, MessageSelectorCreator creator) {
+    public SharedQueueMessageListenerContainer(JmsEndpoint endpoint, MessageSelectorCreator creator) {
         super(endpoint);
         this.creator = creator;
     }

@@ -16,30 +16,20 @@
  */
 package org.apache.camel.language.groovy;
 
-import java.io.InputStreamReader;
-import groovy.lang.GroovyShell;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
+ * @deprecated the standard {@link RouteBuilder} can be used to write
+ * Groovy routes.
  */
 public abstract class GroovyRouteBuilder extends RouteBuilder {
     public GroovyRouteBuilder() {
-        init();
+        super();
     }
 
     public GroovyRouteBuilder(CamelContext context) {
         super(context);
-        init();
     }
 
-    private void init() {
-        ClassLoader loader = getClass().getClassLoader();
-        GroovyShell shell = new GroovyShell(loader);
-        shell.evaluate(new InputStreamReader(loader.getResourceAsStream("org/apache/camel/language/groovy/ConfigureCamel.groovy")));
-
-        // TODO compile Groovy as part of build!
-        //new ConfigureCamel().run();
-    }
 }

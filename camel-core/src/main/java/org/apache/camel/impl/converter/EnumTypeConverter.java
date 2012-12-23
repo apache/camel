@@ -24,10 +24,7 @@ import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A type converter which is used to convert to and from array types
- * particularly for derived types of array component types and dealing with
- * primitive array types.
- *
+ * A type converter which is used to convert from String to enum type
  * @version 
  */
 public class EnumTypeConverter extends TypeConverterSupport {

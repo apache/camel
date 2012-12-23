@@ -30,7 +30,6 @@ import org.apache.cxf.interceptor.AttachmentInInterceptor;
 import org.apache.cxf.interceptor.AttachmentOutInterceptor;
 import org.apache.cxf.interceptor.StaxInInterceptor;
 import org.apache.cxf.interceptor.StaxOutInterceptor;
-import org.apache.cxf.interceptor.URIMappingInterceptor;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.model.EndpointInfo;
@@ -83,7 +82,6 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
         getService().getInInterceptors().add(new AttachmentInInterceptor());
         getService().getInInterceptors().add(new SoapHeaderInterceptor());
         getService().getInInterceptors().add(new CheckFaultInterceptor());
-        getService().getInInterceptors().add(new URIMappingInterceptor());
 
         getService().getInInterceptors().add(new StaxInInterceptor());
         getService().getInInterceptors().add(new SoapActionInInterceptor());

@@ -16,10 +16,13 @@
  */
 package org.apache.camel.util;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.Locale;
@@ -38,9 +41,21 @@ public final class FileUtil {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(FileUtil.class);
     private static final int RETRY_SLEEP_MILLIS = 10;
+    /**
+     * The System property key for the user directory.
+     */
+    private static final String USER_DIR_KEY = "user.dir";
+    private static final File USER_DIR = new File(System.getProperty(USER_DIR_KEY));
     private static File defaultTempDir;
-
+    
+    
     private FileUtil() {
+        // Utils method
+    }
+    
+
+    public static File getUserDir() {
+        return USER_DIR;
     }
 
     /**

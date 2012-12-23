@@ -28,8 +28,7 @@ class MyRouteBuilder extends RouteBuilder {
      */
     void configure() {
         from("jetty:http://0.0.0.0:8080")
-          .transform()
-            .groovy("'Today is ' + new Date()")
+          .transform { 'Today is ' + new Date() }
     }
 
 }

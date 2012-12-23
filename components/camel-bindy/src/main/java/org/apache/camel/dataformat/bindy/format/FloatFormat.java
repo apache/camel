@@ -16,16 +16,31 @@
  */
 package org.apache.camel.dataformat.bindy.format;
 
-import org.apache.camel.dataformat.bindy.Format;
+import java.math.BigDecimal;
+import java.util.Locale;
 
-public class FloatFormat implements Format<Float> {
+public class FloatFormat extends AbstractNumberFormat<Float> {
+
+    public FloatFormat(boolean impliedDecimalPosition, int precision, Locale locale) {
+        super(impliedDecimalPosition, precision, locale);
+    }
 
     public String format(Float object) throws Exception {
-        return object.toString();
+        return !super.hasImpliedDecimalPosition()
+            ? super.getFormat().format(object)
+            : super.getFormat().format(object * super.getMultiplier());
     }
 
     public Float parse(String string) throws Exception {
-        return new Float(string);
-    }
+        Float value = null;
+        if (!super.hasImpliedDecimalPosition()) {
+            value = Float.parseFloat(string.trim());
+        } else {
+            BigDecimal tmp = new BigDecimal(string.trim());
+            BigDecimal div = BigDecimal.valueOf(super.getMultiplier());
+            value = tmp.divide(div).floatValue();
+        }
 
+        return value;
+    }
 }

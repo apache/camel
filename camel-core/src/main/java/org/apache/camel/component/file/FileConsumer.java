@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Processor;
@@ -51,8 +52,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
 
         log.trace("Polling directory: {}", directory.getPath());
-        File[] files = directory.listFiles();
-        if (files == null || files.length == 0) {
+        File[] dirFiles = directory.listFiles();
+        if (dirFiles == null || dirFiles.length == 0) {
             // no files in this directory to poll
             if (log.isTraceEnabled()) {
                 log.trace("No files found in directory: {}", directory.getPath());
@@ -61,9 +62,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
         } else {
             // we found some files
             if (log.isTraceEnabled()) {
-                log.trace("Found {} in directory: {}", files.length, directory.getPath());
+                log.trace("Found {} in directory: {}", dirFiles.length, directory.getPath());
             }
         }
+        List<File> files = Arrays.asList(dirFiles);
 
         for (File file : files) {
             // check if we can continue polling in files
@@ -81,7 +83,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset());
 
             if (file.isDirectory()) {
-                if (endpoint.isRecursive() && isValidFile(gf, true) && depth < endpoint.getMaxDepth()) {
+                if (endpoint.isRecursive() && isValidFile(gf, true, files) && depth < endpoint.getMaxDepth()) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = fileName + File.separator + file.getName();
                     boolean canPollMore = pollDirectory(subDirectory, fileList, depth);
@@ -91,7 +93,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 }
             } else {
                 // Windows can report false to a file on a share so regard it always as a file (if its not a directory)
-                if (isValidFile(gf, false) && depth >= endpoint.minDepth) {
+                if (isValidFile(gf, false, files) && depth >= endpoint.minDepth) {
                     if (isInProgress(gf)) {
                         if (log.isTraceEnabled()) {
                             log.trace("Skipping as file is already in progress: {}", gf.getFileName());
@@ -107,6 +109,19 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
 
         return true;
+    }
+
+    @Override
+    protected boolean isMatched(GenericFile<File> file, String doneFileName, List<File> files) {
+        String onlyName = FileUtil.stripPath(doneFileName);
+        // the done file name must be among the files
+        for (File f : files) {
+            if (f.getName().equals(onlyName)) {
+                return true;
+            }
+        }
+        log.trace("Done file: {} does not exist", doneFileName);
+        return false;
     }
 
     /**

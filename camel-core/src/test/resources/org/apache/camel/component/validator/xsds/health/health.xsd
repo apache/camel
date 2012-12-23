@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        attributeFormDefault="unqualified"
+        elementFormDefault="qualified"
+        targetNamespace="org.health.check.person"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:common="org.health.check.common">
+    <xs:import schemaLocation="common/common.xsd" namespace="org.health.check.common"/>
+    <xs:element name="health" type="org:healthType" xmlns:org="org.health.check.person"/>
+    
+    <xs:complexType name="healthType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="lastCheck"/>
+            <xs:element type="xs:string" name="status"/>
+            <xs:element ref="common:commonElement" maxOccurs="1" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
