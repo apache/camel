@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,9 +61,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     private CamelContext camelContext;
     private MBeanServer server;
-    // need a name -> actual name mapping as some servers changes the names (suc as WebSphere)
+    // need a name -> actual name mapping as some servers changes the names (such as WebSphere)
     private final Map<ObjectName, ObjectName> mbeansRegistered = new HashMap<ObjectName, ObjectName>();
     private JMXConnectorServer cs;
+    private Registry registry;
 
     private Integer registryPort;
     private Integer connectorPort;
@@ -257,7 +261,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     protected void doStop() throws Exception {
-        // close JMX Connector
+        // close JMX Connector, if it was created
         if (cs != null) {
             try {
                 cs.stop();
@@ -267,6 +271,16 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
                         + cs + ". This exception will be ignored.");
             }
             cs = null;
+        }
+
+        // Unexport JMX RMI registry, if it was created
+        if (registry != null) {
+            try {
+                UnicastRemoteObject.unexportObject(registry, true);
+                LOG.debug("Unexported JMX RMI Registry");
+            } catch (NoSuchObjectException e) {
+                LOG.debug("Error occurred while unexporting JMX RMI registry. This exception will be ignored.");
+            }
         }
 
         if (mbeansRegistered.isEmpty()) {
@@ -384,7 +398,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         ObjectHelper.notNull(registryPort, "registryPort");
 
         try {
-            LocateRegistry.createRegistry(registryPort);
+            registry = LocateRegistry.createRegistry(registryPort);
             LOG.debug("Created JMXConnector RMI registry on port {}", registryPort);
         } catch (RemoteException ex) {
             // The registry may had been created, we could get the registry instead

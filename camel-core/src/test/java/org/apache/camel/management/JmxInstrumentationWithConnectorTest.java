@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management;
 
+import java.rmi.NoSuchObjectException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Locale;
 import java.util.Random;
 import javax.management.MBeanServerConnection;
@@ -33,6 +36,7 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
 
     protected String url;
     protected JMXConnector clientConnector;
+    protected int registryPort;
 
     @Override
     protected boolean useJmx() {
@@ -56,14 +60,14 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     protected void setUp() throws Exception {
         sleepForConnection = 3000;
 
-        int port = 30000 + new Random().nextInt(10000);
-        log.info("Using port " + port);
-        url = "service:jmx:rmi:///jndi/rmi://localhost:" + port + "/jmxrmi/camel";
+        registryPort = 30000 + new Random().nextInt(10000);
+        log.info("Using port " + registryPort);
+        url = "service:jmx:rmi:///jndi/rmi://localhost:" + registryPort + "/jmxrmi/camel";
 
         // need to explicit set it to false to use non-platform mbs
         System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "false");
         System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
-        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "" + port);
+        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "" + registryPort);
         super.setUp();
     }
 
@@ -89,5 +93,33 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
             mbsc = clientConnector.getMBeanServerConnection();
         }
         return mbsc;
+    }
+
+    public void testRmiRegistryUnexported() throws Exception {
+
+        Registry registry = LocateRegistry.getRegistry(registryPort);
+
+        // before we stop the context the registry is still exported, so list() should work
+        Exception e;
+        try {
+            registry.list();
+            e = null;
+        } catch (NoSuchObjectException nsoe) {
+            e = nsoe;
+        }
+        assertNull(e);
+
+        // stop the Camel context
+        context.stop();
+
+        // stopping the Camel context unexported the registry, so list() should fail
+        Exception e2;
+        try {
+            registry.list();
+            e2 = null;
+        } catch (NoSuchObjectException nsoe) {
+            e2 = nsoe;
+        }
+        assertNotNull(e2);
     }
 }
