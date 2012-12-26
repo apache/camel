@@ -56,11 +56,6 @@ import static org.apache.camel.component.sjms.SjmsConstants.QUEUE_PREFIX;
 import static org.apache.camel.component.sjms.SjmsConstants.TOPIC_PREFIX;
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
-/**
- * TODO Add Class documentation for SjmsExchangeMessageHelper
- * 
- * @author sully6768
- */
 public final class SjmsExchangeMessageHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(SjmsExchangeMessageHelper.class);
 

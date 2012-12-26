@@ -28,11 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
-/**
- * TODO Add Class documentation for TransactedConsumerSupport
- *
- * @author sully6768
- */
 public abstract class TransactedConsumerSupport extends CamelTestSupport {
     
     public abstract String getBrokerUri();
