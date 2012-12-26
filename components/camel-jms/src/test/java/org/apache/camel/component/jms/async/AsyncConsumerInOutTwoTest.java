@@ -33,7 +33,7 @@ public class AsyncConsumerInOutTwoTest extends CamelTestSupport {
 
     @Test
     public void testAsyncJmsConsumer() throws Exception {
-        String out = template.requestBody("activemq:queue:start", "Hello World", String.class);
+        String out = template.requestBody("activemq:queue:start?replyTo=bar", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
