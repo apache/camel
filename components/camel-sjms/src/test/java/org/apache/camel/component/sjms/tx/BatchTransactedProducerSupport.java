@@ -31,14 +31,8 @@ import org.apache.camel.component.sjms.BatchMessage;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
-/**
- * TODO Add Class documentation for BatchTransactedProducerSupport
- *
- * @author sully6768
- */
 public abstract class BatchTransactedProducerSupport extends CamelTestSupport {
 
-    
     public abstract String getBrokerUri();
 
     protected void runTest(String destinationName, int consumerRouteCount, int messageCount, int totalAttempts)

@@ -28,11 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
-/**
- * TODO Add Class documentation for TransactedConsumerSupport
- *
- * @author sully6768
- */
 public abstract class TransactedConsumerSupport extends CamelTestSupport {
     
     public abstract String getBrokerUri();
@@ -75,6 +70,12 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(getBrokerUri());
+        // use low redelivery delay to speed
+        connectionFactory.getRedeliveryPolicy().setInitialRedeliveryDelay(100);
+        connectionFactory.getRedeliveryPolicy().setRedeliveryDelay(100);
+        connectionFactory.getRedeliveryPolicy().setUseCollisionAvoidance(false);
+        connectionFactory.getRedeliveryPolicy().setUseExponentialBackOff(false);
+
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);

@@ -39,8 +39,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for {@link javax.jms.Message}.
- * 
- * @author sully6768
  */
 public final class JmsMessageHelper {
 

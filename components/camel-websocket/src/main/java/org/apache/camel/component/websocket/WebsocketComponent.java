@@ -187,10 +187,6 @@ public class WebsocketComponent extends DefaultComponent {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
 
-            if (prodcon instanceof WebsocketConsumer) {
-                // connect websocket consumer, to servlet
-                connectorRef.servlet.connect((WebsocketConsumer) prodcon);
-            }
         }
 
     }
@@ -426,6 +422,8 @@ public class WebsocketComponent extends DefaultComponent {
             if (servlet.getConsumer() == null) {
                 servlet.setConsumer(consumer);
             }
+            // registry the consumer here
+            servlet.connect(consumer);
             return servlet;
         } else {
             throw new Exception("Jetty instance has not been retrieved for : " + key);

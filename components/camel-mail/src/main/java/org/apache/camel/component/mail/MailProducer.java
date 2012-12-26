@@ -47,6 +47,8 @@ public class MailProducer extends DefaultProducer {
                 LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
             }
             sender.send(mimeMessage);
+            // set the message ID for further processing
+            exchange.getIn().setHeader(MailConstants.MAIL_MESSAGE_ID, mimeMessage.getMessageID());
         } catch (MessagingException e) {
             exchange.setException(e);
         } catch (IOException e) {
