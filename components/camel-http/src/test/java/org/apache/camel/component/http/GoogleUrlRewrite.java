@@ -18,8 +18,11 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.Producer;
 
+// START SNIPPET: e1
 /**
- *
+ * A very simple url rewrite that replaces yahoo with google in the url.
+ * <p/>
+ * This is only used for testing purposes.
  */
 public class GoogleUrlRewrite implements UrlRewrite {
 
@@ -28,3 +31,4 @@ public class GoogleUrlRewrite implements UrlRewrite {
         return url.replaceAll("yahoo", "google");
     }
 }
+// END SNIPPET: e1

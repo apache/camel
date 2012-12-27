@@ -333,6 +333,7 @@ public class HttpProducer extends DefaultProducer {
      */
     @SuppressWarnings("deprecation")
     protected HttpMethod createMethod(Exchange exchange) throws Exception {
+        // creating the url to use takes 2-steps
         String url = HttpHelper.createURL(exchange, getEndpoint());
         URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
         // get the url and query string from the uri

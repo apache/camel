@@ -104,9 +104,10 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     }
 
     protected JettyContentExchange createHttpExchange(Exchange exchange, AsyncCallback callback) throws Exception {
+        // creating the url to use takes 2-steps
         String url = HttpHelper.createURL(exchange, getEndpoint());
         URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
-        // get the url and query string from the uri
+        // get the url from the uri
         url = uri.toASCIIString();
 
         // execute any custom url rewrite
