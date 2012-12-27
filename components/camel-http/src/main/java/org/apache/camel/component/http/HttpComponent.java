@@ -211,6 +211,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
         IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
@@ -228,6 +229,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
             setEndpointHeaderFilterStrategy(endpoint);
+        }
+        if (urlRewrite != null) {
+            // let CamelContext deal with the lifecycle of the url rewrite
+            // this ensures its being shutdown when Camel shutdown etc.
+            getCamelContext().addService(urlRewrite);
+            endpoint.setUrlRewrite(urlRewrite);
         }
 
         // prefer to use endpoint configured over component configured

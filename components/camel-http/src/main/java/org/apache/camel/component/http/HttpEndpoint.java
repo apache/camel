@@ -61,6 +61,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean transferException;
     private boolean traceEnabled;
     private String httpMethodRestrict;
+    private UrlRewrite urlRewrite;
 
     public HttpEndpoint() {
     }
@@ -338,4 +339,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
     }
+
+    public UrlRewrite getUrlRewrite() {
+        return urlRewrite;
+    }
+
+    public void setUrlRewrite(UrlRewrite urlRewrite) {
+        this.urlRewrite = urlRewrite;
+    }
+
 }
