@@ -40,13 +40,14 @@ public abstract class UrlRewriteFilter extends ServiceSupport implements CamelCo
 
     private static final Logger LOG = LoggerFactory.getLogger(UrlRewriteFilter.class);
 
-    // TODO: Allow to use a config file for mod rewrite rules as well
     // TODO: Find a better way of starting/stopping this without adding as service to CamelContext
+    // TODO: Dynamic ports of testing
 
     protected CamelContext camelContext;
     protected Conf conf;
     protected UrlRewriter urlRewriter;
     protected String configFile;
+    protected String modRewriteConfFile;
     protected String modRewriteConfText;
     protected boolean useQueryString;
 
@@ -102,6 +103,14 @@ public abstract class UrlRewriteFilter extends ServiceSupport implements CamelCo
         this.modRewriteConfText = modRewriteConfText;
     }
 
+    public String getModRewriteConfFile() {
+        return modRewriteConfFile;
+    }
+
+    public void setModRewriteConfFile(String modRewriteConfFile) {
+        this.modRewriteConfFile = modRewriteConfFile;
+    }
+
     public boolean isUseQueryString() {
         return useQueryString;
     }
@@ -115,7 +124,21 @@ public abstract class UrlRewriteFilter extends ServiceSupport implements CamelCo
         ObjectHelper.notNull(camelContext, "camelContext");
 
         if (conf == null) {
-            if (modRewriteConfText != null) {
+            if (modRewriteConfFile != null) {
+                LOG.debug("Using mod rewrite config file: {} as config for urlRewrite", modRewriteConfFile);
+                InputStream is = camelContext.getClassResolver().loadResourceAsStream(modRewriteConfFile);
+                if (is == null) {
+                    throw new IOException("Cannot load mod rewrite config file: " + modRewriteConfFile);
+                }
+                try {
+                    String text = camelContext.getTypeConverter().mandatoryConvertTo(String.class, is);
+                    ModRewriteConfLoader loader = new ModRewriteConfLoader();
+                    conf = new Conf();
+                    loader.process(text, conf);
+                } finally {
+                    IOHelper.close(is);
+                }
+            } else if (modRewriteConfText != null) {
                 LOG.debug("Using modRewriteConfText: {} as config for urlRewrite", modRewriteConfText);
                 ModRewriteConfLoader loader = new ModRewriteConfLoader();
                 conf = new Conf();
