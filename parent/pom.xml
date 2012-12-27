@@ -161,7 +161,6 @@
     <httpclient-version>3.1</httpclient-version> <!-- FIXME cmueller: rename to commons-httpclient-version -->
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
-    <icu4j-version>4.8.1.1</icu4j-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
