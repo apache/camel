@@ -41,7 +41,7 @@ public abstract class UrlRewriteFilter extends ServiceSupport implements CamelCo
     private static final Logger LOG = LoggerFactory.getLogger(UrlRewriteFilter.class);
 
     // TODO: Find a better way of starting/stopping this without adding as service to CamelContext
-    // TODO: Dynamic ports of testing
+    // TODO: Add support in camel-http4 and camel-ahc
 
     protected CamelContext camelContext;
     protected Conf conf;
@@ -50,6 +50,9 @@ public abstract class UrlRewriteFilter extends ServiceSupport implements CamelCo
     protected String modRewriteConfFile;
     protected String modRewriteConfText;
     protected boolean useQueryString;
+    protected boolean useContext;
+    protected String defaultMatchType;
+    protected String decodeUsing;
 
     public String rewrite(String url, HttpServletRequest request) throws Exception {
         RewrittenUrl response = urlRewriter.processRequest(request, null);
@@ -119,6 +122,30 @@ public abstract class UrlRewriteFilter extends ServiceSupport implements CamelCo
         this.useQueryString = useQueryString;
     }
 
+    public boolean isUseContext() {
+        return useContext;
+    }
+
+    public void setUseContext(boolean useContext) {
+        this.useContext = useContext;
+    }
+
+    public String getDefaultMatchType() {
+        return defaultMatchType;
+    }
+
+    public void setDefaultMatchType(String defaultMatchType) {
+        this.defaultMatchType = defaultMatchType;
+    }
+
+    public String getDecodeUsing() {
+        return decodeUsing;
+    }
+
+    public void setDecodeUsing(String decodeUsing) {
+        this.decodeUsing = decodeUsing;
+    }
+
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "camelContext");
@@ -158,6 +185,13 @@ public abstract class UrlRewriteFilter extends ServiceSupport implements CamelCo
             if (conf != null) {
                 // set options before initializing
                 conf.setUseQueryString(isUseQueryString());
+                conf.setUseContext(isUseContext());
+                if (getDefaultMatchType() != null) {
+                    conf.setDefaultMatchType(getDefaultMatchType());
+                }
+                if (getDecodeUsing() != null) {
+                    conf.setDecodeUsing(getDecodeUsing());
+                }
                 conf.initialise();
             }
             if (conf == null || !conf.isOk()) {

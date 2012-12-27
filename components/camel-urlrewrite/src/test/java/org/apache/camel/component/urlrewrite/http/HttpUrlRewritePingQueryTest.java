@@ -17,15 +17,15 @@
 package org.apache.camel.component.urlrewrite.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.urlrewrite.BaseUrlRewriteTest;
 import org.apache.camel.component.urlrewrite.HttpUrlRewrite;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  *
  */
-public class HttpUrlRewritePingQueryTest extends CamelTestSupport {
+public class HttpUrlRewritePingQueryTest extends BaseUrlRewriteTest {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -42,8 +42,8 @@ public class HttpUrlRewritePingQueryTest extends CamelTestSupport {
 
     @Test
     public void testHttpUriRewrite() throws Exception {
-        String out = template.requestBody("http://localhost:8080/ping?foo=bar", null, String.class);
-        assertEquals("http://localhost:8081/proxy/ping?foo=bar", out);
+        String out = template.requestBody("http://localhost:{{port}}/ping?foo=bar", null, String.class);
+        assertEquals("http://localhost:" + getPort2() + "/proxy/ping?foo=bar", out);
     }
 
     @Override
@@ -51,10 +51,10 @@ public class HttpUrlRewritePingQueryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:8080/?matchOnUriPrefix=true")
-                    .to("http://localhost:8081/?bridgeEndpoint=true&throwExceptionOnFailure=false&urlRewrite=#myRewrite");
+                from("jetty:http://localhost:{{port}}/?matchOnUriPrefix=true")
+                    .to("http://localhost:{{port2}}/?bridgeEndpoint=true&throwExceptionOnFailure=false&urlRewrite=#myRewrite");
 
-                from("jetty:http://localhost:8081/proxy/?matchOnUriPrefix=true")
+                from("jetty:http://localhost:{{port2}}/proxy/?matchOnUriPrefix=true")
                     .transform().simple("${header.CamelHttpUrl}?${header.CamelHttpQuery}");
             }
         };
