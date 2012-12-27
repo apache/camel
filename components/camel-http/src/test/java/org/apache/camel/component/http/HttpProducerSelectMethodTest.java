@@ -113,7 +113,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
         Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody("");
+        // no body should be GET
+        exchange.getIn().setBody(null);
         try {
             producer.process(exchange);
             fail("Should have thrown HttpOperationFailedException");
@@ -131,7 +132,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
         Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody("");
+        // no body should be GET
+        exchange.getIn().setBody(null);
         exchange.getIn().setHeader(Exchange.HTTP_QUERY, "q=Camel");
         try {
             producer.process(exchange);
@@ -150,7 +152,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
         Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody("");
+        // no body should be GET
+        exchange.getIn().setBody(null);
         exchange.getIn().setHeader(Exchange.HTTP_QUERY, "q=Camel");
         try {
             producer.process(exchange);

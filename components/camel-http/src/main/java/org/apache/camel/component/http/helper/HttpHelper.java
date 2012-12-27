@@ -30,18 +30,26 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpConverter;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.http.HttpMethods;
+import org.apache.camel.component.http.HttpServletUrlRewrite;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class HttpHelper {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(HttpHelper.class);
 
     private HttpHelper() {
         // Helper class
@@ -216,45 +224,52 @@ public final class HttpHelper {
     }
 
     /**
+     * Creates the URI to invoke.
+     *
+     * @param exchange the exchange
+     * @param url      the url to invoke
+     * @param endpoint the endpoint
+     * @return the URI to invoke
+     */
+    public static URI createURI(Exchange exchange, String url, HttpEndpoint endpoint) throws URISyntaxException {
+        URI uri = new URI(url);
+        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (queryString == null) {
+            queryString = endpoint.getHttpUri().getRawQuery();
+        }
+        // We should user the query string from the HTTP_URI header
+        if (queryString == null) {
+            queryString = uri.getQuery();
+        }
+        if (queryString != null) {
+            // need to encode query string
+            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            uri = URISupport.createURIWithQuery(uri, queryString);
+        }
+        return uri;
+    }
+
+    /**
      * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
      *
      * @param exchange  the exchange
      * @return the created method
-     * @throws URISyntaxException 
+     * @throws URISyntaxException
      */
     public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
-        // is a query string provided in the endpoint URI or in a header (header
-        // overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
-        // We need also check the HTTP_URI header query part
-        String uriString = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-        // resolve placeholders in uriString
-        try {
-            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
-        }
-        if (uriString != null) {
-            URI uri = new URI(uriString);
-            queryString = uri.getQuery();
-        }
-        if (queryString == null) {
-            queryString = endpoint.getHttpUri().getQuery();
-        }
-        
-
         // compute what method to use either GET or POST
         HttpMethods answer;
         HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
         if (m != null) {
             // always use what end-user provides in a header
             answer = m;
-        } else if (queryString != null) {
-            // if a query string is provided then use GET
-            answer = HttpMethods.GET;
+        } else if (hasPayload) {
+            // use POST if we have payload
+            answer = HttpMethods.POST;
         } else {
-            // fallback to POST if we have payload, otherwise GET
-            answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            // fallback to GET
+            answer = HttpMethods.GET;
         }
 
         return answer;
@@ -322,4 +337,78 @@ public final class HttpHelper {
         return value;
     }
 
+    /**
+     * Processes any custom {@link org.apache.camel.component.http.UrlRewrite}.
+     *
+     * @param exchange    the exchange
+     * @param url         the url
+     * @param endpoint    the http endpoint
+     * @param producer    the producer
+     * @return            the rewritten url, or <tt>null</tt> to use original url
+     * @throws Exception is thrown if any error during rewriting url
+     */
+    public static String urlRewrite(Exchange exchange, String url, HttpEndpoint endpoint, Producer producer) throws Exception {
+        String answer = null;
+
+        if (endpoint.getUrlRewrite() != null) {
+            // we should use the relative path if possible
+            String rewriteUrl;
+            String baseUrl;
+            String relativeUri = endpoint.getHttpUri().toASCIIString();
+            if (url.startsWith(relativeUri)) {
+                baseUrl = url.substring(0, relativeUri.length());
+                rewriteUrl = url.substring(relativeUri.length());
+            } else {
+                baseUrl = null;
+                rewriteUrl = url;
+            }
+
+            String newUrl;
+            if (endpoint.getUrlRewrite() instanceof HttpServletUrlRewrite) {
+                // its servlet based, so we need the servlet request
+                HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
+                if (request == null) {
+                    HttpMessage msg = exchange.getIn(HttpMessage.class);
+                    if (msg != null) {
+                        request = msg.getRequest();
+                    }
+                }
+                if (request == null) {
+                    throw new IllegalArgumentException("UrlRewrite " + endpoint.getUrlRewrite() + " requires the message body to be a" +
+                            "HttpServletRequest instance, but was: " + ObjectHelper.className(exchange.getIn().getBody()));
+                }
+                // we need to adapt the context-path to be the path from the endpoint, if it came from a http based endpoint
+                // as eg camel-jetty have hardcoded context-path as / for all its servlets/endpoints
+                String contextPath = null;
+                if (exchange.getFromEndpoint() instanceof HttpEndpoint) {
+                    contextPath = ((HttpEndpoint) exchange.getFromEndpoint()).getPath();
+                }
+                request = new UrlRewriteHttpServletRequestAdapter(request, contextPath);
+                newUrl = ((HttpServletUrlRewrite) endpoint.getUrlRewrite()).rewrite(rewriteUrl, producer, request);
+            } else {
+                newUrl = endpoint.getUrlRewrite().rewrite(rewriteUrl, producer);
+            }
+
+            if (newUrl != null && newUrl != url) {
+                // we got a new url back, that can either be a new absolute url
+                // or a new relative url
+                if (newUrl.startsWith("http:") || newUrl.startsWith("https:")) {
+                    answer = newUrl;
+                } else if (baseUrl != null) {
+                    // avoid double // when adding the urls
+                    if (baseUrl.endsWith("/") && newUrl.startsWith("/")) {
+                        answer = baseUrl + newUrl.substring(1);
+                    } else {
+                        answer = baseUrl + newUrl;
+                    }
+                } else {
+                    // use the new url as is
+                    answer = newUrl;
+                }
+                LOG.debug("Using url rewrite to rewrite from {} to {} -> {}", new Object[]{rewriteUrl, newUrl, answer});
+            }
+        }
+
+        return answer;
+    }
 }

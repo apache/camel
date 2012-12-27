@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +43,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -313,12 +313,10 @@ public class HttpProducer extends DefaultProducer {
             return cos.getWrappedInputStream();
         } catch (IOException ex) {
             // try to close the CachedOutputStream when we get the IOException
-            if (cos != null) {
-                try { 
-                    cos.close(); 
-                } catch (IOException ignore) { 
-                    //do nothing here
-                }
+            try {
+                cos.close();
+            } catch (IOException ignore) {
+                //do nothing here
             }
             throw ex;
         } finally {
@@ -332,31 +330,41 @@ public class HttpProducer extends DefaultProducer {
      * @param exchange the exchange
      * @return the created method as either GET or POST
      * @throws CamelExchangeException is thrown if error creating RequestEntity
-     * @throws URISyntaxException 
      */
     @SuppressWarnings("deprecation")
-    protected HttpMethod createMethod(Exchange exchange) throws CamelExchangeException, URISyntaxException {
-
+    protected HttpMethod createMethod(Exchange exchange) throws Exception {
         String url = HttpHelper.createURL(exchange, getEndpoint());
-        URI uri = new URI(url);
+        URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
+        // get the url and query string from the uri
+        url = uri.toASCIIString();
+        String queryString = uri.getRawQuery();
 
+        // execute any custom url rewrite
+        String rewriteUrl = HttpHelper.urlRewrite(exchange, url, getEndpoint(), this);
+        if (rewriteUrl != null) {
+            // update url and query string from the rewritten url
+            url = rewriteUrl;
+            uri = new URI(url);
+            // use raw query to have uri decimal encoded which http client requires
+            queryString = uri.getRawQuery();
+        }
+
+        // remove query string as http client does not accept that
+        if (url.indexOf('?') != -1) {
+            url = url.substring(0, url.indexOf('?'));
+        }
+
+        // create http holder objects for the request
         RequestEntity requestEntity = createRequestEntity(exchange);
         HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
         HttpMethod method = methodToUse.createMethod(url);
-
-        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
-        if (queryString == null) {
-            queryString = getEndpoint().getHttpUri().getRawQuery();
-        }
-        // We should user the query string from the HTTP_URI header
-        if (queryString == null) {
-            queryString = uri.getQuery();
-        }
         if (queryString != null) {
-            // need to make sure the queryString is URI safe
+            // need to encode query string
+            queryString = UnsafeUriCharactersEncoder.encode(queryString);
             method.setQueryString(queryString);
         }
+
+        LOG.trace("Using URL: {} with method: {}", url, method);
 
         if (methodToUse.isEntityEnclosing()) {
             ((EntityEnclosingMethod) method).setRequestEntity(requestEntity);

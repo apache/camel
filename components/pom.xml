@@ -161,6 +161,7 @@
     <module>camel-syslog</module>
     <module>camel-tagsoup</module>
     <module>camel-twitter</module>
+    <module>camel-urlrewite</module>
     <module>camel-velocity</module>
     <module>camel-websocket</module>
     <module>camel-xmlbeans</module>

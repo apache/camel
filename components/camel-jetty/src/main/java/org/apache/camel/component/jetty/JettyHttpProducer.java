@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -106,17 +105,25 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
 
     protected JettyContentExchange createHttpExchange(Exchange exchange, AsyncCallback callback) throws Exception {
         String url = HttpHelper.createURL(exchange, getEndpoint());
+        URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
+        // get the url and query string from the uri
+        url = uri.toASCIIString();
+
+        // execute any custom url rewrite
+        String rewriteUrl = HttpHelper.urlRewrite(exchange, url, getEndpoint(), this);
+        if (rewriteUrl != null) {
+            // update url and query string from the rewritten url
+            url = rewriteUrl;
+        }
+
         HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
         String method = methodToUse.createMethod(url).getName();
-
-        LOG.trace("Using URL: {} with method: {}", url, method);
 
         JettyContentExchange httpExchange = new JettyContentExchange(exchange, getBinding(), client);
         httpExchange.setMethod(method);
         httpExchange.setURL(url);
 
-        // set query parameters
-        doSetQueryParameters(exchange, httpExchange);
+        LOG.trace("Using URL: {} with method: {}", url, method);
 
         // if we post or put then set data
         if (HttpMethods.POST.equals(methodToUse) || HttpMethods.PUT.equals(methodToUse)) {
@@ -131,9 +138,12 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
                 Serializable obj = exchange.getIn().getMandatoryBody(Serializable.class);
                 // write object to output stream
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                HttpHelper.writeObjectToStream(bos, obj);
-                httpExchange.setRequestContent(new ByteArrayBuffer(bos.toByteArray()));
-                IOHelper.close(bos);
+                try {
+                    HttpHelper.writeObjectToStream(bos, obj);
+                    httpExchange.setRequestContent(new ByteArrayBuffer(bos.toByteArray()));
+                } finally {
+                    IOHelper.close(bos, "body", LOG);
+                }
             } else {
                 Object body = exchange.getIn().getBody();
                 if (body instanceof String) {
@@ -214,33 +224,6 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         // set the callback, which will handle all the response logic
         httpExchange.setCallback(callback);
         return httpExchange;
-    }
-
-    private void doSetQueryParameters(Exchange exchange, JettyContentExchange httpExchange) throws URISyntaxException {
-        // is a query string provided in the endpoint URI or in a header (header
-        // overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
-        if (queryString == null) {
-            queryString = getEndpoint().getHttpUri().getQuery();
-        }
-
-        if (ObjectHelper.isEmpty(queryString)) {
-            return;
-        }
-
-        // okay we need to add the query string to the URI so we need to juggle a bit with the parameters
-        String uri = httpExchange.getRequestURI();
-
-        Map<String, Object> parameters = URISupport.parseParameters(new URI(uri));
-        parameters.putAll(URISupport.parseQuery(queryString));
-
-        if (uri.contains("?")) {
-            uri = ObjectHelper.before(uri, "?");
-        }
-        if (!parameters.isEmpty()) {
-            uri = uri + "?" + URISupport.createQueryString(parameters);
-            httpExchange.setRequestURI(uri);
-        }
     }
 
     protected static void doSendExchange(HttpClient client, JettyContentExchange httpExchange) throws IOException {

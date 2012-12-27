@@ -35,6 +35,7 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.component.http.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
@@ -146,6 +147,7 @@ public class JettyHttpComponent extends HttpComponent {
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
         // extract httpClient. parameters
@@ -162,6 +164,12 @@ public class JettyHttpComponent extends HttpComponent {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
             setEndpointHeaderFilterStrategy(endpoint);
+        }
+        if (urlRewrite != null) {
+            // let CamelContext deal with the lifecycle of the url rewrite
+            // this ensures its being shutdown when Camel shutdown etc.
+            getCamelContext().addService(urlRewrite);
+            endpoint.setUrlRewrite(urlRewrite);
         }
 
         if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
