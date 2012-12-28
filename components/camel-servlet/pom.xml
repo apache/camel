@@ -37,23 +37,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <version>${felix-compendium-version}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>javax.servlet</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>org.osgi.foundation</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
@@ -61,13 +44,18 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
       <exclusions>
-         <exclusion>
-      	   <groupId>org.apache.geronimo.specs</groupId>
-           <artifactId>geronimo-servlet_2.5_spec</artifactId>
-         </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_2.5_spec</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
-    
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>${osgi-version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-servlet_2.5_spec</artifactId>
