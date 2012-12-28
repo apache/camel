@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,12 @@ public class DefaultAhcBinding implements AhcBinding {
 
         RequestBuilder builder = new RequestBuilder();
         try {
+            // creating the url to use takes 2-steps
             String url = AhcHelper.createURL(exchange, endpoint);
+            URI uri = AhcHelper.createURI(exchange, url, endpoint);
+            // get the url from the uri
+            url = uri.toASCIIString();
+
             log.trace("Setting url {}", url);
             builder.setUrl(url);
         } catch (Exception e) {
