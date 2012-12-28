@@ -14,21 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.urlrewrite.http4;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Producer;
+import org.apache.camel.component.http4.HttpServletUrlRewrite;
+import org.apache.camel.component.urlrewrite.UrlRewriteFilter;
 
-// START SNIPPET: e1
 /**
- * A very simple url rewrite that replaces yahoo with google in the url.
- * <p/>
- * This is only used for testing purposes.
+ * The camel-http4 component implementation of the {@link org.apache.camel.component.http.HttpServletUrlRewrite}.
  */
-public class GoogleUrlRewrite implements UrlRewrite {
+public class Http4UrlRewrite extends UrlRewriteFilter implements HttpServletUrlRewrite {
 
     @Override
-    public String rewrite(String url, String relativeUrl, Producer producer) {
-        return url.replaceAll("yahoo", "google");
+    public String rewrite(String url, String relativeUrl, Producer producer, HttpServletRequest request) throws Exception {
+        return rewrite(relativeUrl, request);
+    }
+
+    @Override
+    public String rewrite(String url, String relativeUrl, Producer producer) throws Exception {
+        // not in use
+        return null;
     }
 }
-// END SNIPPET: e1

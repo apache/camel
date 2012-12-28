@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 
 /**
@@ -30,11 +29,13 @@ public interface UrlRewrite {
     /**
      * Rewrite the url.
      *
-     * @param url  the url
+     * @param url  the absolute url (eg with scheme://host:port/path?query)
+     * @param relativeUrl optional relative url, if bridging endpoints, which then would be without the base path from the
+     *                    endpoint from the given producer.
      * @param producer the producer to use the rewritten url
      * @return the rewritten url, or <tt>null</tt> to use the original url
      * @throws Exception is thrown if error rewriting the url
      */
-    String rewrite(String url, Producer producer) throws Exception;
+    String rewrite(String url, String relativeUrl, Producer producer) throws Exception;
 
 }

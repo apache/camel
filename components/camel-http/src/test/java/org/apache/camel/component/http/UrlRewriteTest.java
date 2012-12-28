@@ -41,7 +41,7 @@ public class UrlRewriteTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "null");
+        template.sendBody("direct:start", null);
 
         assertMockEndpointsSatisfied();
     }

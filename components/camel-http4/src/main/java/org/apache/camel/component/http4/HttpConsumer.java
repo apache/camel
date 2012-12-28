@@ -22,6 +22,7 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * @version 
  */
+@Deprecated
 public class HttpConsumer extends DefaultConsumer {
 
     private final HttpEndpoint endpoint;

@@ -33,6 +33,7 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * @version 
  */
+@Deprecated
 public class CamelServlet extends HttpServlet {
 
     private static final long serialVersionUID = -7061982839117697829L;
@@ -71,18 +72,16 @@ public class CamelServlet extends HttpServlet {
             }
             HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
             exchange.setIn(new HttpMessage(exchange, request, response));
-            consumer.getProcessor().process(exchange);
+            // set context path as header
+            String contextPath = consumer.getEndpoint().getPath();
+            exchange.getIn().setHeader("CamelServletContextPath", contextPath);
 
-            // HC: The getBinding() is interesting because it illustrates the
-            // impedance miss-match between
-            // HTTP's stream oriented protocol, and Camels more message oriented
-            // protocol exchanges.
+            consumer.getProcessor().process(exchange);
 
             // now lets output to the response
             consumer.getBinding().writeResponse(exchange, response);
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new ServletException(e);
         }
     }

@@ -196,7 +196,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
-        
+        UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
+
         boolean secure = HttpHelper.isSecureConnection(uri);
 
         // create the configurer to use for this endpoint
@@ -204,6 +205,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
         // create the endpoint and set the http uri to be null
         HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, clientConnectionManager, configurer);
+        if (urlRewrite != null) {
+            // let CamelContext deal with the lifecycle of the url rewrite
+            // this ensures its being shutdown when Camel shutdown etc.
+            getCamelContext().addService(urlRewrite);
+            endpoint.setUrlRewrite(urlRewrite);
+        }
         // configure the endpoint
         setProperties(endpoint, parameters);
         // The httpUri should be start with http or https

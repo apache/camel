@@ -14,47 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.urlrewrite.http;
+package org.apache.camel.component.http4;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.urlrewrite.BaseUrlRewriteTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  *
  */
-public class HttpUrlRewriteModFileTest extends BaseUrlRewriteTest {
+public class UrlRewriteTest extends CamelTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-
-        HttpUrlRewrite myRewrite = new HttpUrlRewrite();
-        myRewrite.setModRewriteConfFile("example/modrewrite.cfg");
-
-        jndi.bind("myRewrite", myRewrite);
-
+        jndi.bind("fooRewrite", new GoogleUrlRewrite());
         return jndi;
     }
 
     @Test
-    public void testHttpUriRewrite() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/myapp/page/software/", null, String.class);
-        assertEquals("http://localhost:" + getPort2() + "/myapp2/index.php?page=software", out);
+    @Ignore
+    public void testUrlRewrite() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:start", null);
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp?matchOnUriPrefix=true")
-                    .to("http://localhost:{{port2}}/myapp2?bridgeEndpoint=true&throwExceptionOnFailure=false&urlRewrite=#myRewrite");
-
-                from("jetty:http://localhost:{{port2}}/myapp2?matchOnUriPrefix=true")
-                    .transform().simple("${header.CamelHttpUrl}?${header.CamelHttpQuery}");
+            public void configure() {
+                from("direct:start")
+                        .to("http4://www.yahoo.com?q=camel&urlRewrite=#fooRewrite")
+                        .convertBodyTo(String.class)
+                        .to("log:result", "mock:result");
             }
         };
     }
+
+
 }

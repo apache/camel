@@ -14,20 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
-
-import javax.servlet.http.HttpServletRequest;
+package org.apache.camel.component.http4;
 
 import org.apache.camel.Producer;
 
 /**
- * Extended {@link UrlRewrite} which leverages {@link HttpServletRequest}
- * during the rewrite process.
+ * Allows to plugin custom strategy for rewriting url.
  * <p/>
- * For example the camel-urlrewrite component supports
- * {@link HttpServletUrlRewrite} implementations.
+ * This allows for example to proxy http services and plugin a url rewrite
+ * strategy such as the <a href="http://camel.apache.org/urlrewrite">url-rewrite</a> component.
  */
-public interface HttpServletUrlRewrite extends UrlRewrite {
+public interface UrlRewrite {
 
     /**
      * Rewrite the url.
@@ -36,10 +33,9 @@ public interface HttpServletUrlRewrite extends UrlRewrite {
      * @param relativeUrl optional relative url, if bridging endpoints, which then would be without the base path from the
      *                    endpoint from the given producer.
      * @param producer the producer to use the rewritten url
-     * @param request  the http servlet request
      * @return the rewritten url, or <tt>null</tt> to use the original url
      * @throws Exception is thrown if error rewriting the url
      */
-    String rewrite(String url, String relativeUrl, Producer producer, HttpServletRequest request) throws Exception;
+    String rewrite(String url, String relativeUrl, Producer producer) throws Exception;
 
 }

@@ -99,6 +99,10 @@ public class CamelServlet extends HttpServlet {
         HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
         exchange.setIn(new HttpMessage(exchange, request, response));
 
+        // set context path as header
+        String contextPath = consumer.getEndpoint().getPath();
+        exchange.getIn().setHeader("CamelServletContextPath", contextPath);
+
         try {
             log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
             // process the exchange

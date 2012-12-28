@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.urlrewrite;
+package org.apache.camel.component.urlrewrite.http;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpServletUrlRewrite;
+import org.apache.camel.component.urlrewrite.UrlRewriteFilter;
 
 /**
  * The camel-http component implementation of the {@link HttpServletUrlRewrite}.
@@ -27,12 +28,12 @@ import org.apache.camel.component.http.HttpServletUrlRewrite;
 public class HttpUrlRewrite extends UrlRewriteFilter implements HttpServletUrlRewrite {
 
     @Override
-    public String rewrite(String url, Producer producer, HttpServletRequest request) throws Exception {
-        return rewrite(url, request);
+    public String rewrite(String url, String relativeUrl, Producer producer, HttpServletRequest request) throws Exception {
+        return rewrite(relativeUrl, request);
     }
 
     @Override
-    public String rewrite(String url, Producer producer) throws Exception {
+    public String rewrite(String url, String relativeUrl, Producer producer) throws Exception {
         // not in use
         return null;
     }

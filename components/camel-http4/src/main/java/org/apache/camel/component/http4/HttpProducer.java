@@ -319,12 +319,10 @@ public class HttpProducer extends DefaultProducer {
             return cos.getWrappedInputStream();
         } catch (IOException ex) {
             // try to close the CachedOutputStream when we get the IOException
-            if (cos != null) {
-                try { 
-                    cos.close(); 
-                } catch (IOException ignore) { 
-                    //do nothing here
-                }
+            try {
+                cos.close();
+            } catch (IOException ignore) {
+                //do nothing here
             }
             throw ex;
         } finally {
@@ -338,59 +336,44 @@ public class HttpProducer extends DefaultProducer {
      * @param exchange the exchange
      * @return the created method as either GET or POST
      * @throws URISyntaxException is thrown if the URI is invalid
-     * @throws CamelExchangeException is thrown if error creating RequestEntity
+     * @throws Exception is thrown if error creating RequestEntity
      */
-    protected HttpRequestBase createMethod(Exchange exchange) throws URISyntaxException, CamelExchangeException {
+    protected HttpRequestBase createMethod(Exchange exchange) throws Exception {
+        // creating the url to use takes 2-steps
         String url = HttpHelper.createURL(exchange, getEndpoint());
-        URI uri = new URI(url);
+        URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
+        // get the url from the uri
+        url = uri.toASCIIString();
 
+        // execute any custom url rewrite
+        String rewriteUrl = HttpHelper.urlRewrite(exchange, url, getEndpoint(), this);
+        if (rewriteUrl != null) {
+            // update url and query string from the rewritten url
+            url = rewriteUrl;
+            uri = new URI(url);
+        }
+
+        // create http holder objects for the request
         HttpEntity requestEntity = createRequestEntity(exchange);
         HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
+        HttpRequestBase method = methodToUse.createMethod(url);
 
-        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
-        // We should user the query string from the HTTP_URI header
-        if (queryString == null) {
-            queryString = uri.getQuery();
-        }
-        
-        if (queryString == null) {
-            queryString = getEndpoint().getHttpUri().getRawQuery();
-        }
-
-        if (uri.getScheme() == null || uri.getHost() == null) {
-            throw new IllegalArgumentException("Invalid uri: " + uri
-                    + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: " + getEndpoint());
-        }
-        
-        StringBuilder builder = new StringBuilder(uri.getScheme()).append("://").append(uri.getHost());
-
-        if (uri.getPort() != -1) {
-            builder.append(":").append(uri.getPort());
-        }
-
-        if (uri.getPath() != null) {
-            builder.append(uri.getRawPath());
-        }
-
-        if (queryString != null) {
-            builder.append('?');
-            builder.append(queryString);
-        }
-        
-        LOG.debug(" The uri used by http request is " + builder.toString());
-       
-
-        HttpRequestBase httpRequest = methodToUse.createMethod(builder.toString());
+        LOG.trace("Using URL: {} with method: {}", url, method);
 
         if (methodToUse.isEntityEnclosing()) {
-            ((HttpEntityEnclosingRequestBase) httpRequest).setEntity(requestEntity);
+            ((HttpEntityEnclosingRequestBase) method).setEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
                 LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
             }
         }
 
-        return httpRequest;
+        // there must be a host on the method
+        if (method.getURI().getScheme() == null || method.getURI().getHost() == null) {
+            throw new IllegalArgumentException("Invalid uri: " + uri
+                    + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: " + getEndpoint());
+        }
+
+        return method;
     }
 
     /**
