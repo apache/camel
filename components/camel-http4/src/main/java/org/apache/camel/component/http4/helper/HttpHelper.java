@@ -30,19 +30,27 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.http4.HttpConstants;
 import org.apache.camel.component.http4.HttpConverter;
 import org.apache.camel.component.http4.HttpEndpoint;
+import org.apache.camel.component.http4.HttpMessage;
 import org.apache.camel.component.http4.HttpMethods;
+import org.apache.camel.component.http4.HttpServletUrlRewrite;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.http.HttpVersion;
 import org.apache.http.ProtocolException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class HttpHelper {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(HttpHelper.class);
 
     private HttpHelper() {
         // Helper class
@@ -217,6 +225,33 @@ public final class HttpHelper {
     }
 
     /**
+     * Creates the URI to invoke.
+     *
+     * @param exchange the exchange
+     * @param url      the url to invoke
+     * @param endpoint the endpoint
+     * @return the URI to invoke
+     */
+    public static URI createURI(Exchange exchange, String url, HttpEndpoint endpoint) throws URISyntaxException {
+        URI uri = new URI(url);
+        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (queryString == null) {
+            queryString = endpoint.getHttpUri().getRawQuery();
+        }
+        // We should user the query string from the HTTP_URI header
+        if (queryString == null) {
+            queryString = uri.getQuery();
+        }
+        if (queryString != null) {
+            // need to encode query string
+            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            uri = URISupport.createURIWithQuery(uri, queryString);
+        }
+        return uri;
+    }
+
+    /**
      * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
      *
      * @param exchange the exchange
@@ -353,6 +388,86 @@ public final class HttpHelper {
         }
 
         return value;
+    }
+
+    /**
+     * Processes any custom {@link org.apache.camel.component.http4.UrlRewrite}.
+     *
+     * @param exchange    the exchange
+     * @param url         the url
+     * @param endpoint    the http endpoint
+     * @param producer    the producer
+     * @return            the rewritten url, or <tt>null</tt> to use original url
+     * @throws Exception is thrown if any error during rewriting url
+     */
+    public static String urlRewrite(Exchange exchange, String url, HttpEndpoint endpoint, Producer producer) throws Exception {
+        String answer = null;
+
+        String relativeUrl;
+        if (endpoint.getUrlRewrite() != null) {
+            // we should use the relative path if possible
+            String baseUrl;
+            relativeUrl = endpoint.getHttpUri().toASCIIString();
+            if (url.startsWith(relativeUrl)) {
+                baseUrl = url.substring(0, relativeUrl.length());
+                relativeUrl = url.substring(relativeUrl.length());
+            } else {
+                baseUrl = null;
+                relativeUrl = url;
+            }
+            // mark it as null if its empty
+            if (ObjectHelper.isEmpty(relativeUrl)) {
+                relativeUrl = null;
+            }
+
+            String newUrl;
+            if (endpoint.getUrlRewrite() instanceof HttpServletUrlRewrite) {
+                // its servlet based, so we need the servlet request
+                HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
+                if (request == null) {
+                    HttpMessage msg = exchange.getIn(HttpMessage.class);
+                    if (msg != null) {
+                        request = msg.getRequest();
+                    }
+                }
+                if (request == null) {
+                    throw new IllegalArgumentException("UrlRewrite " + endpoint.getUrlRewrite() + " requires the message body to be a" +
+                            "HttpServletRequest instance, but was: " + ObjectHelper.className(exchange.getIn().getBody()));
+                }
+                // we need to adapt the context-path to be the path from the endpoint, if it came from a http based endpoint
+                // as eg camel-jetty have hardcoded context-path as / for all its servlets/endpoints
+                // we have the actual context-path stored as a header with the key CamelServletContextPath
+                String contextPath = exchange.getIn().getHeader("CamelServletContextPath", String.class);
+                request = new UrlRewriteHttpServletRequestAdapter(request, contextPath);
+                newUrl = ((HttpServletUrlRewrite) endpoint.getUrlRewrite()).rewrite(url, relativeUrl, producer, request);
+            } else {
+                newUrl = endpoint.getUrlRewrite().rewrite(url, relativeUrl, producer);
+            }
+
+            if (ObjectHelper.isNotEmpty(newUrl) && newUrl != url) {
+                // we got a new url back, that can either be a new absolute url
+                // or a new relative url
+                if (newUrl.startsWith("http:") || newUrl.startsWith("https:")) {
+                    answer = newUrl;
+                } else if (baseUrl != null) {
+                    // avoid double // when adding the urls
+                    if (baseUrl.endsWith("/") && newUrl.startsWith("/")) {
+                        answer = baseUrl + newUrl.substring(1);
+                    } else {
+                        answer = baseUrl + newUrl;
+                    }
+                } else {
+                    // use the new url as is
+                    answer = newUrl;
+                }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using url rewrite to rewrite from url {} to {} -> {}",
+                            new Object[]{relativeUrl != null ? relativeUrl : url, newUrl, answer});
+                }
+            }
+        }
+
+        return answer;
     }
 
 }

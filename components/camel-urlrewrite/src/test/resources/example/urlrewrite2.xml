@@ -27,6 +27,8 @@
 <!-- START SNIPPET: e1 -->
 <urlrewrite>
 
+  <!-- this is a rule where we map from /products/nnn to
+       an url that is a jps page with the product id as a parameter -->
   <rule>
     <from>/products/([0-9]+)</from>
     <to>/products/index.jsp?product_id=$1</to>

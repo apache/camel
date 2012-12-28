@@ -93,7 +93,7 @@
     <commons-net-version>3.1</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
     <commons-jxpath-version>1.3</commons-jxpath-version>
-    <concurrentlinkedhashmap.version>1.3.1</concurrentlinkedhashmap.version>
+    <concurrentlinkedhashmap.version>1.3.2</concurrentlinkedhashmap.version>
     <cxf-version>2.7.1</cxf-version>
     <cxf-version-range>[2.4,2.8)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
@@ -111,7 +111,6 @@
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
-    <felix-compendium-version>1.4.0</felix-compendium-version>
     <felix-configadmin-version>1.4.0</felix-configadmin-version>
     <felix-framework-version>3.2.2</felix-framework-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
@@ -161,7 +160,6 @@
     <httpclient-version>3.1</httpclient-version> <!-- FIXME cmueller: rename to commons-httpclient-version -->
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
-    <icu4j-version>4.8.1.1</icu4j-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
@@ -182,7 +180,7 @@
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
     <jaxen-version>1.1.4</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
-    <jclouds-version>1.5.2</jclouds-version>
+    <jclouds-version>1.5.4</jclouds-version>
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
@@ -311,7 +309,7 @@
     <spring-version>${spring31-version}</spring-version>
     <spring30-version>3.0.7.RELEASE</spring30-version>
     <spring31-version>3.1.3.RELEASE</spring31-version>
-    <spring32-version>3.2.0.RC1</spring32-version>
+    <spring32-version>3.2.0.RELEASE</spring32-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.3.RELEASE</spring-security-version>
     <!-- spring WS 2.0.3 is the last release to support Spring 3.0.x -->
@@ -1044,6 +1042,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-twitter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-urlrewrite</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

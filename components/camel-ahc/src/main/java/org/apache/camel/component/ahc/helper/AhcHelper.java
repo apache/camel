@@ -164,4 +164,32 @@ public final class AhcHelper {
 
         return uri;
     }
+
+    /**
+     * Creates the URI to invoke.
+     *
+     * @param exchange the exchange
+     * @param url      the url to invoke
+     * @param endpoint the endpoint
+     * @return the URI to invoke
+     */
+    public static URI createURI(Exchange exchange, String url, AhcEndpoint endpoint) throws URISyntaxException {
+        URI uri = new URI(url);
+        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (queryString == null) {
+            queryString = endpoint.getHttpUri().getRawQuery();
+        }
+        // We should user the query string from the HTTP_URI header
+        if (queryString == null) {
+            queryString = uri.getQuery();
+        }
+        if (queryString != null) {
+            // need to encode query string
+            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            uri = URISupport.createURIWithQuery(uri, queryString);
+        }
+        return uri;
+    }
+
 }

@@ -25,7 +25,7 @@ import org.apache.camel.component.http.UrlRewrite;
 public class MyUrlRewrite implements UrlRewrite {
 
     @Override
-    public String rewrite(String url, Producer producer) {
+    public String rewrite(String url, String relativeUrl, Producer producer) {
         return url.replaceAll("foo", "bar");
     }
 }

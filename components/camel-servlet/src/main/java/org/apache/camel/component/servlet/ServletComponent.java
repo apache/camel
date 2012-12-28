@@ -27,6 +27,7 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -71,13 +72,18 @@ public class ServletComponent extends HttpComponent {
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
+        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), configurer);
         endpoint.setServletName(servletName);
-        setEndpointHeaderFilterStrategy(endpoint);
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        } else {
+            setEndpointHeaderFilterStrategy(endpoint);
+        }
 
         // prefer to use endpoint configured over component configured
         if (binding == null) {

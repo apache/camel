@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.urlrewrite.http;
+package org.apache.camel.component.urlrewrite.http4;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.urlrewrite.BaseUrlRewriteTest;
@@ -24,14 +24,14 @@ import org.junit.Test;
 /**
  *
  */
-public class HttpUrlRewriteModFileTest extends BaseUrlRewriteTest {
+public class Http4UrlRewriteTest extends BaseUrlRewriteTest {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        HttpUrlRewrite myRewrite = new HttpUrlRewrite();
-        myRewrite.setModRewriteConfFile("example/modrewrite.cfg");
+        Http4UrlRewrite myRewrite = new Http4UrlRewrite();
+        myRewrite.setConfigFile("example/urlrewrite2.xml");
 
         jndi.bind("myRewrite", myRewrite);
 
@@ -40,8 +40,8 @@ public class HttpUrlRewriteModFileTest extends BaseUrlRewriteTest {
 
     @Test
     public void testHttpUriRewrite() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/myapp/page/software/", null, String.class);
-        assertEquals("http://localhost:" + getPort2() + "/myapp2/index.php?page=software", out);
+        String out = template.requestBody("http4://localhost:{{port}}/myapp/products/1234", null, String.class);
+        assertEquals("http://localhost:" + getPort2() + "/myapp2/products/index.jsp?product_id=1234", out);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class HttpUrlRewriteModFileTest extends BaseUrlRewriteTest {
             @Override
             public void configure() throws Exception {
                 from("jetty:http://localhost:{{port}}/myapp?matchOnUriPrefix=true")
-                    .to("http://localhost:{{port2}}/myapp2?bridgeEndpoint=true&throwExceptionOnFailure=false&urlRewrite=#myRewrite");
+                    .to("http4://localhost:{{port2}}/myapp2?bridgeEndpoint=true&throwExceptionOnFailure=false&urlRewrite=#myRewrite");
 
                 from("jetty:http://localhost:{{port2}}/myapp2?matchOnUriPrefix=true")
                     .transform().simple("${header.CamelHttpUrl}?${header.CamelHttpQuery}");

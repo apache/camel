@@ -18,7 +18,6 @@ package org.apache.camel.component.urlrewrite.http;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.urlrewrite.BaseUrlRewriteTest;
-import org.apache.camel.component.urlrewrite.HttpUrlRewrite;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -31,8 +30,10 @@ public class HttpUrlRewriteModTest extends BaseUrlRewriteTest {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
+        // START SNIPPET: e1
         HttpUrlRewrite myRewrite = new HttpUrlRewrite();
         myRewrite.setModRewriteConfText("RewriteRule page/([^/\\.]+)/?$ index.php?page=$1 [L]");
+        // END SNIPPET: e1
 
         jndi.bind("myRewrite", myRewrite);
 

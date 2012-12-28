@@ -57,6 +57,11 @@
       <artifactId>camel-http</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http4</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- test dependencies -->
     <dependency>

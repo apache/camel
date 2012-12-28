@@ -19,7 +19,9 @@ package org.apache.camel.component.http4;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.helper.HttpHelper;
@@ -63,8 +65,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean transferException;
     private boolean traceEnabled;
     private String httpMethodRestrict;
+    private UrlRewrite urlRewrite;
 
-    
     public HttpEndpoint() {
     }
 
@@ -336,5 +338,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
+    }
+
+    public UrlRewrite getUrlRewrite() {
+        return urlRewrite;
+    }
+
+    public void setUrlRewrite(UrlRewrite urlRewrite) {
+        this.urlRewrite = urlRewrite;
     }
 }

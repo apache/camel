@@ -35,13 +35,12 @@ import org.tuckey.web.filters.urlrewrite.utils.ModRewriteConfLoader;
 
 /**
  * Url rewrite filter based on <a href="https://code.google.com/p/urlrewritefilter/">url rewrite filter</a>
+ * <p/>
+ * See more details about the Camel <a href="http://camel.apache.org/urlrewrite">Url Rewrite</a> component.
  */
 public abstract class UrlRewriteFilter extends ServiceSupport implements CamelContextAware, IsSingleton {
 
     private static final Logger LOG = LoggerFactory.getLogger(UrlRewriteFilter.class);
-
-    // TODO: Find a better way of starting/stopping this without adding as service to CamelContext
-    // TODO: Add support in camel-http4 and camel-ahc
 
     protected CamelContext camelContext;
     protected Conf conf;
