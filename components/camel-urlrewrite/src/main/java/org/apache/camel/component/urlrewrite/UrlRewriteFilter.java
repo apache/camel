@@ -35,6 +35,8 @@ import org.tuckey.web.filters.urlrewrite.utils.ModRewriteConfLoader;
 
 /**
  * Url rewrite filter based on <a href="https://code.google.com/p/urlrewritefilter/">url rewrite filter</a>
+ * <p/>
+ * See more details about the Camel <a href="http://camel.apache.org/urlrewrite">Url Rewrite</a> component.
  */
 public abstract class UrlRewriteFilter extends ServiceSupport implements CamelContextAware, IsSingleton {
 
