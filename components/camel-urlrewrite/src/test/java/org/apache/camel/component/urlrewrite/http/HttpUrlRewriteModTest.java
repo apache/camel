@@ -31,8 +31,10 @@ public class HttpUrlRewriteModTest extends BaseUrlRewriteTest {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
+        // START SNIPPET: e1
         HttpUrlRewrite myRewrite = new HttpUrlRewrite();
         myRewrite.setModRewriteConfText("RewriteRule page/([^/\\.]+)/?$ index.php?page=$1 [L]");
+        // END SNIPPET: e1
 
         jndi.bind("myRewrite", myRewrite);
 

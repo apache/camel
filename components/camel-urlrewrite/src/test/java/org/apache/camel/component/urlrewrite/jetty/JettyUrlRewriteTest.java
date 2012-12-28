@@ -31,8 +31,10 @@ public class JettyUrlRewriteTest extends BaseUrlRewriteTest {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
+        // START SNIPPET: e1
         HttpUrlRewrite myRewrite = new HttpUrlRewrite();
         myRewrite.setConfigFile("example/urlrewrite2.xml");
+        // END SNIPPET: e1
 
         jndi.bind("myRewrite", myRewrite);
 
@@ -50,8 +52,10 @@ public class JettyUrlRewriteTest extends BaseUrlRewriteTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: e2
                 from("jetty:http://localhost:{{port}}/myapp?matchOnUriPrefix=true")
                     .to("jetty:http://localhost:{{port2}}/myapp2?bridgeEndpoint=true&throwExceptionOnFailure=false&urlRewrite=#myRewrite");
+                // END SNIPPET: e2
 
                 from("jetty:http://localhost:{{port2}}/myapp2?matchOnUriPrefix=true")
                     .transform().simple("${header.CamelHttpUrl}?${header.CamelHttpQuery}");
