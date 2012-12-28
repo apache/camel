@@ -40,8 +40,6 @@ public abstract class UrlRewriteFilter extends ServiceSupport implements CamelCo
 
     private static final Logger LOG = LoggerFactory.getLogger(UrlRewriteFilter.class);
 
-    // TODO: Add support in camel-http4 and camel-ahc
-
     protected CamelContext camelContext;
     protected Conf conf;
     protected UrlRewriter urlRewriter;
