@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -94,6 +95,36 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals(out1, out2);
         assertTrue("Should have //", out1.startsWith("http://"));
         assertTrue("Should have //", out2.startsWith("http://"));
+    }
+
+    public void testNormalizeHttpEndpointUnicodedParameter() throws Exception {
+        String out = URISupport.normalizeUri("http://www.google.com?q=S\u00F8ren");
+        assertEquals("http://www.google.com?q=S%C3%B8ren", out);
+    }
+
+    public void testParseParametersUnicodedValue() throws Exception {
+        String out = URISupport.normalizeUri("http://www.google.com?q=S\u00F8ren");
+        URI uri = new URI(out);
+
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+
+        assertEquals(1, parameters.size());
+        assertEquals("S\u00F8ren", parameters.get("q"));
+    }
+
+    public void testNormalizeHttpEndpointURLEncodedParameter() throws Exception {
+        String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen");
+        assertEquals("http://www.google.com?q=S%C3%B8ren+Hansen", out);
+    }
+
+    public void testParseParametersURLEncodeddValue() throws Exception {
+        String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren+Hansen");
+        URI uri = new URI(out);
+
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+
+        assertEquals(1, parameters.size());
+        assertEquals("S\u00F8ren Hansen", parameters.get("q"));
     }
 
     public void testNormalizeUriWhereParamererIsFaulty() throws Exception {
