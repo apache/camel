@@ -32,7 +32,7 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
         <jaxb-api-version>2.1</jaxb-api-version>
-        <scalate-version>1.5.3</scalate-version>
+        <scalate-version>1.6.1</scalate-version>
         <jersey-version>1.13</jersey-version>
         <jetty-port>8080</jetty-port>
         <webdriver-version>0.9.7376</webdriver-version>
@@ -131,7 +131,7 @@
         </dependency>
         <dependency>
             <groupId>org.fusesource.scalate</groupId>
-            <artifactId>scalate-core</artifactId>
+            <artifactId>scalate-core_2.9</artifactId>
             <version>${scalate-version}</version>
         </dependency>
 
@@ -232,7 +232,7 @@
 
             <plugin>
                 <groupId>org.fusesource.scalate</groupId>
-                <artifactId>maven-scalate-plugin</artifactId>
+                <artifactId>maven-scalate-plugin_2.9</artifactId>
                 <version>${scalate-version}</version>
                 <executions>
                     <execution>
