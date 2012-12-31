@@ -32,7 +32,7 @@
 
     <properties>
         <spring-version>${spring31-version}</spring-version>
-        <camel.osgi.export.pkg>org.apache.camel.test.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.test.junit4.*,org.apache.camel.test.spring.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
