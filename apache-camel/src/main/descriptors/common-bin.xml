@@ -122,6 +122,7 @@
         <include>org.apache.camel:camel-scala</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-servlet</include>
+        <include>org.apache.camel:camel-servletlistener</include>
         <include>org.apache.camel:camel-shiro</include>
         <include>org.apache.camel:camel-sip</include>
         <include>org.apache.camel:camel-sjms</include>
