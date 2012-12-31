@@ -138,13 +138,7 @@ public class CamelContextServletListener implements ServletContextListener {
             map.remove(name);
         }
 
-        // validate that we could set all the init parameters
-        if (!map.isEmpty()) {
-            throw new IllegalArgumentException("Error setting init parameters on CamelContext."
-                    + " There are " + map.size() + " unknown parameters. [" + map + "]");
-        }
-
-        // Any custom CamelContextLifecycle
+        // any custom CamelContextLifecycle
         String lifecycle = (String) map.remove(CamelContextLifecycle.class.getName());
         if (lifecycle != null) {
             try {
@@ -153,6 +147,12 @@ public class CamelContextServletListener implements ServletContextListener {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("Error creating CamelContextLifecycle class with name " + lifecycle, e);
             }
+        }
+
+        // validate that we could set all the init parameters
+        if (!map.isEmpty()) {
+            throw new IllegalArgumentException("Error setting init parameters on CamelContext."
+                    + " There are " + map.size() + " unknown parameters. [" + map + "]");
         }
 
         try {
@@ -204,4 +204,5 @@ public class CamelContextServletListener implements ServletContextListener {
         instance = null;
         LOG.info("CamelContextServletListener destroyed");
     }
+
 }
