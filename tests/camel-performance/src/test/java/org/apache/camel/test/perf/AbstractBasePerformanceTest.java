@@ -43,8 +43,6 @@ public abstract class AbstractBasePerformanceTest extends CamelTestSupport {
     protected void resetMock(int count) {
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.reset();
-        mock.setRetainFirst(0);
-        mock.setRetainLast(0);
         mock.expectedMessageCount(count);
     }
 

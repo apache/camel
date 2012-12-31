@@ -17,6 +17,7 @@
 package org.apache.camel.test.perf;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultProducerTemplate;
 import org.junit.Test;
 
 public class XsltPerformanceTest extends AbstractBasePerformanceTest {
@@ -25,7 +26,7 @@ public class XsltPerformanceTest extends AbstractBasePerformanceTest {
 
     @Test
     public void testXslt() throws InterruptedException {
-        template.setDefaultEndpointUri("direct:xslt");
+        ((DefaultProducerTemplate) template).setDefaultEndpointUri("direct:xslt");
 
         // warm up with 1.000 messages so that the JIT compiler kicks in
         execute(1000);

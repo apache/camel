@@ -17,6 +17,7 @@
 package org.apache.camel.test.perf;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultProducerTemplate;
 import org.junit.Test;
 
 public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTest {
@@ -25,7 +26,7 @@ public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTe
 
     @Test
     public void testChoiceSimple() throws InterruptedException {
-        template.setDefaultEndpointUri("direct:choice-simple");
+        ((DefaultProducerTemplate) template).setDefaultEndpointUri("direct:choice-simple");
 
         // warm up with 20.000 messages so that the JIT compiler kicks in
         execute(20000);
@@ -42,7 +43,7 @@ public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTe
 
     @Test
     public void testChoiceExpression() throws InterruptedException {
-        template.setDefaultEndpointUri("direct:choice-expression");
+        ((DefaultProducerTemplate) template).setDefaultEndpointUri("direct:choice-expression");
 
         // warm up with 20.000 messages so that the JIT compiler kicks in
         execute(20000);
@@ -59,7 +60,7 @@ public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTe
 
     @Test
     public void testFilterSimple() throws InterruptedException {
-        template.setDefaultEndpointUri("direct:filter-simple");
+        ((DefaultProducerTemplate) template).setDefaultEndpointUri("direct:filter-simple");
 
         // warm up with 20.000 messages so that the JIT compiler kicks in
         execute(20000);
@@ -76,7 +77,7 @@ public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTe
 
     @Test
     public void testFilterExpression() throws InterruptedException {
-        template.setDefaultEndpointUri("direct:filter-expression");
+        ((DefaultProducerTemplate) template).setDefaultEndpointUri("direct:filter-expression");
 
         // warm up with 20.000 messages so that the JIT compiler kicks in
         execute(20000);

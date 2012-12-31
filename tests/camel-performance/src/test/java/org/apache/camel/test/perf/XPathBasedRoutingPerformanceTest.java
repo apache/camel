@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultProducerTemplate;
 import org.junit.Test;
 
 public class XPathBasedRoutingPerformanceTest extends AbstractBasePerformanceTest {
@@ -28,7 +29,7 @@ public class XPathBasedRoutingPerformanceTest extends AbstractBasePerformanceTes
 
     @Test
     public void testChoice() throws InterruptedException {
-        template.setDefaultEndpointUri("direct:choice");
+        ((DefaultProducerTemplate) template).setDefaultEndpointUri("direct:choice");
 
         // warm up with 20.000 messages so that the JIT compiler kicks in
         execute(20000);
@@ -45,7 +46,7 @@ public class XPathBasedRoutingPerformanceTest extends AbstractBasePerformanceTes
 
     @Test
     public void testFilter() throws InterruptedException {
-        template.setDefaultEndpointUri("direct:filter");
+        ((DefaultProducerTemplate) template).setDefaultEndpointUri("direct:filter");
 
         // warm up with 20.000 messages so that the JIT compiler kicks in
         execute(20000);

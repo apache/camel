@@ -17,6 +17,7 @@
 package org.apache.camel.test.perf;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultProducerTemplate;
 import org.junit.Test;
 
 public class SplitterPerformanceTest extends AbstractBasePerformanceTest {
@@ -58,7 +59,7 @@ public class SplitterPerformanceTest extends AbstractBasePerformanceTest {
 
     @Test
     public void testTokenize() throws InterruptedException {
-        template.setDefaultEndpointUri("direct:tokenize");
+        ((DefaultProducerTemplate) template).setDefaultEndpointUri("direct:tokenize");
 
         // warm up with 30.000 messages so that the JIT compiler kicks in
         execute(1);
