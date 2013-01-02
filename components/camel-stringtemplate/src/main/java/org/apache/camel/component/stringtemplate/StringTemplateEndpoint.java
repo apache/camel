@@ -19,14 +19,15 @@ package org.apache.camel.component.stringtemplate;
 import java.io.StringWriter;
 import java.util.Map;
 
-import org.antlr.stringtemplate.AutoIndentWriter;
-import org.antlr.stringtemplate.StringTemplate;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.util.ExchangeHelper;
+import org.stringtemplate.v4.AutoIndentWriter;
+import org.stringtemplate.v4.NoIndentWriter;
+import org.stringtemplate.v4.ST;
 
 /**
  * @version 
@@ -57,10 +58,12 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
 
         // getResourceAsInputStream also considers the content cache
         String text = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, getResourceAsInputStream());
-        StringTemplate template = new StringTemplate(text);
-        template.setAttributes(variableMap);
+        ST template = new ST(text);
+        for (Map.Entry<String, Object> entry : variableMap.entrySet()) {
+            template.add(entry.getKey(), entry.getValue());
+        }
         log.debug("StringTemplate is writing using attributes: {}", variableMap);
-        template.write(new AutoIndentWriter(buffer));
+        template.write(new NoIndentWriter(buffer));
 
         // now lets output the results to the exchange
         Message out = exchange.getOut();
@@ -69,4 +72,5 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, getResourceUri());
         out.setAttachments(exchange.getIn().getAttachments());
     }
+
 }

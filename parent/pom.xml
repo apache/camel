@@ -319,8 +319,8 @@
     <sshd-version>0.8.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
-    <stringtemplate-bundle-version>3.2_5</stringtemplate-bundle-version>
-    <stringtemplate-version>3.2.1</stringtemplate-version>
+    <stringtemplate-bundle-version>4.0.2_2</stringtemplate-bundle-version>
+    <stringtemplate-version>4.0.2</stringtemplate-version>
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.8</testng-version>
