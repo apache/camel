@@ -19,8 +19,12 @@ package org.apache.camel.management;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.rmi.NoSuchObjectException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
@@ -37,6 +41,7 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
 
     protected String url;
     protected JMXConnector clientConnector;
+    protected int registryPort;
 
     @Override
     protected boolean useJmx() {
@@ -55,14 +60,14 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     protected void setUp() throws Exception {
         sleepForConnection = 3000;
 
-        int port = getNextAvailable(9500);
-        log.info("Using port " + port);
-        url = "service:jmx:rmi:///jndi/rmi://localhost:" + port + "/jmxrmi/camel";
+        registryPort = 30000 + new Random().nextInt(10000);
+        log.info("Using port " + registryPort);
+        url = "service:jmx:rmi:///jndi/rmi://localhost:" + registryPort + "/jmxrmi/camel";
 
         // need to explicit set it to false to use non-platform mbs
         System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "false");
         System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
-        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, String.valueOf(port));
+        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "" + registryPort);
         super.setUp();
     }
 
@@ -90,34 +95,31 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
         return mbsc;
     }
     
-    private synchronized int getNextAvailable(int fromPort) {
-        ServerSocket ss = null;
-        DatagramSocket ds = null;
-        
-        for (int port = fromPort; port <= 49151; port++) {
-            try {
-                ss = new ServerSocket(port);
-                ss.setReuseAddress(true);
-                ds = new DatagramSocket(port);
-                ds.setReuseAddress(true);
-                return port;
-            } catch (IOException e) {
-                // Do nothing
-            } finally {
-                if (ds != null) {
-                    ds.close();
-                }
+    public void testRmiRegistryUnexported() throws Exception {
 
-                if (ss != null) {
-                    try {
-                        ss.close();
-                    } catch (IOException e) {
-                        /* should not be thrown */
-                    }
-                }
-            }
+        Registry registry = LocateRegistry.getRegistry(registryPort);
+
+        // before we stop the context the registry is still exported, so list() should work
+        Exception e;
+        try {
+            registry.list();
+            e = null;
+        } catch (NoSuchObjectException nsoe) {
+            e = nsoe;
         }
+        assertNull(e);
 
-        throw new NoSuchElementException("Could not find an available port above " + fromPort);
+        // stop the Camel context
+        context.stop();
+
+        // stopping the Camel context unexported the registry, so list() should fail
+        Exception e2;
+        try {
+            registry.list();
+            e2 = null;
+        } catch (NoSuchObjectException nsoe) {
+            e2 = nsoe;
+        }
+        assertNotNull(e2);
     }
 }
