@@ -40,7 +40,8 @@
     <activemq-version>5.7.0</activemq-version>
     <ahc-version>1.7.9</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
-    <antlr-bundle-version>2.7.7_5</antlr-bundle-version>
+    <antlr-bundle-version>3.4_1</antlr-bundle-version>
+    <antlr-runtime-bundle-version>3.4_2</antlr-runtime-bundle-version>
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
     <apacheds-version>1.5.7</apacheds-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
@@ -74,7 +75,6 @@
     <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
     <commons-codec-version>1.6</commons-codec-version>
     <commons-collections-version>3.2.1</commons-collections-version>
-    <commons-configuration-bundle-version>1.8_1</commons-configuration-bundle-version>
     <commons-configuration-version>1.8</commons-configuration-version>
     <commons-csv-bundle-version>1.0-r706900_3</commons-csv-bundle-version>
     <commons-cli-version>1.2</commons-cli-version>
@@ -303,7 +303,7 @@
     <solr-version>3.6.1</solr-version>
     <spring-batch-version>2.1.9.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
-    <spring-data-redis-version>1.0.0.RELEASE</spring-data-redis-version>
+    <spring-data-redis-version>1.0.2.RELEASE</spring-data-redis-version>
     <spring-integration-version>2.1.4.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-neo4j-version>2.1.0.RELEASE</spring-neo4j-version>

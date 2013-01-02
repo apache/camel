@@ -21,8 +21,7 @@ import org.junit.Test;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,6 +62,6 @@ public class RedisIdempotentRepositoryTest {
     @Test
     public void shouldReturnProcessorName() {
         String processorName = idempotentRepository.getProcessorName();
-        assertThat(processorName, is(REPOSITORY));
+        assertEquals(REPOSITORY, processorName);
     }
 }
