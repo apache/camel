@@ -65,12 +65,11 @@ public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTe
 
         resetMock(count);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         execute(count);
-        long end = System.currentTimeMillis();
 
         assertMockEndpointsSatisfied();
-        log.warn("Run " +  count + " tests in " + (end - start) + "ms");
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Test
@@ -82,12 +81,11 @@ public class HeaderBasedRoutingPerformanceTest extends AbstractBasePerformanceTe
 
         resetMock(count);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         execute(count);
-        long end = System.currentTimeMillis();
 
         assertMockEndpointsSatisfied();
-        log.warn("Run " +  count + " tests in " + (end - start) + "ms");
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Override
