@@ -277,7 +277,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
 
             List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0], body[2][0][0]);
             assertTrue(bodies.contains(result1) && bodies.contains(result2) && bodies.contains(result3));
-
         }
     }
 

@@ -150,8 +150,8 @@
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.12</hawtdispatch-version>
     <hazelcast-version>2.4</hazelcast-version>
-    <hbase-version>0.90.5</hbase-version>
-    <hbase-bundle-version>0.90.5_1</hbase-bundle-version>
+    <hbase-version>0.94.2</hbase-version>
+    <hbase-bundle-version>0.94.2_1</hbase-bundle-version>
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
     <hibernate-version>4.1.9.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>

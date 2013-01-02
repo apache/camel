@@ -100,7 +100,6 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
         }
     }
 
-
     @Test
     public void testRepositoryInRoute() throws Exception {
         if (systemReady) {

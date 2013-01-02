@@ -46,8 +46,6 @@
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase</artifactId>
-            <!-- This is required since using pre-0.92.x with 0.92.x or greater will cause an IllegalArgumentException Not a host:port pair: -->
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -122,16 +120,6 @@
 
         <!-- testing -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
             <scope>test</scope>
@@ -141,6 +129,14 @@
             <artifactId>hbase</artifactId>
             <version>${hbase-version}</version>
             <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <!-- need to use zookeeper 3.4.x for testing -->
+        <!-- TODO: Can be removed when we upgrade to zookeeper 3.4.6 or better (OSGi fixed) -->
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.4.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
