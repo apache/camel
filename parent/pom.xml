@@ -148,7 +148,7 @@
     <hapi-version>2.0</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
-    <hawtdispatch-version>1.12</hawtdispatch-version>
+    <hawtdispatch-version>1.13</hawtdispatch-version>
     <hazelcast-version>2.4</hazelcast-version>
     <hbase-version>0.94.2</hbase-version>
     <hbase-bundle-version>0.94.2_1</hbase-bundle-version>
