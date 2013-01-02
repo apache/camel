@@ -17,6 +17,7 @@
 package org.apache.camel.test.perf;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 public class ContentBasedRoutingPerformanceTest extends AbstractBasePerformanceTest {
@@ -32,12 +33,11 @@ public class ContentBasedRoutingPerformanceTest extends AbstractBasePerformanceT
 
         resetMock(count);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         execute(count);
-        long end = System.currentTimeMillis();
-        
+
         assertMockEndpointsSatisfied();
-        log.warn("Run " +  count + " tests in " + (end - start) + "ms");
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Test
@@ -49,12 +49,11 @@ public class ContentBasedRoutingPerformanceTest extends AbstractBasePerformanceT
 
         resetMock(count);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         execute(count);
-        long end = System.currentTimeMillis();
-        
+
         assertMockEndpointsSatisfied();
-        log.warn("Run " +  count + " tests in " + (end - start) + "ms");
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Test
@@ -66,12 +65,11 @@ public class ContentBasedRoutingPerformanceTest extends AbstractBasePerformanceT
 
         resetMock(count);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         execute(count);
-        long end = System.currentTimeMillis();
 
         assertMockEndpointsSatisfied();
-        log.warn("Run " +  count + " tests in " + (end - start) + "ms");
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Test
@@ -83,12 +81,11 @@ public class ContentBasedRoutingPerformanceTest extends AbstractBasePerformanceT
 
         resetMock(count);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         execute(count);
-        long end = System.currentTimeMillis();
 
         assertMockEndpointsSatisfied();
-        log.warn("Run " +  count + " tests in " + (end - start) + "ms");
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Override
