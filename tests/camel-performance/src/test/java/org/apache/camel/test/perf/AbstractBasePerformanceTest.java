@@ -56,9 +56,4 @@ public abstract class AbstractBasePerformanceTest extends CamelTestSupport {
     public boolean isCreateCamelContextPerClass() {
         return true;
     }
-
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
 }
