@@ -25,15 +25,11 @@ import org.apache.camel.component.twitter.consumer.streaming.FilterConsumer;
 import org.apache.camel.component.twitter.consumer.streaming.SampleConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.HomeConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.MentionsConsumer;
-import org.apache.camel.component.twitter.consumer.timeline.PublicConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.RetweetsConsumer;
 import org.apache.camel.component.twitter.consumer.timeline.UserConsumer;
-import org.apache.camel.component.twitter.consumer.trends.DailyTrendConsumer;
-import org.apache.camel.component.twitter.consumer.trends.WeeklyTrendConsumer;
 import org.apache.camel.component.twitter.data.ConsumerType;
 import org.apache.camel.component.twitter.data.StreamingType;
 import org.apache.camel.component.twitter.data.TimelineType;
-import org.apache.camel.component.twitter.data.TrendsType;
 import org.apache.camel.component.twitter.producer.DirectMessageProducer;
 import org.apache.camel.component.twitter.producer.SearchProducer;
 import org.apache.camel.component.twitter.producer.UserProducer;
@@ -105,8 +101,6 @@ public final class Twitter4JFactory {
                         return new HomeConsumer(te);
                     case MENTIONS:
                         return new MentionsConsumer(te);
-                    case PUBLIC:
-                        return new PublicConsumer(te);
                     case RETWEETSOFME:
                         return new RetweetsConsumer(te);
                     case USER:
@@ -120,25 +114,13 @@ public final class Twitter4JFactory {
                     }
                 }
                 break;
-            case TRENDS:
-                if (uriSplit.length > 1) {
-                    switch (TrendsType.fromUri(uriSplit[1])) {
-                    case DAILY:
-                        return new DailyTrendConsumer(te);
-                    case WEEKLY:
-                        return new WeeklyTrendConsumer(te);
-                    default:
-                        break;
-                    }
-                }
-                break;
             default:
                 break;
             }
         }
 
-        LOG.warn("A consumer type was not provided (or an incorrect pairing was used).  Defaulting to Public Timeline!");
-        return new PublicConsumer(te);
+        throw new IllegalArgumentException("Cannot create any consumer with uri " + uri
+                + ". A consumer type was not provided (or an incorrect pairing was used).");
     }
 
     public static DefaultProducer getProducer(TwitterEndpoint te, String uri) throws IllegalArgumentException {

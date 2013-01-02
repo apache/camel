@@ -17,6 +17,7 @@
 package org.apache.camel.component.twitter.consumer.streaming;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import twitter4j.StallWarning;
 
 /**
  * Consumes the sample stream
@@ -27,7 +28,13 @@ public class SampleConsumer extends StreamingConsumer {
         super(te);
     }
 
+    @Override
     protected void startStreaming() {
         twitterStream.sample();
+    }
+
+    @Override
+    public void onStallWarning(StallWarning stallWarning) {
+        // noop
     }
 }

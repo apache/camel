@@ -22,10 +22,9 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-
 import twitter4j.Query;
 import twitter4j.QueryResult;
-import twitter4j.Tweet;
+import twitter4j.Status;
 import twitter4j.Twitter;
 
 public class SearchProducer extends Twitter4JProducer {
@@ -56,9 +55,9 @@ public class SearchProducer extends Twitter4JProducer {
         Twitter twitter = te.getProperties().getTwitter();
         log.debug("Searching twitter with keywords: {}", keywords);
         QueryResult results = twitter.search(query);
-        List<Tweet> list = results.getTweets();
+        List<Status> list = results.getTweets();
 
-        for (Tweet t : list) {
+        for (Status t : list) {
             long newId = t.getId();
             if (newId > lastId) {
                 lastId = newId;

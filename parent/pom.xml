@@ -324,8 +324,8 @@
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.8</testng-version>
-    <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
-    <twitter4j-version>2.2.5</twitter4j-version>
+    <twitter4j-bundle-version>3.0.1_1</twitter4j-bundle-version>
+    <twitter4j-version>3.0.3</twitter4j-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
     <velocity-bundle-version>1.7_5</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
