@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws.sns;
 
-import junit.framework.Assert;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
@@ -45,6 +43,8 @@ import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.SubscribeRequest;
 import com.amazonaws.services.sns.model.SubscribeResult;
 import com.amazonaws.services.sns.model.UnsubscribeRequest;
+
+import org.junit.Assert;
 
 public class AmazonSNSClientMock extends AmazonSNSClient {
     

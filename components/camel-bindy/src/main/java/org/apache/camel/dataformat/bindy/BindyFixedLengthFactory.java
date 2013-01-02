@@ -162,7 +162,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         int offset;
         int length;
         Field field;
-        String pattern;
 
         // Iterate through the list of positions
         // defined in the @DataField
@@ -210,14 +209,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Pos/Offset: {}, Data: {}, Field type: {}", new Object[]{offset, token, field.getType()});
             }
-            
-            Format<?> format;
-
-            // Get pattern defined for the field
-            pattern = dataField.pattern();
 
             // Create format object to format the field
-            format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
+            Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
 
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
@@ -313,20 +307,14 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                 if (obj != null) {
 
-                    // Retrieve the format, pattern and precision associated to
-                    // the type
+                    // Retrieve the format, pattern and precision associated to the type
                     Class<?> type = field.getType();
-                    String pattern = datafield.pattern();
-                    int precision = datafield.precision();
-
-
 
                     // Create format
                     Format<?> format = FormatFactory.getFormat(type, getLocale(), datafield);
 
                     // Get field value
                     Object value = field.get(obj);
-
 
                     result = formatString(format, value);
 

@@ -25,15 +25,13 @@ import org.apache.camel.impl.DefaultConsumer;
 @Deprecated
 public class HttpConsumer extends DefaultConsumer {
 
-    private final HttpEndpoint endpoint;
-    private boolean traceEnabled;    
+    private boolean traceEnabled;
 
     public HttpConsumer(HttpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         if (endpoint.isTraceEnabled()) {
             setTraceEnabled(true);
-        }        
-        this.endpoint = endpoint;
+        }
     }
 
     @Override
@@ -42,30 +40,30 @@ public class HttpConsumer extends DefaultConsumer {
     }
 
     public HttpBinding getBinding() {
-        return endpoint.getBinding();
+        return getEndpoint().getBinding();
     }
 
     public String getPath() {
-        return endpoint.getPath();
+        return getEndpoint().getPath();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        endpoint.connect(this);
+        getEndpoint().connect(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        endpoint.disconnect(this);
+        getEndpoint().disconnect(this);
         super.doStop();
     }
 
-    public boolean isTraceEnabled() {        
-        return this.traceEnabled;
+    public boolean isTraceEnabled() {
+        return traceEnabled;
     }
 
     public void setTraceEnabled(boolean traceEnabled) {
         this.traceEnabled = traceEnabled;
-    }    
+    }
 }

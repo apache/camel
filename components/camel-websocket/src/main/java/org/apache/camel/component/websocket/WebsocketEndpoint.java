@@ -89,7 +89,6 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     public void connect(WebsocketConsumer consumer) throws Exception {
         component.connect(consumer);
         component.addServlet(sync, consumer, remaining);
-        
     }
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {

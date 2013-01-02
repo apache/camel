@@ -17,7 +17,6 @@
 package org.apache.camel.util;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;

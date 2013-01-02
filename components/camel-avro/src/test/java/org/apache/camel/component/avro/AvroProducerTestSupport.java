@@ -19,8 +19,6 @@ package org.apache.camel.component.avro;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import org.apache.avro.Protocol;
 import org.apache.avro.ipc.Server;
 
@@ -31,6 +29,7 @@ import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class AvroProducerTestSupport extends AvroTestSupport {

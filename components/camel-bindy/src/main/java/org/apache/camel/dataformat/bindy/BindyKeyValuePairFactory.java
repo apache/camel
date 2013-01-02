@@ -283,9 +283,6 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                             if (value != null) {
 
-                                // Get pattern defined for the field
-                                String pattern = keyValuePairField.pattern();
-
                                 // Create format object to format the field
                                 Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField);
 
@@ -321,9 +318,6 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                     }
 
                                     value = values.get(i);
-
-                                    // Get pattern defined for the field
-                                    String pattern = keyValuePairField.pattern();
 
                                     // Create format object to format the field
                                     Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField);
@@ -451,8 +445,6 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
             // Retrieve the format, pattern and precision associated to the type
             Class<?> type = field.getType();
-            String pattern = keyValuePairField.pattern();
-            int precision = keyValuePairField.precision();
 
             // Create format
             @SuppressWarnings("unchecked")

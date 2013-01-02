@@ -17,6 +17,7 @@
 package org.apache.camel.test.perf;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 public class SplitterPerformanceTest extends AbstractBasePerformanceTest {
@@ -60,17 +61,16 @@ public class SplitterPerformanceTest extends AbstractBasePerformanceTest {
     public void testTokenize() throws InterruptedException {
         template.setDefaultEndpointUri("direct:tokenize");
 
-        // warm up with 30.000 messages so that the JIT compiler kicks in
+        // warm up with 1 message so that the JIT compiler kicks in
         execute(1);
 
         resetMock(count);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         execute(1);
-        long end = System.currentTimeMillis();
-        
+
         assertMockEndpointsSatisfied();
-        log.warn("Run " +  count + " tests in " + (end - start) + "ms");
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Override
