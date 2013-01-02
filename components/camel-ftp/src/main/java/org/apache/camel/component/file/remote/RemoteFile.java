@@ -72,4 +72,9 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
         remoteResult.setHostname(remoteSource.getHostname());
     }
 
+    @Override
+    public String toString() {
+        return "RemoteFile[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
+    }
+
 }
