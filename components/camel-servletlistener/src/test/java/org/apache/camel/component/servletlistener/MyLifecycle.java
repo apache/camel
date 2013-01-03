@@ -18,16 +18,25 @@ package org.apache.camel.component.servletlistener;
 
 import org.apache.camel.util.jndi.JndiContext;
 
-/**
- *
- */
 // START SNIPPET: e1
+/**
+ * Our custom {@link CamelContextLifecycle} which allows us to enlist beans in the {@link JndiContext}
+ * so the Camel application can lookup the beans in the {@link org.apache.camel.spi.Registry}.
+ * <p/>
+ * We can of course also do other kind of custom logic as well.
+ */
 public class MyLifecycle extends CamelContextLifecycleSupport {
 
     @Override
     public void beforeStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
         // enlist our bean(s) in the registry
         jndi.bind("myBean", new HelloBean());
+    }
+
+    @Override
+    public void afterStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
+        // unbind our bean when Camel has been stopped
+        jndi.unbind("myBean");
     }
 }
 // END SNIPPET: e1

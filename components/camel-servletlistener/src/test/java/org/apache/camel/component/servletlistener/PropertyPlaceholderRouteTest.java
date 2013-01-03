@@ -24,10 +24,10 @@ import org.junit.Test;
 /**
  *
  */
-public class CamelContextServletListenerTest extends ServletCamelTestSupport {
+public class PropertyPlaceholderRouteTest extends ServletCamelTestSupport {
 
     protected String getConfiguration() {
-        return "/myweb.xml";
+        return "/myweb6.xml";
     }
 
     @Test
@@ -39,10 +39,10 @@ public class CamelContextServletListenerTest extends ServletCamelTestSupport {
 
         ProducerTemplate template = context.createProducerTemplate();
 
-        MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
-        mock.expectedMessageCount(1);
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("seda:foo", "Hello World");
+        template.sendBody("direct:foo", "World");
 
         mock.assertIsSatisfied();
         template.stop();

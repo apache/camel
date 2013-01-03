@@ -31,9 +31,12 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -59,6 +62,10 @@ public class CamelContextServletListener implements ServletContextListener {
     private CamelContextLifecycle camelContextLifecycle;
     private boolean test;
 
+    // TODO: Maybe some way of having CamelContextLifecycleSupport using bean parameter binding
+    // so ppl can build their Camel app without camel-servletlistener dependency on the codebase
+    // TODO: add example and add documentation page
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         LOG.info("CamelContextServletListener initializing ...");
@@ -68,7 +75,6 @@ public class CamelContextServletListener implements ServletContextListener {
             jndiContext = new JndiContext();
             camelContext = new ServletCamelContext(jndiContext, sce.getServletContext());
         } catch (Exception e) {
-            LOG.error("Error creating CamelContext.", e);
             throw new RuntimeException("Error creating CamelContext.", e);
         }
 
@@ -83,12 +89,14 @@ public class CamelContextServletListener implements ServletContextListener {
         LOG.trace("In test mode? {}", this.test);
 
         // set properties on the camel context from the init parameters
-        if (!map.isEmpty()) {
-            try {
+        try {
+            initPropertyPlaceholder(camelContext, map);
+            initCamelContext(camelContext, map);
+            if (!map.isEmpty()) {
                 IntrospectionSupport.setProperties(camelContext, map);
-            } catch (Exception e) {
-                throw new RuntimeException("Error setting init parameters on CamelContext.", e);
             }
+        } catch (Exception e) {
+            throw new RuntimeException("Error setting init parameters on CamelContext.", e);
         }
 
         // get the routes and add to the CamelContext
@@ -185,6 +193,10 @@ public class CamelContextServletListener implements ServletContextListener {
         LOG.info("CamelContextServletListener destroyed");
     }
 
+    /**
+     * Extracts all the init parameters, and will do reference lookup in {@link JndiContext}
+     * if the value starts with a # sign.
+     */
     private Map<String, Object> extractInitParameters(ServletContextEvent sce) {
         // configure CamelContext with the init parameter
         Map<String, Object> map = new LinkedHashMap<String, Object>();
@@ -204,6 +216,72 @@ public class CamelContextServletListener implements ServletContextListener {
             }
         }
         return map;
+    }
+
+    /**
+     * Initializes the property placeholders by registering the {@link PropertiesComponent} with
+     * the configuration from the given init parameters.
+     */
+    private void initPropertyPlaceholder(ServletCamelContext camelContext, Map<String, Object> parameters) throws Exception {
+        // setup property placeholder first
+        Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "propertyPlaceholder.");
+        if (properties != null && !properties.isEmpty()) {
+            PropertiesComponent pc = new PropertiesComponent();
+            IntrospectionSupport.setProperties(pc, properties);
+            // validate we could set all parameters
+            if (!properties.isEmpty()) {
+                throw new IllegalArgumentException("Error setting propertyPlaceholder parameters on CamelContext."
+                        + " There are " + properties.size() + " unknown parameters. [" + properties + "]");
+            }
+            // register the properties component
+            camelContext.addComponent("properties", pc);
+        }
+    }
+
+    /**
+     * Initializes the {@link ServletCamelContext} by setting the supported init parameters.
+     */
+    private void initCamelContext(ServletCamelContext camelContext, Map<String, Object> parameters) throws Exception {
+        String streamCache = (String) parameters.remove("streamCache");
+        if (streamCache != null) {
+            camelContext.setStreamCaching(CamelContextHelper.parseBoolean(camelContext, streamCache));
+        }
+        String trace = (String) parameters.remove("trace");
+        if (trace != null) {
+            camelContext.setTracing(CamelContextHelper.parseBoolean(camelContext, trace));
+        }
+        String delayer = (String) parameters.remove("delayer");
+        if (delayer != null) {
+            camelContext.setDelayer(CamelContextHelper.parseLong(camelContext, delayer));
+        }
+        String handleFault = (String) parameters.remove("handleFault");
+        if (handleFault != null) {
+            camelContext.setHandleFault(CamelContextHelper.parseBoolean(camelContext, handleFault));
+        }
+        String errorHandlerRef = (String) parameters.remove("errorHandlerRef");
+        if (errorHandlerRef != null) {
+            camelContext.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
+        }
+        String autoStartup = (String) parameters.remove("autoStartup");
+        if (autoStartup != null) {
+            camelContext.setAutoStartup(CamelContextHelper.parseBoolean(camelContext, autoStartup));
+        }
+        String useMDCLogging = (String) parameters.remove("useMDCLogging");
+        if (useMDCLogging != null) {
+            camelContext.setUseMDCLogging(CamelContextHelper.parseBoolean(camelContext, useMDCLogging));
+        }
+        String useBreadcrumb = (String) parameters.remove("useBreadcrumb");
+        if (useBreadcrumb != null) {
+            camelContext.setUseBreadcrumb(CamelContextHelper.parseBoolean(camelContext, useBreadcrumb));
+        }
+        String managementNamePattern = (String) parameters.remove("managementNamePattern");
+        if (managementNamePattern != null) {
+            camelContext.getManagementNameStrategy().setNamePattern(managementNamePattern);
+        }
+        String threadNamePattern = (String) parameters.remove("threadNamePattern");
+        if (threadNamePattern != null) {
+            camelContext.getExecutorServiceManager().setThreadNamePattern(threadNamePattern);
+        }
     }
 
     /**
