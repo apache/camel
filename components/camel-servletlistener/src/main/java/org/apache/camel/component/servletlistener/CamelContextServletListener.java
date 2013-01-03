@@ -335,6 +335,14 @@ public class CamelContextServletListener implements ServletContextListener {
         if (threadNamePattern != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(threadNamePattern);
         }
+
+        // extract any additional properties. prefixes
+        Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "properties.");
+        if (properties != null && !properties.isEmpty()) {
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                camelContext.getProperties().put(entry.getKey(), "" + entry.getValue());
+            }
+        }
     }
 
     /**
