@@ -17,9 +17,12 @@
 package org.apache.camel.component.servletlistener;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -45,11 +48,9 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelContextServletListener implements ServletContextListener {
 
-    // TODO: Allow to lookup and configure some of the stuff we do in camel-core-xml
-    // more easily with this listener as well
-    // TODO: Add more tests
-    // TODO: Allow to lookup route builders using package scanning
-
+    /**
+     * instance is used for testing purpose
+     */
     public static ServletCamelContext instance;
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextServletListener.class);
@@ -92,41 +93,37 @@ public class CamelContextServletListener implements ServletContextListener {
         }
 
         // get the routes and add to the CamelContext
-        Map<String, Object> routes = extractRoutes(map);
-        for (Map.Entry<String, Object> entry : routes.entrySet()) {
-            if (entry.getValue() instanceof RouteBuilder) {
-                LOG.debug("Adding route(s) {} -> {}", entry.getKey(), entry.getValue());
+        List<Object> routes = extractRoutes(map);
+        for (Object route : routes) {
+            if (route instanceof RouteBuilder) {
                 try {
-                    camelContext.addRoutes((RoutesBuilder) entry.getValue());
+                    camelContext.addRoutes((RoutesBuilder) route);
                 } catch (Exception e) {
-                    throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
+                    throw new RuntimeException("Error adding route " + route, e);
                 }
-            } else if (entry.getValue() instanceof Set) {
+            } else if (route instanceof Set) {
                 // its a set of route builders
-                for (Object clazz : (Set) entry.getValue()) {
-                    LOG.debug("Adding route(s) {} -> {}", entry.getKey(), clazz);
+                for (Object clazz : (Set) route) {
                     try {
                         camelContext.addRoutes((RoutesBuilder) clazz);
                     } catch (Exception e) {
-                        throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
+                        throw new RuntimeException("Error adding route " + clazz, e);
                     }
                 }
-            } else if (entry.getValue() instanceof RoutesDefinition) {
-                LOG.debug("Adding routes {} -> {}", entry.getKey(), entry.getValue());
+            } else if (route instanceof RoutesDefinition) {
                 try {
-                    camelContext.addRouteDefinitions(((RoutesDefinition) entry.getValue()).getRoutes());
+                    camelContext.addRouteDefinitions(((RoutesDefinition) route).getRoutes());
                 } catch (Exception e) {
-                    throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
+                    throw new RuntimeException("Error adding route(s) " + route, e);
                 }
-            } else if (entry.getValue() instanceof RouteDefinition) {
-                LOG.debug("Adding routes {} -> {}", entry.getKey(), entry.getValue());
+            } else if (route instanceof RouteDefinition) {
                 try {
-                    camelContext.addRouteDefinition((RouteDefinition) entry.getValue());
+                    camelContext.addRouteDefinition((RouteDefinition) route);
                 } catch (Exception e) {
-                    throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
+                    throw new RuntimeException("Error adding route(s) " + route, e);
                 }
             } else {
-                throw new IllegalArgumentException("Unsupported route " + entry.getKey() + " of type: " + entry.getValue().getClass().getName());
+                throw new IllegalArgumentException("Unsupported route: " + route);
             }
         }
 
@@ -167,65 +164,77 @@ public class CamelContextServletListener implements ServletContextListener {
         LOG.info("CamelContextServletListener initialized");
     }
 
-    private Map<String, Object> extractRoutes(Map<String, Object> map) {
-        Map<String, Object> routes = new LinkedHashMap<String, Object>();
+    private List<Object> extractRoutes(Map<String, Object> map) {
+        List<Object> answer = new ArrayList<Object>();
+        List<String> names = new ArrayList<String>();
+
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getKey().toLowerCase(Locale.UK).startsWith("routebuilder")) {
+                names.add(entry.getKey());
+                // we can have multiple values assigned, separated by comma, so create an iterator
                 String value = (String) entry.getValue();
-                if (ObjectHelper.isNotEmpty(value)) {
-                    Object target = null;
-                    if (value.startsWith("#")) {
-                        // a reference lookup in jndi
-                        value = value.substring(1);
-                        target = lookupJndi(jndiContext, value);
-                    } else if (ResourceHelper.hasScheme(value)) {
-                        InputStream is = null;
-                        try {
-                            is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), value);
-                            target = camelContext.loadRoutesDefinition(is);
-                        } catch (Exception e) {
-                            throw new RuntimeException("Error loading routes from resource: " + value, e);
-                        } finally {
-                            IOHelper.close(is, entry.getKey(), LOG);
-                        }
-                    } else if (value.startsWith("packagescan:")) {
-                        // using package scanning
-                        String path = value.substring(12);
-                        Set<Class<?>> classes = camelContext.getPackageScanClassResolver().findImplementations(RouteBuilder.class, path);
-                        if (!classes.isEmpty()) {
-                            Set<RouteBuilder> builders = new LinkedHashSet<RouteBuilder>();
-                            target = builders;
-                            for (Class<?> clazz : classes) {
-                                try {
-                                    RouteBuilder route = (RouteBuilder) camelContext.getInjector().newInstance(clazz);
-                                    builders.add(route);
-                                } catch (Exception e) {
-                                    throw new RuntimeException("Error creating RouteBuilder " + clazz, e);
+                Iterator it = ObjectHelper.createIterator(value);
+                while (it.hasNext()) {
+                    value = (String) it.next();
+                    if (ObjectHelper.isNotEmpty(value)) {
+                        // trim value before usage, as people can indent the values
+                        value = value.trim();
+                        Object target = null;
+
+                        if (value.startsWith("#")) {
+                            // a reference lookup in jndi
+                            value = value.substring(1);
+                            target = lookupJndi(jndiContext, value);
+                        } else if (ResourceHelper.hasScheme(value)) {
+                            // XML resource from classpath or file system
+                            InputStream is = null;
+                            try {
+                                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), value);
+                                target = camelContext.loadRoutesDefinition(is);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Error loading routes from resource: " + value, e);
+                            } finally {
+                                IOHelper.close(is, entry.getKey(), LOG);
+                            }
+                        } else if (value.startsWith("packagescan:")) {
+                            // using package scanning
+                            String path = value.substring(12);
+                            Set<Class<?>> classes = camelContext.getPackageScanClassResolver().findImplementations(RouteBuilder.class, path);
+                            if (!classes.isEmpty()) {
+                                Set<RouteBuilder> builders = new LinkedHashSet<RouteBuilder>();
+                                target = builders;
+                                for (Class<?> clazz : classes) {
+                                    try {
+                                        RouteBuilder route = (RouteBuilder) camelContext.getInjector().newInstance(clazz);
+                                        builders.add(route);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException("Error creating RouteBuilder " + clazz, e);
+                                    }
                                 }
                             }
+                        } else {
+                            // assume its a FQN classname for a RouteBuilder class
+                            try {
+                                Class<RouteBuilder> clazz = camelContext.getClassResolver().resolveMandatoryClass(value, RouteBuilder.class);
+                                target = camelContext.getInjector().newInstance(clazz);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Error creating RouteBuilder " + value, e);
+                            }
                         }
-                    } else {
-                        // assume its a FQN classname for a RouteBuilder class
-                        try {
-                            Class<RouteBuilder> clazz = camelContext.getClassResolver().resolveMandatoryClass(value, RouteBuilder.class);
-                            target = camelContext.getInjector().newInstance(clazz);
-                        } catch (Exception e) {
-                            throw new RuntimeException("Error creating RouteBuilder " + value, e);
+                        if (target != null) {
+                            answer.add(target);
                         }
-                    }
-                    if (target != null) {
-                        routes.put(entry.getKey(), target);
                     }
                 }
             }
         }
 
         // after adding the route builders we should remove them from the map
-        for (String name : routes.keySet()) {
+        for (String name : names) {
             map.remove(name);
         }
 
-        return routes;
+        return answer;
     }
 
     private Map<String, Object> extractInitParameters(ServletContextEvent sce) {
