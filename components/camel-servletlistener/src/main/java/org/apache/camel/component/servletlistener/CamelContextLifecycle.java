@@ -24,12 +24,40 @@ import org.apache.camel.util.jndi.JndiContext;
  */
 public interface CamelContextLifecycle {
 
+    /**
+     * Callback before starting {@link ServletCamelContext}.
+     *
+     * @param camelContext the Camel context
+     * @param jndi         the JNDI context.
+     * @throws Exception is thrown if any error.
+     */
     void beforeStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
 
+    /**
+     * Callback after {@link ServletCamelContext} has been started.
+     *
+     * @param camelContext the Camel context
+     * @param jndi         the JNDI context.
+     * @throws Exception is thrown if any error.
+     */
     void afterStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
 
+    /**
+     * Callback before stopping {@link ServletCamelContext}.
+     *
+     * @param camelContext the Camel context
+     * @param jndi         the JNDI context.
+     * @throws Exception is thrown if any error.
+     */
     void beforeStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
 
+    /**
+     * Callback after {@link ServletCamelContext} has been stopped.
+     *
+     * @param camelContext the Camel context
+     * @param jndi         the JNDI context.
+     * @throws Exception is thrown if any error.
+     */
     void afterStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
 
 }

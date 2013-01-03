@@ -16,30 +16,36 @@
  */
 package org.apache.camel.component.servletlistener;
 
-import javax.naming.Context;
-import javax.servlet.ServletContext;
-
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
- * A servlet based {@link org.apache.camel.CamelContext}.
+ *
  */
-public class ServletCamelContext extends DefaultCamelContext {
+public class LifecycleTest extends ServletCamelTestSupport {
 
-    private final Context jndiContext;
-    private final ServletContext servletContext;
-
-    public ServletCamelContext(Context jndiContext, ServletContext servletContext) {
-        super(jndiContext);
-        this.jndiContext = jndiContext;
-        this.servletContext = servletContext;
+    protected String getConfiguration() {
+        return "/myweb5.xml";
     }
 
-    public Context getJndiContext() {
-        return jndiContext;
+    @Test
+    public void testCamelContext() throws Exception {
+        CamelContext context = getCamelContext();
+        assertNotNull(context);
+
+        assertEquals("MyCamel", context.getName());
+
+        ProducerTemplate template = context.createProducerTemplate();
+
+        MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBody("seda:foo", "World");
+
+        mock.assertIsSatisfied();
+        template.stop();
     }
 
-    public ServletContext getServletContext() {
-        return servletContext;
-    }
 }

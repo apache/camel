@@ -60,7 +60,6 @@ public class CamelContextServletListener implements ServletContextListener {
     private boolean test;
 
     @Override
-    @SuppressWarnings("unchecked")
     public void contextInitialized(ServletContextEvent sce) {
         LOG.info("CamelContextServletListener initializing ...");
 
@@ -128,7 +127,7 @@ public class CamelContextServletListener implements ServletContextListener {
         }
 
         // any custom CamelContextLifecycle
-        String lifecycle = (String) map.remove(CamelContextLifecycle.class.getName());
+        String lifecycle = (String) map.remove("CamelContextLifecycle");
         if (lifecycle != null) {
             try {
                 Class<CamelContextLifecycle> clazz = camelContext.getClassResolver().resolveMandatoryClass(lifecycle, CamelContextLifecycle.class);
@@ -164,6 +163,55 @@ public class CamelContextServletListener implements ServletContextListener {
         LOG.info("CamelContextServletListener initialized");
     }
 
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        LOG.info("CamelContextServletListener destroying ...");
+        if (camelContext != null) {
+            try {
+                if (camelContextLifecycle != null) {
+                    camelContextLifecycle.beforeStop(camelContext, jndiContext);
+                }
+                camelContext.stop();
+                if (camelContextLifecycle != null) {
+                    camelContextLifecycle.afterStop(camelContext, jndiContext);
+                }
+            } catch (Exception e) {
+                LOG.warn("Error stopping CamelContext. This exception will be ignored.", e);
+            }
+        }
+        camelContext = null;
+        jndiContext = null;
+        instance = null;
+        LOG.info("CamelContextServletListener destroyed");
+    }
+
+    private Map<String, Object> extractInitParameters(ServletContextEvent sce) {
+        // configure CamelContext with the init parameter
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Enumeration names = sce.getServletContext().getInitParameterNames();
+        while (names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+            String value = sce.getServletContext().getInitParameter(name);
+
+            if (ObjectHelper.isNotEmpty(value)) {
+                Object target = value;
+                if (value.startsWith("#")) {
+                    // a reference lookup in jndi
+                    value = value.substring(1);
+                    target = lookupJndi(jndiContext, value);
+                }
+                map.put(name, target);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Extract the routes from the parameters.
+     *
+     * @param map  parameters
+     * @return a list of routes, which can be of different types. See source code for more details.
+     */
     private List<Object> extractRoutes(Map<String, Object> map) {
         List<Object> answer = new ArrayList<Object>();
         List<String> names = new ArrayList<String>();
@@ -237,55 +285,12 @@ public class CamelContextServletListener implements ServletContextListener {
         return answer;
     }
 
-    private Map<String, Object> extractInitParameters(ServletContextEvent sce) {
-        // configure CamelContext with the init parameter
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
-        Enumeration names = sce.getServletContext().getInitParameterNames();
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
-            String value = sce.getServletContext().getInitParameter(name);
-
-            if (ObjectHelper.isNotEmpty(value)) {
-                Object target = value;
-                if (value.startsWith("#")) {
-                    // a reference lookup in jndi
-                    value = value.substring(1);
-                    target = lookupJndi(jndiContext, value);
-                }
-                map.put(name, target);
-            }
-        }
-        return map;
-    }
-
     private static Object lookupJndi(JndiContext jndiContext, String name) {
         try {
             return jndiContext.lookup(name);
         } catch (NamingException e) {
             throw new RuntimeException("Error looking up in jndi with name: " + name, e);
         }
-    }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-        LOG.info("CamelContextServletListener destroying ...");
-        if (camelContext != null) {
-            try {
-                if (camelContextLifecycle != null) {
-                    camelContextLifecycle.beforeStop(camelContext, jndiContext);
-                }
-                camelContext.stop();
-                if (camelContextLifecycle != null) {
-                    camelContextLifecycle.afterStop(camelContext, jndiContext);
-                }
-            } catch (Exception e) {
-                LOG.warn("Error stopping CamelContext. This exception will be ignored.", e);
-            }
-        }
-        camelContext = null;
-        jndiContext = null;
-        instance = null;
-        LOG.info("CamelContextServletListener destroyed");
     }
 
 }

@@ -16,30 +16,12 @@
  */
 package org.apache.camel.component.servletlistener;
 
-import javax.naming.Context;
-import javax.servlet.ServletContext;
-
-import org.apache.camel.impl.DefaultCamelContext;
-
 /**
- * A servlet based {@link org.apache.camel.CamelContext}.
+ *
  */
-public class ServletCamelContext extends DefaultCamelContext {
+public class HelloBean {
 
-    private final Context jndiContext;
-    private final ServletContext servletContext;
-
-    public ServletCamelContext(Context jndiContext, ServletContext servletContext) {
-        super(jndiContext);
-        this.jndiContext = jndiContext;
-        this.servletContext = servletContext;
-    }
-
-    public Context getJndiContext() {
-        return jndiContext;
-    }
-
-    public ServletContext getServletContext() {
-        return servletContext;
+    public String hello(String name) {
+        return "Hello " + name;
     }
 }
