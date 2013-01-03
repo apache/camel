@@ -19,17 +19,28 @@ package org.apache.camel.component.servletlistener;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * A callback lifecycle allows end users to implement custom logic before
- * the {@link ServletCamelContext} is started and stopped.
+ * Support class for {@link CamelContextLifecycle} to make sub-classing easier,
+ * allowing to only override methods needed.
  */
-public interface CamelContextLifecycle {
+public class CamelContextLifecycleSupport implements CamelContextLifecycle {
 
-    void beforeStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
+    @Override
+    public void beforeStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
+        // noop
+    }
 
-    void afterStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
+    @Override
+    public void afterStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
+        // noop
+    }
 
-    void beforeStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
+    @Override
+    public void beforeStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
+        // noop
+    }
 
-    void afterStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
-
+    @Override
+    public void afterStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
+        // noop
+    }
 }

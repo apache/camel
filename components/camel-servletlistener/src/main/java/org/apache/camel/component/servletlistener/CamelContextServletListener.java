@@ -17,16 +17,13 @@
 package org.apache.camel.component.servletlistener;
 
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -40,14 +37,10 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelContextServletListener implements ServletContextListener {
 
-    // TODO: Refactor the init method into smaller methods
     // TODO: Allow to lookup and configure some of the stuff we do in camel-core-xml
     // more easily with this listener as well
     // TODO: Add more tests
-    // TODO: Lookup jndi and have expected type, and fail if not matching type
-    // TODO: Consider CamelContextLifecycle as a SPI in camel-core to make it easier for
-    // everyone to do some custom code when Camel starts/stops. Though you can use an EventListener
-    // but maybe this SPI is even easier and more common to use
+    // TODO: Allow to lookup route builders using package scanning
 
     public static ServletCamelContext instance;
 
@@ -61,6 +54,7 @@ public class CamelContextServletListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         LOG.info("CamelContextServletListener initializing ...");
 
+        // create jndi and camel context
         try {
             jndiContext = new JndiContext();
             camelContext = new ServletCamelContext(jndiContext, sce.getServletContext());
@@ -69,23 +63,8 @@ public class CamelContextServletListener implements ServletContextListener {
             throw new RuntimeException("Error creating CamelContext.", e);
         }
 
-        // configure CamelContext with the init parameter
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
-        Enumeration names = sce.getServletContext().getInitParameterNames();
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
-            String value = sce.getServletContext().getInitParameter(name);
-
-            if (ObjectHelper.isNotEmpty(value)) {
-                Object target = value;
-                if (value.startsWith("#")) {
-                    // a reference lookup in jndi
-                    value = value.substring(1);
-                    target = lookupJndi(jndiContext, value);
-                }
-                map.put(name, target);
-            }
-        }
+        // get the init parameters
+        Map<String, Object> map = extractInitParameters(sce);
 
         // special for test parameter
         String test = (String) map.remove("test");
@@ -94,6 +73,7 @@ public class CamelContextServletListener implements ServletContextListener {
         }
         LOG.trace("In test mode? {}", this.test);
 
+        // set properties on the camel context from the init parameters
         if (!map.isEmpty()) {
             try {
                 IntrospectionSupport.setProperties(camelContext, map);
@@ -102,40 +82,15 @@ public class CamelContextServletListener implements ServletContextListener {
             }
         }
 
-        Set<String> routeBuilders = new HashSet<String>();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (entry.getKey().toLowerCase(Locale.UK).startsWith("routebuilder")) {
-                routeBuilders.add(entry.getKey());
-                String value = (String) entry.getValue();
-                if (ObjectHelper.isNotEmpty(value)) {
-                    Object target;
-                    if (value.startsWith("#")) {
-                        // a reference lookup in jndi
-                        value = value.substring(1);
-                        target = lookupJndi(jndiContext, value);
-                    } else {
-                        try {
-                            Class<RouteBuilder> clazz = camelContext.getClassResolver().resolveMandatoryClass(value, RouteBuilder.class);
-                            target = camelContext.getInjector().newInstance(clazz);
-                        } catch (Exception e) {
-                            throw new RuntimeException("Error creating RouteBuilder " + value, e);
-                        }
-                    }
-                    if (target instanceof RouteBuilder) {
-                        LOG.debug("Adding RouteBuilder {} -> {}", entry.getKey(), target);
-                        try {
-                            camelContext.addRoutes((RoutesBuilder) target);
-                        } catch (Exception e) {
-                            throw new RuntimeException("Error adding RouteBuilder " + value, e);
-                        }
-                    }
-                }
+        // get the route builders and add to the CamelContext
+        Map<String, RouteBuilder> routeBuilders = extractRouteBuilders(map);
+        for (Map.Entry<String, RouteBuilder> entry : routeBuilders.entrySet()) {
+            LOG.debug("Adding RouteBuilder {} -> {}", entry.getKey(), entry.getValue());
+            try {
+                camelContext.addRoutes(entry.getValue());
+            } catch (Exception e) {
+                throw new RuntimeException("Error adding RouteBuilder " + entry.getKey(), e);
             }
-        }
-
-        // after adding the route builders we should remove them from the map
-        for (String name : routeBuilders) {
-            map.remove(name);
         }
 
         // any custom CamelContextLifecycle
@@ -157,11 +112,11 @@ public class CamelContextServletListener implements ServletContextListener {
 
         try {
             if (camelContextLifecycle != null) {
-                camelContextLifecycle.preStart(camelContext, jndiContext);
+                camelContextLifecycle.beforeStart(camelContext, jndiContext);
             }
             camelContext.start();
             if (camelContextLifecycle != null) {
-                camelContextLifecycle.postStart(camelContext, jndiContext);
+                camelContextLifecycle.afterStart(camelContext, jndiContext);
             }
         } catch (Exception e) {
             LOG.error("Error starting CamelContext.", e);
@@ -173,6 +128,64 @@ public class CamelContextServletListener implements ServletContextListener {
         }
 
         LOG.info("CamelContextServletListener initialized");
+    }
+
+    private Map<String, RouteBuilder> extractRouteBuilders(Map<String, Object> map) {
+        Map<String, RouteBuilder> routeBuilders = new LinkedHashMap<String, RouteBuilder>();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getKey().toLowerCase(Locale.UK).startsWith("routebuilder")) {
+                String value = (String) entry.getValue();
+                if (ObjectHelper.isNotEmpty(value)) {
+                    Object target;
+                    if (value.startsWith("#")) {
+                        // a reference lookup in jndi
+                        value = value.substring(1);
+                        target = lookupJndi(jndiContext, value);
+                    } else {
+                        try {
+                            Class<RouteBuilder> clazz = camelContext.getClassResolver().resolveMandatoryClass(value, RouteBuilder.class);
+                            target = camelContext.getInjector().newInstance(clazz);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error creating RouteBuilder " + value, e);
+                        }
+                    }
+                    if (target instanceof RouteBuilder) {
+                        routeBuilders.put(entry.getKey(), (RouteBuilder) target);
+                    } else {
+                        throw new IllegalArgumentException("Parameter " + entry.getKey() + " is expected to be a " + RouteBuilder.class.getName()
+                                + " type but was " + target.getClass().getName() + " type.");
+                    }
+                }
+            }
+        }
+
+        // after adding the route builders we should remove them from the map
+        for (String name : routeBuilders.keySet()) {
+            map.remove(name);
+        }
+
+        return routeBuilders;
+    }
+
+    private Map<String, Object> extractInitParameters(ServletContextEvent sce) {
+        // configure CamelContext with the init parameter
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Enumeration names = sce.getServletContext().getInitParameterNames();
+        while (names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+            String value = sce.getServletContext().getInitParameter(name);
+
+            if (ObjectHelper.isNotEmpty(value)) {
+                Object target = value;
+                if (value.startsWith("#")) {
+                    // a reference lookup in jndi
+                    value = value.substring(1);
+                    target = lookupJndi(jndiContext, value);
+                }
+                map.put(name, target);
+            }
+        }
+        return map;
     }
 
     private static Object lookupJndi(JndiContext jndiContext, String name) {
@@ -189,11 +202,11 @@ public class CamelContextServletListener implements ServletContextListener {
         if (camelContext != null) {
             try {
                 if (camelContextLifecycle != null) {
-                    camelContextLifecycle.preStop(camelContext, jndiContext);
+                    camelContextLifecycle.beforeStop(camelContext, jndiContext);
                 }
                 camelContext.stop();
                 if (camelContextLifecycle != null) {
-                    camelContextLifecycle.postStop(camelContext, jndiContext);
+                    camelContextLifecycle.afterStop(camelContext, jndiContext);
                 }
             } catch (Exception e) {
                 LOG.warn("Error stopping CamelContext. This exception will be ignored.", e);
