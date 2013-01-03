@@ -19,8 +19,10 @@ package org.apache.camel.component.servletlistener;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -99,6 +101,16 @@ public class CamelContextServletListener implements ServletContextListener {
                 } catch (Exception e) {
                     throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
                 }
+            } else if (entry.getValue() instanceof Set) {
+                // its a set of route builders
+                for (Object clazz : (Set) entry.getValue()) {
+                    LOG.debug("Adding route(s) {} -> {}", entry.getKey(), clazz);
+                    try {
+                        camelContext.addRoutes((RoutesBuilder) clazz);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
+                    }
+                }
             } else if (entry.getValue() instanceof RoutesDefinition) {
                 LOG.debug("Adding routes {} -> {}", entry.getKey(), entry.getValue());
                 try {
@@ -175,6 +187,22 @@ public class CamelContextServletListener implements ServletContextListener {
                             throw new RuntimeException("Error loading routes from resource: " + value, e);
                         } finally {
                             IOHelper.close(is, entry.getKey(), LOG);
+                        }
+                    } else if (value.startsWith("packagescan:")) {
+                        // using package scanning
+                        String path = value.substring(12);
+                        Set<Class<?>> classes = camelContext.getPackageScanClassResolver().findImplementations(RouteBuilder.class, path);
+                        if (!classes.isEmpty()) {
+                            Set<RouteBuilder> builders = new LinkedHashSet<RouteBuilder>();
+                            target = builders;
+                            for (Class<?> clazz : classes) {
+                                try {
+                                    RouteBuilder route = (RouteBuilder) camelContext.getInjector().newInstance(clazz);
+                                    builders.add(route);
+                                } catch (Exception e) {
+                                    throw new RuntimeException("Error creating RouteBuilder " + clazz, e);
+                                }
+                            }
                         }
                     } else {
                         // assume its a FQN classname for a RouteBuilder class
