@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.servletlistener;
 
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -24,9 +25,14 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.jndi.JndiContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +57,7 @@ public class CamelContextServletListener implements ServletContextListener {
     private boolean test;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void contextInitialized(ServletContextEvent sce) {
         LOG.info("CamelContextServletListener initializing ...");
 
@@ -82,14 +89,32 @@ public class CamelContextServletListener implements ServletContextListener {
             }
         }
 
-        // get the route builders and add to the CamelContext
-        Map<String, RouteBuilder> routeBuilders = extractRouteBuilders(map);
-        for (Map.Entry<String, RouteBuilder> entry : routeBuilders.entrySet()) {
-            LOG.debug("Adding RouteBuilder {} -> {}", entry.getKey(), entry.getValue());
-            try {
-                camelContext.addRoutes(entry.getValue());
-            } catch (Exception e) {
-                throw new RuntimeException("Error adding RouteBuilder " + entry.getKey(), e);
+        // get the routes and add to the CamelContext
+        Map<String, Object> routes = extractRoutes(map);
+        for (Map.Entry<String, Object> entry : routes.entrySet()) {
+            if (entry.getValue() instanceof RouteBuilder) {
+                LOG.debug("Adding route(s) {} -> {}", entry.getKey(), entry.getValue());
+                try {
+                    camelContext.addRoutes((RoutesBuilder) entry.getValue());
+                } catch (Exception e) {
+                    throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
+                }
+            } else if (entry.getValue() instanceof RoutesDefinition) {
+                LOG.debug("Adding routes {} -> {}", entry.getKey(), entry.getValue());
+                try {
+                    camelContext.addRouteDefinitions(((RoutesDefinition) entry.getValue()).getRoutes());
+                } catch (Exception e) {
+                    throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
+                }
+            } else if (entry.getValue() instanceof RouteDefinition) {
+                LOG.debug("Adding routes {} -> {}", entry.getKey(), entry.getValue());
+                try {
+                    camelContext.addRouteDefinition((RouteDefinition) entry.getValue());
+                } catch (Exception e) {
+                    throw new RuntimeException("Error adding route(s) " + entry.getKey(), e);
+                }
+            } else {
+                throw new IllegalArgumentException("Unsupported route " + entry.getKey() + " of type: " + entry.getValue().getClass().getName());
             }
         }
 
@@ -130,18 +155,29 @@ public class CamelContextServletListener implements ServletContextListener {
         LOG.info("CamelContextServletListener initialized");
     }
 
-    private Map<String, RouteBuilder> extractRouteBuilders(Map<String, Object> map) {
-        Map<String, RouteBuilder> routeBuilders = new LinkedHashMap<String, RouteBuilder>();
+    private Map<String, Object> extractRoutes(Map<String, Object> map) {
+        Map<String, Object> routes = new LinkedHashMap<String, Object>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getKey().toLowerCase(Locale.UK).startsWith("routebuilder")) {
                 String value = (String) entry.getValue();
                 if (ObjectHelper.isNotEmpty(value)) {
-                    Object target;
+                    Object target = null;
                     if (value.startsWith("#")) {
                         // a reference lookup in jndi
                         value = value.substring(1);
                         target = lookupJndi(jndiContext, value);
+                    } else if (ResourceHelper.hasScheme(value)) {
+                        InputStream is = null;
+                        try {
+                            is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), value);
+                            target = camelContext.loadRoutesDefinition(is);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error loading routes from resource: " + value, e);
+                        } finally {
+                            IOHelper.close(is, entry.getKey(), LOG);
+                        }
                     } else {
+                        // assume its a FQN classname for a RouteBuilder class
                         try {
                             Class<RouteBuilder> clazz = camelContext.getClassResolver().resolveMandatoryClass(value, RouteBuilder.class);
                             target = camelContext.getInjector().newInstance(clazz);
@@ -149,22 +185,19 @@ public class CamelContextServletListener implements ServletContextListener {
                             throw new RuntimeException("Error creating RouteBuilder " + value, e);
                         }
                     }
-                    if (target instanceof RouteBuilder) {
-                        routeBuilders.put(entry.getKey(), (RouteBuilder) target);
-                    } else {
-                        throw new IllegalArgumentException("Parameter " + entry.getKey() + " is expected to be a " + RouteBuilder.class.getName()
-                                + " type but was " + target.getClass().getName() + " type.");
+                    if (target != null) {
+                        routes.put(entry.getKey(), target);
                     }
                 }
             }
         }
 
         // after adding the route builders we should remove them from the map
-        for (String name : routeBuilders.keySet()) {
+        for (String name : routes.keySet()) {
             map.remove(name);
         }
 
-        return routeBuilders;
+        return routes;
     }
 
     private Map<String, Object> extractInitParameters(ServletContextEvent sce) {

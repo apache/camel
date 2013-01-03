@@ -25,9 +25,9 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
- *
+ * Base class for unit testing.
  */
-public class ServletCamelTestSupport extends TestSupport {
+public abstract class ServletCamelTestSupport extends TestSupport {
     public static final String CONTEXT = "/mycontext";
     public static final String CONTEXT_URL = "http://localhost/mycontext";
     protected ServletRunner sr;
@@ -51,9 +51,7 @@ public class ServletCamelTestSupport extends TestSupport {
     /**
      * @return The web.xml to use for testing.
      */
-    protected String getConfiguration() {
-        return "/myweb.xml";
-    }
+    protected abstract String getConfiguration();
 
     protected ServletCamelContext getCamelContext() {
         return CamelContextServletListener.instance;

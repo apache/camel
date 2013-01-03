@@ -24,27 +24,33 @@ import org.junit.Test;
 /**
  *
  */
-public class CamelContextServletListenerTest extends ServletCamelTestSupport {
+public class RoutesFromXmlTest extends ServletCamelTestSupport {
 
     protected String getConfiguration() {
-        return "/myweb.xml";
+        return "/myweb2.xml";
     }
 
     @Test
-    public void testCamelContext() throws Exception {
+    public void testRoutes() throws Exception {
         CamelContext context = getCamelContext();
         assertNotNull(context);
 
         assertEquals("MyCamel", context.getName());
+        assertEquals(2, context.getRoutes().size());
 
         ProducerTemplate template = context.createProducerTemplate();
 
         MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMessageCount(1);
+        MockEndpoint mock2 = context.getEndpoint("mock:bar", MockEndpoint.class);
+        mock2.expectedMessageCount(1);
 
-        template.sendBody("seda:foo", "Hello World");
+        template.sendBody("direct:foo", "Hello World");
+        template.sendBody("direct:bar", "Bye World");
 
         mock.assertIsSatisfied();
+        mock2.assertIsSatisfied();
+
         template.stop();
     }
 
