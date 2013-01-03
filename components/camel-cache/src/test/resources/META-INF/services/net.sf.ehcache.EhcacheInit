@@ -1,0 +1,2 @@
+# ehcache expects an implementation of the net.sf.ehcache.EhcacheInit interface through the java service-provider loading facility.
+net.sf.ehcache.EhcacheCoreInit
