@@ -17,6 +17,7 @@
 package org.apache.camel.component.hbase;
 
 import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -54,7 +55,6 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         {{"Jane", "", "Dow"}, {"09", "01", "1979"}, {"Another Unknown Street", "14", "2020"}}
     };
 
-
     protected final byte[][] families = {
             family[0].getBytes(),
             family[1].getBytes(),
@@ -79,12 +79,11 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
     @Override
     public CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
-        HBaseComponent component = new HBaseComponent();
+        // configure hbase component
+        HBaseComponent component = context.getComponent("hbase", HBaseComponent.class);
         component.setConfiguration(hbaseUtil.getConfiguration());
-        context.addComponent("hbase", component);
         return context;
     }
-
 
     protected void putMultipleRows() throws IOException {
         Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();

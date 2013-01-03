@@ -17,8 +17,8 @@
 package org.apache.camel.component.twitter.consumer.streaming;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
-
 import twitter4j.FilterQuery;
+import twitter4j.StallWarning;
 
 /**
  * Consumes the filter stream
@@ -29,8 +29,14 @@ public class FilterConsumer extends StreamingConsumer {
         super(te);
     }
 
+    @Override
     protected void startStreaming() {
         twitterStream.filter(createFilter(te));
+    }
+
+    @Override
+    public void onStallWarning(StallWarning stallWarning) {
+        // noop
     }
 
     private FilterQuery createFilter(TwitterEndpoint te) {
@@ -66,7 +72,6 @@ public class FilterConsumer extends StreamingConsumer {
             throw new IllegalArgumentException("At least one filter parameter is required");
         }
 
-        filterQuery.setIncludeEntities(true);
         return filterQuery;
     }
 }

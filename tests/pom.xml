@@ -52,6 +52,13 @@
         <module>camel-itest-osgi</module>
       </modules>
     </profile>
-  </profiles>
 
+    <!-- performance tests -->
+    <profile>
+      <id>performance.test</id>
+      <modules>
+        <module>camel-performance</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

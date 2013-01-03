@@ -126,7 +126,7 @@ public final class CxfPayloadConverter {
                 } else if (value instanceof Node) {
                     src = new DOMSource((Node)value);
                 } else if (value instanceof Source) {
-                    src = (Source)src;
+                    src = (Source)value;
                 }
                 if (src == null) {
                     // assuming staxsource is preferred, otherwise use the one preferred

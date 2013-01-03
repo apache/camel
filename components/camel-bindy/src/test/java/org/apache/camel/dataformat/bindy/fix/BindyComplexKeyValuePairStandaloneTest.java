@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Assert;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;

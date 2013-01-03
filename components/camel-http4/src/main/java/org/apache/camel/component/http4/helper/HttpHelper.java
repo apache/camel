@@ -431,8 +431,8 @@ public final class HttpHelper {
                     }
                 }
                 if (request == null) {
-                    throw new IllegalArgumentException("UrlRewrite " + endpoint.getUrlRewrite() + " requires the message body to be a" +
-                            "HttpServletRequest instance, but was: " + ObjectHelper.className(exchange.getIn().getBody()));
+                    throw new IllegalArgumentException("UrlRewrite " + endpoint.getUrlRewrite() + " requires the message body to be a"
+                            + "HttpServletRequest instance, but was: " + ObjectHelper.className(exchange.getIn().getBody()));
                 }
                 // we need to adapt the context-path to be the path from the endpoint, if it came from a http based endpoint
                 // as eg camel-jetty have hardcoded context-path as / for all its servlets/endpoints

@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Query;
 import twitter4j.QueryResult;
-import twitter4j.Tweet;
+import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
@@ -39,7 +39,7 @@ public class SearchConsumer extends Twitter4JConsumer {
         super(te);
     }
 
-    public List<Tweet> pollConsume() throws TwitterException {
+    public List<Status> pollConsume() throws TwitterException {
         String keywords = te.getProperties().getKeywords();
         Query query = new Query(keywords);
         if (te.getProperties().isFilterOld()) {
@@ -49,7 +49,7 @@ public class SearchConsumer extends Twitter4JConsumer {
         return search(query);
     }
 
-    public List<Tweet> directConsume() throws TwitterException {
+    public List<Status> directConsume() throws TwitterException {
         String keywords = te.getProperties().getKeywords();
         if (keywords == null || keywords.trim().length() == 0) {
             return Collections.emptyList();
@@ -58,12 +58,12 @@ public class SearchConsumer extends Twitter4JConsumer {
         return search(new Query(keywords));
     }
 
-    private List<Tweet> search(Query query) throws TwitterException {
+    private List<Status> search(Query query) throws TwitterException {
         QueryResult qr = te.getProperties().getTwitter().search(query);
-        List<Tweet> tweets = qr.getTweets();
+        List<Status> tweets = qr.getTweets();
 
         if (te.getProperties().isFilterOld()) {
-            for (Tweet t : tweets) {
+            for (Status t : tweets) {
                 checkLastId(t.getId());
             }
         }

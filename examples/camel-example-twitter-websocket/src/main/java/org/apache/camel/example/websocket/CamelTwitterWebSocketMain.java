@@ -42,7 +42,7 @@ public final class CamelTwitterWebSocketMain {
     public static void main(String[] args) throws Exception {
         System.out.println("\n\n\n\n");
         System.out.println("===============================================");
-        System.out.println("Open your web browser on http://localhost:9090");
+        System.out.println("Open your web browser on http://localhost:9090/index.html");
         System.out.println("Press ctrl+c to stop this example");
         System.out.println("===============================================");
         System.out.println("\n\n\n\n");

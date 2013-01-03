@@ -1,4 +1,4 @@
-$! ------------------------------------------------------------------------
+<! ------------------------------------------------------------------------
 ## Licensed to the Apache Software Foundation (ASF) under one or more
 ## contributor license agreements.  See the NOTICE file distributed with
 ## this work for additional information regarding copyright ownership.
@@ -13,5 +13,5 @@ $! ------------------------------------------------------------------------
 ## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
-## ------------------------------------------------------------------------ !$
-Dear $headers.lastName$, $headers.firstName$! Thanks for the order of $headers.item$. Regards Camel Riders Bookstore $body$
+## ------------------------------------------------------------------------ !>
+Dear <headers.lastName>, <headers.firstName>! Thanks for the order of <headers.item>. Regards Camel Riders Bookstore <body>

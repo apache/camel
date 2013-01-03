@@ -96,6 +96,36 @@ public class URISupportTest extends ContextTestSupport {
         assertTrue("Should have //", out2.startsWith("http://"));
     }
 
+    public void testNormalizeHttpEndpointUnicodedParameter() throws Exception {
+        String out = URISupport.normalizeUri("http://www.google.com?q=S\u00F8ren");
+        assertEquals("http://www.google.com?q=S%C3%B8ren", out);
+    }
+
+    public void testParseParametersUnicodedValue() throws Exception {
+        String out = URISupport.normalizeUri("http://www.google.com?q=S\u00F8ren");
+        URI uri = new URI(out);
+
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+
+        assertEquals(1, parameters.size());
+        assertEquals("S\u00F8ren", parameters.get("q"));
+    }
+
+    public void testNormalizeHttpEndpointURLEncodedParameter() throws Exception {
+        String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen");
+        assertEquals("http://www.google.com?q=S%C3%B8ren+Hansen", out);
+    }
+
+    public void testParseParametersURLEncodeddValue() throws Exception {
+        String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren+Hansen");
+        URI uri = new URI(out);
+
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+
+        assertEquals(1, parameters.size());
+        assertEquals("S\u00F8ren Hansen", parameters.get("q"));
+    }
+
     public void testNormalizeUriWhereParamererIsFaulty() throws Exception {
         String out = URISupport.normalizeUri("stream:uri?file:///d:/temp/data/log/quickfix.log&scanStream=true");
         assertNotNull(out);

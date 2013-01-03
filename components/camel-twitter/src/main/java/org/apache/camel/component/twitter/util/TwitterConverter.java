@@ -19,12 +19,10 @@ package org.apache.camel.component.twitter.util;
 import java.text.ParseException;
 
 import org.apache.camel.Converter;
-
 import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.Trend;
 import twitter4j.Trends;
-import twitter4j.Tweet;
 
 /**
  * Utility for converting between Twitter4J and camel-twitter data layers.
@@ -41,14 +39,6 @@ public final class TwitterConverter {
         StringBuilder s = new StringBuilder();
         s.append(status.getCreatedAt()).append(" (").append(status.getUser().getScreenName()).append(") ");
         s.append(status.getText());
-        return s.toString();
-    }
-
-    @Converter
-    public static String toString(Tweet tweet) throws ParseException {
-        StringBuilder s = new StringBuilder();
-        s.append(tweet.getCreatedAt()).append(" (").append(tweet.getFromUser()).append(") ");
-        s.append(tweet.getText());
         return s.toString();
     }
 

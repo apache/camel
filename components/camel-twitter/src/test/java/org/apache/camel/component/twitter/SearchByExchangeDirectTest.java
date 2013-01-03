@@ -18,7 +18,6 @@ package org.apache.camel.component.twitter;
 
 import java.util.List;
 
-import junit.framework.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -84,7 +83,7 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
         templateDouble.sendBodyAndHeader(null, TwitterConstants.TWITTER_KEYWORDS, "java");
 
         // due race condition
-        Assert.assertTrue(mock.getReceivedCounter() >= total);
+        assertTrue(mock.getReceivedCounter() >= total);
     }
 
     protected RouteBuilder createRouteBuilder() {

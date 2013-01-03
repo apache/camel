@@ -23,12 +23,12 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 public class MailProducerTest extends CamelTestSupport {
-    
+
     @Test
     public void testProduer() throws Exception {
         Mailbox.clearAll();
         getMockEndpoint("mock:result").expectedMessageCount(1);
-       
+
         template.sendBodyAndHeader("direct:start", "Message ", "To", "someone@localhost");
         assertMockEndpointsSatisfied();
         // need to check the message header
@@ -38,7 +38,7 @@ public class MailProducerTest extends CamelTestSupport {
         Mailbox box = Mailbox.get("someone@localhost");
         assertEquals(1, box.size());
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -48,6 +48,5 @@ public class MailProducerTest extends CamelTestSupport {
             }
         };
     }
-
 
 }

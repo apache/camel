@@ -422,7 +422,7 @@ public class WebsocketComponent extends DefaultComponent {
             if (servlet.getConsumer() == null) {
                 servlet.setConsumer(consumer);
             }
-            // registry the consumer here
+            // register the consumer here
             servlet.connect(consumer);
             return servlet;
         } else {

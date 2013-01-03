@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
  * @deprecated the standard {@link RouteBuilder} can be used to write
  * Groovy routes.
  */
+@Deprecated
 public abstract class GroovyRouteBuilder extends RouteBuilder {
     public GroovyRouteBuilder() {
         super();

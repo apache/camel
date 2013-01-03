@@ -39,9 +39,6 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
 
     private final String xmlBody = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
 
-    @EndpointInject(uri = "mock:testDefault")
-    private MockEndpoint resultEndpointActionDefault;
-
     @EndpointInject(uri = "mock:testAction")
     private MockEndpoint resultEndpointAction;
 
@@ -68,9 +65,6 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
 
     @EndpointInject(uri = "mock:testSoapAction")
     private MockEndpoint resultSoapAction;
-
-    @EndpointInject(uri = "mock:testReplyTo")
-    private MockEndpoint resultReplyTo;
 
     private WebServiceTemplate webServiceTemplate;
 

@@ -187,13 +187,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 LOG.debug("Pos: {}, Data: {}, Field type: {}", new Object[]{pos, data, field.getType()});
             }
 
-            Format<?> format;
-
-            // Get pattern defined for the field
-            String pattern = dataField.pattern();
-
             // Create format object to format the field
-            format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
+            Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
 
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
@@ -393,11 +388,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 if (obj != null) {
 
-                    // Retrieve the format, pattern and precision associated to
-                    // the type
+                    // Retrieve the format, pattern and precision associated to the type
                     Class<?> type = field.getType();
-                    String pattern = datafield.pattern();
-                    int precision = datafield.precision();
 
                     // Create format
                     Format<?> format = FormatFactory.getFormat(type, getLocale(), datafield);
@@ -590,7 +582,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             DataField dataField = dataFields.get(i);
             Object modelField = model.get(field.getDeclaringClass().getName());
             if (field.get(modelField) == null && !dataField.defaultValue().isEmpty()) {
-                String pattern = dataField.pattern();
                 Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
                 Object value = format.parse(dataField.defaultValue());
                 field.set(modelField, value);

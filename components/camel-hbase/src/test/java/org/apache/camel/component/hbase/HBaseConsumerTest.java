@@ -48,10 +48,12 @@ public class HBaseConsumerTest extends CamelHBaseTestSupport {
         }
     }
 
-
     @Test
     public void testPutMultiRowsAndConsume() throws Exception {
         if (systemReady) {
+            MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+            mockEndpoint.expectedMessageCount(3);
+
             ProducerTemplate template = context.createProducerTemplate();
             Map<String, Object> headers = new HashMap<String, Object>();
 
@@ -61,15 +63,11 @@ public class HBaseConsumerTest extends CamelHBaseTestSupport {
                 headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(row + 1), column[0][0]);
                 headers.put(HbaseAttribute.HBASE_VALUE.asHeader(row + 1), body[row][0][0]);
             }
-
             headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
 
             template.sendBodyAndHeaders("direct:start", null, headers);
 
-            MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-            mockEndpoint.expectedMessageCount(3);
-            mockEndpoint.assertIsSatisfied(10000);
-            Thread.sleep(10000);
+            mockEndpoint.assertIsSatisfied();
         }
     }
 

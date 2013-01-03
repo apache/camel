@@ -66,10 +66,11 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- must use older 1.1 version of hamcrest -->
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-all</artifactId>
-      <version>${hamcrest-version}</version>
+      <version>1.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

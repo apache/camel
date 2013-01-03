@@ -28,6 +28,7 @@ import org.apache.camel.support.ExpressionSupport;
  * @deprecated see {@link org.apache.camel.groovy.extend.CamelGroovyMethods} which is
  * used automatically
  */
+@Deprecated
 public final class CamelGroovyMethods {
     private CamelGroovyMethods() {
         // Utility Class

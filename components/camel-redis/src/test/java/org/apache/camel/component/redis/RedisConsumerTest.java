@@ -63,8 +63,9 @@ public class RedisConsumerTest extends CamelTestSupport {
 
         Topic firstTopic = topicIterator.next();
         Topic twoTopic = topicIterator.next();
-        assertThat(firstTopic.getTopic(), is("one"));
-        assertThat(twoTopic.getTopic(), is("two"));
+
+        assertEquals("one", firstTopic.getTopic());
+        assertEquals("two", twoTopic.getTopic());
     }
 
     @Test

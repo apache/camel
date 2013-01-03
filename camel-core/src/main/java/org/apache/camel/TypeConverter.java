@@ -58,7 +58,7 @@ public interface TypeConverter {
      * @param value the value to be converted
      * @return the converted value, is never <tt>null</tt>
      * @throws TypeConversionException is thrown if error during type conversion
-     * @throws NoTypeConversionAvailableException} if no type converters exists to convert to the given type
+     * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
      */
     <T> T mandatoryConvertTo(Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException;
 
@@ -73,7 +73,7 @@ public interface TypeConverter {
      * @param value the value to be converted
      * @return the converted value, is never <tt>null</tt>
      * @throws TypeConversionException is thrown if error during type conversion
-     * @throws NoTypeConversionAvailableException} if no type converters exists to convert to the given type
+     * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
      */
     <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException, NoTypeConversionAvailableException;
 

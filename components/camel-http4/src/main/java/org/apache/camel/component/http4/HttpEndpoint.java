@@ -19,9 +19,7 @@ package org.apache.camel.component.http4;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.helper.HttpHelper;

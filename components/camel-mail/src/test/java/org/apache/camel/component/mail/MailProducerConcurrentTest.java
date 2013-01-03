@@ -54,7 +54,6 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(files);
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
-        
 
         final CountDownLatch latch = new CountDownLatch(files);
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
@@ -97,6 +96,5 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
             }
         };
     }
-
 
 }
