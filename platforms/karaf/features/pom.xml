@@ -133,7 +133,7 @@
       <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
       <saaj-impl-version>1.3.2_2</saaj-impl-version>
       <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
-      <wss4j-version>1.6.5</wss4j-version>
+      <wss4j-version>1.6.8</wss4j-version>
     </properties>
     
     <!-- The validate plugin will export these provided dependencies bundles' export packages first -->  
