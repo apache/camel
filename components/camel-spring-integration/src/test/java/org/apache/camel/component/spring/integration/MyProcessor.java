@@ -22,8 +22,8 @@ import org.apache.camel.Processor;
 public class MyProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
-        String request = (String) exchange.getIn().getBody();
-        String result = request + " is processed";
+        exchange.getOut().setHeader("Status", "Done");
+        String result = exchange.getIn().getBody() + " is processed";
         exchange.getOut().setBody(result);
     }
 

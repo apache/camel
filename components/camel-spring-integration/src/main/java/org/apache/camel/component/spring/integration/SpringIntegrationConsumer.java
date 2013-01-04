@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spring.SpringCamelContext;
@@ -78,7 +79,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
 
         // if we do in-out we need to setup the input channel as well
         if (getEndpoint().isInOut()) {
-            // we need to setup right inputChannel for further processing
+            // we need to setup right outputChannel for further processing
             ObjectHelper.notEmpty(getEndpoint().getOutputChannel(), "OutputChannel", getEndpoint());
             outputChannel = channelResolver.resolveChannelName(getEndpoint().getOutputChannel());
 
@@ -89,11 +90,11 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
 
         inputChannel.subscribe(this);
     }
-    
+
     public void handleMessage(org.springframework.integration.Message<?> siInMessage) {
         // we received a message from spring integration
         // wrap that in a Camel Exchange and process it
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = getEndpoint().createExchange(getEndpoint().isInOut() ? ExchangePattern.InOut : ExchangePattern.InOnly);
         exchange.setIn(new SpringIntegrationMessage(siInMessage));
 
         // process the exchange
