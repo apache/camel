@@ -114,7 +114,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcpg-jdk16/${bcpg-jdk16-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcpg-jdk15on/${bcpg-jdk15on-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-crypto/${project.version}</bundle>
   </feature>
   <feature name='camel-http' version='${project.version}' resolver='(obr)' start-level='50'>

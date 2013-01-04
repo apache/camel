@@ -30,12 +30,18 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.management.DefaultManagementAgent;
+import org.apache.camel.management.DefaultManagementLifecycleStrategy;
+import org.apache.camel.management.DefaultManagementStrategy;
+import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -49,22 +55,18 @@ import org.slf4j.LoggerFactory;
  * A {@link ServletContextListener} which is used to bootstrap
  * {@link org.apache.camel.CamelContext} in web applications.
  */
-public class CamelContextServletListener implements ServletContextListener {
+public class CamelServletContextListener implements ServletContextListener {
 
     /**
      * instance is used for testing purpose
      */
     public static ServletCamelContext instance;
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelContextServletListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelServletContextListener.class);
     private JndiContext jndiContext;
     private ServletCamelContext camelContext;
     private CamelContextLifecycle camelContextLifecycle;
     private boolean test;
-
-    // TODO: Maybe some way of having CamelContextLifecycleSupport using bean parameter binding
-    // so ppl can build their Camel app without camel-servletlistener dependency on the codebase
-    // TODO: add example and add documentation page
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -91,6 +93,7 @@ public class CamelContextServletListener implements ServletContextListener {
         // set properties on the camel context from the init parameters
         try {
             initPropertyPlaceholder(camelContext, map);
+            initJmx(camelContext, map);
             initCamelContext(camelContext, map);
             if (!map.isEmpty()) {
                 IntrospectionSupport.setProperties(camelContext, map);
@@ -145,10 +148,9 @@ public class CamelContextServletListener implements ServletContextListener {
             }
         }
 
-        // validate that we could set all the init parameters
+        // just log if we could not use all the parameters, as they may be used by others
         if (!map.isEmpty()) {
-            throw new IllegalArgumentException("Error setting init parameters on CamelContext."
-                    + " There are " + map.size() + " unknown parameters. [" + map + "]");
+            LOG.info("There are {} ServletContext init parameters, unknown to Camel. Maybe they are used by other frameworks? [{}]", map.size(), map);
         }
 
         try {
@@ -239,6 +241,56 @@ public class CamelContextServletListener implements ServletContextListener {
     }
 
     /**
+     * Initializes JMX on {@link ServletCamelContext} with the configuration from the given init parameters.
+     */
+    private void initJmx(ServletCamelContext camelContext, Map<String, Object> parameters) throws Exception {
+        // setup jmx
+        Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "jmx.");
+        if (properties != null && !properties.isEmpty()) {
+            String disabled = (String) properties.remove("disabled");
+            boolean disableJmx = CamelContextHelper.parseBoolean(camelContext, disabled != null ? disabled : "false");
+            if (disableJmx) {
+                // disable JMX which is a bit special to do
+                LOG.info("JMXAgent disabled");
+                // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
+                camelContext.getLifecycleStrategies().clear();
+                // no need to add a lifecycle strategy as we do not need one as JMX is disabled
+                camelContext.setManagementStrategy(new DefaultManagementStrategy());
+            } else {
+                LOG.info("JMXAgent enabled");
+                DefaultManagementAgent agent = new DefaultManagementAgent(camelContext);
+                IntrospectionSupport.setProperties(agent, properties);
+
+                ManagementStrategy managementStrategy = new ManagedManagementStrategy(camelContext, agent);
+                camelContext.setManagementStrategy(managementStrategy);
+
+                // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
+                camelContext.getLifecycleStrategies().clear();
+                camelContext.addLifecycleStrategy(new DefaultManagementLifecycleStrategy(camelContext));
+                // set additional configuration from agent
+                boolean onlyId = agent.getOnlyRegisterProcessorWithCustomId() != null && agent.getOnlyRegisterProcessorWithCustomId();
+                camelContext.getManagementStrategy().onlyManageProcessorWithCustomId(onlyId);
+
+                String statisticsLevel = (String) properties.remove("statisticsLevel");
+                if (statisticsLevel != null) {
+                    camelContext.getManagementStrategy().setStatisticsLevel(ManagementStatisticsLevel.valueOf(statisticsLevel));
+                }
+
+                String loadStatisticsEnabled = (String) properties.remove("loadStatisticsEnabled");
+                Boolean statisticsEnabled = CamelContextHelper.parseBoolean(camelContext, loadStatisticsEnabled != null ? loadStatisticsEnabled : "true");
+                if (statisticsEnabled != null) {
+                    camelContext.getManagementStrategy().setLoadStatisticsEnabled(statisticsEnabled);
+                }
+            }
+            // validate we could set all parameters
+            if (!properties.isEmpty()) {
+                throw new IllegalArgumentException("Error setting jmx parameters on CamelContext."
+                        + " There are " + properties.size() + " unknown parameters. [" + properties + "]");
+            }
+        }
+    }
+
+    /**
      * Initializes the {@link ServletCamelContext} by setting the supported init parameters.
      */
     private void initCamelContext(ServletCamelContext camelContext, Map<String, Object> parameters) throws Exception {
@@ -281,6 +333,14 @@ public class CamelContextServletListener implements ServletContextListener {
         String threadNamePattern = (String) parameters.remove("threadNamePattern");
         if (threadNamePattern != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(threadNamePattern);
+        }
+
+        // extract any additional properties. prefixes
+        Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "properties.");
+        if (properties != null && !properties.isEmpty()) {
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                camelContext.getProperties().put(entry.getKey(), "" + entry.getValue());
+            }
         }
     }
 

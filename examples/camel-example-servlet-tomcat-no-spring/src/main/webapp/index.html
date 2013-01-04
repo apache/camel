@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
@@ -15,17 +14,31 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!-- the xmlns="http://camel.apache.org/schema/spring" is needed -->
-<routes xmlns="http://camel.apache.org/schema/spring">
+<html>
 
-  <route id="foo">
-    <from uri="direct:foo"/>
-    <to uri="mock:foo"/>
-  </route>
+<body>
+<h2>Camel Servlet and Apache Tomcat without Spring example</h2>
 
-  <route id="bar">
-    <from uri="direct:bar"/>
-    <to uri="mock:bar"/>
-  </route>
+This example shows how to use route messages in Apache Tomcat using servlets with Apache Camel,
+without any Spring dependency.
+<br/>
+<br/>
+To get started click <a href="camel/hello">this link</a>.
+<br/>
+<br/>
+This example is documented at
+<a href="http://camel.apache.org/servlet-tomcat-example-no-spring.html">servlet tomcat no spring example</a>
 
-</routes>
+<br/>
+If you hit any problems please let us know on the
+<a href="http://camel.apache.org/discussion-forums.html">Camel Forums</a>
+<br/>
+<br/>
+Please help us make Apache Camel better - we appreciate any feedback you may
+have. Enjoy!
+<br/>
+<br/>
+The Camel riders!
+</body>
+
+</html>

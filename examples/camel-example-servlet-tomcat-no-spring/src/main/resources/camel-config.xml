@@ -15,15 +15,33 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!-- the xmlns="http://camel.apache.org/schema/spring" is needed -->
+
+<!-- START SNIPPET: e1 -->
+<!-- here we have the Camel route(s). -->
+<!-- we must still use the http://camel.apache.org/schema/spring namespace so Camel can load the routes
+     though Spring JARs is not required -->
 <routes xmlns="http://camel.apache.org/schema/spring">
 
-  <route id="foo">
-    <from uri="direct:foo"/>
-    <transform>
-      <simple>{{greeting}}</simple>
-    </transform>
-    <to uri="{{end}}"/>
+  <route>
+    <!-- incoming requests from the servlet is routed -->
+    <from uri="servlet:///hello"/>
+    <choice>
+      <when>
+        <!-- is there a header with the key name? -->
+        <header>name</header>
+        <!-- yes so return back a message to the user -->
+        <transform>
+          <simple>Hello ${header.name} how are you?</simple>
+        </transform>
+      </when>
+      <otherwise>
+        <!-- if no name parameter then output a syntax to the user -->
+        <transform>
+          <constant>Add a name parameter to uri, eg ?name=foo</constant>
+        </transform>
+      </otherwise>
+    </choice>
   </route>
 
 </routes>
+<!-- END SNIPPET: e1 -->

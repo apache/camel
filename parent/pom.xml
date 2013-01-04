@@ -61,10 +61,10 @@
     <!--we must use axiom 1.2.10 with abdera 1.1.2, CAMEL-5109 has more details-->
     <axiom-version>1.2.10</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
-    <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
-    <beanio-version>2.0.2</beanio-version>
+    <bcpg-jdk15on-bundle-version>1.47_1</bcpg-jdk15on-bundle-version>
+    <beanio-version>2.0.3</beanio-version>
     <bsh-version>2.0b5</bsh-version>
-    <bouncycastle-version>1.46</bouncycastle-version>
+    <bouncycastle-version>1.47</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
@@ -245,7 +245,7 @@
     <mvel-version>2.1.3.Final</mvel-version>
     <mybatis-version>3.1.1</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
-    <netty-version>3.5.11.Final</netty-version>
+    <netty-version>3.6.1.Final</netty-version>
     <ode-version>1.3.4</ode-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
@@ -1209,6 +1209,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-servlet-tomcat</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-servlet-tomcat-no-spring</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
