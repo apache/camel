@@ -42,7 +42,7 @@ public final class SpringIntegrationBinding {
     }
 
     public static org.springframework.integration.Message<?> storeToSpringIntegrationMessage(org.apache.camel.Message message) {
-        return new GenericMessage<Object>(message.getBody());
+        return new GenericMessage<Object>(message.getBody(), message.getHeaders());
     }
 
     public static void storeToCamelMessage(org.springframework.integration.Message<?> siMessage, org.apache.camel.Message cMessage) {
