@@ -148,10 +148,9 @@ public class CamelServletContextListener implements ServletContextListener {
             }
         }
 
-        // validate that we could set all the init parameters
+        // just log if we could not use all the parameters, as they may be used by others
         if (!map.isEmpty()) {
-            throw new IllegalArgumentException("Error setting init parameters on CamelContext."
-                    + " There are " + map.size() + " unknown parameters. [" + map + "]");
+            LOG.info("There are {} ServletContext init parameters, unknown to Camel. Maybe they are used by other frameworks? [{}]", map.size(), map);
         }
 
         try {
