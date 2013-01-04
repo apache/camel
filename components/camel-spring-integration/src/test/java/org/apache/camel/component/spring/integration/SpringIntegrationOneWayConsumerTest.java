@@ -24,17 +24,18 @@ import org.springframework.integration.MessageChannel;
 import org.springframework.integration.message.GenericMessage;
 
 public class SpringIntegrationOneWayConsumerTest extends CamelSpringTestSupport {
+
     private static final String MESSAGE_BODY = "hello world";
 
     @Test
     public void testSendingOneWayMessage() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived(MESSAGE_BODY);
 
-        MessageChannel outputChannel = applicationContext.getBean("outputChannel", MessageChannel.class);
+        MessageChannel outputChannel = getMandatoryBean(MessageChannel.class, "outputChannel");
         outputChannel.send(new GenericMessage<Object>(MESSAGE_BODY));
 
-        resultEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     public ClassPathXmlApplicationContext createApplicationContext() {

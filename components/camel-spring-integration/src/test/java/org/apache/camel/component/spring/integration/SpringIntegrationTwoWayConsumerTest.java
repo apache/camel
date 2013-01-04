@@ -18,6 +18,8 @@ package org.apache.camel.component.spring.integration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
@@ -30,24 +32,29 @@ import org.springframework.integration.core.MessageHandler;
 import org.springframework.integration.message.GenericMessage;
 
 public class SpringIntegrationTwoWayConsumerTest extends CamelSpringTestSupport {
-    private static final String MESSAGE_BODY = "Request message";    
+
+    private static final String MESSAGE_BODY = "Request message";
 
     @Test
     public void testSendingTwoWayMessage() throws Exception {
-        MessageChannel requestChannel = applicationContext.getBean("requestChannel", MessageChannel.class);
+        final CountDownLatch latch = new CountDownLatch(1);
+        MessageChannel requestChannel = getMandatoryBean(MessageChannel.class, "requestChannel");
         Map<String, Object> maps = new HashMap<String, Object>();
         maps.put(MessageHeaders.REPLY_CHANNEL, "responseChannel");
-
         Message<String> message = new GenericMessage<String>(MESSAGE_BODY, maps);
 
-        DirectChannel responseChannel = applicationContext.getBean("responseChannel", DirectChannel.class);
+        DirectChannel responseChannel = getMandatoryBean(DirectChannel.class, "responseChannel");
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
-                String result = (String) message.getPayload();
-                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);                
+                latch.countDown();
+                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  message.getPayload());
+                assertEquals("Done",  message.getHeaders().get("Status"));
             }             
         });
+
         requestChannel.send(message);
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
     }
 
     public ClassPathXmlApplicationContext createApplicationContext() {

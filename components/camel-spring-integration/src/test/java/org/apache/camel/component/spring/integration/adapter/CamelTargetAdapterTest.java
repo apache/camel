@@ -18,6 +18,8 @@ package org.apache.camel.component.spring.integration.adapter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
@@ -31,48 +33,57 @@ import org.springframework.integration.core.MessageHandler;
 import org.springframework.integration.message.GenericMessage;
 
 public class CamelTargetAdapterTest extends CamelSpringTestSupport {
+
     private static final String MESSAGE_BODY = "hello world";
 
     @Test
     public void testSendingOneWayMessage() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived(MESSAGE_BODY);
-        MessageChannel outputChannel = applicationContext.getBean("channelA", MessageChannel.class);
+
+        MessageChannel outputChannel = getMandatoryBean(MessageChannel.class, "channelA");
         outputChannel.send(new GenericMessage<Object>(MESSAGE_BODY));
-        resultEndpoint.assertIsSatisfied();
+
+        assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSendingTwoWayMessage() throws Exception {
-
-        MessageChannel requestChannel = applicationContext.getBean("channelB", MessageChannel.class);
+        final CountDownLatch latch = new CountDownLatch(1);
+        MessageChannel requestChannel = getMandatoryBean(MessageChannel.class, "channelB");
         Message<?> message = new GenericMessage<Object>(MESSAGE_BODY);
         //Need to subscribe the responseChannel first
-        DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("channelC");
+        DirectChannel responseChannel = getMandatoryBean(DirectChannel.class, "channelC");
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
-                String result = (String) message.getPayload();
-                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);                
+                latch.countDown();
+                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  message.getPayload());
             }            
         });
+
         requestChannel.send(message);
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
     }
 
     @Test
     public void testSendingTwoWayMessageWithMessageAddress() throws Exception {
-
-        MessageChannel requestChannel = applicationContext.getBean("channelD", MessageChannel.class);
-        DirectChannel responseChannel = applicationContext.getBean("channelC", DirectChannel.class);
+        final CountDownLatch latch = new CountDownLatch(1);
+        MessageChannel requestChannel = getMandatoryBean(MessageChannel.class, "channelD");
+        DirectChannel responseChannel = getMandatoryBean(DirectChannel.class, "channelC");
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MessageHeaders.REPLY_CHANNEL, responseChannel);
         GenericMessage<String> message = new GenericMessage<String>(MESSAGE_BODY, headers);
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
-                String result = (String) message.getPayload();
-                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);                
+                latch.countDown();
+                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  message.getPayload());
             }            
         });
-        requestChannel.send(message);        
+
+        requestChannel.send(message);
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
     }
 
     @Override
