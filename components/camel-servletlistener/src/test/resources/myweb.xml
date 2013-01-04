@@ -26,6 +26,7 @@
 <web-app>
 
   <!-- the test parameter is only to be used for unit testing -->
+  <!-- you should not use this option for production usage -->
   <context-param>
     <param-name>test</param-name>
     <param-value>true</param-value>
@@ -44,6 +45,7 @@
     <param-value>org.apache.camel.component.servletlistener.MyRoute</param-value>
   </context-param>
 
+  <!-- register Camel as a listener so we can bootstrap Camel when the web application starts -->
   <listener>
     <listener-class>org.apache.camel.component.servletlistener.CamelServletContextListener</listener-class>
   </listener>
