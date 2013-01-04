@@ -61,10 +61,10 @@
     <!--we must use axiom 1.2.10 with abdera 1.1.2, CAMEL-5109 has more details-->
     <axiom-version>1.2.10</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
-    <bcpg-jdk16-bundle-version>1.46_2</bcpg-jdk16-bundle-version>
+    <bcpg-jdk15on-bundle-version>1.47_1</bcpg-jdk15on-bundle-version>
     <beanio-version>2.0.2</beanio-version>
     <bsh-version>2.0b5</bsh-version>
-    <bouncycastle-version>1.46</bouncycastle-version>
+    <bouncycastle-version>1.47</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
