@@ -25,9 +25,9 @@
         <version>2.11-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-example-webapp-no-spring</artifactId>
-    <name>Camel :: Example :: Webapp without Spring</name>
-    <description>A Camel web application without using Spring</description>
+    <artifactId>camel-example-servlet-tomcat-no-spring</artifactId>
+    <name>Camel :: Example :: Servlet Tomcat without Spring</name>
+    <description>An example using Camel Servlet with Apache Tomcat without using Spring</description>
     <packaging>war</packaging>
 
     <dependencies>

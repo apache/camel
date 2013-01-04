@@ -11,10 +11,10 @@ deploy folder of Apache Tomcat.
 
 And then hit this url from a webbrowser which has further
 instructions (use correct version number)
-  http://localhost:8080/camel-example-tomcat-2.7
+  http://localhost:8080/camel-example-servlet-tomcat-2.7.0
 
 The servlet is located at (use correct version number)
-  http://localhost:8080/camel-example-tomcat-2.7/camel
+  http://localhost:8080/camel-example-servlet-tomcat-2.7.0/camel
 
 This example is documented at
   http://camel.apache.org/servlet-tomcat-example.html

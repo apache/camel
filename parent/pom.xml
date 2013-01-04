@@ -1213,6 +1213,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-servlet-tomcat-no-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-simplejirabot-javadsl</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1234,11 +1239,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-tracer</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-webapp-no-spring</artifactId>
         <version>${project.version}</version>
       </dependency>
 

@@ -59,6 +59,7 @@
     <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-route-throttling</module>
     <module>camel-example-servlet-tomcat</module>
+    <module>camel-example-servlet-tomcat-no-spring</module>
     <module>camel-example-simplejirabot</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-javaconfig</module>
@@ -69,7 +70,6 @@
     <module>camel-example-ssh</module>
     <module>camel-example-tracer</module>
     <module>camel-example-twitter-websocket</module>
-    <module>camel-example-webapp-no-spring</module>
   </modules>
  
   <properties>
