@@ -33,6 +33,7 @@
   <context-param>
     <param-name>routeBuilder-MyRoute</param-name>
     <!-- define the routes as a resource from the classpath by prefixing the value with classpath: -->
+    <!-- note: instead of using a XML file we can also define the routes in Java code in a RouteBuilder class -->
     <param-value>classpath:camel-config.xml</param-value>
   </context-param>
 
