@@ -55,14 +55,14 @@ import org.slf4j.LoggerFactory;
  * A {@link ServletContextListener} which is used to bootstrap
  * {@link org.apache.camel.CamelContext} in web applications.
  */
-public class CamelContextServletListener implements ServletContextListener {
+public class CamelServletContextListener implements ServletContextListener {
 
     /**
      * instance is used for testing purpose
      */
     public static ServletCamelContext instance;
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelContextServletListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelServletContextListener.class);
     private JndiContext jndiContext;
     private ServletCamelContext camelContext;
     private CamelContextLifecycle camelContextLifecycle;

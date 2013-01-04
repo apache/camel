@@ -45,7 +45,7 @@
   </context-param>
 
   <listener>
-    <listener-class>org.apache.camel.component.servletlistener.CamelContextServletListener</listener-class>
+    <listener-class>org.apache.camel.component.servletlistener.CamelServletContextListener</listener-class>
   </listener>
 
 </web-app>

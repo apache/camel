@@ -39,7 +39,7 @@
 
   <!-- the listener that kick-starts Camel -->
   <listener>
-    <listener-class>org.apache.camel.component.servletlistener.CamelContextServletListener</listener-class>
+    <listener-class>org.apache.camel.component.servletlistener.CamelServletContextListener</listener-class>
   </listener>
 
   <!-- Camel servlet used in the Camel application -->

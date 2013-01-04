@@ -54,7 +54,7 @@ public abstract class ServletCamelTestSupport extends TestSupport {
     protected abstract String getConfiguration();
 
     protected ServletCamelContext getCamelContext() {
-        return CamelContextServletListener.instance;
+        return CamelServletContextListener.instance;
     }
 
 }
