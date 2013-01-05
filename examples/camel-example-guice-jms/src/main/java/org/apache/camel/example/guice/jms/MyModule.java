@@ -19,16 +19,16 @@ package org.apache.camel.example.guice.jms;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.guiceyfruit.jndi.JndiBind;
+import org.apache.camel.guice.jndi.JndiBind;
 
 /**
  * Configures the CamelContext, RouteBuilder, Component and Endpoint instances using
  * Guice
  *
- * @version 
  */
 public class MyModule extends CamelModuleWithMatchingRoutes {
 

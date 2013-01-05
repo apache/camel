@@ -22,8 +22,9 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
+
 import org.apache.camel.RoutesBuilder;
-import org.guiceyfruit.Injectors;
+import org.apache.camel.guice.inject.Injectors;
 
 /**
  * A Guice Module which injects the CamelContext with all available implementations

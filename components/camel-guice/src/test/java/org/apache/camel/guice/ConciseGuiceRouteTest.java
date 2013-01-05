@@ -18,6 +18,7 @@ package org.apache.camel.guice;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 import org.junit.Assert;
 import org.junit.Test;
 /**

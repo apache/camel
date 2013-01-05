@@ -18,10 +18,10 @@ package org.apache.camel.guice;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.internal.Sets;
+
 
 import org.apache.camel.RoutesBuilder;
 

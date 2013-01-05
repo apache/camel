@@ -27,18 +27,18 @@ import javax.naming.InitialContext;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.internal.Iterables;
-import com.google.inject.internal.Maps;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.guice.inject.Injectors;
 import org.apache.camel.main.MainSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
-import org.guiceyfruit.Injectors;
 
 /**
  * A command line tool for booting up a CamelContext using a Guice Injector via JNDI

@@ -23,7 +23,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.guice.impl.ConsumerInjection;
 import org.apache.camel.guice.impl.EndpointInjector;
 import org.apache.camel.guice.impl.ProduceInjector;
-import org.guiceyfruit.jsr250.Jsr250Module;
+import org.apache.camel.guice.jsr250.Jsr250Module;
 
 /**
  * A base Guice module for creating a {@link CamelContext} leaving it up to the users module

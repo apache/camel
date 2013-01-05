@@ -43,22 +43,18 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.guiceyfruit</groupId>
-      <artifactId>guiceyfruit-core</artifactId>
-      <version>${guiceyfruit-version}</version>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.collections</groupId>
+      <artifactId>google-collections</artifactId>
     </dependency>
 
-     <!-- testing -->
+    <!-- testing -->
     <dependency>
-      <groupId>org.guiceyfruit</groupId>
-      <artifactId>guiceyfruit-junit4</artifactId>
-      <version>${guiceyfruit-version}</version>
-      <exclusions>
-	    <exclusion>
-		  <groupId>org.hamcrest</groupId>
-		  <artifactId>hamcrest-core</artifactId>
-		</exclusion>
-	  </exclusions>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -79,18 +75,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>guiceyfruit.release</id>
-      <name>GuiceyFruit Release Repository</name>
-      <url>http://guiceyfruit.googlecode.com/svn/repo/releases/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
 </project>

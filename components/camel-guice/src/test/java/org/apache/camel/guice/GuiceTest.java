@@ -21,25 +21,26 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.guice.inject.Injectors;
 import org.apache.camel.test.junit4.TestSupport;
-import org.guiceyfruit.Injectors;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class GuiceTest extends TestSupport {
 
     /**
-     * Asserts that the CamelContext is available in the given Injector, that its been started, then close the injector
-     *
+     * Asserts that the CamelContext is available in the given Injector, that
+     * its been started, then close the injector
+     * 
      * @param injector
      */
     public static void assertCamelContextRunningThenCloseInjector(Injector injector) throws Exception {
         CamelContext camelContext = injector.getInstance(CamelContext.class);
 
         org.hamcrest.MatcherAssert.assertThat(camelContext, org.hamcrest.Matchers.is(GuiceCamelContext.class));
-        GuiceCamelContext guiceContext = (GuiceCamelContext) camelContext;
+        GuiceCamelContext guiceContext = (GuiceCamelContext)camelContext;
         assertTrue("is started!", guiceContext.isStarted());
 
         Thread.sleep(1000);

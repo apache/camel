@@ -24,9 +24,10 @@ import com.google.inject.TypeLiteral;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.guice.support.AnnotationMemberProvider;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.guiceyfruit.support.AnnotationMemberProvider;
+
 
 /**
  * Injects values into the {@link EndpointInject} injection point

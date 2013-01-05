@@ -15,22 +15,23 @@
  * limitations under the License.
  */
 package org.apache.camel.example.guice.jms;
-
 import java.util.Properties;
 import java.util.Set;
+
 import javax.naming.Context;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.guice.jndi.JndiBindings;
+import org.apache.camel.guice.jndi.internal.JndiContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.osgi.CamelContextFactory;
-import org.guiceyfruit.jndi.JndiBindings;
-import org.guiceyfruit.jndi.internal.JndiContext;
 import org.osgi.framework.BundleContext;
 
 public class OSGiCamelContextProvider implements Provider<CamelContext> {

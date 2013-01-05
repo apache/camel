@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.guice;
-
 import java.util.Collection;
 
 import com.google.inject.Guice;
@@ -27,14 +26,14 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.guice.inject.Injectors;
 import org.apache.camel.test.junit4.TestSupport;
-import org.guiceyfruit.Injectors;
 import org.junit.Test;
 
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders
- *
- * @version 
+ * 
+ * @version
  */
 public class GuiceRouteWithNamedKeysTest extends TestSupport {
 
@@ -51,12 +50,14 @@ public class GuiceRouteWithNamedKeysTest extends TestSupport {
     public void testGuice() throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
 
-        MyConfigurableRoute2 instance = injector.getInstance(Key.get(MyConfigurableRoute2.class, Names.named("foo")));
+        MyConfigurableRoute2 instance = injector.getInstance(Key.get(MyConfigurableRoute2.class,
+                                                                     Names.named("foo")));
         assertNotNull("should have found a key for 'foo'", instance);
 
         log.info("Found instance: " + instance);
 
-        //List<Binding<RouteBuilder>> list = injector.findBindingsByType(TypeLiteral.get(RouteBuilder.class));
+        // List<Binding<RouteBuilder>> list =
+        // injector.findBindingsByType(TypeLiteral.get(RouteBuilder.class));
         Collection<RouteBuilder> list = Injectors.getInstancesOf(injector, RouteBuilder.class);
         log.info("RouteBuilder List: " + list);
 
@@ -66,21 +67,19 @@ public class GuiceRouteWithNamedKeysTest extends TestSupport {
         log.info("RouteBuilder List: " + list);
 
         assertEquals("route builder list: " + list, 1, list.size());
-/*
-
-        list = Injectors.getInstancesOf(injector, Matchers.subclassesOf(RouteBuilder.class).and(Matchers.annotatedWith(Names.named("foo"))));
-        log.info("RouteBuilder List: " + list);
-
-        assertEquals("route builder list: " + list, 1, list.size());
-
-        list = Injectors.getInstancesOf(injector, Matchers.subclassesOf(RouteBuilder.class).and(Matchers.annotatedWith(Names.named("bar"))));
-        log.info("RouteBuilder List: " + list);
-
-        assertEquals("route builder list: " + list, 0, list.size());
-*/
+        /*
+         * list = Injectors.getInstancesOf(injector,
+         * Matchers.subclassesOf(RouteBuilder
+         * .class).and(Matchers.annotatedWith(Names.named("foo"))));
+         * log.info("RouteBuilder List: " + list);
+         * assertEquals("route builder list: " + list, 1, list.size()); list =
+         * Injectors.getInstancesOf(injector, Matchers.subclassesOf(RouteBuilder
+         * .class).and(Matchers.annotatedWith(Names.named("bar"))));
+         * log.info("RouteBuilder List: " + list);
+         * assertEquals("route builder list: " + list, 0, list.size());
+         */
 
         GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
     }
-
 
 }

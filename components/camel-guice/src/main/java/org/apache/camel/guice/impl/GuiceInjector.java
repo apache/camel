@@ -21,8 +21,8 @@ import org.apache.camel.spi.Injector;
 
 /**
  * An injector which uses Guice to perform the dependency injection of types
- *
- * @version 
+ * 
+ * @version
  */
 public class GuiceInjector implements Injector {
     private final com.google.inject.Injector injector;
@@ -33,7 +33,7 @@ public class GuiceInjector implements Injector {
 
     public <T> T newInstance(Class<T> type) {
         // TODO if not bound we could create an instance and inject it?
-        //injector.injectMembers(instance);
+        // injector.injectMembers(instance);
         return injector.getInstance(type);
     }
 
