@@ -66,6 +66,13 @@ trait Languages {
   def xpath(expression: String)(exchange: Exchange) =      Languages.evaluate(expression)(exchange)("xpath")
   def xquery(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("xquery")
   
+  // tokenizer languages
+  def tokenize(headerName: String = null, token: String, regex : Boolean = false)(exchange : Exchange) : Any = {
+    TokenizeLanguage.tokenize(headerName, token, regex).evaluate(exchange, classOf[Object])
+  }
+  def tokenizePair(startToken: String, endToken: String, includeTokens : Boolean)(exchange : Exchange) : Any = {
+    TokenizeLanguage.tokenizePair(startToken, endToken, includeTokens).evaluate(exchange, classOf[Object])
+  }
   def tokenizeXML(tagName: String, inheritNamespaceTagName : String = null)(exchange : Exchange) : Any = {
     TokenizeLanguage.tokenizeXML(tagName, inheritNamespaceTagName).evaluate(exchange, classOf[Object])
   }
