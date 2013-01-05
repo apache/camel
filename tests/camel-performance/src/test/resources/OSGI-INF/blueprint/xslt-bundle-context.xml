@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:camel="http://camel.apache.org/schema/blueprint"
+    xmlns:camel-cxf="http://camel.apache.org/schema/blueprint/cxf"
+    xsi:schemaLocation="
+       http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+       http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+    <camel-cxf:cxfEndpoint id="xsltProxy"
+        address="http://localhost:8192/service/XSLTProxy"
+        endpointName="service:EchoServicePort"
+        serviceName="service:XSLTProxy"
+        wsdlURL="wsdl/TransformerWSDL-consumer-embedded.wsdl"
+        xmlns:service="http://services.samples/xsd">
+        
+        <camel-cxf:properties>
+            <entry key="dataFormat" value="MESSAGE" />
+        </camel-cxf:properties>
+    </camel-cxf:cxfEndpoint>
+
+    <camel-cxf:cxfEndpoint id="echoService"
+        address="http://localhost:9000/service/EchoService"
+        endpointName="service:EchoServicePort"
+        serviceName="service:XSLTEchoService"
+        wsdlURL="wsdl/TransformerWSDL-provider-embedded.wsdl"
+        bindingId="s:EchoServiceSOAP11Binding"
+        xmlns:service="http://services.samples/xsd">
+        
+        <camel-cxf:properties>
+            <entry key="dataFormat" value="MESSAGE" />
+        </camel-cxf:properties>
+    </camel-cxf:cxfEndpoint>
+
+    <!-- TODO remove me -->
+    <bean id="transformerFactoryImpl" class="net.sf.saxon.TransformerFactoryImpl" />
+
+    <camel:camelContext>
+        <camel:jmxAgent id="agent" disabled="true"/>
+
+        <camel:route id="cxf-xslt-proxy">
+            <camel:from uri="cxf:bean:xsltProxy" />
+            <camel:to uri="xslt:xslt/transform.xslt?transformerFactory=#transformerFactoryImpl" />
+            <camel:to uri="cxf:bean:echoService" />
+            <camel:to uri="xslt:xslt/transform_back.xslt?transformerFactory=#transformerFactoryImpl" />
+        </camel:route>
+    </camel:camelContext>
+</blueprint>
