@@ -55,7 +55,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   //-----------------------------------------------------------------
 
   def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) = SAggregateDefinition(target.aggregate(expression, strategy))
-  def as[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
+  def as[Target](toType: Class[Target], charset: String = null) = wrap(target.convertBodyTo(toType, charset))
   def attempt: STryDefinition = STryDefinition(target.doTry())
 
   def bean(bean: Any) = bean match {
@@ -65,7 +65,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   }
 
   def choice = SChoiceDefinition(target.choice)
-  def convertBodyTo[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
+  def convertBodyTo[Target](toType: Class[Target], charset: String = null) = wrap(target.convertBodyTo(toType, charset))
 
   def delay(period: Period) = SDelayDefinition(target.delay(period.milliseconds))
   def dynamicRouter(expression: Exchange => Any) = wrap(target.dynamicRouter(expression))

@@ -98,12 +98,12 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   // EIPs
   //-----------------------------------------------------------------
   def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) = stack.top.aggregate(expression, strategy)
-  def as[Target](toType: Class[Target]) = stack.top.as(toType)
+  def as[Target](toType: Class[Target], charset: String = null) = stack.top.as(toType, charset)
   def attempt = stack.top.attempt
 
   def bean(bean: Any) = stack.top.bean(bean)
 
-  def convertBodyTo[Target](toType: Class[Target]) = stack.top.convertBodyTo(toType)
+  def convertBodyTo[Target](toType: Class[Target], charset: String = null) = stack.top.convertBodyTo(toType, charset)
   def choice = stack.top.choice
 
   def delay(delay: Period) = stack.top.delay(delay)
