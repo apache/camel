@@ -54,7 +54,7 @@ public abstract class AbstractBaseEsbPerformanceIntegrationTest extends CamelBlu
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/service");
         server.setHandler(context);
-        context.addServlet(new ServletHolder(new EchoService()),"/EchoService");
+        context.addServlet(new ServletHolder(new EchoService()), "/EchoService");
         server.start();
 
         payload = readPayload();
@@ -80,7 +80,8 @@ public abstract class AbstractBaseEsbPerformanceIntegrationTest extends CamelBlu
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("Content-Type", "text/xml;charset=UTF-8");
         headers.put("SOAPAction", "urn:buyStocks.2");
-        
+        headers.put("routing", "xadmin;server1;community#1.0##");
+
         for (int i = 0; i < messagesToSend; i++) {
             template.requestBodyAndHeaders(payload, headers);
         }

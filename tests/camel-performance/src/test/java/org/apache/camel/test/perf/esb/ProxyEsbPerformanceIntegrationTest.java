@@ -23,6 +23,9 @@ public class ProxyEsbPerformanceIntegrationTest extends AbstractBaseEsbPerforman
 
     @Test
     public void testProxy() throws Exception {
+        // warm up with 1.000 messages so that the JIT compiler kicks in
+        send("http://127.0.0.1:8192/service/DirectProxy", 1000);
+
         StopWatch watch = new StopWatch();
         send("http://127.0.0.1:8192/service/DirectProxy", count);
 

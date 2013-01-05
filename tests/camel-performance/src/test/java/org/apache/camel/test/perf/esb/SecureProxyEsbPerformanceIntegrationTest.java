@@ -26,6 +26,9 @@ public class SecureProxyEsbPerformanceIntegrationTest extends AbstractBaseEsbPer
 
     @Test
     public void testSecureProxy() throws Exception {
+        // warm up with 1.000 messages so that the JIT compiler kicks in
+        send("http://127.0.0.1:8192/service/SecureProxy", 1000);
+
         StopWatch watch = new StopWatch();
         send("http://127.0.0.1:8192/service/SecureProxy", count);
 

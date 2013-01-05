@@ -23,6 +23,9 @@ public class CbrEsbPerformanceIntegrationTest extends AbstractBaseEsbPerformance
 
     @Test
     public void testCbr() throws Exception {
+        // warm up with 1.000 messages so that the JIT compiler kicks in
+        send("http://127.0.0.1:8192/service/CBRProxy", 1000);
+
         StopWatch watch = new StopWatch();
         send("http://127.0.0.1:8192/service/CBRProxy", count);
 

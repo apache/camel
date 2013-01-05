@@ -16,9 +16,6 @@
  */
 package org.apache.camel.test.perf.esb;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -26,10 +23,13 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class EchoService extends HttpServlet {
 
-    public static volatile long delayMillis = 0;
+    public static volatile long delayMillis;
 
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_BUFFER_SIZE = 4;
@@ -48,20 +48,21 @@ public class EchoService extends HttpServlet {
                     soapAction = soapAction.replaceAll("\"", "");
                 }
                 int dotPos = soapAction.indexOf(".");
-                int secondDotPos = (dotPos == -1 ? -1 : soapAction.indexOf(".", dotPos+1));
+                int secondDotPos = dotPos == -1 ? -1 : soapAction.indexOf(".", dotPos + 1);
 
                 if (secondDotPos > 0) {
-                    bufKBytes = Integer.parseInt(soapAction.substring(dotPos+1, secondDotPos));
-                    delaySecs = Integer.parseInt(soapAction.substring(secondDotPos+1));
+                    bufKBytes = Integer.parseInt(soapAction.substring(dotPos + 1, secondDotPos));
+                    delaySecs = Integer.parseInt(soapAction.substring(secondDotPos + 1));
                 } else if (dotPos > 0) {
-                    bufKBytes = Integer.parseInt(soapAction.substring(dotPos+1));
+                    bufKBytes = Integer.parseInt(soapAction.substring(dotPos + 1));
                 }
             }
 
             bb = ByteBuffer.allocate(bufKBytes * 1024);
             ReadableByteChannel rbc = Channels.newChannel(request.getInputStream());
 
-            int len, tot = 0;
+            int len = 0;
+            int tot = 0;
             while ((len = rbc.read(bb)) > 0) {
                 tot += len;
                 if (tot >= bb.capacity()) {
