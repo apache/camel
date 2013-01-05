@@ -103,6 +103,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
 
   def bean(bean: Any) = stack.top.bean(bean)
 
+  def convertBodyTo[Target](toType: Class[Target]) = stack.top.convertBodyTo(toType)
   def choice = stack.top.choice
 
   def delay(delay: Period) = stack.top.delay(delay)

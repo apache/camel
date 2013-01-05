@@ -37,6 +37,7 @@ trait DSL {
   def bean(bean: Any) : DSL
 
   def choice : SChoiceDefinition
+  def convertBodyTo[Target](toType: Class[Target]) : DSL
 
   def delay(delay: Period) : SDelayDefinition
   def dynamicRouter(expression: Exchange => Any) : DSL
