@@ -32,7 +32,7 @@
   <properties>    
     <camel.osgi.export.pkg>org.apache.camel.guice.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>
-        com.google.inject*;version="[1.2,3)"        
+        com.google.inject*;version="[1.2,4)"        
     </camel.osgi.import.additional>
   </properties>
 

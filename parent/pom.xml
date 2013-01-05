@@ -142,7 +142,7 @@
     <google-guava-version>13.0.1</google-guava-version>
     <groovy-version>2.0.6</groovy-version>
     <gson-version>2.2.2</gson-version>
-    <guice-bundle-version>3.0_2</guice-bundle-version>
+    <guice-bundle-version>3.0_1-SNAPSHOT</guice-bundle-version>
     <guice-version>3.0</guice-version>
     <hadoop-bundle-version>1.0.4_1</hadoop-bundle-version>
     <hadoop-version>1.0.4</hadoop-version>
@@ -178,6 +178,7 @@
     <java-apns-version>0.1.6</java-apns-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
+    <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.4.5</javax-mail-version>
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
     <jaxen-version>1.1.4</jaxen-version>
