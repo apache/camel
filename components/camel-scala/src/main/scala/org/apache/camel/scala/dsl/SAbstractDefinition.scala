@@ -65,6 +65,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   }
 
   def choice = SChoiceDefinition(target.choice)
+  def convertBodyTo[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
 
   def delay(period: Period) = SDelayDefinition(target.delay(period.milliseconds))
   def dynamicRouter(expression: Exchange => Any) = wrap(target.dynamicRouter(expression))
