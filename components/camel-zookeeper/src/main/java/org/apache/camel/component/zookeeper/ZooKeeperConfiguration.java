@@ -128,7 +128,7 @@ public class ZooKeeperConfiguration implements Cloneable {
     }
 
     /**
-     * The usage of this option has no effect at all.
+     * @deprecated The usage of this option has no effect at all.
      */
     @Deprecated
     public boolean shouldAwaitExistence() {
@@ -136,7 +136,7 @@ public class ZooKeeperConfiguration implements Cloneable {
     }
 
     /**
-     * The usage of this option has no effect at all.
+     * @deprecated The usage of this option has no effect at all.
      */
     @Deprecated
     public void setAwaitExistence(boolean awaitExistence) {
