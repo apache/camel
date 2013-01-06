@@ -228,7 +228,9 @@
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
+    <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
+    <maven-archetype-packaging-version>2.0</maven-archetype-packaging-version>
     <maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
@@ -1898,7 +1900,7 @@
       <dependency>
         <groupId>org.apache.maven.archetype</groupId>
         <artifactId>archetype-packaging</artifactId>
-        <version>2.0</version>
+        <version>${maven-archetype-packaging-version}</version>
       </dependency>
 
     </dependencies>
@@ -1952,7 +1954,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.6</version>
+          <version>${maven-antrun-plugin-version}</version>
           <dependencies>
             <dependency>
               <groupId>com.sun.xml.bind</groupId>
@@ -2123,7 +2125,7 @@
             <attach>true</attach>
             <source>1.6</source>
             <quiet>true</quiet>
-            <bottom>Apache CAMEL</bottom>
+            <bottom>Apache Camel</bottom>
             <detectOfflineLinks>false</detectOfflineLinks>
             <javadocVersion>1.6</javadocVersion>
             <encoding>UTF-8</encoding>
@@ -2137,7 +2139,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <!-- beware the ActiveMQ team had issues with the 2.3.2 release plugin (2.2.1 works fine) -->
           <version>${maven-release-plugin-version}</version>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
@@ -2477,7 +2478,7 @@
           <links>
             <link>http://download.oracle.com/javase/6/docs/api/</link>
             <link>http://download.oracle.com/javaee/6/api/</link>
-            <link>http://static.springsource.org/spring/docs/3.0.7.RELEASE/api/</link>
+            <link>http://static.springsource.org/spring/docs/3.1.3.RELEASE/javadoc-api/</link>
           </links>
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
