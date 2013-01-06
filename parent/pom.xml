@@ -364,7 +364,6 @@
     <woodstox-version>4.1.4</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
-    <wss4j-version>1.6.8</wss4j-version>
     <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
     <xalan-version>2.7.1</xalan-version>
     <xbean-spring-version>3.12</xbean-spring-version>
