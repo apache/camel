@@ -65,6 +65,7 @@
     <beanio-version>2.0.3</beanio-version>
     <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.47</bouncycastle-version>
+    <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
@@ -96,6 +97,7 @@
     <commons-pool-version>1.6</commons-pool-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.3.2</concurrentlinkedhashmap.version>
+    <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
     <cxf-version>2.7.1</cxf-version>
     <cxf-version-range>[2.4,2.8)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
@@ -115,6 +117,7 @@
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
     <felix-configadmin-version>1.4.0</felix-configadmin-version>
     <felix-framework-version>3.2.2</felix-framework-version>
+    <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
     <fop-bundle-version>1.0_3</fop-bundle-version>
     <fop-version>1.0</fop-version>
@@ -344,6 +347,7 @@
     <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.2_2</stringtemplate-bundle-version>
     <stringtemplate-version>4.0.2</stringtemplate-version>
+    <taglist-maven-plugin-version>2.4</taglist-maven-plugin-version>
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.8</testng-version>
@@ -2227,18 +2231,13 @@
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
-          <artifactId>axistools-maven-plugin</artifactId>
-          <version>1.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.5</version>
+          <version>${build-helper-maven-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.4</version>
+          <version>${cobertura-maven-plugin-version}</version>
           <configuration>
             <check>
               <branchRate>85</branchRate>
@@ -2271,7 +2270,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
-          <version>2.3.1</version>
+          <version>${findbugs-maven-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -2286,7 +2285,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>taglist-maven-plugin</artifactId>
-          <version>2.4</version>
+          <version>${taglist-maven-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -2448,7 +2447,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.4</version>
+        <version>${cobertura-maven-plugin-version}</version>
         <configuration>
           <formats>
             <format>html</format>
@@ -2468,7 +2467,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
-        <version>2.4</version>
+        <version>${taglist-maven-plugin-version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -2491,7 +2490,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.5.2</version>
+        <version>${findbugs-maven-plugin-version}</version>
       </plugin>
     </plugins>
   </reporting>
