@@ -313,7 +313,7 @@
     <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
     <scriptengines-version>1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
-    <servicemix-specs-version>1.9.0</servicemix-specs-version>
+    <servicemix-specs-version>2.2.0</servicemix-specs-version>
     <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
     <shiro-version>1.2.1</shiro-version>
     <!-- use slf4j-api 1.6.x to be easy compatible with older Camel releases -->
