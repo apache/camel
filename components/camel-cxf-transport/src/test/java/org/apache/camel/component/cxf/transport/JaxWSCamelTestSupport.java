@@ -24,10 +24,16 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
+import org.apache.cxf.jaxws.JaxWsClientProxy;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.junit.Before;
 
 public class JaxWSCamelTestSupport extends CamelTestSupport {
+    
     /**
      * Expected SOAP answer for the 'SampleWS.getSomething' method
      */
@@ -39,6 +45,8 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
     public static final String REQUEST = "<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'>"
         + "<Body>" + "<getSomething xmlns='urn:test'/>"
         + "</Body>" + "</Envelope>";
+    
+    private Bus bus;
 
     /**
      * Sample WebService
@@ -65,7 +73,9 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
      */
     @Before
     public void setUpCXFCamelContext() {
-        BusFactory.getThreadDefaultBus().getExtension(CamelTransportFactory.class).setCamelContext(context);
+        bus = BusFactory.getThreadDefaultBus();
+        // make sure the CamelTransportFactory is injected with right camel context
+        bus.getExtension(CamelTransportFactory.class).setCamelContext(context);
     }
 
     /**
@@ -82,6 +92,14 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         s.addPort(portName, "http://schemas.xmlsoap.org/soap/", "camel://" + camelEndpoint);
 
         return s.getPort(SampleWS.class);
+    }
+    
+    public SampleWS getSampleWSWithCXFAPI(String camelEndpoint) {
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+        factory.setAddress("camel://" + camelEndpoint);
+        factory.setServiceClass(SampleWS.class);
+        factory.setBus(bus);
+        return factory.create(SampleWS.class);
     }
     
     /**
