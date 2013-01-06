@@ -145,7 +145,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The usage of this property has no effect at all.
+     * @deprecated The usage of this property has no effect at all.
      */
     @Deprecated
     @ManagedAttribute
@@ -154,7 +154,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The usage of this property has no effect at all.
+     * @deprecated The usage of this property has no effect at all.
      */
     @Deprecated
     @ManagedAttribute
