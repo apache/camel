@@ -24,7 +24,7 @@ import junit.framework.Assert.assertEquals
 class IdTest extends ScalaTestSupport {
 
   @Test
-  def testRouteA = {
+  def testRouteA() {
     "mock:a" expect { _.expectedMessageCount(1)}
     "mock:result" expect { _.expectedMessageCount(1)}
 
@@ -38,7 +38,7 @@ class IdTest extends ScalaTestSupport {
   }
 
   @Test
-  def testRouteB() = {
+  def testRouteB() {
     "mock:b" expect { _.expectedMessageCount(1)}
     "mock:result" expect { _.expectedMessageCount(1)}
 

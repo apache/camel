@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.ScheduledExecutorService
 import org.apache.camel.Processor
 import org.apache.camel.model.SplitDefinition
 import org.apache.camel.processor.aggregate.AggregationStrategy

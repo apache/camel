@@ -94,7 +94,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def multicast = SMulticastDefinition(target.multicast)
 
   def onCompletion: SOnCompletionDefinition = {
-    var completion = SOnCompletionDefinition(target.onCompletion)
+    val completion = SOnCompletionDefinition(target.onCompletion)
     // let's end the block in the Java DSL, we have a better way of handling blocks here
     completion.target.end
     completion
@@ -122,10 +122,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def routingSlip(header: String) = wrap(target.routingSlip(header))
   @Deprecated
   def routingSlip(header: String, separator: String) = wrap(target.routingSlip(header, separator))
-  
-  def routingSlip(expression: Exchange => Any, separator: String) = wrap(target.routingSlip(expression, separator)) 
+  def routingSlip(expression: Exchange => Any, separator: String) = wrap(target.routingSlip(expression, separator))
   def routingSlip(expression: Exchange => Any) = wrap(target.routingSlip(expression))
-  
 
   def setBody(expression: Exchange => Any) = wrap(target.setBody(expression))
   def setFaultBody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))

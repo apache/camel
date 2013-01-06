@@ -27,7 +27,7 @@ import test.Adult
 class DataFormatTest extends ScalaTestSupport {
  
   @Test
-  def testSimpleTrottler() = {
+  def testDataFormat() {
     val person = new Adult("Captain Nemo")
     "mock:a" expect { _.received(person) } 
     test {

@@ -75,7 +75,7 @@ class SOnExceptionRetryUntilWithDefaultErrorHandlerTest extends ScalaTestSupport
   var invoked = 0
 
   @Test
-  def testRetryUntil() = {
+  def testRetryUntil() {
     val out = template.requestBody("direct:start", "Hello World")
     assertEquals("Sorry", out)
     assertEquals(3, invoked)

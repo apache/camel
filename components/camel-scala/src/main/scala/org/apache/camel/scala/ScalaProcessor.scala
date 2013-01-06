@@ -22,6 +22,8 @@ package scala
  */
 class ScalaProcessor(val function: Exchange => Any) extends Processor {
   
-  def process(exchange: Exchange) = function(exchange)
+  def process(exchange: Exchange) {
+    function(exchange)
+  }
 
 }

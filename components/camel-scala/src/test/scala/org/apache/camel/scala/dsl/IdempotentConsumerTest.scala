@@ -28,12 +28,16 @@ import org.apache.camel.{Processor, Exchange}
 class IdempotentConsumerTest extends ScalaTestSupport {
 
   @Test
-  def testSimple() = doTest("direct:a", "mock:a")
+  def testSimple() {
+    doTest("direct:a", "mock:a")
+  }
 
   @Test
-  def testBlock() = doTest("direct:b", "mock:b")
+  def testBlock() {
+    doTest("direct:b", "mock:b")
+  }
 
-  def doTest(from: String, to: String) = {
+  def doTest(from: String, to: String) {
     to expect { _.received("message 1", "message 2", "message 3")}
     def send = sendMessage(from, _:String, _:String)
     test {
@@ -48,7 +52,7 @@ class IdempotentConsumerTest extends ScalaTestSupport {
   
   def sendMessage(from: String, header: String, body: String) = {
     template.send(from, new Processor() {
-      def process(exchange: Exchange) = {
+      def process(exchange: Exchange) {
         val in = exchange.getIn
         in.setBody(body)
         in.setHeader("messageId", header)
@@ -77,7 +81,7 @@ class IdempotentConsumerTest extends ScalaTestSupport {
  */
 class IdempotentConsumerEagerTest extends ScalaTestSupport {
 
-  def testEagerIdempotentConsumer() = {
+  def testEagerIdempotentConsumer() {
     "mock:result" expect { _.received("one", "two", "three")}
     test {
       sendMessage("1", "one")

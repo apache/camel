@@ -25,7 +25,7 @@ import org.junit.Test
 class SplitterTokenizeTest extends ScalaTestSupport {
 
   @Test
-  def testSplitterTokenize() = {
+  def testSplitterTokenize() {
     val mock = getMockEndpoint("mock:b")
     mock.expectedBodiesReceived("Claus", "James", "Willem")
 

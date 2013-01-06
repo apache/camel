@@ -22,7 +22,7 @@ import org.apache.camel.processor.validation.PredicateValidationException
 import org.apache.camel.CamelExecutionException
 import org.apache.camel.TestSupport.assertIsInstanceOf
 
-import junit.framework.Assert.{fail, assertTrue}
+import junit.framework.TestCase.{fail, assertTrue}
 
 /**
  * Scala DSL equivalent for the ValidateSimpleTest, using simple one-line Scala DSL syntax
@@ -30,7 +30,7 @@ import junit.framework.Assert.{fail, assertTrue}
 class SValidateSimpleTest extends ValidateSimpleTest with RouteBuilderSupport {
 
   // we need to override the test method because the validation exception looks slightly different in Scala
-  override def testSendNotMatchingMessage() = {
+  override def testSendNotMatchingMessage() {
     resultEndpoint.expectedMessageCount(0)
 
     try {
@@ -62,7 +62,7 @@ class SValidateSimpleTest extends ValidateSimpleTest with RouteBuilderSupport {
 class SValidateRegExpTest extends ValidateRegExpTest with RouteBuilderSupport {
 
   // we need to override the test method because the validation exception looks slightly different in Scala
-  override def testSendNotMatchingMessage() = {
+  override def testSendNotMatchingMessage() {
     resultEndpoint.expectedMessageCount(0)
 
     try {

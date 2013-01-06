@@ -29,7 +29,7 @@ class RollbackTest extends ScalaTestSupport {
   var handled = false
   
   @Test
-  def testSimple() = {
+  def testSimple() {
     test {
       try {
         template.requestBody("direct:a", "The Joker")
@@ -43,7 +43,7 @@ class RollbackTest extends ScalaTestSupport {
   }
   
   @Test
-  def testBlock() = {
+  def testBlock() {
     "mock:b" expect { _.count = 2 }
     "mock:ok" expect { _.count = 1 }
     test {

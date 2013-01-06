@@ -29,16 +29,24 @@ import org.junit.Assert.assertEquals
 class SetExchangePatternTest extends ScalaTestSupport {
 
   @Test
-  def testSimpleInOnly() = doTest("direct:a", "mock:a", InOnly)
+  def testSimpleInOnly() {
+    doTest("direct:a", "mock:a", InOnly)
+  }
   @Test
-  def testBlockInOnly() = doTest("direct:b", "mock:b", InOnly)
+  def testBlockInOnly() {
+    doTest("direct:b", "mock:b", InOnly)
+  }
   @Test
-  def testSimpleInOut() = doTest("direct:c", "mock:c", InOut)
+  def testSimpleInOut() {
+    doTest("direct:c", "mock:c", InOut)
+  }
   @Test
-  def testBlockInOut() = doTest("direct:d", "mock:d", InOut)
+  def testBlockInOut() {
+    doTest("direct:d", "mock:d", InOut)
+  }
   
   
-  def doTest(from: String, to: String, expected: ExchangePattern) = {
+  def doTest(from: String, to: String, expected: ExchangePattern) {
     to expect { _.count = 1}
     val exchange = in("MyTestBody")
     expected match {

@@ -25,7 +25,7 @@ import org.junit.Test
 class XPathContentBasedRouterTest extends ScalaTestSupport {
 
   @Test
-  def testXPathContentBasedRouter() = {
+  def testXPathContentBasedRouter() {
     "mock:english" expect {_.expectedBodiesReceived("<hello/>")}
     "mock:dutch" expect {_.expectedBodiesReceived("<hallo/>")}
     "mock:german" expect {_.expectedBodiesReceived("<hallo/>")}

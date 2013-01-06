@@ -25,7 +25,7 @@ import builder.RouteBuilder
 class LoadBalancerTest extends ScalaTestSupport {
   
   @Test
-  def testSimpleTrottler() = {
+  def testLoadBalancer() {
     "mock:a" expect { _.received("message 1", "message 4") } 
     "mock:b" expect { _.received("message 2", "message 5") }
     "mock:c" expect { _.received("message 3", "message 6") }

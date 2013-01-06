@@ -24,7 +24,7 @@ import ExchangePattern.{InOnly, InOut}
 class ExchangePatternTest extends ScalaTestSupport {
 
   @Test
-  def testInOnly() = {
+  def testInOnly() {
     getMockEndpoint("mock:a").expectedMessageCount(1)
     getMockEndpoint("mock:a").expectedExchangePattern(InOnly)
     getMockEndpoint("mock:result").expectedMessageCount(1)
@@ -32,11 +32,11 @@ class ExchangePatternTest extends ScalaTestSupport {
 
     template.sendBody("direct:a", "Hello World")
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
   }
 
   @Test
-  def testRequestInOnly() = {
+  def testRequestInOnly() {
     getMockEndpoint("mock:a").expectedMessageCount(1)
     getMockEndpoint("mock:a").expectedExchangePattern(InOnly)
     getMockEndpoint("mock:result").expectedMessageCount(1)
@@ -44,11 +44,11 @@ class ExchangePatternTest extends ScalaTestSupport {
 
     template.requestBody("direct:a", "Hello World")
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
   }
 
   @Test
-  def testInOut() = {
+  def testInOut() {
     getMockEndpoint("mock:b").expectedMessageCount(1)
     getMockEndpoint("mock:b").expectedExchangePattern(InOut)
     getMockEndpoint("mock:result").expectedMessageCount(1)
@@ -56,23 +56,23 @@ class ExchangePatternTest extends ScalaTestSupport {
 
     template.sendBody("direct:b", "Hello World")
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
   }
 
   @Test
-  def testRequestInOut() = {
+  def testRequestInOut() {
     getMockEndpoint("mock:b").expectedMessageCount(1)
     getMockEndpoint("mock:b").expectedExchangePattern(InOut)
     getMockEndpoint("mock:result").expectedMessageCount(1)
     getMockEndpoint("mock:result").expectedExchangePattern(InOut)
 
-    template.requestBody("direct:b", "Hello World");
+    template.requestBody("direct:b", "Hello World")
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
   }
 
   @Test
-  def testMixed() = {
+  def testMixed() {
     getMockEndpoint("mock:c").expectedMessageCount(1)
     getMockEndpoint("mock:c").expectedExchangePattern(InOut)
     getMockEndpoint("mock:result").expectedMessageCount(1)
@@ -80,7 +80,7 @@ class ExchangePatternTest extends ScalaTestSupport {
 
     template.sendBody("direct:c", "Hello World")
 
-    assertMockEndpointsSatisfied
+    assertMockEndpointsSatisfied()
   }
 
   val builder = new MyRouteBuilder

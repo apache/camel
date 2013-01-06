@@ -28,7 +28,7 @@ class AggregatorTest extends ScalaTestSupport {
   val count = 100
   
   @Test
-  def testSimpleAggregator = {
+  def testSimpleAggregator() {
     "mock:a" expect { _.received("message " + count) } 
     test {
       for (i <- 1 to count) {
@@ -38,7 +38,7 @@ class AggregatorTest extends ScalaTestSupport {
   }
 
  @Test
- def testBlockAggregator = {
+ def testBlockAggregator() {
     "mock:b" expect { _.received("message " + count) } 
     test {
       for (i <- 1 to count) {

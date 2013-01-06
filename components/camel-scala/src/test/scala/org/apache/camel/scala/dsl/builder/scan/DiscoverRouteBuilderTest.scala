@@ -29,15 +29,15 @@ import org.junit.Test
 class DiscoverRouteBuilderTest extends Assert {
   
   @Test
-  def testDiscovery = {
+  def testDiscovery() {
     val spring = new ClassPathXmlApplicationContext("org/apache/camel/scala/dsl/builder/scan/scan-camel-context.xml")
     val camel = spring.getBean("myCamel").asInstanceOf[CamelContext]
     assertNotNull(camel)
-    assertEquals(1, camel.getRoutes().size())
+    assertEquals(1, camel.getRoutes.size())
     
     // let us just send a simple message to make sure we discovered the correct RouteBuilder
     val template = camel.createProducerTemplate()
-    template.sendBody("direct:scan", "request");
+    template.sendBody("direct:scan", "request")
     val mock = camel.getEndpoint("mock:discovery").asInstanceOf[MockEndpoint]
     mock.expectedMessageCount(1)
     mock.assertIsSatisfied()

@@ -25,10 +25,10 @@ import org.junit.Test
 class ConvertBodyToTest extends ScalaTestSupport {
 
   @Test
-  def testConvertBody() = {
+  def testConvertBody() {
     val mock = getMockEndpoint("mock:b")
-    mock.expectedMessageCount(1);
-    mock.message(0).body().isInstanceOf(classOf[java.lang.Integer]);
+    mock.expectedMessageCount(1)
+    mock.message(0).body().isInstanceOf(classOf[java.lang.Integer])
 
     // send a string
     template.sendBody("direct:b", "74")

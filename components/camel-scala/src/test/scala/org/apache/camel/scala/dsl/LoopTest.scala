@@ -23,19 +23,27 @@ import builder.RouteBuilder
  */
 class LoopTest extends ScalaTestSupport {
 
-  def testSimpleStaticLoop() = doTestLoopStatic("direct:a", "mock:a")
-  def testSimpleDynamicLoop() = doTestLoopDynamic("direct:b", "mock:b")
-  def testBlockStaticLoop() = doTestLoopStatic("direct:c", "mock:c")
-  def testBlockDynamicLoop() = doTestLoopDynamic("direct:d", "mock:d")
+  def testSimpleStaticLoop() {
+    doTestLoopStatic("direct:a", "mock:a")
+  }
+  def testSimpleDynamicLoop() {
+    doTestLoopDynamic("direct:b", "mock:b")
+  }
+  def testBlockStaticLoop() {
+    doTestLoopStatic("direct:c", "mock:c")
+  }
+  def testBlockDynamicLoop() {
+    doTestLoopDynamic("direct:d", "mock:d")
+  }
   
-  def doTestLoopStatic(from: String, mock: String) = {
+  def doTestLoopStatic(from: String, mock: String) {
     mock expect {_.count = 5}
     test {
       from ! ("ping")
     }    
   }
   
-  def doTestLoopDynamic(from: String, mock: String) = {
+  def doTestLoopDynamic(from: String, mock: String) {
     mock expect {_.count = 5}
     test {
       from ! ("5")

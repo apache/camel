@@ -26,12 +26,16 @@ import builder.RouteBuilder
 class EnricherTest extends ScalaTestSupport {
   
   @Test
-  def testSimpleEnricher() = testEnricher("direct:a", "mock:a")
+  def testSimpleEnricher() {
+    testEnricher("direct:a", "mock:a")
+  }
 
   @Test
-  def testBlockEnricher() = testEnricher("direct:b", "mock:b")
+  def testBlockEnricher() {
+    testEnricher("direct:b", "mock:b")
+  }
   
-  def testEnricher(direct: String, mock: String) = {
+  def testEnricher(direct: String, mock: String) {
     mock expect { _.received ("France:Paris", "UK:London") }      
     direct ! ("France", "UK")   
     mock assert()

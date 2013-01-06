@@ -20,7 +20,7 @@ package dsl
 
 import org.apache.camel.model.DataFormatDefinition
 import reflect.Manifest
-import java.util.Comparator;
+import java.util.Comparator
 import org.apache.camel.processor.aggregate.AggregationStrategy
 
 import org.apache.camel.spi.Policy

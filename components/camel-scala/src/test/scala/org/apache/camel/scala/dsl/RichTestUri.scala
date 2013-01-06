@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint
 
 class RichTestUri(uri: String, support: ScalaTestSupport) {
 
-  def !(messages: Any*) = {
+  def !(messages: Any*) {
     messages.foreach { 
       _ match {
         case exchange: Exchange => support.getTemplate.send(uri, exchange)
@@ -30,11 +30,13 @@ class RichTestUri(uri: String, support: ScalaTestSupport) {
     }
   }
 
-  def expect(block: MockEndpoint => Unit) = {
+  def expect(block: MockEndpoint => Unit) {
     val mock = support.mock(uri)
     block(mock)
   }
 
-  def assert() = support.mock(uri).assertIsSatisfied()
+  def assert() {
+    support.mock(uri).assertIsSatisfied()
+  }
 
 }
