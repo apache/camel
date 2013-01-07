@@ -39,6 +39,8 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
+        // update the sinceId
+        twitter4jConsumer.setLastId(properties.getSinceId());
         Consumer tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
         configureConsumer(tc);
         return tc;

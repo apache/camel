@@ -61,4 +61,12 @@ public abstract class Twitter4JConsumer {
      * Called by direct consumers.
      */
     public abstract List<? extends Serializable> directConsume() throws TwitterException;
+    
+    /**
+     * Support to update the Consumer's lastId when starting the consumer
+     * @param sinceId
+     */
+    public void setLastId(long sinceId) {
+        lastId = sinceId;
+    }
 }
