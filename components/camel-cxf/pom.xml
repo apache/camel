@@ -116,7 +116,7 @@
       <artifactId>spring-context</artifactId>
     </dependency>
 
-    <!-- OSGi, BLueprint -->
+    <!-- OSGi, Blueprint -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-blueprint</artifactId>
