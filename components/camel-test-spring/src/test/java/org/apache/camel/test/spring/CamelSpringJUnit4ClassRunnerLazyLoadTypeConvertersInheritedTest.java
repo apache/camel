@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
-public class CamelSpringJUnit4ClassRunnerProvidesBreakpointInherritedTest 
-        extends CamelSpringJUnit4ClassRunnerProvidesBreakpointTest {
-
+public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersInheritedTest 
+        extends CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersTest {
 }

@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
-import org.apache.camel.management.DefaultManagementStrategy;
-import org.apache.camel.test.spring.DisableJmx;
+import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+@ExcludeRoutes(TestRouteBuilder.class)
+public class CamelSpringJUnit4ClassRunnerExcludeRoutesTest
+        extends CamelSpringJUnit4ClassRunnerPlainTest {
 
-@DisableJmx
-public class CamelSpringJUnit4ClassRunnerDisableJmxInheritedOverrideTest
-        extends CamelSpringJUnit4ClassRunnerDisableJmxTest {
-
-    @Test
-    public void testJmx() throws Exception {
-        assertEquals(DefaultManagementStrategy.class, camelContext.getManagementStrategy().getClass());
+    @Override
+    public void testExcludedRoute() {
+        assertNull(camelContext.getRoute("excludedRoute"));
     }
 }

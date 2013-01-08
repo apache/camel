@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.DefaultManagementStrategy;
-import org.apache.camel.test.spring.StopWatchTestExecutionListener;
+import org.apache.camel.test.junit4.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.util.StopWatch;
 
 import org.junit.Test;

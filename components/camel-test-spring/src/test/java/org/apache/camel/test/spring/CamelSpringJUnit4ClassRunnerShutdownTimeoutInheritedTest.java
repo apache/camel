@@ -14,22 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
-import org.apache.camel.test.spring.LazyLoadTypeConverters;
+public class CamelSpringJUnit4ClassRunnerShutdownTimeoutInheritedTest
+        extends CamelSpringJUnit4ClassRunnerShutdownTimeoutTest {
 
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-
-@SuppressWarnings("deprecation")
-@LazyLoadTypeConverters(true)
-public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersInheritedOverrideTest 
-        extends CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersInheritedTest {
-
-    @Test
-    @Override
-    public void testLazyLoadTypeConverters() {
-        assertTrue(camelContext.isLazyLoadTypeConverters());
-        assertTrue(camelContext2.isLazyLoadTypeConverters());
-    }
 }

@@ -14,23 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
-import java.util.concurrent.TimeUnit;
+public class CamelSpringJUnit4ClassRunnerProvidesBreakpointInherritedTest 
+        extends CamelSpringJUnit4ClassRunnerProvidesBreakpointTest {
 
-import org.apache.camel.test.spring.ShutdownTimeout;
-
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-
-@ShutdownTimeout(value = 11, timeUnit = TimeUnit.MILLISECONDS)
-public class CamelSpringJUnit4ClassRunnerShutdownTimeoutTest
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
-
-    @Test
-    @Override
-    public void testShutdownTimeout() throws Exception {
-        assertEquals(11, camelContext.getShutdownStrategy().getTimeout());
-        assertEquals(TimeUnit.MILLISECONDS, camelContext.getShutdownStrategy().getTimeUnit());
-    }
 }

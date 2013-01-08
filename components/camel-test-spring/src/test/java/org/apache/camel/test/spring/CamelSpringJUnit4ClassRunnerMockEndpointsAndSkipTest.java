@@ -14,38 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.MockEndpoints;
+import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-@MockEndpoints("mock:c*")
-public class CamelSpringJUnit4ClassRunnerMockEndpointsTest
+@MockEndpointsAndSkip("seda:*")
+public class CamelSpringJUnit4ClassRunnerMockEndpointsAndSkipTest
         extends CamelSpringJUnit4ClassRunnerPlainTest {
 
-    @EndpointInject(uri = "mock:mock:c", context = "camelContext2")
-    protected MockEndpoint mockMockC;
-    
+    @EndpointInject(uri = "mock:seda:context2.seda", context = "camelContext2")
+    protected MockEndpoint mock;
+
+    @EndpointInject(uri = "seda:context2.seda", context = "camelContext2")
+    private InterceptSendToEndpoint original;
+
     @Test
     @Override
     public void testPositive() throws Exception {
-        
         assertEquals(ServiceStatus.Started, camelContext.getStatus());
         assertEquals(ServiceStatus.Started, camelContext2.getStatus());
-        
+
         mockA.expectedBodiesReceived("David");
         mockB.expectedBodiesReceived("Hello David");
-        mockC.expectedBodiesReceived("Hello David");
-        mockMockC.expectedBodiesReceived("Hello David");
-        
+        mock.expectedBodiesReceived("Hello David");
+
         start.sendBody("David");
         start2.sendBody("David");
-        
+
         MockEndpoint.assertIsSatisfied(camelContext);
+        assertTrue("Original endpoint was invoked", ((SedaEndpoint) original.getDelegate()).getExchanges().isEmpty());
     }
 }

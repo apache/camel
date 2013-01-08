@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
-import org.apache.camel.test.spring.ProvidesBreakpoint;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;

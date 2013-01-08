@@ -35,7 +35,7 @@
   <!-- setup the profile for testing -->
   <beans profile="test">
      <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-         <property name="location" value="classpath:org/apache/camel/test/junit4/test.properties"/>
+         <property name="location" value="classpath:org/apache/camel/test/spring/test.properties"/>
      </bean>
   </beans>
 </beans>

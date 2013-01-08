@@ -14,21 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
-import org.apache.camel.management.ManagedManagementStrategy;
-import org.apache.camel.test.spring.DisableJmx;
-
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-
-@DisableJmx(false)
-public class CamelSpringJUnit4ClassRunnerDisableJmxTest 
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
-
-    @Test
-    @Override
-    public void testJmx() throws Exception {
-        assertEquals(ManagedManagementStrategy.class, camelContext.getManagementStrategy().getClass());
-    }
+public class CamelSpringJUnit4ClassRunnerDisableJmxInheritedTest 
+        extends CamelSpringJUnit4ClassRunnerDisableJmxTest {
 }

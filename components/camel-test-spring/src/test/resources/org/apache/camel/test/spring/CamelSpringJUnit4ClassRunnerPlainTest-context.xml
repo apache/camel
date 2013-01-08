@@ -17,35 +17,32 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:camel="http://camel.apache.org/schema/spring"
 	xsi:schemaLocation="
 		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd ">
 
-  <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring"
-    trace="true" autoStartup="true">
+  <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring" trace="true" autoStartup="true">
     <packageScan>
-      <package>org.apache.camel.test.junit4</package>
+      <package>org.apache.camel.test.spring</package>
     </packageScan>
     <route>
-      <from uri="direct:start" />
-      <to uri="mock:a" />
+      <from uri="direct:start"/>
+      <to uri="mock:a"/>
       <transform>
         <simple>Hello ${body}</simple>
       </transform>
-      <to uri="mock:b" />
+      <to uri="mock:b"/>
     </route>
   </camelContext>
 
-  <camelContext id="camelContext2" xmlns="http://camel.apache.org/schema/spring"
-    trace="true" autoStartup="true">
+  <camelContext id="camelContext2" xmlns="http://camel.apache.org/schema/spring" trace="true" autoStartup="true">
     <route>
-      <from uri="direct:start2" />
-      <to uri="mock:c" />
+      <from uri="direct:start2"/>
+      <to uri="mock:c"/>
       <transform>
         <simple>Hello ${body}</simple>
       </transform>
-      <to uri="log:org.apache.camel.test.junit4.spring" />
+      <to uri="log:org.apache.camel.test.junit4.spring"/>
       <to uri="seda:context2.seda"/>
     </route>
   </camelContext>

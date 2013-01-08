@@ -14,8 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
-public class CamelSpringJUnit4ClassRunnerDisableJmxInheritedTest 
-        extends CamelSpringJUnit4ClassRunnerDisableJmxTest {
+import org.apache.camel.builder.RouteBuilder;
+
+public class TestRouteBuilder extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        
+        from("direct:z")
+            .routeId("excludedRoute")
+            .to("log:org.apache.camel.test.junit4.spring");
+    }
 }

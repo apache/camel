@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
-import org.apache.camel.test.spring.ExcludeRoutes;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertNull;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-@ExcludeRoutes(TestRouteBuilder.class)
-public class CamelSpringJUnit4ClassRunnerExcludeRoutesTest
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
+@ShutdownTimeout
+public class CamelSpringJUnit4ClassRunnerShutdownTimeoutInheritedOverrideTest
+        extends CamelSpringJUnit4ClassRunnerShutdownTimeoutTest {
 
+    @Test
     @Override
-    public void testExcludedRoute() {
-        assertNull(camelContext.getRoute("excludedRoute"));
+    public void testShutdownTimeout() throws Exception {
+        assertEquals(10, camelContext.getShutdownStrategy().getTimeout());
+        assertEquals(TimeUnit.SECONDS, camelContext.getShutdownStrategy().getTimeUnit());
     }
 }

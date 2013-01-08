@@ -30,7 +30,8 @@ public class CamelSpringTestSupportActiveProfileTest extends CamelSpringTestSupp
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         // must not refresh when using active profiles
-        return new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/test/junit4/CamelSpringActiveProfileTest-context.xml"}, false);
+        // lets reuse the xml file from the other test
+        return new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/test/spring/CamelSpringActiveProfileTest-context.xml"}, false);
     }
 
     @Override

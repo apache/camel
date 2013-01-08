@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.test.spring;
 
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.test.spring.StopWatchTestExecutionListener;
-import org.apache.camel.test.spring.UseAdviceWith;
 import org.apache.camel.util.StopWatch;
 import org.junit.Before;
 import org.junit.Test;
