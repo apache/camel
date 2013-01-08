@@ -58,7 +58,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     /**
      * The URL to the confluence page to convert.
      *
-     * @parameter property="${page}"
+     * @parameter expression="${page}"
      * @required
      */
     private String page;
@@ -66,7 +66,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     /**
      * The output file name for the pdf.
      *
-     * @parameter property="${pdf}"
+     * @parameter expression="${pdf}"
      *            default-value="${project.build.directory}/site/manual/${project.artifactId}-${project.version}.pdf"
      */
     private String pdf;
@@ -136,7 +136,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     /**
      * The maven project.
      *
-     * @parameter property="${project}"
+     * @parameter expression="${project}"
      * @required
      * @readonly
      */
