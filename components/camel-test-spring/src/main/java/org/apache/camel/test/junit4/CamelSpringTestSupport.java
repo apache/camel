@@ -19,6 +19,7 @@ package org.apache.camel.test.junit4;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
@@ -70,18 +71,40 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
                 if (isCreateCamelContextPerClass()) {
                     applicationContext = threadAppContext.get();
                     if (applicationContext == null) {
-                        applicationContext = createApplicationContext();
+                        applicationContext = doCreateApplicationContext();
                         threadAppContext.set(applicationContext);
                     }
                 } else {
-                    applicationContext = createApplicationContext();
+                    applicationContext = doCreateApplicationContext();
                 }
-                assertNotNull("Should have created a valid spring context", applicationContext);
                 SpringCamelContext.setNoStart(false);
             }
         } else {
             log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
         }
+    }
+
+    private AbstractApplicationContext doCreateApplicationContext() {
+        AbstractApplicationContext context = createApplicationContext();
+        assertNotNull("Should have created a valid Spring application context", context);
+
+        String[] profiles = activeProfiles();
+        if (profiles != null && profiles.length > 0) {
+            // the context must not be active
+            if (context.isActive()) {
+                throw new IllegalStateException("Cannot active profiles: " + Arrays.asList(profiles) + " on active Spring application context: " + context
+                    + ". The code in your createApplicationContext() method should be adjusted to create the application context with refresh = false as parameter");
+            }
+            log.info("Spring activating profiles: {}", Arrays.asList(profiles));
+            context.getEnvironment().setActiveProfiles(profiles);
+        }
+
+        // ensure the context has been refreshed at least once
+        if (!context.isActive()) {
+            context.refresh();
+        }
+
+        return context;
     }
 
     @Override
@@ -170,6 +193,23 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             fail("Spring bean <" + name + "> is not an instanceof " + type.getName() + " but is of type " + ObjectHelper.className(value));
             return null;
         }
+    }
+
+    /**
+     * Which active profiles should be used.
+     * <p/>
+     * <b>Important:</b> When using active profiles, then the code in {@link #createApplicationContext()} should create
+     * the Spring {@link AbstractApplicationContext} without refreshing. For example creating an
+     * {@link org.springframework.context.support.ClassPathXmlApplicationContext} you would need to pass in
+     * <tt>false</tt> in the refresh parameter, in the constructor.
+     * Camel will thrown an {@link IllegalStateException} if this is not correct stating this problem.
+     * The reason is that we cannot active profiles <b>after</b> a Spring application context has already
+     * been refreshed, and is active.
+     *
+     * @return an array of active profiles to use, use <tt>null</tt> to not use any active profiles.
+     */
+    protected String[] activeProfiles() {
+        return null;
     }
 
     @Override

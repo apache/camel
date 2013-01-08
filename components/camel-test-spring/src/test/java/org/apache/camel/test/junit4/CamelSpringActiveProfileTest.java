@@ -26,15 +26,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration 
+// START SNIPPET: e1
+
+/**
+ * Spring style testing with annotations to configure and setup the test.
+ * <p/>
+ * As we do next extend any base test class, we need to inject our resources
+ * for testing such as the {@link CamelContext} and {@link ProducerTemplate}.
+ */
+@ContextConfiguration
 @ActiveProfiles("test")
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 public class CamelSpringActiveProfileTest {
+
     @Autowired
     protected CamelContext camelContext;
     @Produce(uri = "direct:start", context = "camelContext")
     protected ProducerTemplate start;
- 
+
     @Test
     public void testLoadActiveProfile() throws InterruptedException {
         MockEndpoint mock = camelContext.getEndpoint("mock:test", MockEndpoint.class);
@@ -44,3 +53,4 @@ public class CamelSpringActiveProfileTest {
     }
 
 }
+// END SNIPPET: e1
