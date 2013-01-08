@@ -16,21 +16,6 @@
  */
 package org.apache.camel.component.hl7;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.GenericParser;
-import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
-
 import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_CONTROL;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_TYPE;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_PROCESSING_ID;
@@ -42,6 +27,21 @@ import static org.apache.camel.component.hl7.HL7Constants.HL7_SENDING_FACILITY;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_TIMESTAMP;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_TRIGGER_EVENT;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ExchangeHelper;
+
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.parser.GenericParser;
+import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * HL7 DataFormat (supports v2.x of the HL7 protocol).
@@ -79,60 +79,60 @@ import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
  */
 public class HL7DataFormat implements DataFormat {
 
-    private static final Map<String, String> HEADER_MAP = new HashMap<String, String>();
+	private static final Map<String, String> HEADER_MAP = new HashMap<String, String>();
 
-    private Parser parser = new GenericParser();
-    
-    static {
-        HEADER_MAP.put(HL7_SENDING_APPLICATION, "MSH-3");
-        HEADER_MAP.put(HL7_SENDING_FACILITY, "MSH-4");
-        HEADER_MAP.put(HL7_RECEIVING_APPLICATION, "MSH-5");
-        HEADER_MAP.put(HL7_RECEIVING_FACILITY, "MSH-6");
-        HEADER_MAP.put(HL7_TIMESTAMP, "MSH-7");
-        HEADER_MAP.put(HL7_SECURITY, "MSH-8");
-        HEADER_MAP.put(HL7_MESSAGE_TYPE, "MSH-9-1");
-        HEADER_MAP.put(HL7_TRIGGER_EVENT, "MSH-9-2");
-        HEADER_MAP.put(HL7_MESSAGE_CONTROL, "MSH-10");
-        HEADER_MAP.put(HL7_PROCESSING_ID, "MSH-11");
-        HEADER_MAP.put(HL7_VERSION_ID, "MSH-12");
-    }
+	private Parser parser = new GenericParser();
 
-    public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-        Message message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, body);
-        String encoded = HL7Converter.encode(message, parser);
-        outputStream.write(encoded.getBytes());
-    }
+	static {
+		HEADER_MAP.put(HL7_SENDING_APPLICATION, "MSH-3");
+		HEADER_MAP.put(HL7_SENDING_FACILITY, "MSH-4");
+		HEADER_MAP.put(HL7_RECEIVING_APPLICATION, "MSH-5");
+		HEADER_MAP.put(HL7_RECEIVING_FACILITY, "MSH-6");
+		HEADER_MAP.put(HL7_TIMESTAMP, "MSH-7");
+		HEADER_MAP.put(HL7_SECURITY, "MSH-8");
+		HEADER_MAP.put(HL7_MESSAGE_TYPE, "MSH-9-1");
+		HEADER_MAP.put(HL7_TRIGGER_EVENT, "MSH-9-2");
+		HEADER_MAP.put(HL7_MESSAGE_CONTROL, "MSH-10");
+		HEADER_MAP.put(HL7_PROCESSING_ID, "MSH-11");
+		HEADER_MAP.put(HL7_VERSION_ID, "MSH-12");
+	}
 
-    public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        String body = ExchangeHelper.convertToMandatoryType(exchange, String.class, inputStream);
-        Message message = HL7Converter.parse(body, parser);
+	public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
+		Message message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, body);
+		String encoded = HL7Converter.encode(message, parser);
+		String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+		outputStream.write(charsetName != null ? encoded.getBytes(charsetName) : encoded.getBytes());
+	}
 
-        // add MSH fields as message out headers
-        Terser terser = new Terser(message);
-        for (Map.Entry<String, String> entry : HEADER_MAP.entrySet()) {
-            exchange.getOut().setHeader(entry.getKey(), terser.get(entry.getValue()));
-        }
-        return message;
-    }
+	public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
+		String body = ExchangeHelper.convertToMandatoryType(exchange, String.class, inputStream);
+		Message message = HL7Converter.parse(body, parser);
 
-    public boolean isValidate() {
-        return parser.getValidationContext() instanceof NoValidation;
-    }
+		// add MSH fields as message out headers
+		Terser terser = new Terser(message);
+		for (Map.Entry<String, String> entry : HEADER_MAP.entrySet()) {
+			exchange.getOut().setHeader(entry.getKey(), terser.get(entry.getValue()));
+		}
+		return message;
+	}
 
-    public void setValidate(boolean validate) {
-        if (!validate) {
-            parser.setValidationContext(new NoValidation());
-        }
-    }
+	public boolean isValidate() {
+		return parser.getValidationContext() instanceof NoValidation;
+	}
 
-    public Parser getParser() {
-        return parser;
-    }
+	public void setValidate(boolean validate) {
+		if (!validate) {
+			parser.setValidationContext(new NoValidation());
+		}
+	}
 
-    public void setParser(Parser parser) {
-        this.parser = parser;
-    }
-    
-    
+	public Parser getParser() {
+		return parser;
+	}
+
+	public void setParser(Parser parser) {
+		this.parser = parser;
+	}
+
 }
 
