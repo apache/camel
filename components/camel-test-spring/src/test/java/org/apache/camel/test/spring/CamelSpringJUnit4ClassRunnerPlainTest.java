@@ -25,7 +25,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.DefaultManagementStrategy;
-import org.apache.camel.test.junit4.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.util.StopWatch;
 
 import org.junit.Test;
