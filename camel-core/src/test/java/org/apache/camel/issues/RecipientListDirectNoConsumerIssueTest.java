@@ -28,7 +28,7 @@ public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:foo,direct:foo");
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:foo;direct:foo");
 
         assertMockEndpointsSatisfied();
     }
@@ -51,7 +51,7 @@ public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
                 onException(Exception.class).handled(true).to("mock:error");
 
                 from("direct:start")
-                    .recipientList().header("foo");
+                    .recipientList().header("foo").delimiter(";");
             }
         };
     }
