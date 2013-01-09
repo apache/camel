@@ -30,6 +30,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 
 import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_CONTROL;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_TYPE;
@@ -100,7 +101,8 @@ public class HL7DataFormat implements DataFormat {
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         Message message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, body);
         String encoded = HL7Converter.encode(message, parser);
-        outputStream.write(encoded.getBytes());
+        String charsetName = IOHelper.getCharsetName(exchange);
+        outputStream.write(encoded.getBytes(charsetName));
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {

@@ -21,7 +21,7 @@ import ca.uhn.hl7v2.model.v24.message.ADR_A19;
 import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
-
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -31,7 +31,9 @@ import org.junit.Test;
  * Unit test for HL7 DataFormat.
  */
 public class HL7DataFormatTest extends CamelTestSupport {
-
+    private static final String NONE_ISO_8859_1 = 
+        "\u221a\u00c4\u221a\u00e0\u221a\u00e5\u221a\u00ed\u221a\u00f4\u2248\u00ea";
+    
     @Test
     public void testMarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
@@ -43,6 +45,32 @@ public class HL7DataFormatTest extends CamelTestSupport {
         Message message = createHL7AsMessage();
         template.sendBody("direct:marshal", message);
 
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testMarshalISO8859() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:marshal");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(byte[].class);
+        mock.message(0).body(String.class).contains("MSA|AA|123");
+        mock.message(0).body(String.class).contains("QRD|20080805120000");
+        mock.message(0).body(String.class).not().contains(NONE_ISO_8859_1);
+        Message message = createHL7AsMessage();
+        template.sendBodyAndProperty("direct:marshal", message, Exchange.CHARSET_NAME, "ISO-8859-1");
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testMarshalUTF8() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:marshal");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(byte[].class);
+        mock.message(0).body(String.class).contains("MSA|AA|123");
+        mock.message(0).body(String.class).contains("QRD|20080805120000");
+        mock.message(0).body(String.class).contains(NONE_ISO_8859_1);
+        Message message = createHL7AsMessage();
+        template.sendBodyAndProperty("direct:marshal", message, Exchange.CHARSET_NAME, "UTF-8");
         assertMockEndpointsSatisfied();
     }
 
@@ -98,7 +126,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
 
     private static Message createHL7AsMessage() throws Exception {
         ADR_A19 adr = new ADR_A19();
-
+       
         // Populate the MSH Segment
         MSH mshSegment = adr.getMSH();
         mshSegment.getFieldSeparator().setValue("|");
@@ -113,6 +141,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
         MSA msa = adr.getMSA();
         msa.getAcknowledgementCode().setValue("AA");
         msa.getMessageControlID().setValue("123");
+        msa.getMsa3_TextMessage().setValue(NONE_ISO_8859_1);
 
         QRD qrd = adr.getQRD();
         qrd.getQueryDateTime().getTimeOfAnEvent().setValue("20080805120000");
