@@ -182,6 +182,17 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     }
 
     /**
+     * Set the delimiter
+     *
+     * @param delimiter the delimiter
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> delimiter(String delimiter) {
+        setDelimiter(delimiter);
+        return this;
+    }
+
+    /**
      * Set the aggregationStrategy
      *
      * @param aggregationStrategy the strategy
