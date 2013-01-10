@@ -43,6 +43,15 @@ public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testDirectNoConsumerOneMessageBar() throws Exception {
+        getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
+
+        template.sendBodyAndHeader("direct:bar", "Hello World", "bar", "mock:foo;direct:foo");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -52,6 +61,9 @@ public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
 
                 from("direct:start")
                     .recipientList().header("foo").delimiter(";");
+
+                from("direct:bar")
+                    .recipientList(";").header("bar");
             }
         };
     }
