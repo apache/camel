@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
