@@ -44,7 +44,7 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private String deadLetterUri;
     @XmlAttribute
-    private LoggingLevel level = LoggingLevel.ERROR;
+    private LoggingLevel level;
     @XmlAttribute
     private String logName;
     @XmlAttribute
