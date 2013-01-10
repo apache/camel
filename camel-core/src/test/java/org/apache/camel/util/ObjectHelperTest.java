@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.bean.MyStaticClass;
@@ -182,6 +184,173 @@ public class ObjectHelperTest extends TestCase {
         Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
         assertEquals("bean:foo?method=bar('A','B','C')", it.next());
         assertEquals("bean:bar?method=cool('A','Hello,World')", it.next());
+    }
+
+    public void testCreateIteratorWithPrimitiveArrayTypes() {
+        Iterator<?> it = ObjectHelper.createIterator(new byte[] {13, Byte.MAX_VALUE, 7, Byte.MIN_VALUE}, null);
+        assertTrue(it.hasNext());
+        assertEquals(Byte.valueOf((byte) 13), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Byte.MAX_VALUE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Byte.valueOf((byte) 7), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Byte.MIN_VALUE, it.next());
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new byte[] {}, null);
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new short[] {13, Short.MAX_VALUE, 7, Short.MIN_VALUE}, null);
+        assertTrue(it.hasNext());
+        assertEquals(Short.valueOf((short) 13), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Short.MAX_VALUE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Short.valueOf((short) 7), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Short.MIN_VALUE, it.next());
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new short[] {}, null);
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new int[] {13, Integer.MAX_VALUE, 7, Integer.MIN_VALUE}, null);
+        assertTrue(it.hasNext());
+        assertEquals(Integer.valueOf(13), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Integer.MAX_VALUE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Integer.valueOf(7), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Integer.MIN_VALUE, it.next());
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new int[] {}, null);
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new long[] {13, Long.MAX_VALUE, 7, Long.MIN_VALUE}, null);
+        assertTrue(it.hasNext());
+        assertEquals(Long.valueOf(13), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Long.MAX_VALUE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Long.valueOf(7), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Long.MIN_VALUE, it.next());
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new long[] {}, null);
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new float[] {13.7F, Float.MAX_VALUE, 7.13F, Float.MIN_VALUE}, null);
+        assertTrue(it.hasNext());
+        assertEquals(Float.valueOf(13.7F), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Float.MAX_VALUE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Float.valueOf(7.13F), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Float.MIN_VALUE, it.next());
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new float[] {}, null);
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new double[] {13.7D, Double.MAX_VALUE, 7.13D, Double.MIN_VALUE}, null);
+        assertTrue(it.hasNext());
+        assertEquals(Double.valueOf(13.7D), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Double.MAX_VALUE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Double.valueOf(7.13D), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Double.MIN_VALUE, it.next());
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new double[] {}, null);
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new char[] {'C', 'a', 'm', 'e', 'l'}, null);
+        assertTrue(it.hasNext());
+        assertEquals(Character.valueOf('C'), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Character.valueOf('a'), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Character.valueOf('m'), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Character.valueOf('e'), it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Character.valueOf('l'), it.next());
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new char[] {}, null);
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new boolean[] {false, true, false, true, true}, null);
+        assertTrue(it.hasNext());
+        assertEquals(Boolean.FALSE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Boolean.TRUE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Boolean.FALSE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Boolean.TRUE, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(Boolean.TRUE, it.next());
+        assertFalse(it.hasNext());
+
+        it = ObjectHelper.createIterator(new boolean[] {}, null);
+        assertFalse(it.hasNext());
+    }
+
+    public void testIsPrimitiveType() {
+        assertTrue(ObjectHelper.isPrimitiveType(byte.class));
+        assertTrue(ObjectHelper.isPrimitiveType(short.class));
+        assertTrue(ObjectHelper.isPrimitiveType(int.class));
+        assertTrue(ObjectHelper.isPrimitiveType(long.class));
+        assertTrue(ObjectHelper.isPrimitiveType(float.class));
+        assertTrue(ObjectHelper.isPrimitiveType(double.class));
+        assertTrue(ObjectHelper.isPrimitiveType(char.class));
+        assertTrue(ObjectHelper.isPrimitiveType(boolean.class));
+        assertTrue(ObjectHelper.isPrimitiveType(void.class));
+
+        assertFalse(ObjectHelper.isPrimitiveType(Object.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Byte.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Short.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Integer.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Long.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Float.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Double.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Character.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Boolean.class));
+        assertFalse(ObjectHelper.isPrimitiveType(Void.class));
+        assertFalse(ObjectHelper.isPrimitiveType(CamelContext.class));
+        assertFalse(ObjectHelper.isPrimitiveType(null));
+    }
+
+    public void testIsPrimitiveArrayType() {
+        assertTrue(ObjectHelper.isPrimitiveArrayType(byte[].class));
+        assertTrue(ObjectHelper.isPrimitiveArrayType(short[].class));
+        assertTrue(ObjectHelper.isPrimitiveArrayType(int[].class));
+        assertTrue(ObjectHelper.isPrimitiveArrayType(long[].class));
+        assertTrue(ObjectHelper.isPrimitiveArrayType(float[].class));
+        assertTrue(ObjectHelper.isPrimitiveArrayType(double[].class));
+        assertTrue(ObjectHelper.isPrimitiveArrayType(char[].class));
+        assertTrue(ObjectHelper.isPrimitiveArrayType(boolean[].class));
+
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Object[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Byte[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Short[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Integer[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Long[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Float[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Double[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Character[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Boolean[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(Void[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(CamelContext[].class));
+        assertFalse(ObjectHelper.isPrimitiveArrayType(null));
     }
 
     public void testBefore() {
