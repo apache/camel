@@ -66,9 +66,6 @@ public final class ObjectHelper {
     private static final transient Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
     private static final String DEFAULT_DELIMITER = ",";
     @SuppressWarnings("unchecked")
-    private static final List<?> PRIMITIVE_TYPES = Arrays.asList(byte.class, short.class, int.class, long.class,
-                                                                 float.class, double.class, char.class, boolean.class, void.class);
-    @SuppressWarnings("unchecked")
     private static final List<?> PRIMITIVE_ARRAY_TYPES = Arrays.asList(byte[].class, short[].class, int[].class, long[].class,
                                                                        float[].class, double[].class, char[].class, boolean[].class);
 
@@ -1083,16 +1080,6 @@ public final class ObjectHelper {
         a = convertPrimitiveTypeToWrapperType(a);
         b = convertPrimitiveTypeToWrapperType(b);
         return a.isAssignableFrom(b);
-    }
-
-    /**
-     * Returns if the given {@code clazz} type is a Java primitive type.
-     * 
-     * @param clazz the Java type to be checked
-     * @return {@code true} if the given type is a Java primitive type
-     */
-    public static boolean isPrimitiveType(Class<?> clazz) {
-        return PRIMITIVE_TYPES.contains(clazz);
     }
 
     /**
