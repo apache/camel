@@ -532,24 +532,16 @@ public final class ObjectHelper {
                     int idx = -1;
 
                     public boolean hasNext() {
-                        return (idx + 1) < length();
+                        return (idx + 1) < Array.getLength(array);
                     }
 
                     public Object next() {
                         idx++;
-                        return current(idx);
+                        return Array.get(array, idx);
                     }
 
                     public void remove() {
                         throw new UnsupportedOperationException();
-                    }
-
-                    private int length() {
-                        return Array.getLength(array);
-                    }
-
-                    private Object current(int index) {
-                        return Array.get(array, index);
                     }
 
                 };
