@@ -36,11 +36,20 @@
       <cm:property name="service.address" value="http://localhost:8000/serviceEndpoint" />
     </cm:default-properties>
   </cm:property-placeholder>
-
+  
+  <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+  <bean id="loggingInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+ 
   <cxf:cxfEndpoint id="routerEndpoint" address="{{router.address}}">
     <cxf:properties>
       <entry key="dataFormat" value="PAYLOAD"/>
     </cxf:properties>
+    <cxf:outInterceptors>
+      <ref component-id="loggingOutInterceptor"/>
+    </cxf:outInterceptors>
+    <cxf:inInterceptors>
+      <ref component-id="loggingInInterceptor"/>
+    </cxf:inInterceptors>
   </cxf:cxfEndpoint>
 
   <cxf:cxfEndpoint id="serviceEndpoint" address="{{service.address}}">
