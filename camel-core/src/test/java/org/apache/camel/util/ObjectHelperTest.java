@@ -304,31 +304,6 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(it.hasNext());
     }
 
-    public void testIsPrimitiveType() {
-        assertTrue(ObjectHelper.isPrimitiveType(byte.class));
-        assertTrue(ObjectHelper.isPrimitiveType(short.class));
-        assertTrue(ObjectHelper.isPrimitiveType(int.class));
-        assertTrue(ObjectHelper.isPrimitiveType(long.class));
-        assertTrue(ObjectHelper.isPrimitiveType(float.class));
-        assertTrue(ObjectHelper.isPrimitiveType(double.class));
-        assertTrue(ObjectHelper.isPrimitiveType(char.class));
-        assertTrue(ObjectHelper.isPrimitiveType(boolean.class));
-        assertTrue(ObjectHelper.isPrimitiveType(void.class));
-
-        assertFalse(ObjectHelper.isPrimitiveType(Object.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Byte.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Short.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Integer.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Long.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Float.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Double.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Character.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Boolean.class));
-        assertFalse(ObjectHelper.isPrimitiveType(Void.class));
-        assertFalse(ObjectHelper.isPrimitiveType(CamelContext.class));
-        assertFalse(ObjectHelper.isPrimitiveType(null));
-    }
-
     public void testIsPrimitiveArrayType() {
         assertTrue(ObjectHelper.isPrimitiveArrayType(byte[].class));
         assertTrue(ObjectHelper.isPrimitiveArrayType(short[].class));
