@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.RedeliveryPolicyDefinition;
 
 /**
  * The &lt;errorHandler&gt; tag element.
@@ -34,15 +33,15 @@ import org.apache.camel.model.RedeliveryPolicyDefinition;
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("unused")
-public class ErrorHandlerDefinition extends IdentifiedType {    
+public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
     @XmlAttribute
     private String deadLetterUri;
     @XmlAttribute
-    private LoggingLevel level = LoggingLevel.ERROR;
+    private LoggingLevel level;
     @XmlAttribute
-    private LoggingLevel rollbackLoggingLevel = LoggingLevel.WARN;
+    private LoggingLevel rollbackLoggingLevel;
     @XmlAttribute
     private String logName;
     @XmlAttribute
