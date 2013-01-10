@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -544,53 +545,11 @@ public final class ObjectHelper {
                     }
 
                     private int length() {
-                        int answer = 0;
-                        if (array instanceof byte[]) {
-                            answer = ((byte[]) array).length;
-                        } else if (array instanceof short[]) {
-                            answer = ((short[]) array).length;
-                        } else if (array instanceof int[]) {
-                            answer = ((int[]) array).length;
-                        } else if (array instanceof long[]) {
-                            answer = ((long[]) array).length;
-                        } else if (array instanceof float[]) {
-                            answer = ((float[]) array).length;
-                        } else if (array instanceof double[]) {
-                            answer = ((double[]) array).length;
-                        } else if (array instanceof char[]) {
-                            answer = ((char[]) array).length;
-                        } else if (array instanceof boolean[]) {
-                            answer = ((boolean[]) array).length;
-                        } else {
-                            throw new IllegalStateException("Unexpected type for " + array);
-                        }
-
-                        return answer;
+                        return Array.getLength(array);
                     }
 
                     private Object current(int index) {
-                        Object answer = 0;
-                        if (array instanceof byte[]) {
-                            answer = Byte.valueOf(((byte[]) array)[index]);
-                        } else if (array instanceof short[]) {
-                            answer = Short.valueOf(((short[]) array)[index]);
-                        } else if (array instanceof int[]) {
-                            answer = Integer.valueOf(((int[]) array)[index]);
-                        } else if (array instanceof long[]) {
-                            answer = Long.valueOf(((long[]) array)[index]);
-                        } else if (array instanceof float[]) {
-                            answer = Float.valueOf(((float[]) array)[index]);
-                        } else if (array instanceof double[]) {
-                            answer = Double.valueOf(((double[]) array)[index]);
-                        } else if (array instanceof char[]) {
-                            answer = Character.valueOf(((char[]) array)[index]);
-                        } else if (array instanceof boolean[]) {
-                            answer = Boolean.valueOf(((boolean[]) array)[index]);
-                        } else {
-                            throw new IllegalStateException("Unexpected type for " + array);
-                        }
-
-                        return answer;
+                        return Array.get(array, index);
                     }
 
                 };
