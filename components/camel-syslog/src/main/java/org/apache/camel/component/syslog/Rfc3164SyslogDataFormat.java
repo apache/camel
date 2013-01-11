@@ -52,9 +52,14 @@ public class Rfc3164SyslogDataFormat implements DataFormat {
             message.setRemoteAddress(exchange.getIn().getHeader("CamelMinaRemoteAddress", String.class));
             exchange.getOut().setHeader(SyslogConstants.SYSLOG_REMOTE_ADDRESS, message.getRemoteAddress());
         }
+        
+        if (exchange.getIn().getHeader("CamelNettyLocalAddress") != null) {
+            message.setRemoteAddress(exchange.getIn().getHeader("CamelNettyLocalAddress", String.class));
+            exchange.getOut().setHeader(SyslogConstants.SYSLOG_LOCAL_ADDRESS, message.getRemoteAddress());
+        }
 
         if (exchange.getIn().getHeader("CamelNettyRemoteAddress") != null) {
-            message.setRemoteAddress(exchange.getIn().getHeader("CamelMinaRemoteAddress", String.class));
+            message.setRemoteAddress(exchange.getIn().getHeader("CamelNettyRemoteAddress", String.class));
             exchange.getOut().setHeader(SyslogConstants.SYSLOG_REMOTE_ADDRESS, message.getRemoteAddress());
         }
 
