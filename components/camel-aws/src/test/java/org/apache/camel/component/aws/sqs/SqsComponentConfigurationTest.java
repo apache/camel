@@ -119,4 +119,23 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         SqsComponent component = new SqsComponent(context);
         component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx");
     }
+    
+    // Setting extendMessageVisibility on an SQS consumer should make visibilityTimeout compulsory
+    @Test(expected = IllegalArgumentException.class)
+    public void createEndpointWithExtendMessageVisibilityAndNoVisibilityTimeoutThrowsException() throws Exception {
+        SqsComponent component = new SqsComponent(context);
+        component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&extendMessageVisibility=true");
+    }
+    
+    @Test
+    public void createEndpointWithExtendMessageVisibilityTrueAndVisibilityTimeoutSet() throws Exception {
+        SqsComponent component = new SqsComponent(context);
+        assertNotNull(component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&visibilityTimeout=30&extendMessageVisibility=true"));
+    }
+    
+    @Test
+    public void createEndpointWithExtendMessageVisibilityFalseAndVisibilityTimeoutSet() throws Exception {
+        SqsComponent component = new SqsComponent(context);
+        assertNotNull(component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&visibilityTimeout=30&extendMessageVisibility=false"));
+    }
 }
