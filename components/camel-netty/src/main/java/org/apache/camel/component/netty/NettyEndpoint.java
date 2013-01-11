@@ -54,6 +54,7 @@ public class NettyEndpoint extends DefaultEndpoint {
         exchange.getIn().setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
         exchange.getIn().setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
         exchange.getIn().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
+        exchange.getIn().setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, messageEvent.getChannel().getLocalAddress());
         NettyPayloadHelper.setIn(exchange, messageEvent.getMessage());
         return exchange;
     }
