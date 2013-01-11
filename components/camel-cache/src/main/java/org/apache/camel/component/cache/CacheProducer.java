@@ -43,6 +43,7 @@ public class CacheProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        cache = getEndpoint().initializeCache();
     }
 
     @Override
@@ -52,9 +53,6 @@ public class CacheProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         LOG.trace("Cache Name: {}", config.getCacheName());
-
-        cache = getEndpoint().initializeCache();
-
         String key = exchange.getIn().getHeader(CacheConstants.CACHE_KEY, String.class);
         String operation = exchange.getIn().getHeader(CacheConstants.CACHE_OPERATION, String.class);
 

@@ -56,9 +56,9 @@ public class CacheRegistryRefTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        super.setUp();
         eventListenerRegistry.addCacheEventListener(new TestCacheEventListener());
         loaderRegistry.addCacheLoader(new TestLoader());
+        super.setUp();
     }
 
     @Override
@@ -90,7 +90,7 @@ public class CacheRegistryRefTest extends CamelTestSupport {
                 in.setBody("Hello World");
             }
         });
-
+        
         CacheManager cm = cacheEndpoint.getCacheManagerFactory().getInstance();
         Cache cache = cm.getCache(cacheEndpoint.getConfig().getCacheName());
         Set<CacheEventListener> ehcacheEventListners = cache.getCacheEventNotificationService().getCacheEventListeners();
