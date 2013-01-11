@@ -31,6 +31,7 @@ import javax.script.ScriptException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
@@ -369,10 +370,16 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         ScriptContext context = engine.getContext();
         int scope = ScriptContext.ENGINE_SCOPE;
         context.setAttribute("context", exchange.getContext(), scope);
+        context.setAttribute("camelContext", exchange.getContext(), scope);
         context.setAttribute("exchange", exchange, scope);
-        context.setAttribute("request", exchange.getIn(), scope);
+        Message in = exchange.getIn();
+        context.setAttribute("in", in, scope);
+        context.setAttribute("request", in, scope);
+        context.setAttribute("headers", in.getHeaders(), scope);
         if (exchange.hasOut()) {
-            context.setAttribute("response", exchange.getOut(), scope);
+            Message out = exchange.getOut();
+            context.setAttribute("out", out , scope);
+            context.setAttribute("response", out, scope);
         }
         // to make using properties component easier
         context.setAttribute("properties", new ScriptPropertiesFunction(exchange.getContext()), scope);
