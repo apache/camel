@@ -373,9 +373,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         context.setAttribute("camelContext", exchange.getContext(), scope);
         context.setAttribute("exchange", exchange, scope);
         Message in = exchange.getIn();
-        context.setAttribute("in", in, scope);
         context.setAttribute("request", in, scope);
         context.setAttribute("headers", in.getHeaders(), scope);
+        context.setAttribute("body", in.getBody(), scope);
         if (exchange.hasOut()) {
             Message out = exchange.getOut();
             context.setAttribute("out", out , scope);
