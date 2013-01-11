@@ -48,7 +48,12 @@ public class SqsComponent extends DefaultComponent {
         if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
         }
-
+        
+        // Verify that visibilityTimeout is set if extendMessageVisibility is set to true.
+        if (configuration.isExtendMessageVisibility() && (configuration.getVisibilityTimeout() == null)) {
+            throw new IllegalArgumentException("Extending message visibilty (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
+        }
+        
         SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);
         sqsEndpoint.setConsumerProperties(parameters);
         return sqsEndpoint;
