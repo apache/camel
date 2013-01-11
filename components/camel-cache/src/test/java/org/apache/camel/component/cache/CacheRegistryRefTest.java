@@ -106,7 +106,6 @@ public class CacheRegistryRefTest extends BaseCacheTest {
 
         //Expecting 2 listeners- one added by us: TestCacheEventListener and
         //one added by ehcache by cfg file.
-        System.out.println("EventListenser is " + ehcacheEventListners.iterator().next());
         assertEquals("Number of registered listeners", 2, ehcacheEventListners.size());
 
         assertEquals("Number of registered loaders", 1, cacheLoaders.size());
