@@ -55,7 +55,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   //-----------------------------------------------------------------
 
   def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) = SAggregateDefinition(target.aggregate(expression, strategy))
-  def as[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
+  def as[Target](toType: Class[Target], charset: String = null) = wrap(target.convertBodyTo(toType, charset))
   def attempt: STryDefinition = STryDefinition(target.doTry())
 
   def bean(bean: Any) = bean match {
@@ -65,6 +65,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   }
 
   def choice = SChoiceDefinition(target.choice)
+  def convertBodyTo[Target](toType: Class[Target], charset: String = null) = wrap(target.convertBodyTo(toType, charset))
 
   def delay(period: Period) = SDelayDefinition(target.delay(period.milliseconds))
   def dynamicRouter(expression: Exchange => Any) = wrap(target.dynamicRouter(expression))
@@ -93,7 +94,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def multicast = SMulticastDefinition(target.multicast)
 
   def onCompletion: SOnCompletionDefinition = {
-    var completion = SOnCompletionDefinition(target.onCompletion)
+    val completion = SOnCompletionDefinition(target.onCompletion)
     // let's end the block in the Java DSL, we have a better way of handling blocks here
     completion.target.end
     completion
@@ -121,10 +122,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def routingSlip(header: String) = wrap(target.routingSlip(header))
   @Deprecated
   def routingSlip(header: String, separator: String) = wrap(target.routingSlip(header, separator))
-  
-  def routingSlip(expression: Exchange => Any, separator: String) = wrap(target.routingSlip(expression, separator)) 
+  def routingSlip(expression: Exchange => Any, separator: String) = wrap(target.routingSlip(expression, separator))
   def routingSlip(expression: Exchange => Any) = wrap(target.routingSlip(expression))
-  
 
   def setBody(expression: Exchange => Any) = wrap(target.setBody(expression))
   def setFaultBody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))

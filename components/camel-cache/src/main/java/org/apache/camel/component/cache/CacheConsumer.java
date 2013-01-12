@@ -16,23 +16,35 @@
  */
 package org.apache.camel.component.cache;
 
+import net.sf.ehcache.Ehcache;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheConsumer extends DefaultConsumer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(CacheConsumer.class);
 
-    private CacheConfiguration config;
+    private CacheEventListener cacheEventListener;
+    
+    private Ehcache cache;
 
     public CacheConsumer(Endpoint endpoint, Processor processor, CacheConfiguration config) {
         super(endpoint, processor);
-        this.config = config;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         createConsumerCacheConnection();
+        LOG.debug("initialize the cache");
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        // unregisty the listenser when the consumer is stopped
+        cache.getCacheEventNotificationService().unregisterListener(cacheEventListener);
     }
 
     @Override
@@ -41,11 +53,10 @@ public class CacheConsumer extends DefaultConsumer {
     }
 
     protected void createConsumerCacheConnection() {
-        CacheEventListener cacheEventListener = new CacheEventListener();
+        cacheEventListener = new CacheEventListener();
         cacheEventListener.setCacheConsumer(this);
-
-        config.getEventListenerRegistry().addCacheEventListener(cacheEventListener);
-
-        getEndpoint().initializeCache();
+        cache = getEndpoint().initializeCache();
+        // registry the CacheEventListener directly 
+        cache.getCacheEventNotificationService().registerListener(cacheEventListener);
     }
 }

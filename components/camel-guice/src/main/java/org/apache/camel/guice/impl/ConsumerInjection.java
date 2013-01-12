@@ -23,9 +23,9 @@ import com.google.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
+import org.apache.camel.guice.support.MethodHandler;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.guiceyfruit.support.MethodHandler;
 
 /**
  * @version 

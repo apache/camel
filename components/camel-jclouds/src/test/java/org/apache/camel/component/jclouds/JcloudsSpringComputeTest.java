@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -132,27 +132,6 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         template.sendBodyAndHeaders("direct:start", null, listNodeHeaders("3", "other", "RUNNING"));
 
         result.assertIsSatisfied();
-
-        List<Exchange> exchanges = result.getExchanges();
-        Exchange exchange = exchanges.get(3);
-        Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
-        assertEquals("Nodes should be 2", 2, nodeMetadatas.size());
-        NodeMetadata nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
-        assertEquals("other", nodeMetadata.getGroup());
-
-        exchange = exchanges.get(4);
-        nodeMetadatas = exchange.getIn().getBody(Set.class);
-        assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
-        nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
-        assertEquals("other", nodeMetadata.getGroup());
-        assertEquals("3", nodeMetadata.getId());
-
-        exchange = exchanges.get(5);
-        nodeMetadatas = exchange.getIn().getBody(Set.class);
-        assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
-        nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
-        assertEquals("other", nodeMetadata.getGroup());
-        assertEquals("3", nodeMetadata.getId());
     }
 
     @Test

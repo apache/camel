@@ -27,7 +27,7 @@ import org.apache.camel.spi.UnitOfWork;
  * This ensures that the {@link Exchange} have details under which route its being currently processed.
  */
 public class RouteContextProcessor extends DelegateAsyncProcessor {
-    
+
     private final RouteContext routeContext;
 
     public RouteContextProcessor(RouteContext routeContext, Processor processor) {
@@ -38,17 +38,17 @@ public class RouteContextProcessor extends DelegateAsyncProcessor {
     @Override
     protected boolean processNext(final Exchange exchange, final AsyncCallback callback) {
         // push the current route context
-        if (exchange.getUnitOfWork() != null) {
-            exchange.getUnitOfWork().pushRouteContext(routeContext);
+        final UnitOfWork unitOfWork = exchange.getUnitOfWork();
+        if (unitOfWork != null) {
+            unitOfWork.pushRouteContext(routeContext);
         }
 
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 try {
-                    UnitOfWork uow = exchange.getUnitOfWork();
                     // pop the route context we just used
-                    if (uow != null) {
-                        uow.popRouteContext();
+                    if (unitOfWork != null) {
+                        unitOfWork.popRouteContext();
                     }
                 } catch (Exception e) {
                     exchange.setException(e);

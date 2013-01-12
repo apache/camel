@@ -16,77 +16,16 @@
  */
 package org.apache.camel.test.junit4;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.apache.camel.test.spring.CamelSpringTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringTestContextLoaderTestExecutionListener;
-import org.apache.camel.test.spring.DisableJmxTestExecutionListener;
-import org.apache.camel.test.spring.StopWatchTestExecutionListener;
 import org.junit.runners.model.InitializationError;
-import org.springframework.test.context.TestContextManager;
-import org.springframework.test.context.TestExecutionListener;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * An implementation bringing the functionality of {@link CamelSpringTestSupport} to
- * Spring Test based test cases.  This approach allows developers to implement tests
- * for their Spring based applications/routes using the typical Spring Test conventions
- * for test development.
+ * @deprecated use {@link org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner}
  */
-public class CamelSpringJUnit4ClassRunner extends SpringJUnit4ClassRunner {
+@Deprecated
+public class CamelSpringJUnit4ClassRunner extends org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner {
 
     public CamelSpringJUnit4ClassRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
-    }
-
-    /**
-     * Returns the specialized manager instance that provides tight integration between Camel testing
-     * features and Spring.
-     * 
-     * @return a new instance of {@link CamelTestContextManager}.
-     */
-    @Override
-    protected TestContextManager createTestContextManager(Class<?> clazz) {
-        return new CamelTestContextManager(clazz, getDefaultContextLoaderClassName(clazz));
-    }
-    
-    /**
-     * Returns the specialized loader for tight integration between Camel testing features
-     * and the application context initialization.
-     * 
-     * @return Returns the class name for {@link CamelSpringTestContextLoader}
-     */
-    @Override
-    protected String getDefaultContextLoaderClassName(Class<?> clazz) {
-        return CamelSpringTestContextLoader.class.getName();
-    }
-
-    /**
-     * An implementation providing additional integration between Spring Test and Camel
-     * testing features.
-     */
-    public static final class CamelTestContextManager extends TestContextManager {
-
-        public CamelTestContextManager(Class<?> testClass, String defaultContextLoaderClassName) {
-            super(testClass, defaultContextLoaderClassName);
-        }
-
-        /**
-         * Augments the default listeners with additional listeners to provide support
-         * for the Camel testing features.
-         */
-        @Override
-        protected Set<Class<? extends TestExecutionListener>> getDefaultTestExecutionListenerClasses() {
-            Set<Class<? extends TestExecutionListener>> classes = new LinkedHashSet<Class<? extends TestExecutionListener>>();
-
-            classes.add(CamelSpringTestContextLoaderTestExecutionListener.class);
-            classes.addAll(super.getDefaultTestExecutionListenerClasses());
-            classes.add(DisableJmxTestExecutionListener.class);
-            classes.add(StopWatchTestExecutionListener.class);
-
-            return classes;
-        }
     }
 
 }

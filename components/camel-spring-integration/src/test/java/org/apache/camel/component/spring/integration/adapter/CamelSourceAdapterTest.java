@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.spring.integration.adapter;
 
-import org.apache.camel.ExchangePattern;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,20 +27,27 @@ import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.MessageHandler;
 
 public class CamelSourceAdapterTest extends CamelSpringTestSupport {
+
     @Test
     public void testSendingOneWayMessage() throws Exception {
-        DirectChannel channelA = applicationContext.getBean("channelA", DirectChannel.class);
+        final CountDownLatch latch = new CountDownLatch(1);
+        DirectChannel channelA = getMandatoryBean(DirectChannel.class, "channelA");
         channelA.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
+                latch.countDown();
                 assertEquals("We should get the message from channelA", message.getPayload(), "Willem");             
             }            
         });
+
         template.sendBody("direct:OneWay", "Willem");
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
     }
 
     @Test
     public void testSendingTwoWayMessage() throws Exception {
-        String result = (String) template.sendBody("direct:TwoWay", ExchangePattern.InOut, "Willem");
+        String result = template.requestBody("direct:TwoWay", "Willem", String.class);
+
         assertEquals("Can't get the right response", result, "Hello Willem");
     }
 

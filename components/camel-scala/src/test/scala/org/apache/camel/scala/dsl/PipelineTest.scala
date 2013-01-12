@@ -51,7 +51,7 @@ class PipelineTest extends ScalaTestSupport {
   }  
 
   @Test
-  def testIncrementSimple() = {
+  def testIncrementSimple() {
     "mock:result" expect { _.received(new java.lang.Integer(4))}
     test {
       "direct:a" ! 1
@@ -59,7 +59,7 @@ class PipelineTest extends ScalaTestSupport {
   }
 
   @Test
-  def testIncrementBlock() = {
+  def testIncrementBlock() {
     "mock:result" expect { _.received(new java.lang.Integer(4))}
     test {
       "direct:b" ! 1
@@ -67,7 +67,7 @@ class PipelineTest extends ScalaTestSupport {
   }
 
   @Test
-  def testExplicitPipeline() = {
+  def testExplicitPipeline() {
     test {
       "direct:start" ! "Hello world"
     }

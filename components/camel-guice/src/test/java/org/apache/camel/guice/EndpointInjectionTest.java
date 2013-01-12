@@ -18,10 +18,10 @@ package org.apache.camel.guice;
 
 import java.util.Collection;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.internal.Lists;
 import com.google.inject.name.Named;
 
 import org.apache.camel.EndpointInject;

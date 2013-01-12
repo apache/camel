@@ -18,8 +18,8 @@ package org.apache.camel.guice.produce;
 
 import org.apache.camel.Produce;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.guiceyfruit.testing.UseModule;
-import org.guiceyfruit.testing.junit4.GuiceyJUnit4;
+import org.apache.camel.guice.testing.UseModule;
+import org.apache.camel.guice.testing.junit4.GuiceyJUnit4;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
@@ -33,10 +34,8 @@ import org.junit.Test;
  */
 public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSupport {
 
-    // must user "consumer." prefix on the parameters to the file component
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true"
-                + "&initialDelay=2500&delay=5000&recursive=true";
+        return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true&recursive=true";
     }
 
     @Override
@@ -44,14 +43,21 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     public void setUp() throws Exception {
         deleteDirectory("target/ftpsetnamestest");
         super.setUp();
-        prepareFtpServer();
     }
 
     @Test
     public void testFtpRoute() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(2);
-        resultEndpoint.assertIsSatisfied();
+
+        prepareFtpServer();
+
+        context.startRoute("foo");
+
+        assertMockEndpointsSatisfied();
+        assertTrue(notify.matchesMockWaitTime());
+
         Exchange ex = resultEndpoint.getExchanges().get(0);
         byte[] bytes = ex.getIn().getBody(byte[].class);
         assertTrue("Logo size wrong", bytes.length > 10000);
@@ -94,7 +100,9 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).to("file:target/ftpsetnamestest", "mock:result");
+                from(getFtpUrl())
+                    .routeId("foo").noAutoStartup()
+                    .to("file:target/ftpsetnamestest", "mock:result");
             }
         };
     }

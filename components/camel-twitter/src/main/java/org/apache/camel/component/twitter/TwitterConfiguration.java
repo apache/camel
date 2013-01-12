@@ -76,6 +76,12 @@ public class TwitterConfiguration {
      * Used for time-based endpoints (trends, etc.)
      */
     private String date;
+    
+    /**
+     * Used to set the sinceId from pulling
+     */
+    private long sinceId  = 1;
+    
     private Date parsedDate;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -244,6 +250,15 @@ public class TwitterConfiguration {
 
         return twitterStream;
     }
+    
+    public long getSinceId() {
+        return sinceId;
+    }
+
+    public void setSinceId(long sinceId) {
+        this.sinceId = sinceId;
+    }
+
 }
 
 

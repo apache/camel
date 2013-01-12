@@ -26,16 +26,12 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/multidir/?recursive=true&initialDelay=2000&delay=5000"
-            + "&move=.done/${file:name}.old";
+    private String fileUrl = "file://target/multidir/?recursive=true&move=.done/${file:name}.old";
 
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/multidir");
         super.setUp();
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
 
     public void testMultiDir() throws Exception {
@@ -46,13 +42,21 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
         mock.expectedFileExists("target/multidir/.done/sub/hello.txt.old");
         mock.expectedFileExists("target/multidir/.done/sub/sub2/goodday.txt.old");
 
+        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
+
+        context.startRoute("foo");
+
         assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUrl)
+                        .routeId("foo").noAutoStartup()
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
@@ -79,7 +80,7 @@ public class SmppProducer extends DefaultProducer {
             }
         }
     }
-    
+
     private SMPPSession createSession() throws IOException {
         LOG.debug("Connecting to: " + getEndpoint().getConnectionString() + "...");
         
@@ -103,7 +104,7 @@ public class SmppProducer extends DefaultProducer {
         
         return session;
     }
-    
+
     /**
      * Factory method to easily instantiate a mock SMPPSession
      * 
@@ -117,10 +118,19 @@ public class SmppProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         if (session == null) {
-            if (getConfiguration().isLazySessionCreation()) {
+            if (this.configuration.isLazySessionCreation()) {
                 if (connectLock.tryLock()) {
                     try {
                         if (session == null) {
+                            // set the system id and password with which we will try to connect to the SMSC
+                            Message in = exchange.getIn();
+                            String systemId = in.getHeader(SmppConstants.SYSTEM_ID, String.class);
+                            String password = in.getHeader(SmppConstants.PASSWORD, String.class);
+                            if (systemId != null && password != null) {
+                                log.info("using the system id '{}' to connect to the SMSC...", systemId);
+                                this.configuration.setSystemId(systemId);
+                                this.configuration.setPassword(password);
+                            }
                             session = createSession();
                         }
                     } finally {

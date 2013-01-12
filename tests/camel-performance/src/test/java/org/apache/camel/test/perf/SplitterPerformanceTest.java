@@ -42,7 +42,7 @@ public class SplitterPerformanceTest extends AbstractBasePerformanceTest {
             + "</soapenv:Body>"
             + "</soapenv:Envelope>";
 
-    protected static String PAYLOAD = null;
+    protected static final String PAYLOAD;
 
     static {
         StringBuilder builder = new StringBuilder(HEADER);

@@ -22,7 +22,7 @@ import builder.RouteBuilder
 class ContentBasedRouterTest extends ScalaTestSupport {
 
   @Test
-  def testSimpleContentBasedRouter() = {
+  def testSimpleContentBasedRouter() {
     "mock:polyglot" expect {_.expectedMessageCount(3)}
     "mock:english" expect {_.received("<hello/>")}
     "mock:dutch" expect {_.received("<hallo/>")}

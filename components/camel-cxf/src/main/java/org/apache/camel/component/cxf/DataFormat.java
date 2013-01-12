@@ -31,8 +31,20 @@ public enum DataFormat {
 
 
     /**
+     * <p>
      * RAW is the raw message that is received from the transport layer.
      * Streaming and non-streaming are both supported.
+     * <p>
+     * <p>
+     * Only the interceptors of these phases are <b>preserved</b>:
+     * </p>
+     * <p>
+     * In phases: {Phase.RECEIVE , Phase.INVOKE, Phase.POST_INVOKE}
+     * </p>
+     * <p>
+     * Out phases: {Phase.PREPARE_SEND, Phase.WRITE, Phase.SEND, Phase.PREPARE_SEND_ENDING}
+     * </p>
+     * 
      */
     RAW,
     

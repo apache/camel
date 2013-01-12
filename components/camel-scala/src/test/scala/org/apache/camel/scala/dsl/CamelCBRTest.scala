@@ -25,7 +25,7 @@ class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
   override protected def createRouteBuilder = builder
 
   @Test
-  def testFoo {
+  def testFoo() {
     getMockEndpoint("mock:foo").expectedMessageCount(1)
     getMockEndpoint("mock:other").expectedMessageCount(0)
 
@@ -35,7 +35,7 @@ class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
   }
 
   @Test
-  def testOther {
+  def testOther() {
     getMockEndpoint("mock:foo").expectedMessageCount(0)
     getMockEndpoint("mock:other").expectedMessageCount(1)
 

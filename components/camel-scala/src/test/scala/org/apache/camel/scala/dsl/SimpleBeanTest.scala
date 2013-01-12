@@ -27,7 +27,7 @@ import org.junit.Test
 class SimpleBeanTest extends ScalaTestSupport {
 
   @Test
-  def testSimpleObject() = {
+  def testSimpleObject() {
     "mock:a" expect {_.received("Lucky Luke rides Jolly Jumper")}
     test {
       "direct:a" ! ("Lucky Luke")
@@ -35,7 +35,7 @@ class SimpleBeanTest extends ScalaTestSupport {
   }
   
   @Test
-  def testSimpleClass() = {
+  def testSimpleClass() {
     "mock:b" expect {_.received("Batman drives the batmobile")}
     test {
       "direct:b" ! ("Batman")
@@ -43,7 +43,7 @@ class SimpleBeanTest extends ScalaTestSupport {
   }
   
   @Test
-  def testSimpleRef() = {
+  def testSimpleRef() {
     "mock:c" expect {_.received("Aladin flies a carpet")}
     test {
       "direct:c" ! ("Aladin")

@@ -23,12 +23,16 @@ import builder.RouteBuilder
 class BasicRouteBuilderTest extends ScalaTestSupport {
 
   @Test
-  def testBasicRouteArrowSyntax() = assertBasicRoute("direct:a", "mock:a")
+  def testBasicRouteArrowSyntax() {
+    assertBasicRoute("direct:a", "mock:a")
+  }
 
   @Test
-  def testBasicRouteTextSyntax() = assertBasicRoute("direct:b", "mock:b")
+  def testBasicRouteTextSyntax() {
+    assertBasicRoute("direct:b", "mock:b")
+  }
 
-  def assertBasicRoute(from: String, to: String) = {
+  def assertBasicRoute(from: String, to: String) {
     to expect {
       _.expectedMessageCount(1)
     }

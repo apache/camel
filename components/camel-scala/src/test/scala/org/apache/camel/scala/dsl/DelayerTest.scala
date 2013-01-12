@@ -25,7 +25,7 @@ import builder.RouteBuilder
 class DelayerTest extends ScalaTestSupport {
   
   @Test
-  def testSimpleDelayer() = {
+  def testSimpleDelayer() {
     "mock:a" expect { _.count = 0 }      
     "seda:a" ! "any given message"   
     "mock:a" assert()
@@ -36,7 +36,7 @@ class DelayerTest extends ScalaTestSupport {
   }
 
   @Test
-  def testBlockDelayer() = {
+  def testBlockDelayer() {
     "mock:b" expect { _.count = 1 }
     "mock:c" expect { _.count = 0 }
     "seda:b" ! "any given message"   

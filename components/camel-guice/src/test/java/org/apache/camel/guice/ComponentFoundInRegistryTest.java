@@ -17,7 +17,6 @@
 package org.apache.camel.guice;
 
 import java.util.Hashtable;
-
 import javax.naming.InitialContext;
 
 import com.google.inject.Injector;
@@ -28,9 +27,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.guiceyfruit.Injectors;
-import org.guiceyfruit.jndi.GuiceInitialContextFactory;
-import org.guiceyfruit.jndi.JndiBind;
+import org.apache.camel.guice.inject.Injectors;
+import org.apache.camel.guice.jndi.GuiceInitialContextFactory;
+import org.apache.camel.guice.jndi.JndiBind;
 import org.junit.Assert;
 import org.junit.Test;
 

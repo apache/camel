@@ -1555,6 +1555,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a>
      * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients
      *
+     * @param delimiter  a custom delimiter to use
+     * @return the builder
+     */
+    public ExpressionClause<RecipientListDefinition<Type>> recipientList(String delimiter) {
+        RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>();
+        answer.setDelimiter(delimiter);
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a>
+     * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients
+     *
      * @return the expression clause to configure the expression to decide the destinations
      */
     public ExpressionClause<RecipientListDefinition<Type>> recipientList() {

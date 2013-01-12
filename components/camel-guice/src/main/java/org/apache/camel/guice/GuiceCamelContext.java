@@ -32,6 +32,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.guice.impl.GuiceInjector;
+import org.apache.camel.guice.inject.Injectors;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ComponentResolver;
@@ -40,7 +41,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
-import org.guiceyfruit.Injectors;
 
 /**
  * The default CamelContext implementation for working with Guice.

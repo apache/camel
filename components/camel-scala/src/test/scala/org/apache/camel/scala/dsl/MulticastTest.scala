@@ -24,7 +24,7 @@ import org.apache.camel.processor.MulticastParallelTest
 class ExplicitMulticastTest extends ScalaTestSupport {
 
   @Test
-  def testExplicitMulticast() = {
+  def testExplicitMulticast() {
     "mock:a" expect { _.count = 3 }
     "mock:b" expect { _.count = 3 }
     "mock:c" expect { _.count = 3 }

@@ -17,7 +17,7 @@
 package org.apache.camel.scala
 
 import junit.framework.TestCase
-import junit.framework.Assert._
+import junit.framework.TestCase.assertEquals
 
 import org.apache.camel.model._
 
@@ -29,7 +29,7 @@ import org.apache.camel.model._
  */
 class UsingModelTest extends TestCase {
 
-  def testUsingModel() = {
+  def testUsingModel() {
     val routes = new RoutesDefinition
     val route = routes.route
     route.from("seda:foo")

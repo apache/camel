@@ -25,7 +25,7 @@ import builder.RouteBuilder
 class ResequencerTest extends ScalaTestSupport {
   
   @Test
-  def testSimpleResequencer() = {
+  def testSimpleResequencer() {
     "mock:a" expect { _.received("message 1", "message 2", "message 3", "message 4", "message 5") } 
     test {
       "direct:a" ! ("message 5", "message 1", "message 3", "message 2", "message 4")
@@ -33,7 +33,7 @@ class ResequencerTest extends ScalaTestSupport {
   }
   
   @Test
-  def testBlockResequencer() = {
+  def testBlockResequencer() {
     "mock:b" expect (_.received("message 5", "message 1", "message 3", "message 2", "message 4"))
     "mock:c" expect (_.received("message 1", "message 2", "message 3", "message 4", "message 5"))
     test {
@@ -42,7 +42,7 @@ class ResequencerTest extends ScalaTestSupport {
   }
   
   @Test
-  def testBatchResequencer() = {
+  def testBatchResequencer() {
     "mock:d" expect (_.received("message 5", "message 1", "message 3", "message 2"))
     "mock:e" expect (_.count = 0)
     test {

@@ -21,14 +21,12 @@ import org.apache.camel.Consume;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.guiceyfruit.testing.UseModule;
-import org.guiceyfruit.testing.junit4.GuiceyJUnit4;
+import org.apache.camel.guice.testing.UseModule;
+import org.apache.camel.guice.testing.junit4.GuiceyJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
-
-
 /**
  * @version 
  */

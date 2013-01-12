@@ -17,7 +17,7 @@
 package org.apache.camel.component.xslt;
 
 import java.io.ByteArrayInputStream;
-
+import java.io.InputStream;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
@@ -27,6 +27,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  *
@@ -61,6 +62,15 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
 
             @Override
             public Source resolve(String href, String base) throws TransformerException {
+                if (href.equals("org/apache/camel/component/xslt/include_not_existing_resource.xsl")) {
+                    try {
+                        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), href);
+                        return new StreamSource(is);
+                    } catch (Exception e) {
+                        throw new TransformerException(e);
+                    }
+                }
+
                 Source constantResult = new StreamSource(new ByteArrayInputStream(EXPECTED_XML_CONSTANT.getBytes()));
                 return constantResult;
             }

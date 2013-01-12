@@ -20,8 +20,8 @@ import org.apache.camel.{Expression, Predicate, Exchange}
 import org.apache.camel.spi.Language
 
 /**
- * A language which has a function that can be evaluated as either an {@link org.apache.camel.Expression}
- * or {@link org.apache.camel.Predicate}.
+ * A language which has a function that can be evaluated as either an {@link Expression}
+ * or {@link Predicate}.
  */
 class LanguageFunction(language: Language, expression: String) extends Predicate with Expression {
 

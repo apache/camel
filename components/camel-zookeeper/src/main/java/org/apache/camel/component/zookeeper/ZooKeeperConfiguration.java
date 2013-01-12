@@ -127,10 +127,18 @@ public class ZooKeeperConfiguration implements Cloneable {
         }
     }
 
+    /**
+     * @deprecated The usage of this option has no effect at all.
+     */
+    @Deprecated
     public boolean shouldAwaitExistence() {
         return awaitExistence;
     }
 
+    /**
+     * @deprecated The usage of this option has no effect at all.
+     */
+    @Deprecated
     public void setAwaitExistence(boolean awaitExistence) {
         this.awaitExistence = awaitExistence;
     }

@@ -26,26 +26,34 @@ import org.junit.Test
 class SetBodyTest extends ScalaTestSupport {
 
   @Test
-  def testSimpleSetBody() = doTestConstant("direct:a", "mock:a")
+  def testSimpleSetBody() {
+    doTestConstant("direct:a", "mock:a")
+  }
 
   @Test
-  def testBlockSetBody() = doTestConstant("direct:b", "mock:b")
+  def testBlockSetBody() {
+    doTestConstant("direct:b", "mock:b")
+  }
   
   @Test
-  def testSimpleExpression() = doTestExpression("direct:c", "mock:c")
+  def testSimpleExpression() {
+    doTestExpression("direct:c", "mock:c")
+  }
 
   @Test
-  def testBodyExpression() = doTestExpression("direct:d", "mock:d")
+  def testBodyExpression() {
+    doTestExpression("direct:d", "mock:d")
+  }
   
   
-  def doTestConstant(from: String, mock: String) = {
+  def doTestConstant(from: String, mock: String) {
     mock expect {_.received("pong")}
     test {
       from ! ("ping")
     }    
   }
   
-  def doTestExpression(from: String, mock: String) = {
+  def doTestExpression(from: String, mock: String) {
     mock expect {_.received("Duchess", "Toulouse")}
     test {
       from ! (new Cat("Duchess"), new Cat("Toulouse"))

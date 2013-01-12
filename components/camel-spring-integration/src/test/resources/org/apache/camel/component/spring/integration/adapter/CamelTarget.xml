@@ -21,14 +21,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel-si="http://camel.apache.org/schema/spring/integration"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/integration
-	   http://www.springframework.org/schema/integration/spring-integration.xsd
-       http://camel.apache.org/schema/spring/integration
-       http://camel.apache.org/schema/spring/integration/camel-spring-integration.xsd
-       http://camel.apache.org/schema/spring
-       http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+       http://camel.apache.org/schema/spring/integration http://camel.apache.org/schema/spring/integration/camel-spring-integration.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
  <!-- END SNIPPET: header -->
 
@@ -67,5 +63,3 @@
    <beans:bean id="myProcessor" class="org.apache.camel.component.spring.integration.MyProcessor"/>
    <!-- END SNIPPET: example -->
 </beans:beans>
-
-

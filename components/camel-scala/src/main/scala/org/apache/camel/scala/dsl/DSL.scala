@@ -20,7 +20,7 @@ package dsl
 
 import org.apache.camel.model.DataFormatDefinition
 import reflect.Manifest
-import java.util.Comparator;
+import java.util.Comparator
 import org.apache.camel.processor.aggregate.AggregationStrategy
 
 import org.apache.camel.spi.Policy
@@ -31,12 +31,13 @@ import org.apache.camel.spi.Policy
 trait DSL {
   
   def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) : SAggregateDefinition
-  def as[Target](toType: Class[Target]) : DSL
+  def as[Target](toType: Class[Target], charset: String = null) : DSL
   def attempt : STryDefinition
 
   def bean(bean: Any) : DSL
 
   def choice : SChoiceDefinition
+  def convertBodyTo[Target](toType: Class[Target], charset: String = null) : DSL
 
   def delay(delay: Period) : SDelayDefinition
   def dynamicRouter(expression: Exchange => Any) : DSL
@@ -49,8 +50,8 @@ trait DSL {
 
   def id(id : String): DSL
   def idempotentConsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
-  def inOnly(): DSL with Block
-  def inOut(): DSL with Block
+  def inOnly: DSL with Block
+  def inOut: DSL with Block
 
   def loadbalance : SLoadBalanceDefinition
   def log(message: String) : DSL

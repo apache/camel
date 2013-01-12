@@ -31,7 +31,7 @@ import scala.xml.Elem
 class ScalaTypeConverterTest extends CamelTestSupport {
   
   @Test
-  def testDocumentConverter = {
+  def testDocumentConverter() {
     val exchange = context.getEndpoint("direct:start").createExchange
 
     val result = context.getTypeConverter.convertTo(classOf[Document], exchange, <persons/>)
@@ -40,7 +40,7 @@ class ScalaTypeConverterTest extends CamelTestSupport {
   }
 
   @Test
-  def testXmlStringToElemConverter = {
+  def testXmlStringToElemConverter() {
     val exchange = context.getEndpoint("direct:start").createExchange
 
     val result = context.getTypeConverter.convertTo(classOf[Elem], exchange, "<persons/>")
@@ -49,7 +49,7 @@ class ScalaTypeConverterTest extends CamelTestSupport {
   }
 
   @Test
-  def testDomDocumentToElemConverter = {
+  def testDomDocumentToElemConverter() {
     val exchange = context.getEndpoint("direct:start").createExchange
 
     val factory = DocumentBuilderFactory.newInstance()
@@ -64,7 +64,7 @@ class ScalaTypeConverterTest extends CamelTestSupport {
   }
 
   @Test
-  def testDomNodeToElemConverter = {
+  def testDomNodeToElemConverter() {
     val exchange = context.getEndpoint("direct:start").createExchange
 
     val factory = DocumentBuilderFactory.newInstance()

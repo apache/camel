@@ -17,17 +17,19 @@
 package org.apache.camel.guice;
 
 import java.util.Hashtable;
+
 import javax.naming.InitialContext;
 
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
-import org.guiceyfruit.Injectors;
-import org.guiceyfruit.jndi.GuiceInitialContextFactory;
-import org.guiceyfruit.jndi.JndiBind;
+import org.apache.camel.guice.inject.Injectors;
+import org.apache.camel.guice.jndi.GuiceInitialContextFactory;
+import org.apache.camel.guice.jndi.JndiBind;
 import org.junit.Assert;
 import org.junit.Test;
 

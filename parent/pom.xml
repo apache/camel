@@ -35,7 +35,7 @@
     <compiler.fork>true</compiler.fork>
     
     <!-- dependency versions -->
-    <abdera-version>1.1.2</abdera-version>
+    <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.7.0</activemq-version>
     <ahc-version>1.7.9</ahc-version>
@@ -58,13 +58,13 @@
     <avro-bundle-version>1.7.2_1</avro-bundle-version>
     <aws-java-sdk-bundle-version>1.3.26_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.3.26</aws-java-sdk-version>
-    <!--we must use axiom 1.2.10 with abdera 1.1.2, CAMEL-5109 has more details-->
-    <axiom-version>1.2.10</axiom-version>
+    <axiom-version>1.2.14</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk15on-bundle-version>1.47_1</bcpg-jdk15on-bundle-version>
     <beanio-version>2.0.3</beanio-version>
     <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.47</bouncycastle-version>
+    <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
@@ -96,8 +96,9 @@
     <commons-pool-version>1.6</commons-pool-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.3.2</concurrentlinkedhashmap.version>
-    <cxf-version>2.7.1</cxf-version>
-    <cxf-version-range>[2.4,2.8)</cxf-version-range>
+    <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
+    <cxf-version>2.7.2</cxf-version>
+    <cxf-version-range>[2.4,2.9)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
     <derby-version>10.9.1.0</derby-version>
@@ -115,6 +116,7 @@
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
     <felix-configadmin-version>1.4.0</felix-configadmin-version>
     <felix-framework-version>3.2.2</felix-framework-version>
+    <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
     <fop-bundle-version>1.0_3</fop-bundle-version>
     <fop-version>1.0</fop-version>
@@ -142,8 +144,8 @@
     <google-guava-version>13.0.1</google-guava-version>
     <groovy-version>2.0.6</groovy-version>
     <gson-version>2.2.2</gson-version>
-    <guice-bundle-version>2.0_2</guice-bundle-version>
-    <guiceyfruit-version>2.0</guiceyfruit-version>
+    <guice-bundle-version>3.0_1-SNAPSHOT</guice-bundle-version>
+    <guice-version>3.0</guice-version>
     <hadoop-bundle-version>1.0.4_1</hadoop-bundle-version>
     <hadoop-version>1.0.4</hadoop-version>
     <hamcrest-version>1.3</hamcrest-version>
@@ -157,9 +159,9 @@
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
     <hibernate-version>4.1.9.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
-    <httpcore4-version>4.2.2</httpcore4-version> <!-- FIXME cmueller: rename to httpcore4-version -->
-    <httpclient4-version>4.2.2</httpclient4-version> <!-- FIXME cmueller: rename to commons-httpclient4-version -->
-    <httpclient-version>3.1</httpclient-version> <!-- FIXME cmueller: rename to commons-httpclient-version -->
+    <httpcore4-version>4.2.2</httpcore4-version>
+    <httpclient4-version>4.2.2</httpclient4-version>
+    <httpclient-version>3.1</httpclient-version> 
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
@@ -178,6 +180,7 @@
     <java-apns-version>0.1.6</java-apns-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
+    <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.4.5</javax-mail-version>
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
     <jaxen-version>1.1.4</jaxen-version>
@@ -227,13 +230,32 @@
     <lucene-version>3.6.1</lucene-version>
     <lightcouch-version>0.0.4</lightcouch-version>
     <!-- needed from tooling/archetypes -->
-    <maven-bundle-version>2.3.7</maven-bundle-version>
+    <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
+    <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
+    <maven-archetype-packaging-version>2.0</maven-archetype-packaging-version>
+    <maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
+    <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
+    <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
+    <maven-checkstyle-plugin-version>2.9.1</maven-checkstyle-plugin-version>
+    <maven-clean-plugin-version>2.5</maven-clean-plugin-version>
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+    <maven-dependency-plugin-version>2.6</maven-dependency-plugin-version>
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
+    <maven-failsafe-plugin-version>2.13</maven-failsafe-plugin-version>
+    <maven-install-plugin-version>2.4</maven-install-plugin-version>
+    <maven-jar-plugin-version>2.4</maven-jar-plugin-version>
+    <maven-javadoc-plugin-version>2.9</maven-javadoc-plugin-version>
     <maven-plugin-plugin-version>3.2</maven-plugin-plugin-version>
-    <maven-resources-plugin-version>2.4.3</maven-resources-plugin-version>
+    <maven-release-plugin-version>2.4</maven-release-plugin-version>
+    <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
+    <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
+    <maven-shade-plugin-version>2.0</maven-shade-plugin-version>
+    <maven-source-plugin-version>2.2.1</maven-source-plugin-version>
+    <maven-surefire-plugin-version>2.13</maven-surefire-plugin-version>
+    <maven-surefire-report-plugin-version>2.13</maven-surefire-report-plugin-version>
+    <maven-war-plugin-version>2.3</maven-war-plugin-version>
     <maven-version>2.0</maven-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
@@ -290,7 +312,7 @@
     <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
     <scriptengines-version>1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
-    <servicemix-specs-version>1.9.0</servicemix-specs-version>
+    <servicemix-specs-version>2.2.0</servicemix-specs-version>
     <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
     <shiro-version>1.2.1</shiro-version>
     <!-- use slf4j-api 1.6.x to be easy compatible with older Camel releases -->
@@ -305,7 +327,7 @@
     <spring-batch-version>2.1.9.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-redis-version>1.0.2.RELEASE</spring-data-redis-version>
-    <spring-integration-version>2.1.4.RELEASE</spring-integration-version>
+    <spring-integration-version>2.2.0.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-neo4j-version>2.1.0.RELEASE</spring-neo4j-version>
     <!-- CAMEL-5768 using spring3.1.x by default -->
@@ -324,6 +346,7 @@
     <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.2_2</stringtemplate-bundle-version>
     <stringtemplate-version>4.0.2</stringtemplate-version>
+    <taglist-maven-plugin-version>2.4</taglist-maven-plugin-version>
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.8</testng-version>
@@ -340,7 +363,6 @@
     <woodstox-version>4.1.4</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
-    <wss4j-version>1.6.5</wss4j-version>
     <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
     <xalan-version>2.7.1</xalan-version>
     <xbean-spring-version>3.12</xbean-spring-version>
@@ -1476,9 +1498,14 @@
 
       <!-- optional guice dependencies -->
       <dependency>
-        <groupId>org.guiceyfruit</groupId>
-        <artifactId>guiceyfruit-core</artifactId>
-        <version>${guiceyfruit-version}</version>
+        <groupId>com.google.inject</groupId>
+        <artifactId>guice</artifactId>
+        <version>${guice-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${google-guava-version}</version>
       </dependency>
 
       <!-- optional castor dependencies -->
@@ -1875,7 +1902,7 @@
       <dependency>
         <groupId>org.apache.maven.archetype</groupId>
         <artifactId>archetype-packaging</artifactId>
-        <version>2.0</version>
+        <version>${maven-archetype-packaging-version}</version>
       </dependency>
 
     </dependencies>
@@ -1889,7 +1916,7 @@
         <plugin>
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>${scala-maven-plugin-version}</version>
           <configuration>
             <args>
               <arg>-deprecation</arg>
@@ -1929,7 +1956,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.6</version>
+          <version>${maven-antrun-plugin-version}</version>
           <dependencies>
             <dependency>
               <groupId>com.sun.xml.bind</groupId>
@@ -1978,17 +2005,17 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-archetype-plugin</artifactId>
-          <version>2.0</version>
+          <version>${maven-archetype-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.2</version>
+          <version>${maven-assembly-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.6</version>
+          <version>${maven-checkstyle-plugin-version}</version>
           <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
@@ -2030,7 +2057,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>2.5</version>
+          <version>${maven-clean-plugin-version}</version>
           <configuration>
             <filesets>
               <fileset>
@@ -2044,7 +2071,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.5.1</version>
+          <version>${maven-compiler-plugin-version}</version>
           <configuration>
             <source>1.6</source>
             <target>1.6</target>
@@ -2055,7 +2082,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.4</version>
+          <version>${maven-dependency-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -2080,27 +2107,27 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.8.1</version>
+          <version>${maven-failsafe-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
-          <version>2.3.1</version>
+          <version>${maven-install-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.3.1</version>
+          <version>${maven-jar-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.7</version>
+          <version>${maven-javadoc-plugin-version}</version>
           <configuration>
             <attach>true</attach>
             <source>1.6</source>
             <quiet>true</quiet>
-            <bottom>Apache CAMEL</bottom>
+            <bottom>Apache Camel</bottom>
             <detectOfflineLinks>false</detectOfflineLinks>
             <javadocVersion>1.6</javadocVersion>
             <encoding>UTF-8</encoding>
@@ -2109,13 +2136,12 @@
        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.6</version>
+          <version>${maven-plugin-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <!-- beware the ActiveMQ team had issues with the 2.3.2 release plugin (2.2.1 works fine) -->
-          <version>2.2.1</version>
+          <version>${maven-release-plugin-version}</version>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
             <useReleaseProfile>false</useReleaseProfile>
@@ -2128,7 +2154,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-remote-resources-plugin</artifactId>
-          <version>1.3</version>
+          <version>${maven-remote-resources-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -2141,12 +2167,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>1.6</version>
+          <version>${maven-shade-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.1.2</version>
+          <version>${maven-source-plugin-version}</version>
           <configuration>
             <archive>
               <manifestEntries>
@@ -2160,7 +2186,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>2.2</version>
+          <version>${maven-war-plugin-version}</version>
           <configuration>
             <webResources>
               <!-- HACK: Include legal files explicitly, otherwise they will 
@@ -2180,7 +2206,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>2.5</version>
+          <version>${maven-surefire-report-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
@@ -2203,18 +2229,13 @@
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
-          <artifactId>axistools-maven-plugin</artifactId>
-          <version>1.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.5</version>
+          <version>${build-helper-maven-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.4</version>
+          <version>${cobertura-maven-plugin-version}</version>
           <configuration>
             <check>
               <branchRate>85</branchRate>
@@ -2247,7 +2268,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
-          <version>2.3.1</version>
+          <version>${findbugs-maven-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -2262,7 +2283,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>taglist-maven-plugin</artifactId>
-          <version>2.4</version>
+          <version>${taglist-maven-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -2310,7 +2331,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.3.7</version>
+        <version>${maven-bundle-plugin-version}</version>
         <extensions>true</extensions>
         <configuration>
           <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
@@ -2347,7 +2368,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.8</version>
+        <version>${maven-surefire-plugin-version}</version>
         <configuration>
           <!--forkMode>pertest</forkMode -->
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
@@ -2424,7 +2445,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.4</version>
+        <version>${cobertura-maven-plugin-version}</version>
         <configuration>
           <formats>
             <format>html</format>
@@ -2434,27 +2455,27 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.6</version>
+        <version>${maven-checkstyle-plugin-version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.5</version>
+        <version>${maven-surefire-report-plugin-version}</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
-        <version>2.4</version>
+        <version>${taglist-maven-plugin-version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.7</version>
+        <version>${maven-javadoc-plugin-version}</version>
         <configuration>
           <links>
             <link>http://download.oracle.com/javase/6/docs/api/</link>
             <link>http://download.oracle.com/javaee/6/api/</link>
-            <link>http://static.springsource.org/spring/docs/3.0.7.RELEASE/api/</link>
+            <link>http://static.springsource.org/spring/docs/3.1.3.RELEASE/javadoc-api/</link>
           </links>
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
@@ -2467,7 +2488,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.3.1</version>
+        <version>${findbugs-maven-plugin-version}</version>
       </plugin>
     </plugins>
   </reporting>
@@ -2567,11 +2588,4 @@
     </profile>
   </profiles>
   
-  <repositories>
-    <repository>
-      <id>repository.springframework.maven.milestone</id>
-      <name>Spring Framework Maven Milestone Repository</name>
-      <url>http://maven.springframework.org/milestone</url>
-    </repository>
-  </repositories>
 </project>

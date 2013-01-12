@@ -29,7 +29,7 @@ class TryCatchFinallyTest extends ScalaTestSupport {
   var handled = false
   
   @Test
-  def testTryCatchFinally() = {
+  def testTryCatchFinally() {
     "mock:a" expect { _.count = 1 }
     "mock:b" expect { _.count = 1 }
     "mock:c" expect { _.count = 2 }

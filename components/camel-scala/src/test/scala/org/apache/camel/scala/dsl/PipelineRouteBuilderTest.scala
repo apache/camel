@@ -21,18 +21,26 @@ import org.junit.Test
 
 class PipelineRouteBuilderTest extends ScalaTestSupport {
   @Test
-  def testPipelineWithArrows() = testPipeline("direct:a", "mock:a", "mock:b")
+  def testPipelineWithArrows() {
+    testPipeline("direct:a", "mock:a", "mock:b")
+  }
 
   @Test
-  def testPipelineWithTos() = testPipeline("direct:c", "mock:c", "mock:d")
+  def testPipelineWithTos() {
+    testPipeline("direct:c", "mock:c", "mock:d")
+  }
 
   @Test
-  def testPipelineBlockWithArrows() = testPipeline("direct:e", "mock:e", "mock:f")
+  def testPipelineBlockWithArrows() {
+    testPipeline("direct:e", "mock:e", "mock:f")
+  }
 
   @Test
-  def testPipelineBlockWithTos() = testPipeline("direct:g", "mock:g", "mock:h")
+  def testPipelineBlockWithTos() {
+    testPipeline("direct:g", "mock:g", "mock:h")
+  }
 
-  def testPipeline(from: String, to: String*) = {
+  def testPipeline(from: String, to: String*) {
     to.foreach {
       _.expect { _.expectedMessageCount(1) }
     }

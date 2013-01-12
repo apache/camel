@@ -19,7 +19,7 @@ package scala.dsl
 
 import org.junit.Test
 import builder.RouteBuilder
-import junit.framework.Assert._
+import junit.framework.TestCase.assertFalse
 
 /**
  * Test case for exception handler
@@ -29,7 +29,7 @@ class ExceptionHandlerTest extends ScalaTestSupport {
   var handled = false
 
   @Test
-  def testTryCatchFinally() = {
+  def testTryCatchFinally() {
     "mock:a" expect { _.count = 1 }
     "mock:b" expect { _.count = 1 }
     "mock:c" expect { _.count = 1 }
@@ -37,7 +37,7 @@ class ExceptionHandlerTest extends ScalaTestSupport {
       test {
        "direct:a" ! ("any given message", 'Symbol, 256)
       }
-    } catch { case _ => log.info("get the exception here")}
+    } catch { case _: Throwable => log.info("get the exception here")}
   }
 
   val builder =

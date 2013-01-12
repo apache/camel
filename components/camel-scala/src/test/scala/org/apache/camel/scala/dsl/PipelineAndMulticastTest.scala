@@ -22,18 +22,26 @@ import org.junit.Test
 class PipelineAndMulticastTest extends ScalaTestSupport {
 
   @Test
-  def testArrowRoute() = testRoute("direct:a", "mock:c", "mock:a", "mock:b")
+  def testArrowRoute() {
+    testRoute("direct:a", "mock:c", "mock:a", "mock:b")
+  }
 
   @Test
-  def testToRoute() = testRoute("direct:d", "mock:f", "mock:d", "mock:e")
+  def testToRoute() {
+    testRoute("direct:d", "mock:f", "mock:d", "mock:e")
+  }
 
   @Test
-  def testArrowBlockRoute() = testRoute("direct:g", "mock:i", "mock:g", "mock:h")
+  def testArrowBlockRoute() {
+    testRoute("direct:g", "mock:i", "mock:g", "mock:h")
+  }
 
   @Test
-  def testToBlockRoute() = testRoute("direct:j", "mock:l", "mock:j", "mock:k")
+  def testToBlockRoute() {
+    testRoute("direct:j", "mock:l", "mock:j", "mock:k")
+  }
 
-  def testRoute(from: String, end: String, multis: String*) = {
+  def testRoute(from: String, end: String, multis: String*) {
     multis.foreach ( _.expect { _.received("<hello/>")})
     end expect { _.received("<olleh/>")}
 

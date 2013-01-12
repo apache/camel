@@ -46,6 +46,7 @@
     <camel.osgi.private.pkg>
       org.apache.camel.component.sjms.consumer,
       org.apache.camel.component.sjms.producer,
+      org.apache.camel.component.sjms.taskmanager,
       org.apache.camel.component.sjms.tx
     </camel.osgi.private.pkg>
   </properties>

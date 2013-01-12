@@ -27,7 +27,6 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
     
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
@@ -53,6 +52,7 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
     @Test
     public void testStart1() {
         assertThat(getSampleWS("direct:start1").getSomething(), is("Something"));
+        
     }
 
     /**
@@ -60,7 +60,7 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
      */
     @Test
     public void testStart2() {
-        assertThat(getSampleWS("direct:start2").getSomething(), is("Something"));
+        assertThat(getSampleWSWithCXFAPI("direct:start2").getSomething(), is("Something"));
     }
     
     // test the content type

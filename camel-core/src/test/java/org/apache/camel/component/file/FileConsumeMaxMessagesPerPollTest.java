@@ -26,28 +26,27 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/poll/?initialDelay=2000&delay=5000&maxMessagesPerPoll=2";
+    private String fileUrl = "file://target/poll/?maxMessagesPerPoll=2";
 
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/poll");
         super.setUp();
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "godday.txt");
     }
 
     public void testMaxMessagesPerPoll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.setResultWaitTime(3000);
-        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
+        // we should poll at most 2
+        mock.expectedMinimumMessageCount(2);
+        mock.message(0).property(Exchange.BATCH_SIZE).isEqualTo(2);
+        mock.message(1).property(Exchange.BATCH_SIZE).isEqualTo(2);
 
-        assertMockEndpointsSatisfied();
+        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "godday.txt");
 
-        mock.reset();
-        mock.expectedMessageCount(1);
-        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 1);
+        // start route
+        context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }
@@ -55,7 +54,9 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUrl)
+                        .routeId("foo").noAutoStartup()
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

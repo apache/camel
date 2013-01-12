@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -64,6 +65,9 @@ import org.slf4j.LoggerFactory;
 public final class ObjectHelper {
     private static final transient Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
     private static final String DEFAULT_DELIMITER = ",";
+    @SuppressWarnings("unchecked")
+    private static final List<?> PRIMITIVE_ARRAY_TYPES = Arrays.asList(byte[].class, short[].class, int[].class, long[].class,
+                                                                       float[].class, double[].class, char[].class, boolean[].class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -493,7 +497,12 @@ public final class ObjectHelper {
      * Object[], a String with values separated by the given delimiter,
      * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
-     *
+     * 
+     * </p> In case of primitive type arrays the returned {@code Iterator} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     * 
      * @param value             the value
      * @param delimiter         delimiter for separating String values
      * @param allowEmptyValues  whether to allow empty values
@@ -514,9 +523,29 @@ public final class ObjectHelper {
         } else if (value instanceof Iterable) {
             return ((Iterable<Object>)value).iterator();
         } else if (value.getClass().isArray()) {
-            // TODO we should handle primitive array types?
-            List<Object> list = Arrays.asList((Object[])value);
-            return list.iterator();
+            if (isPrimitiveArrayType(value.getClass())) {
+                final Object array = value;
+                return new Iterator<Object>() {
+                    int idx = -1;
+
+                    public boolean hasNext() {
+                        return (idx + 1) < Array.getLength(array);
+                    }
+
+                    public Object next() {
+                        idx++;
+                        return Array.get(array, idx);
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+
+                };
+            } else {
+                List<Object> list = Arrays.asList((Object[]) value);
+                return list.iterator();
+            }
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
@@ -1051,6 +1080,16 @@ public final class ObjectHelper {
         a = convertPrimitiveTypeToWrapperType(a);
         b = convertPrimitiveTypeToWrapperType(b);
         return a.isAssignableFrom(b);
+    }
+
+    /**
+     * Returns if the given {@code clazz} type is a Java primitive array type.
+     * 
+     * @param clazz the Java type to be checked
+     * @return {@code true} if the given type is a Java primitive array type
+     */
+    public static boolean isPrimitiveArrayType(Class<?> clazz) {
+        return PRIMITIVE_ARRAY_TYPES.contains(clazz);
     }
 
     /**

@@ -80,7 +80,7 @@ public final class MailConverters {
         int size = multipart.getCount();
         for (int i = 0; i < size; i++) {
             BodyPart part = multipart.getBodyPart(i);
-            if (part.getContentType().startsWith("text")) {
+            if (part.getContentType().toLowerCase().startsWith("text")) {
                 return part.getContent().toString();
             }
         }
