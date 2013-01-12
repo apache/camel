@@ -54,6 +54,8 @@ public interface SmppConstants {
     String SOURCE_ADDR_TON = "CamelSmppSourceAddrTon";
     String SUBMITTED = "CamelSmppSubmitted";
     String SUBMIT_DATE = "CamelSmppSubmitDate";
+    String SYSTEM_ID = "CamelSmppSystemId";
+    String PASSWORD = "CamelSmppSystemId";
     String VALIDITY_PERIOD = "CamelSmppValidityPeriod";
     
     String UCS2_ENCODING = "UTF-16BE";

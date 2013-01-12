@@ -78,13 +78,27 @@ public class SmppEndpointTest {
     @Test
     public void createEndpointUriShouldReturnTheEndpointUri() {
         expect(configuration.getUsingSSL()).andReturn(false);
-        expect(configuration.getSystemId()).andReturn("smppclient");
+        expect(configuration.getSystemId()).andReturn("smppclient").times(2);
         expect(configuration.getHost()).andReturn("localhost");
         expect(configuration.getPort()).andReturn(new Integer(2775));
         
         replay(configuration);
         
         assertEquals("smpp://smppclient@localhost:2775", endpoint.createEndpointUri());
+        
+        verify(configuration);
+    }
+
+    @Test
+    public void createEndpointUriWithoutUserShouldReturnTheEndpointUri() {
+        expect(configuration.getUsingSSL()).andReturn(false);
+        expect(configuration.getSystemId()).andReturn(null);
+        expect(configuration.getHost()).andReturn("localhost");
+        expect(configuration.getPort()).andReturn(new Integer(2775));
+        
+        replay(configuration);
+        
+        assertEquals("smpp://localhost:2775", endpoint.createEndpointUri());
         
         verify(configuration);
     }
@@ -220,13 +234,27 @@ public class SmppEndpointTest {
     @Test
     public void getConnectionStringShouldReturnTheConnectionString() {
         expect(configuration.getUsingSSL()).andReturn(false);
-        expect(configuration.getSystemId()).andReturn("smppclient");
+        expect(configuration.getSystemId()).andReturn("smppclient").times(2);
         expect(configuration.getHost()).andReturn("localhost");
         expect(configuration.getPort()).andReturn(new Integer(2775));
         
         replay(configuration);
         
         assertEquals("smpp://smppclient@localhost:2775", endpoint.getConnectionString());
+        
+        verify(configuration);
+    }
+
+    @Test
+    public void getConnectionStringWithoutUserShouldReturnTheConnectionString() {
+        expect(configuration.getUsingSSL()).andReturn(false);
+        expect(configuration.getSystemId()).andReturn(null);
+        expect(configuration.getHost()).andReturn("localhost");
+        expect(configuration.getPort()).andReturn(new Integer(2775));
+        
+        replay(configuration);
+        
+        assertEquals("smpp://localhost:2775", endpoint.getConnectionString());
         
         verify(configuration);
     }

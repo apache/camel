@@ -17,6 +17,7 @@
 package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
@@ -61,14 +62,14 @@ public class SmppProducerLazySessionCreationTest {
     @Test
     public void doStartShouldNotCreateTheSmppSession() throws Exception {
         expect(endpoint.getConnectionString()).andReturn("smpp://smppclient@localhost:2775");
-    
+
         replay(endpoint, session);
-    
+
         producer.doStart();
-    
+
         verify(endpoint, session);
     }
-    
+
     @Test
     public void processShouldCreateTheSmppSession() throws Exception {
         expect(endpoint.getConnectionString())
@@ -91,16 +92,59 @@ public class SmppProducerLazySessionCreationTest {
         expect(endpoint.getConnectionString()).andReturn("smpp://smppclient@localhost:2775");
         SmppBinding binding = createMock(SmppBinding.class);
         Exchange exchange = createMock(Exchange.class);
+        Message in = createMock(Message.class);
         SmppCommand command = createMock(SmppCommand.class);
         expect(endpoint.getBinding()).andReturn(binding);
         expect(binding.createSmppCommand(session, exchange)).andReturn(command);
+        expect(exchange.getIn()).andReturn(in);
+        expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn(null);
+        expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn(null);
         command.execute(exchange);
         
-        replay(session, endpoint, binding, exchange, command);
+        replay(session, endpoint, binding, exchange, in, command);
         
         producer.doStart();
         producer.process(exchange);
         
-        verify(session, endpoint, binding, exchange, command);
+        verify(session, endpoint, binding, exchange, in, command);
+    }
+
+    @Test
+    public void processShouldCreateTheSmppSessionWithTheSystemIdAndPasswordFromTheExchange() throws Exception {
+        expect(endpoint.getConnectionString())
+            .andReturn("smpp://localhost:2775")
+            .times(2);
+        session.setEnquireLinkTimer(5000); //expectation
+        session.setTransactionTimer(10000); //expectation
+        session.addSessionStateListener(isA(SessionStateListener.class));
+        expect(session.connectAndBind(
+            "localhost",
+            new Integer(2775),
+            new BindParameter(
+                    BindType.BIND_TX,
+                    "smppclient2",
+                    "password2",
+                    "cp",
+                    TypeOfNumber.UNKNOWN,
+                    NumberingPlanIndicator.UNKNOWN,
+                    ""))).andReturn("1");
+        expect(endpoint.getConnectionString()).andReturn("smpp://localhost:2775");
+        SmppBinding binding = createMock(SmppBinding.class);
+        Exchange exchange = createMock(Exchange.class);
+        Message in = createMock(Message.class);
+        SmppCommand command = createMock(SmppCommand.class);
+        expect(endpoint.getBinding()).andReturn(binding);
+        expect(binding.createSmppCommand(session, exchange)).andReturn(command);
+        expect(exchange.getIn()).andReturn(in);
+        expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn("smppclient2");
+        expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn("password2");
+        command.execute(exchange);
+        
+        replay(session, endpoint, binding, exchange, in, command);
+        
+        producer.doStart();
+        producer.process(exchange);
+        
+        verify(session, endpoint, binding, exchange, in, command);
     }
 }
