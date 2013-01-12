@@ -82,6 +82,13 @@ public class XsltUriResolver implements URIResolver {
             return new StreamSource(file);
         }
 
+        // if href and location is the same, then its the initial resolve
+        if (href.equals(location)) {
+            // default to use classpath: location
+            String path = "classpath:" + href;
+            return resolve(path, base);
+        }
+
         // okay then its relative to the starting location from the XSLT component
         String path = FileUtil.onlyPath(location);
         if (ObjectHelper.isEmpty(path)) {

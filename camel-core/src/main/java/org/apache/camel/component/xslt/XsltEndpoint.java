@@ -17,9 +17,8 @@
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
-import java.net.URL;
-
-import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
@@ -28,7 +27,6 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +46,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.xslt = xslt;
         this.resourceUri = resourceUri;
         this.cacheStylesheet = cacheStylesheet;
-        loadResource(xslt, resourceUri);
     }
 
     @ManagedOperation(description = "Clears the cached XSLT stylesheet, forcing to re-load the stylesheet on next request")
@@ -61,21 +58,12 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return cacheStylesheet;
     }
 
-    private synchronized void loadResource(XsltBuilder xslt, String resourceUri) throws TransformerConfigurationException, IOException {
-        LOG.trace("{} loading schema resource: {}", this, resourceUri);
-        // prefer to use URL over InputStream as it loads better with http
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
-        xslt.setTransformerURL(url);
-        // now loaded so clear flag
-        cacheCleared = false;
-    }
-
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(resourceUri, newResourceUri);
         LOG.trace("Getting endpoint with URI: {}", newUri);
         return getCamelContext().getEndpoint(newUri, XsltEndpoint.class);
     }
-    
+
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         String newResourceUri = exchange.getIn().getHeader(XsltConstants.XSLT_RESOURCE_URI, String.class);
@@ -86,12 +74,42 @@ public class XsltEndpoint extends ProcessorEndpoint {
             XsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
             return;
-        } else {            
+        } else {
             if (!cacheStylesheet || cacheCleared) {
-                loadResource(xslt, resourceUri);
-            }    
+                loadResource(resourceUri);
+            }
             super.onExchange(exchange);
         }
     }
 
+    /**
+     * Loads the resource.
+     *
+     * @param resourceUri  the resource to load
+     *
+     * @throws TransformerException is thrown if error loading resource
+     * @throws IOException is thrown if error loading resource
+     */
+    protected void loadResource(String resourceUri) throws TransformerException, IOException {
+        LOG.trace("{} loading schema resource: {}", this, resourceUri);
+        Source source = xslt.getUriResolver().resolve(resourceUri, null);
+        if (source == null) {
+            throw new IOException("Cannot load schema resource " + resourceUri);
+        } else {
+            xslt.setTransformerSource(source);
+        }
+        // now loaded so clear flag
+        cacheCleared = false;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        loadResource(resourceUri);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+    }
 }
