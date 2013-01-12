@@ -37,10 +37,8 @@ import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-/**
- * @version 
- */
 public class JpaEndpoint extends ScheduledPollEndpoint {
+
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private String persistenceUnit = "camel";
