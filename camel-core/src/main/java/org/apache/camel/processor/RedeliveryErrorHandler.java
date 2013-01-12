@@ -760,6 +760,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // store the last to endpoint as the failure endpoint
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            // and store the route id so we know in which route we failed
+            if (exchange.getUnitOfWork().getRouteContext() != null) {
+                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, exchange.getUnitOfWork().getRouteContext().getRoute().getId());
+            }
 
             // the failure processor could also be asynchronous
             AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
@@ -836,6 +840,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
             // and put failure endpoint back as well
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            // and store the route id so we know in which route we failed
+            if (exchange.getUnitOfWork().getRouteContext() != null) {
+                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, exchange.getUnitOfWork().getRouteContext().getRoute().getId());
+            }
         }
     }
 
