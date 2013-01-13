@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.xml;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -26,6 +26,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +48,17 @@ public class XsltUriResolver implements URIResolver {
 
     private final ClassResolver resolver;
     private final String location;
+    private final String baseScheme;
 
     public XsltUriResolver(ClassResolver resolver, String location) {
         this.resolver = resolver;
         this.location = location;
+        if (ResourceHelper.hasScheme(location)) {
+            baseScheme = ResourceHelper.getScheme(location);
+        } else {
+            // default to use classpath
+            baseScheme = "classpath:";
+        }
     }
 
     public Source resolve(String href, String base) throws TransformerException {
@@ -60,44 +68,41 @@ public class XsltUriResolver implements URIResolver {
 
         LOG.trace("Resolving URI with href: {} and base: {}", href, base);
 
-        if (href.startsWith("classpath:")) {
-            LOG.debug("Resolving URI from classpath: {}", href);
+        String scheme = ResourceHelper.getScheme(href);
+        if (scheme != null && "file:".equals(scheme)) {
+            // need to compact paths for file as it can be relative paths using .. to go backwards
+            href = FileUtil.compactPath(href, '/');
+        }
 
-            String name = ObjectHelper.after(href, ":");
-            InputStream is = resolver.loadResourceAsStream(name);
-            if (is == null) {
-                throw new TransformerException("Cannot find " + name + " in classpath");
+        if (scheme != null) {
+            LOG.debug("Resolving URI from {}: {}", scheme, href);
+
+            InputStream is;
+            try {
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(resolver, href);
+            } catch (IOException e) {
+                throw new TransformerException(e);
             }
             return new StreamSource(is);
         }
 
-        if (href.startsWith("file:")) {
-            LOG.debug("Resolving URI from file: {}", href);
-
-            String name = ObjectHelper.after(href, ":");
-            File file = new File(name);
-            if (!file.exists()) {
-                throw new TransformerException("Cannot find " + name + " in the file system");
-            }
-            return new StreamSource(file);
-        }
-
         // if href and location is the same, then its the initial resolve
         if (href.equals(location)) {
-            // default to use classpath: location
-            String path = "classpath:" + href;
+            String path = baseScheme + href;
             return resolve(path, base);
         }
 
         // okay then its relative to the starting location from the XSLT component
         String path = FileUtil.onlyPath(location);
         if (ObjectHelper.isEmpty(path)) {
-            // default to use classpath: location
-            path = "classpath:" + href;
+            path = baseScheme + href;
             return resolve(path, base);
         } else {
-            // default to use classpath: location
-            path = "classpath:" + path + "/" + href;
+            if (ResourceHelper.hasScheme(path)) {
+                path = path + "/" + href;
+            } else {
+                path = baseScheme + path + "/" + href;
+            }
             return resolve(path, base);
         }
     }

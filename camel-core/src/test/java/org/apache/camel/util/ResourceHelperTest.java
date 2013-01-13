@@ -141,6 +141,14 @@ public class ResourceHelperTest extends TestSupport {
         assertTrue(ResourceHelper.isHttpUri("https://camel.apache.org"));
     }
 
+    public void testGetScheme() throws Exception {
+        assertEquals("file:", ResourceHelper.getScheme("file:myfile.txt"));
+        assertEquals("classpath:", ResourceHelper.getScheme("classpath:myfile.txt"));
+        assertEquals("http:", ResourceHelper.getScheme("http:www.foo.com"));
+        assertEquals(null, ResourceHelper.getScheme("www.foo.com"));
+        assertEquals(null, ResourceHelper.getScheme("myfile.txt"));
+    }
+
     public void testAppendParameters() throws Exception {
         Map<String, Object> params = new LinkedHashMap<String, Object>();
         params.put("foo", 123);
