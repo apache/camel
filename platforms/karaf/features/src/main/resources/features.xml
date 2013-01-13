@@ -803,8 +803,9 @@
     <bundle>mvn:org.apache.camel/camel-spring-batch/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-integration' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.springframework.integration/spring-integration-core/${spring-integration-version}</bundle>
     <feature version='${project.version}'>camel-spring</feature>
+    <bundle dependency='true'>mvn:org.springframework.retry/spring-retry/${spring-retry-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.integration/spring-integration-core/${spring-integration-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-integration/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-javaconfig' version='${project.version}' resolver='(obr)' start-level='50'>

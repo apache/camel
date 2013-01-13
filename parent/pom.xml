@@ -330,6 +330,7 @@
     <spring-integration-version>2.2.0.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-neo4j-version>2.1.0.RELEASE</spring-neo4j-version>
+    <spring-retry-version>1.0.2.RELEASE</spring-retry-version>
     <!-- CAMEL-5768 using spring3.1.x by default -->
     <spring-version>${spring31-version}</spring-version>
     <spring30-version>3.0.7.RELEASE</spring30-version>
