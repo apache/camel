@@ -159,7 +159,7 @@
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
     <hibernate-version>4.1.9.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
-    <httpcore4-version>4.2.2</httpcore4-version>
+    <httpcore4-version>4.2.3</httpcore4-version>
     <httpclient4-version>4.2.2</httpclient4-version>
     <httpclient-version>3.1</httpclient-version> 
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
