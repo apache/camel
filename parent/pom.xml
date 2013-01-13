@@ -370,6 +370,8 @@
     <xbean-spring-version>3.12</xbean-spring-version>
     <xerces-bundle-version>2.10.0_1</xerces-bundle-version>
     <xerces-version>2.10.0</xerces-version>
+    <!-- needed to manage the xml-apis version in camel-xmljson -->
+    <xml-apis-version>1.4.01</xml-apis-version>
     <xml-resolver-version>1.2</xml-resolver-version>
     <xmlbeans-bundle-version>2.5.0_2</xmlbeans-bundle-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
@@ -1829,6 +1831,11 @@
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
         <version>${xerces-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>${xml-apis-version}</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.woodstox</groupId>
