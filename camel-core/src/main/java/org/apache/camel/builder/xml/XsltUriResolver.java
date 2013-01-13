@@ -69,12 +69,11 @@ public class XsltUriResolver implements URIResolver {
         LOG.trace("Resolving URI with href: {} and base: {}", href, base);
 
         String scheme = ResourceHelper.getScheme(href);
-        if (scheme != null && "file:".equals(scheme)) {
-            // need to compact paths for file as it can be relative paths using .. to go backwards
-            href = FileUtil.compactPath(href, '/');
-        }
-
         if (scheme != null) {
+            // need to compact paths for file/classpath as it can be relative paths using .. to go backwards
+            if ("file:".equals(scheme) || "classpath:".equals(scheme)) {
+                href = FileUtil.compactPath(href);
+            }
             LOG.debug("Resolving URI from {}: {}", scheme, href);
 
             InputStream is;
