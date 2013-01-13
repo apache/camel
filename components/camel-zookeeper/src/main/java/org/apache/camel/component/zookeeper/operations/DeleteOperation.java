@@ -55,8 +55,7 @@ public class DeleteOperation extends ZooKeeperOperation<Boolean> {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public ZooKeeperOperation createCopy() throws Exception {
+    public ZooKeeperOperation<?> createCopy() throws Exception {
         DeleteOperation copy = (DeleteOperation) super.createCopy();
         copy.version = -1; // set the version to -1 for 'any version'
         return copy;

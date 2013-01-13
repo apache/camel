@@ -384,7 +384,7 @@
     <xstream-bundle-version>1.4.3_1</xstream-bundle-version>
     <xstream-version>1.4.3</xstream-version>
     <xom-version>1.2.5</xom-version>
-    <zookeeper-version>3.3.5</zookeeper-version>
+    <zookeeper-version>3.4.5</zookeeper-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
