@@ -105,6 +105,7 @@
     <derby-version>10.9.1.0</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
+    <!-- we cannot upgrade to dozer 5.4.0 because it requires commons-lang3 -->
     <dozer-version>5.3.2</dozer-version>
     <easymock-version>3.1</easymock-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
