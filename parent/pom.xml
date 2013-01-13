@@ -367,8 +367,8 @@
     <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
     <xalan-version>2.7.1</xalan-version>
     <xbean-spring-version>3.12</xbean-spring-version>
-    <xerces-bundle-version>2.9.1_5</xerces-bundle-version>
-    <xerces-version>2.9.1</xerces-version>
+    <xerces-bundle-version>2.10.0_1</xerces-bundle-version>
+    <xerces-version>2.10.0</xerces-version>
     <xml-resolver-version>1.2</xml-resolver-version>
     <xmlbeans-bundle-version>2.5.0_2</xmlbeans-bundle-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
