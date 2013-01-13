@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.io.FileNotFoundException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.camel.CamelContext;
@@ -41,7 +42,7 @@ public class XsltFileNotFoundTest extends TestSupport {
         } catch (FailedToCreateRouteException e) {
             assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             assertIsInstanceOf(TransformerException.class, e.getCause().getCause());
-            assertEquals("Cannot find org/apache/camel/component/xslt/notfound.xsl in classpath", e.getCause().getCause().getMessage());
+            assertIsInstanceOf(FileNotFoundException.class, e.getCause().getCause().getCause());
         }
     }
 

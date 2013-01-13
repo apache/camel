@@ -55,6 +55,20 @@ public final class ResourceHelper {
     }
 
     /**
+     * Gets the scheme from the URI (e.g. file:, classpath: or http:)
+     *
+     * @param uri  the uri
+     * @return the scheme, or <tt>null</tt> if no scheme
+     */
+    public static String getScheme(String uri) {
+        if (hasScheme(uri)) {
+            return uri.substring(0, uri.indexOf(":") + 1);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Resolves the mandatory resource.
      * <p/>
      * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
