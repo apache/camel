@@ -623,6 +623,7 @@
   </feature>
   <feature name='camel-msv' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
+    <!-- xerces is an optional dependency from isorelax -->
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.isorelax/${isorelax-bundle-version}</bundle>
@@ -803,8 +804,9 @@
     <bundle>mvn:org.apache.camel/camel-spring-batch/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-integration' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.springframework.integration/spring-integration-core/${spring-integration-version}</bundle>
     <feature version='${project.version}'>camel-spring</feature>
+    <bundle dependency='true'>mvn:org.springframework.retry/spring-retry/${spring-retry-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.integration/spring-integration-core/${spring-integration-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-integration/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-javaconfig' version='${project.version}' resolver='(obr)' start-level='50'>

@@ -19,8 +19,8 @@ package org.apache.camel.component.zookeeper;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
@@ -63,7 +63,7 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
                                          createChildListing());
     }
 
-    private void validateExchangesContainListings(MockEndpoint mock, List<?>... expected) throws InvalidPayloadException, NoSuchHeaderException {
+    private void validateExchangesContainListings(MockEndpoint mock, List<?>... expected) throws CamelExchangeException, NoSuchHeaderException {
         int index = 0;
         for (Exchange received : mock.getReceivedExchanges()) {
             Watcher.Event.EventType expectedEvent;
