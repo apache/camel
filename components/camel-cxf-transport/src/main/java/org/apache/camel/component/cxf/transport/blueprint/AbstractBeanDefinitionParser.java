@@ -72,7 +72,7 @@ public class AbstractBeanDefinitionParser extends AbstractBPBeanDefinitionParser
             String val = node.getValue();
             //String pre = node.getPrefix();
             String name = node.getLocalName();
-            if ("camelContext".equals(name)) {
+            if ("camelContextId".equals(name)) {
                 camelContextId = val;
             }
         }

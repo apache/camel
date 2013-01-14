@@ -35,7 +35,7 @@
             <xsd:complexContent>
                 <xsd:extension base="beans:Tcomponent"/>
                 <!-- here we need to specify the CamelContext reference --> 
-                <xsd:attribute name="camelContext" type="xsd:string" />
+                <xsd:attribute name="camelContextId" type="xsd:string" />
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
@@ -45,7 +45,7 @@
             <xsd:complexContent>
                 <xsd:extension base="beans:Tcomponent"/>
                 <!-- here we need to specify the CamelContext reference --> 
-                <xsd:attribute name="camelContext" type="xsd:string" />    
+                <xsd:attribute name="camelContextId" type="xsd:string" />    
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
