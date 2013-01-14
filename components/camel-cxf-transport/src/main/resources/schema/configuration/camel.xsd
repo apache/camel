@@ -41,6 +41,8 @@
                         <xs:element name="camelContextRef" type="xs:string" minOccurs="0"/>
                     </xs:sequence>
                     <xs:attributeGroup ref="cxf-beans:beanAttributes"/>
+                    <!-- here we need to specify the CamelContext reference --> 
+                    <xs:attribute name="camelContextId" type="xs:string" />    
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -55,6 +57,8 @@
                         <xs:element name="camelContextRef" type="xs:string" minOccurs="0"/>                        
                     </xs:sequence>
                     <xs:attributeGroup ref="cxf-beans:beanAttributes"/>
+                    <!-- here we need to specify the CamelContext reference --> 
+                    <xs:attribute name="camelContextId" type="xs:string" />    
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

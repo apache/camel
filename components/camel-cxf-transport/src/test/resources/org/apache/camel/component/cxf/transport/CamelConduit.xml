@@ -36,6 +36,10 @@
    <camel:conduit name="{http://camel.apache.org/camel-test}portA.camel-conduit">
        <camel:camelContextRef>conduit_context</camel:camelContextRef>
    </camel:conduit>
+   
+    <camel:conduit name="{http://camel.apache.org/camel-test}portC.camel-conduit" camelContextId="conduit_context"/>
+      
+   
    <!-- START SNIPPET: example -->
    <camel:conduit name="{http://camel.apache.org/camel-test}portB.camel-conduit">
        <camelContext id="context" xmlns="http://camel.apache.org/schema/spring">

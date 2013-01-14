@@ -62,6 +62,8 @@ public class CamelConduitTest extends CamelTransportTestSupport {
     public void testCamelConduitConfiguration() throws Exception {
         QName testEndpointQNameA = new QName("http://camel.apache.org/camel-test", "portA");
         QName testEndpointQNameB = new QName("http://camel.apache.org/camel-test", "portB");
+        QName testEndpointQNameC = new QName("http://camel.apache.org/camel-test", "portC");
+        
         // set up the bus with configure file
         SpringBusFactory bf = new SpringBusFactory();
         BusFactory.setDefaultBus(null);
@@ -77,6 +79,17 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         assertNotNull("the camel context which get from camel conduit is not null", context);
         assertEquals("get the wrong camel context", context.getName(), "conduit_context");
         assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
+        
+        // test the configuration of camelContextId attribute 
+        endpointInfo.setAddress("camel://direct:EndpointA");
+        endpointInfo.setName(testEndpointQNameC);
+        conduit = new CamelConduit(null, bus, endpointInfo);
+        context = conduit.getCamelContext();
+
+        assertNotNull("the camel context which get from camel conduit is not null", context);
+        assertEquals("get the wrong camel context", context.getName(), "conduit_context");
+        assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
+
 
         endpointInfo.setAddress("camel://direct:EndpointC");
         endpointInfo.setName(testEndpointQNameB);
