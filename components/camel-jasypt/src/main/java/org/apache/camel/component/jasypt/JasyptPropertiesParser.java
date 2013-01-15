@@ -82,8 +82,10 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         String text = ObjectHelper.between(value, JASYPT_PREFIX_TOKEN, JASYPT_SUFFIX_TOKEN);
         if (text == null) {
             // not encrypted
+            log.trace("Property is not encrypted {}", text);
             return value;
         } else {
+            log.trace("Decrypting property {}", text);
             // do not log the decrypted text as it could be sensitive information such as a password
             return getEncryptor().decrypt(text);
         }
