@@ -120,9 +120,13 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             answer.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
         }
         answer.setConnectionFactory(endpoint.getConnectionFactory());
-        // we use CACHE_CONSUMER to cling to the consumer as long as we can, since we can only consume
+        // we use CACHE_CONSUMER by default to cling to the consumer as long as we can, since we can only consume
         // msgs from the JMS Connection that created the temp destination in the first place
-        answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
+        if (endpoint.getReplyToCacheLevelName() != null) {
+            answer.setCacheLevelName(endpoint.getReplyToCacheLevelName());
+        } else {
+            answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
+        }
         String clientId = endpoint.getClientId();
         if (clientId != null) {
             clientId += ".CamelReplyManager";
