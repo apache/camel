@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.management.AttributeChangeNotification;
 import javax.management.MBeanServerNotification;
 import javax.management.Notification;
@@ -40,21 +38,26 @@ import javax.xml.datatype.DatatypeFactory;
 import org.apache.camel.component.jmx.jaxb.NotificationEventType;
 import org.apache.camel.component.jmx.jaxb.ObjectFactory;
 import org.apache.camel.component.jmx.jaxb.ObjectNamesType;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Converts the Notification into an XML stream.
  */
-public class NotificationXmlFormatter {
+public class NotificationXmlFormatter extends ServiceSupport {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(NotificationXmlFormatter.class);
+
+    private final ObjectFactory mObjectFactory = new ObjectFactory();
+    private JAXBContext jaxbContext;
     private DatatypeFactory mDatatypeFactory;
-    private Marshaller mMarshaller;
-    private Lock mMarshallerLock = new ReentrantLock(false);
-    private ObjectFactory mObjectFactory = new ObjectFactory();
 
     public String format(Notification aNotification) throws NotificationFormatException {
+        ObjectHelper.notNull(jaxbContext, "jaxbContext");
 
-        NotificationEventType jaxb = null;
-
+        NotificationEventType jaxb;
         boolean wrap = false;
 
         if (aNotification instanceof AttributeChangeNotification) {
@@ -125,12 +128,10 @@ public class NotificationXmlFormatter {
 
             StringWriter sw = new StringWriter();
 
-            try {
-                mMarshallerLock.lock();
-                getMarshaller(mObjectFactory.getClass().getPackage().getName()).marshal(bean, sw);
-            } finally {
-                mMarshallerLock.unlock();
-            }
+            // must create a new marshaller as its not thread safe
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.marshal(bean, sw);
+
             return sw.toString();
         } catch (JAXBException e) {
             throw new NotificationFormatException(e);
@@ -153,13 +154,6 @@ public class NotificationXmlFormatter {
         return mDatatypeFactory;
     }
 
-    private Marshaller getMarshaller(String aPackageName) throws JAXBException {
-        if (mMarshaller == null) {
-            mMarshaller = JAXBContext.newInstance(aPackageName).createMarshaller();
-        }
-        return mMarshaller;
-    }
-
     private List<String> toStringList(List<ObjectName> objectNames) {
         List<String> roles = new ArrayList<String>(objectNames.size());
         for (ObjectName on : objectNames) {
@@ -167,4 +161,28 @@ public class NotificationXmlFormatter {
         }
         return roles;
     }
+
+    /**
+      * Strategy to create JAXB context
+      */
+    protected JAXBContext createContext(String contextPath) throws JAXBException {
+        ClassLoader cl = NotificationXmlFormatter.class.getClassLoader();
+        try {
+            LOG.info("Creating JAXBContext with contextPath: " + contextPath + " and classloader: " + cl);
+            return JAXBContext.newInstance(contextPath, cl);
+        } catch (Exception e) {
+            LOG.info("Creating JAXBContext with contextPath: " + contextPath);
+            return JAXBContext.newInstance(contextPath);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        jaxbContext = createContext("org.apache.camel.component.jmx.jaxb");
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+    }
+
 }
