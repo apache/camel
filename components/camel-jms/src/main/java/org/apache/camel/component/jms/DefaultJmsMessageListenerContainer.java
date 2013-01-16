@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * The default {@link DefaultMessageListenerContainer container} which listen for messages
@@ -28,7 +29,7 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  * This implementation extends Springs {@link DefaultMessageListenerContainer} supporting
  * automatic recovery and throttling.
  *
- * @version 
+ * @version
  */
 public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerContainer {
 
@@ -46,18 +47,26 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
 
     /**
      * Create a default TaskExecutor. Called if no explicit TaskExecutor has been specified.
-     * <p>The default implementation builds a {@link org.springframework.core.task.SimpleAsyncTaskExecutor}
-     * with the specified bean name and using Camel's {@link org.apache.camel.spi.ExecutorServiceManager}
+     * <p>The default implementation builds a {@link ThreadPoolTaskExecutor} with the following parameters:
+     * <ul>
+     * <li>corePoolSize = concurrentConsumers</li>
+     * <li>maxPoolSize = maxConcurrentConsumers</li>
+     * </ul>
+     * It uses the specified bean name and Camel's {@link org.apache.camel.spi.ExecutorServiceManager}
      * to resolve the thread name.
-     * @see org.springframework.core.task.SimpleAsyncTaskExecutor#SimpleAsyncTaskExecutor(String)
+     * @see ThreadPoolTaskExecutor#setBeanName(String)
      */
     @Override
     protected TaskExecutor createDefaultTaskExecutor() {
-        String pattern = endpoint.getCamelContext().getExecutorServiceManager().getThreadNamePattern();
+        ExecutorServiceManager esm = endpoint.getCamelContext().getExecutorServiceManager();
+        String pattern = esm.getThreadNamePattern();
         String beanName = getBeanName();
 
-        SimpleAsyncTaskExecutor answer = new SimpleAsyncTaskExecutor(beanName);
+        ThreadPoolTaskExecutor answer = new ThreadPoolTaskExecutor();
+        answer.setBeanName(beanName);
         answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+        answer.setCorePoolSize(endpoint.getConcurrentConsumers());
+        answer.setMaxPoolSize(endpoint.getMaxConcurrentConsumers());
         return answer;
     }
 
