@@ -300,7 +300,7 @@
     <quickfix-version>1.5.2-bd</quickfix-version>
     <regexp-bundle-version>1.3_3</regexp-bundle-version>
     <relaxngDatatype-version>20020414</relaxngDatatype-version>
-    <restlet-version>2.0.15</restlet-version>
+    <restlet-version>2.0.10</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
