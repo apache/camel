@@ -19,7 +19,6 @@ package org.apache.camel.component.jmx;
 import java.lang.management.ManagementFactory;
 import java.util.Collections;
 import java.util.Map;
-
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationFilter;
@@ -34,6 +33,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer will add itself as a NotificationListener on the object
@@ -51,9 +54,9 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      */
     private NotificationXmlFormatter mFormatter;
 
-    public JMXConsumer(JMXEndpoint aEndpoint, Processor aProcessor) {
-        super(aEndpoint, aProcessor);
-        mFormatter = new NotificationXmlFormatter();
+    public JMXConsumer(JMXEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        this.mFormatter = new NotificationXmlFormatter();
     }
 
     /**
@@ -65,6 +68,8 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         super.doStart();
 
         JMXEndpoint ep = (JMXEndpoint) getEndpoint();
+
+        ServiceHelper.startService(mFormatter);
 
         // connect to the mbean server
         if (ep.isPlatformServer()) {
@@ -100,8 +105,10 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     protected void doStop() throws Exception {
         super.doStop();
         removeNotificationListener();
-    }
 
+        ServiceHelper.stopService(mFormatter);
+    }
+    
     /**
      * Removes the consumer as a listener from the bean. 
      */
