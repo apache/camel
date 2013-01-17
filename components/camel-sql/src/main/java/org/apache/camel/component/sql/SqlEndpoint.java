@@ -40,8 +40,6 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private String onConsumeBatchComplete;
     private boolean allowNamedParameters = true;
 
-    // TODO: onConsumeBatchDone to execute a query when batch done
-
     public SqlEndpoint() {
     }
 
