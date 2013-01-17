@@ -20,13 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -34,15 +35,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 /**
  *
  */
-@Ignore
 public class SqlConsumerDeleteTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
+    private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
             .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+
+        jdbcTemplate = new JdbcTemplate(db);
 
         super.setUp();
     }
@@ -70,6 +73,12 @@ public class SqlConsumerDeleteTest extends CamelTestSupport {
         assertEquals("AMQ", exchanges.get(1).getIn().getBody(Map.class).get("PROJECT"));
         assertEquals(3, exchanges.get(2).getIn().getBody(Map.class).get("ID"));
         assertEquals("Linux", exchanges.get(2).getIn().getBody(Map.class).get("PROJECT"));
+
+        // give it a little tine to delete
+        Thread.sleep(500);
+
+        // there should only be 1 row in the table
+        assertEquals("Should have deleted all 3 rows", 0, jdbcTemplate.queryForInt("select count(*) from projects"));
     }
 
     @Override
@@ -79,7 +88,7 @@ public class SqlConsumerDeleteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?consumer.onConsume=delete from projects where id = #")
+                from("sql:select * from projects order by id?consumer.onConsume=delete from projects where id = :#id")
                     .to("mock:result");
             }
         };

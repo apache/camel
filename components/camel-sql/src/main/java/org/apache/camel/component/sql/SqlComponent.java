@@ -51,7 +51,18 @@ public class SqlComponent extends DefaultComponent {
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 
         String query = remaining.replaceAll(parameterPlaceholderSubstitute, "?");
-        return new SqlEndpoint(uri, this, jdbcTemplate, query);
+
+        String onConsume = getAndRemoveParameter(parameters, "consumer.onConsume", String.class);
+        if (onConsume == null) {
+            onConsume = getAndRemoveParameter(parameters, "onConsume", String.class);
+        }
+        if (onConsume != null) {
+            onConsume = onConsume.replaceAll(parameterPlaceholderSubstitute, "?");
+        }
+
+        SqlEndpoint endpoint = new SqlEndpoint(uri, this, jdbcTemplate, query);
+        endpoint.setOnConsume(onConsume);
+        return endpoint;
     }
 
     public void setDataSource(DataSource dataSource) {

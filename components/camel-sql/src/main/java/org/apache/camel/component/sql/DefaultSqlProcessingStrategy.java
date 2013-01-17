@@ -19,7 +19,6 @@ package org.apache.camel.component.sql;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
@@ -35,75 +34,30 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlProcessingStrategy.class);
 
     @Override
-    public void commit(SqlEndpoint endpoint, final Exchange exchange, Object data, JdbcTemplate jdbcTemplate, final String query) throws Exception {
-        jdbcTemplate.execute(query, new PreparedStatementCallback<Map<?, ?>>() {
-            public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
+    public int commit(final SqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
+
+        final String preparedQuery = endpoint.getPrepareStatementStrategy().prepareQuery(query, endpoint.isAllowNamedParameters());
+
+        return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
+            public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = ps.getParameterMetaData().getParameterCount();
 
-                Iterator<?> iterator = createIterator(exchange, query, expected);
+                Iterator<?> iterator = endpoint.getPrepareStatementStrategy().createPopulateIterator(query, preparedQuery, expected, exchange, data);
                 if (iterator != null) {
-                    populateStatement(ps, iterator, expected);
+                    endpoint.getPrepareStatementStrategy().populateStatement(ps, iterator, expected);
                     LOG.trace("Execute query {}", query);
                     ps.execute();
+
+                    int updateCount = ps.getUpdateCount();
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Update count {}", updateCount);
+                    }
+                    return updateCount;
                 }
 
-                return null;
+                return 0;
             };
         });
-    }
-
-    private Iterator<?> createIterator(Exchange exchange, final String query, final int expectedParams) {
-        Object body = exchange.getIn().getBody();
-        if (body == null) {
-            return null;
-        }
-
-        // TODO: support named parameters
-/*
-        if (body instanceof Map) {
-            final Map map = (Map) body;
-            return new Iterator() {
-
-                private int current;
-
-                @Override
-                public boolean hasNext() {
-                    return current < expectedParams;
-                }
-
-                @Override
-                public Object next() {
-                    current++;
-                    // TODO: Fix me
-                    return map.get("ID");
-                }
-
-                @Override
-                public void remove() {
-                    // noop
-                }
-            };
-        }*/
-
-        // else force as iterator based
-        Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
-        return iterator;
-    }
-
-    private void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
-        int argNumber = 1;
-        if (expectedParams > 0) {
-            while (iterator != null && iterator.hasNext()) {
-                Object value = iterator.next();
-                LOG.trace("Setting parameter #{} with value: {}", argNumber, value);
-                ps.setObject(argNumber, value);
-                argNumber++;
-            }
-        }
-
-        if (argNumber - 1 != expectedParams) {
-            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was:" + (argNumber - 1));
-        }
     }
 
 }

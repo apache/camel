@@ -45,20 +45,11 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     private final String query;
     private final JdbcTemplate jdbcTemplate;
 
-    /**
-     * Statement to run after data has been processed in the route
-     */
     private String onConsume;
-
-    /**
-     * Process resultset individually or as a list
-     */
     private boolean useIterator = true;
-
-    /**
-     * Whether allow empty resultset to be routed to the next hop
-     */
     private boolean routeEmptyResultSet;
+    private int expectedUpdateCount = -1;
+    private boolean breakBatchOnConsumeFail;
 
     private static final class DataHolder {
         private Exchange exchange;
@@ -92,9 +83,10 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             public Integer doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
                 Queue<DataHolder> answer = new LinkedList<DataHolder>();
 
+                log.debug("Executing query: {}", preparedQuery);
                 ResultSet rs = preparedStatement.executeQuery();
                 try {
-                    log.trace("Got result list from query {}", rs);
+                    log.trace("Got result list from query: {}", rs);
 
                     RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(new ColumnMapRowMapper());
                     List<Map<String, Object>> data = mapper.extractData(rs);
@@ -166,19 +158,24 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
 
             // process the current exchange
-            log.debug("Processing exchange: {} with properties: {}", exchange, exchange.getProperties());
             getProcessor().process(exchange);
 
-            // TODO: support when with CAMEL-5977
-            /*
             try {
-                if (onConsume != null) {
-                    SqlEndpoint endpoint = (SqlEndpoint) getEndpoint();
-                    endpoint.getProcessingStrategy().commit(endpoint, exchange, data, jdbcTemplate, onConsume);
+                // we can only run on consume if there was data
+                if (onConsume != null && data != null) {
+                    int updateCount = getEndpoint().getProcessingStrategy().commit(getEndpoint(), exchange, data, jdbcTemplate, onConsume);
+                    if (expectedUpdateCount > -1 && updateCount != expectedUpdateCount) {
+                        String msg = "Expected update count " + expectedUpdateCount + " but was " + updateCount + " executing query: " + onConsume;
+                        throw new SQLException(msg);
+                    }
                 }
             } catch (Exception e) {
-                handleException(e);
-            }*/
+                if (breakBatchOnConsumeFail) {
+                    throw e;
+                } else {
+                    handleException("Error executing onConsume query " + onConsume, e);
+                }
+            }
         }
 
         return total;
@@ -231,5 +228,28 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         this.routeEmptyResultSet = routeEmptyResultSet;
     }
 
+    public int getExpectedUpdateCount() {
+        return expectedUpdateCount;
+    }
+
+    /**
+     * Sets an expected update count to validate when using onConsume.
+     *
+     * @param expectedUpdateCount typically set this value to <tt>1</tt> to expect 1 row updated.
+     */
+    public void setExpectedUpdateCount(int expectedUpdateCount) {
+        this.expectedUpdateCount = expectedUpdateCount;
+    }
+
+    public boolean isBreakBatchOnConsumeFail() {
+        return breakBatchOnConsumeFail;
+    }
+
+    /**
+     * Sets whether to break batch if onConsume failed.
+     */
+    public void setBreakBatchOnConsumeFail(boolean breakBatchOnConsumeFail) {
+        this.breakBatchOnConsumeFail = breakBatchOnConsumeFail;
+    }
 }
 

@@ -32,7 +32,8 @@ public interface SqlProcessingStrategy {
      * @param data         The original data delivered to the route
      * @param jdbcTemplate The JDBC template
      * @param query        The SQL query to execute
+     * @return the update count if the query returned an update count
      * @throws Exception can be thrown in case of error
      */
-    void commit(SqlEndpoint endpoint, Exchange exchange, Object data, JdbcTemplate jdbcTemplate, String query) throws Exception;
+    int commit(SqlEndpoint endpoint, Exchange exchange, Object data, JdbcTemplate jdbcTemplate, String query) throws Exception;
 }
