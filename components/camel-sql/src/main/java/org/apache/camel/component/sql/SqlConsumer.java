@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -69,10 +68,15 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    public SqlConsumer(Endpoint endpoint, Processor processor, JdbcTemplate jdbcTemplate, String query) {
+    public SqlConsumer(SqlEndpoint endpoint, Processor processor, JdbcTemplate jdbcTemplate, String query) {
         super(endpoint, processor);
         this.jdbcTemplate = jdbcTemplate;
         this.query = query;
+    }
+
+    @Override
+    public SqlEndpoint getEndpoint() {
+        return (SqlEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -81,7 +85,9 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        Integer messagePolled = jdbcTemplate.execute(query, new PreparedStatementCallback<Integer>() {
+        final String preparedQuery = getEndpoint().getPrepareStatementStrategy().prepareQuery(query, getEndpoint().isAllowNamedParameters());
+
+        Integer messagePolled = jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             @Override
             public Integer doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
                 Queue<DataHolder> answer = new LinkedList<DataHolder>();

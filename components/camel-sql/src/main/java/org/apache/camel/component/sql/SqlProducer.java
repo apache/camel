@@ -41,27 +41,34 @@ public class SqlProducer extends DefaultProducer {
         this.batch = batch;
     }
 
+    @Override
+    public SqlEndpoint getEndpoint() {
+        return (SqlEndpoint) super.getEndpoint();
+    }
+
     public void process(final Exchange exchange) throws Exception {
         String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
-        String sql = queryHeader != null ? queryHeader : query;
 
-        jdbcTemplate.execute(sql, new PreparedStatementCallback<Map<?, ?>>() {
+        final String sql = queryHeader != null ? queryHeader : query;
+        final String preparedQuery = getEndpoint().getPrepareStatementStrategy().prepareQuery(sql, getEndpoint().isAllowNamedParameters());
+
+        jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Map<?, ?>>() {
             public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = ps.getParameterMetaData().getParameterCount();
 
                 // transfer incoming message body data to prepared statement parameters, if necessary
                 if (exchange.getIn().getBody() != null) {
-                    Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
-                    
                     if (batch) {
+                        Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
                         while (iterator != null && iterator.hasNext()) {
                             Object value = iterator.next();
-                            Iterator<?> i = exchange.getContext().getTypeConverter().convertTo(Iterator.class, value);
-                            populateStatement(ps, i, expected);
+                            Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                            getEndpoint().getPrepareStatementStrategy().populateStatement(ps, i, expected);
                             ps.addBatch();
                         }
                     } else {
-                        populateStatement(ps, iterator, expected);
+                        Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, exchange.getIn().getBody());
+                        getEndpoint().getPrepareStatementStrategy().populateStatement(ps, i, expected);
                     }
                 }
 
@@ -93,19 +100,4 @@ public class SqlProducer extends DefaultProducer {
         });
     }
 
-    private void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
-        int argNumber = 1;
-        if (expectedParams > 0) {
-            while (iterator != null && iterator.hasNext()) {
-                Object value = iterator.next();
-                log.trace("Setting parameter #{} with value: {}", argNumber, value);
-                ps.setObject(argNumber, value);
-                argNumber++;
-            }
-        }
-        
-        if (argNumber - 1 != expectedParams) {
-            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was:" + (argNumber - 1));
-        }
-    }
 }
