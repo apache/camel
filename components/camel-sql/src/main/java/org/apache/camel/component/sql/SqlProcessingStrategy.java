@@ -36,4 +36,16 @@ public interface SqlProcessingStrategy {
      * @throws Exception can be thrown in case of error
      */
     int commit(SqlEndpoint endpoint, Exchange exchange, Object data, JdbcTemplate jdbcTemplate, String query) throws Exception;
+
+    /**
+     * Commit callback when the batch is complete. This allows you to do one extra query after all rows has been processed in the batch.
+     *
+     * @param endpoint     the endpoint
+     * @param jdbcTemplate The JDBC template
+     * @param query        The SQL query to execute
+     * @return the update count if the query returned an update count
+     * @throws Exception can be thrown in case of error
+     */
+    int commitBatchComplete(SqlEndpoint endpoint, JdbcTemplate jdbcTemplate, String query) throws Exception;
+
 }

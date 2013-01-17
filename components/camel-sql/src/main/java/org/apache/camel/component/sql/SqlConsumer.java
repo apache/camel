@@ -46,6 +46,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     private final JdbcTemplate jdbcTemplate;
 
     private String onConsume;
+    private String onConsumeBatchComplete;
     private boolean useIterator = true;
     private boolean routeEmptyResultSet;
     private int expectedUpdateCount = -1;
@@ -178,6 +179,19 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             }
         }
 
+        try {
+            if (onConsumeBatchComplete != null) {
+                int updateCount = getEndpoint().getProcessingStrategy().commitBatchComplete(getEndpoint(), jdbcTemplate, onConsumeBatchComplete);
+                log.debug("onConsumeBatchComplete update count {}", updateCount);
+            }
+        } catch (Exception e) {
+            if (breakBatchOnConsumeFail) {
+                throw e;
+            } else {
+                handleException("Error executing onConsumeBatchComplete query " + onConsumeBatchComplete, e);
+            }
+        }
+
         return total;
     }
 
@@ -195,6 +209,14 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
      */
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
+    }
+
+    public String getOnConsumeBatchComplete() {
+        return onConsumeBatchComplete;
+    }
+
+    public void setOnConsumeBatchComplete(String onConsumeBatchComplete) {
+        this.onConsumeBatchComplete = onConsumeBatchComplete;
     }
 
     /**

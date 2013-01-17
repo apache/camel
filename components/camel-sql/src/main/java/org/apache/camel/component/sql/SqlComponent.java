@@ -59,9 +59,17 @@ public class SqlComponent extends DefaultComponent {
         if (onConsume != null) {
             onConsume = onConsume.replaceAll(parameterPlaceholderSubstitute, "?");
         }
+        String onConsumeBatchComplete = getAndRemoveParameter(parameters, "consumer.onConsumeBatchComplete", String.class);
+        if (onConsumeBatchComplete == null) {
+            onConsumeBatchComplete = getAndRemoveParameter(parameters, "onConsumeBatchComplete", String.class);
+        }
+        if (onConsumeBatchComplete != null) {
+            onConsumeBatchComplete = onConsumeBatchComplete.replaceAll(parameterPlaceholderSubstitute, "?");
+        }
 
         SqlEndpoint endpoint = new SqlEndpoint(uri, this, jdbcTemplate, query);
         endpoint.setOnConsume(onConsume);
+        endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
         return endpoint;
     }
 

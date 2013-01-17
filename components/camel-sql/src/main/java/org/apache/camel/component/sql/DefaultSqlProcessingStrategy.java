@@ -60,5 +60,27 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
         });
     }
 
+    @Override
+    public int commitBatchComplete(final SqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
+        final String preparedQuery = endpoint.getPrepareStatementStrategy().prepareQuery(query, endpoint.isAllowNamedParameters());
+
+        return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
+            public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
+                int expected = ps.getParameterMetaData().getParameterCount();
+                if (expected != 0) {
+                    throw new IllegalArgumentException("Query onConsumeBatchComplete " + query + " cannot have parameters, was " + expected);
+                }
+
+                LOG.trace("Execute query {}", query);
+                ps.execute();
+
+                int updateCount = ps.getUpdateCount();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Update count {}", updateCount);
+                }
+                return updateCount;
+            };
+        });
+    }
 }
 

@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.sql;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -35,7 +30,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 /**
  *
  */
-public class SqlConsumerDeleteTest extends CamelTestSupport {
+public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
     private JdbcTemplate jdbcTemplate;
@@ -60,19 +55,9 @@ public class SqlConsumerDeleteTest extends CamelTestSupport {
     @Test
     public void testConsume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(3);
+        mock.expectedMessageCount(1);
 
         assertMockEndpointsSatisfied();
-
-        List<Exchange> exchanges = mock.getReceivedExchanges();
-        assertEquals(3, exchanges.size());
-
-        assertEquals(1, exchanges.get(0).getIn().getBody(Map.class).get("ID"));
-        assertEquals("Camel", exchanges.get(0).getIn().getBody(Map.class).get("PROJECT"));
-        assertEquals(2, exchanges.get(1).getIn().getBody(Map.class).get("ID"));
-        assertEquals("AMQ", exchanges.get(1).getIn().getBody(Map.class).get("PROJECT"));
-        assertEquals(3, exchanges.get(2).getIn().getBody(Map.class).get("ID"));
-        assertEquals("Linux", exchanges.get(2).getIn().getBody(Map.class).get("PROJECT"));
 
         // give it a little tine to delete
         Thread.sleep(500);
@@ -87,7 +72,7 @@ public class SqlConsumerDeleteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?consumer.onConsume=delete from projects where id = :#id")
+                from("sql:select * from projects order by id?consumer.onConsumeBatchComplete=delete from projects")
                     .to("mock:result");
             }
         };

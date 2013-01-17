@@ -37,6 +37,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private SqlProcessingStrategy processingStrategy = new DefaultSqlProcessingStrategy();
     private SqlPrepareStatementStrategy prepareStatementStrategy = new DefaultSqlPrepareStatementStrategy();
     private String onConsume;
+    private String onConsumeBatchComplete;
     private boolean allowNamedParameters = true;
 
     // TODO: onConsumeBatchDone to execute a query when batch done
@@ -54,6 +55,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         SqlConsumer consumer = new SqlConsumer(this, processor, jdbcTemplate, query);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setOnConsume(getOnConsume());
+        consumer.setOnConsumeBatchComplete(getOnConsumeBatchComplete());
         configureConsumer(consumer);
         return consumer;
     }
@@ -120,6 +122,14 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
+    }
+
+    public String getOnConsumeBatchComplete() {
+        return onConsumeBatchComplete;
+    }
+
+    public void setOnConsumeBatchComplete(String onConsumeBatchComplete) {
+        this.onConsumeBatchComplete = onConsumeBatchComplete;
     }
 
     public boolean isAllowNamedParameters() {
