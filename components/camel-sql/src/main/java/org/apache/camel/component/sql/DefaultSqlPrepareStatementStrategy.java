@@ -54,9 +54,10 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                                               final Exchange exchange, final Object value) throws SQLException {
         if (hasNamedParameters(query)) {
             // create an iterator that returns the value in the named order
-            // the body must be a map type when using named parameters
             try {
-                final Map map = exchange.getContext().getTypeConverter().mandatoryConvertTo(Map.class, value);
+                // the body may be a map which we look at first
+                final Map bodyMap = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, value);
+                final Map headerMap = exchange.getIn().hasHeaders() ? exchange.getIn().getHeaders() : null;
 
                 return new Iterator() {
                     private NamedQueryParser parser = new NamedQueryParser(query);
@@ -83,10 +84,16 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                                 return null;
                             }
                             // the key is expected to exist, if not report so end user can see this
-                            if (!map.containsKey(key)) {
-                                throw new RuntimeExchangeException("Cannot find key [" + key + "] in message body to use when setting named parameter in query [" + query + "]", exchange);
+                            boolean contains = bodyMap != null ? bodyMap.containsKey(key) : false;
+                            contains |= headerMap != null ? headerMap.containsKey(key) : false;
+                            if (!contains) {
+                                throw new RuntimeExchangeException("Cannot find key [" + key + "] in message body or headers to use when setting named parameter in query [" + query + "]", exchange);
                             }
-                            next = map.get(key);
+                            // get from body before header
+                            next = bodyMap != null ? bodyMap.get(key) : null;
+                            if (next == null) {
+                                next = headerMap != null ? headerMap.get(key) : null;
+                            }
                         }
                         Object answer = next;
                         next = null;

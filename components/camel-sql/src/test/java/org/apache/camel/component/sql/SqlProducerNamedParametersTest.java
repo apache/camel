@@ -53,7 +53,7 @@ public class SqlProducerNamedParametersTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNamedParameters() throws Exception {
+    public void testNamedParametersFromBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -62,6 +62,25 @@ public class SqlProducerNamedParametersTest extends CamelTestSupport {
         map.put("min", 1);
 
         template.sendBody("direct:start", map);
+
+        mock.assertIsSatisfied();
+
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, received.size());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("AMQ", row.get("PROJECT"));
+    }
+
+    @Test
+    public void testNamedParametersFromHeaders() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        Map map = new HashMap();
+        map.put("lic", "ASF");
+        map.put("min", 1);
+
+        template.sendBodyAndHeaders("direct:start", "This is a dummy body", map);
 
         mock.assertIsSatisfied();
 
