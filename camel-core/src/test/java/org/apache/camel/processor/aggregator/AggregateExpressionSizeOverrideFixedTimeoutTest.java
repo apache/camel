@@ -27,19 +27,21 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 /**
  * @version 
  */
-public class AggregateExpressionSizeOverrideFixedTest extends ContextTestSupport {
+public class AggregateExpressionSizeOverrideFixedTimeoutTest extends ContextTestSupport {
 
     public void testAggregateExpressionSize() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
-        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "size");
+        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("id", 123);
-        headers.put("mySize", 3);
+        headers.put("mySize", 4);
 
         template.sendBodyAndHeaders("direct:start", "A", headers);
         template.sendBodyAndHeaders("direct:start", "B", headers);
         template.sendBodyAndHeaders("direct:start", "C", headers);
+
+        // do not send the 4th as we want to test for timeout then
 
         assertMockEndpointsSatisfied();
     }
@@ -52,6 +54,7 @@ public class AggregateExpressionSizeOverrideFixedTest extends ContextTestSupport
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .completionSize(2).completionSize(header("mySize"))
+                        .completionTimeout(1000)
                         .to("mock:aggregated");
             }
         };

@@ -307,19 +307,19 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
+        boolean sizeChecked = false;
         if (getCompletionSizeExpression() != null) {
             Integer value = getCompletionSizeExpression().evaluate(exchange, Integer.class);
             if (value != null && value > 0) {
+                // mark as already checked size as expression takes precedence over static configured
+                sizeChecked = true;
                 int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
                 if (size >= value) {
                     return "size";
-                } else {
-                    // not completed yet
-                    return null;
                 }
             }
         }
-        if (getCompletionSize() > 0) {
+        if (!sizeChecked && getCompletionSize() > 0) {
             int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
             if (size >= getCompletionSize()) {
                 return "size";
