@@ -24,12 +24,12 @@ import org.apache.camel.Exchange;
 public interface GenericFileProcessStrategy<T> {
 
     /**
-     * Allows custom logic to be run on startup preparing the strategy,
+     * Allows custom logic to be run on first poll preparing the strategy,
      * such as removing old lock files etc.
      *
      * @param operations file operations
      * @param endpoint   the endpoint
-     * @throws Exception can be thrown in case of errors which causes startup to fail
+     * @throws Exception can be thrown in case of errors which causes poll to fail
      */
     void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception;
 

@@ -42,12 +42,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
-    protected boolean loggedIn;
+    protected volatile boolean loggedIn;
     protected String fileExpressionResult;
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
     protected Processor customProcessor;
     protected boolean eagerLimitMaxMessagesPerPoll = true;
+    protected volatile boolean prepareOnStartup;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
@@ -86,6 +87,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * Poll for files
      */
     protected int poll() throws Exception {
+        // must prepare on startup the very first time
+        if (!prepareOnStartup) {
+            // prepare on startup
+            endpoint.getGenericFileProcessStrategy().prepareOnStartup(operations, endpoint);
+            prepareOnStartup = true;
+        }
+
         // must reset for each poll
         fileExpressionResult = null;
         shutdownRunningTask = null;
@@ -544,8 +552,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+    }
 
-        // prepare on startup
-        endpoint.getGenericFileProcessStrategy().prepareOnStartup(operations, endpoint);
+    @Override
+    protected void doStop() throws Exception {
+        prepareOnStartup = false;
+        super.doStop();
     }
 }
