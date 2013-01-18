@@ -29,8 +29,9 @@
     <property name="password" value=""/>
   </bean>
 
-  <!-- bean which creates the database table for this example -->
-  <bean id="initDatabase" class="org.apache.camel.example.sql.DatabaseBean" init-method="create">
+  <!-- bean which creates/destroys the database table for this example -->
+  <bean id="initDatabase" class="org.apache.camel.example.sql.DatabaseBean"
+        init-method="create" destroy-method="destroy">
     <property name="dataSource" ref="dataSource"/>
   </bean>
 

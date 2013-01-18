@@ -51,8 +51,24 @@ public class DatabaseBean {
 
         LOG.info("Creating table orders ...");
 
+        try {
+            jdbc.execute("drop table orders");
+        } catch (Throwable e) {
+            // ignore
+        }
+
         jdbc.execute(sql);
 
         LOG.info("... created table orders");
+    }
+
+    public void destroy() throws Exception {
+        JdbcTemplate jdbc = new JdbcTemplate(dataSource);
+
+        try {
+            jdbc.execute("drop table orders");
+        } catch (Throwable e) {
+            // ignore
+        }
     }
 }
