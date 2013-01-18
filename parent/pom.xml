@@ -334,14 +334,15 @@
     <spring-neo4j-version>2.1.0.RELEASE</spring-neo4j-version>
     <spring-retry-version>1.0.2.RELEASE</spring-retry-version>
     <!-- CAMEL-5768 using spring3.1.x by default -->
+    <spring-version-range>[3.1,3.2)</spring-version-range>
     <spring-version>${spring31-version}</spring-version>
+    <!-- spring 3.0 support is @deprecated -->
     <spring30-version>3.0.7.RELEASE</spring30-version>
     <spring31-version>3.1.3.RELEASE</spring31-version>
     <spring32-version>3.2.0.RELEASE</spring32-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.3.RELEASE</spring-security-version>
-    <!-- spring WS 2.0.3 is the last release to support Spring 3.0.x -->
-    <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
+    <spring-ws-version>2.1.2.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
     <sshd-version>0.8.0</sshd-version>
@@ -397,7 +398,7 @@
     <camel.osgi.import.defaults>
       org.springframework.ws.*;version="[2,3)",
       org.springframework.xml.*;version="[2,3)",
-      org.springframework.*;version="[3,4)",
+      org.springframework.*;version="${spring-version-range}",
       org.apache.commons.logging.*;version="[1.1,2)",
       org.apache.cxf.*;version="${cxf-version-range}",
       org.apache.qpid.*;version="[0.14,1)",
