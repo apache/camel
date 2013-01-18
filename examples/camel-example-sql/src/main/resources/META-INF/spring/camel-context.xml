@@ -21,6 +21,7 @@
           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+  <!-- START SNIPPET: e1 -->
   <!-- this is the JDBC data source which uses an in-memory only Apache Derby database -->
   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
@@ -39,7 +40,9 @@
   <bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
     <property name="dataSource" ref="dataSource"/>
   </bean>
+  <!-- END SNIPPET: e1 -->
 
+  <!-- START SNIPPET: e2 -->
   <!-- order bean is our business logic bean that creates new orders -->
   <bean id="orderBean" class="org.apache.camel.example.sql.OrderBean"/>
 
@@ -68,5 +71,6 @@
     </route>
 
   </camelContext>
+  <!-- END SNIPPET: e2 -->
 
 </beans>
