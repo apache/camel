@@ -19,7 +19,6 @@ package org.apache.camel.core.osgi;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import com.sun.org.apache.xml.internal.security.encryption.Reference;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.file.FileComponent;

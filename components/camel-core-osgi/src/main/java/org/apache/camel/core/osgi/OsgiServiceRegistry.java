@@ -36,7 +36,6 @@ import org.osgi.framework.ServiceReference;
 public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry {
     private final BundleContext bundleContext;
     private final Map<String, Object> serviceCacheMap = new ConcurrentHashMap<String, Object>();
-    private final Map<Class<?>, Map<String, Object>> typeCacheMap = new ConcurrentHashMap<Class<?>, Map<String, Object>>();
     private final Queue<ServiceReference<?>> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference<?>>();
     
     public OsgiServiceRegistry(BundleContext bc) {
