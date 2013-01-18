@@ -16,7 +16,6 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -55,11 +54,11 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 if (refs != null && refs.length > 0) {
                     // just return the first one
                     sr = refs[0];
-                }
-                serviceReferenceQueue.add(sr);
-                service = bundleContext.getService(sr);
-                if (service != null) {
-                    serviceCacheMap.put(name, service);
+                    serviceReferenceQueue.add(sr);
+                    service = bundleContext.getService(sr);
+                    if (service != null) {
+                        serviceCacheMap.put(name, service);
+                    }
                 }
             } catch (Exception ex) {
                 throw ObjectHelper.wrapRuntimeCamelException(ex);
@@ -94,12 +93,14 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
             ServiceReference<?>[] refs = bundleContext.getAllServiceReferences(type.getName(), null);
             if (refs != null) {
                 for (ServiceReference<?> sr : refs) {
-                    serviceReferenceQueue.add(sr);
-                    Object service = bundleContext.getService(sr);
-                    if (service != null) {
-                        String name = (String)sr.getProperty("name");
-                        if (name != null) {
-                            result.put(name , type.cast(service));
+                    if (sr != null) {
+                        Object service = bundleContext.getService(sr);
+                        serviceReferenceQueue.add(sr);
+                        if (service != null) {
+                            String name = (String)sr.getProperty("name");
+                            if (name != null) {
+                                result.put(name , type.cast(service));
+                            }
                         }
                     }
                 }

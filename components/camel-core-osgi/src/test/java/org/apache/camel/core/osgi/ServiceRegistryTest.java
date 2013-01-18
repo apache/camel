@@ -31,6 +31,9 @@ public class ServiceRegistryTest extends CamelOsgiTestSupport {
         context.start();
         MyService myService = context.getRegistry().lookup(MyService.class.getName(), MyService.class);
         assertNotNull("MyService should not be null", myService);
+        
+        myService = context.getRegistry().lookup("test", MyService.class);
+        assertNull("We should not get the MyService Object here", myService);
 
         Object service = context.getRegistry().lookup(MyService.class.getName());
         assertNotNull("MyService should not be null", service);

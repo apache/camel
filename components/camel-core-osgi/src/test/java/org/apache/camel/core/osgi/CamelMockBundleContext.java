@@ -66,9 +66,22 @@ public class CamelMockBundleContext extends MockBundleContext {
             return null;
         }    
     }
+    
+    public ServiceReference[] getServiceReferences(String clazz, String filter) throws InvalidSyntaxException {
+        // just simulate when the bundle context doesn't have right service reference
+        if (filter != null && filter.indexOf("name=test") > 0) {
+            return null;
+        } else {
+            return super.getServiceReferences(clazz, filter);
+        }
+    }
    
     @SuppressWarnings({"rawtypes", "unchecked"})
     public ServiceReference[] getAllServiceReferences(String clazz, String filter) throws InvalidSyntaxException {
+        // just simulate when the bundle context doesn't have right service reference
+        if (filter != null && filter.indexOf("name=test") > 0) {
+            return null;
+        }
         MockServiceReference reference = new MockServiceReference(getBundle(), new String[] {clazz});
         // setup the name property with the class name
         Dictionary properties = new Hashtable();
