@@ -75,7 +75,7 @@ public class SqlConsumerDeleteTest extends CamelTestSupport {
         assertEquals("Linux", exchanges.get(2).getIn().getBody(Map.class).get("PROJECT"));
 
         // give it a little tine to delete
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         assertEquals("Should have deleted all 3 rows", 0, jdbcTemplate.queryForInt("select count(*) from projects"));
     }

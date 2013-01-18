@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.sql;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -30,7 +35,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 /**
  *
  */
-public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
+public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
     private JdbcTemplate jdbcTemplate;
@@ -55,14 +60,23 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
     @Test
     public void testConsume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("The project is Camel", "The project is AMQ", "The project is Linux");
+        mock.expectedMessageCount(2);
 
         assertMockEndpointsSatisfied();
+
+        List<Exchange> exchanges = mock.getReceivedExchanges();
+        assertEquals(2, exchanges.size());
+
+        assertEquals(1, exchanges.get(0).getIn().getBody(Map.class).get("ID"));
+        assertEquals("Camel", exchanges.get(0).getIn().getBody(Map.class).get("PROJECT"));
+        assertEquals(3, exchanges.get(1).getIn().getBody(Map.class).get("ID"));
+        assertEquals("Linux", exchanges.get(1).getIn().getBody(Map.class).get("PROJECT"));
 
         // give it a little tine to delete
         Thread.sleep(1000);
 
-        assertEquals("Should have deleted all 3 rows", 0, jdbcTemplate.queryForInt("select count(*) from projects"));
+        assertEquals("Should have deleted 2 rows", 1, jdbcTemplate.queryForInt("select count(*) from projects"));
+        assertEquals("Should be AMQ project that is BAD", "AMQ", jdbcTemplate.queryForObject("select PROJECT from projects where license = 'BAD'", String.class));
     }
 
     @Override
@@ -72,10 +86,18 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                // even if we transform the exchange we can still do onConsume as we have the original data at
-                // the point when onConsume is executed
-                from("sql:select * from projects order by id?consumer.onConsume=delete from projects where id = :#id")
-                    .transform().simple("The project is ${body[project]}")
+                from("sql:select * from projects where license <> 'BAD' order by id"
+                        + "?consumer.onConsume=delete from projects where id = :#id"
+                        + "&consumer.onConsumeFailed=update projects set license = 'BAD' where id = :#id")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            Object project = exchange.getIn().getBody(Map.class).get("PROJECT");
+                            if ("AMQ".equals(project)) {
+                                throw new IllegalArgumentException("Cannot handled AMQ");
+                            }
+                        }
+                    })
                     .to("mock:result");
             }
         };

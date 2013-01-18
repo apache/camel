@@ -46,6 +46,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     private final JdbcTemplate jdbcTemplate;
 
     private String onConsume;
+    private String onConsumeFailed;
     private String onConsumeBatchComplete;
     private boolean useIterator = true;
     private boolean routeEmptyResultSet;
@@ -159,14 +160,20 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
 
             // process the current exchange
-            getProcessor().process(exchange);
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
 
+            // pick the on consume to use
+            String sql = exchange.isFailed() ? onConsumeFailed : onConsume;
             try {
                 // we can only run on consume if there was data
-                if (onConsume != null && data != null) {
-                    int updateCount = getEndpoint().getProcessingStrategy().commit(getEndpoint(), exchange, data, jdbcTemplate, onConsume);
+                if (data != null && sql != null) {
+                    int updateCount = getEndpoint().getProcessingStrategy().commit(getEndpoint(), exchange, data, jdbcTemplate, sql);
                     if (expectedUpdateCount > -1 && updateCount != expectedUpdateCount) {
-                        String msg = "Expected update count " + expectedUpdateCount + " but was " + updateCount + " executing query: " + onConsume;
+                        String msg = "Expected update count " + expectedUpdateCount + " but was " + updateCount + " executing query: " + sql;
                         throw new SQLException(msg);
                     }
                 }
@@ -174,7 +181,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 if (breakBatchOnConsumeFail) {
                     throw e;
                 } else {
-                    handleException("Error executing onConsume query " + onConsume, e);
+                    handleException("Error executing onConsume/onConsumeFailed query " + sql, e);
                 }
             }
         }
@@ -195,20 +202,26 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         return total;
     }
 
-    /**
-     * Gets the statement(s) to run after successful processing.
-     * Use comma to separate multiple statements.
-     */
     public String getOnConsume() {
         return onConsume;
     }
 
     /**
-     * Sets the statement to run after successful processing.
-     * Use comma to separate multiple statements.
+     * Sets a SQL to execute when the row has been successfully processed.
      */
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
+    }
+
+    public String getOnConsumeFailed() {
+        return onConsumeFailed;
+    }
+
+    /**
+     * Sets a SQL to execute when the row failed being processed.
+     */
+    public void setOnConsumeFailed(String onConsumeFailed) {
+        this.onConsumeFailed = onConsumeFailed;
     }
 
     public String getOnConsumeBatchComplete() {

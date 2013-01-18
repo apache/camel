@@ -37,6 +37,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private SqlProcessingStrategy processingStrategy = new DefaultSqlProcessingStrategy();
     private SqlPrepareStatementStrategy prepareStatementStrategy = new DefaultSqlPrepareStatementStrategy();
     private String onConsume;
+    private String onConsumeFailed;
     private String onConsumeBatchComplete;
     private boolean allowNamedParameters = true;
 
@@ -53,6 +54,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         SqlConsumer consumer = new SqlConsumer(this, processor, jdbcTemplate, query);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setOnConsume(getOnConsume());
+        consumer.setOnConsumeFailed(getOnConsumeFailed());
         consumer.setOnConsumeBatchComplete(getOnConsumeBatchComplete());
         configureConsumer(consumer);
         return consumer;
@@ -120,6 +122,14 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
+    }
+
+    public String getOnConsumeFailed() {
+        return onConsumeFailed;
+    }
+
+    public void setOnConsumeFailed(String onConsumeFailed) {
+        this.onConsumeFailed = onConsumeFailed;
     }
 
     public String getOnConsumeBatchComplete() {

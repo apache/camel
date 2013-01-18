@@ -60,7 +60,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // give it a little tine to delete
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         assertEquals("Should have deleted all 3 rows", 0, jdbcTemplate.queryForInt("select count(*) from projects"));
     }
