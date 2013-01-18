@@ -53,7 +53,7 @@
     <route id="generateOrder-route">
       <from uri="timer:foo?period=5s"/>
       <transform>
-        <method ref="orderBean" method="generateData"/>
+        <method ref="orderBean" method="generateOrder"/>
       </transform>
       <to uri="sql:{{sql.insertOrder}}"/>
       <log message="Inserted new order ${body[id]}"/>
