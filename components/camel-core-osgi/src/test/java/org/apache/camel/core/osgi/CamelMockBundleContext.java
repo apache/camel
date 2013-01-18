@@ -16,6 +16,10 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+import com.sun.org.apache.xml.internal.security.encryption.Reference;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.file.FileComponent;
@@ -26,8 +30,10 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.springframework.osgi.mock.MockBundleContext;
+import org.springframework.osgi.mock.MockServiceReference;
 
 public class CamelMockBundleContext extends MockBundleContext {
 
@@ -61,5 +67,14 @@ public class CamelMockBundleContext extends MockBundleContext {
             return null;
         }    
     }
-
+   
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public ServiceReference[] getAllServiceReferences(String clazz, String filter) throws InvalidSyntaxException {
+        MockServiceReference reference = new MockServiceReference(getBundle(), new String[] {clazz});
+        // setup the name property with the class name
+        Dictionary properties = new Hashtable();
+        properties.put("name", clazz);
+        reference.setProperties(properties);
+        return new ServiceReference[] {reference};
+    }
 }
