@@ -17,6 +17,7 @@
 package org.apache.camel.component.apns.factory;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import javax.net.ssl.SSLContext;
 
@@ -35,6 +36,7 @@ import org.apache.camel.component.apns.util.AssertUtils;
 import org.apache.camel.component.apns.util.ParamUtils;
 import org.apache.camel.component.apns.util.ResourceUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 public class ApnsServiceFactory implements CamelContextAware {
 
@@ -169,7 +171,7 @@ public class ApnsServiceFactory implements CamelContextAware {
         configureApnsDestinations(builder);
         try {
             configureApnsCertificate(builder);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
@@ -177,7 +179,7 @@ public class ApnsServiceFactory implements CamelContextAware {
         return apnsService;
     }
 
-    private void configureApnsCertificate(ApnsServiceBuilder builder) throws FileNotFoundException {
+    private void configureApnsCertificate(ApnsServiceBuilder builder) throws IOException {
         if (getSslContext() != null) {
             builder.withSSLContext(getSslContext());
             return;
@@ -189,10 +191,7 @@ public class ApnsServiceFactory implements CamelContextAware {
 
         InputStream certificateInputStream = null;
         try {
-            certificateInputStream = camelContext.getClassResolver().loadResourceAsStream(getCertificatePath());
-            if (certificateInputStream == null) {
-                throw new FileNotFoundException("Cannot load " + getCertificatePath() + " from classpath");
-            }
+            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), getCertificatePath());
             builder.withCert(certificateInputStream, getCertificatePassword());
         } finally {
             ResourceUtils.close(certificateInputStream);
