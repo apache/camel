@@ -139,22 +139,21 @@ public class PollEnricher extends ServiceSupport implements Processor {
         } else {
             prepareResult(exchange);
 
-            // prepare the exchanges for aggregation
-            ExchangeHelper.prepareAggregation(exchange, resourceExchange);
-            // must catch any exception from aggregation
-            Exchange aggregatedExchange;
             try {
-                aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+                // prepare the exchanges for aggregation
+                ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+                // must catch any exception from aggregation
+                Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+                if (aggregatedExchange != null) {
+                    // copy aggregation result onto original exchange (preserving pattern)
+                    copyResultsPreservePattern(exchange, aggregatedExchange);
+                    // handover any synchronization
+                    if (resourceExchange != null) {
+                        resourceExchange.handoverCompletions(exchange);
+                    }
+                }
             } catch (Throwable e) {
                 throw new CamelExchangeException("Error occurred during aggregation", exchange, e);
-            }
-            if (aggregatedExchange != null) {
-                // copy aggregation result onto original exchange (preserving pattern)
-                copyResultsPreservePattern(exchange, aggregatedExchange);
-                // handover any synchronization
-                if (resourceExchange != null) {
-                    resourceExchange.handoverCompletions(exchange);
-                }
             }
         }
 
