@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.apns.factory;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.net.ssl.SSLContext;
