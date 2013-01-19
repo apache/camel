@@ -123,12 +123,11 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
                     copyResultsPreservePattern(exchange, resourceExchange);
                 } else {
                     prepareResult(exchange);
-
-                    // prepare the exchanges for aggregation
-                    ExchangeHelper.prepareAggregation(exchange, resourceExchange);
-                    Exchange aggregatedExchange;
                     try {
-                        aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+                        // prepare the exchanges for aggregation
+                        ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+
+                        Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                         if (aggregatedExchange != null) {
                             // copy aggregation result onto original exchange (preserving pattern)
                             copyResultsPreservePattern(exchange, aggregatedExchange);
@@ -137,6 +136,8 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
                         // if the aggregationStrategy threw an exception, set it on the original exchange
                         exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
                         callback.done(false);
+                        // we failed so break out now
+                        return;
                     }
                 }
 
@@ -162,20 +163,21 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
         } else {
             prepareResult(exchange);
 
-            // prepare the exchanges for aggregation
-            ExchangeHelper.prepareAggregation(exchange, resourceExchange);
-            // must catch any exception from aggregation
-            Exchange aggregatedExchange;
             try {
-                aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+                // prepare the exchanges for aggregation
+                ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+
+                Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+                if (aggregatedExchange != null) {
+                    // copy aggregation result onto original exchange (preserving pattern)
+                    copyResultsPreservePattern(exchange, aggregatedExchange);
+                }
             } catch (Throwable e) {
+                // if the aggregationStrategy threw an exception, set it on the original exchange
                 exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
                 callback.done(true);
+                // we failed so break out now
                 return true;
-            }
-            if (aggregatedExchange != null) {
-                // copy aggregation result onto original exchange (preserving pattern)
-                copyResultsPreservePattern(exchange, aggregatedExchange);
             }
         }
 
@@ -196,7 +198,8 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
      * @return created exchange.
      */
     protected Exchange createResourceExchange(Exchange source, ExchangePattern pattern) {
-        Exchange target = source.copy();
+        // copy exchange, and do not share the unit of work
+        Exchange target = ExchangeHelper.createCorrelatedCopy(source, false);
         target.setPattern(pattern);
         return target;
     }
