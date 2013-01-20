@@ -51,6 +51,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // expected
         }
@@ -69,6 +70,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // expected
         }
@@ -94,6 +96,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // expected
         }
@@ -118,6 +121,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // expected
         }
@@ -136,6 +140,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // expected
         }
@@ -156,6 +161,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // expected
         }

@@ -323,6 +323,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:a", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Forced", e.getCause().getMessage());
@@ -339,6 +340,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:a", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Forced", e.getCause().getMessage());
@@ -357,6 +359,7 @@ public class MockEndpointTest extends ContextTestSupport {
         template.sendBody("direct:a", "Hello World");
         try {
             template.sendBody("direct:a", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Forced", e.getCause().getMessage());
@@ -375,6 +378,7 @@ public class MockEndpointTest extends ContextTestSupport {
         template.sendBody("direct:a", "Hello World");
         try {
             template.sendBody("direct:a", "Bye World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Forced", e.getCause().getMessage());
