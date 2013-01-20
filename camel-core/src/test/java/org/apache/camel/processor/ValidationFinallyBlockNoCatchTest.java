@@ -50,6 +50,7 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
 
         try {
             template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // expected
         }

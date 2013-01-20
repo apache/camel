@@ -59,6 +59,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:a", "Hello Camel");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // expected
         }

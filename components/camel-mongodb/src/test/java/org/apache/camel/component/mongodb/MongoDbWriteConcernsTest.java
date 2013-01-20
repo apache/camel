@@ -74,6 +74,7 @@ public class MongoDbWriteConcernsTest extends AbstractMongoDbTest {
         
         try {
             template.requestBodyAndHeader("direct:noWriteConcern", "{\"scientist\":\"newton\"}", MongoDbConstants.WRITECONCERN, "Random");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             extractAndAssertCamelMongoDbException(e, "WriteConcern specified in the " + MongoDbConstants.WRITECONCERN + " header");
         }

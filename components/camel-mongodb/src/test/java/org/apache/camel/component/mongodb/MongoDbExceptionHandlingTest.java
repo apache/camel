@@ -34,6 +34,7 @@ public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
         // notice missing quote at the end of Einstein
         try {
             template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             extractAndAssertCamelMongoDbException(e, null);
         }
@@ -47,6 +48,7 @@ public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
         
         try {
             template.requestBodyAndHeader("direct:findOneByQuery", "{\"scientist\": \"Einstein\"}", MongoDbConstants.OPERATION_HEADER, "dummyOp");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             extractAndAssertCamelMongoDbException(e, "Operation specified on header is not supported. Value: dummyOp");
         }
