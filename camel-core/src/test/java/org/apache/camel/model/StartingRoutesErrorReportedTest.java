@@ -67,6 +67,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
                 }
             });
             context.start();
+            fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             assertTrue(e.getMessage().startsWith("Failed to create route route3 at: >>> Bean[ref:] <<< in route:"
                     + " Route[[From[direct:start]] -> [To[mock:foo], Bean[ref:]]] because of"));
@@ -84,6 +85,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
                 }
             });
             context.start();
+            fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             assertTrue(e.getMessage().contains("Ensure that the data format is valid and the associated Camel component is present on the classpath"));
         }

@@ -223,6 +223,7 @@ public class DefaultCamelContextTest extends TestSupport {
         try {
             Endpoint endpoint = ctx.hasEndpoint(null);
             assertNull("Should not have endpoint", endpoint);
+            fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException e) {
             // expected
         }
