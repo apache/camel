@@ -22,6 +22,7 @@ import java.util.Map;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 
+import com.ning.http.client.Realm;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.IntrospectionSupport;
@@ -40,6 +41,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
     
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";
+    private static final String CLIENT_REALM_CONFIG_PREFIX = "clientConfig.realm.";
 
     private AsyncHttpClient client;
     private AsyncHttpClientConfig clientConfig;
@@ -60,7 +62,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         endpoint.setSslContextParameters(getSslContextParameters());
         
         setProperties(endpoint, parameters);
-        
+
         if (IntrospectionSupport.hasProperties(parameters, CLIENT_CONFIG_PREFIX)) {
             AsyncHttpClientConfig.Builder builder = endpoint.getClientConfig() == null 
                     ? new AsyncHttpClientConfig.Builder() : AhcComponent.cloneConfig(endpoint.getClientConfig());
@@ -78,12 +80,26 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
                          + " of the explicitly configured AsyncHttpClientConfig.  That is, the URI parameters override the"
                          + " settings on the explicitly configured AsyncHttpClientConfig for this endpoint.");
             }
-            
+
+            // special for realm builder
+            Realm.RealmBuilder realmBuilder = null;
+            if (IntrospectionSupport.hasProperties(parameters, CLIENT_REALM_CONFIG_PREFIX)) {
+                realmBuilder = new Realm.RealmBuilder();
+
+                // set and validate additional parameters on client config
+                Map<String, Object> realmParams = IntrospectionSupport.extractProperties(parameters, CLIENT_REALM_CONFIG_PREFIX);
+                setProperties(realmBuilder, realmParams);
+                validateParameters(uri, realmParams, null);
+            }
+
             // set and validate additional parameters on client config
             Map<String, Object> clientParams = IntrospectionSupport.extractProperties(parameters, CLIENT_CONFIG_PREFIX);
             setProperties(builder, clientParams);
             validateParameters(uri, clientParams, null);
-            
+
+            if (realmBuilder != null) {
+                builder.setRealm(realmBuilder.build());
+            }
             endpoint.setClientConfig(builder.build());
         }
 

@@ -31,7 +31,7 @@ import org.apache.camel.impl.DefaultExchangeHolder;
 /**
  * Adapted from HawtDBCamelCodec
  */
-public final class JdbcCamelCodec {
+public class JdbcCamelCodec {
 
     public byte[] marshallExchange(CamelContext camelContext, Exchange exchange) throws IOException {
         // use DefaultExchangeHolder to marshal to a serialized object

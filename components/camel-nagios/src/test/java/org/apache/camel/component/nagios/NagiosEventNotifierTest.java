@@ -108,6 +108,7 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
 
         try {
             template.sendBody("direct:fail", "Bye World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // ignore
         }

@@ -638,6 +638,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-example-spring-xquery</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-example-sql</artifactId>
+    </dependency>
 
 
     <dependency>

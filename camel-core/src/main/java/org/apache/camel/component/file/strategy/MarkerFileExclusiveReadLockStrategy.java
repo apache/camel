@@ -25,6 +25,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,13 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
         LOG.debug("Prepare on startup by deleting orphaned lock files from: {}", dir);
 
+        StopWatch watch = new StopWatch();
         deleteLockFiles(file, endpoint.isRecursive());
+
+        // log anything that takes more than a second
+        if (watch.taken() > 1000) {
+            LOG.info("Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.", dir, watch.taken());
+        }
     }
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,

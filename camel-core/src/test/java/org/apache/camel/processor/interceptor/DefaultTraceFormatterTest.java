@@ -59,6 +59,7 @@ public class DefaultTraceFormatterTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:fail", "Hello World");
+            fail("Should have thrown an exception");
         } catch (Exception e) {
             // ignore
         }

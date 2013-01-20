@@ -27,11 +27,6 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class ControlBusComponent extends DefaultComponent {
 
-    // TODO: management command, to use the JMX mbeans easier
-    // TODO: Bulk status in POJO / JSON format
-    // TODO: a header with the action to do instead of uri, as we may want to be lenient
-    // TODO: JMX stats and operations of in-flight tasks, and history of done etc
-
     private ExecutorService executorService;
 
     @Override

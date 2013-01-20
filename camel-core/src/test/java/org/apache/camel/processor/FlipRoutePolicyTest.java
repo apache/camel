@@ -28,10 +28,10 @@ public class FlipRoutePolicyTest extends ContextTestSupport {
 
     public void testFlipRoutePolicyTest() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
-        foo.expectedMinimumMessageCount(5);
+        foo.expectedMinimumMessageCount(3);
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
-        bar.expectedMinimumMessageCount(5);
+        bar.expectedMinimumMessageCount(3);
 
         assertMockEndpointsSatisfied();
     }

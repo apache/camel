@@ -74,8 +74,6 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
 
     @Test
     public void testScheduledStopRoutePolicy() throws Exception {
-        boolean consumerStopped = false;
-  
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -96,7 +94,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         Thread.sleep(4000);
 
         assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
-        
+
+        boolean consumerStopped = false;
         try {
             template.sendBody("direct:start", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {
@@ -108,8 +107,6 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     
     @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
-        boolean consumerSuspended = false;
-       
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -128,6 +125,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         context.start();
         
         Thread.sleep(4000);
+
+        boolean consumerSuspended = false;
         try {
             template.sendBody("direct:start", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {
@@ -162,6 +161,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         ServiceHelper.suspendService(context.getRoute("test").getConsumer());
         try {
             template.sendBody("direct:start", "Ready or not, Here, I come");
+            fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             LOG.debug("Consumer successfully suspended");
         } 
@@ -201,6 +201,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         
         try {
             template.sendBody("direct:start", "Ready or not, Here, I come");
+            fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             LOG.debug("Consumer successfully suspended");
         } 
@@ -240,6 +241,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         
         try {
             template.sendBody("direct:start", "Ready or not, Here, I come");
+            fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             LOG.debug("Consumer successfully suspended");
         } 

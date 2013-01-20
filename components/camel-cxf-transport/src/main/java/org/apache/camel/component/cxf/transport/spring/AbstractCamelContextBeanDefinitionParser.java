@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -44,6 +45,13 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         // Parser the id attribute
         bean.setAbstract(true);
+        // Parser the camelContextId attribute
+        final String camelContextId = element.getAttribute("camelContextId");
+        if (!StringUtils.isEmpty(camelContextId)) {
+            wireCamelContext(bean, getContextId(camelContextId));
+            // Don't need to do further parsing here
+            return;
+        }
         NodeList children = element.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node n = children.item(i);

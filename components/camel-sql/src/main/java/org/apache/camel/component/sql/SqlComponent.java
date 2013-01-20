@@ -31,6 +31,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class SqlComponent extends DefaultComponent {
     private DataSource dataSource;
+    private boolean usePlaceholder = true;
 
     public SqlComponent() {
     }
@@ -51,7 +52,34 @@ public class SqlComponent extends DefaultComponent {
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 
         String query = remaining.replaceAll(parameterPlaceholderSubstitute, "?");
-        return new SqlEndpoint(uri, this, jdbcTemplate, query);
+
+        String onConsume = getAndRemoveParameter(parameters, "consumer.onConsume", String.class);
+        if (onConsume == null) {
+            onConsume = getAndRemoveParameter(parameters, "onConsume", String.class);
+        }
+        if (onConsume != null && usePlaceholder) {
+            onConsume = onConsume.replaceAll(parameterPlaceholderSubstitute, "?");
+        }
+        String onConsumeFailed = getAndRemoveParameter(parameters, "consumer.onConsumeFailed", String.class);
+        if (onConsumeFailed == null) {
+            onConsumeFailed = getAndRemoveParameter(parameters, "onConsumeFailed", String.class);
+        }
+        if (onConsumeFailed != null && usePlaceholder) {
+            onConsumeFailed = onConsumeFailed.replaceAll(parameterPlaceholderSubstitute, "?");
+        }
+        String onConsumeBatchComplete = getAndRemoveParameter(parameters, "consumer.onConsumeBatchComplete", String.class);
+        if (onConsumeBatchComplete == null) {
+            onConsumeBatchComplete = getAndRemoveParameter(parameters, "onConsumeBatchComplete", String.class);
+        }
+        if (onConsumeBatchComplete != null && usePlaceholder) {
+            onConsumeBatchComplete = onConsumeBatchComplete.replaceAll(parameterPlaceholderSubstitute, "?");
+        }
+
+        SqlEndpoint endpoint = new SqlEndpoint(uri, this, jdbcTemplate, query);
+        endpoint.setOnConsume(onConsume);
+        endpoint.setOnConsumeFailed(onConsumeFailed);
+        endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
+        return endpoint;
     }
 
     public void setDataSource(DataSource dataSource) {
@@ -60,5 +88,18 @@ public class SqlComponent extends DefaultComponent {
 
     public DataSource getDataSource() {
         return dataSource;
+    }
+
+    public boolean isUsePlaceholder() {
+        return usePlaceholder;
+    }
+
+    /**
+     * Sets whether to use placeholder and replace all placeholder characters with ? sign in the SQL queries.
+     * <p/>
+     * This option is default <tt>true</tt>
+     */
+    public void setUsePlaceholder(boolean usePlaceholder) {
+        this.usePlaceholder = usePlaceholder;
     }
 }

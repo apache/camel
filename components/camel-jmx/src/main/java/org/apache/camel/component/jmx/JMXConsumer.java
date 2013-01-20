@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationFilter;
@@ -38,6 +37,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,10 +75,10 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     private NotificationXmlFormatter mFormatter;
 
 
-    public JMXConsumer(JMXEndpoint aEndpoint, Processor aProcessor) {
-        super(aEndpoint, aProcessor);
-        this.mJmxEndpoint = aEndpoint;
-        mFormatter = new NotificationXmlFormatter();
+    public JMXConsumer(JMXEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        this.mJmxEndpoint = endpoint;
+        this.mFormatter = new NotificationXmlFormatter();
     }
 
     /**
@@ -87,6 +87,8 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      */
     @Override
     protected void doStart() throws Exception {
+        ServiceHelper.startService(mFormatter);
+
         // connect to the mbean server
         if (mJmxEndpoint.isPlatformServer()) {
             setServerConnection(ManagementFactory.getPlatformMBeanServer());
@@ -245,6 +247,8 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         }
 
         removeNotificationListeners();
+
+        ServiceHelper.stopService(mFormatter);
     }
     
     /**
@@ -255,6 +259,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         getServerConnection().removeNotificationListener(mJmxEndpoint.getJMXObjectName(), this);
         if (mConnectionNotificationListener != null) {
             mConnector.removeConnectionNotificationListener(mConnectionNotificationListener);
+            mConnectionNotificationListener = null;
         }    
     }
 

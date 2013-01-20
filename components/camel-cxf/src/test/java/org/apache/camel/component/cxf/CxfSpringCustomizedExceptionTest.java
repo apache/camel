@@ -74,6 +74,7 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
     public void testInvokingServiceFromCamel() throws Exception {
         try {
             template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world" , CxfConstants.OPERATION_NAME, "echo");
+            fail("Should have thrown an exception");
         } catch (Exception ex) {
             Throwable result = ex.getCause();
             assertTrue("Exception is not instance of SoapFault", result instanceof SoapFault);

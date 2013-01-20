@@ -20,7 +20,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -29,10 +29,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * question marks (that are parameter placeholders), sharp signs should be used.
  * This is because in camel question mark has other meaning.
  */
-public class SqlEndpoint extends DefaultEndpoint {
+public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
     private String query;
     private boolean batch;
+    private int maxMessagesPerPoll;
+    private SqlProcessingStrategy processingStrategy = new DefaultSqlProcessingStrategy();
+    private SqlPrepareStatementStrategy prepareStatementStrategy = new DefaultSqlPrepareStatementStrategy();
+    private String onConsume;
+    private String onConsumeFailed;
+    private String onConsumeBatchComplete;
+    private boolean allowNamedParameters = true;
 
     public SqlEndpoint() {
     }
@@ -42,9 +49,15 @@ public class SqlEndpoint extends DefaultEndpoint {
         this.jdbcTemplate = jdbcTemplate;
         this.query = query;
     }
-    
+
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Not implemented");
+        SqlConsumer consumer = new SqlConsumer(this, processor, jdbcTemplate, query);
+        consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+        consumer.setOnConsume(getOnConsume());
+        consumer.setOnConsumeFailed(getOnConsumeFailed());
+        consumer.setOnConsumeBatchComplete(getOnConsumeBatchComplete());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public Producer createProducer() throws Exception {
@@ -77,6 +90,62 @@ public class SqlEndpoint extends DefaultEndpoint {
 
     public void setBatch(boolean batch) {
         this.batch = batch;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public SqlProcessingStrategy getProcessingStrategy() {
+        return processingStrategy;
+    }
+
+    public void setProcessingStrategy(SqlProcessingStrategy processingStrategy) {
+        this.processingStrategy = processingStrategy;
+    }
+
+    public SqlPrepareStatementStrategy getPrepareStatementStrategy() {
+        return prepareStatementStrategy;
+    }
+
+    public void setPrepareStatementStrategy(SqlPrepareStatementStrategy prepareStatementStrategy) {
+        this.prepareStatementStrategy = prepareStatementStrategy;
+    }
+
+    public String getOnConsume() {
+        return onConsume;
+    }
+
+    public void setOnConsume(String onConsume) {
+        this.onConsume = onConsume;
+    }
+
+    public String getOnConsumeFailed() {
+        return onConsumeFailed;
+    }
+
+    public void setOnConsumeFailed(String onConsumeFailed) {
+        this.onConsumeFailed = onConsumeFailed;
+    }
+
+    public String getOnConsumeBatchComplete() {
+        return onConsumeBatchComplete;
+    }
+
+    public void setOnConsumeBatchComplete(String onConsumeBatchComplete) {
+        this.onConsumeBatchComplete = onConsumeBatchComplete;
+    }
+
+    public boolean isAllowNamedParameters() {
+        return allowNamedParameters;
+    }
+
+    public void setAllowNamedParameters(boolean allowNamedParameters) {
+        this.allowNamedParameters = allowNamedParameters;
     }
 
     @Override

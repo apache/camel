@@ -128,9 +128,13 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
             }
         }
 
-        if (answer == null && delegate != null) {
-            // let delegate have a try since blueprint didn't resolve it
-            answer = delegate.parseProperty(key, value, properties);
+        // if there is a delegate then let it parse the current answer as it may be jasypt which
+        // need to decrypt values
+        if (delegate != null) {
+            String delegateAnswer = delegate.parseProperty(key, answer != null ? answer : value, properties);
+            if (delegateAnswer != null) {
+                answer = delegateAnswer;
+            }
         }
 
         log.trace("Returning parsed property key: {} as value: {}", key, answer);

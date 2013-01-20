@@ -45,7 +45,7 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
-import org.apache.zookeeper.server.NIOServerCnxn;
+import org.apache.zookeeper.server.NIOServerCnxnFactory;
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
 
@@ -114,7 +114,7 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
     }
 
     public static class TestZookeeperServer {
-        private NIOServerCnxn.Factory connectionFactory;
+        private NIOServerCnxnFactory connectionFactory;
         private ZooKeeperServer zkServer;
 
         public TestZookeeperServer(int clientPort, boolean clearServerData) throws Exception {
@@ -132,7 +132,8 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
             FileTxnSnapLog ftxn = new FileTxnSnapLog(dataDir, snapDir);
             zkServer.setTxnLogFactory(ftxn);
             zkServer.setTickTime(1000);
-            connectionFactory = new NIOServerCnxn.Factory(new InetSocketAddress("localhost", clientPort), 0);
+            connectionFactory = new NIOServerCnxnFactory();
+            connectionFactory.configure(new InetSocketAddress("localhost", clientPort), 0);
             connectionFactory.startup(zkServer);
         }
 

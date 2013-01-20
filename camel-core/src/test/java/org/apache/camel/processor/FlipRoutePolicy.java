@@ -47,14 +47,34 @@ public class FlipRoutePolicy extends RoutePolicySupport {
         String stop = route.getId().equals(name1) ? name1 : name2;
         String start = route.getId().equals(name1) ? name2 : name1;
 
-        CamelContext context = exchange.getContext();
-        try {
-            context.getInflightRepository().remove(exchange);
-            context.stopRoute(stop);
-            context.startRoute(start);
-        } catch (Exception e) {
-            // let the exception handle handle it, which is often just to log it
-            getExceptionHandler().handleException("Error flipping routes", e);
+        FlipThread thread = new FlipThread(exchange.getContext(), start, stop);
+        thread.start();
+    }
+
+    /**
+     * Use a thread to flip the routes.
+     */
+    private class FlipThread extends Thread {
+
+        private final CamelContext context;
+        private final String start;
+        private final String stop;
+
+        private FlipThread(CamelContext context, String start, String stop) {
+            this.context = context;
+            this.start = start;
+            this.stop = stop;
+        }
+
+        @Override
+        public void run() {
+            try {
+                context.stopRoute(stop);
+                context.startRoute(start);
+            } catch (Exception e) {
+                // let the exception handle handle it, which is often just to log it
+                getExceptionHandler().handleException("Error flipping routes", e);
+            }
         }
     }
 
