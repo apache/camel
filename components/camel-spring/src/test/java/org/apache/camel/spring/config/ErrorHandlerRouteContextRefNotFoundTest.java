@@ -32,6 +32,7 @@ public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
     protected void setUp() throws Exception {
         try {
             super.setUp();
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
             NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, cause.getCause());

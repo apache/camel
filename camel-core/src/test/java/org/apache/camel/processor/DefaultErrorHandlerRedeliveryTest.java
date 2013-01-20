@@ -34,6 +34,7 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected
         }
@@ -46,6 +47,7 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:no", "Hello World");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected
         }
@@ -57,6 +59,7 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
         counter = 0;
         try {
             template.sendBody("direct:one", "Hello World");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected
         }

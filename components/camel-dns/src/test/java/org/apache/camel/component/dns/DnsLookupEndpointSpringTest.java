@@ -48,6 +48,7 @@ public class DnsLookupEndpointSpringTest extends CamelSpringTestSupport {
         resultEndpoint.expectedMessageCount(0);
         try {
             template.sendBody("hello");
+            fail("Should have thrown exception");
         } catch (Throwable t) {
             assertTrue(t.getCause() instanceof IllegalArgumentException);
         }
@@ -59,8 +60,8 @@ public class DnsLookupEndpointSpringTest extends CamelSpringTestSupport {
         resultEndpoint.expectedMessageCount(0);
         try {
             template.sendBodyAndHeader("hello", "dns.name", "");
+            fail("Should have thrown exception");
         } catch (Throwable t) {
-
             assertTrue(t.toString(), t.getCause() instanceof IllegalArgumentException);
         }
         resultEndpoint.assertIsSatisfied();

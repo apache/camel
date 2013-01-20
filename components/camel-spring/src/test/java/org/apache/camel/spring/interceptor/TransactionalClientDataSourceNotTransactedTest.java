@@ -28,6 +28,7 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
     public void testTransactionRollback() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertTrue(e.getCause() instanceof IllegalArgumentException);

@@ -41,6 +41,7 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
         });
         try {
             context.start();
+            fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, rce.getCause());

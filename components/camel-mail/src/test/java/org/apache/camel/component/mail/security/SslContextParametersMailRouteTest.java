@@ -102,6 +102,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         
         try {
             template.sendBodyAndHeaders("direct:in", "Test Email Body", headers);
+            fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause().getCause() instanceof SSLHandshakeException);
             assertTrue(e.getCause().getCause().getMessage().contains(

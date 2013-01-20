@@ -30,6 +30,7 @@ public class AssertUtilsTest {
     public void testAssertIsTrueInvalid() {
         try {
             AssertUtils.isTrue(false, "message");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             Assert.assertEquals("[Assert is true] message", e.getMessage());
         }
@@ -44,6 +45,7 @@ public class AssertUtilsTest {
     public void testAssertNotNullInvalid() {
         try {
             AssertUtils.notNull(null, "message");
+            Assert.fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             Assert.assertEquals("[Assert not null] message", e.getMessage());
         }

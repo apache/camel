@@ -96,6 +96,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     public void testAuthMethodPriorityNTLM() throws Exception {
         try {
             template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck", "Hello World", String.class);
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(401, cause.getStatusCode());

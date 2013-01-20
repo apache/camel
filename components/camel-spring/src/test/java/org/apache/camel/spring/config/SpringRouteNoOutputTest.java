@@ -36,12 +36,16 @@ public class SpringRouteNoOutputTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        AbstractXmlApplicationContext answer;
         try {
-            return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoOutputTest.xml");
+            answer = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoOutputTest.xml");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             IllegalArgumentException iae = (IllegalArgumentException) e.getCause().getCause();
             assertEquals("Route myRoute has no outputs: Route[[From[direct:start]] -> []]", iae.getMessage());
             return null;
         }
+
+        return answer;
     }
 }

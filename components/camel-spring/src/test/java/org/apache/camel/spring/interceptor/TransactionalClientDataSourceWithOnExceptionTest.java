@@ -33,6 +33,7 @@ public class TransactionalClientDataSourceWithOnExceptionTest extends Transactio
 
         try {
             template.sendBody("direct:fail", "Hello World");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
