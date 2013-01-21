@@ -71,7 +71,8 @@ public class BeanTest extends LanguageTestSupport {
         Expression exp = BeanLanguage.bean(user, "unknown");
         Exchange exchange = createExchangeWithBody("Claus");
 
-        exp.evaluate(exchange, Object.class);
+        Object result = exp.evaluate(exchange, Object.class);
+        assertNull(result);
         MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, exchange.getException());
         assertSame(user, e.getBean());
         assertEquals("unknown", e.getMethodName());
@@ -81,7 +82,8 @@ public class BeanTest extends LanguageTestSupport {
         Expression exp = BeanLanguage.bean("foo.cake");
         Exchange exchange = createExchangeWithBody("Claus");
 
-        exp.evaluate(exchange, Object.class);
+        Object result = exp.evaluate(exchange, Object.class);
+        assertNull(result);
         MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, exchange.getException());
         assertSame(context.getRegistry().lookup("foo"), e.getBean());
         assertEquals("cake", e.getMethodName());
