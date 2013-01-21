@@ -40,7 +40,7 @@ public class ExceptionTest extends ContextTestSupport {
         // so that the general purpose dead letter channel will come into the play here and then when all
         // the attempts of redelivery fail the exchange will be moved to "mock:error" and then from the client
         // point of view the exchange is completed.
-        template.requestBody("direct:start", "<body/>");
+        template.sendBody("direct:start", "<body/>");
 
         assertMockEndpointsSatisfied();
     }
