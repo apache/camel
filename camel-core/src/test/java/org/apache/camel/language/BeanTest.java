@@ -73,6 +73,7 @@ public class BeanTest extends LanguageTestSupport {
 
         Object result = exp.evaluate(exchange, Object.class);
         assertNull(result);
+        assertNotNull(exchange.getException());
         MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, exchange.getException());
         assertSame(user, e.getBean());
         assertEquals("unknown", e.getMethodName());
@@ -84,6 +85,7 @@ public class BeanTest extends LanguageTestSupport {
 
         Object result = exp.evaluate(exchange, Object.class);
         assertNull(result);
+        assertNotNull(exchange.getException());
         MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, exchange.getException());
         assertSame(context.getRegistry().lookup("foo"), e.getBean());
         assertEquals("cake", e.getMethodName());
