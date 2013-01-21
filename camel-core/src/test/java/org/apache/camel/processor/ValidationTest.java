@@ -50,10 +50,11 @@ public class ValidationTest extends ContextTestSupport {
         try {
             template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
         } catch (RuntimeCamelException e) {
-            // the expected empty catch block here is not intended for this class itself but the drived
-            // ones e.g. ValidationWithErrorInHandleAndFinallyBlockTest where noErrorHandler() is being
-            // installed. this's also why there's no fail("Should have thrown an exception") call here
-            // right after template.sendBodyAndHeader()
+            // the expected empty catch block here is not intended for this class itself but the subclasses
+            // e.g. ValidationWithErrorInHandleAndFinallyBlockTest where noErrorHandler() is being installed.
+            // this's also why there's no fail("Should have thrown an exception") call here right after
+            // template.sendBodyAndHeader() call as RuntimeCamelException will be not thrown by *all* subclasses
+            // but only by some of them.
         }
 
         assertMockEndpointsSatisfied();
