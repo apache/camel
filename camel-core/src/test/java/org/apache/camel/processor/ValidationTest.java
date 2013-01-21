@@ -38,19 +38,22 @@ public class ValidationTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(0);
 
         Object result = template.requestBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
+        assertEquals("validResult", result);
 
         assertMockEndpointsSatisfied();
-        assertEquals("validResult", result);
     }
 
     public void testInvalidMessage() throws Exception {
-        invalidEndpoint.expectedMessageCount(1);
         validEndpoint.expectedMessageCount(0);
+        invalidEndpoint.expectedMessageCount(1);
 
         try {
             template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
         } catch (RuntimeCamelException e) {
-            // expected
+            // the expected empty catch block here is not intended for this class itself but the drived
+            // ones e.g. ValidationWithErrorInHandleAndFinallyBlockTest where noErrorHandler() is being
+            // installed. this's also why there's no fail("Should have thrown an exception") call here
+            // right after template.sendBodyAndHeader()
         }
 
         assertMockEndpointsSatisfied();
@@ -63,7 +66,7 @@ public class ValidationTest extends ContextTestSupport {
         try {
             template.sendBodyAndHeader("direct:start", "<invalid/>", "foo",  "notMatchedHeaderValue");
         } catch (RuntimeCamelException e) {
-            // expected
+            // the same as above
         }
 
         Object result = template.requestBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
