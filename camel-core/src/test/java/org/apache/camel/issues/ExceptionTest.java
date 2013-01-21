@@ -32,14 +32,14 @@ public class ExceptionTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
-        errorEndpoint.expectedMessageCount(1);
-        resultEndpoint.expectedMessageCount(0);
+        errorEndpoint.expectedBodiesReceived("<exception/>");
         exceptionEndpoint.expectedMessageCount(0);
+        resultEndpoint.expectedMessageCount(0);
 
         // we don't expect any thrown exception here as there's no onException clause defined for this test
-        // so that the general purpose dead letter channel will come into the play here and then when all
-        // the attempts of redelivery fail the exchange will be moved to "mock:error" and then from the client
-        // point of view the exchange is completed.
+        // so that the general purpose dead letter channel will come into the play and then when all the attempts
+        // to redelivery fails the exchange will be moved to "mock:error" and then from the client point of
+        // view the exchange is completed.
         template.sendBody("direct:start", "<body/>");
 
         assertMockEndpointsSatisfied();
@@ -51,7 +51,7 @@ public class ExceptionTest extends ContextTestSupport {
         MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
         errorEndpoint.expectedMessageCount(0);
-        exceptionEndpoint.expectedMessageCount(1);
+        exceptionEndpoint.expectedBodiesReceived("<exception/>");
         resultEndpoint.expectedMessageCount(0);
 
         try {
@@ -70,7 +70,7 @@ public class ExceptionTest extends ContextTestSupport {
         MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
         errorEndpoint.expectedMessageCount(0);
-        exceptionEndpoint.expectedBodiesReceived("<handled/>");
+        exceptionEndpoint.expectedBodiesReceived("<not-handled/>");
         resultEndpoint.expectedMessageCount(0);
 
         try {
@@ -89,7 +89,7 @@ public class ExceptionTest extends ContextTestSupport {
         MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
         errorEndpoint.expectedMessageCount(0);
-        exceptionEndpoint.expectedMessageCount(1);
+        exceptionEndpoint.expectedBodiesReceived("<exception/>");
         resultEndpoint.expectedMessageCount(0);
 
         try {
@@ -117,7 +117,7 @@ public class ExceptionTest extends ContextTestSupport {
 
                 if (getName().endsWith("WithLongHandler")) {
                     log.debug("Using long exception handler");
-                    onException(IllegalArgumentException.class).setBody(constant("<handled/>")).
+                    onException(IllegalArgumentException.class).setBody(constant("<not-handled/>")).
                         to("mock:exception");
                 } else if (getName().endsWith("WithHandler")) {
                     log.debug("Using exception handler");
