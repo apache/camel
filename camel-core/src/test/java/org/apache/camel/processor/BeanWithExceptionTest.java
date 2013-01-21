@@ -34,12 +34,12 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class BeanWithExceptionTest extends ContextTestSupport {
-    protected Processor validator = new MyValidator();
     protected MockEndpoint validEndpoint;
     protected MockEndpoint invalidEndpoint;
 
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
+        invalidEndpoint.expectedMessageCount(0);
 
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -53,19 +53,20 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     }
 
     public void testInvalidMessage() throws Exception {
+        validEndpoint.expectedMessageCount(0);
         invalidEndpoint.expectedMessageCount(1);
 
-        try {
-            template.send("direct:start", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setBody("<invalid/>");
-                    exchange.getIn().setHeader("foo", "notMatchedHeaderValue");
-                    exchange.setProperty("cheese", "old");
-                }
-            });
-        } catch (Exception e) {
-            // expected
-        }
+        Exchange exchange = template.send("direct:start", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("<invalid/>");
+                exchange.getIn().setHeader("foo", "notMatchedHeaderValue");
+                exchange.setProperty("cheese", "old");
+            }
+        });
+        
+        assertNotNull(exchange.getException());
+        ValidationException exception = assertIsInstanceOf(ValidationException.class, exchange.getException());
+        assertEquals("Invalid header foo: notMatchedHeaderValue", exception.getMessage());
 
         assertMockEndpointsSatisfied();
     }
