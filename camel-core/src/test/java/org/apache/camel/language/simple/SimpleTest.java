@@ -422,6 +422,7 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(null);
         try {
             assertExpression("${mandatoryBodyAs('String')}", "");
+            fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(InvalidPayloadException.class, e.getCause());
         }

@@ -74,6 +74,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
         RouteContext routeContext = new DefaultRouteContext(context);
         try {
             routeContext.resolveEndpoint(null, "endpoint1");
+            fail("Should have thrown exception");
         } catch (NoSuchEndpointException exception) {
             assertTrue("Get a wrong exception message", exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"));
         }

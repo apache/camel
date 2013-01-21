@@ -81,6 +81,11 @@ public class TwitterConfiguration {
      * Used to set the sinceId from pulling
      */
     private long sinceId  = 1;
+
+    /**
+     * Used ot set the preferred language on which to search
+     */
+    private String lang;
     
     private Date parsedDate;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -259,6 +264,13 @@ public class TwitterConfiguration {
         this.sinceId = sinceId;
     }
 
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
 }
 
 

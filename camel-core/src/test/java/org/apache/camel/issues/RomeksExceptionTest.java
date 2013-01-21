@@ -50,6 +50,7 @@ public class RomeksExceptionTest extends ContextTestSupport {
 
         try {
             template.sendBodyAndHeader("direct:start", "<body/>", "route", route);
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertEquals("Exception thrown intentionally.", e.getCause().getMessage());

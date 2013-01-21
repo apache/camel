@@ -49,6 +49,7 @@ public class DnsIpEndpointTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(0);
         try {
             template.sendBodyAndHeader("hello", "dns.domain", null);
+            fail("Should have thrown exception");
         } catch (Throwable t) {
             assertTrue(t.getCause() instanceof IllegalArgumentException);
         }
@@ -60,6 +61,7 @@ public class DnsIpEndpointTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(0);
         try {
             template.sendBodyAndHeader("hello", "dns.domain", "");
+            fail("Should have thrown exception");
         } catch (Throwable t) {
             assertTrue(t.getCause() instanceof IllegalArgumentException);
         }

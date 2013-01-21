@@ -41,6 +41,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     public void testIllegalConfiguration() throws Exception {
         try {
             context.getEndpoint("file://target/tempprefix?fileExist=Append&tempPrefix=foo").createProducer();
+            fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("You cannot set both fileExist=Append and tempPrefix options", e.getMessage());
         }

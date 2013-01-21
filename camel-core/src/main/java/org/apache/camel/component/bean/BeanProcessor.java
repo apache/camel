@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -42,7 +38,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);
 
     private boolean multiParameterArray;
-    private Method methodObject;
     private String method;
     private BeanHolder beanHolder;
     private boolean shorthandMethod;
@@ -65,8 +60,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
     @Override
     public String toString() {
-        String description = methodObject != null ? " " + methodObject : "";
-        return "BeanProcessor[" + beanHolder + description + "]";
+        return "BeanProcessor[" + beanHolder + "]";
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -156,50 +150,15 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
             in.removeHeader(Exchange.BEAN_METHOD_NAME);
         }
+
         if (invocation == null) {
-            throw new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean);
-        }
-
-        Object value;
-        try {
-            AtomicBoolean sync = new AtomicBoolean(true);
-            value = invocation.proceed(callback, sync);
-            if (!sync.get()) {
-                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
-                // the remainder of the routing will be completed async
-                // so we break out now, then the callback will be invoked which then continue routing from where we left here
-                return false;
-            }
-
-            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
-        } catch (InvocationTargetException e) {
-            // let's unwrap the exception when it's an invocation target exception
-            exchange.setException(e.getCause());
-            callback.done(true);
-            return true;
-        } catch (Throwable e) {
-            exchange.setException(e);
+            exchange.setException(new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean));
             callback.done(true);
             return true;
         }
 
-        // if the method returns something then set the value returned on the Exchange
-        if (!invocation.getMethod().getReturnType().equals(Void.TYPE) && value != Void.TYPE) {
-            if (exchange.getPattern().isOutCapable()) {
-                // force out creating if not already created (as its lazy)
-                LOG.debug("Setting bean invocation result on the OUT message: {}", value);
-                exchange.getOut().setBody(value);
-                // propagate headers
-                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            } else {
-                // if not out then set it on the in
-                LOG.debug("Setting bean invocation result on the IN message: {}", value);
-                exchange.getIn().setBody(value);
-            }
-        }
-
-        callback.done(true);
-        return true;
+        // invoke invocation
+        return invocation.proceed(callback);
     }
 
     protected Processor getProcessor() {

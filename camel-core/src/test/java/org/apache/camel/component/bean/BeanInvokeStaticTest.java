@@ -53,6 +53,7 @@ public class BeanInvokeStaticTest extends ContextTestSupport {
         });
         try {
             context.start();
+            fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());

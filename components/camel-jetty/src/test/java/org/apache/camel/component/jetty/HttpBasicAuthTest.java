@@ -77,6 +77,7 @@ public class HttpBasicAuthTest extends BaseJettyTest {
     public void testHttpBasicAuthInvalidPassword() throws Exception {
         try {
             template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=sorry", "Hello World", String.class);
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(401, cause.getStatusCode());

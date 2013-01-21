@@ -22,6 +22,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -29,7 +30,7 @@ import twitter4j.Twitter;
 
 public class SearchProducer extends Twitter4JProducer {
 
-    private long lastId;
+    private volatile long lastId;
 
     public SearchProducer(TwitterEndpoint te) {
         super(te);
@@ -37,6 +38,7 @@ public class SearchProducer extends Twitter4JProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        long myLastId = lastId;
         // keywords from header take precedence
         String keywords = exchange.getIn().getHeader(TwitterConstants.TWITTER_KEYWORDS, String.class);
         if (keywords == null) {
@@ -46,10 +48,19 @@ public class SearchProducer extends Twitter4JProducer {
         if (keywords == null) {
             throw new CamelExchangeException("No keywords to use for query", exchange);
         }
-
+        
         Query query = new Query(keywords);
-        if (lastId != 0) {
-            query.setSinceId(lastId);
+        if (te.getProperties().isFilterOld() && myLastId != 0) {
+            query.setSinceId(myLastId);
+        }
+        
+        String lang = exchange.getIn().getHeader(TwitterConstants.TWITTER_SEARCH_LANGUAGE, String.class);
+        if (lang == null) {
+            lang = te.getProperties().getLang();
+        }
+
+        if (ObjectHelper.isNotEmpty(lang)) {
+            query.setLang(lang);
         }
 
         Twitter twitter = te.getProperties().getTwitter();
@@ -57,14 +68,20 @@ public class SearchProducer extends Twitter4JProducer {
         QueryResult results = twitter.search(query);
         List<Status> list = results.getTweets();
 
-        for (Status t : list) {
-            long newId = t.getId();
-            if (newId > lastId) {
-                lastId = newId;
+        if (te.getProperties().isFilterOld()) {
+            for (Status t : list) {
+                long newId = t.getId();
+                if (newId > myLastId) {
+                    myLastId = newId;
+                }
             }
         }
 
         exchange.getIn().setBody(list);
+        // update the lastId after finished the processing
+        if (myLastId > lastId) {
+            lastId = myLastId;
+        }
     }
 
 }

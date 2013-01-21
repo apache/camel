@@ -23,6 +23,8 @@ public final class TwitterConstants {
 
     public static final String TWITTER_KEYWORDS = "CamelTwitterKeywords";
 
+    public static final String TWITTER_SEARCH_LANGUAGE = "CamelTwitterSearchLanguage";
+
     private TwitterConstants() {
         // utility
     }

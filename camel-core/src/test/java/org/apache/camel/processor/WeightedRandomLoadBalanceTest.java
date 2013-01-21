@@ -105,8 +105,6 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
     }
     
     public void testUnmatchedRatiosToProcessors() throws Exception {
-        boolean error = false;
-        
         try {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
@@ -118,12 +116,10 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
                 }
             });
             context.start();
+            fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("Loadbalacing with 3 should match number of distributions 2", e.getMessage());
-            error = true;
         }
-
-        assertTrue(error);
     }
     
     protected void sendBulkMessages(int number) {

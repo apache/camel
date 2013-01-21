@@ -42,6 +42,7 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
         // send a request reply to the direct start endpoint
         try {
             template.requestBody("direct:start", "Hello");
+            fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             // expected an execution exception
             assertEquals("Damn forced by unit test", e.getCause().getMessage());

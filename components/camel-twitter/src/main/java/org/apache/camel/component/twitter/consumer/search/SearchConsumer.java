@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Query;
@@ -45,6 +46,9 @@ public class SearchConsumer extends Twitter4JConsumer {
         if (te.getProperties().isFilterOld()) {
             query.setSinceId(lastId);
         }
+        if (ObjectHelper.isNotEmpty(te.getProperties().getLang())) {
+            query.setLang(te.getProperties().getLang());
+        }
         LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(query);
     }
@@ -54,8 +58,12 @@ public class SearchConsumer extends Twitter4JConsumer {
         if (keywords == null || keywords.trim().length() == 0) {
             return Collections.emptyList();
         }
+        Query query = new Query(keywords);
+        if (ObjectHelper.isNotEmpty(te.getProperties().getLang())) {
+            query.setLang(te.getProperties().getLang());
+        }
         LOG.debug("Searching twitter with keywords: {}", keywords);
-        return search(new Query(keywords));
+        return search(query);
     }
 
     private List<Status> search(Query query) throws TwitterException {

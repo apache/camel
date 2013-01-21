@@ -38,6 +38,7 @@ public class IBatisUnknownStatementTypeTest extends CamelTestSupport {
         });
         try {
             context.start();
+            fail("Should have thrown exception");
         } catch (FailedToCreateProducerException e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("statementType must be specified on: Endpoint[ibatis://selectAllAccounts]", e.getCause().getMessage());

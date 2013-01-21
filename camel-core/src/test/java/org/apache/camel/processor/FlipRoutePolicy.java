@@ -54,7 +54,7 @@ public class FlipRoutePolicy extends RoutePolicySupport {
     /**
      * Use a thread to flip the routes.
      */
-    private class FlipThread extends Thread {
+    private final class FlipThread extends Thread {
 
         private final CamelContext context;
         private final String start;
