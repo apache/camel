@@ -18,7 +18,6 @@ package org.apache.camel.component.bean;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 
@@ -33,7 +32,13 @@ public interface MethodInvocation {
 
     Object[] getArguments();
 
-    Object proceed(AsyncCallback callback, AtomicBoolean doneSync) throws Exception;
+    /**
+     * Proceed and invokes the method.
+     *
+     * @param callback   the callback
+     * @return see {@link org.apache.camel.AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)}
+     */
+    boolean proceed(AsyncCallback callback);
 
     Object getThis();
 
