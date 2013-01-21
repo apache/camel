@@ -18,37 +18,17 @@ package org.apache.camel.karaf.commands;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * Command to stop a route.
  */
 @Command(scope = "camel", name = " route-stop", description = "Stop a Camel route.")
-public class RouteStop extends OsgiCommandSupport {
+public class RouteStop extends AbstractRouteCommand {
 
-    @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
-    String route;
-
-    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
-    String context;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
-
-    public Object doExecute() throws Exception {
-        Route camelRoute = camelController.getRoute(route, context);
-        if (camelRoute == null) {
-            System.err.println("Camel route " + route + " not found.");
-            return null;
-        }
-        CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
-        camelContext.stopRoute(route);
-        return null;
-    }
+	@Override
+	public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
+		camelContext.stopRoute(route);
+	}
 
 }
