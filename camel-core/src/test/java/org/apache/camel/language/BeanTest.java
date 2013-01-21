@@ -23,8 +23,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Header;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Message;
+import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.BeanLanguage;
-import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 
 /**
  * @version 
@@ -69,29 +69,22 @@ public class BeanTest extends LanguageTestSupport {
     public void testNoMethod() throws Exception {
         MyUser user = new MyUser();
         Expression exp = BeanLanguage.bean(user, "unknown");
-
         Exchange exchange = createExchangeWithBody("Claus");
 
-        try {
-            exp.evaluate(exchange, Object.class);
-        } catch (RuntimeBeanExpressionException e) {
-            assertNull(e.getBeanName());
-            assertSame(exchange, e.getExchange());
-            assertEquals("unknown", e.getMethod());
-        }
+        exp.evaluate(exchange, Object.class);
+        MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, exchange.getException());
+        assertSame(user, e.getBean());
+        assertEquals("unknown", e.getMethodName());
     }
 
     public void testNoMethodBeanLookup() throws Exception {
         Expression exp = BeanLanguage.bean("foo.cake");
         Exchange exchange = createExchangeWithBody("Claus");
 
-        try {
-            exp.evaluate(exchange, Object.class);
-        } catch (RuntimeBeanExpressionException e) {
-            assertEquals("foo", e.getBeanName());
-            assertSame(exchange, e.getExchange());
-            assertEquals("cake", e.getMethod());
-        }
+        exp.evaluate(exchange, Object.class);
+        MethodNotFoundException e = assertIsInstanceOf(MethodNotFoundException.class, exchange.getException());
+        assertSame(context.getRegistry().lookup("foo"), e.getBean());
+        assertEquals("cake", e.getMethodName());
     }
 
     protected String getLanguageName() {
