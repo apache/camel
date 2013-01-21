@@ -81,9 +81,10 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 3, count);
     }
 
-    public void testRequiredOnlkyRollback() throws Exception {
+    public void testRequiredOnlyRollback() throws Exception {
         try {
             template.sendBody("direct:required", "Donkey in Action");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
@@ -96,9 +97,10 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
-    public void testRequiresNewOnlkyRollback() throws Exception {
+    public void testRequiresNewOnlyRollback() throws Exception {
         try {
             template.sendBody("direct:new", "Donkey in Action");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
@@ -111,21 +113,13 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
-    public void testRequiredAndNewRollback() throws Exception {
-        try {
-            template.sendBody("direct:new", "Tiger in Action");
-        } catch (RuntimeCamelException e) {
-            // expeced as we fail
-            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
-        }
+    public void testRequiredAndNew() throws Exception {
+        template.sendBody("direct:requiredAndNew", "Tiger in Action");
 
         int count = jdbc.queryForInt("select count(*) from books");
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = ?", "Tiger in Action"));
+        assertEquals(2, jdbc.queryForInt("select count(*) from books where title = ?", "Tiger in Action"));
         assertEquals(0, jdbc.queryForInt("select count(*) from books where title = ?", "Donkey in Action"));
-        // the tiger in action should be committed, but our 2nd route should rollback
-        assertEquals("Number of books", 2, count);
+        assertEquals("Number of books", 3, count);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
