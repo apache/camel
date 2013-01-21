@@ -20,12 +20,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
 *
 */
 public final class DirectVmProcessor extends DelegateProcessor {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(DirectVmProcessor.class);
     private final DirectVmEndpoint endpoint;
 
     public DirectVmProcessor(Processor processor, DirectVmEndpoint endpoint) {
@@ -37,11 +40,26 @@ public final class DirectVmProcessor extends DelegateProcessor {
     public void process(Exchange exchange) throws Exception {
         // need to use a copy of the incoming exchange, so we route using this camel context
         Exchange copy = prepareExchange(exchange);
+
+        ClassLoader current = Thread.currentThread().getContextClassLoader();
+        boolean changed = false;
         try {
+            // set TCCL to application context class loader if given
+            ClassLoader appClassLoader = endpoint.getCamelContext().getApplicationContextClassLoader();
+            if (appClassLoader != null) {
+                LOG.trace("Setting Thread ContextClassLoader to {}", appClassLoader);
+                Thread.currentThread().setContextClassLoader(appClassLoader);
+                changed = true;
+            }
             getProcessor().process(copy);
         } finally {
             // make sure to copy results back
             ExchangeHelper.copyResults(exchange, copy);
+            // restore TCCL if it was changed during processing
+            if (changed) {
+                LOG.trace("Restoring Thread ContextClassLoader to {}", current);
+                Thread.currentThread().setContextClassLoader(current);
+            }
         }
     }
 
