@@ -43,14 +43,14 @@ public class BeanInfoTest extends TestCase {
         assertNotNull("Should have found a method invocation!", invocation);
 
         AtomicBoolean sync = new AtomicBoolean(true);
-        Object value = invocation.proceed(new AsyncCallback() {
+        invocation.proceed(new AsyncCallback() {
             public void done(boolean doneSync) {
                 // nnop
             }
-        }, sync);
+        });
 
         assertEquals(true, sync.get());
-        assertEquals("Hello James!", value);
+        assertEquals("Hello James!", exchange.getIn().getBody());
     }
 
     public void testBeanProcessor() throws Exception {

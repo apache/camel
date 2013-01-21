@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -246,7 +245,21 @@ public class MethodInfo {
                 return arguments;
             }
 
-            public Object proceed(AsyncCallback callback, AtomicBoolean doneSync) throws Exception {
+            public boolean proceed(AsyncCallback callback) {
+                try {
+                    return doProceed(callback);
+                } catch (InvocationTargetException e) {
+                    exchange.setException(e.getTargetException());
+                    callback.done(true);
+                    return true;
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                    callback.done(true);
+                    return true;
+                }
+            }
+
+            private boolean doProceed(AsyncCallback callback) throws Exception {
                 // dynamic router should be invoked beforehand
                 if (dynamicRouter != null) {
                     if (!dynamicRouter.isStarted()) {
@@ -254,10 +267,7 @@ public class MethodInfo {
                     }
                     // use a expression which invokes the method to be used by dynamic router
                     Expression expression = new DynamicRouterExpression(pojo);
-                    boolean sync = dynamicRouter.doRoutingSlip(exchange, expression, callback);
-                    // must remember the done sync returned from the dynamic router
-                    doneSync.set(sync);
-                    return Void.TYPE;
+                    return dynamicRouter.doRoutingSlip(exchange, expression, callback);
                 }
 
                 // invoke pojo
@@ -271,24 +281,34 @@ public class MethodInfo {
                     if (!recipientList.isStarted()) {
                         ServiceHelper.startService(recipientList);
                     }
-                    boolean sync = recipientList.sendToRecipientList(exchange, result, callback);
-                    // must remember the done sync returned from the recipient list
-                    doneSync.set(sync);
-                    // we don't want to return the list of endpoints
-                    // return Void to indicate to BeanProcessor that there is no reply
-                    return Void.TYPE;
+                    return recipientList.sendToRecipientList(exchange, result, callback);
                 }
                 if (routingSlip != null) {
                     if (!routingSlip.isStarted()) {
                         ServiceHelper.startService(routingSlip);
                     }
-                    boolean sync = routingSlip.doRoutingSlip(exchange, result, callback);
-                    // must remember the done sync returned from the routing slip
-                    doneSync.set(sync);
-                    return Void.TYPE;
+                    return routingSlip.doRoutingSlip(exchange, result, callback);
                 }
 
-                return result;
+                // if the method returns something then set the value returned on the Exchange
+                if (!getMethod().getReturnType().equals(Void.TYPE) && result != Void.TYPE) {
+                    if (exchange.getPattern().isOutCapable()) {
+                        // force out creating if not already created (as its lazy)
+                        LOG.debug("Setting bean invocation result on the OUT message: {}", result);
+                        exchange.getOut().setBody(result);
+                        // propagate headers
+                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                    } else {
+                        // if not out then set it on the in
+                        LOG.debug("Setting bean invocation result on the IN message: {}", result);
+                        exchange.getIn().setBody(result);
+                    }
+                }
+
+                // we did not use any of the eips, but just invoked the bean
+                // so notify the callback we are done synchronously
+                callback.done(true);
+                return true;
             }
 
             public Object getThis() {
