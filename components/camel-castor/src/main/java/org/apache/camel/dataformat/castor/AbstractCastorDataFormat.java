@@ -48,14 +48,14 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
     public static final String DEFAULT_ENCODING = "UTF-8";
 
     private String encoding = DEFAULT_ENCODING;
-    private XMLContext xmlContext;
     private String mappingFile;
     private String[] classNames;
     private String[] packages;
     private boolean validation;
 
-    private Marshaller marshaller;
-    private Unmarshaller unmarshaller;
+    private volatile XMLContext xmlContext;
+    private volatile Marshaller marshaller;
+    private volatile Unmarshaller unmarshaller;
 
     public AbstractCastorDataFormat() {
     }
@@ -74,12 +74,17 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
         return getUnmarshaller(exchange).unmarshal(reader);
     }
 
-    public XMLContext getXmlContext(ClassResolver resolver) throws Exception {
+    public XMLContext getXmlContext(ClassResolver resolver, ClassLoader contetClassLoader) throws Exception {
         if (xmlContext == null) {
             xmlContext = new XMLContext();
 
             if (ObjectHelper.isNotEmpty(getMappingFile())) {
-                Mapping xmlMap = new Mapping();
+                Mapping xmlMap;
+                if (contetClassLoader != null) {
+                    xmlMap = new Mapping(contetClassLoader);
+                } else {
+                    xmlMap = new Mapping();
+                }
                 xmlMap.loadMapping(resolver.loadResourceAsURL(getMappingFile()));
                 xmlContext.addMapping(xmlMap);
             }
@@ -100,7 +105,7 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
 
     public Unmarshaller getUnmarshaller(Exchange exchange) throws Exception {
         if (this.unmarshaller == null) {
-            this.unmarshaller = getXmlContext(exchange.getContext().getClassResolver()).createUnmarshaller();
+            this.unmarshaller = getXmlContext(exchange.getContext().getClassResolver(), exchange.getContext().getApplicationContextClassLoader()).createUnmarshaller();
             this.unmarshaller.setValidation(isValidation());
         }
         return this.unmarshaller;
@@ -108,7 +113,7 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
 
     public Marshaller getMarshaller(Exchange exchange) throws Exception {
         if (this.marshaller == null) {
-            this.marshaller = getXmlContext(exchange.getContext().getClassResolver()).createMarshaller();
+            this.marshaller = getXmlContext(exchange.getContext().getClassResolver(), exchange.getContext().getApplicationContextClassLoader()).createMarshaller();
             this.marshaller.setValidation(isValidation());
         }
         return this.marshaller;
