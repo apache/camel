@@ -20,28 +20,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Before;
+import org.apache.camel.test.junit4.TestSupport;
+
 import org.junit.Test;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * TODO Add Class documentation for ObjectPoolTest
  */
-public class ObjectPoolTest {
+public class ObjectPoolTest extends TestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectPoolTest.class);
-
-    private AtomicInteger atomicInteger;
-
-    @Before
-    public void setUp() {
-        atomicInteger = new AtomicInteger();
-    }
 
     /**
      * Test method for
@@ -51,7 +42,7 @@ public class ObjectPoolTest {
      */
     @Test
     public void testObjectPool() throws Exception {
-        TestPool testPool = new TestPool();
+        ObjectPool<MyPooledObject> testPool = new TestPool();
         assertNotNull(testPool);
         testPool.fillPool();
         MyPooledObject pooledObject = testPool.borrowObject();
@@ -73,10 +64,13 @@ public class ObjectPoolTest {
      */
     @Test
     public void testBadObjectPool() {
+        ObjectPool<Object> objectPool = new BadTestPool();
+
         try {
-            new BadTestPool();
+            objectPool.createObject();
+            fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue("Should have thrown an IllegalStateException", e instanceof IllegalStateException);
+            assertIsInstanceOf(IllegalStateException.class, e);
         }
     }
 
@@ -90,7 +84,7 @@ public class ObjectPoolTest {
     public void testObjectPoolInt() throws Exception {
         final int maxPoolObjects = 5;
 
-        TestPool testPool = new TestPool(maxPoolObjects);
+        ObjectPool<MyPooledObject> testPool = new TestPool(maxPoolObjects);
         testPool.fillPool();
 
         List<MyPooledObject> poolObjects = new ArrayList<MyPooledObject>();
@@ -125,7 +119,7 @@ public class ObjectPoolTest {
      */
     @Test
     public void testCreateObject() throws Exception {
-        TestPool testPool = new TestPool();
+        ObjectPool<MyPooledObject> testPool = new TestPool();
         assertNotNull(testPool.createObject());
     }
 
@@ -137,7 +131,7 @@ public class ObjectPoolTest {
      */
     @Test
     public void testBorrowObject() throws Exception {
-        TestPool testPool = new TestPool();
+        ObjectPool<MyPooledObject> testPool = new TestPool();
         testPool.fillPool();
         MyPooledObject pooledObject = testPool.borrowObject();
         assertNotNull(pooledObject);
@@ -157,7 +151,7 @@ public class ObjectPoolTest {
      */
     @Test
     public void testReturnObject() throws Exception {
-        TestPool testPool = new TestPool();
+        ObjectPool<MyPooledObject> testPool = new TestPool();
         testPool.fillPool();
         assertNotNull(testPool);
         MyPooledObject pooledObject = testPool.borrowObject();
@@ -168,7 +162,9 @@ public class ObjectPoolTest {
         testPool.drainPool();
     }
 
-    class TestPool extends ObjectPool<MyPooledObject> {
+    private static class TestPool extends ObjectPool<MyPooledObject> {
+
+        private final AtomicInteger atomicInteger = new AtomicInteger();
 
         public TestPool() {
         }
@@ -204,14 +200,16 @@ public class ObjectPoolTest {
         }
     }
 
-    static class BadTestPool extends ObjectPool<Object> {
+    private static class BadTestPool extends ObjectPool<Object> {
+
         @Override
         protected Object createObject() throws Exception {
-            throw new Exception();
+            throw new IllegalStateException("I'm a bad ObjectPool impl");
         }
 
         @Override
         protected void destroyObject(Object t) throws Exception {
+            // noop
         }
 
     }

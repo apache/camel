@@ -40,15 +40,14 @@ public class JettyHttpProducerSimulate404ErrorTest extends BaseJettyTest {
         // give Jetty time to startup properly
         Thread.sleep(1000);
 
-        try {
-            template.request(url, null);
-        } catch (Exception e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(404, cause.getStatusCode());
-            assertEquals("http//0.0.0.0:" + getPort() + "/bar", cause.getUri());
-            assertEquals("Page not found", cause.getResponseBody());
-            assertNotNull(cause.getResponseHeaders());
-        }
+        Exchange exchange = template.request(url, null);
+
+        assertNotNull(exchange.getException());
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, exchange.getException());
+        assertEquals(404, cause.getStatusCode());
+        assertEquals("http//0.0.0.0:" + getPort() + "/bar", cause.getUri());
+        assertEquals("Page not found", cause.getResponseBody());
+        assertNotNull(cause.getResponseHeaders());
     }
 
     @Override
