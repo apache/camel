@@ -113,13 +113,21 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
-    public void testRequiredAndNew() throws Exception {
-        template.sendBody("direct:requiredAndNew", "Tiger in Action");
+    public void testRequiredAndNewRollback() throws Exception {
+        try {
+            template.sendBody("direct:requiredAndNewRollback", "Tiger in Action");
+        } catch (RuntimeCamelException e) {
+            // expeced as we fail
+            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+            assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
+            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
+        }
 
         int count = jdbc.queryForInt("select count(*) from books");
-        assertEquals(2, jdbc.queryForInt("select count(*) from books where title = ?", "Tiger in Action"));
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = ?", "Tiger in Action"));
         assertEquals(0, jdbc.queryForInt("select count(*) from books where title = ?", "Donkey in Action"));
-        assertEquals("Number of books", 3, count);
+        // the tiger in action should be committed, but our 2nd route should rollback
+        assertEquals("Number of books", 2, count);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
