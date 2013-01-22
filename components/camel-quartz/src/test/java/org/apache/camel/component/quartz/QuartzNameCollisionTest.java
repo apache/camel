@@ -51,6 +51,22 @@ public class QuartzNameCollisionTest {
             Assert.assertEquals("A Quartz job already exists with the name/group: myTimerName/myGroup", e.getMessage());
         }
     }
+    
+    @Test
+    public void testDupeNameSameExpression() throws Exception {
+        camel1 = new DefaultCamelContext();
+        camel1.setName("camel-1");
+        camel1.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
+            }
+        });
+        camel1.start();
+
+        QuartzComponent component2 = new QuartzComponent(camel1);
+        component2.createEndpoint("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?");
+    }
 
     @Test
     public void testDupeNameMultiContext() throws Exception {

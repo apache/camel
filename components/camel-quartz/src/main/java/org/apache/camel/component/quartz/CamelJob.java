@@ -35,6 +35,7 @@ public class CamelJob implements Job, Serializable {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String camelContextName = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
         String endpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT_URI);
+        
 
         SchedulerContext schedulerContext;
         try {
@@ -47,7 +48,7 @@ public class CamelJob implements Job, Serializable {
         if (camelContext == null) {
             throw new JobExecutionException("No CamelContext could be found with name: " + camelContextName);
         }
-        QuartzEndpoint endpoint = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
+        QuartzEndpoint endpoint = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);
         if (endpoint == null) {
             throw new JobExecutionException("No QuartzEndpoint could be found with uri: " + endpointUri);
         }

@@ -127,18 +127,10 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         Trigger trigger;
         boolean stateful = "true".equals(parameters.get("stateful"));
+		QuartzEndpoint answer = new QuartzEndpoint(uri, this);
+        setProperties(answer.getJobDetail(), jobParameters);
 
-        // if we're starting up and not running in Quartz clustered mode or not stateful then check for a name conflict.
-        if (!isClustered() && !stateful) {
-            // check to see if this trigger already exists
-            trigger = getScheduler().getTrigger(name, group);
-            if (trigger != null) {
-                String msg = "A Quartz job already exists with the name/group: " + name + "/" + group;
-                throw new IllegalArgumentException(msg);
-            }
-        }
-
-        // create the trigger either cron or simple
+		// create the trigger either cron or simple
         if (ObjectHelper.isNotEmpty(cron)) {
             trigger = createCronTrigger(cron);
         } else {
@@ -151,13 +143,25 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
                 }
             }
         }
-
-        QuartzEndpoint answer = new QuartzEndpoint(uri, this);
-        setProperties(answer.getJobDetail(), jobParameters);
-
         setProperties(trigger, triggerParameters);
         trigger.setName(name);
         trigger.setGroup(group);
+        
+        // if we're starting up and not running in Quartz clustered mode or not stateful then check for a name conflict.
+        if (!isClustered() && !stateful) {
+            // check to see if this trigger already exists
+            Trigger oldTrigger = getScheduler().getTrigger(name, group);
+            if (oldTrigger != null 
+            		&& hasTriggerChanged(oldTrigger, trigger) 
+            		) {
+                String msg = "A Quartz job already exists with the name/group: " + name + "/" + group;
+                throw new IllegalArgumentException(msg);
+            }
+            if(oldTrigger != null) {
+            	trigger = oldTrigger;
+            }
+        }
+
         answer.setTrigger(trigger);
 
         return answer;
@@ -255,6 +259,9 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
         if (oldTrigger instanceof CronTrigger && oldTrigger.equals(newTrigger)) {
+            if(! (newTrigger instanceof CronTrigger)) {
+            	return true;
+            }
             CronTrigger oldCron = (CronTrigger) oldTrigger;
             CronTrigger newCron = (CronTrigger) newTrigger;
             return !oldCron.getCronExpression().equals(newCron.getCronExpression());
