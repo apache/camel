@@ -279,7 +279,7 @@
     <opensaml-version>2.5.1_2</opensaml-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
-    <osgi-version>4.3.0</osgi-version>
+    <osgi-version>4.3.1</osgi-version>
     <paranamer-bundle-version>2.4_1</paranamer-bundle-version>
     <pax-exam-version>2.6.0</pax-exam-version>
     <paxexam-karaf-container-version>1.0.0</paxexam-karaf-container-version>
