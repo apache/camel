@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
@@ -99,30 +100,26 @@ public class CxfEndpointUtilsTest extends Assert {
     @Test
     public void testCheckServiceClassProcedure() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
-        try {
-            endpoint.createProducer();
-        } catch (IllegalArgumentException exception) {
-            assertNotNull("Should get a CamelException here", exception);
-        }
+        assertNotNull(endpoint.createProducer());
     }
 
     @Test
     public void testCheckServiceClassConsumer() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
         try {
-            endpoint.createConsumer(new NullProcessor());
+            endpoint.createConsumer(new Processor() {
+
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    // noop
+                }
+
+            });
+            fail("Should have thrown exception");
         } catch (IllegalArgumentException exception) {
             assertNotNull("Should get a CamelException here", exception);
             assertTrue(exception.getMessage().startsWith("serviceClass must be specified"));
         }
-    }
-
-    class NullProcessor implements Processor {
-
-        public void process(Exchange exchange) throws Exception {
-            // Do nothing here
-        }
-
     }
 
 }

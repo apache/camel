@@ -54,7 +54,6 @@ public class SetDataOperationTest extends ZooKeeperTestSupport {
 
     @Test
     public void setWithNull() throws Exception {
-
         client.create("/three", testPayload);
         updateDataOnNode("/three", null, -1, 1);
 

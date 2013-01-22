@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 
@@ -26,13 +25,9 @@ import org.apache.camel.spring.SpringRouteBuilder;
 public class TransactionalClientDataSourceMixedTransactedTest extends TransactionalClientDataSourceTest {
 
     public void testTransactionRollback() throws Exception {
-        try {
-            template.sendBody("direct:fail", "Hello World");
-        } catch (RuntimeCamelException e) {
-            // expected as we fail
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
-        }
+        // through the onException clause below we've marked the exceptions containing the message
+        // "Donkey" as being handled so that we don't count with any exception on the client side.
+        template.sendBody("direct:fail", "Hello World");
 
         int count = jdbc.queryForInt("select count(*) from books");
         // should get 2 books as the first operation will succeed and we are not transacted

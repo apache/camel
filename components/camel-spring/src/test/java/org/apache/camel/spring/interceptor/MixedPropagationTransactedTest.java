@@ -81,9 +81,10 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 3, count);
     }
 
-    public void testRequiredOnlkyRollback() throws Exception {
+    public void testRequiredOnlyRollback() throws Exception {
         try {
             template.sendBody("direct:required", "Donkey in Action");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
@@ -96,9 +97,10 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
-    public void testRequiresNewOnlkyRollback() throws Exception {
+    public void testRequiresNewOnlyRollback() throws Exception {
         try {
             template.sendBody("direct:new", "Donkey in Action");
+            fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
@@ -113,7 +115,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
     public void testRequiredAndNewRollback() throws Exception {
         try {
-            template.sendBody("direct:new", "Tiger in Action");
+            template.sendBody("direct:requiredAndNewRollback", "Tiger in Action");
         } catch (RuntimeCamelException e) {
             // expeced as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());

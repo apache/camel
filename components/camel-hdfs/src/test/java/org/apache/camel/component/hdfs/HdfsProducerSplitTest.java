@@ -66,6 +66,9 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
             Thread.sleep(2000);
         }
 
+        // stop Camel to flush and close file stream
+        stopCamelContext();
+
         for (int i = 0; i < 3; ++i) {
             InputStream in = null;
             try {

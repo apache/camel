@@ -41,7 +41,8 @@ public class JettyHttpProducerSimulate404ErrorTest extends BaseJettyTest {
         Thread.sleep(1000);
 
         try {
-            template.request(url, null);
+            template.sendBody(url, null);
+            fail("Should have thrown exception");
         } catch (Exception e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(404, cause.getStatusCode());

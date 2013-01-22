@@ -17,7 +17,6 @@
 package org.apache.camel.component.zookeeper;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -79,9 +78,7 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         e.setPattern(ExchangePattern.InOut);
         template.send("direct:roundtrip", e);
 
-        mock.await(2, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
-        pipeline.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Test
@@ -92,8 +89,7 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         Exchange e = createExchangeWithBody(testPayload);
         template.send("direct:roundtrip", e);
 
-        mock.await(2, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Test
@@ -105,8 +101,7 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         e.setPattern(ExchangePattern.InOut);
         template.sendBodyAndHeader("direct:node-from-header", e, ZOOKEEPER_NODE, "/set");
 
-        mock.await(5, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Test
@@ -132,12 +127,14 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         e.setPattern(ExchangePattern.InOut);
         
         template.send("direct:create-mode", e);
-        mock.await(5, TimeUnit.SECONDS);
-        
+
+        assertMockEndpointsSatisfied();
+
         Stat s = mock.getReceivedExchanges().get(0).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS, Stat.class);
         assertEquals(s.getEphemeralOwner(), 0);
     }
 
+    @Test
     public void deleteNode() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:delete");
         mock.expectedMessageCount(1);
@@ -148,7 +145,8 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         e.getIn().setHeader(ZOOKEEPER_OPERATION, "DELETE");
         template.send("direct:delete", e);
 
-        mock.await(5, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied();
+
         assertNull(client.getConnection().exists("/to-be-deleted", false));
     }
 
@@ -172,8 +170,8 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
 
         Exchange exchange = createExchangeWithBody(testPayload);
         template.send("direct:roundtrip", exchange);
-        mock.await();
-        mock.assertIsSatisfied();
+
+        assertMockEndpointsSatisfied();
 
         Message received = mock.getReceivedExchanges().get(0).getIn();
         assertEquals("/node", ZooKeeperMessage.getPath(received));

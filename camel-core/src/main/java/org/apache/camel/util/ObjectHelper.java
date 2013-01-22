@@ -287,12 +287,15 @@ public final class ObjectHelper {
      *
      * @param value  the value to test
      * @param name   the key that resolved the value
+     * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
-    public static void notNull(Object value, String name) {
+    public static Object notNull(Object value, String name) {
         if (value == null) {
             throw new IllegalArgumentException(name + " must be specified");
         }
+
+        return value;
     }
 
     /**
@@ -301,14 +304,17 @@ public final class ObjectHelper {
      * @param value  the value to test
      * @param on     additional description to indicate where this problem occurred (appended as toString())
      * @param name   the key that resolved the value
+     * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
-    public static void notNull(Object value, String name, Object on) {
+    public static Object notNull(Object value, String name, Object on) {
         if (on == null) {
             notNull(value, name);
         } else if (value == null) {
             throw new IllegalArgumentException(name + " must be specified on: " + on);
         }
+
+        return value;
     }
 
     /**
@@ -316,12 +322,15 @@ public final class ObjectHelper {
      *
      * @param value  the string to test
      * @param name   the key that resolved the value
+     * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
-    public static void notEmpty(String value, String name) {
+    public static String notEmpty(String value, String name) {
         if (isEmpty(value)) {
             throw new IllegalArgumentException(name + " must be specified and not empty");
         }
+
+        return value;
     }
 
     /**
@@ -330,14 +339,17 @@ public final class ObjectHelper {
      * @param value  the string to test
      * @param on     additional description to indicate where this problem occurred (appended as toString())
      * @param name   the key that resolved the value
+     * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
-    public static void notEmpty(String value, String name, Object on) {
+    public static String notEmpty(String value, String name, Object on) {
         if (on == null) {
             notNull(value, name);
         } else if (isEmpty(value)) {
             throw new IllegalArgumentException(name + " must be specified and not empty on: " + on);
         }
+
+        return value;
     }
 
     /**

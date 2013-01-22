@@ -25,7 +25,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -52,13 +51,10 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", message);
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof Exception);
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-        }
-        
+        // having dead letter channel as the errorHandler in place makes exchanges to appear as completed from
+        // the client point of view so that we don't count with any thrown exception here (the client side)
+        template.sendBody("direct:start", message);
+
         assertEquals("The message should be delivered 4 times", count, 4);
         mock.assertIsSatisfied();
     }

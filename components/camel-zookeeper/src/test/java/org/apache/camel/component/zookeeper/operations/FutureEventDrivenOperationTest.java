@@ -53,7 +53,6 @@ public class FutureEventDrivenOperationTest {
         new Thread(new Runnable() {
 
             public void run() {
-
                 try {
                     Thread.sleep(millisecondsTillFire);
                     future.process(event);

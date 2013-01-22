@@ -28,28 +28,35 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ExceptionTest extends ContextTestSupport {
 
     public void testExceptionWithoutHandler() throws Exception {
+        MockEndpoint errorEndpoint = getMockEndpoint("mock:error");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
+        errorEndpoint.expectedBodiesReceived("<exception/>");
+        exceptionEndpoint.expectedMessageCount(0);
         resultEndpoint.expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "<body/>");
-        } catch (Exception e) {
-            // expected
-        }
+        // we don't expect any thrown exception here as there's no onException clause defined for this test
+        // so that the general purpose dead letter channel will come into the play and then when all the attempts
+        // to redelivery fails the exchange will be moved to "mock:error" and then from the client point of
+        // view the exchange is completed.
+        template.sendBody("direct:start", "<body/>");
 
         assertMockEndpointsSatisfied();
     }
 
     public void testExceptionWithHandler() throws Exception {
+        MockEndpoint errorEndpoint = getMockEndpoint("mock:error");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
-        exceptionEndpoint.expectedMessageCount(1);
+        errorEndpoint.expectedMessageCount(0);
+        exceptionEndpoint.expectedBodiesReceived("<exception/>");
         resultEndpoint.expectedMessageCount(0);
 
         try {
             template.sendBody("direct:start", "<body/>");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // expected
         }
@@ -58,14 +65,17 @@ public class ExceptionTest extends ContextTestSupport {
     }
 
     public void testExceptionWithLongHandler() throws Exception {
+        MockEndpoint errorEndpoint = getMockEndpoint("mock:error");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
-        exceptionEndpoint.expectedBodiesReceived("<handled/>");
+        errorEndpoint.expectedMessageCount(0);
+        exceptionEndpoint.expectedBodiesReceived("<not-handled/>");
         resultEndpoint.expectedMessageCount(0);
 
         try {
             template.sendBody("direct:start", "<body/>");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // expected
         }
@@ -74,14 +84,17 @@ public class ExceptionTest extends ContextTestSupport {
     }
 
     public void testLongRouteWithHandler() throws Exception {
+        MockEndpoint errorEndpoint = getMockEndpoint("mock:error");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
-        exceptionEndpoint.expectedMessageCount(1);
+        errorEndpoint.expectedMessageCount(0);
+        exceptionEndpoint.expectedBodiesReceived("<exception/>");
         resultEndpoint.expectedMessageCount(0);
 
         try {
             template.sendBody("direct:start2", "<body/>");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             // expected
         }
@@ -104,7 +117,7 @@ public class ExceptionTest extends ContextTestSupport {
 
                 if (getName().endsWith("WithLongHandler")) {
                     log.debug("Using long exception handler");
-                    onException(IllegalArgumentException.class).setBody(constant("<handled/>")).
+                    onException(IllegalArgumentException.class).setBody(constant("<not-handled/>")).
                         to("mock:exception");
                 } else if (getName().endsWith("WithHandler")) {
                     log.debug("Using exception handler");
