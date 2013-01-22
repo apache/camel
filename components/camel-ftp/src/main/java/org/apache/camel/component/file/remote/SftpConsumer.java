@@ -98,6 +98,10 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
         for (ChannelSftp.LsEntry file : files) {
 
+            if (log.isTraceEnabled()) {
+                log.trace("SftpFile[fileName={}, longName={}, dir={}]", new Object[]{file.getFilename(), file.getLongname(), file.getAttrs().isDir()});
+            }
+
             // check if we can continue polling in files
             if (!canPollMoreFiles(fileList)) {
                 return false;
