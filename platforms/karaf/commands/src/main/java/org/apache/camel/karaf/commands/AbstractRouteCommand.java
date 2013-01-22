@@ -36,9 +36,9 @@ public abstract class AbstractRouteCommand extends OsgiCommandSupport {
     public void setCamelController(CamelController camelController) {
         this.camelController = camelController;
     }
-    
+
     public abstract void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception;
-    
+
     public Object doExecute() throws Exception {
         List<Route> camelRoutes = camelController.getRoutes(context, RegexUtil.wildcardAsRegex(route));
         if (camelRoutes == null || camelRoutes.isEmpty()) {
@@ -48,13 +48,13 @@ public abstract class AbstractRouteCommand extends OsgiCommandSupport {
         for (Route camelRoute : camelRoutes) {
             CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
             // Setting thread context classloader to the bundle classloader to enable
-            // legacy code that relies on it 
+            // legacy code that relies on it
             ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(camelContext.getApplicationContextClassLoader());
             try {
-            	executeOnRoute(camelContext, camelRoute);
+                executeOnRoute(camelContext, camelRoute);
             } finally {
-            	Thread.currentThread().setContextClassLoader(oldClassloader);
+                Thread.currentThread().setContextClassLoader(oldClassloader);
             }
         }
 

@@ -26,10 +26,9 @@ import org.apache.felix.gogo.commands.Command;
 @Command(scope = "camel", name = "route-resume", description = "Resume a Camel route or a group of routes.")
 public class RouteResume extends AbstractRouteCommand {
 
-	@Override
-	public void executeOnRoute(CamelContext camelContext, Route camelRoute)
-			throws Exception {
-		camelContext.resumeRoute(camelRoute.getId());
-	}
+    @Override
+    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
+        camelContext.resumeRoute(camelRoute.getId());
+    }
 
 }

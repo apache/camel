@@ -18,8 +18,6 @@ package org.apache.camel.component.solr;
 
 import java.io.File;
 import java.util.Arrays;
-import static org.junit.Assert.assertEquals;
-
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -37,6 +35,8 @@ import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration (locations = {"/SolrSpringTest-context.xml"})
 public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
