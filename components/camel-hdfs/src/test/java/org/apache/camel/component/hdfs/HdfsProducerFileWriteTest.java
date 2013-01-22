@@ -76,7 +76,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch1/", "CIAO", "CamelFileName", "CIAO" + i);
         }
 
-        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
+        assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         InputStream in = null;
@@ -84,7 +84,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             in = new URL("file:///" + file.toUri()).openStream();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOUtils.copyBytes(in, bos, 4096, false);
-            Assert.assertEquals(40, bos.size());
+            assertEquals(40, bos.size());
         } finally {
             IOUtils.closeStream(in);
         }
@@ -115,7 +115,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch2", "CIAO", "CamelFileName", "CIAO" + i);
         }
 
-        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
+        assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         Configuration conf = new Configuration();
@@ -127,10 +127,10 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
         int i = 0;
         while (reader.next(key, value)) {
             String str = new String(value.getBytes(), 0, value.getLength());
-            Assert.assertEquals("CIAO", str);
+            assertEquals("CIAO", str);
             i++;
         }
-        Assert.assertEquals(10, i);
+        assertEquals(10, i);
     }
 
     @Test
@@ -159,7 +159,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch3", "CIAO", "CamelFileName", "CIAO" + i);
         }
 
-        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
+        assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         Configuration conf = new Configuration();
@@ -171,11 +171,11 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
         int i = 0;
         while (reader.next(key, value)) {
             String str = new String(value.getBytes(), 0, value.getLength());
-            Assert.assertEquals("CIAO", str);
-            Assert.assertEquals("CIAO" + i, key.toString());
+            assertEquals("CIAO", str);
+            assertEquals("CIAO" + i, key.toString());
             i++;
         }
-        Assert.assertEquals(10, i);
+        assertEquals(10, i);
     }
 
     @Test
@@ -204,7 +204,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch4", "CIAO" + i, "CamelFileName", "CIAO" + i);
         }
 
-        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
+        assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         Configuration conf = new Configuration();
@@ -216,8 +216,8 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             BytesWritable value = new BytesWritable();
             reader.get(key, value);
             String str = new String(value.getBytes(), 0, value.getLength());
-            Assert.assertEquals("CIAO" + i, str);
-            Assert.assertEquals("CIAO" + i, key.toString());
+            assertEquals("CIAO" + i, str);
+            assertEquals("CIAO" + i, key.toString());
         }
     }
 
@@ -251,7 +251,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch5", bb, "CamelFileName", "CIAO" + i);
         }
 
-        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
+        assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         Configuration conf = new Configuration();
@@ -262,10 +262,10 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
         BytesWritable value = (BytesWritable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         int i = 0;
         while (reader.next(key, value)) {
-            Assert.assertEquals(value.getLength(), 8 * 1024 * 1024);
+            assertEquals(value.getLength(), 8 * 1024 * 1024);
             i++;
         }
-        Assert.assertEquals(1, i);
+        assertEquals(1, i);
     }
 
     @Override
