@@ -18,7 +18,6 @@ package org.apache.camel.component.hdfs;
 
 import java.io.File;
 
-import junit.framework.Assert;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
@@ -72,7 +71,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         int i = 0;
         while (reader.next(key, value)) {
             Text txt = (Text) value;
-            Assert.assertTrue(("PAPPO" + i).equals(txt.toString()));
+            assertTrue(("PAPPO" + i).equals(txt.toString()));
             ++i;
         }
     }
@@ -93,7 +92,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         Boolean rBoolean = ((BooleanWritable) value).get();
-        Assert.assertEquals(rBoolean, aBoolean);
+        assertEquals(rBoolean, aBoolean);
     }
 
     @Test
@@ -112,7 +111,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         byte rByte = ((ByteWritable) value).get();
-        Assert.assertEquals(rByte, aByte);
+        assertEquals(rByte, aByte);
     }
 
     @Test
@@ -131,7 +130,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         int rInt = ((IntWritable) value).get();
-        Assert.assertEquals(rInt, anInt);
+        assertEquals(rInt, anInt);
     }
 
     @Test
@@ -150,7 +149,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         float rFloat = ((FloatWritable) value).get();
-        Assert.assertEquals(rFloat, aFloat);
+        assertEquals(rFloat, aFloat, 0.0F);
     }
 
     @Test
@@ -158,7 +157,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         if (SKIP) {
             return;
         }
-        double aDouble = 12.34d;
+        Double aDouble = 12.34D;
         template.sendBody("direct:write_double", aDouble);
         stopCamelContext();
         Configuration conf = new Configuration();
@@ -169,7 +168,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         Double rDouble = ((DoubleWritable) value).get();
-        Assert.assertEquals(rDouble, aDouble);
+        assertEquals(rDouble, aDouble);
     }
 
     @Test
@@ -188,7 +187,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         long rLong = ((LongWritable) value).get();
-        Assert.assertEquals(rLong, aLong);
+        assertEquals(rLong, aLong);
     }
 
     @Test
@@ -207,7 +206,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         Text value = (Text) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         String rTxt = value.toString();
-        Assert.assertEquals(rTxt, txt);
+        assertEquals(rTxt, txt);
     }
 
     @Test
@@ -226,8 +225,8 @@ public class HdfsProducerTest extends CamelTestSupport {
         Text key = (Text) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
         Text value = (Text) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
-        Assert.assertEquals(key.toString(), txtKey);
-        Assert.assertEquals(value.toString(), txtValue);
+        assertEquals(key.toString(), txtKey);
+        assertEquals(value.toString(), txtValue);
     }
 
     @Test
@@ -246,8 +245,8 @@ public class HdfsProducerTest extends CamelTestSupport {
         Text key = (Text) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
         Text value = (Text) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
-        Assert.assertEquals(key.toString(), txtKey);
-        Assert.assertEquals(value.toString(), txtValue);
+        assertEquals(key.toString(), txtKey);
+        assertEquals(value.toString(), txtValue);
     }
 
     @Test
@@ -264,7 +263,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         ArrayFile.Reader reader = new ArrayFile.Reader(fs1, "file:///" + TEMP_DIR.toUri() + "test-camel-text4", conf);
         Text value = (Text) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(value);
-        Assert.assertEquals(value.toString(), txtValue);
+        assertEquals(value.toString(), txtValue);
     }
 
     @Test
@@ -283,8 +282,8 @@ public class HdfsProducerTest extends CamelTestSupport {
         Text key = (Text) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
         Text value = (Text) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
-        Assert.assertEquals(key.toString(), txtKey);
-        Assert.assertEquals(value.toString(), txtValue);
+        assertEquals(key.toString(), txtKey);
+        assertEquals(value.toString(), txtValue);
     }
 
     @Override

@@ -23,9 +23,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.xml.ws.Holder;
 
-import junit.framework.Assert;
-
 import org.apache.camel.cxf.mtom_feature.Hello;
+
+import org.junit.Assert;
 
 /**
  * Hello Test Impl class

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import junit.framework.Assert;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultExchange;
 
@@ -38,7 +36,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
             assertEquals("process", mi.getMethod().getName());
             assertEquals("Y", mi.getMethod().getDeclaringClass().getSimpleName());
         } catch (AmbiguousMethodCallException e) {
-            Assert.fail("This should not be ambiguous!");
+            fail("This should not be ambiguous!");
         }
     }
 
@@ -54,7 +52,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
             assertEquals("process", mi.getMethod().getName());
             assertEquals("A", mi.getMethod().getDeclaringClass().getSimpleName());
         } catch (AmbiguousMethodCallException e) {
-            Assert.fail("This should not be ambiguous!");
+            fail("This should not be ambiguous!");
         }
     }
 
@@ -66,7 +64,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
 
         try {
             beanInfo.createInvocation(null, exchange);
-            Assert.fail("This should be ambiguous!");
+            fail("This should be ambiguous!");
         } catch (AmbiguousMethodCallException e) {
             // expected (currently not supported in camel)
         }

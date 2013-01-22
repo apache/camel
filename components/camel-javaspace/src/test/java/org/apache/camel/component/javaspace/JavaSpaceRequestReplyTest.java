@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,7 +47,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
         for (int i = 0; i < 100; ++i) {
             req.setPayload("REQUEST " + i);
             Reply reply = proxy.method(req);
-            Assert.assertTrue(reply.getPayload().equals("REPLY for REQUEST " + i));
+            assertTrue(reply.getPayload().equals("REPLY for REQUEST " + i));
         }
         long stop = System.currentTimeMillis();
         System.out.println(stop - start);
@@ -70,7 +69,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
         }
         int i = 0;
         for (FutureTask<Reply> futureTask : tasks) {
-            Assert.assertTrue(futureTask.get().getPayload().equals("REPLY for REQUEST " + i++));
+            assertTrue(futureTask.get().getPayload().equals("REPLY for REQUEST " + i++));
         }
         long stop = System.currentTimeMillis();
         System.out.println(stop - start);

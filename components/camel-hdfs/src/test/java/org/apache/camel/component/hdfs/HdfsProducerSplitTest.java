@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
-import junit.framework.Assert;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
@@ -75,7 +74,7 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
                 in = new URL("file:///" + BASE_FILE.toUri() + "3/" + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 IOUtils.copyBytes(in, bos, 4096, false);
-                Assert.assertEquals("CIAO" + i, new String(bos.toByteArray()));
+                assertEquals("CIAO" + i, new String(bos.toByteArray()));
             } finally {
                 IOUtils.closeStream(in);
             }
@@ -108,7 +107,7 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
                 in = new URL("file:///" + BASE_FILE.toUri() + routeNr + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 IOUtils.copyBytes(in, bos, 4096, false);
-                Assert.assertEquals("CIAO" + i, new String(bos.toByteArray()));
+                assertEquals("CIAO" + i, new String(bos.toByteArray()));
             } finally {
                 IOUtils.closeStream(in);
             }

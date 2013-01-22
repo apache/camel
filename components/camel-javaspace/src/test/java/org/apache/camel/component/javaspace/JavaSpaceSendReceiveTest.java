@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.javaspace;
 
-import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -78,7 +77,7 @@ public class JavaSpaceSendReceiveTest extends CamelTestSupport {
                         .process(new Processor() {
                             public void process(Exchange exc) throws Exception {
                                 TestEntry msg = exc.getIn().getBody(TestEntry.class);
-                                Assert.assertTrue(msg.id == 1);
+                                assertTrue(msg.id == 1);
                             }
                         }).to("mock:mymock");
             }

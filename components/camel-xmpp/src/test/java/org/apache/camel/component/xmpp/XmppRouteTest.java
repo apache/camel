@@ -19,7 +19,6 @@ package org.apache.camel.component.xmpp;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import org.apache.camel.CamelContext;
@@ -95,7 +94,7 @@ public class XmppRouteTest extends TestCase {
         assertNotNull(receivedExchange);
         XmppMessage receivedMessage = (XmppMessage)receivedExchange.getIn();
 
-        Assert.assertEquals("cheese header", 123, receivedMessage.getHeader("cheese"));
+        assertEquals("cheese header", 123, receivedMessage.getHeader("cheese"));
         Object body = receivedMessage.getBody();
         XmppRouteTest.LOG.debug("Received body: " + body);
         Message xmppMessage = receivedMessage.getXmppMessage();

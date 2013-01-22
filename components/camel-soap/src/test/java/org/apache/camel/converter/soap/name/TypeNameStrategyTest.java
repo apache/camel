@@ -18,11 +18,10 @@ package org.apache.camel.converter.soap.name;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
-
 import com.example.customerservice.GetCustomersByName;
 
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TypeNameStrategyTest {

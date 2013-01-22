@@ -18,7 +18,7 @@ package org.apache.camel.component.solr;
 
 import java.io.File;
 import java.util.Arrays;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.client.solrj.SolrQuery;

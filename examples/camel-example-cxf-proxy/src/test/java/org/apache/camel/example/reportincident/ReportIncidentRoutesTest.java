@@ -19,11 +19,10 @@ package org.apache.camel.example.reportincident;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import junit.framework.Assert;
-
 import org.apache.camel.spring.Main;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

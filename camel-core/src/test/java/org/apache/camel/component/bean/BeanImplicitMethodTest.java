@@ -18,7 +18,6 @@ package org.apache.camel.component.bean;
 
 import javax.naming.Context;
 
-import junit.framework.Assert;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
@@ -29,11 +28,11 @@ public class BeanImplicitMethodTest extends ContextTestSupport {
 
         String stringBody = "stringBody";
         String stringResponse = (String)template.requestBody("direct:in", stringBody);
-        Assert.assertEquals(stringBody, stringResponse);
+        assertEquals(stringBody, stringResponse);
 
         Integer intBody = 1;
         Integer intResponse = (Integer)template.requestBody("direct:in", intBody); 
-        Assert.assertEquals(1, intResponse.intValue());
+        assertEquals(1, intResponse.intValue());
     }
 
     protected RouteBuilder createRouteBuilder() {

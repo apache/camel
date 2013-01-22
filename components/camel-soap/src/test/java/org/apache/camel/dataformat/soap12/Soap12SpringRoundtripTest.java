@@ -18,14 +18,13 @@ package org.apache.camel.dataformat.soap12;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import com.example.customerservice.GetCustomersByName;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

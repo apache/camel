@@ -18,7 +18,6 @@ package org.apache.camel.component.javaspace;
 
 import java.util.concurrent.CountDownLatch;
 
-import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -76,7 +75,7 @@ public class JavaSpaceTransportSendReceiveTest extends CamelTestSupport {
                         .process(new Processor() {
                             public void process(Exchange exc) throws Exception {
                                 byte[] body = exc.getIn().getBody(byte[].class);
-                                Assert.assertTrue(new String(body).equals("DAVID"));
+                                assertTrue(new String(body).equals("DAVID"));
                                 countLatch.countDown();
                             }
                         });

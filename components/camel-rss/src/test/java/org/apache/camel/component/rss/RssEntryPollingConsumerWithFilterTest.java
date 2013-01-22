@@ -23,8 +23,6 @@ import java.util.TimeZone;
 
 import javax.naming.Context;
 
-import junit.framework.Assert;
-
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
@@ -76,7 +74,7 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
 
         public boolean isAfterDate(Exchange ex) {
             SyndFeed feed = ex.getIn().getBody(SyndFeed.class);
-            Assert.assertTrue(feed.getEntries().size() == 1);
+            assertTrue(feed.getEntries().size() == 1);
             SyndEntry entry = (SyndEntry) feed.getEntries().get(0);
             return entry.getPublishedDate().after(time);     
         }
