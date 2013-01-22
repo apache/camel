@@ -37,7 +37,6 @@ public class ChildrenChangedOperationTest extends ZooKeeperTestSupport {
 
     @Test
     public void getsNotifiedWhenNodeIsDeleted() throws Exception {
-
         String path = "/parent2";
         client.createPersistent(path, null);
         client.createPersistent(path + "/child1", null);

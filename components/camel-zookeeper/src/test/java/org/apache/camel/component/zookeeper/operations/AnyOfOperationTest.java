@@ -22,7 +22,6 @@ import org.junit.Test;
 
 public class AnyOfOperationTest extends ZooKeeperTestSupport {
 
-
     @Test
     public void testExistsOrWaitsWhenNodeExists() throws Exception {
         String node = "/cogito";
@@ -30,7 +29,6 @@ public class AnyOfOperationTest extends ZooKeeperTestSupport {
         AnyOfOperations operation = getExistsOrWaitOperation(node);
         assertEquals(node, operation.get().getResult());
     }
-
 
     @Test
     public void testExistsOrWaitsWhenNodeDoesNotExist() throws Exception {

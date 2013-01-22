@@ -58,11 +58,10 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
 
         updateNode(10);
 
-        delay(200);
+        delay(500);
         client.delete("/camel");
 
-        mock.await(5, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
+        mock.assertIsSatisfied(30, TimeUnit.SECONDS);
 
         int lastVersion = -1;
         for (int i = 0; i < mock.getExchanges().size(); i++) {
@@ -80,10 +79,10 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
     public void deletionOfAwaitedNodeCausesNoFailure() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:zookeeper-data");
-        mock.expectedMessageCount(11);
+        mock.expectedMinimumMessageCount(11);
         createCamelNode();
 
-        delay(200);
+        delay(500);
 
         // by now we are back waiting for a change so delete the node
         client.delete("/camel");
@@ -92,20 +91,19 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
         createCamelNode();
         updateNode(10);
   
-        mock.await(5, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
-        
+        mock.assertIsSatisfied(30, TimeUnit.SECONDS);
+
         client.delete("/camel");
     }
 
-    private void updateNode(int times) throws InterruptedException, Exception {
+    private void updateNode(int times) throws Exception {
         for (int x = 1; x < times; x++) {
-            delay(200);
+            delay(500);
             client.setData("/camel", testPayload + "_" + x, -1);
         }
     }
 
-    private void createCamelNode() throws InterruptedException, Exception {
+    private void createCamelNode() throws Exception {
         try {
             delay(1000);
             client.create("/camel", testPayload + "_0");

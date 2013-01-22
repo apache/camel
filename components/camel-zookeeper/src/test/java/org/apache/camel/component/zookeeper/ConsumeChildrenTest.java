@@ -17,7 +17,6 @@
 package org.apache.camel.component.zookeeper;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -46,7 +45,6 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
 
     @Test
     public void shouldAwaitCreationAndGetDataNotification() throws Exception {
-
         MockEndpoint mock = getMockEndpoint("mock:zookeeper-data");
         mock.expectedMessageCount(5);
 
@@ -56,8 +54,7 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
         client.delete("/grimm/hansel");
         client.delete("/grimm/gretel");
 
-        mock.await(5, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
 
         validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"), createChildListing("hansel", "gretel"), createChildListing("gretel"),
                                          createChildListing());

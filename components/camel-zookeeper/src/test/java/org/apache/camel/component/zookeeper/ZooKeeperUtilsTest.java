@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 public class ZooKeeperUtilsTest {
 
     @Test
-    public void testCreatModeExtraction() {
+    public void testCreateModeExtraction() {
         assertEquals(CreateMode.EPHEMERAL, getCreateModeFromString("EPHEMERAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.EPHEMERAL_SEQUENTIAL, getCreateModeFromString("EPHEMERAL_SEQUENTIAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.PERSISTENT, getCreateModeFromString("PERSISTENT", CreateMode.EPHEMERAL));
@@ -38,7 +38,7 @@ public class ZooKeeperUtilsTest {
     }
     
     @Test
-    public void testCreatModeExtractionFromMessageHeader() {
+    public void testCreateModeExtractionFromMessageHeader() {
         assertEquals(CreateMode.EPHEMERAL, testModeInMessage("EPHEMERAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.EPHEMERAL_SEQUENTIAL, testModeInMessage("EPHEMERAL_SEQUENTIAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.PERSISTENT, testModeInMessage("PERSISTENT", CreateMode.EPHEMERAL));

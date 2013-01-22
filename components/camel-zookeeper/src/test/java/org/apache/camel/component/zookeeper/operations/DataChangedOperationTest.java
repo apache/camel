@@ -36,7 +36,6 @@ public class DataChangedOperationTest extends ZooKeeperTestSupport {
 
     @Test
     public void getsNotifiedWhenNodeIsDeleted() throws Exception {
-
         client.create("/existedButWasDeleted", "this won't hurt a bit");
         ZooKeeper connection = getConnection();
 
