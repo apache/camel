@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring.config;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
@@ -27,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version 
  */
-public class CamelProxyTest extends TestCase {
+public class CamelProxyTest extends TestSupport {
 
     public void testCamelProxy() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyTest.xml");
@@ -40,7 +38,7 @@ public class CamelProxyTest extends TestCase {
         // test sending inOnly message
         MyProxySender anotherSender = ac.getBean("myAnotherProxySender", MyProxySender.class);
         SpringCamelContext context = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
-        MockEndpoint result = TestSupport.resolveMandatoryEndpoint(context, "mock:result", MockEndpoint.class);
+        MockEndpoint result = resolveMandatoryEndpoint(context, "mock:result", MockEndpoint.class);
         result.expectedBodiesReceived("Hello my friends!");
         
         anotherSender.greeting("Hello my friends!");

@@ -16,23 +16,24 @@
  */
 package org.apache.camel.spring.config;
 
-import junit.framework.Assert;
 import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class CustomExecutorServiceManagerTest extends AbstractJUnit38SpringContextTests {
+public class CustomExecutorServiceManagerTest extends SpringRunWithTestSupport {
 
     @Autowired
     protected CamelContext context;
 
+    @Test
     public void testCustomExecutorService() throws Exception {
-        Assert.assertTrue(context.getExecutorServiceManager() instanceof CustomExecutorServiceManager);
+        assertIsInstanceOf(CustomExecutorServiceManager.class, context.getExecutorServiceManager());
     }
 
 }

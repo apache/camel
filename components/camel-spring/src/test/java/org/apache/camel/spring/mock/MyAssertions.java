@@ -16,9 +16,9 @@
  */
 package org.apache.camel.spring.mock;
 
-import junit.framework.Assert;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assert;
 import org.springframework.beans.factory.InitializingBean;
 
 /**

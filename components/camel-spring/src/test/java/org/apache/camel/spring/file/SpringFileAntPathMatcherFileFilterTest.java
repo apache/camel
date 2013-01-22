@@ -20,17 +20,18 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class SpringFileAntPathMatcherFileFilterTest extends AbstractJUnit38SpringContextTests {
+public class SpringFileAntPathMatcherFileFilterTest extends SpringRunWithTestSupport {
     protected String expectedBody = "Godday World";
     @Autowired
     protected ProducerTemplate template;
@@ -39,6 +40,7 @@ public class SpringFileAntPathMatcherFileFilterTest extends AbstractJUnit38Sprin
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
+    @Test
     public void testAntPatchMatherFilter() throws Exception {
         result.expectedBodiesReceived(expectedBody);
 
@@ -51,9 +53,9 @@ public class SpringFileAntPathMatcherFileFilterTest extends AbstractJUnit38Sprin
         result.assertIsSatisfied();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        TestSupport.deleteDirectory("target/antpathmatcher");
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory("target/antpathmatcher");
         super.setUp();
     }
 }

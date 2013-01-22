@@ -19,15 +19,16 @@ package org.apache.camel.spring.config;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class DependencyInjectCamelTemplateTest extends AbstractJUnit38SpringContextTests {
+public class DependencyInjectCamelTemplateTest extends SpringRunWithTestSupport {
     protected String body = "Hello";
 
     @Autowired
@@ -36,6 +37,7 @@ public class DependencyInjectCamelTemplateTest extends AbstractJUnit38SpringCont
     @EndpointInject(uri = "mock:results")
     private MockEndpoint endpoint;
 
+    @Test
     public void testBeanHasCamelTemplateInjected() throws Exception {
         assertNotNull("Bean should be injected", bean);
         ProducerTemplate template = bean.getTemplate();

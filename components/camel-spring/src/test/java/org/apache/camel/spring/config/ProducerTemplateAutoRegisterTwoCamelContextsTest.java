@@ -21,14 +21,15 @@ import javax.annotation.Resource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class ProducerTemplateAutoRegisterTwoCamelContextsTest extends AbstractJUnit38SpringContextTests {
+public class ProducerTemplateAutoRegisterTwoCamelContextsTest extends SpringRunWithTestSupport {
 
     @Resource(name = "camel1")
     private CamelContext context1;
@@ -36,21 +37,25 @@ public class ProducerTemplateAutoRegisterTwoCamelContextsTest extends AbstractJU
     @Resource(name = "camel2")
     private CamelContext context2;
 
+    @Test
     public void testHasNoTemplateCamel1() {
         ProducerTemplate lookup = context1.getRegistry().lookup("template", ProducerTemplate.class);
         assertNull("Should NOT lookup producer template", lookup);
     }
 
+    @Test
     public void testHasNoTemplateCamel2() {
         ProducerTemplate lookup = context2.getRegistry().lookup("template", ProducerTemplate.class);
         assertNull("Should NOT lookup producer template", lookup);
     }
 
+    @Test
     public void testHasNoConsumerTemplateCamel1() {
         ConsumerTemplate lookup = context1.getRegistry().lookup("consumerTemplate", ConsumerTemplate.class);
         assertNull("Should NOT lookup consumer template", lookup);
     }
 
+    @Test
     public void testHasNoConsumerTemplateCamel2() {
         ConsumerTemplate lookup = context2.getRegistry().lookup("consumerTemplate", ConsumerTemplate.class);
         assertNull("Should NOT lookup consumer template", lookup);

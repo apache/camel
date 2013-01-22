@@ -21,27 +21,27 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultThreadPoolFactory;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class CustomThreadPoolFactoryTest extends AbstractJUnit38SpringContextTests {
+public class CustomThreadPoolFactoryTest extends SpringRunWithTestSupport {
 
     @Autowired
     protected CamelContext context;
 
+    @Test
     public void testCustomThreadPoolFactory() throws Exception {
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "foo");
-        Assert.assertTrue(context.getExecutorServiceManager().getThreadPoolFactory() instanceof MyCustomThreadPoolFactory);
 
-        MyCustomThreadPoolFactory factory = (MyCustomThreadPoolFactory) context.getExecutorServiceManager().getThreadPoolFactory();
+        MyCustomThreadPoolFactory factory = assertIsInstanceOf(MyCustomThreadPoolFactory.class, context.getExecutorServiceManager().getThreadPoolFactory());
         assertTrue("Should use custom thread pool factory", factory.isInvoked());
     }
 

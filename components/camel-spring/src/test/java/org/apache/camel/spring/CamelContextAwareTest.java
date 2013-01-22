@@ -40,10 +40,10 @@ public class CamelContextAwareTest extends SpringTestSupport {
     
     public void testCamelTemplates() throws Exception {
         DefaultProducerTemplate producer1 = getMandatoryBean(DefaultProducerTemplate.class, "producer1");
-        assertEquals("Inject a wrong camel context", producer1.getContext().getName(), "camel1");
+        assertEquals("Inject a wrong camel context", producer1.getCamelContext().getName(), "camel1");
         
         DefaultProducerTemplate producer2 = getMandatoryBean(DefaultProducerTemplate.class, "producer2");
-        assertEquals("Inject a wrong camel context", producer2.getContext().getName(), "camel2");
+        assertEquals("Inject a wrong camel context", producer2.getCamelContext().getName(), "camel2");
         
         DefaultConsumerTemplate consumer = getMandatoryBean(DefaultConsumerTemplate.class, "consumer");
         assertEquals("Inject a wrong camel context", consumer.getCamelContext().getName(), "camel2");

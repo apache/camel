@@ -22,18 +22,16 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class SpringRemotingWithOneWayTest extends AbstractJUnit38SpringContextTests {
-    private static final Logger LOG = LoggerFactory.getLogger(SpringRemotingWithOneWayTest.class);
+public class SpringRemotingWithOneWayTest extends SpringRunWithTestSupport {
 
     @Autowired
     protected IAsyncService myService;
@@ -41,6 +39,7 @@ public class SpringRemotingWithOneWayTest extends AbstractJUnit38SpringContextTe
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint endpoint;
 
+    @Test
     public void testAsyncInvocation() throws Exception {
         endpoint.expectedMessageCount(1);
 
@@ -51,7 +50,7 @@ public class SpringRemotingWithOneWayTest extends AbstractJUnit38SpringContextTe
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            LOG.info("Received: " + exchange.getIn().getBody());
+            log.info("Received: " + exchange.getIn().getBody());
             ExchangePattern pattern = exchange.getPattern();
             assertEquals("Expected pattern on exchange: " + exchange, ExchangePattern.InOnly, pattern);
         }

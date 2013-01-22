@@ -18,15 +18,16 @@ package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class ConsumerTemplateAlreadyExistTest extends AbstractJUnit38SpringContextTests {
+public class ConsumerTemplateAlreadyExistTest extends SpringRunWithTestSupport {
 
     @Autowired
     private ConsumerTemplate template;
@@ -34,6 +35,7 @@ public class ConsumerTemplateAlreadyExistTest extends AbstractJUnit38SpringConte
     @Autowired
     private CamelContext context;
 
+    @Test
     public void testHasExistingTemplate() {
         assertNotNull("Should have injected a consumer template", template);
 
@@ -44,6 +46,7 @@ public class ConsumerTemplateAlreadyExistTest extends AbstractJUnit38SpringConte
         assertNull("Should not be able to lookup consumer template", lookup2);
     }
 
+    @Test
     public void testShouldBeSingleton() {
         ConsumerTemplate lookup = context.getRegistry().lookup("myConsumerTemplate", ConsumerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);

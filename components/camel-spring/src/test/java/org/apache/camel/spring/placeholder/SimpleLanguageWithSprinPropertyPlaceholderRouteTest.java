@@ -16,24 +16,21 @@
  */
 package org.apache.camel.spring.placeholder;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
-public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends AbstractJUnit4SpringContextTests {
+public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends SpringRunWithTestSupport {
     
     @Produce(uri = "direct:startSimple")
     protected ProducerTemplate template;
@@ -54,7 +51,7 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends Abstrac
         assertFileExists("target/outBoxSimple/");
     }
     
-    @Ignore(value = "dissabled because of https://jira.springsource.org/browse/SPR-7593")
+    @Ignore(value = "disabled because of https://jira.springsource.org/browse/SPR-7593")
     @Test
     @DirtiesContext
     public void replaceExpression() throws Exception {
@@ -71,8 +68,4 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends Abstrac
         return "test-" + s + ".txt";
     }
     
-    private void assertFileExists(String filename) {
-        File file = new File(filename);
-        assertTrue("File " + filename + " should exist", file.exists());
-    }
 }

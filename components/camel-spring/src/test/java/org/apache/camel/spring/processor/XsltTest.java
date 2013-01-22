@@ -19,15 +19,16 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class XsltTest extends AbstractJUnit38SpringContextTests {
+public class XsltTest extends SpringRunWithTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
@@ -35,7 +36,7 @@ public class XsltTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected ProducerTemplate template;
 
-
+    @Test
     public void testXslt() throws Exception {
         resultEndpoint.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
 

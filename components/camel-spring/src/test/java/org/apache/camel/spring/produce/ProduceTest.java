@@ -20,24 +20,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Produce;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class ProduceTest extends AbstractJUnit38SpringContextTests {
+public class ProduceTest extends SpringRunWithTestSupport {
     
     @Produce(uri = "direct:start")
     protected MyListener producer;
 
+    @Test
     public void testInvokeService() throws Exception {
         // lets send a message
         String actual = producer.sayHello("James");
         assertEquals("response", "Hello James", actual);
     }
     
+    @Test
     public void testInvokeServiceWithMessageHeader() throws Exception {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("greeter", "Nihao ");
