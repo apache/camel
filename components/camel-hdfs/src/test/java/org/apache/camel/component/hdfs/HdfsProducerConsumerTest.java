@@ -74,7 +74,7 @@ public class HdfsProducerConsumerTest extends CamelTestSupport {
         int i = 0;
         List<Exchange> exchanges = resultEndpoint.getExchanges();
         for (Exchange exchange : exchanges) {
-            Assert.assertEquals("CIAO" + i++, exchange.getIn().getBody(String.class));
+            assertEquals("CIAO" + i++, exchange.getIn().getBody(String.class));
         }
     }
 
