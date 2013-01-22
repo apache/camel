@@ -371,7 +371,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         LOG.trace("getCurrentDirectory()");
         try {
-            return channel.pwd();
+            String answer = channel.pwd();
+            LOG.trace("Current dir: {}", answer);
+            return answer;
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot get current directory", e);
         }
