@@ -101,6 +101,10 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         for (FTPFile file : files) {
 
+            if (log.isTraceEnabled()) {
+                log.trace("FtpFile[name={}, dir={}, file={}]", new Object[]{file.getName(), file.isDirectory(), file.isFile()});
+            }
+
             // check if we can continue polling in files
             if (!canPollMoreFiles(fileList)) {
                 return false;
