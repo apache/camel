@@ -18,7 +18,6 @@ package org.apache.camel.component.mina2;
 
 import java.nio.charset.Charset;
 
-import junit.framework.Assert;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -98,13 +97,13 @@ public class Mina2VMTransferExchangeOptionTest extends BaseMina2Test {
                 from(String.format("mina2:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())).process(new Processor() {
 
                     public void process(Exchange e) throws InterruptedException {
-                        Assert.assertNotNull(e.getIn().getBody());
-                        Assert.assertNotNull(e.getIn().getHeaders());
-                        Assert.assertNotNull(e.getProperties());
-                        Assert.assertEquals("Hello!", e.getIn().getBody());
-                        Assert.assertEquals("feta", e.getIn().getHeader("cheese"));
-                        Assert.assertEquals("old", e.getProperty("ham"));
-                        Assert.assertEquals(ExchangePattern.InOut, e.getPattern());
+                        assertNotNull(e.getIn().getBody());
+                        assertNotNull(e.getIn().getHeaders());
+                        assertNotNull(e.getProperties());
+                        assertEquals("Hello!", e.getIn().getBody());
+                        assertEquals("feta", e.getIn().getHeader("cheese"));
+                        assertEquals("old", e.getProperty("ham"));
+                        assertEquals(ExchangePattern.InOut, e.getPattern());
                         Boolean setException = (Boolean) e.getProperty("setException");
 
                         if (setException) {

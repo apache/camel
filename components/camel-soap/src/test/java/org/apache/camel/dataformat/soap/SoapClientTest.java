@@ -18,8 +18,6 @@ package org.apache.camel.dataformat.soap;
 
 import java.io.InputStream;
 
-import junit.framework.Assert;
-
 import com.example.customerservice.Customer;
 import com.example.customerservice.CustomerService;
 import com.example.customerservice.GetCustomersByName;
@@ -45,9 +43,9 @@ public class SoapClientTest extends CamelTestSupport {
     public void testRoundTripGetCustomersByName() throws Exception {
         GetCustomersByNameResponse response = customerService.getCustomersByName(new GetCustomersByName());
 
-        Assert.assertEquals(1, response.getReturn().size());
+        assertEquals(1, response.getReturn().size());
         Customer firstCustomer = response.getReturn().get(0);
-        Assert.assertEquals(100000.0, firstCustomer.getRevenue());
+        assertEquals(100000.0, firstCustomer.getRevenue(), 0.0D);
     }
 
     @Override

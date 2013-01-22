@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hdfs.integration;
 
-import junit.framework.Assert;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
@@ -24,6 +23,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 

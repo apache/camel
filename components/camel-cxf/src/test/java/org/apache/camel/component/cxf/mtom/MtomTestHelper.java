@@ -18,10 +18,9 @@ package org.apache.camel.component.cxf.mtom;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import org.apache.cxf.helpers.IOUtils;
 
+import org.junit.Assert;
 
 /**
  * Package local test helper

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms.temp;
 
-import junit.framework.Assert;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.Produce;
@@ -25,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-import junit.framework.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -67,9 +66,9 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
     private static class MyParamsProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             HttpMessage message = (HttpMessage)exchange.getIn();
-            Assert.assertNotNull(message.getRequest());
-            Assert.assertEquals("uno", message.getRequest().getParameter("one"));
-            Assert.assertEquals("dos", message.getRequest().getParameter("two"));
+            assertNotNull(message.getRequest());
+            assertEquals("uno", message.getRequest().getParameter("one"));
+            assertEquals("dos", message.getRequest().getParameter("two"));
 
             exchange.getOut().setBody("Bye World");
             exchange.getOut().setHeader("one", "eins");
