@@ -19,25 +19,24 @@ package org.apache.camel.spring.config;
 import javax.annotation.Resource;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class EndpointUriSetFromSpringTest extends AbstractJUnit38SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointUriSetFromSpringTest.class);
+public class EndpointUriSetFromSpringTest extends SpringRunWithTestSupport {
 
     @Resource(name = "foo:bar")
     MockEndpoint endpoint;
 
+    @Test
     public void testEndpointCreatedWithCorrectUri() throws Exception {
         assertNotNull("foo", endpoint);
         assertEquals("foo.getEndpointUri()", "foo:bar", endpoint.getEndpointUri());
-        LOG.info("Found endpoint " + endpoint + " with URI: " + endpoint.getEndpointUri());
+        log.info("Found endpoint " + endpoint + " with URI: " + endpoint.getEndpointUri());
     }
 
 }

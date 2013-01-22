@@ -14,26 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel.spring;
 
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import java.lang.annotation.Inherited;
+
+import org.apache.camel.TestSupport;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * @version 
+ * As the {@link RunWith} annotation is flagged to be {@link Inherited} we
+ * make use of this class as the base class of those tests where we need
+ * {@link SpringJUnit4ClassRunner} as the test runner but at the same time
+ * require the useful testing methods provided by {@link TestSupport}.
  */
-@ContextConfiguration
-public class SpringTraceTest extends SpringRunWithTestSupport {
+@RunWith(SpringJUnit4ClassRunner.class)
+public class SpringRunWithTestSupport extends TestSupport {
 
-    @Autowired
-    protected ProducerTemplate camelTemplate;
-
-    @Test
-    public void testTracing() throws Exception {
-        camelTemplate.sendBody("Hello");
-        camelTemplate.sendBody(1234);
-    }
 }

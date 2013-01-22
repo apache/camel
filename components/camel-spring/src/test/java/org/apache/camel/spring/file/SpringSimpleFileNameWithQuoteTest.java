@@ -19,23 +19,25 @@ package org.apache.camel.spring.file;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class SpringSimpleFileNameWithQuoteTest extends AbstractJUnit38SpringContextTests {
+public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport {
     protected String expectedBody = "Hello World!";
     @Autowired
     protected ProducerTemplate template;
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
+    @Test
     public void testMocksAreValid() throws Exception {
         result.expectedBodiesReceived(expectedBody);
         result.expectedHeaderReceived("foo", "\"hello.txt\" abc");
@@ -45,9 +47,9 @@ public class SpringSimpleFileNameWithQuoteTest extends AbstractJUnit38SpringCont
         result.assertIsSatisfied();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        TestSupport.deleteDirectory("target/foo");
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory("target/foo");
         super.setUp();
     }
 }

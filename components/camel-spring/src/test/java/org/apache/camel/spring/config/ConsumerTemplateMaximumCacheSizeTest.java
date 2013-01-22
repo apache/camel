@@ -19,15 +19,16 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class ConsumerTemplateMaximumCacheSizeTest extends AbstractJUnit38SpringContextTests {
+public class ConsumerTemplateMaximumCacheSizeTest extends SpringRunWithTestSupport {
 
     @Autowired
     private ConsumerTemplate template;
@@ -35,6 +36,7 @@ public class ConsumerTemplateMaximumCacheSizeTest extends AbstractJUnit38SpringC
     @Autowired
     private CamelContext context;
 
+    @Test
     public void testTemplateMaximumCache() throws Exception {
         assertNotNull("Should have injected a consumer template", template);
 

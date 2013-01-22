@@ -19,15 +19,16 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class DefaultErrorHandlerConfigTest extends AbstractJUnit38SpringContextTests {
+public class DefaultErrorHandlerConfigTest extends SpringRunWithTestSupport {
 
     @Autowired
     protected ProducerTemplate template;
@@ -37,10 +38,12 @@ public class DefaultErrorHandlerConfigTest extends AbstractJUnit38SpringContextT
 
     protected Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testRouteInheritsConfiguredErrorHandler() throws Exception {
         assertReceivedMessageWithErrorHandlerValue("foo", null);
     }
 
+    @Test
     public void testRouteConfiguredErrorHandler() throws Exception {
         assertReceivedMessageWithErrorHandlerValue("bar", null);
     }

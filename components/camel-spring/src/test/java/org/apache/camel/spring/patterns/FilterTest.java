@@ -20,9 +20,10 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * Tests filtering using Spring Test and XML Config
@@ -31,7 +32,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  */
 // START SNIPPET: example
 @ContextConfiguration
-public class FilterTest extends AbstractJUnit38SpringContextTests {
+public class FilterTest extends SpringRunWithTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
@@ -40,6 +41,7 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
     protected ProducerTemplate template;
 
     @DirtiesContext
+    @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
 
@@ -51,6 +53,7 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
     }
 
     @DirtiesContext
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 

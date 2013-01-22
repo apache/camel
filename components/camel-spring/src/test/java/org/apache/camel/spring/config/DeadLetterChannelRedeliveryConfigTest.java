@@ -20,15 +20,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * Unit test that spring configured DeadLetterChannel redelivery policy works.
  */
 @ContextConfiguration
-public class DeadLetterChannelRedeliveryConfigTest extends AbstractJUnit38SpringContextTests {
+public class DeadLetterChannelRedeliveryConfigTest extends SpringRunWithTestSupport {
 
     @Autowired
     protected ProducerTemplate template;
@@ -36,6 +37,7 @@ public class DeadLetterChannelRedeliveryConfigTest extends AbstractJUnit38Spring
     @Autowired
     protected CamelContext context;
 
+    @Test
     public void testDLCSpringConfiguredRedeliveryPolicy() throws Exception {
         MockEndpoint dead = context.getEndpoint("mock:dead", MockEndpoint.class);
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
