@@ -74,14 +74,14 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
         return getUnmarshaller(exchange).unmarshal(reader);
     }
 
-    public XMLContext getXmlContext(ClassResolver resolver, ClassLoader contetClassLoader) throws Exception {
+    public XMLContext getXmlContext(ClassResolver resolver, ClassLoader contextClassLoader) throws Exception {
         if (xmlContext == null) {
             xmlContext = new XMLContext();
 
             if (ObjectHelper.isNotEmpty(getMappingFile())) {
                 Mapping xmlMap;
-                if (contetClassLoader != null) {
-                    xmlMap = new Mapping(contetClassLoader);
+                if (contextClassLoader != null) {
+                    xmlMap = new Mapping(contextClassLoader);
                 } else {
                     xmlMap = new Mapping();
                 }
