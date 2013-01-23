@@ -60,7 +60,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
 
             // lookup endpoint or we have the url for it
             if (getServiceRef() != null) {
-                endpoint = camelContext.getRegistry().lookup(getServiceRef(), Endpoint.class);
+                endpoint = camelContext.getRegistry().lookupByNameAndType(getServiceRef(), Endpoint.class);
             } else {
                 endpoint = camelContext.getEndpoint(getServiceUrl());
             }

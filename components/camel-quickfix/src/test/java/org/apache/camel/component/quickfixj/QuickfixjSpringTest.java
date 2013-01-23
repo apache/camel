@@ -45,7 +45,7 @@ public class QuickfixjSpringTest extends CamelSpringTestSupport {
     @Test
     public void configureInSpring() throws Exception {
         SessionID sessionID = new SessionID("FIX.4.2:INITIATOR->ACCEPTOR");
-        QuickfixjConfiguration configuration = context.getRegistry().lookup("quickfixjConfiguration", QuickfixjConfiguration.class);
+        QuickfixjConfiguration configuration = context.getRegistry().lookupByNameAndType("quickfixjConfiguration", QuickfixjConfiguration.class);
 
         SessionSettings springSessionSettings = configuration.createSessionSettings();
         Properties sessionProperties = springSessionSettings.getSessionProperties(sessionID, true);

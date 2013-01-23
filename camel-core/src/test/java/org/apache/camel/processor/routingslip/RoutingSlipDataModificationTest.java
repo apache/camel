@@ -51,7 +51,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        Object lookedUpBean = context.getRegistry().lookup("myBean");
+        Object lookedUpBean = context.getRegistry().lookupByName("myBean");
         assertSame("Lookup of 'myBean' should return same object!", myBean, lookedUpBean);
     }
 

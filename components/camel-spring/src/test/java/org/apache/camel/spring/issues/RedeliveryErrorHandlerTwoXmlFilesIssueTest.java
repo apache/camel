@@ -42,7 +42,7 @@ public class RedeliveryErrorHandlerTwoXmlFilesIssueTest extends SpringTestSuppor
 
         assertMockEndpointsSatisfied();
 
-        OnRedeliveryCounter counter = context.getRegistry().lookup("counter", OnRedeliveryCounter.class);
+        OnRedeliveryCounter counter = context.getRegistry().lookupByNameAndType("counter", OnRedeliveryCounter.class);
         assertEquals(3, counter.getCounter());
     }
 

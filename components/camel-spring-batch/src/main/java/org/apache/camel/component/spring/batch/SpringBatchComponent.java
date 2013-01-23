@@ -42,8 +42,8 @@ public class SpringBatchComponent extends DefaultComponent {
 
     @Override
     protected void doStart() throws Exception {
-        defaultResolvedJobLauncher = getCamelContext().getRegistry().lookup(DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
-        allResolvedJobLaunchers = getCamelContext().getRegistry().lookupByType(JobLauncher.class);
+        defaultResolvedJobLauncher = getCamelContext().getRegistry().lookupByNameAndType(DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
+        allResolvedJobLaunchers = getCamelContext().getRegistry().findByTypeWithName(JobLauncher.class);
     }
 
     public void setJobLauncher(JobLauncher jobLauncher) {

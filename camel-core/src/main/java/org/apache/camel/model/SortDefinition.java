@@ -74,7 +74,7 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // lookup in registry
         if (ObjectHelper.isNotEmpty(comparatorRef)) {
-            comparator = routeContext.getCamelContext().getRegistry().lookup(comparatorRef, Comparator.class);
+            comparator = routeContext.getCamelContext().getRegistry().lookupByNameAndType(comparatorRef, Comparator.class);
         }
 
         // if no comparator then default on to string representation

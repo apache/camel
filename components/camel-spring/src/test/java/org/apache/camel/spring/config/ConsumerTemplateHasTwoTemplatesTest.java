@@ -34,10 +34,10 @@ public class ConsumerTemplateHasTwoTemplatesTest extends SpringRunWithTestSuppor
 
     @Test
     public void testHasTwoTemplates() {
-        ConsumerTemplate lookup = context.getRegistry().lookup("myTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("myTemplate", ConsumerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);
 
-        ConsumerTemplate lookup2 = context.getRegistry().lookup("myOtherTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup2 = context.getRegistry().lookupByNameAndType("myOtherTemplate", ConsumerTemplate.class);
         assertNotNull("Should lookup producer template", lookup2);
 
         assertNotSame("Should not be same", lookup, lookup2);

@@ -27,7 +27,7 @@ public class SpringSplitterWithCustomThreadPoolExecutorTest extends SplitterWith
 
     @Override
     protected ThreadPoolExecutor getThreadPoolExecutor() {
-        return context.getRegistry().lookup("myThreadPoolExecutor", ThreadPoolExecutor.class);
+        return context.getRegistry().lookupByNameAndType("myThreadPoolExecutor", ThreadPoolExecutor.class);
     }
 
     protected CamelContext createCamelContext() throws Exception {

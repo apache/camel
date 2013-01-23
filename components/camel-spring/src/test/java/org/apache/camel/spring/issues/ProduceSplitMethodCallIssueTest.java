@@ -33,7 +33,7 @@ public class ProduceSplitMethodCallIssueTest extends SpringTestSupport {
     public void testProduceSplitMethodCallIssue() throws Exception {
         getMockEndpoint("mock:split").expectedBodiesReceived("Hello A", "Hello B");
 
-        CoolService cool = context.getRegistry().lookup("cool", CoolService.class);
+        CoolService cool = context.getRegistry().lookupByNameAndType("cool", CoolService.class);
         String out = cool.stuff("A,B");
         // keeps the original message
         assertEquals("A,B", out);

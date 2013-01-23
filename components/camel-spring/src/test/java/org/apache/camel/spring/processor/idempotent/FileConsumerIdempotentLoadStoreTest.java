@@ -55,7 +55,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
         super.setUp();
 
         // add a file to the repo
-        repo = context.getRegistry().lookup("fileStore", IdempotentRepository.class);
+        repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
 
     public void testIdempotentLoad() throws Exception {

@@ -39,27 +39,27 @@ public class ProducerTemplateMixedAutoRegisterTwoCamelContextsTest extends Sprin
 
     @Test
     public void testHasTemplateCamel1() {
-        DefaultProducerTemplate lookup = context1.getRegistry().lookup("template1", DefaultProducerTemplate.class);
+        DefaultProducerTemplate lookup = context1.getRegistry().lookupByNameAndType("template1", DefaultProducerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);
         assertEquals("camel1", lookup.getCamelContext().getName());
     }
 
     @Test
     public void testHasTemplateCamel2() {
-        DefaultProducerTemplate lookup = context1.getRegistry().lookup("template2", DefaultProducerTemplate.class);
+        DefaultProducerTemplate lookup = context1.getRegistry().lookupByNameAndType("template2", DefaultProducerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);
         assertEquals("camel2", lookup.getCamelContext().getName());
     }
 
     @Test
     public void testHasNoConsumerTemplateCamel1() {
-        ConsumerTemplate lookup = context1.getRegistry().lookup("consumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup = context1.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
         assertNull("Should NOT lookup consumer template", lookup);
     }
 
     @Test
     public void testHasNoConsumerTemplateCamel2() {
-        ConsumerTemplate lookup = context2.getRegistry().lookup("consumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup = context2.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
         assertNull("Should NOT lookup consumer template", lookup);
     }
 }

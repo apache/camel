@@ -123,7 +123,7 @@ class Task implements Runnable {
         this.transactionTimeout = transactionTimeout;
         this.verb = verb;
         if (templateId != null) {
-            Entry tmpl = (Entry) this.endpoint.getCamelContext().getRegistry().lookup(templateId);
+            Entry tmpl = (Entry) this.endpoint.getCamelContext().getRegistry().lookupByName(templateId);
             template = javaSpace.snapshot(tmpl);
         } else {
             this.template = javaSpace.snapshot(new InEntry());

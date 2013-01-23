@@ -60,7 +60,7 @@ public class JcrEndpoint extends DefaultEndpoint {
                     this.credentials = new SimpleCredentials(username, password.toCharArray());
                 }
             }
-            this.repository = component.getCamelContext().getRegistry().lookup(uri.getHost(), Repository.class);
+            this.repository = component.getCamelContext().getRegistry().lookupByNameAndType(uri.getHost(), Repository.class);
             if (repository == null) {
                 throw new RuntimeCamelException("No JCR repository defined under '" + uri.getHost() + "'");
             }

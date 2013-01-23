@@ -44,8 +44,8 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        MyPolicy foo = context.getRegistry().lookup("foo", MyPolicy.class);
-        MyPolicy bar = context.getRegistry().lookup("bar", MyPolicy.class);
+        MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
+        MyPolicy bar = context.getRegistry().lookupByNameAndType("bar", MyPolicy.class);
 
         assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
         assertEquals("Should only be invoked 1 time", 1, bar.getInvoked());

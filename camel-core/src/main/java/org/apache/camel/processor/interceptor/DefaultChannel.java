@@ -256,7 +256,7 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         if (tracer == null) {
             if (camelContext.getRegistry() != null) {
                 // lookup in registry
-                Map<String, Tracer> map = camelContext.getRegistry().lookupByType(Tracer.class);
+                Map<String, Tracer> map = camelContext.getRegistry().findByTypeWithName(Tracer.class);
                 if (map.size() == 1) {
                     tracer = map.values().iterator().next();
                 }
@@ -266,7 +266,7 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
                 tracer = camelContext.getDefaultTracer();
 
                 // configure and use any trace formatter if any exists
-                Map<String, TraceFormatter> formatters = camelContext.getRegistry().lookupByType(TraceFormatter.class);
+                Map<String, TraceFormatter> formatters = camelContext.getRegistry().findByTypeWithName(TraceFormatter.class);
                 if (formatters.size() == 1) {
                     TraceFormatter formatter = formatters.values().iterator().next();
                     if (tracer instanceof Tracer) {

@@ -41,8 +41,7 @@ public class EjbRegistryBean extends RegistryBean {
     }
 
     protected Object lookupBean() {
-        // TODO: override lookupBean to be backwards compatible with Camel 2.3.0
-        return registry.lookup(getName());
+        return registry.lookupByName(getName());
     }
 
 }

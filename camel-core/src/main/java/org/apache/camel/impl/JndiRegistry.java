@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
@@ -43,8 +44,8 @@ public class JndiRegistry implements Registry {
         this.context = context;
     }
 
-    public <T> T lookup(String name, Class<T> type) {
-        Object answer = lookup(name);
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
+        Object answer = lookupByName(name);
 
         // just to be safe
         if (answer == null) {
@@ -60,7 +61,7 @@ public class JndiRegistry implements Registry {
         }
     }
 
-    public Object lookup(String name) {
+    public Object lookupByName(String name) {
         try {
             return getContext().lookup(name);
         } catch (NameNotFoundException e) {
@@ -70,9 +71,26 @@ public class JndiRegistry implements Registry {
         }
     }
 
-    public <T> Map<String, T> lookupByType(Class<T> type) {
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         // not implemented so we return an empty map
         return Collections.emptyMap();
+    }
+
+    public <T> Set<T> findByType(Class<T> type) {
+        // not implemented so we return an empty set
+        return Collections.emptySet();
+    }
+
+    public Object lookup(String name) {
+        return lookupByName(name);
+    }
+
+    public <T> T lookup(String name, Class<T> type) {
+        return lookupByNameAndType(name, type);
+    }
+
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return findByTypeWithName(type);
     }
 
     public void bind(String s, Object o) {

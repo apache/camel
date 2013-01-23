@@ -31,11 +31,11 @@ public class RegistryLookupTypeClassCastExceptionTest extends TestCase {
         MyClass my = new MyClass();
         simple.put("my", my);
 
-        assertEquals(my, simple.lookup("my"));
-        assertEquals(my, simple.lookup("my", MyClass.class));
+        assertEquals(my, simple.lookupByName("my"));
+        assertEquals(my, simple.lookupByNameAndType("my", MyClass.class));
 
-        assertNull(simple.lookup("foo"));
-        assertNull(simple.lookup("foo", MyClass.class));
+        assertNull(simple.lookupByName("foo"));
+        assertNull(simple.lookupByNameAndType("foo", MyClass.class));
     }
 
     public void testCamelContextLookupOk() throws Exception {
@@ -45,11 +45,11 @@ public class RegistryLookupTypeClassCastExceptionTest extends TestCase {
         MyClass my = new MyClass();
         simple.put("my", my);
 
-        assertEquals(my, context.getRegistry().lookup("my"));
-        assertEquals(my, context.getRegistry().lookup("my", MyClass.class));
+        assertEquals(my, context.getRegistry().lookupByName("my"));
+        assertEquals(my, context.getRegistry().lookupByNameAndType("my", MyClass.class));
 
-        assertNull(context.getRegistry().lookup("foo"));
-        assertNull(context.getRegistry().lookup("foo", MyClass.class));
+        assertNull(context.getRegistry().lookupByName("foo"));
+        assertNull(context.getRegistry().lookupByNameAndType("foo", MyClass.class));
     }
 
     public void testLookupClassCast() throws Exception {
@@ -59,7 +59,7 @@ public class RegistryLookupTypeClassCastExceptionTest extends TestCase {
         simple.put("my", my);
 
         try {
-            simple.lookup("my", String.class);
+            simple.lookupByNameAndType("my", String.class);
             fail("Should have thrown exception");
         } catch (NoSuchBeanException e) {
             assertEquals("my", e.getName());
@@ -75,7 +75,7 @@ public class RegistryLookupTypeClassCastExceptionTest extends TestCase {
         simple.put("my", my);
 
         try {
-            context.getRegistry().lookup("my", String.class);
+            context.getRegistry().lookupByNameAndType("my", String.class);
             fail("Should have thrown exception");
         } catch (NoSuchBeanException e) {
             assertEquals("my", e.getName());

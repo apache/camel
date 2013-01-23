@@ -92,11 +92,11 @@ public class JmsResequencerTest extends CamelTestSupport  {
         
         resultEndpoint = getMockEndpoint("mock:result");
         
-        Object lookedUpBean = context.getRegistry().lookup("myBean1");
+        Object lookedUpBean = context.getRegistry().lookupByName("myBean1");
         assertSame("Lookup of 'myBean' should return same object!", b1, lookedUpBean);
-        lookedUpBean = context.getRegistry().lookup("myBean2");
+        lookedUpBean = context.getRegistry().lookupByName("myBean2");
         assertSame("Lookup of 'myBean' should return same object!", b2, lookedUpBean);
-        lookedUpBean = context.getRegistry().lookup("myBean3");
+        lookedUpBean = context.getRegistry().lookupByName("myBean3");
         assertSame("Lookup of 'myBean' should return same object!", b3, lookedUpBean);
        
     }

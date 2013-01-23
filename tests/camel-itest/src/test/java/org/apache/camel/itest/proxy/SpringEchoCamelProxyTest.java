@@ -33,7 +33,7 @@ public class SpringEchoCamelProxyTest extends CamelSpringTestSupport {
 
     @Test
     public void testEchoProduce() throws Exception {
-        EchoClient client = context.getRegistry().lookup("client", EchoClient.class);
+        EchoClient client = context.getRegistry().lookupByNameAndType("client", EchoClient.class);
 
         String reply = client.hello("Camel");
         assertEquals("Hello Camel", reply);

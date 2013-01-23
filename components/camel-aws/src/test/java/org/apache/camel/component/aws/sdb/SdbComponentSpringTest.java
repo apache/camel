@@ -44,7 +44,7 @@ public class SdbComponentSpringTest extends CamelSpringTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         
-        amazonSDBClient = context.getRegistry().lookup("amazonSDBClient", AmazonSDBClientMock.class);
+        amazonSDBClient = context.getRegistry().lookupByNameAndType("amazonSDBClient", AmazonSDBClientMock.class);
     }
     
     @Test

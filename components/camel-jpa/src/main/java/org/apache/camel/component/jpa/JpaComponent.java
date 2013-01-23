@@ -81,7 +81,7 @@ public class JpaComponent extends DefaultComponent {
 
         // lookup entity manager factory and use it if only one provided
         if (entityManagerFactory == null) {
-            Map<String, EntityManagerFactory> map = getCamelContext().getRegistry().lookupByType(EntityManagerFactory.class);
+            Map<String, EntityManagerFactory> map = getCamelContext().getRegistry().findByTypeWithName(EntityManagerFactory.class);
             if (map != null) {
                 if (map.size() == 1) {
                     entityManagerFactory = map.values().iterator().next();
@@ -97,7 +97,7 @@ public class JpaComponent extends DefaultComponent {
 
         // lookup transaction manager and use it if only one provided
         if (transactionManager == null) {
-            Map<String, PlatformTransactionManager> map = getCamelContext().getRegistry().lookupByType(PlatformTransactionManager.class);
+            Map<String, PlatformTransactionManager> map = getCamelContext().getRegistry().findByTypeWithName(PlatformTransactionManager.class);
             if (map != null) {
                 if (map.size() == 1) {
                     transactionManager = map.values().iterator().next();
@@ -113,7 +113,7 @@ public class JpaComponent extends DefaultComponent {
 
         // transaction manager could also be hidden in a template
         if (transactionManager == null) {
-            Map<String, TransactionTemplate> map = getCamelContext().getRegistry().lookupByType(TransactionTemplate.class);
+            Map<String, TransactionTemplate> map = getCamelContext().getRegistry().findByTypeWithName(TransactionTemplate.class);
             if (map != null) {
                 if (map.size() == 1) {
                     transactionManager = map.values().iterator().next().getTransactionManager();

@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Registry;
@@ -39,34 +40,50 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
         this.delegate = delegate;
     }
 
-    public Object lookup(String name) {
+    public Object lookupByName(String name) {
         try {
             // Must avoid attempting placeholder resolution when looking up
             // the properties component or else we end up in an infinite loop.
             if (!name.equals("properties")) {
                 name = context.resolvePropertyPlaceholders(name);
             }
-            return delegate.lookup(name);
+            return delegate.lookupByName(name);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+    }
+
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
+        try {
+            // Must avoid attempting placeholder resolution when looking up
+            // the properties component or else we end up in an infinite loop.
+            if (!name.equals("properties")) {
+                name = context.resolvePropertyPlaceholders(name);
+            }
+            return delegate.lookupByNameAndType(name, type);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
+        return delegate.findByTypeWithName(type);
+    }
+
+    public <T> Set<T> findByType(Class<T> type) {
+        return delegate.findByType(type);
+    }
+
+    public Object lookup(String name) {
+        return lookupByName(name);
     }
 
     public <T> T lookup(String name, Class<T> type) {
-        try {
-            // Must avoid attempting placeholder resolution when looking up
-            // the properties component or else we end up in an infinite loop.
-            if (!name.equals("properties")) {
-                name = context.resolvePropertyPlaceholders(name);
-            }
-            return delegate.lookup(name, type);
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
+        return lookupByNameAndType(name, type);
     }
 
     public <T> Map<String, T> lookupByType(Class<T> type) {
-        return delegate.lookupByType(type);
+        return findByTypeWithName(type);
     }
 
     public Registry getRegistry() {

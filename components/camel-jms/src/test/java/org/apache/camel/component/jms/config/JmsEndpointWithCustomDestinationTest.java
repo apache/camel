@@ -37,7 +37,7 @@ public class JmsEndpointWithCustomDestinationTest extends CamelSpringTestSupport
 
     @Test
     public void testMessageSentToCustomEndpoint() throws Exception {
-        ActiveMQQueue jmsQueue = context.getRegistry().lookup("jmsQueue", ActiveMQQueue.class);
+        ActiveMQQueue jmsQueue = context.getRegistry().lookupByNameAndType("jmsQueue", ActiveMQQueue.class);
         assertNotNull("jmsQueue", jmsQueue);
         assertEquals("jmsqueue.getPhysicalName()", "Test.Camel.CustomEndpoint", jmsQueue.getPhysicalName());
 

@@ -40,7 +40,7 @@ public class ConsumerTemplateMaximumCacheSizeTest extends SpringRunWithTestSuppo
     public void testTemplateMaximumCache() throws Exception {
         assertNotNull("Should have injected a consumer template", template);
 
-        ConsumerTemplate lookup = context.getRegistry().lookup("template", ConsumerTemplate.class);
+        ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("template", ConsumerTemplate.class);
         assertNotNull("Should lookup consumer template", lookup);
 
         assertEquals(50, template.getMaximumCacheSize());

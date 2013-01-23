@@ -35,7 +35,7 @@ public class JpaRouteEndpointTest extends JpaRouteTest {
                 JpaEndpoint jpa = new JpaEndpoint();
                 jpa.setCamelContext(context);
                 jpa.setEntityType(SendEmail.class);
-                jpa.setEntityManagerFactory(context.getRegistry().lookup("entityManagerFactory", EntityManagerFactory.class));
+                jpa.setEntityManagerFactory(context.getRegistry().lookupByNameAndType("entityManagerFactory", EntityManagerFactory.class));
 
                 from("direct:start").to(jpa).to("mock:result");
             }

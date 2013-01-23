@@ -45,7 +45,7 @@ public class DefaultComponentResolver implements ComponentResolver {
         // lookup in registry first
         Object bean = null;
         try {
-            bean = context.getRegistry().lookup(name);
+            bean = context.getRegistry().lookupByName(name);
             getLog().debug("Found component: {} in registry: {}", name, bean);
         } catch (Exception e) {
             getLog().debug("Ignored error looking up bean: " + name, e);

@@ -322,7 +322,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * @param writeConcernRef the name of the bean in the registry that represents the WriteConcern to use
      */
     public void setWriteConcernRef(String writeConcernRef) {
-        WriteConcern wc = this.getCamelContext().getRegistry().lookup(writeConcernRef, WriteConcern.class);
+        WriteConcern wc = this.getCamelContext().getRegistry().lookupByNameAndType(writeConcernRef, WriteConcern.class);
         if (wc == null) {
             LOG.error("Camel MongoDB component could not find the WriteConcern in the Registry. Verify that the " 
                     + "provided bean name ({}) is correct. Aborting initialization.", writeConcernRef);

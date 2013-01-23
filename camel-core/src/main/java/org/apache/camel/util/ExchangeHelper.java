@@ -479,7 +479,7 @@ public final class ExchangeHelper {
      * @return the bean, or <tt>null</tt> if no bean could be found
      */
     public static Object lookupBean(Exchange exchange, String name) {
-        return exchange.getContext().getRegistry().lookup(name);
+        return exchange.getContext().getRegistry().lookupByName(name);
     }
 
     /**
@@ -491,7 +491,7 @@ public final class ExchangeHelper {
      * @return the bean, or <tt>null</tt> if no bean could be found
      */
     public static <T> T lookupBean(Exchange exchange, String name, Class<T> type) {
-        return exchange.getContext().getRegistry().lookup(name, type);
+        return exchange.getContext().getRegistry().lookupByNameAndType(name, type);
     }
 
     /**

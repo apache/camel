@@ -34,10 +34,10 @@ public class ProducerTemplateHasTwoTemplatesTest extends SpringRunWithTestSuppor
 
     @Test
     public void testHasTwoTemplates() {
-        ProducerTemplate lookup = context.getRegistry().lookup("myTemplate", ProducerTemplate.class);
+        ProducerTemplate lookup = context.getRegistry().lookupByNameAndType("myTemplate", ProducerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);
 
-        ProducerTemplate lookup2 = context.getRegistry().lookup("myOtherTemplate", ProducerTemplate.class);
+        ProducerTemplate lookup2 = context.getRegistry().lookupByNameAndType("myOtherTemplate", ProducerTemplate.class);
         assertNotNull("Should lookup producer template", lookup2);
 
         assertNotSame("Should not be same", lookup, lookup2);

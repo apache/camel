@@ -35,13 +35,13 @@ public class ProducerTemplateAutoRegisterBeanIdExistsTest extends SpringRunWithT
 
     @Test
     public void testHasNoTemplate() {
-        Object lookup = context.getRegistry().lookup("template");
+        Object lookup = context.getRegistry().lookupByName("template");
         assertFalse("Should not be a producer template", lookup instanceof ProducerTemplate);
     }
 
     @Test
     public void testHasConsumerTemplate() {
-        Object lookup = context.getRegistry().lookup("consumerTemplate");
+        Object lookup = context.getRegistry().lookupByName("consumerTemplate");
         assertTrue("Should be a consumer template", lookup instanceof ConsumerTemplate);
     }
 }

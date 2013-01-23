@@ -48,7 +48,7 @@ public class AsyncEndpointTransactedTest extends CamelSpringTestSupport {
 
     @Before
     public void createTable() {
-        table = context.getRegistry().lookup("table", DummyTable.class);
+        table = context.getRegistry().lookupByNameAndType("table", DummyTable.class);
         table.create();
     }
 

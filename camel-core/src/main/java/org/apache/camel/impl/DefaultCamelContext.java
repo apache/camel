@@ -1574,7 +1574,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         Component existing = hasComponent("properties");
         if (existing == null) {
             // no existing properties component so lookup and add as component if possible
-            propertiesComponent = getRegistry().lookup("properties", PropertiesComponent.class);
+            propertiesComponent = getRegistry().lookupByNameAndType("properties", PropertiesComponent.class);
             if (propertiesComponent != null) {
                 addComponent("properties", propertiesComponent);
             }
@@ -2207,7 +2207,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      * @return the newly created endpoint or null if it could not be resolved
      */
     protected Endpoint createEndpoint(String uri) {
-        Object value = getRegistry().lookup(uri);
+        Object value = getRegistry().lookupByName(uri);
         if (value instanceof Endpoint) {
             return (Endpoint) value;
         } else if (value instanceof Processor) {
@@ -2443,7 +2443,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
         try {
-            return context.getRegistry().lookup(ref, type);
+            return context.getRegistry().lookupByNameAndType(ref, type);
         } catch (Exception e) {
             // need to ignore not same type and return it as null
             return null;

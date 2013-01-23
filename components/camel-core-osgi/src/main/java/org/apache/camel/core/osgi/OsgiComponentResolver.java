@@ -39,7 +39,7 @@ public class OsgiComponentResolver implements ComponentResolver {
     public Component resolveComponent(String name, CamelContext context) throws Exception {
         Object bean = null;
         try {
-            bean = context.getRegistry().lookup(name);
+            bean = context.getRegistry().lookupByName(name);
             if (bean != null) {
                 LOG.debug("Found component: {} in registry: {}", name, bean);
             }

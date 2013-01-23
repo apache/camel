@@ -40,7 +40,7 @@ public class ProducerTemplateMaximumCacheSizeTest extends SpringRunWithTestSuppo
     public void testTemplateMaximumCache() throws Exception {
         assertNotNull("Should have injected a producer template", template);
 
-        ProducerTemplate lookup = context.getRegistry().lookup("template", ProducerTemplate.class);
+        ProducerTemplate lookup = context.getRegistry().lookupByNameAndType("template", ProducerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);
 
         assertEquals(50, template.getMaximumCacheSize());

@@ -37,7 +37,7 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         
-        sesClient = context.getRegistry().lookup("amazonSESClient", AmazonSESClientMock.class);
+        sesClient = context.getRegistry().lookupByNameAndType("amazonSESClient", AmazonSESClientMock.class);
     }
 
     @Test

@@ -108,7 +108,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
                     return;
                 } else {
                     if (elementNameStrategyRef != null) {
-                        elementNameStrategy = exchange.getContext().getRegistry().lookup(elementNameStrategyRef,
+                        elementNameStrategy = exchange.getContext().getRegistry().lookupByNameAndType(elementNameStrategyRef,
                                 ElementNameStrategy.class);
                     } else {
                         elementNameStrategy = new TypeNameStrategy();

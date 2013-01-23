@@ -40,6 +40,6 @@ public class SpringInitializationIssueTest extends ContextTestSupport {
     }
 
     private List<?> getNamesList(String beanName) {
-        return context.getRegistry().lookup(beanName, List.class);
+        return context.getRegistry().lookupByNameAndType(beanName, List.class);
     }
 }

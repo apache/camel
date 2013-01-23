@@ -48,7 +48,7 @@ public class CustomizedJdbcMessageIdRepositoryTest extends CamelSpringTestSuppor
     public void setUp() throws Exception {
         super.setUp();
         
-        dataSource = context.getRegistry().lookup("dataSource", DataSource.class);
+        dataSource = context.getRegistry().lookupByNameAndType("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
     }

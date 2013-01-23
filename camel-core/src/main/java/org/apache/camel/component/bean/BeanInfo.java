@@ -146,7 +146,7 @@ public class BeanInfo {
     public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
         // lookup in registry first if there is a user define strategy
         Registry registry = camelContext.getRegistry();
-        ParameterMappingStrategy answer = registry.lookup(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class);
+        ParameterMappingStrategy answer = registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class);
         if (answer == null) {
             // no then use the default one
             answer = new DefaultParameterMappingStrategy();

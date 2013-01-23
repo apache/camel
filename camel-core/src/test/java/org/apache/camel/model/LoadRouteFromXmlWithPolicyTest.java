@@ -66,7 +66,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        MyPolicy foo = context.getRegistry().lookup("foo", MyPolicy.class);
+        MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
 
         assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
     }

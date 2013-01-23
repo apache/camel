@@ -108,7 +108,7 @@ public final class CamelContextHelper {
      * {@link CamelContext}
      */
     public static Object lookup(CamelContext context, String name) {
-        return context.getRegistry().lookup(name);
+        return context.getRegistry().lookupByName(name);
     }
 
     /**
@@ -116,7 +116,7 @@ public final class CamelContextHelper {
      * {@link CamelContext}
      */
     public static <T> T lookup(CamelContext context, String name, Class<T> beanType) {
-        return context.getRegistry().lookup(name, beanType);
+        return context.getRegistry().lookupByNameAndType(name, beanType);
     }
 
     /**
@@ -374,7 +374,7 @@ public final class CamelContextHelper {
         }
 
         // lets see what other components are in the registry
-        Map<String, Component> beanMap = camelContext.getRegistry().lookupByType(Component.class);
+        Map<String, Component> beanMap = camelContext.getRegistry().findByTypeWithName(Component.class);
         Set<Map.Entry<String, Component>> entries = beanMap.entrySet();
         for (Map.Entry<String, Component> entry : entries) {
             String name = entry.getKey();

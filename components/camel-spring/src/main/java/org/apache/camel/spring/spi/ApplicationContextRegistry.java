@@ -16,7 +16,9 @@
  */
 package org.apache.camel.spring.spi;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
@@ -37,7 +39,8 @@ public class ApplicationContextRegistry implements Registry {
         this.applicationContext = applicationContext;
     }
 
-    public <T> T lookup(String name, Class<T> type) {
+    @Override
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object answer;
         try {
             answer = applicationContext.getBean(name, type);
@@ -61,7 +64,8 @@ public class ApplicationContextRegistry implements Registry {
         }
     }
 
-    public Object lookup(String name) {
+    @Override
+    public Object lookupByName(String name) {
         try {
             return applicationContext.getBean(name);
         } catch (NoSuchBeanDefinitionException e) {
@@ -69,7 +73,30 @@ public class ApplicationContextRegistry implements Registry {
         }
     }
 
-    public <T> Map<String, T> lookupByType(Class<T> type) {
+    @Override
+    public <T> Set<T> findByType(Class<T> type) {
+        Map<String, T> map = applicationContext.getBeansOfType(type);
+        return new HashSet<T>(map.values());
+    }
+
+    @Override
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         return applicationContext.getBeansOfType(type);
     }
+
+    @Override
+    public Object lookup(String name) {
+        return lookupByName(name);
+    }
+
+    @Override
+    public <T> T lookup(String name, Class<T> type) {
+        return lookupByNameAndType(name, type);
+    }
+
+    @Override
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return findByTypeWithName(type);
+    }
+
 }

@@ -57,7 +57,7 @@ public class SpringAopClassLevelCamelBeanTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ExceptionInterceptor ei = context.getRegistry().lookup("exceptionInterceptor", ExceptionInterceptor.class);
+        ExceptionInterceptor ei = context.getRegistry().lookupByNameAndType("exceptionInterceptor", ExceptionInterceptor.class);
         IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ei.getE());
         assertEquals("Foo has not expected value ABC but Damn", iae.getMessage());
     }

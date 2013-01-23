@@ -38,7 +38,7 @@ public class CamelCustomPostProcessorOnRouteBuilderTest extends SpringTestSuppor
 
         assertMockEndpointsSatisfied();
 
-        TestPojo pojo = (TestPojo) context.getRegistry().lookup("testPojo");
+        TestPojo pojo = (TestPojo) context.getRegistry().lookupByName("testPojo");
         assertNotNull("Test pojo not registered", pojo);
 
         assertEquals("Processor has not changed field value", "Changed Value", pojo.getTestValue());

@@ -416,7 +416,7 @@ public final class ExpressionBuilder {
     public static Expression refExpression(final String ref) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getContext().getRegistry().lookup(ref);
+                return exchange.getContext().getRegistry().lookupByName(ref);
             }
 
             @Override

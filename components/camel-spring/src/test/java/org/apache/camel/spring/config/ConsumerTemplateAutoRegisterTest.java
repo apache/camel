@@ -41,7 +41,7 @@ public class ConsumerTemplateAutoRegisterTest extends SpringRunWithTestSupport {
         assertNotNull("Should have injected a consumer template", template);
         assertNotNull("The template context should not be null", ((DefaultConsumerTemplate)template).getCamelContext());
 
-        ConsumerTemplate lookup = context.getRegistry().lookup("consumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
         assertNotNull("Should lookup consumer template", lookup);
     }
 }

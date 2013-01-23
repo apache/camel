@@ -34,17 +34,17 @@ public class RegistryTest extends TestCase {
 
         registry.bind("foo", foo);
 
-        List<?> list = registry.lookup("foo", List.class);
+        List<?> list = registry.lookupByNameAndType("foo", List.class);
         assertEquals("Should be same!", foo, list);
     }
 
     public void testDefaultProviderAllowsValuesToBeCreatedInThePropertiesFile() throws Exception {
-        Object value = registry.lookup("foo");
+        Object value = registry.lookupByName("foo");
         assertEquals("lookup of foo", "bar", value);
     }
 
     public void testLookupOfUnknownName() throws Exception {
-        Object value = registry.lookup("No such entry!");
+        Object value = registry.lookupByName("No such entry!");
         assertNull("Should not find anything!", value);
     }
 

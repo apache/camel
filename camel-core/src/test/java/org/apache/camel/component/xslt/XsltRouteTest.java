@@ -52,7 +52,7 @@ public class XsltRouteTest extends ContextTestSupport {
         assertTrue(xml.indexOf("<subject>Hey</subject>") > -1);
         assertTrue(xml.indexOf("<body>Hello world!</body>") > -1);
 
-        TestBean bean = context.getRegistry().lookup("testBean", TestBean.class);
+        TestBean bean = context.getRegistry().lookupByNameAndType("testBean", TestBean.class);
         assertNotNull(bean);
         assertEquals("bean.subject", "Hey", bean.getSubject());
     }

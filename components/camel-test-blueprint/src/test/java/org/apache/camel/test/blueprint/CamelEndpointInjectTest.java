@@ -35,7 +35,7 @@ public class CamelEndpointInjectTest extends CamelBlueprintTestSupport {
         assertNotNull(mock);
         mock.expectedMessageCount(1);
 
-        MyProducer producer = context.getRegistry().lookup("myProducer", MyProducer.class);
+        MyProducer producer = context.getRegistry().lookupByNameAndType("myProducer", MyProducer.class);
         producer.doSomething("Hello World");
 
         mock.assertIsSatisfied();

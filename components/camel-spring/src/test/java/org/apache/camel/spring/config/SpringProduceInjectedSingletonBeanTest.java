@@ -33,7 +33,7 @@ public class SpringProduceInjectedSingletonBeanTest extends SpringTestSupport {
     public void testProduceInjectedOnce() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 
-        MyProduceBean bean = context.getRegistry().lookup("myProducerBean", MyProduceBean.class);
+        MyProduceBean bean = context.getRegistry().lookupByNameAndType("myProducerBean", MyProduceBean.class);
 
         bean.testDoSomething("Hello World");
         bean.testDoSomething("Bye World");
@@ -44,11 +44,11 @@ public class SpringProduceInjectedSingletonBeanTest extends SpringTestSupport {
     public void testProduceInjectedTwice() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
 
-        MyProduceBean bean = context.getRegistry().lookup("myProducerBean", MyProduceBean.class);
+        MyProduceBean bean = context.getRegistry().lookupByNameAndType("myProducerBean", MyProduceBean.class);
 
         bean.testDoSomething("Hello World");
 
-        MyProduceBean bean2 = context.getRegistry().lookup("myProducerBean", MyProduceBean.class);
+        MyProduceBean bean2 = context.getRegistry().lookupByNameAndType("myProducerBean", MyProduceBean.class);
         bean2.testDoSomething("Bye World");
 
         assertMockEndpointsSatisfied();

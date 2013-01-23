@@ -32,7 +32,7 @@ public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
 
     @Test
     public void testCallBean() throws Exception {
-        DerivedClass derived = context.getRegistry().lookup("derived", DerivedClass.class);
+        DerivedClass derived = context.getRegistry().lookupByNameAndType("derived", DerivedClass.class);
 
         template.sendBody("direct:start", "Hello World");
         assertEquals("Hello World", derived.getBody());

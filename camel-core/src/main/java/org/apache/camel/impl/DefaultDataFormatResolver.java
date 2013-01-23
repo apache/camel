@@ -66,7 +66,7 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
 
     private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
         try {
-            return context.getRegistry().lookup(ref, type);
+            return context.getRegistry().lookupByNameAndType(ref, type);
         } catch (Exception e) {
             // need to ignore not same type and return it as null
             return null;

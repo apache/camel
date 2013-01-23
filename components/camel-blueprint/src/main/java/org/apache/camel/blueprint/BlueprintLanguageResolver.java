@@ -35,7 +35,7 @@ public class BlueprintLanguageResolver extends OsgiLanguageResolver {
     @Override
     public Language resolveLanguage(String name, CamelContext context) {
         try {
-            Object bean = context.getRegistry().lookup(".camelBlueprint.languageResolver." + name);
+            Object bean = context.getRegistry().lookupByName(".camelBlueprint.languageResolver." + name);
             if (bean instanceof LanguageResolver) {
                 LOG.debug("Found language resolver: {} in registry: {}", name, bean);
                 return ((LanguageResolver) bean).resolveLanguage(name, context);

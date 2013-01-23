@@ -39,19 +39,19 @@ public class ProducerTemplateAlreadyExistTest extends SpringRunWithTestSupport {
     public void testHasExistingTemplate() {
         assertNotNull("Should have injected a producer template", template);
 
-        ProducerTemplate lookup = context.getRegistry().lookup("myTemplate", ProducerTemplate.class);
+        ProducerTemplate lookup = context.getRegistry().lookupByNameAndType("myTemplate", ProducerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);
 
-        ProducerTemplate lookup2 = context.getRegistry().lookup("template", ProducerTemplate.class);
+        ProducerTemplate lookup2 = context.getRegistry().lookupByNameAndType("template", ProducerTemplate.class);
         assertNull("Should not be able to lookup producer template", lookup2);
     }
 
     @Test
     public void testShouldBeSingleton() {
-        ProducerTemplate lookup = context.getRegistry().lookup("myTemplate", ProducerTemplate.class);
+        ProducerTemplate lookup = context.getRegistry().lookupByNameAndType("myTemplate", ProducerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);
 
-        ProducerTemplate lookup2 = context.getRegistry().lookup("myTemplate", ProducerTemplate.class);
+        ProducerTemplate lookup2 = context.getRegistry().lookupByNameAndType("myTemplate", ProducerTemplate.class);
         assertNotNull("Should lookup producer template", lookup);
 
         assertSame("Should be same instances (singleton)", lookup, lookup2);
