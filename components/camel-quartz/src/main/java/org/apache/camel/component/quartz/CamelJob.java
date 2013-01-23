@@ -19,22 +19,25 @@ package org.apache.camel.component.quartz;
 import java.io.Serializable;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 
+import static org.apache.camel.util.URISupport.normalizeUri;
+
 /**
  * @version 
  */
 public class CamelJob implements Job, Serializable {
 
-    private static final long serialVersionUID = 26L;
+    private static final long serialVersionUID = 27L;
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String camelContextName = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
-        String endpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT_URI);
+        String expectedQuartzEndpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT_URI);
 
         SchedulerContext schedulerContext;
         try {
@@ -47,11 +50,26 @@ public class CamelJob implements Job, Serializable {
         if (camelContext == null) {
             throw new JobExecutionException("No CamelContext could be found with name: " + camelContextName);
         }
-        QuartzEndpoint endpoint = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
-        if (endpoint == null) {
-            throw new JobExecutionException("No QuartzEndpoint could be found with uri: " + endpointUri);
+
+        getExpectedQuartzEndpoint(expectedQuartzEndpointUri, camelContext).onJobExecute(context);
+    }
+
+    private QuartzEndpoint getExpectedQuartzEndpoint(String expectedQuartzEndpointUri, CamelContext camelContext) throws JobExecutionException {
+        try {
+            for (Route route : camelContext.getRoutes()) {
+                if (route.getEndpoint() instanceof  QuartzEndpoint) {
+                    QuartzEndpoint quartzEndpoint = (QuartzEndpoint)route.getEndpoint();
+                    if (normalizeUri(quartzEndpoint.getEndpointUri()).equals(normalizeUri(expectedQuartzEndpointUri)) && quartzEndpoint.isStarted()) {
+                        return quartzEndpoint;
+                    }
+                }
+            }
         }
-        endpoint.onJobExecute(context);
+        catch (Exception e) {
+            throw new JobExecutionException(e);
+        }
+
+        throw new JobExecutionException("No QuartzEndpoint could be found with uri: " + expectedQuartzEndpointUri);
     }
 
 }
