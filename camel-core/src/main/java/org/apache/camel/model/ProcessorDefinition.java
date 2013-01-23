@@ -978,7 +978,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sets the id of this node
+     * Sets the id of this node.
+     * <p/>
+     * <b>Important:</b> If you want to set the id of the route,
+     * then you <b>must</b> use {@link #routeId(String)} instead.
      *
      * @param id  the id
      * @return the builder
