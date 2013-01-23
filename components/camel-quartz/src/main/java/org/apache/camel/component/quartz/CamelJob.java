@@ -29,7 +29,7 @@ import org.quartz.SchedulerException;
 import static org.apache.camel.util.URISupport.normalizeUri;
 
 /**
- * @version 
+ * @version
  */
 public class CamelJob implements Job, Serializable {
 
