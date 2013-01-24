@@ -877,9 +877,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
-
-            // add to cache
-            errorHandlers.putIfAbsent(key, answer);
+            // here we don't cache the ChildUnitOfWorkProcessor
+            // As the UnitOfWorkProcess will be delegate to the Parent
+            if (!(answer instanceof ChildUnitOfWorkProcessor)) {
+                // add to cache
+                errorHandlers.putIfAbsent(key, answer);
+            }
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
             answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
