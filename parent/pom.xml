@@ -226,7 +226,7 @@
     <karaf-version>2.3.0</karaf-version>
     <krati-version>0.4.8</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
-    <leveldbjni-version>1.3</leveldbjni-version>
+    <leveldbjni-version>1.5</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
     <lucene-bundle-version>3.6.0_1</lucene-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <lucene-version>3.6.1</lucene-version>

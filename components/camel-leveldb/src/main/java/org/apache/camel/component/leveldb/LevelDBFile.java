@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.Service;
+import org.apache.camel.util.IOHelper;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
@@ -182,7 +183,7 @@ public class LevelDBFile implements Service {
 
         LOG.debug("Stopping LevelDB using file: {}", file);
         if (db != null) {
-            db.close();
+            IOHelper.close(db);
             db = null;
         }
     }
