@@ -52,6 +52,7 @@ class SetExchangePatternTest extends ScalaTestSupport {
     expected match {
       case InOut => exchange.setPattern(InOnly)
       case InOnly => exchange.setPattern(InOut)
+      case _ => throw new IllegalArgumentException("We only test for InOnly and InOut")
     }
     test {
       from ! exchange

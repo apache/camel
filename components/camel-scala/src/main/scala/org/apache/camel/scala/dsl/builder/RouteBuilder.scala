@@ -85,7 +85,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
    */
   def handle[E <: Throwable](block: => Unit)(implicit manifest: Manifest[E]) = {
     stack.size match {
-      case 0 => SOnExceptionDefinition[E](builder.onException(manifest.erasure.asInstanceOf[Class[Throwable]]))(this).apply(block)
+      case 0 => SOnExceptionDefinition[E](builder.onException(manifest.runtimeClass.asInstanceOf[Class[Throwable]]))(this).apply(block)
       case _ => stack.top.handle[E](block)
     }
   }
