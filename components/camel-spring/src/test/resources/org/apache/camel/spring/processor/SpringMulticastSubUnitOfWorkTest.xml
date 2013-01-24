@@ -24,6 +24,7 @@
 
   <bean id="myPreProcessor" class="org.apache.camel.processor.MulticastSubUnitOfWorkTest$MyPreProcessor"/>
   <bean id="myProcessor" class="org.apache.camel.processor.MulticastSubUnitOfWorkTest$MyProcessor"/>
+  <bean name="anException" class="java.lang.IllegalArgumentException"/>
 
   <!-- START SNIPPET: e1 -->
   <camelContext errorHandlerRef="dlc" xmlns="http://camel.apache.org/schema/spring">
@@ -56,6 +57,14 @@
       <from uri="direct:b"/>
       <process ref="myProcessor"/>
       <to uri="mock:b"/>
+    </route>
+    
+    <route>
+      <from uri="direct:e"/>
+      <multicast shareUnitOfWork="true">
+        <throwException ref="anException"/>
+        <throwException ref="anException"/>
+      </multicast>
     </route>
 
   </camelContext>
