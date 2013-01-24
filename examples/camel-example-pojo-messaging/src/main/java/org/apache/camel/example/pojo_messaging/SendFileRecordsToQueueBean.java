@@ -25,7 +25,7 @@ public class SendFileRecordsToQueueBean {
     @Produce(uri = "activemq:personnel.records")
     ProducerTemplate producer;
 
-    @Consume(uri = "file:src/data?noop=true")
+    @Consume(uri = "file:src/data?noop=true&initialDelay=100&delay=100")
     public void onFileSendToQueue(String body) {
         producer.sendBody(body);
     }
