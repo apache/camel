@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.Statement;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.After;
 import org.junit.Before;
 
@@ -79,8 +78,8 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
     }
 
     private Connection createConnection() throws Exception {
-        MyBatisEndpoint endpoint = resolveMandatoryEndpoint("mybatis:Account", MyBatisEndpoint.class);
-        return endpoint.getSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
+        MyBatisComponent component = context.getComponent("mybatis", MyBatisComponent.class);
+        return component.createSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
     }
 
 }

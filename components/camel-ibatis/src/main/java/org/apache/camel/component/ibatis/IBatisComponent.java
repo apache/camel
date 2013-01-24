@@ -70,9 +70,6 @@ public class IBatisComponent extends DefaultComponent {
         this.sqlMapClient = sqlMapClient;
     }
 
-    /**
-     * Creates an IbatisEndpoint for use by an IbatisConsumer or IbatisProducer.
-     */
     @Override
     protected IBatisEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         IBatisEndpoint answer = new IBatisEndpoint(uri, this, remaining);
@@ -80,7 +77,7 @@ public class IBatisComponent extends DefaultComponent {
         return answer;
     }
 
-    private SqlMapClient createSqlMapClient() throws IOException {
+    protected SqlMapClient createSqlMapClient() throws IOException {
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), sqlMapConfig);
         return SqlMapClientBuilder.buildSqlMapClient(is);
     }
@@ -88,30 +85,14 @@ public class IBatisComponent extends DefaultComponent {
     // Properties
     //-------------------------------------------------------------------------
 
-    /**
-     * Returns the configured SqlMapClient.
-     *
-     * @return com.ibatis.sqlmap.client.SqlMapClient
-     * @throws IOException If configured with a SqlMapConfig and there
-     * is a problem reading the resource.
-     */
-    public SqlMapClient getSqlMapClient() throws IOException {
-        if (sqlMapClient == null) {
-            sqlMapClient = createSqlMapClient();
-        }
+    public SqlMapClient getSqlMapClient() {
         return sqlMapClient;
     }
-    
-    /**
-     * Sets the SqlMapClient
-     */
+
     public void setSqlMapClient(SqlMapClient sqlMapClient) {
         this.sqlMapClient = sqlMapClient;
     }
 
-    /**
-     * The Spring uri of the SqlMapConfig
-     */
     public String getSqlMapConfig() {
         return sqlMapConfig;
     }
@@ -126,5 +107,19 @@ public class IBatisComponent extends DefaultComponent {
     
     public void setUseTransactions(boolean useTransactions) {
         this.useTransactions = useTransactions;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (sqlMapClient == null) {
+            sqlMapClient = createSqlMapClient();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
     }
 }
