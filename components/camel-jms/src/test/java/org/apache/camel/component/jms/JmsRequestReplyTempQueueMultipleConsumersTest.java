@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -65,8 +66,10 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(files);
-        getMockEndpoint("mock:result").expectsNoDuplicates(body());
+        resetMocks();
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(files);
+        mockEndpoint.expectsNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
@@ -80,7 +83,6 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         }
 
         assertMockEndpointsSatisfied();
-        resetMocks();
         executor.shutdownNow();
     }
     
