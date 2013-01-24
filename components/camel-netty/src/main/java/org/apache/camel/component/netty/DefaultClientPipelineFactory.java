@@ -22,6 +22,7 @@ import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
+import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
@@ -33,18 +34,24 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultClientPipelineFactory.class);
 
     private final NettyProducer producer;
+    private SSLContext sslContext;
 
     public DefaultClientPipelineFactory(NettyProducer producer) {
         this.producer = producer;
+        try {
+            this.sslContext = createSSLContext(producer);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public ChannelPipeline getPipeline() throws Exception {
         // create a new pipeline
         ChannelPipeline channelPipeline = Channels.pipeline();
 
-        SslHandler sslHandler = configureClientSSLOnDemand(producer);
+        SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
-            LOG.debug("Client SSL handler configured and added to the ChannelPipeline");
+            LOG.debug("Client SSL handler configured and added to the ChannelPipeline: {}", sslHandler);
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
 
@@ -79,16 +86,29 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
         pipeline.addLast(name, handler);
     }
 
-    private SslHandler configureClientSSLOnDemand(NettyProducer producer) throws Exception {
+    private SSLContext createSSLContext(NettyProducer producer) throws Exception {
+        if (!producer.getConfiguration().isSsl()) {
+            return null;
+        }
+
+        // create ssl context once
+        if (producer.getConfiguration().getSslContextParameters() != null) {
+            SSLContext context = producer.getConfiguration().getSslContextParameters().createSSLContext();
+            return context;
+        }
+
+        return null;
+    }
+
+    private SslHandler configureClientSSLOnDemand() throws Exception {
         if (!producer.getConfiguration().isSsl()) {
             return null;
         }
 
         if (producer.getConfiguration().getSslHandler() != null) {
             return producer.getConfiguration().getSslHandler();
-        } else if (producer.getConfiguration().getSslContextParameters() != null) {
-            SSLContext context = producer.getConfiguration().getSslContextParameters().createSSLContext();
-            SSLEngine engine = context.createSSLEngine();
+        } else if (sslContext != null) {
+            SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(true);
             return new SslHandler(engine);
         } else {
