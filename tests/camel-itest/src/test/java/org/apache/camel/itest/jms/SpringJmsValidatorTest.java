@@ -17,7 +17,7 @@
 package org.apache.camel.itest.jms;
 
 import org.apache.camel.spi.BrowsableEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

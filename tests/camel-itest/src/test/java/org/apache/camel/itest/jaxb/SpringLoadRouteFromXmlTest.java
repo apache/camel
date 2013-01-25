@@ -22,7 +22,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.Constants;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

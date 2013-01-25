@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
