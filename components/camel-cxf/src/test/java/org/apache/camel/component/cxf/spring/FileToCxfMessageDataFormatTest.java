@@ -21,7 +21,7 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.HelloService;
 import org.apache.camel.component.cxf.HelloServiceImpl;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.junit.Test;

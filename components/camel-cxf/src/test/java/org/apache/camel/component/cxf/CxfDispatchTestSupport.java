@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.After;
 import org.junit.Before;

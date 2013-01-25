@@ -31,7 +31,7 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.camel.util.CastUtils;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;

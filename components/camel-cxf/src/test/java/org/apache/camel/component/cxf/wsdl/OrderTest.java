@@ -22,7 +22,7 @@ import java.io.LineNumberReader;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
