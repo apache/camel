@@ -1,0 +1,17 @@
+<xs:schema elementFormDefault="qualified" version="1.0"
+           targetNamespace="http://foo.com/bar"
+           xmlns:tns="http://foo.com/bar"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    
+  <xs:element name="user">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" type="xs:int"/>
+        <xs:element name="username" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
+

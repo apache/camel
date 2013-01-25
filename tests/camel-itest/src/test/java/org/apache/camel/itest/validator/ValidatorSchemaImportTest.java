@@ -113,6 +113,35 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
+    
+    /**
+     * Test for the valid schema location relative to a path other than the validating schema
+     * @throws Exception
+     */
+    @Test
+    public void testChildParentUncleSchemaImport() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .doTry()
+                        .to("validator:org/apache/camel/component/validator/childparentuncle/child/child.xsd")
+                        .to("mock:valid")
+                    .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                    .doFinally()
+                        .to("mock:finally")
+                    .end();
+            }
+        });
+        validEndpoint.expectedMessageCount(1);
+        finallyEndpoint.expectedMessageCount(1);
+
+        template.sendBody("direct:start",
+                "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
+
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+    }
 
     @Override
     @Before
