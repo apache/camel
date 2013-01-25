@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
