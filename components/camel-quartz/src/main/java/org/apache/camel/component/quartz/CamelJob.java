@@ -19,17 +19,23 @@ package org.apache.camel.component.quartz;
 import java.io.Serializable;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.URISupport.normalizeUri;
 
 /**
  * @version 
  */
 public class CamelJob implements Job, Serializable {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelJob.class);
     private static final long serialVersionUID = 26L;
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -47,11 +53,38 @@ public class CamelJob implements Job, Serializable {
         if (camelContext == null) {
             throw new JobExecutionException("No CamelContext could be found with name: " + camelContextName);
         }
-        QuartzEndpoint endpoint = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
+
+        QuartzEndpoint endpoint = lookupQuartzEndpoint(camelContext, endpointUri);
         if (endpoint == null) {
             throw new JobExecutionException("No QuartzEndpoint could be found with uri: " + endpointUri);
         }
         endpoint.onJobExecute(context);
+    }
+
+    private QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, String endpointUri) throws JobExecutionException {
+        try {
+            String targetUri = normalizeUri(endpointUri);
+
+            // check all active routes for the quartz endpoint this task matches
+            // as we prefer to use the existing endpoint from the routes
+            for (Route route : camelContext.getRoutes()) {
+                if (route.getEndpoint() instanceof QuartzEndpoint) {
+                    if (normalizeUri(route.getEndpoint().getEndpointUri()).equals(targetUri)) {
+                        return (QuartzEndpoint) route.getEndpoint();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new JobExecutionException("Error lookup up existing QuartzEndpoint with uri: " + endpointUri, e);
+        }
+
+        // fallback and lookup existing from registry (eg maybe a @Consume POJO with a quartz endpoint, and thus not from a route)
+        if (camelContext.hasEndpoint(endpointUri) != null) {
+            return camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
+        } else {
+            LOG.warn("Cannot find existing QuartzEndpoint with uri: {}. Creating new endpoint instance.", endpointUri);
+            return camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
+        }
     }
 
 }
