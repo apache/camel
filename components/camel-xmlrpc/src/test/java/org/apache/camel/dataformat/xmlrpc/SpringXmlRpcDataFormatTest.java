@@ -18,7 +18,7 @@ package org.apache.camel.dataformat.xmlrpc;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.xmlrpc.XmlRpcRequestImpl;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;

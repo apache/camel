@@ -26,7 +26,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.component.spring.ws.utils.OutputChannelReceiver;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.ws.client.core.WebServiceTemplate;

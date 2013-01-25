@@ -18,7 +18,7 @@ package org.apache.camel.component.quickfixj;
 
 import java.util.Properties;
 
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;

@@ -26,7 +26,7 @@ import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spring.spi.TransactionErrorHandler;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.After;
 import org.springframework.context.support.AbstractXmlApplicationContext;
