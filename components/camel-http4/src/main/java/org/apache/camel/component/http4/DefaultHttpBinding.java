@@ -19,6 +19,7 @@ package org.apache.camel.component.http4;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URLDecoder;
@@ -39,6 +40,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.http4.helper.CamelFileDataSource;
 import org.apache.camel.component.http4.helper.HttpHelper;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
@@ -278,6 +280,25 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
     }
+    
+    protected boolean isText(String contentType) {
+        if (contentType != null) {
+            String temp = contentType.toLowerCase();
+            if (temp.indexOf("text") >= 0 || temp.indexOf("html") >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    protected void copyStream(InputStream is, OutputStream os) throws IOException {
+        try {
+            // copy directly from input stream to output stream
+            IOHelper.copy(is, os);
+        } finally {
+            IOHelper.close(os, is);
+        }
+    }
 
     protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         // if content type is serialized Java object, then serialize and write it to the response
@@ -294,22 +315,32 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         // prefer streaming
-        InputStream is;
+        InputStream is = null;
         if (checkChunked(message, exchange)) {
             is = message.getBody(InputStream.class);
         } else {
-            // try to use input stream first, so we can copy directly
-            is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, message.getBody());
+         // try to use input stream first, so we can copy directly
+            if (!isText(contentType)) {
+                is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, message.getBody());
+            }
         }
 
         if (is != null) {
             ServletOutputStream os = response.getOutputStream();
-            try {
-                LOG.trace("Writing direct response from source input stream to servlet output stream");
-                // copy directly from input stream to output stream
-                IOHelper.copy(is, os);
-            } finally {
-                IOHelper.close(os, is);
+            LOG.trace("Writing direct response from source input stream to servlet output stream");
+            if (!checkChunked(message, exchange)) {
+                CachedOutputStream stream = new CachedOutputStream(exchange);
+                try {
+                    // copy directly from input stream to the cached output stream to get the content length
+                    int len = IOHelper.copy(is, stream);
+                    // we need to setup the length if message is not chucked
+                    response.setContentLength(len);
+                    copyStream(stream.getInputStream(), os);
+                } finally {
+                    IOHelper.close(is, stream);
+                }
+            } else {
+                copyStream(is, os);
             }
         } else {
             // not convertable as a stream so try as a String
