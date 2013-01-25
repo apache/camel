@@ -169,7 +169,6 @@
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
-    <isorelax-jaxp-bridge-version>1.0</isorelax-jaxp-bridge-version>
     <isorelax-version>20050913</isorelax-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.10</jackson-version>
@@ -299,7 +298,6 @@
     <quickfix-bundle-version>1.5.2_1</quickfix-bundle-version>
     <quickfix-version>1.5.2-bd</quickfix-version>
     <regexp-bundle-version>1.3_3</regexp-bundle-version>
-    <relaxngDatatype-version>20020414</relaxngDatatype-version>
     <restlet-version>2.0.10</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
