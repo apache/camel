@@ -419,9 +419,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (!isMatched(file, isDirectory, files)) {
             log.trace("File did not match. Will skip this file: {}", file);
             return false;
-        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getAbsoluteFilePath())) {
-            log.trace("This consumer is idempotent and the file has been consumed before. Will skip this file: {}", file);
-            return false;
+        } else if (endpoint.isIdempotent()) {
+            // use absolute file path as default key, but evaluate if an expression key was configured
+            String key = file.getAbsoluteFilePath();
+            if (endpoint.getIdempotentKey() != null) {
+                Exchange dummy = endpoint.createExchange(file);
+                key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+            }
+            if (key != null && endpoint.getIdempotentRepository().contains(key)) {
+                log.trace("This consumer is idempotent and the file has been consumed before. Will skip this file: {}", file);
+                return false;
+            }
         }
 
         // file matched
