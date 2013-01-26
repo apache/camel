@@ -117,6 +117,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     @Override
     protected void doStop() throws Exception {
         component.stop();
+        // component stop will stop servers so we should clear our list as well
+        servers.clear();
         // routers map entries are removed as consumer stops and servers map
         // is not touch so to keep in sync with component's servers
         super.doStop();
@@ -147,20 +149,20 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     public void disconnect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = consumer.getEndpoint();
 
-        List<MethodBasedRouter> routers = new ArrayList<MethodBasedRouter>();
+        List<MethodBasedRouter> routesToRemove = new ArrayList<MethodBasedRouter>();
 
         String pattern = decodePattern(endpoint.getUriPattern());
         if (pattern != null && !pattern.isEmpty()) {
-            routers.add(getMethodRouter(pattern));
+            routesToRemove.add(getMethodRouter(pattern, false));
         }
 
         if (endpoint.getRestletUriPatterns() != null) {
             for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                routers.add(getMethodRouter(uriPattern));
+                routesToRemove.add(getMethodRouter(uriPattern, false));
             }
         }
 
-        for (MethodBasedRouter router : routers) {
+        for (MethodBasedRouter router : routesToRemove) {
             if (endpoint.getRestletMethods() != null) {
                 Method[] methods = endpoint.getRestletMethods();
                 for (Method method : methods) {
@@ -174,13 +176,22 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
                 LOG.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(),
                           endpoint.getRestletMethod());
             }
+
+            // remove router if its no longer in use
+            if (!router.hasRoutes()) {
+                deattachUriPatternFrimRestlet(router.getUriPattern(), endpoint, router);
+                if (!router.isStopped()) {
+                    router.stop();
+                }
+                routers.remove(router.getUriPattern());
+            }
         }
     }
 
-    private MethodBasedRouter getMethodRouter(String uriPattern) {
+    private MethodBasedRouter getMethodRouter(String uriPattern, boolean addIfEmpty) {
         synchronized (routers) {
             MethodBasedRouter result = routers.get(uriPattern);
-            if (result == null) {
+            if (result == null && addIfEmpty) {
                 result = new MethodBasedRouter(uriPattern);
                 LOG.debug("Added method based router: {}", result);
                 routers.put(uriPattern, result);
@@ -255,9 +266,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         return endpoint.getHost() + ":" + endpoint.getPort();
     }
 
-    private void attachUriPatternToRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) {
+    private void attachUriPatternToRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
         uriPattern = decodePattern(uriPattern);
-        MethodBasedRouter router = getMethodRouter(uriPattern);
+        MethodBasedRouter router = getMethodRouter(uriPattern, true);
 
         Map<String, String> realm = endpoint.getRestletRealm();
         if (realm != null && realm.size() > 0) {
@@ -289,6 +300,16 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             component.getDefaultHost().attach(uriPattern, router);
             LOG.debug("Attached methodRouter uriPattern: {}", uriPattern);
         }
+
+        if (!router.isStarted()) {
+            router.start();
+            LOG.debug("Started methodRouter uriPattern: {}", uriPattern);
+        }
+    }
+
+    private void deattachUriPatternFrimRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
+        component.getDefaultHost().detach(target);
+        LOG.debug("Deattached methodRouter uriPattern: {}", uriPattern);
     }
 
     @Deprecated
