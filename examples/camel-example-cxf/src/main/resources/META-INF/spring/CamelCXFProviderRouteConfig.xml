@@ -36,8 +36,6 @@
   please replace the cxf-extension-http-jetty.xml with cxf-servlet.xml
   -->
 
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
   <bean id="testBean" class="org.apache.camel.example.cxf.provider.TesterBean"/>
 
   <cxf:cxfEndpoint id="soapMessageEndpoint"

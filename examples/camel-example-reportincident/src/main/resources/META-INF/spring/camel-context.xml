@@ -28,9 +28,6 @@
   <!-- this is Spring XML example of the Camel route in the ReportIncidentRoutes class -->
   <!-- this is for demonstration purpose, to show how you can use Camel with XML DSL -->
 
-  <!-- Needed Apache CXF imports -->
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-  
   <cxf:cxfEndpoint id="reportIncident"
                    address="http://localhost:{{port}}/camel-example-reportincident/webservices/incident"
                    wsdlURL="etc/report_incident.wsdl"

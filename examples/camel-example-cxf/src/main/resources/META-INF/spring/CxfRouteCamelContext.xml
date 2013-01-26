@@ -27,8 +27,6 @@
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
   <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
     <broker:transportConnectors>
       <broker:transportConnector name="openwire" uri="vm://localhost"/>
@@ -44,6 +42,5 @@
   <jaxws:endpoint id="serviceEndpoint"
                   implementor="org.apache.camel.example.cxf.GreeterImpl"
                   address="jms://"/>
-
 
 </beans>

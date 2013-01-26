@@ -22,9 +22,6 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <!-- needed Apache CXF imports -->
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
   <!-- create a camel context as to start Camel -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <package>org.apache.camel.example.reportincident</package>
