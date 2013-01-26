@@ -35,7 +35,7 @@ public class BeanWithJXPathInjectionTest extends CamelTestSupport {
     public void testSendMessage() throws Exception {
         template.sendBody("direct:in", new PersonBean("James", "London"));
 
-        MyBean myBean = context.getRegistry().lookup("myBean", MyBean.class);
+        MyBean myBean = context.getRegistry().lookupByNameAndType("myBean", MyBean.class);
 
         assertEquals("bean foo: " + myBean, "James", myBean.getName());
         assertNotNull("Should pass body as well", myBean.getBody());
@@ -45,7 +45,7 @@ public class BeanWithJXPathInjectionTest extends CamelTestSupport {
     public void testSendNullMessage() throws Exception {
         template.sendBody("direct:in", new PersonBean(null, "London"));
 
-        MyBean myBean = context.getRegistry().lookup("myBean", MyBean.class);
+        MyBean myBean = context.getRegistry().lookupByNameAndType("myBean", MyBean.class);
 
         assertEquals("bean foo: " + myBean, null, myBean.getName());
         assertNotNull("Should pass body as well", myBean.getBody());

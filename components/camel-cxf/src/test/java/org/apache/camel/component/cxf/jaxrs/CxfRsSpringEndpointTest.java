@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf.jaxrs;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.version.Version;
 
 import org.junit.Test;

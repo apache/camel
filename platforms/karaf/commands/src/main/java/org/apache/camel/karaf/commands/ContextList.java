@@ -34,7 +34,7 @@ public class ContextList extends OsgiCommandSupport {
     private static final String NAME_COLUMN_LABEL = "Name";
     private static final String STATUS_COLUMN_LABEL = "Status";
     private static final String UPTIME_COLUMN_LABEL = "Uptime";
-    private static final int DEFAULT_FORMAT_BUFFER_LENGTH = 24; 
+    private static final int DEFAULT_FORMAT_BUFFER_LENGTH = 24;
     private static final String DEFAULT_FIELD_PREAMBLE = "[ ";
     private static final String DEFAULT_FIELD_POSTAMBLE = " ]";
     private static final String DEFAULT_HEADER_PREAMBLE = "  ";
@@ -51,7 +51,7 @@ public class ContextList extends OsgiCommandSupport {
     protected Object doExecute() throws Exception {
         final List<CamelContext> camelContexts = camelController.getCamelContexts();
 
-        final Map<String, Integer> columnWidths = computeColumnWidths(camelContexts); 
+        final Map<String, Integer> columnWidths = computeColumnWidths(camelContexts);
         final String headerFormat = buildFormatString(columnWidths, true);
         final String rowFormat = buildFormatString(columnWidths, false);
         final PrintStream out = System.out;
@@ -77,10 +77,10 @@ public class ContextList extends OsgiCommandSupport {
             for (final CamelContext camelContext : camelContexts) {
                 final String name = camelContext.getName();
                 maxNameLen = java.lang.Math.max(maxNameLen, name == null ? 0 : name.length());
-             
+
                 final String status = camelContext.getStatus().toString();
                 maxStatusLen = java.lang.Math.max(maxStatusLen, status == null ? 0 : status.length());
-             
+
                 final String uptime = camelContext.getUptime();
                 maxUptimeLen = java.lang.Math.max(maxUptimeLen, uptime == null ? 0 : uptime.length());
             }
@@ -99,7 +99,7 @@ public class ContextList extends OsgiCommandSupport {
         final String fieldPostamble;
         final int columnWidthIncrement;
 
-        if (isHeader) { 
+        if (isHeader) {
             fieldPreamble = DEFAULT_HEADER_PREAMBLE;
             fieldPostamble = DEFAULT_HEADER_POSTAMBLE;
         } else {
@@ -107,7 +107,7 @@ public class ContextList extends OsgiCommandSupport {
             fieldPostamble = DEFAULT_FIELD_POSTAMBLE;
         }
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
-        
+
         final int nameLen = java.lang.Math.min(columnWidths.get(NAME_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         final int statusLen = java.lang.Math.min(columnWidths.get(STATUS_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         final int uptimeLen = java.lang.Math.min(columnWidths.get(UPTIME_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);

@@ -65,6 +65,10 @@ class MethodBasedRouter extends Restlet {
     void removeRoute(Method method) {
         routes.remove(method);
     }
+
+    boolean hasRoutes() {
+        return !routes.isEmpty();
+    }
     
     /**
      * This method does "test-and-set" on the underlying flag that indicates

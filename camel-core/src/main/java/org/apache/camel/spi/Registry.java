@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a service registry which may be implemented via a Spring ApplicationContext,
@@ -33,7 +34,7 @@ public interface Registry {
      * @param name the name of the service
      * @return the service from the registry or <tt>null</tt> if it could not be found
      */
-    Object lookup(String name);
+    Object lookupByName(String name);
 
     /**
      * Looks up a service in the registry, returning the service or <tt>null</tt> if it could not be found.
@@ -42,6 +43,50 @@ public interface Registry {
      * @param type the type of the required service
      * @return the service from the registry or <tt>null</tt> if it could not be found
      */
+    <T> T lookupByNameAndType(String name, Class<T> type);
+
+    /**
+     * Finds services in the registry by their type.
+     * <p/>
+     * <b>Note:</b> Not all registry implementations support this feature,
+     * such as the {@link org.apache.camel.impl.JndiRegistry}.
+     *
+     * @param type  the type of the registered services
+     * @return the types found, with their ids as the key. Returns an empty Map if none found.
+     */
+    <T> Map<String, T> findByTypeWithName(Class<T> type);
+
+    /**
+     * Finds services in the registry by their type.
+     * <p/>
+     * <b>Note:</b> Not all registry implementations support this feature,
+     * such as the {@link org.apache.camel.impl.JndiRegistry}.
+     *
+     * @param type  the type of the registered services
+     * @return the types found. Returns an empty Set if none found.
+     */
+    <T> Set<T> findByType(Class<T> type);
+
+    /**
+     * Looks up a service in the registry based purely on name,
+     * returning the service or <tt>null</tt> if it could not be found.
+     *
+     * @param name the name of the service
+     * @return the service from the registry or <tt>null</tt> if it could not be found
+     * @deprecated use {@link #lookupByName(String)}
+     */
+    @Deprecated
+    Object lookup(String name);
+
+    /**
+     * Looks up a service in the registry, returning the service or <tt>null</tt> if it could not be found.
+     *
+     * @param name the name of the service
+     * @param type the type of the required service
+     * @return the service from the registry or <tt>null</tt> if it could not be found
+     * @deprecated use {@link #lookupByNameAndType(String, Class)}
+     */
+    @Deprecated
     <T> T lookup(String name, Class<T> type);
 
     /**
@@ -52,7 +97,9 @@ public interface Registry {
      *
      * @param type  the type of the registered services
      * @return the types found, with their id as the key. Returns an empty Map if none found.
+     * @deprecated use {@link #findByTypeWithName(Class)}
      */
+    @Deprecated
     <T> Map<String, T> lookupByType(Class<T> type);
 
 }

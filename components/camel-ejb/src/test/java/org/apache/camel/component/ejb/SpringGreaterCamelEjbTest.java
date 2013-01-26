@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.ejb;
 
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -42,7 +42,7 @@ public class SpringGreaterCamelEjbTest extends CamelSpringTestSupport {
 
     @Test
     public void testLocateOtherBeans() throws Exception {
-        GreaterLocal mySpringBean = context().getRegistry().lookup("mySpringBean", GreaterLocal.class);
+        GreaterLocal mySpringBean = context().getRegistry().lookupByNameAndType("mySpringBean", GreaterLocal.class);
         assertNotNull("We should get the instance of spring bean", mySpringBean);
     }
 

@@ -17,6 +17,7 @@
 package org.apache.camel.core.osgi;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.core.osgi.test.MyService;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -26,22 +27,27 @@ public class ServiceRegistryTest extends CamelOsgiTestSupport {
 
     @Test
     public void camelContextFactoryServiceRegistryTest() throws Exception {
-        
         DefaultCamelContext context = new OsgiDefaultCamelContext(getBundleContext());
         context.start();
-        MyService myService = context.getRegistry().lookup(MyService.class.getName(), MyService.class);
+
+        MyService myService = context.getRegistry().lookupByNameAndType(MyService.class.getName(), MyService.class);
         assertNotNull("MyService should not be null", myService);
         
-        myService = context.getRegistry().lookup("test", MyService.class);
+        myService = context.getRegistry().lookupByNameAndType("test", MyService.class);
         assertNull("We should not get the MyService Object here", myService);
 
-        Object service = context.getRegistry().lookup(MyService.class.getName());
+        Object service = context.getRegistry().lookupByName(MyService.class.getName());
         assertNotNull("MyService should not be null", service);
         assertTrue("It should be the instance of MyService ", service instanceof MyService);
 
-        Map<String, MyService> collection = context.getRegistry().lookupByType(MyService.class);
+        Map<String, MyService> collection = context.getRegistry().findByTypeWithName(MyService.class);
         assertNotNull("MyService should not be null", collection);
         assertNotNull("There should have one MyService.", collection.get(MyService.class.getName()));
+
+        Set<MyService> collection2 = context.getRegistry().findByType(MyService.class);
+        assertNotNull("MyService should not be null", collection2);
+        assertEquals(1, collection2.size());
+
         context.stop();
     }
 

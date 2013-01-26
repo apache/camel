@@ -31,8 +31,6 @@
        to dynamically set the port number for unit testing the example.  -->
   <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer"/>
     
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
   <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
     <broker:transportConnectors>
       <broker:transportConnector name="openwire" uri="vm://localhost"/>
@@ -48,6 +46,5 @@
   <jaxws:endpoint id="serviceEndpoint"
                   implementor="org.apache.camel.example.cxf.httptojms.GreeterImpl"
                   address="jms://"/>
-
 
 </beans>

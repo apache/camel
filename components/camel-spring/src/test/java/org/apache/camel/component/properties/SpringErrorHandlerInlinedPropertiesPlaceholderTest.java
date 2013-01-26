@@ -37,7 +37,7 @@ public class SpringErrorHandlerInlinedPropertiesPlaceholderTest extends SpringTe
 
         assertMockEndpointsSatisfied();
 
-        MyErrorBean bean = context.getRegistry().lookup("errorBean", MyErrorBean.class);
+        MyErrorBean bean = context.getRegistry().lookupByNameAndType("errorBean", MyErrorBean.class);
         assertNotNull(bean);
         // 1 regular and 3 redeliveries
         assertEquals(3 + 1, bean.getCounter());

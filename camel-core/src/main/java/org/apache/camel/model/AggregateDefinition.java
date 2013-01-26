@@ -179,7 +179,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         ScheduledExecutorService timeoutThreadPool = timeoutCheckerExecutorService;
         if (timeoutThreadPool == null && timeoutCheckerExecutorServiceRef != null) {
             // lookup existing thread pool
-            timeoutThreadPool = routeContext.getCamelContext().getRegistry().lookup(timeoutCheckerExecutorServiceRef, ScheduledExecutorService.class);
+            timeoutThreadPool = routeContext.getCamelContext().getRegistry().lookupByNameAndType(timeoutCheckerExecutorServiceRef, ScheduledExecutorService.class);
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool profile id
                 timeoutThreadPool = routeContext.getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,

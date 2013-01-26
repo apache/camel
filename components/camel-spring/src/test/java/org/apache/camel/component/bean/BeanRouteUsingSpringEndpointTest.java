@@ -20,15 +20,16 @@ import javax.annotation.Resource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class BeanRouteUsingSpringEndpointTest extends AbstractJUnit38SpringContextTests {
+public class BeanRouteUsingSpringEndpointTest extends SpringRunWithTestSupport {
     @Autowired
     protected ProducerTemplate template;
     @Resource
@@ -38,6 +39,7 @@ public class BeanRouteUsingSpringEndpointTest extends AbstractJUnit38SpringConte
 
     protected String body = "James";
 
+    @Test
     public void testSayHello() throws Exception {
         assertNotNull(helloEndpoint);
         assertNotNull(goodbyeEndpoint);
@@ -47,6 +49,7 @@ public class BeanRouteUsingSpringEndpointTest extends AbstractJUnit38SpringConte
         assertEquals("Returned value", "Hello James!", value);
     }
 
+    @Test
     public void testSayGoodbye() throws Exception {
         Object value = template.requestBody(goodbyeEndpoint, body);
 

@@ -19,16 +19,16 @@ package org.apache.camel.component.bean;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class BeanWithRecipientListTest extends AbstractJUnit4SpringContextTests {
+public class BeanWithRecipientListTest extends SpringRunWithTestSupport {
     @Autowired
     protected ProducerTemplate template;
     @EndpointInject(uri = "mock:a")

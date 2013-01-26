@@ -72,7 +72,7 @@ public class Tracer implements InterceptStrategy, Service {
     public static Tracer createTracer(CamelContext context) {
         Tracer tracer = new Tracer();
         // lets see if we have a formatter if so use it
-        TraceFormatter formatter = context.getRegistry().lookup("traceFormatter", TraceFormatter.class);
+        TraceFormatter formatter = context.getRegistry().lookupByNameAndType("traceFormatter", TraceFormatter.class);
         if (formatter != null) {
             tracer.setFormatter(formatter);
         }

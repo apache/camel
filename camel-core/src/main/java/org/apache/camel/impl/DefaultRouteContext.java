@@ -134,11 +134,11 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public <T> T lookup(String name, Class<T> type) {
-        return getCamelContext().getRegistry().lookup(name, type);
+        return getCamelContext().getRegistry().lookupByNameAndType(name, type);
     }
 
     public <T> Map<String, T> lookupByType(Class<T> type) {
-        return getCamelContext().getRegistry().lookupByType(type);
+        return getCamelContext().getRegistry().findByTypeWithName(type);
     }
 
     @Override

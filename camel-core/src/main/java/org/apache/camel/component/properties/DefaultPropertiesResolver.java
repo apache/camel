@@ -109,7 +109,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         if (path.startsWith("ref:")) {
             path = ObjectHelper.after(path, "ref:");
         }
-        Properties answer = context.getRegistry().lookup(path, Properties.class);
+        Properties answer = context.getRegistry().lookupByNameAndType(path, Properties.class);
         if (answer == null && (!ignoreMissingLocation)) {
             throw new FileNotFoundException("Properties " + path + " not found in registry");
         }

@@ -27,7 +27,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
     public void testForceCompletionTrue() throws Exception {
-        MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookup("myCompletionProcessor", MyCompletionProcessor.class);
+        MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
 
         context.getShutdownStrategy().setShutdownNowOnTimeout(true);
@@ -44,7 +44,7 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
     }
 
     public void testForceCompletionFalse() throws Exception {
-        MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookup("myCompletionProcessor", MyCompletionProcessor.class);
+        MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
 
         context.getShutdownStrategy().setShutdownNowOnTimeout(true);
@@ -61,7 +61,7 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
     }
 
     public void testStopRouteForceCompletionTrue() throws Exception {
-        MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookup("myCompletionProcessor", MyCompletionProcessor.class);
+        MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
 
         context.getShutdownStrategy().setShutdownNowOnTimeout(true);
@@ -79,7 +79,7 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
     }
 
     public void testStopRouteForceCompletionFalse() throws Exception {
-        MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookup("myCompletionProcessor", MyCompletionProcessor.class);
+        MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
 
         context.getShutdownStrategy().setShutdownNowOnTimeout(true);

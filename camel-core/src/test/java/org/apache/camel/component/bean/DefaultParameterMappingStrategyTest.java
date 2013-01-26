@@ -135,7 +135,7 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         public String withRegistry(String body, Registry registry) {
             assertNotNull(body);
             assertNotNull(registry);
-            assertNotNull(registry.lookup("foo"));
+            assertNotNull(registry.lookupByName("foo"));
             assertEquals("Hello", body);
             return "Registry";
         }
@@ -143,7 +143,7 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         public String withCamelContext(String body, CamelContext camel) {
             assertNotNull(body);
             assertNotNull(camel);
-            assertNotNull(camel.getRegistry().lookup("foo"));
+            assertNotNull(camel.getRegistry().lookupByName("foo"));
             assertEquals("Hello", body);
             return "CamelContext";
         }

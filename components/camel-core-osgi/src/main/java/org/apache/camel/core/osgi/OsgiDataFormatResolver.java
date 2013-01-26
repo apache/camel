@@ -39,7 +39,7 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
         // lookup in registry first
         Object bean = null;
         try {
-            bean = context.getRegistry().lookup(name);
+            bean = context.getRegistry().lookupByName(name);
             if (bean != null) {
                 LOG.debug("Found language: {} in registry: {}", name, bean);
             }

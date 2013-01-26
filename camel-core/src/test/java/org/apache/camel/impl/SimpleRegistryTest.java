@@ -32,20 +32,20 @@ public class SimpleRegistryTest extends TestCase {
     }
 
     public void testLookupByName() {
-        assertEquals("b", registry.lookup("a"));
+        assertEquals("b", registry.lookupByName("a"));
     }
 
     public void testLookupByWrongName() {
-        assertNull(registry.lookup("x"));
+        assertNull(registry.lookupByName("x"));
     }
 
     public void testLookupByNameAndType() {
-        assertEquals("b", registry.lookup("a", String.class));
+        assertEquals("b", registry.lookupByNameAndType("a", String.class));
     }
 
     public void testLookupByNameAndWrongType() {
         try {
-            registry.lookup("a", Float.class);
+            registry.lookupByNameAndType("a", Float.class);
             fail();
         } catch (NoSuchBeanException e) {
             // expected
@@ -55,17 +55,17 @@ public class SimpleRegistryTest extends TestCase {
     }
     
     public void testLookupByType() {
-        Map<?, ?> map = registry.lookupByType(String.class);
+        Map<?, ?> map = registry.findByTypeWithName(String.class);
         assertEquals(1, map.size());
         assertEquals("b", map.get("a"));
-        map = registry.lookupByType(Object.class);
+        map = registry.findByTypeWithName(Object.class);
         assertEquals(2, map.size());
         assertEquals("b", map.get("a"));
         assertEquals(1, map.get("c"));
     }
  
     public void testLookupByWrongType() {
-        Map<?, ?> map = registry.lookupByType(Float.class);
+        Map<?, ?> map = registry.findByTypeWithName(Float.class);
         assertEquals(0, map.size());
     }
 

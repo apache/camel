@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -52,26 +53,40 @@ public class DefaultRouteNode implements RouteNode {
         return processorDefinition;
     }
 
-    @SuppressWarnings("deprecation")
     public String getLabel(Exchange exchange) {
         if (expression != null) {
             return expression.evaluate(exchange, String.class);
         }
 
-        Processor target = processor;
-        if (target != null && target instanceof Traceable) {
+        String label = getTraceLabel(processor);
+        if (label == null) {
+            // no label then default to use the definition label
+            label = processorDefinition.getLabel();
+        }
+        return label;
+    }
+
+    @SuppressWarnings("deprecation")
+    private String getTraceLabel(Processor target) {
+        if (target == null) {
+            return null;
+        }
+
+        if (target instanceof Traceable) {
             Traceable trace = (Traceable) target;
             return trace.getTraceLabel();
-        }
-        
-        // Compatiblity for old Traceable interface
-        if (target != null && target instanceof org.apache.camel.processor.Traceable) {
+        } else if (target instanceof org.apache.camel.processor.Traceable) {
+            // to be backwards compatible
             org.apache.camel.processor.Traceable trace = (org.apache.camel.processor.Traceable) target;
             return trace.getTraceLabel();
         }
 
-        // default then to definition
-        return processorDefinition.getLabel();
+        // if we are a delegate then drill down
+        if (target instanceof DelegateProcessor) {
+            return getTraceLabel(((DelegateProcessor) target).getProcessor());
+        }
+
+        return null;
     }
 
     public boolean isAbstract() {

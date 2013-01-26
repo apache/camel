@@ -17,7 +17,7 @@
 package org.apache.camel.component.jms.config;
 
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,7 +37,7 @@ public class JmsEndpointWithCustomDestinationTest extends CamelSpringTestSupport
 
     @Test
     public void testMessageSentToCustomEndpoint() throws Exception {
-        ActiveMQQueue jmsQueue = context.getRegistry().lookup("jmsQueue", ActiveMQQueue.class);
+        ActiveMQQueue jmsQueue = context.getRegistry().lookupByNameAndType("jmsQueue", ActiveMQQueue.class);
         assertNotNull("jmsQueue", jmsQueue);
         assertEquals("jmsqueue.getPhysicalName()", "Test.Camel.CustomEndpoint", jmsQueue.getPhysicalName());
 

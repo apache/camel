@@ -19,18 +19,20 @@ package org.apache.camel.spring.produce;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 @ContextConfiguration
-public class ProduceTemplateWithTwoCamelContextTest extends AbstractJUnit38SpringContextTests {
+public class ProduceTemplateWithTwoCamelContextTest extends SpringRunWithTestSupport {
     @Autowired
     protected ProducerTemplate producer;
     
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
+    @Test
     public void testProducerTemplate() throws Exception {
         result.expectedBodiesReceived("hello");
         // lets send a message

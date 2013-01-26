@@ -58,6 +58,14 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
 
         assertEquals(4, counter); // 1 first + 3 redeliveries
     }
+    
+    public void testMulticastException() throws Exception {
+        getMockEndpoint("mock:dead").expectedBodiesReceived("Hello", "Hi", "Bye");
+        template.sendBody("direct:e", "Hello");
+        template.sendBody("direct:e", "Hi");
+        template.sendBody("direct:e", "Bye");
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -82,6 +90,12 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
                 from("direct:b")
                     .process(new MyProcessor())
                     .to("mock:b");
+                
+                from("direct:e")
+                    .multicast().shareUnitOfWork()
+                        .throwException(new IllegalArgumentException("exception1"))
+                        .throwException(new IllegalArgumentException("exception2"))
+                    .end();
             }
         };
     }

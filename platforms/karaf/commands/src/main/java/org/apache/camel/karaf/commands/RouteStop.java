@@ -26,9 +26,9 @@ import org.apache.felix.gogo.commands.Command;
 @Command(scope = "camel", name = " route-stop", description = "Stop a Camel route or a group of routes.")
 public class RouteStop extends AbstractRouteCommand {
 
-	@Override
-	public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-    	camelContext.stopRoute(camelRoute.getId());
-	}
+    @Override
+    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
+        camelContext.stopRoute(camelRoute.getId());
+    }
 
 }

@@ -62,19 +62,19 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
     public void testPropertiesComponentRegistryPlain() throws Exception {
         context.start();
 
-        assertSame(foo, context.getRegistry().lookup("foo"));
-        assertSame(bar, context.getRegistry().lookup("bar"));
-        assertNull(context.getRegistry().lookup("unknown"));
+        assertSame(foo, context.getRegistry().lookupByName("foo"));
+        assertSame(bar, context.getRegistry().lookupByName("bar"));
+        assertNull(context.getRegistry().lookupByName("unknown"));
     }
 
     public void testPropertiesComponentRegistryLookupName() throws Exception {
         context.start();
 
-        assertSame(foo, context.getRegistry().lookup("{{bean.foo}}"));
-        assertSame(bar, context.getRegistry().lookup("{{bean.bar}}"));
+        assertSame(foo, context.getRegistry().lookupByName("{{bean.foo}}"));
+        assertSame(bar, context.getRegistry().lookupByName("{{bean.bar}}"));
 
         try {
-            context.getRegistry().lookup("{{bean.unknown}}");
+            context.getRegistry().lookupByName("{{bean.unknown}}");
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
@@ -85,11 +85,11 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
     public void testPropertiesComponentRegistryLookupNameAndType() throws Exception {
         context.start();
 
-        assertSame(foo, context.getRegistry().lookup("{{bean.foo}}", MyFooBean.class));
-        assertSame(bar, context.getRegistry().lookup("{{bean.bar}}", MyDummyBean.class));
+        assertSame(foo, context.getRegistry().lookupByNameAndType("{{bean.foo}}", MyFooBean.class));
+        assertSame(bar, context.getRegistry().lookupByNameAndType("{{bean.bar}}", MyDummyBean.class));
 
         try {
-            context.getRegistry().lookup("{{bean.unknown}}", MyDummyBean.class);
+            context.getRegistry().lookupByNameAndType("{{bean.unknown}}", MyDummyBean.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());

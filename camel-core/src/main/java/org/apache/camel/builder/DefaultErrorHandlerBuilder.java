@@ -459,7 +459,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         if (executorService == null || executorService.isShutdown()) {
             // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
             if (executorServiceRef != null) {
-                executorService = camelContext.getRegistry().lookup(executorServiceRef, ScheduledExecutorService.class);
+                executorService = camelContext.getRegistry().lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
                 if (executorService == null) {
                     ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
                     ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);

@@ -19,7 +19,6 @@ package org.apache.camel.component.hdfs;
 import java.io.File;
 import java.util.List;
 
-import junit.framework.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -75,7 +74,7 @@ public class HdfsProducerConsumerTest extends CamelTestSupport {
         int i = 0;
         List<Exchange> exchanges = resultEndpoint.getExchanges();
         for (Exchange exchange : exchanges) {
-            Assert.assertEquals("CIAO" + i++, exchange.getIn().getBody(String.class));
+            assertEquals("CIAO" + i++, exchange.getIn().getBody(String.class));
         }
     }
 

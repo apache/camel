@@ -22,7 +22,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.ws.utils.OutputChannelReceiver;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.fest.assertions.Assertions;
 import org.junit.Before;
 import org.junit.BeforeClass;

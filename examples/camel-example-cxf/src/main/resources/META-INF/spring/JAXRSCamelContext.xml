@@ -27,8 +27,6 @@
        to dynamically set the port number for unit testing the example.  -->
   <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer"/>
     
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
   <camel:camelContext id="cxfrs_context">
     <camel:package>org.apache.camel.example.cxf.jaxrs</camel:package>
   </camel:camelContext>

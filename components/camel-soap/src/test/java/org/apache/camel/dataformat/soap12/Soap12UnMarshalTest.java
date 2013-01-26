@@ -19,8 +19,6 @@ package org.apache.camel.dataformat.soap12;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.Assert;
-
 import com.example.customerservice.GetCustomersByName;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -53,9 +51,9 @@ public class Soap12UnMarshalTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getExchanges().get(0);
         Object body = exchange.getIn().getBody();
-        Assert.assertEquals(GetCustomersByName.class, body.getClass());
+        assertEquals(GetCustomersByName.class, body.getClass());
         GetCustomersByName request = (GetCustomersByName) body;
-        Assert.assertEquals("Smith", request.getName());
+        assertEquals("Smith", request.getName());
     }
 
     @Override

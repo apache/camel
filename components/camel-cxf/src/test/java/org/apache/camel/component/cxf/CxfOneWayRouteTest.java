@@ -25,7 +25,7 @@ import javax.xml.ws.Service;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.Before;
 import org.junit.Test;

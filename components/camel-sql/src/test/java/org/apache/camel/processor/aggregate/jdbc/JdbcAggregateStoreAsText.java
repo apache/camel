@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -47,7 +47,7 @@ public class JdbcAggregateStoreAsText extends CamelSpringTestSupport {
         super.postProcessTest();
 
         repo = applicationContext.getBean("repo3", JdbcAggregationRepository.class);
-        dataSource = context.getRegistry().lookup("dataSource3", DataSource.class);
+        dataSource = context.getRegistry().lookupByNameAndType("dataSource3", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
     }

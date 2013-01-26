@@ -32,7 +32,7 @@ public class RoutePolicyRefCallbackTest extends RoutePolicyCallbackTest {
 
     @Override
     protected MyRoutePolicy getAndInitMyRoutePolicy() {
-        return context.getRegistry().lookup("myPolicy", MyRoutePolicy.class);
+        return context.getRegistry().lookupByNameAndType("myPolicy", MyRoutePolicy.class);
     }
 
     @Override

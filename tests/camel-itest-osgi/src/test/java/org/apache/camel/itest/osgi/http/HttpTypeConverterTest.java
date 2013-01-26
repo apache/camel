@@ -23,12 +23,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -38,7 +37,7 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 @RunWith(JUnit4TestRunner.class)
-public class HttpTypeConverterTest  extends OSGiIntegrationTestSupport {
+public class HttpTypeConverterTest extends OSGiIntegrationTestSupport {
 
     static HttpServletResponse servletResponse = new HttpServletResponse() {
         public void addCookie(Cookie cookie) {

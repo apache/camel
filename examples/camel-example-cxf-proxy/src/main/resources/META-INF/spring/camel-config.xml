@@ -28,8 +28,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
   <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
   <context:property-placeholder location="classpath:incident.properties,file:target/custom.properties"
                                 ignore-resource-not-found="true"/>

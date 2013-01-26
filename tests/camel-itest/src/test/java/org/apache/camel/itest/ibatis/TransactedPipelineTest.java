@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +57,7 @@ public class TransactedPipelineTest extends CamelSpringTestSupport {
 
     @Before
     public void createTable() {
-        table = context.getRegistry().lookup("table", DummyTable.class);
+        table = context.getRegistry().lookupByNameAndType("table", DummyTable.class);
         table.create();
     }
 

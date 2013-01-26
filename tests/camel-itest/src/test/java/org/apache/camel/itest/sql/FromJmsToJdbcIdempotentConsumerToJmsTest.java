@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     public void setUp() throws Exception {
         super.setUp();
 
-        dataSource = context.getRegistry().lookup(getDatasourceName(), DataSource.class);
+        dataSource = context.getRegistry().lookupByNameAndType(getDatasourceName(), DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
     }
@@ -224,7 +224,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                IdempotentRepository<?> repository = context.getRegistry().lookup("messageIdRepository", IdempotentRepository.class);
+                IdempotentRepository<?> repository = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
 
                 from("activemq:queue:inbox")
                     .transacted("required")

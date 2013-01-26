@@ -18,7 +18,6 @@ package org.apache.camel.component.mina2;
 
 import java.nio.charset.Charset;
 
-import junit.framework.Assert;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -104,19 +103,19 @@ public class Mina2TransferExchangeOptionTest extends BaseMina2Test {
 
                     public void process(Exchange e) throws InterruptedException {
                         LOG.debug("Enter Processor...");
-                        Assert.assertNotNull(e.getIn().getBody());
+                        assertNotNull(e.getIn().getBody());
                         LOG.debug("Enter Processor...1");
-                        Assert.assertNotNull(e.getIn().getHeaders());
+                        assertNotNull(e.getIn().getHeaders());
                         LOG.debug("Enter Processor...2");
-                        Assert.assertNotNull(e.getProperties());
+                        assertNotNull(e.getProperties());
                         LOG.debug("Enter Processor...3");
-                        Assert.assertEquals("Hello!", e.getIn().getBody());
+                        assertEquals("Hello!", e.getIn().getBody());
                         LOG.debug("Enter Processor...4");
-                        Assert.assertEquals("feta", e.getIn().getHeader("cheese"));
+                        assertEquals("feta", e.getIn().getHeader("cheese"));
                         LOG.debug("Enter Processor...5");
-                        Assert.assertEquals("old", e.getProperty("ham"));
+                        assertEquals("old", e.getProperty("ham"));
                         LOG.debug("Enter Processor...6");
-                        Assert.assertEquals(ExchangePattern.InOut, e.getPattern());
+                        assertEquals(ExchangePattern.InOut, e.getPattern());
                         LOG.debug("Enter Processor...7");
                         Boolean setException = (Boolean) e.getProperty("setException");
 

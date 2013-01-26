@@ -36,11 +36,20 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
     private final CamelContext camelContext;
     private final String resourceUri;
     private final String resourcePath;
+    private String relatedURI;
 
     public DefaultLSResourceResolver(CamelContext camelContext, String resourceUri) {
         this.camelContext = camelContext;
         this.resourceUri = resourceUri;
         this.resourcePath = FileUtil.onlyPath(resourceUri);
+    }
+    
+    private String getUri(String systemId) {
+        if (resourcePath != null) {
+            return FileUtil.onlyPath(resourceUri) + "/" + systemId;
+        } else {
+            return systemId;
+        }
     }
 
     @Override
@@ -50,7 +59,13 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             throw new IllegalArgumentException(String.format("Resource: %s refers an invalid resource without SystemId."
                     + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s", resourceUri, type, namespaceURI, publicId, systemId, baseURI));
         }
-        return new DefaultLSInput(publicId, systemId, baseURI);
+        // Build up the relative path for using
+        if (baseURI == null) {
+            relatedURI = getUri(systemId);
+        } else {
+            relatedURI = FileUtil.onlyPath(relatedURI) + "/" + systemId;
+        }
+        return new DefaultLSInput(publicId, systemId, baseURI, relatedURI);
     }
     
     private final class DefaultLSInput implements LSInput {
@@ -58,51 +73,31 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         private final String publicId;
         private final String systemId;
         private final String baseURI;
+        private final String relatedURI;
         private final String uri;
+        
 
-        private DefaultLSInput(String publicId, String systemId, String baseURI) {
+        private DefaultLSInput(String publicId, String systemId, String basedURI, String relatedURI) {
             this.publicId = publicId;
             this.systemId = systemId;
-            this.baseURI = baseURI;
+            this.baseURI = basedURI;
+            this.relatedURI = relatedURI;
             this.uri = getInputUri();
         }
         
         
         private String getInputUri() {
             // find the xsd with relative path
-            if (ObjectHelper.isNotEmpty(baseURI)) {
-                String inputUri = getUri(getRelativePath(baseURI));
+            if (ObjectHelper.isNotEmpty(relatedURI)) {
                 try {
-                    ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), inputUri);
-                    return inputUri;
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), relatedURI);
+                    return relatedURI;
                 } catch (IOException e) {
                    // ignore the exception
                 }
             }
             // don't use the relative path
             return getUri("");
-        }
-        
-        private String getRelativePath(String base) {
-            String userDir = "";
-            String answer = "";
-            if (ObjectHelper.isNotEmpty(base)) {
-                try {
-                    userDir = FileUtil.getUserDir().toURI().toASCIIString();
-                } catch (Exception ex) {
-                    // do nothing here
-                }
-                // get the relative path from the userdir
-                if (ObjectHelper.isNotEmpty(base) && base.startsWith("file://") && userDir.startsWith("file:")) {
-                    // skip the protocol part
-                    base = base.substring(7);
-                    userDir = userDir.substring(5);
-                    if (base.startsWith(userDir)) {
-                        answer = FileUtil.onlyPath(base.substring(userDir.length())) + "/";
-                    }
-                }
-            }
-            return answer;
         }
         
         private String getUri(String relativePath) {

@@ -34,6 +34,8 @@ public class CommandDispatcher {
         this.exchange = exchange;
     }
 
+    // TODO: This method is longer than maximally allowed 200 lines
+    // CHECKSTYLE:OFF
     public void execute(final RedisClient redisClient) {
         switch (determineCommand()) {
 
@@ -338,6 +340,7 @@ public class CommandDispatcher {
             throw new RuntimeExchangeException("Unsupported command", exchange);
         }
     }
+    // CHECKSTYLE:ON
 
     private Command determineCommand() {
         String command = exchange.getIn().getHeader(RedisConstants.COMMAND, String.class);

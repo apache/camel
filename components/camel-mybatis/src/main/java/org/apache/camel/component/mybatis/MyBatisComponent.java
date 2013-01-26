@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
@@ -42,9 +43,9 @@ public class MyBatisComponent extends DefaultComponent {
         return answer;
     }
 
-    private SqlSessionFactory createSqlSessionFactory() throws IOException {
+    protected SqlSessionFactory createSqlSessionFactory() throws IOException {
         ObjectHelper.notNull(configurationUri, "configurationUri", this);
-        InputStream is = getCamelContext().getClassResolver().loadResourceAsStream(configurationUri);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationUri);
         try {
             return new SqlSessionFactoryBuilder().build(is);
         } finally {
@@ -52,10 +53,7 @@ public class MyBatisComponent extends DefaultComponent {
         }
     }
 
-    public synchronized SqlSessionFactory getSqlSessionFactory() throws IOException {
-        if (sqlSessionFactory == null) {
-            sqlSessionFactory = createSqlSessionFactory();
-        }
+    public SqlSessionFactory getSqlSessionFactory() {
         return sqlSessionFactory;
     }
 
@@ -69,5 +67,19 @@ public class MyBatisComponent extends DefaultComponent {
 
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (sqlSessionFactory == null) {
+            sqlSessionFactory = createSqlSessionFactory();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
     }
 }

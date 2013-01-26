@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
@@ -42,11 +43,11 @@ public class CompositeRegistry implements Registry {
         registryList.add(registry);
     }
 
-    public <T> T lookup(String name, Class<T> type) {
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
         T answer = null;
         for (Registry registry : registryList) {
             try {
-                answer = registry.lookup(name, type);
+                answer = registry.lookupByNameAndType(name, type);
                 if (answer != null) {
                     break;
                 }
@@ -62,10 +63,10 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
-    public Object lookup(String name) {
+    public Object lookupByName(String name) {
         Object answer = null;
         for (Registry registry : registryList) {
-            answer = registry.lookup(name);
+            answer = registry.lookupByName(name);
             if (answer != null) {
                 break;
             }
@@ -73,10 +74,10 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        Map<String, T> answer = Collections.<String, T>emptyMap();
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
+        Map<String, T> answer = Collections.emptyMap();
         for (Registry registry : registryList) {
-            answer = registry.lookupByType(type);
+            answer = registry.findByTypeWithName(type);
             if (!answer.isEmpty()) {
                 break;
             }
@@ -84,4 +85,26 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
+    public <T> Set<T> findByType(Class<T> type) {
+        Set<T> answer = Collections.emptySet();
+        for (Registry registry : registryList) {
+            answer = registry.findByType(type);
+            if (!answer.isEmpty()) {
+                break;
+            }
+        }
+        return answer;
+    }
+
+    public Object lookup(String name) {
+        return lookupByName(name);
+    }
+
+    public <T> T lookup(String name, Class<T> type) {
+        return lookupByNameAndType(name, type);
+    }
+
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return findByTypeWithName(type);
+    }
 }

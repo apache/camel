@@ -64,7 +64,7 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         if (ref != null && exception == null) {
-            this.exception = routeContext.getCamelContext().getRegistry().lookup(ref, Exception.class);
+            this.exception = routeContext.getCamelContext().getRegistry().lookupByNameAndType(ref, Exception.class);
         }
 
         ObjectHelper.notNull(exception, "exception or ref", this);

@@ -91,7 +91,7 @@ public class LdapProducer extends DefaultProducer {
         // On the other hand if you have a DirContext that is able to support concurrency
         // then using the default singleton scope is entirely sufficient. Most DirContext
         // classes will require prototype scope though.
-        DirContext dirContext = (DirContext) getEndpoint().getCamelContext().getRegistry().lookup(remaining);
+        DirContext dirContext = (DirContext) getEndpoint().getCamelContext().getRegistry().lookupByName(remaining);
         return dirContext;
     }
 

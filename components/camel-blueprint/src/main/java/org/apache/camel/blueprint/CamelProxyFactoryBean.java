@@ -93,7 +93,7 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
 
             // lookup endpoint or we have the url for it
             if (getServiceRef() != null) {
-                endpoint = getCamelContext().getRegistry().lookup(getServiceRef(), Endpoint.class);
+                endpoint = getCamelContext().getRegistry().lookupByNameAndType(getServiceRef(), Endpoint.class);
             } else {
                 endpoint = getCamelContext().getEndpoint(getServiceUrl());
             }

@@ -645,7 +645,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         log.trace("getCurrentDirectory()");
         try {
-            return client.printWorkingDirectory();
+            String answer = client.printWorkingDirectory();
+            log.trace("Current dir: {}", answer);
+            return answer;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }

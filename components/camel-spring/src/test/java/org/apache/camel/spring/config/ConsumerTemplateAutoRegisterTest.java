@@ -19,15 +19,16 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.impl.DefaultConsumerTemplate;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class ConsumerTemplateAutoRegisterTest extends AbstractJUnit38SpringContextTests {
+public class ConsumerTemplateAutoRegisterTest extends SpringRunWithTestSupport {
 
     @Autowired
     private ConsumerTemplate template;
@@ -35,11 +36,12 @@ public class ConsumerTemplateAutoRegisterTest extends AbstractJUnit38SpringConte
     @Autowired
     private CamelContext context;
 
+    @Test
     public void testHasTemplate() {
         assertNotNull("Should have injected a consumer template", template);
         assertNotNull("The template context should not be null", ((DefaultConsumerTemplate)template).getCamelContext());
 
-        ConsumerTemplate lookup = context.getRegistry().lookup("consumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
         assertNotNull("Should lookup consumer template", lookup);
     }
 }

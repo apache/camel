@@ -22,18 +22,19 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
+public class SpringFileRouteTest extends SpringRunWithTestSupport {
     protected String expectedBody = "Hello World!";
     @Autowired
     protected ProducerTemplate template;
@@ -42,9 +43,10 @@ public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
+    @Test
     public void testMocksAreValid() throws Exception {
         // lets check that our injected endpoint is valid
-        FileEndpoint fileEndpoint = TestSupport.assertIsInstanceOf(FileEndpoint.class, inputFile);
+        FileEndpoint fileEndpoint = assertIsInstanceOf(FileEndpoint.class, inputFile);
         assertEquals("File", new File("target/test-default-inbox"), fileEndpoint.getFile());
 
         result.expectedBodiesReceived(expectedBody);
@@ -55,9 +57,9 @@ public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
         result.assertIsSatisfied();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        TestSupport.deleteDirectory("target/test-default-inbox");
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory("target/test-default-inbox");
         super.setUp();
     }
 }

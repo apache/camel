@@ -210,7 +210,7 @@ public class XPathExpression extends NamespaceAwareExpression {
 
         // Validate the factory class
         if (ObjectHelper.isNotEmpty(factoryRef)) {
-            xpathFactory = camelContext.getRegistry().lookup(factoryRef, XPathFactory.class);
+            xpathFactory = camelContext.getRegistry().lookupByNameAndType(factoryRef, XPathFactory.class);
             if (xpathFactory == null) {
                 throw new IllegalArgumentException("The provided XPath Factory is invalid; either it cannot be resolved or it is not an XPathFactory instance");
             }

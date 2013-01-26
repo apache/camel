@@ -35,7 +35,7 @@ public class BlueprintDataFormatResolver extends OsgiDataFormatResolver {
     @Override
     public DataFormat resolveDataFormat(String name, CamelContext context) {
         try {
-            Object bean = context.getRegistry().lookup(".camelBlueprint.dataformatResolver." + name);
+            Object bean = context.getRegistry().lookupByName(".camelBlueprint.dataformatResolver." + name);
             if (bean instanceof DataFormatResolver) {
                 LOG.debug("Found dataformat resolver: {} in registry: {}", name, bean);
                 return ((DataFormatResolver) bean).resolveDataFormat(name, context);

@@ -73,7 +73,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
 
     private JobLauncher resolveJobLauncher() {
         if (jobLauncherRef != null) {
-            JobLauncher jobLauncher = getCamelContext().getRegistry().lookup(jobLauncherRef, JobLauncher.class);
+            JobLauncher jobLauncher = getCamelContext().getRegistry().lookupByNameAndType(jobLauncherRef, JobLauncher.class);
             if (jobLauncher == null) {
                 throw new IllegalStateException(String.format("No JobLauncher named %s found in the registry.", jobLauncherRef));
             }

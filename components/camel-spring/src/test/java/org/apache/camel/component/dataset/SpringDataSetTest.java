@@ -18,18 +18,20 @@ package org.apache.camel.component.dataset;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class SpringDataSetTest extends AbstractJUnit38SpringContextTests {
+public class SpringDataSetTest extends SpringRunWithTestSupport {
     @Autowired
     protected CamelContext camelContext;
 
+    @Test
     public void testRun() throws Exception {
         MockEndpoint.assertIsSatisfied(camelContext);
     }

@@ -29,8 +29,6 @@
          http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
          http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
   <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
   <context:property-placeholder location="classpath:loanbroker.properties,file:target/custom.properties"
                                 ignore-resource-not-found="true"/>

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.blueprint;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,11 +38,13 @@ public class BlueprintContainerRegistry implements Registry {
         this.blueprintContainer = blueprintContainer;
     }
 
-    public Object lookup(String name) {
+    @Override
+    public Object lookupByName(String name) {
         return blueprintContainer.getComponentInstance(name);
     }
 
-    public <T> T lookup(String name, Class<T> type) {
+    @Override
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object answer;
         try {
             answer = blueprintContainer.getComponentInstance(name);
@@ -63,8 +66,30 @@ public class BlueprintContainerRegistry implements Registry {
         }
     }
 
-    public <T> Map<String, T> lookupByType(Class<T> type) {
+    @Override
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         return lookupByType(blueprintContainer, type);
+    }
+
+    @Override
+    public <T> Set<T> findByType(Class<T> type) {
+        Map<String, T> map = lookupByType(blueprintContainer, type);
+        return new HashSet<T>(map.values());
+    }
+
+    @Override
+    public Object lookup(String name) {
+        return lookupByName(name);
+    }
+
+    @Override
+    public <T> T lookup(String name, Class<T> type) {
+        return lookupByNameAndType(name, type);
+    }
+
+    @Override
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return findByTypeWithName(type);
     }
 
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {

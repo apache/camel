@@ -41,7 +41,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         deleteDirectory("target/fileidempotent");
 
         super.setUp();
-        repo = context.getRegistry().lookup("fileStore", IdempotentRepository.class);
+        repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
 
 

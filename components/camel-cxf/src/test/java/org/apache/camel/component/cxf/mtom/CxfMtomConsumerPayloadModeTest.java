@@ -30,8 +30,6 @@ import javax.xml.xpath.XPathConstants;
 
 import org.w3c.dom.Element;
 
-import junit.framework.Assert;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -96,7 +94,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             CxfPayload<SoapHeader> in = exchange.getIn().getBody(CxfPayload.class);
             
             // verify request
-            Assert.assertEquals(1, in.getBody().size());
+            assertEquals(1, in.getBody().size());
             
             Map<String, String> ns = new HashMap<String, String>();
             ns.put("ns", MtomTestHelper.SERVICE_TYPES_NS);
@@ -107,19 +105,19 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             Element ele = (Element)xu.getValue("//ns:Detail/ns:photo/xop:Include", body,
                                                XPathConstants.NODE);
             String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
-            Assert.assertEquals(MtomTestHelper.REQ_PHOTO_CID, photoId);
+            assertEquals(MtomTestHelper.REQ_PHOTO_CID, photoId);
 
             ele = (Element)xu.getValue("//ns:Detail/ns:image/xop:Include", body,
                                                XPathConstants.NODE);
             String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
-            Assert.assertEquals(MtomTestHelper.REQ_IMAGE_CID, imageId);
+            assertEquals(MtomTestHelper.REQ_IMAGE_CID, imageId);
 
             DataHandler dr = exchange.getIn().getAttachment(photoId);
-            Assert.assertEquals("application/octet-stream", dr.getContentType());
+            assertEquals("application/octet-stream", dr.getContentType());
             MtomTestHelper.assertEquals(MtomTestHelper.REQ_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
        
             dr = exchange.getIn().getAttachment(imageId);
-            Assert.assertEquals("image/jpeg", dr.getContentType());
+            assertEquals("image/jpeg", dr.getContentType());
             MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
             // create response

@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.BeforeClass;
 import org.junit.Test;

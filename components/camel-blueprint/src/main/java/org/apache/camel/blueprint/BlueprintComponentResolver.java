@@ -36,7 +36,7 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
     @Override
     public Component resolveComponent(String name, CamelContext context) throws Exception {
         try {
-            Object bean = context.getRegistry().lookup(name);
+            Object bean = context.getRegistry().lookupByName(name);
             if (bean instanceof Component) {
                 LOG.debug("Found component: {} in registry: {}", name, bean);
                 return (Component) bean;
@@ -52,7 +52,7 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
             LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
         }
         try {
-            Object bean = context.getRegistry().lookup(".camelBlueprint.componentResolver." + name);
+            Object bean = context.getRegistry().lookupByName(".camelBlueprint.componentResolver." + name);
             if (bean instanceof ComponentResolver) {
                 LOG.debug("Found component resolver: {} in registry: {}", name, bean);
                 return ((ComponentResolver) bean).resolveComponent(name, context);

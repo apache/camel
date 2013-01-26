@@ -18,8 +18,6 @@ package org.apache.camel.dataformat.soap;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import com.example.customerservice.GetCustomersByName;
 
 import org.apache.camel.EndpointInject;
@@ -50,8 +48,8 @@ public class SoapRoundtripTest extends CamelTestSupport {
         Exchange exchange = resultEndpoint.getExchanges().get(0);
         GetCustomersByName received = exchange.getIn().getBody(
                 GetCustomersByName.class);
-        Assert.assertNotNull(received);
-        Assert.assertEquals("Mueller", received.getName());
+        assertNotNull(received);
+        assertEquals("Mueller", received.getName());
     }
 
     @Override

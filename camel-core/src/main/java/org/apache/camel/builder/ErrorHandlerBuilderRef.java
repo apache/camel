@@ -135,7 +135,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
             ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
             String otherRef = other.getRef();
             if (isErrorHandlerBuilderConfigured(otherRef)) {
-                answer = camelContext.getRegistry().lookup(otherRef, ErrorHandlerBuilder.class);
+                answer = camelContext.getRegistry().lookupByNameAndType(otherRef, ErrorHandlerBuilder.class);
                 if (answer == null) {
                     throw new IllegalArgumentException("ErrorHandlerBuilder with id " + otherRef + " not found in registry.");
                 }

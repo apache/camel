@@ -131,7 +131,7 @@
         </dependency>
         <dependency>
             <groupId>org.fusesource.scalate</groupId>
-            <artifactId>scalate-core_2.9</artifactId>
+            <artifactId>scalate-core_2.10</artifactId>
             <version>${scalate-version}</version>
         </dependency>
 
@@ -232,7 +232,7 @@
 
             <plugin>
                 <groupId>org.fusesource.scalate</groupId>
-                <artifactId>maven-scalate-plugin_2.9</artifactId>
+                <artifactId>maven-scalate-plugin_2.10</artifactId>
                 <version>${scalate-version}</version>
                 <executions>
                     <execution>

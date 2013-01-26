@@ -268,7 +268,7 @@ public final class ProcessorDefinitionHelper {
             // no there is a custom thread pool configured
             return false;
         } else if (definition.getExecutorServiceRef() != null) {
-            ExecutorService answer = routeContext.getCamelContext().getRegistry().lookup(definition.getExecutorServiceRef(), ExecutorService.class);
+            ExecutorService answer = routeContext.getCamelContext().getRegistry().lookupByNameAndType(definition.getExecutorServiceRef(), ExecutorService.class);
             // if no existing thread pool, then we will have to create a new thread pool
             return answer == null;
         } else if (useDefault) {
@@ -303,7 +303,7 @@ public final class ProcessorDefinitionHelper {
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
 
         // lookup in registry first and use existing thread pool if exists
-        ExecutorService answer = routeContext.getCamelContext().getRegistry().lookup(executorServiceRef, ExecutorService.class);
+        ExecutorService answer = routeContext.getCamelContext().getRegistry().lookupByNameAndType(executorServiceRef, ExecutorService.class);
         if (answer == null) {
             // then create a thread pool assuming the ref is a thread pool profile id
             answer = manager.newThreadPool(source, name, executorServiceRef);
@@ -380,7 +380,7 @@ public final class ProcessorDefinitionHelper {
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
 
         // lookup in registry first and use existing thread pool if exists
-        ScheduledExecutorService answer = routeContext.getCamelContext().getRegistry().lookup(executorServiceRef, ScheduledExecutorService.class);
+        ScheduledExecutorService answer = routeContext.getCamelContext().getRegistry().lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
         if (answer == null) {
             // then create a thread pool assuming the ref is a thread pool profile id
             answer = manager.newScheduledThreadPool(source, name, executorServiceRef);

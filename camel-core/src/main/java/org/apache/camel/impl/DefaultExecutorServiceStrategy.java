@@ -72,7 +72,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public ExecutorService lookup(Object source, String name, String executorServiceRef) {
-        ExecutorService answer = camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
+        ExecutorService answer = camelContext.getRegistry().lookupByNameAndType(executorServiceRef, ExecutorService.class);
         if (answer == null) {
             // try to see if we got a thread pool profile with that id
             answer = newThreadPool(source, name, executorServiceRef);
@@ -81,7 +81,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public ScheduledExecutorService lookupScheduled(Object source, String name, String executorServiceRef) {
-        ScheduledExecutorService answer = camelContext.getRegistry().lookup(executorServiceRef, ScheduledExecutorService.class);
+        ScheduledExecutorService answer = camelContext.getRegistry().lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
         if (answer == null) {
             ThreadPoolProfile profile = getThreadPoolProfile(executorServiceRef);
             if (profile != null) {

@@ -725,7 +725,7 @@
     <bundle>mvn:org.apache.camel/camel-saxon/${project.version}</bundle>
   </feature>
   <feature name='camel-scala' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.scala-library/${scala-library-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala/${project.version}</bundle>
   </feature>

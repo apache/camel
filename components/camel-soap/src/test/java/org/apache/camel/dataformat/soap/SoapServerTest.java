@@ -19,8 +19,6 @@ package org.apache.camel.dataformat.soap;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.Assert;
-
 import com.example.customerservice.GetCustomersByName;
 
 import org.apache.camel.Produce;
@@ -56,7 +54,7 @@ public class SoapServerTest extends CamelTestSupport {
         InputStream responseIs = this.getClass().getResourceAsStream(responseResource);
         Object reply = producer.requestBody(requestIs);
         String replySt = context.getTypeConverter().convertTo(String.class, reply);
-        Assert.assertEquals(TestUtil.readStream(responseIs), replySt);
+        assertEquals(TestUtil.readStream(responseIs), replySt);
     }
 
     @Override

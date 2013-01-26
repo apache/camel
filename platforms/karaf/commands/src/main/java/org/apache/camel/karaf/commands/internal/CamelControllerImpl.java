@@ -28,7 +28,6 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Implementation of <code>CamelController</code>.
  */
@@ -89,7 +88,7 @@ public class CamelControllerImpl implements CamelController {
         }
         return null;
     }
-    
+
     public List<Route> getRoutes(String camelContextName, String filter) {
         List<Route> routes = null;
         if (camelContextName != null) {

@@ -17,7 +17,7 @@
 package org.apache.camel.example.reportincident;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -809,7 +809,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     public void setKeyOrTrustStoreParametersId(String registryId) {
         this.keyOrTrustStoreParametersId = registryId;
         if (camelContext != null) {
-            Object parametersObj = camelContext.getRegistry().lookup(this.keyOrTrustStoreParametersId);
+            Object parametersObj = camelContext.getRegistry().lookupByName(this.keyOrTrustStoreParametersId);
             if (parametersObj instanceof KeyStoreParameters) {
                 this.keyOrTrustStoreParameters = (KeyStoreParameters)parametersObj;
             } else {

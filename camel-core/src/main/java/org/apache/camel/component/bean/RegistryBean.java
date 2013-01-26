@@ -133,6 +133,6 @@ public class RegistryBean implements BeanHolder {
     }
 
     protected Object lookupBean() {
-        return registry.lookup(name);
+        return registry.lookupByName(name);
     }
 }

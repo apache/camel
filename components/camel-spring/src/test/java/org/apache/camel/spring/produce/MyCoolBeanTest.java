@@ -16,12 +16,14 @@
  */
 package org.apache.camel.spring.produce;
 
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class MyCoolBeanTest extends AbstractJUnit38SpringContextTests {
+public class MyCoolBeanTest extends AbstractJUnit4SpringContextTests {
 
+    @Test
     public void testProducerTemplate() throws Exception {
         MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
         cool.sendMsg();

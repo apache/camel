@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.fusesource.hawtbuf.Buffer;
@@ -227,7 +228,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
-            it.close();
+            IOHelper.close(it);
         }
 
         return Collections.unmodifiableSet(keys);
@@ -262,7 +263,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
-            it.close();
+            IOHelper.close(it);
         }
 
         if (answer.size() == 0) {
@@ -309,7 +310,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
-            it.close();
+            IOHelper.close(it);
         }
 
         LOG.debug("Size of repository [{}] -> {}", repositoryName, count);

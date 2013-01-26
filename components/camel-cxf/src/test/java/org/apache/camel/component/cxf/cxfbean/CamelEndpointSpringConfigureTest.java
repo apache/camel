@@ -24,7 +24,7 @@ import org.apache.camel.component.cxf.CxfProducer;
 import org.apache.camel.component.cxf.transport.CamelConduit;
 import org.apache.camel.component.cxf.transport.CamelDestination;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

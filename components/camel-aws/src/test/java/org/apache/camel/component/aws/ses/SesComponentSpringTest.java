@@ -22,7 +22,7 @@ import java.util.List;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -37,7 +37,7 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         
-        sesClient = context.getRegistry().lookup("amazonSESClient", AmazonSESClientMock.class);
+        sesClient = context.getRegistry().lookupByNameAndType("amazonSESClient", AmazonSESClientMock.class);
     }
 
     @Test

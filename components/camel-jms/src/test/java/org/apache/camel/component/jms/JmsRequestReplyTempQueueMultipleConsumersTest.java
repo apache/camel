@@ -23,16 +23,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.broker.TransportConnection;
 import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -45,7 +41,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupport {
 
     private Map<String, AtomicInteger> msgsPerThread = new ConcurrentHashMap<String, AtomicInteger>();
-    private BrokerService broker;
     private PooledConnectionFactory connectionFactory;
     
     @Test
@@ -71,8 +66,10 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(files);
-        getMockEndpoint("mock:result").expectsNoDuplicates(body());
+        resetMocks();
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(files);
+        mockEndpoint.expectsNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
@@ -86,24 +83,11 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         }
 
         assertMockEndpointsSatisfied();
-        resetMocks();
         executor.shutdownNow();
     }
     
-    public void startBroker() throws Exception {
-        String brokerName = "test-broker-" + System.currentTimeMillis();
-        String brokerUri = "vm://" + brokerName;
-        broker = new BrokerService();
-        broker.setBrokerName(brokerName);
-        broker.setBrokerId(brokerName);
-        broker.addConnector(brokerUri);
-        broker.setPersistent(false);
-        broker.start();
-    }
-
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        //startBroker();
         
         connectionFactory = (PooledConnectionFactory) CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
@@ -116,26 +100,22 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start")
-                    .inOut("jms:queue:foo?concurrentConsumers=10&maxConcurrentConsumers=20&recoveryInterval=10")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String threadName = Thread.currentThread().getName();
-                            synchronized (msgsPerThread) {
-                               AtomicInteger count = msgsPerThread.get(threadName);
-                               if (count == null) {
-                                   count = new AtomicInteger(0);
-                                   msgsPerThread.put(threadName, count);
-                               }
-                               count.incrementAndGet();
+                from("seda:start").inOut("jms:queue:foo?concurrentConsumers=10&maxConcurrentConsumers=20&recoveryInterval=10").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String threadName = Thread.currentThread().getName();
+                        synchronized (msgsPerThread) {
+                            AtomicInteger count = msgsPerThread.get(threadName);
+                            if (count == null) {
+                                count = new AtomicInteger(0);
+                                msgsPerThread.put(threadName, count);
                             }
+                            count.incrementAndGet();
                         }
-                    })
-                    .to("mock:result");
+                    }
+                }).to("mock:result");
 
-                from("jms:queue:foo?concurrentConsumers=20&recoveryInterval=10")
-                    .setBody(simple("Reply >>> ${body}"));
+                from("jms:queue:foo?concurrentConsumers=20&recoveryInterval=10").setBody(simple("Reply >>> ${body}"));
             }
         };
     }

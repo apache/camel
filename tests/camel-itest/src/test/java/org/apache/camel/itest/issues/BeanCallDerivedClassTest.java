@@ -16,7 +16,7 @@
  */
 package org.apache.camel.itest.issues;
 
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -32,7 +32,7 @@ public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
 
     @Test
     public void testCallBean() throws Exception {
-        DerivedClass derived = context.getRegistry().lookup("derived", DerivedClass.class);
+        DerivedClass derived = context.getRegistry().lookupByNameAndType("derived", DerivedClass.class);
 
         template.sendBody("direct:start", "Hello World");
         assertEquals("Hello World", derived.getBody());

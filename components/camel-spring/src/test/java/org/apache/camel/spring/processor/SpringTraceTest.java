@@ -17,19 +17,21 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version 
  */
 @ContextConfiguration
-public class SpringTraceTest extends AbstractJUnit38SpringContextTests {
+public class SpringTraceTest extends SpringRunWithTestSupport {
 
     @Autowired
     protected ProducerTemplate camelTemplate;
 
+    @Test
     public void testTracing() throws Exception {
         camelTemplate.sendBody("Hello");
         camelTemplate.sendBody(1234);

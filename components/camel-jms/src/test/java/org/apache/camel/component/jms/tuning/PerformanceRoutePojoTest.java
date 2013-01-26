@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms.tuning;
 
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Ignore;
 import org.junit.Test;

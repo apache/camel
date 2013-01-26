@@ -20,7 +20,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;

@@ -17,7 +17,9 @@
 package org.apache.camel.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
@@ -29,12 +31,12 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
 
     private static final long serialVersionUID = -3739035212761568984L;
 
-    public Object lookup(String name) {
+    public Object lookupByName(String name) {
         return get(name);
     }
 
-    public <T> T lookup(String name, Class<T> type) {
-        Object answer = lookup(name);
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
+        Object answer = lookupByName(name);
 
         // just to be safe
         if (answer == null) {
@@ -50,7 +52,7 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
         }
     }
 
-    public <T> Map<String, T> lookupByType(Class<T> type) {
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> result = new HashMap<String, T>();
         for (Map.Entry<String, Object> entry : entrySet()) {
             if (type.isInstance(entry.getValue())) {
@@ -59,5 +61,26 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
         }
         return result;
     }
-    
+
+    public <T> Set<T> findByType(Class<T> type) {
+        Set<T> result = new HashSet<T>();
+        for (Map.Entry<String, Object> entry : entrySet()) {
+            if (type.isInstance(entry.getValue())) {
+                result.add(type.cast(entry.getValue()));
+            }
+        }
+        return result;
+    }
+
+    public Object lookup(String name) {
+        return lookupByName(name);
+    }
+
+    public <T> T lookup(String name, Class<T> type) {
+        return lookupByNameAndType(name, type);
+    }
+
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return findByTypeWithName(type);
+    }
 }

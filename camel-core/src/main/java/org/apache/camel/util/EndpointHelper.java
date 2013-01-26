@@ -408,7 +408,7 @@ public final class EndpointHelper {
             return null;
         }
 
-        Map<String, Endpoint> map = endpoint.getCamelContext().getRegistry().lookupByType(Endpoint.class);
+        Map<String, Endpoint> map = endpoint.getCamelContext().getRegistry().findByTypeWithName(Endpoint.class);
         for (Map.Entry<String, Endpoint> entry : map.entrySet()) {
             if (entry.getValue().equals(endpoint)) {
                 return entry.getKey();

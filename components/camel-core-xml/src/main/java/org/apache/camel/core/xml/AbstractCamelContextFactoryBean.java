@@ -199,7 +199,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().getManagementStrategy().setEventFactory(eventFactory);
         }
         // set the event notifier strategies if defined
-        Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().lookupByType(EventNotifier.class);
+        Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().findByTypeWithName(EventNotifier.class);
         if (eventNotifiers != null && !eventNotifiers.isEmpty()) {
             for (Entry<String, EventNotifier> entry : eventNotifiers.entrySet()) {
                 EventNotifier notifier = entry.getValue();
@@ -211,7 +211,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
         }
         // set endpoint strategies if defined
-        Map<String, EndpointStrategy> endpointStrategies = getContext().getRegistry().lookupByType(EndpointStrategy.class);
+        Map<String, EndpointStrategy> endpointStrategies = getContext().getRegistry().findByTypeWithName(EndpointStrategy.class);
         if (endpointStrategies != null && !endpointStrategies.isEmpty()) {
             for (Entry<String, EndpointStrategy> entry : endpointStrategies.entrySet()) {
                 EndpointStrategy strategy = entry.getValue();
@@ -226,7 +226,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setShutdownStrategy(shutdownStrategy);
         }
         // add global interceptors
-        Map<String, InterceptStrategy> interceptStrategies = getContext().getRegistry().lookupByType(InterceptStrategy.class);
+        Map<String, InterceptStrategy> interceptStrategies = getContext().getRegistry().findByTypeWithName(InterceptStrategy.class);
         if (interceptStrategies != null && !interceptStrategies.isEmpty()) {
             for (Entry<String, InterceptStrategy> entry : interceptStrategies.entrySet()) {
                 InterceptStrategy strategy = entry.getValue();
@@ -238,7 +238,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
         }
         // set the lifecycle strategy if defined
-        Map<String, LifecycleStrategy> lifecycleStrategies = getContext().getRegistry().lookupByType(LifecycleStrategy.class);
+        Map<String, LifecycleStrategy> lifecycleStrategies = getContext().getRegistry().findByTypeWithName(LifecycleStrategy.class);
         if (lifecycleStrategies != null && !lifecycleStrategies.isEmpty()) {
             for (Entry<String, LifecycleStrategy> entry : lifecycleStrategies.entrySet()) {
                 LifecycleStrategy strategy = entry.getValue();
@@ -561,7 +561,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         Set<String> defaultIds = new HashSet<String>();
 
         // lookup and use custom profiles from the registry
-        Map<String, ThreadPoolProfile> profiles = context.getRegistry().lookupByType(ThreadPoolProfile.class);
+        Map<String, ThreadPoolProfile> profiles = context.getRegistry().findByTypeWithName(ThreadPoolProfile.class);
         if (profiles != null && !profiles.isEmpty()) {
             for (Entry<String, ThreadPoolProfile> entry : profiles.entrySet()) {
                 ThreadPoolProfile profile = entry.getValue();

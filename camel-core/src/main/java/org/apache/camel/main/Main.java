@@ -72,7 +72,7 @@ public class Main extends MainSupport {
      * Using the given <code>name</code> does lookup for the bean being already
      * bound using the {@link #bind(String, Object)} method.
      * 
-     * @see Registry#lookup(String)
+     * @see Registry#lookupByName(String)
      */
     public Object lookup(String name) {
         return registry.get(name);
@@ -83,20 +83,20 @@ public class Main extends MainSupport {
      * the bean being already bound using the {@link #bind(String, Object)}
      * method.
      * 
-     * @see Registry#lookup(String, Class)
+     * @see Registry#lookupByNameAndType(String, Class)
      */
     public <T> T lookup(String name, Class<T> type) {
-        return registry.lookup(name, type);
+        return registry.lookupByNameAndType(name, type);
     }
 
     /**
      * Using the given <code>type</code> does lookup for the bean being already
      * bound using the {@link #bind(String, Object)} method.
      * 
-     * @see Registry#lookupByType(Class)
+     * @see Registry#findByTypeWithName(Class)
      */
     public <T> Map<String, T> lookupByType(Class<T> type) {
-        return registry.lookupByType(type);
+        return registry.findByTypeWithName(type);
     }    
     
     // Implementation methods

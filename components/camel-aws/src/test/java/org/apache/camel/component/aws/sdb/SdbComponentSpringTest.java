@@ -29,7 +29,7 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultProducerTemplate;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -44,7 +44,7 @@ public class SdbComponentSpringTest extends CamelSpringTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         
-        amazonSDBClient = context.getRegistry().lookup("amazonSDBClient", AmazonSDBClientMock.class);
+        amazonSDBClient = context.getRegistry().lookupByNameAndType("amazonSDBClient", AmazonSDBClientMock.class);
     }
     
     @Test

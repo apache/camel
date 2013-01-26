@@ -41,13 +41,13 @@ public class DatabaseBean {
     public void create() throws Exception {
         JdbcTemplate jdbc = new JdbcTemplate(dataSource);
 
-        String sql = "create table orders (\n" +
-                "  id integer primary key,\n" +
-                "  item varchar(10),\n" +
-                "  amount varchar(5),\n" +
-                "  description varchar(30),\n" +
-                "  processed boolean\n" +
-                ")";
+        String sql = "create table orders (\n"
+              + "  id integer primary key,\n"
+              + "  item varchar(10),\n"
+              + "  amount varchar(5),\n"
+              + "  description varchar(30),\n"
+              + "  processed boolean\n"
+              + ")";
 
         LOG.info("Creating table orders ...");
 

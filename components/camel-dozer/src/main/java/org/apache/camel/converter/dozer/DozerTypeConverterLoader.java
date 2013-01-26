@@ -105,7 +105,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
         BeanContainer.getInstance().setClassLoader(adapter);
         
-        Map<String, DozerBeanMapper> mappers = new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().lookupByType(DozerBeanMapper.class));
+        Map<String, DozerBeanMapper> mappers = new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapper.class));
         if (mapper != null) {
             mappers.put("parameter", mapper);
         }

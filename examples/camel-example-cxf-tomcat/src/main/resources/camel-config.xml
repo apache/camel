@@ -26,8 +26,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-
   <bean id="myRoutes" class="org.apache.camel.example.cxf.CamelRoute"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">

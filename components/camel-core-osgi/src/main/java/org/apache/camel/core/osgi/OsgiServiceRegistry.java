@@ -16,9 +16,12 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -43,9 +46,8 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
 
     /**
      * Support to lookup the Object with filter with the (name=NAME) and class type
-     * 
      */
-    public <T> T lookup(String name, Class<T> type) {
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object service = serviceCacheMap.get(name);
         if (service == null) {
             ServiceReference<?> sr  = null;
@@ -70,7 +72,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
     /**
      * It's only support to look up the ServiceReference with Class name
      */
-    public Object lookup(String name) {
+    public Object lookupByName(String name) {
         Object service = serviceCacheMap.get(name);
         if (service == null) {
             ServiceReference<?> sr = bundleContext.getServiceReference(name);            
@@ -87,7 +89,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         return service;
     }
 
-    public <T> Map<String, T> lookupByType(Class<T> type) {
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> result = new HashMap<String, T>();
         try {
             ServiceReference<?>[] refs = bundleContext.getAllServiceReferences(type.getName(), null);
@@ -109,6 +111,23 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
             throw ObjectHelper.wrapRuntimeCamelException(ex);
         }
         return result;
+    }
+
+    public <T> Set<T> findByType(Class<T> type) {
+        Map<String, T> map = findByTypeWithName(type);
+        return new HashSet<T>(map.values());
+    }
+
+    public Object lookup(String name) {
+        return lookupByName(name);
+    }
+
+    public <T> T lookup(String name, Class<T> type) {
+        return lookupByNameAndType(name, type);
+    }
+
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return findByTypeWithName(type);
     }
 
     @Override
