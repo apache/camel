@@ -105,8 +105,18 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy,
                                          Exchange exchange, GenericFile<T> file) {
         if (endpoint.isIdempotent()) {
+
+            // use absolute file path as default key, but evaluate if an expression key was configured
+            String key = absoluteFileName;
+            if (endpoint.getIdempotentKey() != null) {
+                Exchange dummy = endpoint.createExchange(file);
+                key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+            }
+
             // only add to idempotent repository if we could process the file
-            endpoint.getIdempotentRepository().add(absoluteFileName);
+            if (key != null) {
+                endpoint.getIdempotentRepository().add(key);
+            }
         }
 
         // must be last in batch to delete the done file name

@@ -85,6 +85,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Expression preMove;
     protected Expression moveExisting;
     protected Boolean idempotent;
+    protected Expression idempotentKey;
     protected IdempotentRepository<String> idempotentRepository;
     protected GenericFileFilter<T> filter;
     protected AntPathMatcherGenericFileFilter<T> antFilter;
@@ -421,6 +422,18 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     public void setIdempotent(Boolean idempotent) {
         this.idempotent = idempotent;
+    }
+
+    public Expression getIdempotentKey() {
+        return idempotentKey;
+    }
+
+    public void setIdempotentKey(Expression idempotentKey) {
+        this.idempotentKey = idempotentKey;
+    }
+
+    public void setIdempotentKey(String expression) {
+        this.idempotentKey = createFileLanguageExpression(expression);
     }
 
     public IdempotentRepository<String> getIdempotentRepository() {
