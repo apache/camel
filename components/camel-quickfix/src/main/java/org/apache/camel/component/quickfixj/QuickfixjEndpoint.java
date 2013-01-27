@@ -66,17 +66,14 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.info("Creating QuickFIX/J consumer: "
-            + (sessionID != null ? sessionID : "No Session")
-            + ", ExchangePattern=" + getExchangePattern());
+        LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
         consumers.add(consumer);
         return consumer;
     }
 
     public Producer createProducer() throws Exception {
-        LOG.info("Creating QuickFIX/J producer: "
-            + (sessionID != null ? sessionID : "No Session"));
+        LOG.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
         if (isWildcarded()) {
             throw new ResolveEndpointFailedException("Cannot create consumer on wildcarded session identifier: " + sessionID);
         }

@@ -19,8 +19,8 @@ package org.apache.camel.component.quickfixj.examples;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
@@ -96,7 +96,7 @@ public class AuthenticationExample {
     }
     
     public static class LogonAuthenticator {
-        public void authenticate(Exchange exchange) throws RejectLogon, InvalidPayloadException, FieldNotFound {
+        public void authenticate(Exchange exchange) throws RejectLogon, CamelExchangeException, FieldNotFound {
             LOG.info("Acceptor is rejecting logon for " + exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY));
             Message message = exchange.getIn().getMandatoryBody(Message.class);
             if (message.isSetField(RawData.FIELD)) {
@@ -113,7 +113,7 @@ public class AuthenticationExample {
             this.password = password;
         }
 
-        public void inject(Exchange exchange) throws InvalidPayloadException {
+        public void inject(Exchange exchange) throws CamelExchangeException {
             LOG.info("Injecting password into outgoing logon message");
             Message message = exchange.getIn().getMandatoryBody(Message.class);
             message.setString(RawData.FIELD, password);
