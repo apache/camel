@@ -49,9 +49,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
         Message camelMessage = exchange.getOut();
         quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Sending FIX message reply: " + quickfixjMessage.toString());
-        }
+        log.debug("Sending FIX message reply: {}", quickfixjMessage);
 
         SessionID messageSessionID = MessageUtils.getReverseSessionID(exchange.getIn().getBody(quickfix.Message.class));
 

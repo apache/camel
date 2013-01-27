@@ -24,9 +24,6 @@ import quickfix.Dictionary;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
 
-/**
- *
- */
 public class QuickfixjConfiguration {
 
     private Map<Object, Object> defaultSettings;
