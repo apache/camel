@@ -74,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint</artifactId>
+            <artifactId>org.apache.aries.blueprint.core</artifactId>
         </dependency>
 
         <!-- for testing -->
