@@ -108,7 +108,7 @@ public class FailoverRoutePolicyTest extends ZooKeeperTestSupport {
         }
 
         public void configure() throws Exception {
-            ZooKeeperRoutePolicy policy = new ZooKeeperRoutePolicy("zookeeper:localhost:39913/someapp/somepolicy", 1);
+            ZooKeeperRoutePolicy policy = new ZooKeeperRoutePolicy("zookeeper:localhost:" + getServerPort() + "/someapp/somepolicy", 1);
             from("vm:" + routename).routePolicy(policy).id(routename).to("mock:controlled");
         }
     };

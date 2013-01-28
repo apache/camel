@@ -32,6 +32,7 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -57,17 +58,18 @@ import org.slf4j.LoggerFactory;
 public class ZooKeeperTestSupport extends CamelTestSupport {
 
     protected static TestZookeeperServer server;
-    
     protected static TestZookeeperClient client;
 
+    private static volatile int port;
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperTestSupport.class);
  
     protected String testPayload = "This is a test";
-
     protected byte[] testPayloadBytes = testPayload.getBytes();
         
     @BeforeClass
     public static void setupTestServer() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(39913);
+        
         LOG.info("Starting Zookeeper Test Infrastructure");
         server = new TestZookeeperServer(getServerPort(), clearServerData());
         waitForServerUp("localhost:" + getServerPort(), 1000);
@@ -89,7 +91,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
     }
 
     protected static int getServerPort() {
-        return 39913;
+        return port;
     }
 
     protected static int getTestClientSessionTimeout() {
@@ -144,9 +146,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
         public static int x;
 
         private final Logger log = LoggerFactory.getLogger(getClass());
-
         private ZooKeeper zk;
-
         private CountDownLatch connected = new CountDownLatch(1);
 
 
