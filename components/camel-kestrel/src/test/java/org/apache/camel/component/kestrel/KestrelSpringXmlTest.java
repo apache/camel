@@ -23,13 +23,16 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
+import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @ContextConfiguration
+@RunWith(SpringJUnit4ClassRunner.class)
 @Ignore("Manual test as you need to start a Kestrel broker")
-public class KestrelSpringXmlTest extends AbstractJUnit38SpringContextTests {
+public class KestrelSpringXmlTest extends AbstractJUnit4SpringContextTests {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mock;

@@ -73,12 +73,16 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     public void init() throws Exception {
+        LOG.trace("init {}", this);
+
         // add service listener so we can be notified when blueprint container is done
         // and we would be ready to start CamelContext
         bundleContext.addServiceListener(this);
     }
 
     public void destroy() throws Exception {
+        LOG.trace("destroy {}", this);
+
         // remove listener and stop this CamelContext
         bundleContext.removeServiceListener(this);
         stop();
@@ -95,7 +99,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             try {
                 maybeStart();
             } catch (Exception e) {
-                LOG.warn("Error occurred during starting " + this, e);
+                LOG.error("Error occurred during starting Camel: " + this + " due " + e.getMessage(), e);
             }
         }
     }
@@ -118,6 +122,8 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     private void maybeStart() throws Exception {
+        LOG.trace("maybeStart: {}", this);
+
         if (!isStarted() && !isStarting()) {
             final ClassLoader original = Thread.currentThread().getContextClassLoader();
             try {

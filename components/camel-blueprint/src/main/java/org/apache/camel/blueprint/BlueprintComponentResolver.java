@@ -22,8 +22,11 @@ import org.apache.camel.core.osgi.OsgiComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.CamelContextHelper;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.blueprint.container.NoSuchComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.getException;
 
 public class BlueprintComponentResolver extends OsgiComponentResolver {
 
@@ -49,7 +52,11 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
                 }
             }
         } catch (Exception e) {
-            LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
+            if (getException(NoSuchComponentException.class, e) != null) {
+                // if the caused error is NoSuchComponentException then that can be expected so ignore
+            } else {
+                LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
+            }
         }
         try {
             Object bean = context.getRegistry().lookupByName(".camelBlueprint.componentResolver." + name);
