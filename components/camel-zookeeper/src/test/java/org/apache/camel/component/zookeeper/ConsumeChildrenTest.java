@@ -36,14 +36,15 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
-                from("zookeeper://localhost:39913/grimm?repeat=true&listChildren=true").sort(body(), new NaturalSortComparator(Order.Descending)).to("mock:zookeeper-data");
+                from("zookeeper://localhost:" + getServerPort() + "/grimm?repeat=true&listChildren=true")
+                    .sort(body(), new NaturalSortComparator(Order.Descending))
+                    .to("mock:zookeeper-data");
             }
         }};
     }
 
     @Test
     public void shouldAwaitCreationAndGetDataNotification() throws Exception {
-
         MockEndpoint mock = getMockEndpoint("mock:zookeeper-data");
         mock.expectedMessageCount(5);
 
@@ -58,7 +59,6 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
 
         validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"), createChildListing("hansel", "gretel"), createChildListing("gretel"),
                                          createChildListing());
-
     }
 
     private void validateExchangesContainListings(MockEndpoint mock, List<String>... expected) throws InvalidPayloadException {

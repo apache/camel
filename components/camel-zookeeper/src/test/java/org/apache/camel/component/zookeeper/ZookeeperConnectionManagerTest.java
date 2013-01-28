@@ -25,7 +25,7 @@ public class ZookeeperConnectionManagerTest extends ZooKeeperTestSupport {
     @Test
     public void shouldWaitForConnection() {
         ZooKeeperConfiguration config = new ZooKeeperConfiguration();
-        config.addZookeeperServer("localhost:39913");
+        config.addZookeeperServer("localhost:" + getServerPort());
 
         ZooKeeperComponent component = new ZooKeeperComponent(config);
         component.setConfiguration(config);
