@@ -49,6 +49,11 @@ public class SearchConsumer extends Twitter4JConsumer {
         if (ObjectHelper.isNotEmpty(te.getProperties().getLang())) {
             query.setLang(te.getProperties().getLang());
         }
+
+        if (ObjectHelper.isNotEmpty(te.getProperties().getCount())) {
+            query.setCount(te.getProperties().getCount());
+        }
+
         LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(query);
     }
@@ -59,9 +64,15 @@ public class SearchConsumer extends Twitter4JConsumer {
             return Collections.emptyList();
         }
         Query query = new Query(keywords);
+
         if (ObjectHelper.isNotEmpty(te.getProperties().getLang())) {
             query.setLang(te.getProperties().getLang());
         }
+
+        if (ObjectHelper.isNotEmpty(te.getProperties().getCount())) {
+            query.setCount(te.getProperties().getCount());
+        }
+
         LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(query);
     }
