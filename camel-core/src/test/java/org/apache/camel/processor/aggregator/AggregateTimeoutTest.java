@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,11 +25,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 
 /**
- * @version 
+ * @version
  */
 public class AggregateTimeoutTest extends ContextTestSupport {
 
-    private static final AtomicInteger INVOKED = new AtomicInteger();
+    private final AtomicInteger INVOKED = new AtomicInteger();
+    private volatile Exchange receivedExchange;
+    private volatile int receivedIndex;
+    private volatile int receivedTotal;
+    private volatile long receivedTimeout;
 
     public void testAggregateTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
@@ -39,7 +42,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait 3 seconds
+        // wait 3 seconds so that the timeout kicks in
         Thread.sleep(3000);
 
         mock.assertIsSatisfied();
@@ -47,18 +50,24 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         // should invoke the timeout method
         assertEquals(1, INVOKED.get());
 
-        // now send 3 which does not timeout
-        mock.reset();
-        mock.expectedBodiesReceived("C+D+E");
+        assertNotNull(receivedExchange);
+        assertEquals("A+B", receivedExchange.getIn().getBody());
+        assertEquals(-1, receivedIndex);
+        assertEquals(-1, receivedTotal);
+        assertEquals(2000, receivedTimeout);
 
+        mock.reset();
+        mock.expectedBodiesReceived("A+B+C");
+
+        // now send 3 exchanges which shouldn't trigger the timeout anymore
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
         template.sendBodyAndHeader("direct:start", "C", "id", 123);
 
         // should complete before timeout
-        mock.await(1500, TimeUnit.MILLISECONDS);
+        mock.assertIsSatisfied(1500);
 
-        // should not invoke the timeout method
+        // should have not invoked the timeout method anymore
         assertEquals(1, INVOKED.get());
     }
 
@@ -78,16 +87,18 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         };
     }
 
-    private static class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
+    private class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             INVOKED.incrementAndGet();
 
-            assertEquals(2000, timeout);
-            assertEquals(-1, total);
-            assertEquals(-1, index);
-            assertNotNull(oldExchange);
-            assertEquals("AB", oldExchange.getIn().getBody());
+            // we can't assert on the expected values here as the contract of this method doesn't
+            // allow to throw any Throwable here (including AssertionFailedError) so that we assert
+            // about the expected values directly inside the test method itself
+            receivedExchange = oldExchange;
+            receivedIndex = index;
+            receivedTotal = total;
+            receivedTimeout = timeout;
         }
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -96,7 +107,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
             }
 
             String body = oldExchange.getIn().getBody(String.class);
-            oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
+            oldExchange.getIn().setBody(body + "+" + newExchange.getIn().getBody(String.class));
             return oldExchange;
         }
     }
