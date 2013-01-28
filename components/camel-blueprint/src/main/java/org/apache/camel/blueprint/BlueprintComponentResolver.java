@@ -22,6 +22,7 @@ import org.apache.camel.core.osgi.OsgiComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.CamelContextHelper;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.blueprint.container.NoSuchComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,9 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
                     return component;
                 }
             }
+        } catch (NoSuchComponentException e) {
+            // can be expected so ignore
+            LOG.trace("Component: {} not found in registry.", name);
         } catch (Exception e) {
             LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
         }

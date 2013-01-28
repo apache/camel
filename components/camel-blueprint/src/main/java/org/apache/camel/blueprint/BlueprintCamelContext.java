@@ -73,12 +73,18 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     public void init() throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("init {}", this);
+        }
         // add service listener so we can be notified when blueprint container is done
         // and we would be ready to start CamelContext
         bundleContext.addServiceListener(this);
     }
 
     public void destroy() throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("destroy {}", this);
+        }
         // remove listener and stop this CamelContext
         bundleContext.removeServiceListener(this);
         stop();
@@ -118,6 +124,9 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     private void maybeStart() throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("maybeStart: {}", this);
+        }
         if (!isStarted() && !isStarting()) {
             final ClassLoader original = Thread.currentThread().getContextClassLoader();
             try {
