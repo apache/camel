@@ -16,16 +16,17 @@
  */
 package org.apache.camel.example.gae;
 
-import java.util.logging.Logger;
-
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReportGenerator implements Processor {
-    private static final Logger LOGGER = Logger.getLogger(RequestProcessor.class.getName());
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestProcessor.class);
 
     public void process(Exchange exchange) throws Exception {
         ReportData data = exchange.getIn().getBody(ReportData.class);
