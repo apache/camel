@@ -26,6 +26,8 @@ import org.osgi.service.blueprint.container.NoSuchComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.getException;
+
 public class BlueprintComponentResolver extends OsgiComponentResolver {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintComponentResolver.class);
@@ -49,11 +51,12 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
                     return component;
                 }
             }
-        } catch (NoSuchComponentException e) {
-            // can be expected so ignore
-            LOG.trace("Component: {} not found in registry.", name);
         } catch (Exception e) {
-            LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
+            if (getException(NoSuchComponentException.class, e) != null) {
+                // if the caused error is NoSuchComponentException then that can be expected so ignore
+            } else {
+                LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
+            }
         }
         try {
             Object bean = context.getRegistry().lookup(".camelBlueprint.componentResolver." + name);
