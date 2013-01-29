@@ -18,8 +18,7 @@ package org.apache.camel.converter.crypto;
 
 import org.junit.Ignore;
 
-@Ignore("It looks like the bcpg dosen't work well with the JDK of CI"
-+ "The tests are passed in my Mac JDK-1.6.0_33")
+@Ignore("Requires JCE unlimited strength jurisdiction policy files on CI server")
 public class PGPDataFormatElGamalTest extends PGPDataFormatTest {
     protected String getKeyFileName() {
         return "org/apache/camel/component/crypto/pubring-ElGamal.gpg";

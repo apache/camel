@@ -17,6 +17,7 @@
 package org.apache.camel.converter.crypto;
 
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -27,16 +28,21 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 public abstract class AbstractPGPDataFormatTest extends CamelTestSupport {
     
-    protected void doRoundTripEncryptionTests(String endpoint, Map<String, Object> headers) throws Exception {
+    protected void doRoundTripEncryptionTests(String endpoint) throws Exception {
         MockEndpoint encrypted = setupExpectations(context, 3, "mock:encrypted");
         MockEndpoint unencrypted = setupExpectations(context, 3, "mock:unencrypted");
 
         String payload = "Hi Alice, Be careful Eve is listening, signed Bob";
+        Map<String, Object> headers = getHeaders();
         template.sendBodyAndHeaders(endpoint, payload, headers);
         template.sendBodyAndHeaders(endpoint, payload.getBytes(), headers);
         template.sendBodyAndHeaders(endpoint, new ByteArrayInputStream(payload.getBytes()), headers);
 
         assertMocksSatisfied(encrypted, unencrypted, payload);
+    }
+
+    protected Map<String, Object> getHeaders() {
+        return new HashMap<String, Object>();
     }
 
     protected void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws InterruptedException, InvalidPayloadException {

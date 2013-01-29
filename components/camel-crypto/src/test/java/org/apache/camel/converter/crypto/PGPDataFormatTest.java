@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.crypto;
 
-import java.util.HashMap;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -41,17 +39,22 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     @Test
     public void testEncryption() throws Exception {
-        doRoundTripEncryptionTests("direct:inline", new HashMap<String, Object>());
+        doRoundTripEncryptionTests("direct:inline");
     }
 
     @Test
     public void testEncryption2() throws Exception {
-        doRoundTripEncryptionTests("direct:inline2", new HashMap<String, Object>());
+        doRoundTripEncryptionTests("direct:inline2");
     }
 
     @Test
     public void testEncryptionArmor() throws Exception {
-        doRoundTripEncryptionTests("direct:inline-armor", new HashMap<String, Object>());
+        doRoundTripEncryptionTests("direct:inline-armor");
+    }
+
+    @Test
+    public void testEncryptionSigned() throws Exception {
+        doRoundTripEncryptionTests("direct:inline-sign");
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -96,6 +99,26 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                         .unmarshal().pgp(keyFileNameSec, keyUserid, keyPassword, true, true)
                         .to("mock:unencrypted");
                 // END SNIPPET: pgp-format-header
+
+                PGPDataFormat pgpSignAndEncrypt = new PGPDataFormat();
+                pgpSignAndEncrypt.setKeyFileName(keyFileName);
+                pgpSignAndEncrypt.setKeyUserid(keyUserid);
+                pgpSignAndEncrypt.setSignatureKeyFileName(keyFileNameSec);
+                pgpSignAndEncrypt.setSignatureKeyUserid(keyUserid);
+                pgpSignAndEncrypt.setSignaturePassword(keyPassword);
+
+                PGPDataFormat pgpVerifyAndDecrypt = new PGPDataFormat();
+                pgpVerifyAndDecrypt.setKeyFileName(keyFileNameSec);
+                pgpVerifyAndDecrypt.setKeyUserid(keyUserid);
+                pgpVerifyAndDecrypt.setPassword(keyPassword);
+                pgpVerifyAndDecrypt.setSignatureKeyFileName(keyFileName);
+                pgpVerifyAndDecrypt.setSignatureKeyUserid(keyUserid);
+
+                from("direct:inline-sign")
+                        .marshal(pgpSignAndEncrypt)
+                        .to("mock:encrypted")
+                        .unmarshal(pgpVerifyAndDecrypt)
+                        .to("mock:unencrypted");
             }
         };
     }

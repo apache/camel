@@ -19,38 +19,24 @@ package org.apache.camel.converter.crypto;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
 public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
     // setup a wrong userid
     protected String getKeyUserId() {
         return "wrong";
     }
+
     // setup a wrong password
     protected String getKeyPassword() {
         return "wrong";
     }
-    
-    private Map<String, Object> getHeaders() {
+
+    // override wrong userid and password with correct userid and password in the headers
+    protected Map<String, Object> getHeaders() {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(PGPDataFormat.KEY_USERID, "sdude@nowhere.net");
+        headers.put(PGPDataFormat.SIGNATURE_KEY_USERID, "sdude@nowhere.net");
         headers.put(PGPDataFormat.KEY_PASSWORD, "sdude");
+        headers.put(PGPDataFormat.SIGNATURE_KEY_PASSWORD, "sdude");
         return headers;
     }
-    
-    @Test
-    public void testEncryption() throws Exception {
-        doRoundTripEncryptionTests("direct:inline", getHeaders());
-    }
-
-    @Test
-    public void testEncryption2() throws Exception {
-        doRoundTripEncryptionTests("direct:inline2", getHeaders());
-    }
-
-    @Test
-    public void testEncryptionArmor() throws Exception {
-        doRoundTripEncryptionTests("direct:inline-armor", getHeaders());
-    }
-
 }
