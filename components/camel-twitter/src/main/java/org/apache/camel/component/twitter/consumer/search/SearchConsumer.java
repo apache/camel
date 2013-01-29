@@ -87,9 +87,11 @@ public class SearchConsumer extends Twitter4JConsumer {
     }
 
     private List<Status> search(Query query, Integer numberOfPages) throws TwitterException {
+        LOG.debug("Searching with " + numberOfPages + " pages.");
         Twitter twitter = te.getProperties().getTwitter();
         QueryResult qr = twitter.search(query);
         List<Status> tweets = qr.getTweets();
+
 
         for (int i = 1; i < numberOfPages; i++) {
             if (qr.hasNext() == false) {
