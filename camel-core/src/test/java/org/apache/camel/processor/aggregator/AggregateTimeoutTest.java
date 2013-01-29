@@ -51,13 +51,13 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         assertEquals(1, INVOKED.get());
 
         assertNotNull(receivedExchange);
-        assertEquals("A+B", receivedExchange.getIn().getBody());
+        assertEquals("AB", receivedExchange.getIn().getBody());
         assertEquals(-1, receivedIndex);
         assertEquals(-1, receivedTotal);
         assertEquals(2000, receivedTimeout);
 
         mock.reset();
-        mock.expectedBodiesReceived("A+B+C");
+        mock.expectedBodiesReceived("ABC");
 
         // now send 3 exchanges which shouldn't trigger the timeout anymore
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
@@ -93,8 +93,10 @@ public class AggregateTimeoutTest extends ContextTestSupport {
             INVOKED.incrementAndGet();
 
             // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable here (including AssertionFailedError) so that we assert
-            // about the expected values directly inside the test method itself
+            // allow to throw any Throwable (including AssertionFailedError) so that we assert
+            // about the expected values directly inside the test method itself. other than that
+            // asserting inside a thread other than the main thread dosen't make much sense as
+            // junit would not realize the failed assertion!
             receivedExchange = oldExchange;
             receivedIndex = index;
             receivedTotal = total;
@@ -107,7 +109,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
             }
 
             String body = oldExchange.getIn().getBody(String.class);
-            oldExchange.getIn().setBody(body + "+" + newExchange.getIn().getBody(String.class));
+            oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
             return oldExchange;
         }
     }
