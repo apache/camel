@@ -27,6 +27,11 @@ import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
  */
 public class MulticastParallelTimeoutAwareTest extends ContextTestSupport {
 
+    private volatile Exchange receivedExchange;
+    private volatile int receivedIndex;
+    private volatile int receivedTotal;
+    private volatile long receivedTimeout;
+
     public void testMulticastParallelTimeoutAware() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and/or C
@@ -35,6 +40,11 @@ public class MulticastParallelTimeoutAwareTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello");
 
         assertMockEndpointsSatisfied();
+
+        assertNotNull(receivedExchange);
+        assertEquals(0, receivedIndex);
+        assertEquals(3, receivedTotal);
+        assertEquals(1000, receivedTimeout);
     }
 
     @Override
@@ -58,13 +68,18 @@ public class MulticastParallelTimeoutAwareTest extends ContextTestSupport {
         };
     }
 
-    private static class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
+    private class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
-            assertEquals(1000, timeout);
-            assertEquals(3, total);
-            assertEquals(0, index);
-            assertNotNull(oldExchange);
+            // we can't assert on the expected values here as the contract of this method doesn't
+            // allow to throw any Throwable (including AssertionFailedError) so that we assert
+            // about the expected values directly inside the test method itself. other than that
+            // asserting inside a thread other than the main thread dosen't make much sense as
+            // junit would not realize the failed assertion!
+            receivedExchange = oldExchange;
+            receivedIndex = index;
+            receivedTotal = total;
+            receivedTimeout = timeout;
         }
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
