@@ -147,7 +147,7 @@
     <google-guava-version>13.0.1</google-guava-version>
     <groovy-version>2.1.0</groovy-version>
     <gson-version>2.2.2</gson-version>
-    <guice-bundle-version>3.0_1-SNAPSHOT</guice-bundle-version>
+    <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
     <hadoop-bundle-version>1.0.4_1</hadoop-bundle-version>
     <hadoop-version>1.0.4</hadoop-version>
