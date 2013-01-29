@@ -30,6 +30,9 @@
     <description>Camel Scala DSL</description>
 
     <properties>
+        <camel.osgi.import.before.defaults>
+            scala.*;version="[2.10,2.11)"
+        </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.scala.*</camel.osgi.export.pkg>
     </properties>
 

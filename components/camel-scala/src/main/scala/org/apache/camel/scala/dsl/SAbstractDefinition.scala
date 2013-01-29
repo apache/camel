@@ -74,7 +74,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def filter(predicate: Exchange => Any) = SFilterDefinition(target.filter(predicateBuilder(predicate)))
 
-  def handle[E <: Throwable](block: => Unit)(implicit manifest: Manifest[E]) = SOnExceptionDefinition[E](target.onException(manifest.runtimeClass.asInstanceOf[Class[Throwable]])).apply(block)
+  def handle[E <: Throwable](block: => Unit)(implicit manifest: Manifest[E]) = SOnExceptionDefinition[E](target.onException(manifest.erasure.asInstanceOf[Class[Throwable]])).apply(block)
 
   def id(id : String) = wrap(target.id(id))
   def idempotentConsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
