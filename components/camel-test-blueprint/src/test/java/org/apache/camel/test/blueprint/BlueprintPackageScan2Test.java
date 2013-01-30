@@ -14,17 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint.scan;
+package org.apache.camel.test.blueprint;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *
  */
-public class MyCoolRoute extends RouteBuilder {
+@Ignore("Issue with @EndpointInject")
+public class BlueprintPackageScan2Test extends CamelBlueprintTestSupport {
 
     @Override
-    public void configure() throws Exception {
-        from("direct:start").to("mock:a");
+    protected String getBlueprintDescriptor() {
+        return "org/apache/camel/test/blueprint/packagescan2.xml";
     }
+
+    // here we have regular Junit @Test method
+    @Test
+    public void testRoute() throws Exception {
+        // set mock expectations
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+
+        // send a message
+        template.sendBody("direct:start", "World");
+
+        // assert mocks
+        assertMockEndpointsSatisfied();
+    }
+
 }
