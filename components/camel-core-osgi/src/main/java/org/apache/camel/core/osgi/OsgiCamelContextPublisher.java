@@ -58,18 +58,24 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
             props.put(CONTEXT_VERSION_PROPERTY, getBundleVersion(bundleContext.getBundle()));
             props.put(CONTEXT_NAME_PROPERTY, context.getName());
 
-            log.debug("Registering CamelContext [{}] of in OSGi registry", props);
+            if (log.isDebugEnabled()) {
+                log.debug("Registering CamelContext [{}] of in OSGi registry", context.getName());
+            }
 
             ServiceRegistration reg = bundleContext.registerService(CamelContext.class.getName(), context, props);
             registrations.put(context, reg);
         } else if (event instanceof CamelContextStoppingEvent) {
             CamelContext context = ((CamelContextStoppingEvent) event).getContext();
-            ServiceRegistration reg = registrations.get(context);
+            ServiceRegistration reg = registrations.remove(context);
             if (reg != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Unregistering CamelContext [{}] from OSGi registry", context.getName());
                 }
-                reg.unregister();
+                try {
+                    reg.unregister();
+                } catch (Exception e) {
+                    log.warn("Error unregistering CamelContext [{}] from OSGi registry. This exception will be ignored.", context.getName(), e);
+                }
             }
         }
     }
@@ -84,6 +90,10 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
 
     @Override
     protected void doStop() throws Exception {
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
         registrations.clear();
     }
 
