@@ -24,6 +24,8 @@
 	  <packageScan>
 		  <package>org.apache.camel.test.blueprint.scan</package>
 	  </packageScan>
+
+    <endpoint id="foo" uri="direct:start"/>
   </camelContext>
 
 </blueprint>

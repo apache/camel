@@ -14,17 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint.scan;
+package org.apache.camel.test.blueprint.scan2;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  *
  */
-public class MyCoolRoute extends RouteBuilder {
+public class MyOtherCoolRoute extends RouteBuilder {
+
+    @EndpointInject(ref = "foo")
+    private Endpoint foo;
 
     @Override
     public void configure() throws Exception {
-        from("direct:start").to("mock:a");
+        from(foo).to("mock:a");
     }
 }
