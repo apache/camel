@@ -97,17 +97,9 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
                 }
             }
             // don't use the relative path
-            return getUri("");
+            return getUri(systemId);
         }
         
-        private String getUri(String relativePath) {
-            if (resourcePath != null) {
-                return FileUtil.onlyPath(resourceUri) + "/" + relativePath + systemId;
-            } else {
-                return relativePath + systemId;
-            }
-        }
-
         @Override
         public Reader getCharacterStream() {
             InputStream is = getByteStream();
