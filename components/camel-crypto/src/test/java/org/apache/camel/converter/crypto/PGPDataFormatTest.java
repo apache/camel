@@ -100,6 +100,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                         .to("mock:unencrypted");
                 // END SNIPPET: pgp-format-header
 
+                // START SNIPPET: pgp-format-signature
                 PGPDataFormat pgpSignAndEncrypt = new PGPDataFormat();
                 pgpSignAndEncrypt.setKeyFileName(keyFileName);
                 pgpSignAndEncrypt.setKeyUserid(keyUserid);
@@ -119,6 +120,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                         .to("mock:encrypted")
                         .unmarshal(pgpVerifyAndDecrypt)
                         .to("mock:unencrypted");
+                // END SNIPPET: pgp-format-signature
             }
         };
     }
