@@ -104,7 +104,7 @@ public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("zookeeper://localhost:39913/node").to("mock:test");
+                from("zookeeper://localhost:" + ZooKeeperTestSupport.getServerPort() + "/node").to("mock:test");
             }
         };
     }

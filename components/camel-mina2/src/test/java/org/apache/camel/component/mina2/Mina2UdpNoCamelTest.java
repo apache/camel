@@ -24,7 +24,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
-import java.util.logging.Level;
 
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
@@ -43,9 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- *
- */
 public class Mina2UdpNoCamelTest {
 
     private static Logger logger = LoggerFactory.getLogger(Mina2UdpNoCamelTest.class);
@@ -149,23 +145,18 @@ public class Mina2UdpNoCamelTest {
                 address = InetAddress.getByName(localHost);
 
             } catch (UnknownHostException ex) {
-                java.util.logging.Logger.getLogger(Mina2UdpNoCamelTest.class.getName()).log(
-                    Level.SEVERE, null, ex);
+                logger.warn(null, ex);
             } catch (SocketException ex) {
-                java.util.logging.Logger.getLogger(Mina2UdpNoCamelTest.class.getName()).log(
-                    Level.SEVERE, null, ex);
+                logger.warn(null, ex);
             }
-
         }
 
         public void sendNoMina(String msg) {
             try {
-                DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.getBytes().length,
-                                                           address, localPort);
+                DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.getBytes().length, address, localPort);
                 socket.send(packet);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(Mina2UdpNoCamelTest.class.getName()).log(
-                    Level.SEVERE, null, ex);
+                logger.warn(null, ex);
             }
         }
 

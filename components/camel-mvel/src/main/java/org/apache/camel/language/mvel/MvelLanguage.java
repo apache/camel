@@ -17,26 +17,25 @@
 package org.apache.camel.language.mvel;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 
 /**
  * An <a href="http://mvel.codehaus.org/">MVEL</a> {@link Language} plugin
  * 
  * @version 
  */
-public class MvelLanguage implements Language, IsSingleton {
+public class MvelLanguage extends LanguageSupport {
 
     public Predicate createPredicate(String expression) {
+        expression = loadResource(expression);
         return new MvelExpression(this, expression, Boolean.class);
     }
 
     public Expression createExpression(String expression) {
+        expression = loadResource(expression);
         return new MvelExpression(this, expression, Object.class);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

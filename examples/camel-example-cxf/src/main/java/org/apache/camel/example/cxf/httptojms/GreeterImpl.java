@@ -16,11 +16,11 @@
  */
 package org.apache.camel.example.cxf.httptojms;
 
-import java.util.logging.Logger;
-
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @javax.jws.WebService(portName = "SoapOverJms", serviceName = "SOAPService", 
                       targetNamespace = "http://apache.org/hello_world_soap_http", 
@@ -29,8 +29,7 @@ import org.apache.hello_world_soap_http.types.FaultDetail;
                   
 public class GreeterImpl implements Greeter {
 
-    private static final Logger LOG = 
-        Logger.getLogger(GreeterImpl.class.getPackage().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(GreeterImpl.class);
     
     public String greetMe(String me) {
         LOG.info("Executing operation greetMe");

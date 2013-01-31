@@ -32,7 +32,7 @@ class RichExchange(val exchange : Exchange) extends Exchange {
   def in(header:String) : Any = exchange.getIn.getHeader(header)
 
   def in = exchange.getIn.getBody
-  def in[T](implicit manifest: Manifest[T]) : T = exchange.getIn.getBody(manifest.runtimeClass).asInstanceOf[T]
+  def in[T](implicit manifest: Manifest[T]) : T = exchange.getIn.getBody(manifest.erasure).asInstanceOf[T]
 
   def out : Any = exchange.getOut.getBody
 

@@ -17,24 +17,23 @@
 package org.apache.camel.language.spel;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 
 /**
  * A Spring Expression {@link Language} plugin
  */
-public class SpelLanguage implements Language, IsSingleton {
+public class SpelLanguage extends LanguageSupport {
 
     public Predicate createPredicate(String expression) {
+        expression = loadResource(expression);
         return new SpelExpression(expression, Boolean.class);
     }
 
     public Expression createExpression(String expression) {
+        expression = loadResource(expression);
         return new SpelExpression(expression, Object.class);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

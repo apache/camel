@@ -38,6 +38,26 @@ public class JettyHttpClientOptionsTest extends BaseJettyTest {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
     }
+    
+    @Test
+    public void testProxySettingOfJettyHttpClient() throws Exception {
+        // setup the Proxy setting through the URI
+        HttpEndpoint jettyEndpoint = context.getEndpoint("jetty://http://localhost:{{port}}/proxy/setting?proxyHost=192.168.0.1&proxyPort=9090", HttpEndpoint.class);
+        assertNotNull("Jetty endpoint should not be null ", jettyEndpoint);
+        JettyHttpProducer producer = (JettyHttpProducer)jettyEndpoint.createProducer();
+        assertEquals("Get the wrong http proxy host parameter", "192.168.0.1", producer.getClient().getProxy().getHost());
+        assertEquals("Get the wrong http proxy port paramerter", 9090, producer.getClient().getProxy().getPort());
+        
+        // setup the context properties
+        context.getProperties().put("http.proxyHost", "192.168.0.2");
+        context.getProperties().put("http.proxyPort", "8080");
+        jettyEndpoint = context.getEndpoint("jetty://http://localhost:{{port}}/proxy2/setting", HttpEndpoint.class);
+        producer = (JettyHttpProducer)jettyEndpoint.createProducer();
+        assertEquals("Get the wrong http proxy host parameter", "192.168.0.2", producer.getClient().getProxy().getHost());
+        assertEquals("Get the wrong http proxy port paramerter", 8080, producer.getClient().getProxy().getPort());
+        context.getProperties().clear();
+
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

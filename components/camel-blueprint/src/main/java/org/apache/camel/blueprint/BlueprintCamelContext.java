@@ -28,16 +28,20 @@ import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.blueprint.container.BlueprintEvent;
+import org.osgi.service.blueprint.container.BlueprintListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener {
+public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener, BlueprintListener {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
 
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;
+    private ServiceRegistration<?> registration;
 
     public BlueprintCamelContext() {
     }
@@ -78,14 +82,37 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         // add service listener so we can be notified when blueprint container is done
         // and we would be ready to start CamelContext
         bundleContext.addServiceListener(this);
+        // add blueprint listener as service, as we need this for the blueprint container
+        // to support change events when it changes states
+        registration = bundleContext.registerService(BlueprintListener.class, this, null);
     }
 
     public void destroy() throws Exception {
         LOG.trace("destroy {}", this);
 
         // remove listener and stop this CamelContext
-        bundleContext.removeServiceListener(this);
+        try {
+            bundleContext.removeServiceListener(this);
+        } catch (Exception e) {
+            LOG.warn("Error removing ServiceListener " + this + ". This exception is ignored.", e);
+        }
+        if (registration != null) {
+            try {
+                registration.unregister();
+            } catch (Exception e) {
+                LOG.warn("Error unregistering service registration " + registration + ". This exception is ignored.", e);
+            }
+            registration = null;
+        }
+
+        // must stop Camel
         stop();
+    }
+
+
+    @Override
+    public void blueprintEvent(BlueprintEvent event) {
+        // noop as we just needed to enlist the BlueprintListener to have events triggered to serviceChanged method
     }
 
     @Override

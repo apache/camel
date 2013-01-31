@@ -45,6 +45,10 @@ public final class RootObject {
         return exchange.getExchangeId();
     }
 
+    public Object getBody() {
+        return exchange.getIn().getBody();
+    }
+
     public Message getRequest() {
         return exchange.getIn();
     }

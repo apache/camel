@@ -17,25 +17,24 @@
 package org.apache.camel.language.jxpath;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 
 /**
  * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Language}
  * provider
  */
-public class JXPathLanguage implements Language, IsSingleton {
+public class JXPathLanguage extends LanguageSupport {
 
     public Expression createExpression(String expression) {
+        expression = loadResource(expression);
         return new JXPathExpression(expression, Object.class);
     }
 
     public Predicate createPredicate(String predicate) {
+        predicate = loadResource(predicate);
         return new JXPathExpression(predicate, Boolean.class);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

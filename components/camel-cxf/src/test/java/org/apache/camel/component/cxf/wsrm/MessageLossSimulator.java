@@ -20,8 +20,6 @@ package org.apache.camel.component.cxf.wsrm;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ListIterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.Interceptor;
@@ -35,12 +33,12 @@ import org.apache.cxf.phase.PhaseInterceptor;
 import org.apache.cxf.ws.addressing.AddressingProperties;
 import org.apache.cxf.ws.rm.RMContextUtils;
 
-/**
- * 
- */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
 
-    private static final Logger LOG = Logger.getLogger(MessageLossSimulator.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MessageLossSimulator.class.getName());
     private int appMessageCount; 
     
     public MessageLossSimulator() {
@@ -73,7 +71,7 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
             PhaseInterceptor<?> pi = (PhaseInterceptor<?>)it.next();
             if (MessageSenderInterceptor.class.getName().equals(pi.getId())) {
                 chain.remove(pi);
-                LOG.fine("Removed MessageSenderInterceptor from interceptor chain.");
+                LOG.debug("Removed MessageSenderInterceptor from interceptor chain.");
                 break;
             }
         }
@@ -103,27 +101,19 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
 
         @Override
         protected void onFirstWrite() throws IOException {
-            if (LOG.isLoggable(Level.FINE)) {
-                Long nr = RMContextUtils.retrieveRMProperties(outMessage, true)
-                    .getSequence().getMessageNumber();
-                LOG.fine("Losing message " + nr);
+            if (LOG.isDebugEnabled()) {
+                Long nr = RMContextUtils.retrieveRMProperties(outMessage, true).getSequence().getMessageNumber();
+                LOG.debug("Losing message {}", nr);
             }
             wrappedStream = new DummyOutputStream();
         }
     }    
 
-            
-    
     private class DummyOutputStream extends OutputStream {
 
         @Override
         public void write(int b) throws IOException {
             // TODO Auto-generated method stub
-            
         }
-        
     }
-    
-    
-    
 }

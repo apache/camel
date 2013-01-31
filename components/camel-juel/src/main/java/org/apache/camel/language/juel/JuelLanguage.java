@@ -18,20 +18,22 @@ package org.apache.camel.language.juel;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 
 /**
  * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
- * using the <a href="http://camel.apache.org/juel.html">JUEL library</a>
  *
  * @version 
  */
-public class JuelLanguage implements Language {
+public class JuelLanguage extends LanguageSupport {
+
     public Predicate createPredicate(String expression) {
+        expression = loadResource(expression);
         return new JuelExpression(expression, Boolean.class);
     }
 
     public Expression createExpression(String expression) {
+        expression = loadResource(expression);
         return new JuelExpression(expression, Object.class);
     }
 }

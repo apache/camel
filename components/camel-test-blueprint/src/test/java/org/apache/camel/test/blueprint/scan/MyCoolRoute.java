@@ -16,8 +16,6 @@
  */
 package org.apache.camel.test.blueprint.scan;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -25,11 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MyCoolRoute extends RouteBuilder {
 
-    @EndpointInject(ref = "foo")
-    private Endpoint foo;
-
     @Override
     public void configure() throws Exception {
-        from(foo).to("mock:a");
+        from("direct:start").to("mock:a");
     }
 }

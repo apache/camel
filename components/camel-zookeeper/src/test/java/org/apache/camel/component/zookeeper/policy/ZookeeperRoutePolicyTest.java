@@ -41,7 +41,7 @@ public class ZookeeperRoutePolicyTest extends ZooKeeperTestSupport {
 
     public static class ZooKeeperPolicyEnforcedRoute extends RouteBuilder {
         public void configure() throws Exception {
-            ZooKeeperRoutePolicy policy = new ZooKeeperRoutePolicy("zookeeper:localhost:39913/someapp/somepolicy", 1);
+            ZooKeeperRoutePolicy policy = new ZooKeeperRoutePolicy("zookeeper:localhost:" + getServerPort() + "/someapp/somepolicy", 1);
             from("direct:policy-controlled").routePolicy(policy).to("mock:controlled");
         }
     };

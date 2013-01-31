@@ -16,16 +16,16 @@
  */
 package org.apache.camel.example.gae;
 
-import java.util.logging.Logger;
-
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RequestProcessor implements Processor {
 
-    private static final Logger LOGGER = Logger.getLogger(RequestProcessor.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestProcessor.class);
     
     public void process(Exchange exchange) throws Exception {
         UserService userService = UserServiceFactory.getUserService();

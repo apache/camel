@@ -16,13 +16,12 @@
  */
 package org.apache.camel.language.groovy;
 
-import org.apache.camel.IsSingleton;
-import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 
 /**
  * @version 
  */
-public class GroovyLanguage implements Language, IsSingleton {
+public class GroovyLanguage extends LanguageSupport {
 
     public static GroovyExpression groovy(String expression) {
         return new GroovyLanguage().createExpression(expression);
@@ -33,10 +32,8 @@ public class GroovyLanguage implements Language, IsSingleton {
     }
 
     public GroovyExpression createExpression(String expression) {
+        expression = loadResource(expression);
         return new GroovyExpression(expression);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

@@ -9,3 +9,4 @@ target
 .settings
 .checkstyle
 *.log
+dependency-reduced-pom.xml

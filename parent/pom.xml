@@ -92,6 +92,7 @@
     <commons-jxpath-version>1.3</commons-jxpath-version>
     <commons-lang-version>2.6</commons-lang-version>
     <commons-lang-version-xmljson>2.5</commons-lang-version-xmljson>
+    <commons-lang3-version>3.1</commons-lang3-version>
     <commons-logging-version>1.1.1</commons-logging-version>
     <commons-math-version>2.2</commons-math-version>
     <commons-net-version>3.2</commons-net-version>
@@ -106,11 +107,10 @@
     <derby-version>10.9.1.0</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
-    <!-- we cannot upgrade to dozer 5.4.0 because it requires commons-lang3 -->
-    <dozer-version>5.3.2</dozer-version>
+    <dozer-version>5.4.0</dozer-version>
     <easymock-version>3.1</easymock-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <ehcache-bundle-version>2.6.2_1</ehcache-bundle-version>
+    <ehcache-bundle-version>2.6.3_1</ehcache-bundle-version>
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.19.10</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
@@ -147,10 +147,10 @@
     <google-guava-version>13.0.1</google-guava-version>
     <groovy-version>2.1.0</groovy-version>
     <gson-version>2.2.2</gson-version>
-    <guice-bundle-version>3.0_1-SNAPSHOT</guice-bundle-version>
+    <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
-    <hadoop-bundle-version>1.0.4_1</hadoop-bundle-version>
-    <hadoop-version>1.0.4</hadoop-version>
+    <hadoop-bundle-version>1.1.1_1</hadoop-bundle-version>
+    <hadoop-version>1.1.1</hadoop-version>
     <hamcrest-version>1.3</hamcrest-version>
     <hapi-version>2.0</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
@@ -308,6 +308,8 @@
     <saxon-bundle-version>9.4.0.4_1</saxon-bundle-version>
     <saxon-version>9.4.0.4</saxon-version>
     <scala-version>2.10.0</scala-version>
+    <scala29-version>2.9.2</scala29-version>
+    <scala29-bundle-version>2.9.2_1</scala29-bundle-version>
     <scala-maven-plugin-version>3.1.2</scala-maven-plugin-version>
     <scriptengines-version>1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
@@ -326,7 +328,7 @@
     <spring-batch-version>2.1.9.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-redis-version>1.0.2.RELEASE</spring-data-redis-version>
-    <spring-integration-version>2.2.0.RELEASE</spring-integration-version>
+    <spring-integration-version>2.2.1.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-neo4j-version>2.1.0.RELEASE</spring-neo4j-version>
     <spring-retry-version>1.0.2.RELEASE</spring-retry-version>
@@ -935,6 +937,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-scala</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-scala_2.9</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

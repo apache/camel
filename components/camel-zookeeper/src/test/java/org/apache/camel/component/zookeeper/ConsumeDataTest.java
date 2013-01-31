@@ -30,7 +30,7 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
-                from("zookeeper://localhost:39913/camel?repeat=true").to("mock:zookeeper-data");
+                from("zookeeper://localhost:" + getServerPort() + "/camel?repeat=true").to("mock:zookeeper-data");
             }
         }};
     }
@@ -77,7 +77,6 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
 
     @Test
     public void deletionOfAwaitedNodeCausesNoFailure() throws Exception {
-
         MockEndpoint mock = getMockEndpoint("mock:zookeeper-data");
         mock.expectedMinimumMessageCount(11);
         createCamelNode();

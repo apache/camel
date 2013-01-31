@@ -54,6 +54,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private Boolean useContinuation;
     private SSLContextParameters sslContextParameters;
     private Map<String, Object> httpClientParameters;
+    
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -76,7 +77,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
             // thread pool min/max from endpoint take precedence over from component
             Integer min = httpClientMinThreads != null ? httpClientMinThreads : getComponent().getHttpClientMinThreads();
             Integer max = httpClientMaxThreads != null ? httpClientMaxThreads : getComponent().getHttpClientMaxThreads();
-            HttpClient httpClient = JettyHttpComponent.createHttpClient(min, max, sslContextParameters);
+            HttpClient httpClient = JettyHttpComponent.createHttpClient(this, min, max, sslContextParameters);
 
             // set optional http client parameters
             if (httpClientParameters != null) {

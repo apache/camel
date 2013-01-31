@@ -58,6 +58,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        // store any existing file header which we want to keep and propagate
+        final String existing = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+
+        // create the target file name
         String target = createFileName(exchange);
 
         // use lock for same file name to avoid concurrent writes to the same file
@@ -78,6 +82,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // do not remove as the locks cache has an upper bound
             // this ensure the locks is appropriate reused
             lock.unlock();
+            // and remove the write file name header as we only want to use it once (by design)
+            exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
+            // and restore existing file name
+            exchange.getIn().setHeader(Exchange.FILE_NAME, existing);
         }
     }
 
@@ -256,7 +264,14 @@ public class GenericFileProducer<T> extends DefaultProducer {
     public String createFileName(Exchange exchange) {
         String answer;
 
-        String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+        // overrule takes precedence
+        String overrule = exchange.getIn().getHeader(Exchange.OVERRULE_FILE_NAME, String.class);
+        String name = overrule == null ? exchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : overrule;
+
+        // if we have an overrule then override the existing header to use the overrule computed name from this point forward
+        if (overrule != null) {
+            exchange.getIn().setHeader(Exchange.FILE_NAME, name);
+        }
 
         // expression support
         Expression expression = endpoint.getFileName();

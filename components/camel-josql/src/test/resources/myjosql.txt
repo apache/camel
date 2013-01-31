@@ -1,0 +1,1 @@
+SELECT name FROM org.apache.camel.builder.sql.Person where city = 'Tampa'

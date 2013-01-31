@@ -17,14 +17,13 @@
 package org.apache.camel.builder.script;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 
 /**
  * @version 
  */
-public class ScriptLanguage implements Language, IsSingleton {
+public class ScriptLanguage extends LanguageSupport {
     private final String language;
 
     public ScriptLanguage(String language) {
@@ -32,14 +31,13 @@ public class ScriptLanguage implements Language, IsSingleton {
     }
 
     public Predicate createPredicate(String expression) {
+        expression = loadResource(expression);
         return new ScriptBuilder(language, expression);
     }
 
     public Expression createExpression(String expression) {
+        expression = loadResource(expression);
         return new ScriptBuilder(language, expression);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

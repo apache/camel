@@ -18,18 +18,20 @@ package org.apache.camel.component.xquery;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 
 /**
  * @version 
  */
-public class XQueryLanguage implements Language {
+public class XQueryLanguage extends LanguageSupport {
 
     public Predicate createPredicate(String expression) {
+        expression = loadResource(expression);
         return XQueryBuilder.xquery(expression);
     }
 
     public Expression createExpression(String expression) {
+        expression = loadResource(expression);
         return XQueryBuilder.xquery(expression);
     }
 }

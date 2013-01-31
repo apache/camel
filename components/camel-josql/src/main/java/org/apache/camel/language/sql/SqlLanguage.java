@@ -17,42 +17,38 @@
 package org.apache.camel.language.sql;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.sql.SqlBuilder;
-import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 import org.josql.QueryParseException;
 
 /**
- * XPath language.
+ * JoSQL language.
  *
  * @version 
  */
-public class SqlLanguage implements Language, IsSingleton {
+public class SqlLanguage extends LanguageSupport {
    
     public Predicate createPredicate(String expression) {
+        expression = loadResource(expression);
         try {
             SqlBuilder builder = SqlBuilder.sql(expression);
             return builder;
         } catch (QueryParseException e) {
-            RuntimeException exception = new RuntimeCamelException("Canont create the SqlBuilder.", e);
-            throw exception;
+            throw new ExpressionIllegalSyntaxException(expression, e);
         }
         
     }
 
     public Expression createExpression(String expression) {
+        expression = loadResource(expression);
         try {
             SqlBuilder builder = SqlBuilder.sql(expression);
             return builder;
         } catch (QueryParseException e) {
-            RuntimeException exception = new RuntimeCamelException("Canont create the SqlBuilder.", e);
-            throw exception;
+            throw new ExpressionIllegalSyntaxException(expression, e);
         }
     }
     
-    public boolean isSingleton() {
-        return true;
-    }
 }

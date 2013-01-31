@@ -21,6 +21,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -88,7 +89,7 @@ import org.apache.camel.util.ObjectHelper;
  * The <b>only</b> file is the filename only with all paths clipped.
  *
  */
-public class SimpleLanguage implements Language, IsSingleton {
+public class SimpleLanguage extends LanguageSupport {
 
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
@@ -127,6 +128,8 @@ public class SimpleLanguage implements Language, IsSingleton {
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
+        expression = loadResource(expression);
+
         // support old simple language syntax
         @SuppressWarnings("deprecation")
         Predicate answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
@@ -140,6 +143,8 @@ public class SimpleLanguage implements Language, IsSingleton {
 
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
+
+        expression = loadResource(expression);
 
         // support old simple language syntax
         @SuppressWarnings("deprecation")

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.crypto;
 
-import java.util.HashMap;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
@@ -30,7 +28,7 @@ public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     @Test
     public void testEncryption() throws Exception {
-        doRoundTripEncryptionTests("direct:inline", new HashMap<String, Object>());
+        doRoundTripEncryptionTests("direct:inline");
     }
 
 }
