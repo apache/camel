@@ -110,7 +110,7 @@
     <dozer-version>5.4.0</dozer-version>
     <easymock-version>3.1</easymock-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <ehcache-bundle-version>2.6.2_1</ehcache-bundle-version>
+    <ehcache-bundle-version>2.6.3_1</ehcache-bundle-version>
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.19.10</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
