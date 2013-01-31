@@ -16,24 +16,33 @@
  */
 package org.apache.camel.language.groovy;
 
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
- * @version 
+ *
  */
-public class GroovyLanguage extends LanguageSupport {
+public class GroovyResourceTest extends CamelTestSupport {
 
-    public static GroovyExpression groovy(String expression) {
-        return new GroovyLanguage().createExpression(expression);
+    @Test
+    public void testGroovyResource() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("The result is 6");
+
+        template.sendBody("direct:start", 3);
+
+        assertMockEndpointsSatisfied();
     }
 
-    public GroovyExpression createPredicate(String expression) {
-        return createExpression(expression);
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .transform().groovy("resource:classpath:mygroovy.groovy")
+                    .to("mock:result");
+            }
+        };
     }
-
-    public GroovyExpression createExpression(String expression) {
-        expression = loadResource(expression);
-        return new GroovyExpression(expression);
-    }
-
 }

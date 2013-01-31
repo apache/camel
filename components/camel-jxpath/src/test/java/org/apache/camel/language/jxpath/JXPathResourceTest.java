@@ -16,25 +16,33 @@
  */
 package org.apache.camel.language.jxpath;
 
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
- * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Language}
- * provider
+ *
  */
-public class JXPathLanguage extends LanguageSupport {
+public class JXPathResourceTest extends CamelTestSupport {
 
-    public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-        return new JXPathExpression(expression, Object.class);
+    @Test
+    public void testJXPathResource() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("James");
+
+        template.sendBody("direct:start", new PersonBean("James", "London"));
+
+        assertMockEndpointsSatisfied();
     }
 
-    public Predicate createPredicate(String predicate) {
-        predicate = loadResource(predicate);
-        return new JXPathExpression(predicate, Boolean.class);
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .transform().jxpath("resource:classpath:myjxpath.txt")
+                        .to("mock:result");
+            }
+        };
     }
-
 }

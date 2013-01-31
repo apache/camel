@@ -14,26 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.juel;
+package org.apache.camel.language.ognl;
 
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
- * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
  *
- * @version 
  */
-public class JuelLanguage extends LanguageSupport {
+public class OgnlResourceTest extends CamelTestSupport {
 
-    public Predicate createPredicate(String expression) {
-        expression = loadResource(expression);
-        return new JuelExpression(expression, Boolean.class);
+    @Test
+    public void testOgnllResource() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(7);
+
+        template.sendBody("direct:start", 3);
+
+        assertMockEndpointsSatisfied();
     }
 
-    public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-        return new JuelExpression(expression, Object.class);
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .transform().ognl("resource:classpath:myognl.txt")
+                    .to("mock:result");
+            }
+        };
     }
 }

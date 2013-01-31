@@ -25,17 +25,19 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.support.ExpressionSupport;
 
 /**
- * An <a href="http://www.ognl.org/">OGNL</a> {@link Expression}
+ * An <a href="http://www.ognl.org/">OGNL</a> {@link org.apache.camel.Expression}
  *
  * @version 
  */
 public class OgnlExpression extends ExpressionSupport {
 
+    private final OgnlLanguage language;
     private final String expressionString;
     private final Class<?> type;
     private Object expression;
 
     public OgnlExpression(OgnlLanguage language, String expressionString, Class<?> type) {
+        this.language = language;
         this.expressionString = expressionString;
         this.type = type;
         try {
@@ -50,8 +52,6 @@ public class OgnlExpression extends ExpressionSupport {
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
-        // TODO we could use caching here but then we'd have possible
-        // concurrency issues so lets assume that the provider caches
         OgnlContext oglContext = new OgnlContext();
         try {
             Object value = Ognl.getValue(expression, oglContext, new RootObject(exchange));

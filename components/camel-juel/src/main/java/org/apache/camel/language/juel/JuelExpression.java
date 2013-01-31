@@ -62,18 +62,16 @@ public class JuelExpression extends ExpressionSupport {
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
-        // TODO we could use caching here but then we'd have possible concurrency issues
-        // so lets assume that the provider caches
-        
         // Create (if needed) the ExpressionFactory first from the CamelContext using FactoryFinder
         ExpressionFactory factory = getExpressionFactory(exchange.getContext());
         ELContext context = populateContext(createContext(), exchange);
         ValueExpression valueExpression = factory.createValueExpression(context, expression, type);
         Object value = valueExpression.getValue(context);
+        LOG.trace("Value returned {}", value);
         return exchange.getContext().getTypeConverter().convertTo(tClass, value);
     }
 
-    public ExpressionFactory getExpressionFactory(CamelContext context) {
+    public synchronized ExpressionFactory getExpressionFactory(CamelContext context) {
         if (expressionFactory == null && context != null) {
             try {
                 FactoryFinder finder = context.getFactoryFinder("META-INF/services/org/apache/camel/language/");
@@ -94,7 +92,7 @@ public class JuelExpression extends ExpressionSupport {
         return getExpressionFactory();
     }
 
-    public ExpressionFactory getExpressionFactory() {
+    public synchronized ExpressionFactory getExpressionFactory() {
         if (expressionFactory == null) {
             expressionFactory = new ExpressionFactoryImpl();
         }
@@ -126,7 +124,6 @@ public class JuelExpression extends ExpressionSupport {
     protected ELContext createContext() {
         ELResolver resolver = new CompositeELResolver() {
             {
-                //add(methodResolver);
                 add(new ArrayELResolver(false));
                 add(new ListELResolver(false));
                 add(new MapELResolver(false));

@@ -14,26 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.juel;
+package org.apache.camel.language.simple;
 
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
- * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
  *
- * @version 
  */
-public class JuelLanguage extends LanguageSupport {
+public class SimpleResourceTest extends ContextTestSupport {
 
-    public Predicate createPredicate(String expression) {
-        expression = loadResource(expression);
-        return new JuelExpression(expression, Boolean.class);
+    @Test
+    public void testSimpleResource() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("The name is Camel");
+
+        template.sendBody("direct:start", "Camel");
+
+        assertMockEndpointsSatisfied();
     }
 
-    public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-        return new JuelExpression(expression, Object.class);
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .transform().simple("resource:classpath:mysimple.txt")
+                    .to("mock:result");
+            }
+        };
     }
 }
