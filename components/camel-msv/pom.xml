@@ -54,7 +54,7 @@
     <dependency>
       <groupId>msv</groupId>
       <artifactId>msv</artifactId>
-      <version>${isorelax-version}</version>
+      <version>${msv-version}</version>
     </dependency>
     <dependency>
       <groupId>com.sun.msv.datatype.xsd</groupId>
