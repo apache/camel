@@ -66,8 +66,7 @@
     <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.47</bouncycastle-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
-    <!-- we cannot upgrade to Castor 1.3.2_1 because of SMX4-1343 -->
-    <castor-bundle-version>1.3.1_2</castor-bundle-version>
+    <castor-bundle-version>1.3.2_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
     <cmis-version>0.7.0</cmis-version>
