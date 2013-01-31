@@ -34,6 +34,8 @@ import org.apache.camel.util.ResourceHelper;
  */
 public class LanguageComponent extends DefaultComponent {
 
+    public static final String RESOURCE = "resource:";
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String name = ObjectHelper.before(remaining, ":");
         String script = ObjectHelper.after(remaining, ":");
@@ -49,10 +51,14 @@ public class LanguageComponent extends DefaultComponent {
 
         Expression expression = null;
         String resourceUri = null;
-        if (script != null) {
-            if (ResourceHelper.hasScheme(script)) {
+        String resource = script;
+        if (resource != null) {
+            if (resource.startsWith(RESOURCE)) {
+                resource = resource.substring(RESOURCE.length());
+            }
+            if (ResourceHelper.hasScheme(resource)) {
                 // the script is a uri for a resource
-                resourceUri = script;
+                resourceUri = resource;
             } else {
                 // the script is provided as text in the uri, so decode to utf-8
                 expression = language.createExpression(URLDecoder.decode(script, "UTF-8"));
