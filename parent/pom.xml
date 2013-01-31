@@ -57,8 +57,8 @@
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avro-version>1.7.2</avro-version>
     <avro-bundle-version>1.7.2_1</avro-bundle-version>
-    <aws-java-sdk-bundle-version>1.3.26_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.3.26</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.3.27_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.3.27</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk15on-bundle-version>1.47_1</bcpg-jdk15on-bundle-version>
@@ -156,7 +156,7 @@
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.13</hawtdispatch-version>
-    <hazelcast-version>2.4</hazelcast-version>
+    <hazelcast-version>2.5</hazelcast-version>
     <hbase-version>0.94.2</hbase-version>
     <hbase-bundle-version>0.94.2_1</hbase-bundle-version>
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
