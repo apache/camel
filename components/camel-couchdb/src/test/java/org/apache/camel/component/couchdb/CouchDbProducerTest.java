@@ -51,6 +51,9 @@ public class CouchDbProducerTest {
     @Mock
     private Message msg;
 
+    @Mock
+    private Response response;
+
     private CouchDbProducer producer;
 
     @Before
@@ -72,16 +75,14 @@ public class CouchDbProducerTest {
         String id = UUID.randomUUID().toString();
         String rev = UUID.randomUUID().toString();
 
-        Response response = new Response();
-        response.setId(id);
-        response.setRev(rev);
-
         JsonObject doc = new JsonObject();
         doc.addProperty("_id", id);
         doc.addProperty("_rev", rev);
 
         when(msg.getMandatoryBody()).thenReturn(doc);
         when(client.update(doc)).thenReturn(response);
+        when(response.getId()).thenReturn(id);
+        when(response.getRev()).thenReturn(rev);
 
         producer.process(exchange);
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_ID, id);

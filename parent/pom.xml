@@ -231,7 +231,7 @@
     <log4j-version>1.2.17</log4j-version>
     <lucene-bundle-version>3.6.0_1</lucene-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <lucene-version>3.6.1</lucene-version>
-    <lightcouch-version>0.0.4</lightcouch-version>
+    <lightcouch-version>0.0.5</lightcouch-version>
     <!-- needed from tooling/archetypes -->
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
