@@ -358,6 +358,7 @@
     <twitter4j-bundle-version>3.0.1_1</twitter4j-bundle-version>
     <twitter4j-version>3.0.3</twitter4j-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
+    <urlrewritefilter-bundle-version>4.0.4_1</urlrewritefilter-bundle-version>
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
