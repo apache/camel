@@ -145,12 +145,6 @@
     <feature version='${project.version}'>camel-http</feature>
     <bundle>mvn:org.apache.camel/camel-jetty/${project.version}</bundle>
   </feature>
-  <feature name='camel-servlet' version='${project.version}' resolver='(obr)' start-level='50'>
-    <!-- camel-servlet need to access the http OSGi services -->
-    <feature>http</feature>
-    <feature version='${project.version}'>camel-http</feature>
-    <bundle>mvn:org.apache.camel/camel-servlet/${project.version}</bundle>
-  </feature>
   <feature name='camel-jms' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${spring-version-range}'>spring</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
@@ -327,10 +321,6 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/${jsch-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ftp/${project.version}</bundle>
-  </feature>
-  <feature name='camel-jsch' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-ftp</feature>
-    <bundle>mvn:org.apache.camel/camel-jsch/${project.version}</bundle>
   </feature>
   <feature name='camel-guava-eventbus' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
@@ -552,6 +542,22 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jpa/${project.version}</bundle>
   </feature>
+  <feature name='camel-jsch' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-ftp</feature>
+    <bundle>mvn:org.apache.camel/camel-jsch/${project.version}</bundle>
+  </feature>
+  <feature name='camel-jt400' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-spec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jt400/${jt400-bundle-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jt400/${project.version}</bundle>
+  </feature>
+  <feature name='camel-juel' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature>war</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-juel/${project.version}</bundle>
+  </feature>
   <feature name='camel-jxpath' version='${project.version}' resolver='(obr)' start-level='50'>
     <!-- All those bundles should be optional I think, but the commons-jxpath osgi metadata is not really good -->
     <feature>war</feature>
@@ -560,18 +566,6 @@
     <bundle dependency='true'>mvn:commons-jxpath/commons-jxpath/${commons-jxpath-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jxpath/${project.version}</bundle>
-  </feature>
-  <feature name='camel-juel' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature>war</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-juel/${project.version}</bundle>
-  </feature>
-  <feature name='camel-jt400' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-spec-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jt400/${jt400-bundle-version}</bundle>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-jt400/${project.version}</bundle>
   </feature>
   <feature name='camel-kestrel' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spymemcached/${spymemcached-bundle-version}</bundle>
@@ -708,15 +702,15 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-routebox/${project.version}</bundle>
   </feature>
-  <feature name='camel-ruby' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-script</feature>
-    <bundle>mvn:org.jruby/jruby/${jruby-version}</bundle>
-  </feature>
   <feature name='camel-rss' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-atom</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rome/${rome-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rss/${project.version}</bundle>
+  </feature>
+  <feature name='camel-ruby' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-script</feature>
+    <bundle>mvn:org.jruby/jruby/${jruby-version}</bundle>
   </feature>
   <feature name='camel-saxon' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -757,17 +751,29 @@
     <bundle dependency='true'>mvn:org.jruby/jruby/${jruby-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-script/${project.version}</bundle>
   </feature>
-  <feature name='camel-sip' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jain-sip-api-1.2/${servicemix-specs-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jain-sip-ri/${jain-sip-ri-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-sip/${project.version}</bundle>
+  <feature name='camel-servlet' version='${project.version}' resolver='(obr)' start-level='50'>
+    <!-- camel-servlet need to access the http OSGi services -->
+    <feature>http</feature>
+    <feature version='${project.version}'>camel-http</feature>
+    <bundle>mvn:org.apache.camel/camel-servlet/${project.version}</bundle>
+  </feature>
+  <feature name='camel-servletlistener' version='${project.version}' resolver='(obr)' start-level='50'>
+    <!-- camel-servletlistener need to access the http OSGi services -->
+    <feature>http</feature>
+    <feature version='${project.version}'>camel-http</feature>
+    <bundle>mvn:org.apache.camel/camel-servletlistener/${project.version}</bundle>
   </feature>
   <feature name='camel-shiro' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.shiro/shiro-core/${shiro-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-shiro/${project.version}</bundle>
+  </feature>
+  <feature name='camel-sip' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jain-sip-api-1.2/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jain-sip-ri/${jain-sip-ri-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-sip/${project.version}</bundle>
   </feature>
   <feature name='camel-sjms' version='${project.version}' resolver='(obr)' start-level='50'>
     <!-- JTA is not currently supported by SJMS but is a required dependency of the Geronimo JMS Bundle -->
