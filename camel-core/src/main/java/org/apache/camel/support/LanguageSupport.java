@@ -31,6 +31,8 @@ import org.apache.camel.util.ResourceHelper;
  */
 public abstract class LanguageSupport implements Language, IsSingleton, CamelContextAware {
 
+    public static final String RESOURCE = "resource:";
+
     private CamelContext camelContext;
 
     public CamelContext getCamelContext() {
@@ -58,8 +60,8 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
      * @throws ExpressionIllegalSyntaxException is thrown if error loading the resource
      */
     protected String loadResource(String expression) throws ExpressionIllegalSyntaxException {
-        if (camelContext != null && expression.startsWith("resource:")) {
-            String uri = expression.substring(9);
+        if (camelContext != null && expression.startsWith(RESOURCE)) {
+            String uri = expression.substring(RESOURCE.length());
             InputStream is = null;
             try {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), uri);

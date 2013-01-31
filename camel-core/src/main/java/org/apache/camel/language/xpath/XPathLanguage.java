@@ -20,27 +20,30 @@ import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.xml.XPathBuilder;
-import org.apache.camel.spi.Language;
+import org.apache.camel.support.LanguageSupport;
 
 /**
  * XPath language.
  */
-public class XPathLanguage implements Language, IsSingleton {
+public class XPathLanguage extends LanguageSupport {
     private QName resultType;
     private XPathFactory xpathFactory;
     private Boolean useSaxon;
     private String objectModelUri;
 
     public Predicate createPredicate(String expression) {
+        expression = loadResource(expression);
+
         XPathBuilder builder = XPathBuilder.xpath(expression);
         configureBuilder(builder);
         return builder;
     }
 
     public Expression createExpression(String expression) {
+        expression = loadResource(expression);
+
         XPathBuilder builder = XPathBuilder.xpath(expression);
         configureBuilder(builder);
         return builder;
