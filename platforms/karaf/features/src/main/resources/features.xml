@@ -56,6 +56,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
   </feature>
+<!-- TODO: Need Karaf 2.3.1 release 
   <feature name='camel-test-spring' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
     <bundle dependency='true'>mvn:org.springframework/spring-test/${spring-version}</bundle>
@@ -63,6 +64,7 @@
     <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test-spring/${project.version}</bundle>
   </feature>
+-->
   <feature name='camel-context' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-context/${project.version}</bundle>
@@ -684,14 +686,16 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quickfix/${quickfix-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-quickfix/${project.version}</bundle>
   </feature>
-<!-- TODO: camel-redis feature doesnt work yet 
   <feature name='camel-redis' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='[3.1,4)'>spring</feature>
     <feature version='${project.version}'>camel-core</feature>
+    <feature version='${spring-version-range}'>spring</feature>
+    <feature version='${spring-version-range}'>spring-tx</feature>
+    <bundle dependency='true'>mvn:org.springframework/spring-context/${spring-version}</bundle>
+    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.data/spring-data-redis/${spring-data-redis-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jedis/${jedis-client-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-redis/${project.version}</bundle>
   </feature>
--->
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:http://maven.restlet.org!org.restlet.jse/org.restlet/${restlet-version}</bundle>
