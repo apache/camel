@@ -80,7 +80,8 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
 
         if (sshd != null) {
             try {
-                sshd.stop();
+                // stop asap as we may hang forever
+                sshd.stop(true);
                 sshd = null;
             } catch (Exception e) {
                 // ignore while shutting down as we could be polling during shutdown
