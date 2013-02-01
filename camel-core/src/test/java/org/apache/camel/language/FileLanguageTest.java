@@ -83,9 +83,9 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:length}", file.length());
         assertExpression("${file:size}", file.length());
 
-        // modified is a Date object
-        Date modified = SimpleLanguage.simple("${file:modified}").evaluate(exchange, Date.class);
-        assertEquals(new Date(file.lastModified()), modified);
+        // modified is a long object
+        Long modified = SimpleLanguage.simple("${file:modified}").evaluate(exchange, Long.class);
+        assertEquals(file.lastModified(), modified.longValue());
     }
 
     public void testFileUsingAlternativeStartToken() throws Exception {
@@ -102,9 +102,9 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("$simple{file:length}", file.length());
         assertExpression("$simple{file:size}", file.length());
 
-        // modified is a Date object
-        Date modified = SimpleLanguage.simple("${file:modified}").evaluate(exchange, Date.class);
-        assertEquals(new Date(file.lastModified()), modified);
+        // modified is a long object
+        long modified = SimpleLanguage.simple("${file:modified}").evaluate(exchange, long.class);
+        assertEquals(file.lastModified(), modified);
     }
 
     public void testDate() throws Exception {

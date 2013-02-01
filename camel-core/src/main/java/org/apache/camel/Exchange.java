@@ -120,6 +120,7 @@ public interface Exchange {
     String FILE_PATH            = "CamelFilePath";
     String FILE_PARENT          = "CamelFileParent";
     String FILE_LAST_MODIFIED   = "CamelFileLastModified";
+    String FILE_LENGTH          = "CamelFileLength";
     String FILTER_MATCHED       = "CamelFilterMatched";
     String FILE_LOCK_FILE_ACQUIRED   = "CamelFileLockFileAcquired"; 
 

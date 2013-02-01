@@ -1326,9 +1326,14 @@ public final class ExpressionBuilder {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
                     }
                 } else if ("file".equals(command)) {
-                    date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
-                    if (date == null) {
-                        throw new IllegalArgumentException("Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
+                    Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
+                    if (num != null && num > 0) {
+                        date = new Date(num.longValue());
+                    } else {
+                        date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
+                        if (date == null) {
+                            throw new IllegalArgumentException("Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
+                        }
                     }
                 } else {
                     throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
@@ -1563,7 +1568,7 @@ public final class ExpressionBuilder {
     public static Expression fileSizeExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader("CamelFileLength", Long.class);
+                return exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class);
             }
 
             @Override
@@ -1576,7 +1581,7 @@ public final class ExpressionBuilder {
     public static Expression fileLastModifiedExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
+                return exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
             }
 
             @Override
