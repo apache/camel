@@ -144,10 +144,10 @@ public class GenericFile<T> implements WrappedFile<T>  {
             message.setHeader(Exchange.FILE_PARENT, getParent());
     
             if (getFileLength() >= 0) {
-                message.setHeader("CamelFileLength", getFileLength());
+                message.setHeader(Exchange.FILE_LENGTH, getFileLength());
             }
             if (getLastModified() > 0) {
-                message.setHeader(Exchange.FILE_LAST_MODIFIED, new Date(getLastModified()));
+                message.setHeader(Exchange.FILE_LAST_MODIFIED, getLastModified());
             }
         }
     }
