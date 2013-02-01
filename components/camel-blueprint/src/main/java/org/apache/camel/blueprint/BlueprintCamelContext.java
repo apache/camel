@@ -41,7 +41,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;
-    private ServiceRegistration<?> registration;
+    private ServiceRegistration registration;
 
     public BlueprintCamelContext() {
     }
@@ -84,7 +84,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         bundleContext.addServiceListener(this);
         // add blueprint listener as service, as we need this for the blueprint container
         // to support change events when it changes states
-        registration = bundleContext.registerService(BlueprintListener.class, this, null);
+        registration = bundleContext.registerService(BlueprintListener.class.getName(), this, null);
     }
 
     public void destroy() throws Exception {
