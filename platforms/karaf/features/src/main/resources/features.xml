@@ -639,7 +639,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsendnsca-core/${jsendnsca-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-nagios/${project.version}</bundle>
   </feature>
-<!-- TODO: camel-gae feature needs to be completed
+<!-- TODO: camel-neo4j feature needs to be completed
   <feature name='camel-neo4j' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-neo4j/${project.version}</bundle>

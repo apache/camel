@@ -100,7 +100,7 @@
     <concurrentlinkedhashmap.version>1.3.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
     <cxf-version>2.7.2</cxf-version>
-    <cxf-version-range>[2.4,2.9)</cxf-version-range>
+    <cxf-version-range>[2.6,2.9)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
     <derby-version>10.9.1.0</derby-version>
