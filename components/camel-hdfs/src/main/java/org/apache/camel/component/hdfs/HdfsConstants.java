@@ -44,6 +44,8 @@ public final class HdfsConstants {
 
     public static final int DEFAULT_CHECK_IDLE_INTERVAL = 500;
 
+    public static final String HDFS_CLOSE = "CamelHdfsClose";
+
     private HdfsConstants() {
     }
 }
