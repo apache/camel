@@ -86,6 +86,11 @@ public class TwitterConfiguration {
      * Used ot set the preferred language on which to search
      */
     private String lang;
+
+    /**
+     * Used to set the maximum tweets per page (max = 100)
+     */
+    private Integer count;
     
     private Date parsedDate;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -99,6 +104,11 @@ public class TwitterConfiguration {
      */
     private Twitter twitter;
     private TwitterStream twitterStream;
+
+    /**
+     * Number of page to iterate before stop (default is 1)
+     */
+    private Integer numberOfPages = new Integer(1);
 
     /**
      * Ensures required fields are available.
@@ -270,6 +280,22 @@ public class TwitterConfiguration {
 
     public void setLang(String lang) {
         this.lang = lang;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public Integer getNumberOfPages() {
+        return numberOfPages;
+    }
+
+    public void setNumberOfPages(Integer numberOfPages) {
+        this.numberOfPages = numberOfPages;
     }
 }
 

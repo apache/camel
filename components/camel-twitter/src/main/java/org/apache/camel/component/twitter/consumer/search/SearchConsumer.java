@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 /**
@@ -41,34 +42,58 @@ public class SearchConsumer extends Twitter4JConsumer {
     }
 
     public List<Status> pollConsume() throws TwitterException {
+        
         String keywords = te.getProperties().getKeywords();
         Query query = new Query(keywords);
         if (te.getProperties().isFilterOld()) {
             query.setSinceId(lastId);
         }
-        if (ObjectHelper.isNotEmpty(te.getProperties().getLang())) {
-            query.setLang(te.getProperties().getLang());
-        }
+        
         LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(query);
     }
 
     public List<Status> directConsume() throws TwitterException {
+        
         String keywords = te.getProperties().getKeywords();
         if (keywords == null || keywords.trim().length() == 0) {
             return Collections.emptyList();
         }
         Query query = new Query(keywords);
-        if (ObjectHelper.isNotEmpty(te.getProperties().getLang())) {
-            query.setLang(te.getProperties().getLang());
-        }
+        
         LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(query);
     }
 
     private List<Status> search(Query query) throws TwitterException {
-        QueryResult qr = te.getProperties().getTwitter().search(query);
+        Integer numberOfPages = 1;
+        
+        if (ObjectHelper.isNotEmpty(te.getProperties().getLang())) {
+            query.setLang(te.getProperties().getLang());
+        }
+
+        if (ObjectHelper.isNotEmpty(te.getProperties().getCount())) {
+            query.setCount(te.getProperties().getCount());
+        }
+
+        if (ObjectHelper.isNotEmpty(te.getProperties().getNumberOfPages())) {
+            numberOfPages = te.getProperties().getNumberOfPages();
+        }
+        
+        LOG.debug("Searching with " + numberOfPages + " pages.");
+
+        Twitter twitter = te.getProperties().getTwitter();
+        QueryResult qr = twitter.search(query);
         List<Status> tweets = qr.getTweets();
+
+        for (int i = 1; i < numberOfPages; i++) {
+            if (!qr.hasNext()) {
+                break;
+            }
+
+            qr = twitter.search(qr.nextQuery());
+            tweets.addAll(qr.getTweets());
+        }
 
         if (te.getProperties().isFilterOld()) {
             for (Status t : tweets) {
