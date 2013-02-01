@@ -86,7 +86,7 @@ public class ContextInfo extends OsgiCommandSupport {
                 System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Failed: " + exchangesFailed));
                 Long minProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "MinProcessingTime");
                 System.out.println(StringEscapeUtils.unescapeJava("\tMin Processing Time: " + minProcessingTime + "ms"));
-                Long maxProcessingTime = (Long) mBeanServer.getAttribute(contextMBean,  "MaxProcessingTime");
+                Long maxProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "MaxProcessingTime");
                 System.out.println(StringEscapeUtils.unescapeJava("\tMax Processing Time: " + maxProcessingTime + "ms"));
                 Long meanProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "MeanProcessingTime");
                 System.out.println(StringEscapeUtils.unescapeJava("\tMean Processing Time: " + meanProcessingTime + "ms"));
@@ -173,7 +173,7 @@ public class ContextInfo extends OsgiCommandSupport {
         for (String language : camelContext.getLanguageNames()) {
             System.out.println(StringEscapeUtils.unescapeJava("\t" + language));
         }
-        
+
         return null;
     }
 
