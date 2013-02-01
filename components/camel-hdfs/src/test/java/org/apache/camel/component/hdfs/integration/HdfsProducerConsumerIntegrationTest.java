@@ -25,7 +25,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -69,7 +68,8 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        Thread.sleep(100);
+
+        Thread.sleep(250);
         Configuration conf = new Configuration();
         Path dir = new Path("hdfs://localhost:9000/tmp/test");
         FileSystem fs = FileSystem.get(dir.toUri(), conf);

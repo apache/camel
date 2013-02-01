@@ -63,7 +63,6 @@ public class HdfsAppendTest extends CamelTestSupport {
         for (int i = 0; i < 10; ++i) {
             template.sendBody("direct:start1", "PIPPO");
         }
-        stopCamelContext();
 
         Configuration conf = new Configuration();
         Path file = new Path("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file1");
@@ -82,7 +81,8 @@ public class HdfsAppendTest extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        Thread.sleep(100);
+
+        Thread.sleep(250);
         Configuration conf = new Configuration();
         Path dir = new Path("hdfs://localhost:9000/tmp/test");
         FileSystem fs = FileSystem.get(dir.toUri(), conf);
