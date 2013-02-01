@@ -187,9 +187,18 @@ public class HdfsProducer extends DefaultProducer {
 
         idle.set(false);
 
+        // close if we do not have idle checker task to do this for us
+        boolean close = scheduler == null;
+        // but user may have a header to explict control the close
+        Boolean closeHeader = exchange.getIn().getHeader(HdfsConstants.HDFS_CLOSE, Boolean.class);
+        if (closeHeader != null) {
+            close = closeHeader;
+        }
+
         // if no idle checker then we need to explicit close the stream after usage
-        if (scheduler == null) {
+        if (close) {
             try {
+                HdfsProducer.this.log.trace("Closing stream");
                 ostream.close();
                 ostream = null;
             } catch (IOException e) {

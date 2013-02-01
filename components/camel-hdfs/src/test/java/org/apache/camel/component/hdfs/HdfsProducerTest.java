@@ -40,7 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class HdfsProducerTest extends CamelTestSupport {
-    
+
     private static final Path TEMP_DIR = new Path(new File("target/test/").getAbsolutePath());
 
     //Hadoop doesn't run on IBM JDK
@@ -53,6 +53,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         super.setUp();
     }
+
     @Test
     public void testProducer() throws Exception {
         if (SKIP) {
@@ -68,6 +69,31 @@ public class HdfsProducerTest extends CamelTestSupport {
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         assertEquals("PAPPO", value.toString());
+    }
+
+    @Test
+    public void testProducerClose() throws Exception {
+        if (SKIP) {
+            return;
+        }
+        for (int i = 0; i < 10; ++i) {
+            // send 10 messages, and mark to close in last message
+            template.sendBodyAndHeader("direct:start1", "PAPPO" + i, HdfsConstants.HDFS_CLOSE, i == 9 ? true : false);
+        }
+
+        Configuration conf = new Configuration();
+        Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel1");
+        FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
+        SequenceFile.Reader reader = new SequenceFile.Reader(fs1, file1, conf);
+        Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
+        Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
+
+        int i = 0;
+        while (reader.next(key, value)) {
+            Text txt = (Text) value;
+            assertEquals("PAPPO" + i, txt.toString());
+            ++i;
+        }
     }
 
     @Test
