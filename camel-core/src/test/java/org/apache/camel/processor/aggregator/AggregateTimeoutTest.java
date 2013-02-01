@@ -29,7 +29,7 @@ import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
  */
 public class AggregateTimeoutTest extends ContextTestSupport {
 
-    private final AtomicInteger INVOKED = new AtomicInteger();
+    private final AtomicInteger inovked = new AtomicInteger();
     private volatile Exchange receivedExchange;
     private volatile int receivedIndex;
     private volatile int receivedTotal;
@@ -48,7 +48,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // should invoke the timeout method
-        assertEquals(1, INVOKED.get());
+        assertEquals(1, inovked.get());
 
         assertNotNull(receivedExchange);
         assertEquals("AB", receivedExchange.getIn().getBody());
@@ -68,7 +68,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         mock.assertIsSatisfied(1500);
 
         // should have not invoked the timeout method anymore
-        assertEquals(1, INVOKED.get());
+        assertEquals(1, inovked.get());
     }
 
     @Override
@@ -90,7 +90,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
     private class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
-            INVOKED.incrementAndGet();
+            inovked.incrementAndGet();
 
             // we can't assert on the expected values here as the contract of this method doesn't
             // allow to throw any Throwable (including AssertionFailedError) so that we assert
