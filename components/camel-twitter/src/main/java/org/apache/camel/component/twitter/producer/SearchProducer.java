@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.twitter.producer;
 
+import java.util.List;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterConstants;
@@ -25,8 +27,6 @@ import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
-
-import java.util.List;
 
 public class SearchProducer extends Twitter4JProducer {
 
@@ -88,7 +88,7 @@ public class SearchProducer extends Twitter4JProducer {
         List<Status> list = results.getTweets();
 
         for (int i = 1; i < numberOfPages; i++) {
-            if (results.hasNext() == false) {
+            if (!results.hasNext()) {
                 break;
             }
             log.debug("Fetching page");

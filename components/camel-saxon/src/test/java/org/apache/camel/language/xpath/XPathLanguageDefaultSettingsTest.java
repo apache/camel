@@ -19,8 +19,8 @@ package org.apache.camel.language.xpath;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.camel.test.junit4.TestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
