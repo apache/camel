@@ -48,10 +48,11 @@ public class HdfsOutputStream implements Closeable {
         HdfsInfo info = new HdfsInfo(ret.actualPath);
 
         ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
-        if (configuration.isAppend()) {
+        if (configuration.isWantAppend() || configuration.isAppend()) {
             if (!info.getFileSystem().exists(new Path(ret.actualPath))) {
                 configuration.setAppend(false);
             } else {
+                configuration.setAppend(true);
                 info = new HdfsInfo(ret.suffixedPath);
                 info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
             }

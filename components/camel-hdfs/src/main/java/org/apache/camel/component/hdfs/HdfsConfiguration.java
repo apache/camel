@@ -33,6 +33,7 @@ public class HdfsConfiguration {
     private String path;
     private boolean overwrite = true;
     private boolean append;
+    private boolean wantAppend;
     private int bufferSize = HdfsConstants.DEFAULT_BUFFERSIZE;
     private short replication = HdfsConstants.DEFAULT_REPLICATION;
     private long blockSize = HdfsConstants.DEFAULT_BLOCKSIZE;
@@ -192,6 +193,7 @@ public class HdfsConfiguration {
 
         overwrite = getBoolean(hdfsSettings, "overwrite", overwrite);
         append = getBoolean(hdfsSettings, "append", append);
+        wantAppend = append;
         bufferSize = getInteger(hdfsSettings, "bufferSize", bufferSize);
         replication = getShort(hdfsSettings, "replication", replication);
         blockSize = getLong(hdfsSettings, "blockSize", blockSize);
@@ -252,6 +254,10 @@ public class HdfsConfiguration {
 
     public boolean isAppend() {
         return append;
+    }
+
+    public boolean isWantAppend() {
+        return wantAppend;
     }
 
     public void setAppend(boolean append) {
