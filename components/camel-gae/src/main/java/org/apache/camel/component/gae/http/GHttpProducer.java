@@ -46,13 +46,10 @@ public class GHttpProducer extends DefaultProducer {
     /**
      * Invokes the URL fetch service.
      * 
-     * @param exchange
-     *            contains the request data in the in-message. The result is
-     *            written to the out-message.
-     * @throws GHttpException
-     *             if the response code is >= 400 and
-     *             {@link GHttpEndpoint#isThrowExceptionOnFailure()} returns
-     *             <code>true</code>.
+     * @param exchange contains the request data in the in-message. The result is written to the out-message.
+     * @throws GHttpException if the response code is >= 400 and {@link GHttpEndpoint#isThrowExceptionOnFailure()}
+     * returns <code>true</code>.
+     *
      * @see GHttpBinding
      */
     public void process(Exchange exchange) throws Exception {

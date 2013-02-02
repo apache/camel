@@ -18,18 +18,19 @@ package org.apache.camel.component.gae.auth;
 
 import java.security.PrivateKey;
 
+import org.apache.camel.CamelContextAware;
+
 /**
  * Interface used by {@link GAuthComponent} for loading private keys. The private
  * key is needed for RSA-SHA1 signatures.
  */
-public interface GAuthKeyLoader {
+public interface GAuthKeyLoader extends CamelContextAware {
 
     /**
      * Loads a private key.
      * 
      * @return the loaded private key.
-     * @throws Exception
-     *             if key loading failed.
+     * @throws Exception if key loading failed.
      */
     PrivateKey loadPrivateKey() throws Exception;
 

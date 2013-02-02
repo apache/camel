@@ -27,12 +27,9 @@ import org.apache.camel.Exchange;
  * by {@link Consumer} implementations or their clients to translate between
  * protocol-specific or services-specific messages and {@link Exchange} objects.
  * 
- * @param S
- *            request type.
- * @param T
- *            response type.
- * @param E
- *            endpoint type.
+ * @param S request type.
+ * @param T response type.
+ * @param E endpoint type.
  */
 public interface InboundBinding<E extends Endpoint, S, T> {
 

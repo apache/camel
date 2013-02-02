@@ -42,9 +42,7 @@ public class GLoginProducer extends DefaultProducer {
     /**
      * First obtains an authentication token and then exchanges the token against
      * an authorization cookie.
-     * 
-     * @param exchange
-     * 
+     *
      * @see GLoginBinding
      * @see GLoginServiceImpl
      */

@@ -68,11 +68,7 @@ public class GTaskBinding implements
      * Reads data from <code>exchange</code> and writes it to a newly created
      * {@link TaskOptions} instance. The <code>request</code> parameter is
      * ignored.
-     * 
-     * @param endpoint
-     * @param exchange
-     * @param request
-     *            ignored.
+     *
      * @return a newly created {@link TaskOptions} instance containing data from
      *         <code>exchange</code>.
      */

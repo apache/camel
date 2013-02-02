@@ -19,25 +19,25 @@
 
 <web-app>
 
-    <!-- tell Spring where it should load the XML file -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:org/apache/camel/component/gae/http/context-inbound.xml</param-value>
-    </context-param>
+  <!-- tell Spring where it should load the XML file -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:org/apache/camel/component/gae/http/context-inbound.xml</param-value>
+  </context-param>
 
-    <!-- spring context listener which loads the XML file -->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
+  <!-- spring context listener which loads the XML file -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
 
-    <servlet>
-        <servlet-name>CamelServlet</servlet-name>
-        <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
-    </servlet>
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+  </servlet>
 
-    <servlet-mapping>
-        <servlet-name>CamelServlet</servlet-name>
-        <url-pattern>/camel/*</url-pattern>
-    </servlet-mapping>
-    
+  <servlet-mapping>
+    <servlet-name>CamelServlet</servlet-name>
+    <url-pattern>/camel/*</url-pattern>
+  </servlet-mapping>
+
 </web-app>

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.camel.util.IOHelper;
 
 public class GHttpTestServlet extends HttpServlet {
 
@@ -63,7 +63,7 @@ public class GHttpTestServlet extends HttpServlet {
         }
 
         // Copy body from request to response
-        resp.getWriter().println(IOUtils.toString(req.getInputStream()));
+        IOHelper.copyAndCloseInput(req.getInputStream(), resp.getOutputStream());
         resp.getWriter().flush();
     }
 }

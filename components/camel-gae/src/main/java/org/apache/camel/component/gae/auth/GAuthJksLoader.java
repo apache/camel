@@ -22,45 +22,49 @@ import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.PrivateKey;
 
-import org.springframework.core.io.Resource;
+import org.apache.camel.CamelContext;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * A Java keystore specific key loader. 
  */
 public class GAuthJksLoader implements GAuthKeyLoader {
 
-    private Resource keyStoreLocation;
-
+    private CamelContext camelContext;
+    private String keyStoreLocation;
     private String storePass;
-
     private String keyPass;
-
     private String keyAlias;
 
     public GAuthJksLoader() {
         this(null, null, null, null);
     }
 
-    public GAuthJksLoader(Resource keyStoreLocation, String storePass, String keyPass, String keyAlias) {
+    public GAuthJksLoader(String keyStoreLocation, String storePass, String keyPass, String keyAlias) {
         this.keyStoreLocation = keyStoreLocation;
         this.storePass = storePass;
         this.keyPass = keyPass;
         this.keyAlias = keyAlias;
     }
 
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     /**
      * Set the location of the Java keystore.
-     * 
-     * @param keyStoreLocation
      */
-    public void setKeyStoreLocation(Resource keyStoreLocation) {
+    public void setKeyStoreLocation(String keyStoreLocation) {
         this.keyStoreLocation = keyStoreLocation;
     }
 
     /**
      * Sets the password used to open the key store.
-     * 
-     * @param storePass
      */
     public void setStorePass(String storePass) {
         this.storePass = storePass;
@@ -68,8 +72,6 @@ public class GAuthJksLoader implements GAuthKeyLoader {
 
     /**
      * Sets the password used to get access to a specific key.
-     * 
-     * @param keyPass
      */
     public void setKeyPass(String keyPass) {
         this.keyPass = keyPass;
@@ -77,23 +79,20 @@ public class GAuthJksLoader implements GAuthKeyLoader {
 
     /**
      * Sets the alias of the key to be loaded.
-     * 
-     * @param keyAlias
      */
     public void setKeyAlias(String keyAlias) {
         this.keyAlias = keyAlias;
     }
 
     /**
-     * Loads a private key from a Java keystore depending on this loader's 
-     * properties.
+     * Loads a private key from a Java keystore depending on this loader's properties.
      */
     public PrivateKey loadPrivateKey() throws Exception {
-        InputStream input = keyStoreLocation.getInputStream();
+        InputStream input = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), keyStoreLocation);
         try {
             return loadPrivateKey(input);
         } finally {
-            input.close();
+            IOHelper.close(input);
         }
     }
 

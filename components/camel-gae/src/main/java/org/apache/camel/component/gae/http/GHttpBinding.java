@@ -55,13 +55,8 @@ public class GHttpBinding implements
      * Reads data from <code>response</code> and writes it to the out-message of
      * the <code>exchange</code>.
      * 
-     * @param endpoint
-     * @param exchange
-     * @param response
-     * @return the original <code>exchange</code> instance populated with
-     *         response data.
-     * @throws GHttpException
-     *             if the response code is >= 400 and
+     * @return the original <code>exchange</code> instance populated with response data.
+     * @throws GHttpException if the response code is >= 400 and
      *             {@link GHttpEndpoint#isThrowExceptionOnFailure()} returns
      *             <code>true</code>.
      */
@@ -81,11 +76,7 @@ public class GHttpBinding implements
      * Reads data from <code>exchange</code> and writes it to a newly created
      * {@link HTTPRequest} instance. The <code>request</code> parameter is
      * ignored.
-     * 
-     * @param endpoint
-     * @param exchange
-     * @param request
-     *            ignored.
+     *
      * @return a newly created {@link HTTPRequest} instance containing data from
      *         <code>exchange</code>.
      */

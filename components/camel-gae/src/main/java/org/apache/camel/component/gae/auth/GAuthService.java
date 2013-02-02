@@ -26,20 +26,16 @@ public interface GAuthService {
     /**
      * Gets an unauthorized request token from Google.
      * 
-     * @param oauthParameters
-     *            value object for providing input data and storing result data
-     *            (unauthorized request token).
-     * @throws Exception
+     * @param oauthParameters value object for providing input data and storing result data
+     *                        (unauthorized request token).
      */
     void getUnauthorizedRequestToken(OAuthParameters oauthParameters) throws Exception;
 
     /**
      * Gets an access token from Google.
      * 
-     * @param oauthParameters
-     *            value object for providing input data (authorized request
-     *            token) and storing result data (access token).
-     * @throws Exception
+     * @param oauthParameters value object for providing input data (authorized request token)
+     *                        and storing result data (access token).
      */
     void getAccessToken(OAuthParameters oauthParameters) throws Exception;
     

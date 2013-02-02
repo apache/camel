@@ -26,10 +26,7 @@ public interface GLoginService {
      * {@link GLoginData#setAuthenticationToken(String)} (only if needed by
      * {@link #authorize(GLoginData)}).
      * 
-     * @param data
-     *            authentication input data and response data (authentication
-     *            token) container.
-     * @throws Exception
+     * @param data authentication input data and response data (authentication token) container.
      */
     void authenticate(GLoginData data) throws Exception;
 
@@ -37,10 +34,7 @@ public interface GLoginService {
      * Authorizes access to an application and stores an authorization cookie to
      * {@link GLoginData#setAuthorizationCookie(String)}.
      * 
-     * @param data
-     *            authentication input data and response data (authorization
-     *            cookie) container.
-     * @throws Exception
+     * @param data authentication input data and response data (authorization cookie) container.
      */
     void authorize(GLoginData data) throws Exception;
 

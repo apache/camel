@@ -44,9 +44,7 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
 
     private OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding;
     private InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding;
-
     private String workerRoot;
-    
     private Queue queue;
     
     public GTaskEndpoint(String endpointUri, ServletComponent component,
@@ -76,8 +74,7 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
     /**
      * Proxies the {@link HttpBinding} returned by {@link super#getBinding()}
      * with a dynamic proxy. The proxy's invocation handler further delegates to
-     * {@link InboundBinding#readRequest(org.apache.camel.Endpoint, Exchange, Object)}
-     * .
+     * {@link InboundBinding#readRequest(org.apache.camel.Endpoint, Exchange, Object)} .
      * 
      * @return proxied {@link HttpBinding}.
      */
@@ -98,12 +95,10 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
     /**
      * Sets the web hook path root. 
      *
-     * @param workerRoot
-     *            the assumed web hook path root. The default is
-     *            <code>worker</code>. The servlet handling the callback from
-     *            the task queueing service should have a <code>/worker/*</code>
-     *            servlet mapping in this case. If another servlet mapping is
-     *            used it must be set here accordingly.
+     * @param workerRoot the assumed web hook path root. The default is <code>worker</code>.
+     *                   The servlet handling the callback from the task queueing service should have
+     *                   a <code>/worker/*</code> servlet mapping in this case. If another servlet mapping
+     *                   is used it must be set here accordingly.
      */
     public void setWorkerRoot(String workerRoot) {
         this.workerRoot = workerRoot;

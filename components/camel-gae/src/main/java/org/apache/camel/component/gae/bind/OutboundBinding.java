@@ -27,12 +27,9 @@ import org.apache.camel.Producer;
  * by {@link Producer} implementations to translate between {@link Exchange}
  * objects and protocol-specific or services-specific messages.
  * 
- * @param S
- *            request type.
- * @param T
- *            response type.
- * @param E
- *            endpoint type.
+ * @param S request type.
+ * @param T response type.
+ * @param E endpoint type.
  */
 public interface OutboundBinding<E extends Endpoint, S, T> {
 

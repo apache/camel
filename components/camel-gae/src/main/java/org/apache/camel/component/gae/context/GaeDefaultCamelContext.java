@@ -17,14 +17,15 @@
 package org.apache.camel.component.gae.context;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 
 public class GaeDefaultCamelContext extends DefaultCamelContext {
 
-    @Override
-    protected void doStart() throws Exception {
-        // JMX not allowed on GAE
+    public GaeDefaultCamelContext() {
+        super();
+        // disable JMX and use the simple registry as JNDI is not allowed
         disableJMX();
-        super.doStart();
+        setRegistry(new SimpleRegistry());
     }
 
 }

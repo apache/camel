@@ -30,9 +30,7 @@ class GTaskEndpointInfo {
     private static final String COLON = ":";
     
     private String uri;
-    
     private String uriPath;
-
     private URI uriObject;
     
     public GTaskEndpointInfo(String uri, String uriPath) throws Exception {

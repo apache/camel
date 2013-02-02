@@ -74,11 +74,6 @@ public class GAuthAuthorizeBinding implements OutboundBinding<GAuthEndpoint, Goo
      * {@link GAuthComponent} is configured to use the HMAC_SHA1 signature
      * method, a cookie is created containing the request token secret. It is
      * needed later to upgrade an authorized request token to an access token.
-     * 
-     * @param endpoint
-     * @param exchange
-     * @param response
-     * @return
      */
     public Exchange readResponse(GAuthEndpoint endpoint, Exchange exchange, GoogleOAuthParameters response) throws Exception {
         String authrUrl = endpoint.newOAuthHelper().createUserAuthorizationUrl(response);
