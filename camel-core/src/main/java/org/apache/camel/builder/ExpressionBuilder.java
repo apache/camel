@@ -690,6 +690,41 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for a type value
+     *
+     * @param name the type name
+     * @return an expression object which will return the type value
+     */
+    public static Expression typeExpression(final String name) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // it may refer to a class type
+                Class<?> type = exchange.getContext().getClassResolver().resolveClass(name);
+                if (type != null) {
+                    return type;
+                }
+
+                int pos = name.lastIndexOf(".");
+                if (pos > 0) {
+                    String before = name.substring(0, pos);
+                    String after = name.substring(pos + 1);
+                    type = exchange.getContext().getClassResolver().resolveClass(before);
+                    if (type != null) {
+                        return ObjectHelper.lookupConstantFieldValue(type, after);
+                    }
+                }
+
+                throw ObjectHelper.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + name));
+            }
+
+            @Override
+            public String toString() {
+                return "type:" + name;
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message body
      */
     public static Expression bodyExpression() {
