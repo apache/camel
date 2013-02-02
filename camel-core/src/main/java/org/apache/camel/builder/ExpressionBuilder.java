@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -720,6 +721,33 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "type:" + name;
+            }
+        };
+    }
+
+    /**
+     * Returns an expression that caches the evaluation of another expression
+     * and returns the cached value, to avoid re-evaluating the expression.
+     *
+     * @param expression  the target expression to cache
+     * @return the cached value
+     */
+    public static Expression cacheExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            private final AtomicReference<Object> cache = new AtomicReference<Object>();
+
+            public Object evaluate(Exchange exchange) {
+                Object answer = cache.get();
+                if (answer == null) {
+                    answer = expression.evaluate(exchange, Object.class);
+                    cache.set(answer);
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return expression.toString();
             }
         };
     }
