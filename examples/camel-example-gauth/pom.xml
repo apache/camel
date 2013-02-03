@@ -52,7 +52,7 @@
             <artifactId>com.google.gdata-calendar</artifactId>
             <version>${google-gdata-version}</version>
         </dependency>
-        <!-- beginning from spring 3.2.x spring-webmvc doesn't bring the transitive dependency -->
+        <!-- beginning from spring 3.2.1 spring-webmvc doesn't bring the transitive dependency -->
         <!-- to spring-web anymore so that we need to explicitly declare this dependency here  -->
         <dependency>
           <groupId>org.springframework</groupId>
