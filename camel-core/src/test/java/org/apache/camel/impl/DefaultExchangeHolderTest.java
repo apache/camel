@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeExchangeException;
 
 /**
  * @version 
@@ -123,6 +125,18 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertEquals("Hello World", exchange.getIn().getBody());
         assertEquals(123, exchange.getIn().getHeader("Bar"));
         assertNull(exchange.getIn().getHeader("Foo"));
+    }
+
+    public void testFileNotSupported() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new File("src/test/resources/log4j.properties"));
+
+        try {
+            DefaultExchangeHolder.marshal(exchange);
+            fail("Should have thrown exception");
+        } catch (RuntimeExchangeException e) {
+            // expected
+        }
     }
 
     private DefaultExchangeHolder createHolder(boolean includeProperties) {

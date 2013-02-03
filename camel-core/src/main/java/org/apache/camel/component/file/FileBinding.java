@@ -35,7 +35,7 @@ public class FileBinding implements GenericFileBinding<File> {
             return content;
         }
         
-        // as we use java.io.File itself as the body (not loading its content into a OutputStream etc.)
+        // as we use java.io.File itself as the body (not loading its content into an OutputStream etc.)
         // we just store a java.io.File handle to the actual file denoted by the
         // file.getAbsoluteFilePath. We must do this as the original file consumed can be renamed before
         // being processed (preMove) and thus it points to an invalid file location.
@@ -54,7 +54,7 @@ public class FileBinding implements GenericFileBinding<File> {
     public void loadContent(Exchange exchange, GenericFile<?> file) throws IOException {
         if (content == null) {
             try {
-                content = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, file.getFile());
+                content = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, file);
             } catch (NoTypeConversionAvailableException e) {
                 throw new IOException("Cannot load file content: " + file.getAbsoluteFilePath(), e);
             }
