@@ -88,6 +88,10 @@ public interface RuntimeConfiguration {
      * <p/>
      * <b>Important:</b> Currently only routes can be disabled, as {@link CamelContext}s are always started.
      * <br/>
+     * <b>Note:</b> When setting auto startup <tt>false</tt> on {@link CamelContext} then that takes precedence
+     * and <i>no</i> routes is started. You would need to start {@link CamelContext} explicit using
+     * the {@link org.apache.camel.CamelContext#start()} method, to start the context and the routes.
+     * <p/>
      * Default is <tt>true</tt> to always start up.
      *
      * @param autoStartup whether to start up automatically.

@@ -58,13 +58,8 @@ public class GMailBinding implements OutboundBinding<GMailEndpoint, Message, Voi
      * Reads data from <code>exchange</code> and writes it to a newly created
      * {@link Message} instance. The <code>request</code> parameter is
      * ignored.
-     * 
-     * @param endpoint
-     * @param exchange
-     * @param request
-     *            ignored.
-     * @return a newly created {@link Message} instance containing data from
-     *         <code>exchange</code>.
+     *
+     * @return a newly created {@link Message} instance containing data from <code>exchange</code>.
      */
     public Message writeRequest(GMailEndpoint endpoint, Exchange exchange, Message request) {
         Message message = new Message();

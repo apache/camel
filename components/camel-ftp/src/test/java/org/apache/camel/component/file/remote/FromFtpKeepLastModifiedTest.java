@@ -59,7 +59,7 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class).getTime();
+        long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/keep/out/hello.txt").lastModified();
 
         assertEquals("Timestamp should have been kept", t1, t2);
@@ -83,7 +83,7 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class).getTime();
+        long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/keep/out/hello.txt").lastModified();
 
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
@@ -107,7 +107,7 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class).getTime();
+        long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/keep/out/hello.txt").lastModified();
 
         assertNotSame("Timestamp should NOT have been kept", t1, t2);

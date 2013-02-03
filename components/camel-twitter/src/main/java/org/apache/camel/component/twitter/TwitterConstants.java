@@ -24,6 +24,8 @@ public final class TwitterConstants {
     public static final String TWITTER_KEYWORDS = "CamelTwitterKeywords";
 
     public static final String TWITTER_SEARCH_LANGUAGE = "CamelTwitterSearchLanguage";
+    public static final String TWITTER_COUNT = "CamelTwitterCount";
+    public static final String TWITTER_NUMBER_OF_PAGES = "CamelTwitterNumberOfPages";
 
     private TwitterConstants() {
         // utility

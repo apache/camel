@@ -58,36 +58,16 @@ public class GAuthEndpoint  extends DefaultEndpoint {
     }
     
     private OutboundBinding<GAuthEndpoint, GoogleOAuthParameters, GoogleOAuthParameters> authorizeBinding;
-
     private OutboundBinding<GAuthEndpoint, GoogleOAuthParameters, GoogleOAuthParameters> upgradeBinding;
-    
     private Name name;
-    
     private String callback;
-    
     private String scope;
-
     private String consumerKey;
-    
     private String consumerSecret;
-
     private GAuthKeyLoader keyLoader;
-
     private GAuthService service;
-    
     private PrivateKey cachedKey;
     
-    /**
-     * Creates a new GAuthEndpoint.
-     * 
-     * @param endpointUri
-     * @param component
-     *            component that created this endpoint.
-     * @param name
-     *            either <code>authorize</code> or <code>upgrade</code>.
-     * @throws IllegalArgumentException
-     *             if the endpoint name is invalid.
-     */
     public GAuthEndpoint(String endpointUri, Component component, String name) {
         super(endpointUri, component);
         this.name = Name.valueOf(name.toUpperCase());
@@ -100,9 +80,6 @@ public class GAuthEndpoint  extends DefaultEndpoint {
 
     /**
      * Sets the binding for <code>gauth:authorize</code> endpoints.  
-     * 
-     * @param authorizeBinding
-     * @see GAuthAuthorizeBinding
      */
     public void setAuthorizeBinding(OutboundBinding<GAuthEndpoint, GoogleOAuthParameters, GoogleOAuthParameters> authorizeBinding) {
         this.authorizeBinding = authorizeBinding;
@@ -114,9 +91,6 @@ public class GAuthEndpoint  extends DefaultEndpoint {
 
     /**
      * Sets the binding for <code>gauth:upgrade</code> endpoints. 
-     * 
-     * @param upgradeBinding
-     * @see GAuthUpgradeBinding
      */
     public void setUpgradeBinding(OutboundBinding<GAuthEndpoint, GoogleOAuthParameters, GoogleOAuthParameters> upgradeBinding) {
         this.upgradeBinding = upgradeBinding;
@@ -208,9 +182,6 @@ public class GAuthEndpoint  extends DefaultEndpoint {
      * Sets the consumer secret. This secret is generated when a web application
      * is registered at Google. Only set the consumer secret if the HMAC-SHA1 
      * signature method shall be used.
-     * 
-     * @param consumerSecret
-     *            consumer secret to set.
      */
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
@@ -231,9 +202,6 @@ public class GAuthEndpoint  extends DefaultEndpoint {
     /**
      * Sets a key loader for loading a private key. A private key is required
      * when the RSA-SHA1 signature method shall be used.    
-     * 
-     * @param keyLoader
-     *            key loader to set.
      */
     public void setKeyLoader(GAuthKeyLoader keyLoader) {
         this.keyLoader = keyLoader;
@@ -247,8 +215,6 @@ public class GAuthEndpoint  extends DefaultEndpoint {
      * Sets the service that makes the remote calls to Google services. Testing
      * code should inject a mock service here (using serviceRef in endpoint
      * URI).
-     * 
-     * @param service
      */
     public void setService(GAuthService service) {
         this.service = service;
@@ -279,9 +245,6 @@ public class GAuthEndpoint  extends DefaultEndpoint {
      * Creates an {@link OAuthHelper} configured with either an
      * {@link OAuthHmacSha1Signer} or an {@link OAuthRsaSha1Signer}, depending
      * on this endpoint's properties.
-     * 
-     * @return
-     * @throws Exception
      */
     OAuthHelper newOAuthHelper() throws Exception {
         OAuthSigner signer = null;

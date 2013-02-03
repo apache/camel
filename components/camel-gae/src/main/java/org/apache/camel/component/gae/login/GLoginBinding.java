@@ -56,12 +56,6 @@ public class GLoginBinding implements OutboundBinding<GLoginEndpoint, GLoginData
      * Creates a {@link GLoginData} object from endpoint and
      * <code>exchange.getIn()</code> header data. The created object is used to
      * obtain an authentication token and an authorization cookie.
-     * 
-     * @param endpoint
-     * @param exchange
-     * @param request
-     *            ignored.
-     * @return
      */
     public GLoginData writeRequest(GLoginEndpoint endpoint, Exchange exchange, GLoginData request) {
         String hostName = exchange.getIn().getHeader(GLOGIN_HOST_NAME, String.class); 
@@ -94,11 +88,6 @@ public class GLoginBinding implements OutboundBinding<GLoginEndpoint, GLoginData
      * {@link #GLOGIN_COOKIE} header containing an authorization cookie. If the
      * endpoint is configured to run in development mode, no authentication
      * token will be set, only an authorization cookie.
-     * 
-     * @param endpoint
-     * @param exchange
-     * @param response
-     * @return
      */
     public Exchange readResponse(GLoginEndpoint endpoint, Exchange exchange, GLoginData response) throws Exception {
         if (response.getAuthenticationToken() != null) {

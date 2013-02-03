@@ -38,4 +38,14 @@ public class UriConfigurationTest extends Assert {
         Assert.assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
         Assert.assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
     }
+    
+    @Test
+    public void testPageSetting() throws Exception {
+        Endpoint endpoint = context.getEndpoint("twitter:todo/page?count=50&numberOfPages=2");
+        assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
+        TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
+
+        Assert.assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
+        Assert.assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
+    }
 }

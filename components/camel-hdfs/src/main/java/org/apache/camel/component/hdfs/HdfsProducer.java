@@ -181,8 +181,32 @@ public class HdfsProducer extends DefaultProducer {
             ostream = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
         }
 
+        String path = ostream.getActualPath();
+        log.trace("Writing body to hdfs-file {}", path);
         ostream.append(key, body, exchange.getContext().getTypeConverter());
+
         idle.set(false);
+
+        // close if we do not have idle checker task to do this for us
+        boolean close = scheduler == null;
+        // but user may have a header to explict control the close
+        Boolean closeHeader = exchange.getIn().getHeader(HdfsConstants.HDFS_CLOSE, Boolean.class);
+        if (closeHeader != null) {
+            close = closeHeader;
+        }
+
+        // if no idle checker then we need to explicit close the stream after usage
+        if (close) {
+            try {
+                HdfsProducer.this.log.trace("Closing stream");
+                ostream.close();
+                ostream = null;
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        log.debug("Wrote body to hdfs-file {}", path);
     }
 
     private StringBuilder newFileName() {
@@ -215,6 +239,7 @@ public class HdfsProducer extends DefaultProducer {
             if (System.currentTimeMillis() - ostream.getLastAccess() > strategy.value && !idle.get() && !ostream.isBusy().get()) {
                 idle.set(true);
                 try {
+                    HdfsProducer.this.log.trace("Closing stream as idle");
                     ostream.close();
                 } catch (IOException e) {
                     // ignore

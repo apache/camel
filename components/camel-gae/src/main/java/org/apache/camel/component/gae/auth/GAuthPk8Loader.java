@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.gae.auth;
 
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 
 import com.google.gdata.util.common.util.Base64;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.Resource;
+import org.apache.camel.CamelContext;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * A Java PKCS#8-specific key loader.
@@ -33,14 +34,21 @@ public class GAuthPk8Loader implements GAuthKeyLoader {
     private static final String BEGIN = "-----BEGIN PRIVATE KEY-----";
     private static final String END   = "-----END PRIVATE KEY-----";
 
-    private Resource keyLocation;
+    private CamelContext camelContext;
+    private String keyLocation;
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     /**
      * Sets the location of the PKCS#8 file that contains a private key.
-     * 
-     * @param keyLocation
      */
-    public void setKeyLocation(Resource keyLocation) {
+    public void setKeyLocation(String keyLocation) {
         this.keyLocation = keyLocation;
     }
 
@@ -48,7 +56,13 @@ public class GAuthPk8Loader implements GAuthKeyLoader {
      * Loads a private key from a PKCS#8 file.
      */
     public PrivateKey loadPrivateKey() throws Exception {
-        String str = IOUtils.toString(keyLocation.getInputStream());
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), keyLocation);
+        String str;
+        try {
+            str = getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, is);
+        } finally {
+            IOHelper.close(is);
+        }
 
         if (str.contains(BEGIN) && str.contains(END)) {
             str = str.substring(BEGIN.length(), str.lastIndexOf(END));

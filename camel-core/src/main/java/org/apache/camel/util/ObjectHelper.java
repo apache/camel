@@ -1464,10 +1464,16 @@ public final class ObjectHelper {
             return null;
         }
 
+        // remove leading dots
+        if (name.startsWith(",")) {
+            name = name.substring(1);
+        }
+
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(name)) {
                 try {
-                    return (String) field.get(null);
+                    Object v = field.get(null);
+                    return v.toString();
                 } catch (IllegalAccessException e) {
                     // ignore
                     return null;

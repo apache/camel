@@ -18,20 +18,20 @@ package org.apache.camel.component.gae.auth;
 
 import java.security.PrivateKey;
 
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
-import static org.junit.Assert.assertEquals;
-
-public class GAuthPk8LoaderTest {
+public class GAuthPk8LoaderTest extends CamelTestSupport {
 
     private GAuthPk8Loader keyLoader;
     
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         keyLoader = new GAuthPk8Loader();
-        keyLoader.setKeyLocation(new ClassPathResource("org/apache/camel/component/gae/auth/test2.pk8"));
+        keyLoader.setCamelContext(context);
+        keyLoader.setKeyLocation("classpath:org/apache/camel/component/gae/auth/test2.pk8");
     }
 
     @Test
@@ -40,5 +40,9 @@ public class GAuthPk8LoaderTest {
         assertEquals("RSA", key.getAlgorithm());
         assertEquals("PKCS#8", key.getFormat());
     }
-    
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 }

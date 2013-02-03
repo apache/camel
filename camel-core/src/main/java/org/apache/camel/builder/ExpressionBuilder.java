@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -685,6 +686,68 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "" + value;
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for a type value
+     *
+     * @param name the type name
+     * @return an expression object which will return the type value
+     */
+    public static Expression typeExpression(final String name) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // it may refer to a class type
+                Class<?> type = exchange.getContext().getClassResolver().resolveClass(name);
+                if (type != null) {
+                    return type;
+                }
+
+                int pos = name.lastIndexOf(".");
+                if (pos > 0) {
+                    String before = name.substring(0, pos);
+                    String after = name.substring(pos + 1);
+                    type = exchange.getContext().getClassResolver().resolveClass(before);
+                    if (type != null) {
+                        return ObjectHelper.lookupConstantFieldValue(type, after);
+                    }
+                }
+
+                throw ObjectHelper.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + name));
+            }
+
+            @Override
+            public String toString() {
+                return "type:" + name;
+            }
+        };
+    }
+
+    /**
+     * Returns an expression that caches the evaluation of another expression
+     * and returns the cached value, to avoid re-evaluating the expression.
+     *
+     * @param expression  the target expression to cache
+     * @return the cached value
+     */
+    public static Expression cacheExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            private final AtomicReference<Object> cache = new AtomicReference<Object>();
+
+            public Object evaluate(Exchange exchange) {
+                Object answer = cache.get();
+                if (answer == null) {
+                    answer = expression.evaluate(exchange, Object.class);
+                    cache.set(answer);
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return expression.toString();
             }
         };
     }
@@ -1350,9 +1413,14 @@ public final class ExpressionBuilder {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
                     }
                 } else if ("file".equals(command)) {
-                    date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
-                    if (date == null) {
-                        throw new IllegalArgumentException("Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
+                    Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
+                    if (num != null && num > 0) {
+                        date = new Date(num.longValue());
+                    } else {
+                        date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
+                        if (date == null) {
+                            throw new IllegalArgumentException("Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
+                        }
                     }
                 } else {
                     throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
@@ -1587,7 +1655,7 @@ public final class ExpressionBuilder {
     public static Expression fileSizeExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader("CamelFileLength", Long.class);
+                return exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class);
             }
 
             @Override
@@ -1600,7 +1668,7 @@ public final class ExpressionBuilder {
     public static Expression fileLastModifiedExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
+                return exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
             }
 
             @Override

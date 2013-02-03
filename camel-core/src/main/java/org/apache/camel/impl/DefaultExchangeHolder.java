@@ -16,12 +16,15 @@
  */
 package org.apache.camel.impl;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Holder object for sending an exchange over a remote wire as a serialized object.
  * This is usually configured using the <tt>transferExchange=true</tt> option on the endpoint.
+ * <p/>
+ * Note: Message body of type {@link File} or {@link WrappedFile} is <b>not</b> supported and
+ * a {@link RuntimeExchangeException} is thrown.
  * <p/>
  * As opposed to normal usage where only the body part of the exchange is transferred over the wire,
  * this holder object serializes the following fields over the wire:
@@ -79,6 +85,12 @@ public class DefaultExchangeHolder implements Serializable {
      * @return the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties) {
+        // we do not support files
+        Object body = exchange.getIn().getBody();
+        if (body instanceof WrappedFile || body instanceof File) {
+            throw new RuntimeExchangeException("Message body of type " + body.getClass().getCanonicalName() + " is not supported by this marshaller.", exchange);
+        }
+
         DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
         payload.exchangeId = exchange.getExchangeId();

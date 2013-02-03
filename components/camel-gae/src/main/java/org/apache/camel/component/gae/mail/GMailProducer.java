@@ -45,8 +45,7 @@ public class GMailProducer extends DefaultProducer {
     /**
      * Invokes the mail service.
      * 
-     * @param exchange
-     *            contains the mail data in the in-message.
+     * @param exchange contains the mail data in the in-message.
      * @see GMailBinding
      */
     public void process(Exchange exchange) throws Exception {

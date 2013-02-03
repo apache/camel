@@ -22,21 +22,13 @@ package org.apache.camel.component.gae.login;
 public class GLoginData {
 
     private String hostName;
-
     private String clientName;
-
     private String userName;
-
     private String password;
-
     private int devPort;
-    
     private boolean devAdmin;
-
     private boolean devMode;
-    
     private String authenticationToken;
-
     private String authorizationCookie;
 
     /**

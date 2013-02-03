@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gae.auth;
+package org.apache.camel.itest.karaf;
 
-import java.security.PrivateKey;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-import org.apache.camel.CamelContextAware;
+@RunWith(JUnit4TestRunner.class)
+public class CamelXmlrpcTest extends AbstractFeatureTest {
 
-/**
- * Interface used by {@link GAuthComponent} for loading private keys. The private
- * key is needed for RSA-SHA1 signatures.
- */
-public interface GAuthKeyLoader extends CamelContextAware {
+    public static final String COMPONENT = extractName(CamelXmlrpcTest.class);
 
-    /**
-     * Loads a private key.
-     * 
-     * @return the loaded private key.
-     * @throws Exception if key loading failed.
-     */
-    PrivateKey loadPrivateKey() throws Exception;
+    @Test
+    public void test() throws Exception {
+        testComponent(COMPONENT);
+    }
+
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
+    }
 
 }

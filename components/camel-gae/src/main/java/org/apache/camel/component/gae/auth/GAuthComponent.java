@@ -19,7 +19,6 @@ package org.apache.camel.component.gae.auth;
 import java.util.Map;
 
 import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.OutboundBinding;
@@ -37,9 +36,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class GAuthComponent extends DefaultComponent {
 
     private String consumerKey;
-    
     private String consumerSecret;
-
     private GAuthKeyLoader keyLoader;
 
     public GAuthComponent() {
@@ -93,6 +90,10 @@ public class GAuthComponent extends DefaultComponent {
         endpoint.setAuthorizeBinding(authorizeBinding);
         endpoint.setUpgradeBinding(upgradeBinding);
         endpoint.setService(service);
+        // ensure to inject CamelContext to key loader
+        if (keyLoader != null) {
+            keyLoader.setCamelContext(getCamelContext());
+        }
         endpoint.setKeyLoader(keyLoader);
         return endpoint;
     }

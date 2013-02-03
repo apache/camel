@@ -21,37 +21,33 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-http://www.springframework.org/schema/beans 
-http://www.springframework.org/schema/beans/spring-beans.xsd
-http://camel.apache.org/schema/spring
-http://camel.apache.org/schema/spring/camel-spring.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
     
     <camel:camelContext id="camelContext">
-        <camel:jmxAgent id="agent" disabled="true" />
+        <camel:jmxAgent id="agent" disabled="true"/>
         <camel:routeBuilder ref="routeBuilder"/>
     </camel:camelContext>
 
-    <bean id="routeBuilder"
-        class="org.apache.camel.component.gae.auth.GAuthRouteBuilder">
-    </bean>
+    <bean id="routeBuilder" class="org.apache.camel.component.gae.auth.GAuthRouteBuilder"/>
 
     <bean id="gauth-cs" class="org.apache.camel.component.gae.auth.GAuthComponent">
-        <property name="consumerKey" value="testComsumerKey" />
-        <property name="consumerSecret" value="testComsumerSecret" />
+        <property name="consumerKey" value="testComsumerKey"/>
+        <property name="consumerSecret" value="testComsumerSecret"/>
     </bean>
     
     <bean id="gauth-pk" class="org.apache.camel.component.gae.auth.GAuthComponent">
-        <property name="consumerKey" value="test" />
-        <property name="keyLoader" ref="keyLoader" />
+        <property name="consumerKey" value="test"/>
+        <property name="keyLoader" ref="keyLoader"/>
     </bean>
     
     <bean id="keyLoader" class="org.apache.camel.component.gae.auth.GAuthJksLoader">
-        <property name="keyStoreLocation" value="org/apache/camel/component/gae/auth/test1.jks" />
-        <property name="keyAlias" value="test1" />
-        <property name="keyPass" value="test1pass" />
-        <property name="storePass" value="test1pass" />
+        <property name="keyStoreLocation" value="org/apache/camel/component/gae/auth/test1.jks"/>
+        <property name="keyAlias" value="test1"/>
+        <property name="keyPass" value="test1pass"/>
+        <property name="storePass" value="test1pass"/>
     </bean>
     
-    <bean id="testService" class="org.apache.camel.component.gae.auth.GAuthServiceMock" />
+    <bean id="testService" class="org.apache.camel.component.gae.auth.GAuthServiceMock"/>
     
 </beans>

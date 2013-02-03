@@ -119,4 +119,40 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         
         camel.stop();
     }
+
+    public void testAutoStartupFalseRouteOverride() throws Exception {
+        DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
+        camel.disableJMX();
+        camel.setAutoStartup(false);
+
+        camel.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").routeId("foo").autoStartup(true).to("mock:result");
+            }
+        });
+        camel.start();
+
+        // this is special, when you have auto startup=false on CamelContext, then NO routes is started
+
+        assertEquals(true, camel.isStarted());
+        assertEquals(1, camel.getRoutes().size());
+        assertEquals(true, camel.getRouteStatus("foo").isStopped());
+        assertEquals(false, camel.getRouteStatus("foo").isStarted());
+
+        // now start camel again, to get it to start the routes
+        camel.start();
+
+        assertEquals(true, camel.getRouteStatus("foo").isStarted());
+
+        MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedMessageCount(1);
+
+        camel.createProducerTemplate().sendBody("direct:start", "Hello World");
+
+        mock.assertIsSatisfied();
+
+        camel.stop();
+    }
+
 }

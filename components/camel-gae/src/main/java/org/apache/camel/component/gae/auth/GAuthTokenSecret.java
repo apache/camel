@@ -59,8 +59,7 @@ public class GAuthTokenSecret {
     /**
      * Create a {@link GAuthTokenSecret} from a cookies string.
      * 
-     * @param cookies
-     *            cookies string.
+     * @param cookies cookies string.
      * @return either an {@link GAuthTokenSecret} instance or <code>null</code>
      *         if there's no cookie with name {@link #COOKIE_NAME}.
      */

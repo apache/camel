@@ -209,6 +209,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 
+    /**
+     * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
+     * but will silently fallback and use {@link SimpleRegistry} if JNDI cannot be used.
+     * <p/>
+     * Use one of the other constructors to force use an explicit registry / JNDI.
+     */
     public DefaultCamelContext() {
         this.executorServiceManager = new DefaultExecutorServiceManager(this);
 
@@ -1173,7 +1179,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void setRegistry(Registry registry) {
-        // wrap the registry so we always do propery placeholder lookups
+        // wrap the registry so we always do property placeholder lookups
         if (!(registry instanceof PropertyPlaceholderDelegateRegistry)) {
             registry = new PropertyPlaceholderDelegateRegistry(this, registry);
         }
@@ -2134,6 +2140,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      * components and create routes
      */
     protected void forceLazyInitialization() {
+        getRegistry();
         getInjector();
         getLanguageResolver();
         getTypeConverterRegistry();
@@ -2195,7 +2202,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      * Lazily create a default implementation
      */
     protected Registry createRegistry() {
-        return new JndiRegistry();
+        JndiRegistry jndi = new JndiRegistry();
+        try {
+            // getContext() will force setting up JNDI
+            jndi.getContext();
+            return jndi;
+        } catch (Throwable e) {
+            log.debug("Cannot create javax.naming.InitialContext due " + e.getMessage() + ". Will fallback and use SimpleRegistry instead. This exception is ignored.", e);
+            return new SimpleRegistry();
+        }
     }
 
     /**

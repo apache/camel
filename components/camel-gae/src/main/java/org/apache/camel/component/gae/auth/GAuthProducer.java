@@ -47,12 +47,6 @@ public class GAuthProducer extends DefaultProducer {
      * Depending on the {@link GAuthEndpoint.Name}, this method either fetches
      * an unauthorized request token and creates a redirect response, or
      * upgrades an authorized request token to an access token.
-     * 
-     * @param exchange
-     * 
-     * @see GAuthAuthorizeBinding
-     * @see GAuthUpgradeBinding
-     * @see GAuthServiceImpl
      */
     public void process(Exchange exchange) throws Exception {
         if (getEndpoint().getName() == AUTHORIZE) {
@@ -64,7 +58,6 @@ public class GAuthProducer extends DefaultProducer {
             getEndpoint().getService().getAccessToken(params);
             getUpgradeBinding().readResponse(getEndpoint(), exchange, params);
         }
-        
     }
 
 }

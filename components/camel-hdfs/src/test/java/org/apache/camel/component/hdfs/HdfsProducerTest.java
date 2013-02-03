@@ -40,7 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class HdfsProducerTest extends CamelTestSupport {
-    
+
     private static final Path TEMP_DIR = new Path(new File("target/test/").getAbsolutePath());
 
     //Hadoop doesn't run on IBM JDK
@@ -53,25 +53,45 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         super.setUp();
     }
+
     @Test
     public void testProducer() throws Exception {
         if (SKIP) {
             return;
         }
-        for (int i = 0; i < 10; ++i) {
-            template.sendBody("direct:start1", "PAPPO" + i);
-        }
-        stopCamelContext();
+        template.sendBody("direct:start1", "PAPPO");
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel1");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
         SequenceFile.Reader reader = new SequenceFile.Reader(fs1, file1, conf);
         Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
+        reader.next(key, value);
+        assertEquals("PAPPO", value.toString());
+    }
+
+    @Test
+    public void testProducerClose() throws Exception {
+        if (SKIP) {
+            return;
+        }
+        for (int i = 0; i < 10; ++i) {
+            // send 10 messages, and mark to close in last message
+            template.sendBodyAndHeader("direct:start1", "PAPPO" + i, HdfsConstants.HDFS_CLOSE, i == 9 ? true : false);
+        }
+
+        Configuration conf = new Configuration();
+        Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel1");
+        FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
+        SequenceFile.Reader reader = new SequenceFile.Reader(fs1, file1, conf);
+        Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
+        Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
+
         int i = 0;
         while (reader.next(key, value)) {
             Text txt = (Text) value;
-            assertTrue(("PAPPO" + i).equals(txt.toString()));
+            assertEquals("PAPPO" + i, txt.toString());
             ++i;
         }
     }
@@ -83,7 +103,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         Boolean aBoolean = true;
         template.sendBody("direct:write_boolean", aBoolean);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-boolean");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -102,7 +122,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         byte aByte = 8;
         template.sendBody("direct:write_byte", aByte);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-byte");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -121,7 +141,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         int anInt = 1234;
         template.sendBody("direct:write_int", anInt);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-int");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -140,7 +160,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         float aFloat = 12.34f;
         template.sendBody("direct:write_float", aFloat);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-float");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -159,7 +179,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         Double aDouble = 12.34D;
         template.sendBody("direct:write_double", aDouble);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-double");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -178,7 +198,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         long aLong = 1234567890;
         template.sendBody("direct:write_long", aLong);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-long");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -197,7 +217,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         String txt = "CIAO MONDO !";
         template.sendBody("direct:write_text1", txt);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-text1");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -217,7 +237,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text2", txtValue, "KEY", txtKey);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-text2");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -237,7 +257,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text3", txtValue, "KEY", txtKey);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-text3");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -256,7 +276,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         }
         String txtValue = "CIAO MONDO !";
         template.sendBody("direct:write_text4", txtValue);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-text4");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -274,7 +294,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text5", txtValue, "KEY", txtKey);
-        stopCamelContext();
+
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "test-camel-text5");
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
@@ -292,7 +312,8 @@ public class HdfsProducerTest extends CamelTestSupport {
             return;
         }
         super.tearDown();
-        Thread.sleep(100);
+
+        Thread.sleep(250);
         Configuration conf = new Configuration();
         Path dir = new Path("target/test");
         FileSystem fs = FileSystem.get(dir.toUri(), conf);

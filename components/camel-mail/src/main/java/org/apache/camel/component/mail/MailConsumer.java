@@ -122,25 +122,32 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         } catch (Exception e) {
             handleException(e);
         } finally {
-            // need to ensure we release resources
-            try {
-                if (folder.isOpen()) {
-                    folder.close(true);
+            // need to ensure we release resources, but only if closeFolder or disconnect = true
+            if (getEndpoint().getConfiguration().isCloseFolder() || getEndpoint().getConfiguration().isDisconnect()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Close mailbox folder {} from {}", folder.getName(), getEndpoint().getConfiguration().getMailStoreLogInformation());
                 }
-            } catch (Exception e) {
-                // some mail servers will lock the folder so we ignore in this case (CAMEL-1263)
-                LOG.debug("Could not close mailbox folder: " + folder.getName(), e);
+                try {
+                    if (folder.isOpen()) {
+                        folder.close(true);
+                    }
+                } catch (Exception e) {
+                    // some mail servers will lock the folder so we ignore in this case (CAMEL-1263)
+                    LOG.debug("Could not close mailbox folder: " + folder.getName() + ". This exception is ignored.", e);
+                }
             }
         }
 
         // should we disconnect, the header can override the configuration
         boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
         if (disconnect) {
-            LOG.debug("Disconnecting from {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Disconnecting from {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
+            }
             try {
                 store.close();
             } catch (Exception e) {
-                LOG.debug("Could not disconnect from {}: " + getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
+                LOG.debug("Could not disconnect from {}: " + getEndpoint().getConfiguration().getMailStoreLogInformation() + ". This exception is ignored.", e);
             }
             store = null;
             folder = null;

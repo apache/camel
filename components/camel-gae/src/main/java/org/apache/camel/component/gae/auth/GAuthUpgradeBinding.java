@@ -51,14 +51,8 @@ public class GAuthUpgradeBinding implements OutboundBinding<GAuthEndpoint, Googl
      * {@link GAuthComponent} is configured to use the HMAC_SHA1 signature
      * method, a request token secret is obtained from a
      * {@link GAuthTokenSecret#COOKIE_NAME} cookie.
-     * 
-     * @param endpoint
-     * @param exchange
-     * @param request
-     *            ignored.
-     * @return
-     * @throws GAuthException
-     *             if the {@link GAuthComponent} is configured to use the
+     *
+     * @throws GAuthException if the {@link GAuthComponent} is configured to use the
      *             HMAC_SHA1 signature method but there's no cookie with the
      *             request token secret.
      */
@@ -85,11 +79,7 @@ public class GAuthUpgradeBinding implements OutboundBinding<GAuthEndpoint, Googl
     /**
      * Creates an <code>exchange.getOut()</code> message that containing the 
      * access token and the access token secret in the message header.
-     * 
-     * @param endpoint
-     * @param exchange
-     * @param response
-     * @return
+     *
      * @see #GAUTH_ACCESS_TOKEN
      * @see #GAUTH_ACCESS_TOKEN_SECRET
      */

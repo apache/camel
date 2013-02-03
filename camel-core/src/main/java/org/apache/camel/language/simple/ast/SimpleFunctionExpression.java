@@ -175,6 +175,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.refExpression(remainder);
         }
 
+        // const: prefix
+        remainder = ifStartsWithReturnRemainder("type:", function);
+        if (remainder != null) {
+            Expression exp = ExpressionBuilder.typeExpression(remainder);
+            // we want to cache this expression so we wont re-evaluate it as the type/constant wont change
+            return ExpressionBuilder.cacheExpression(exp);
+        }
+
         if (strict) {
             throw new SimpleParserException("Unknown function: " + function, token.getIndex());
         } else {

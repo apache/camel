@@ -55,10 +55,10 @@
     <aspectj-version>1.6.2</aspectj-version>
     <atomikos-transactions-version>3.8.0</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
-    <avro-version>1.7.2</avro-version>
-    <avro-bundle-version>1.7.2_1</avro-bundle-version>
-    <aws-java-sdk-bundle-version>1.3.26_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.3.26</aws-java-sdk-version>
+    <avro-version>1.7.3</avro-version>
+    <avro-bundle-version>1.7.3_1</avro-bundle-version>
+    <aws-java-sdk-bundle-version>1.3.27_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.3.27</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk15on-bundle-version>1.47_1</bcpg-jdk15on-bundle-version>
@@ -66,11 +66,10 @@
     <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.47</bouncycastle-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
-    <!-- we cannot upgrade to Castor 1.3.2_1 because of SMX4-1343 -->
-    <castor-bundle-version>1.3.1_2</castor-bundle-version>
+    <castor-bundle-version>1.3.2_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
-    <cmis-version>0.7.0</cmis-version>
+    <cmis-version>0.8.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
     <cometd-java-server>2.3.1</cometd-java-server>
@@ -86,7 +85,6 @@
     <commons-digester-version>2.1</commons-digester-version>
     <commons-exec-version>1.1</commons-exec-version>
     <commons-httpclient-bundle-version>3.1_7</commons-httpclient-bundle-version>
-    <commons-io-bundle-version>1.4_3</commons-io-bundle-version>
     <commons-io-version>1.4</commons-io-version>
     <commons-jexl2-version>2.0.1</commons-jexl2-version>
     <commons-jxpath-version>1.3</commons-jxpath-version>
@@ -101,18 +99,20 @@
     <concurrentlinkedhashmap.version>1.3.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
     <cxf-version>2.7.2</cxf-version>
-    <cxf-version-range>[2.4,2.9)</cxf-version-range>
+    <cxf-version-range>[2.6,2.9)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
     <derby-version>10.9.1.0</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
+    <dnsjava-bundle-version>2.1.1_1</dnsjava-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.4.0</dozer-version>
     <easymock-version>3.1</easymock-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-bundle-version>2.6.3_1</ehcache-bundle-version>
+    <!-- The 0.20 bundle is flawed, see SMX4-1372 -->
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
-    <elasticsearch-version>0.19.10</elasticsearch-version>
+    <elasticsearch-version>0.20.4</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
@@ -142,8 +142,10 @@
     <geronimo-servlet-spec-version>1.2</geronimo-servlet-spec-version>
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <gmaven-plugin-version>1.4</gmaven-plugin-version>
-    <google-app-engine-version>1.6.6</google-app-engine-version>
+    <google-app-engine-version>1.7.4</google-app-engine-version>
+    <google-app-engine-bundle-version>1.7.4_1</google-app-engine-bundle-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
+    <google-gdata-bundle-version>1.41.1_1</google-gdata-bundle-version>
     <google-guava-version>13.0.1</google-guava-version>
     <groovy-version>2.1.0</groovy-version>
     <gson-version>2.2.2</gson-version>
@@ -156,24 +158,23 @@
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.13</hawtdispatch-version>
-    <hazelcast-version>2.4</hazelcast-version>
-    <hbase-version>0.94.2</hbase-version>
-    <hbase-bundle-version>0.94.2_1</hbase-bundle-version>
+    <hazelcast-version>2.5</hazelcast-version>
+    <hbase-version>0.94.3</hbase-version>
+    <hbase-bundle-version>0.94.3_1</hbase-bundle-version>
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
     <hibernate-version>4.1.9.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.2.3</httpcore4-version>
-    <httpclient4-version>4.2.2</httpclient4-version>
+    <httpclient4-version>4.2.3</httpclient4-version>
     <httpclient-version>3.1</httpclient-version> 
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
-    <isorelax-version>20050913</isorelax-version>
     <jini-version>2.1</jini-version>
-    <jackson-version>1.9.10</jackson-version>
-    <jackson2-version>2.1.0</jackson2-version>
+    <jackson-version>1.9.12</jackson-version>
+    <jackson2-version>2.1.3</jackson2-version>
     <jackrabbit-version>2.2.12</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasypt-bundle-version>1.9.0_1</jasypt-bundle-version>
@@ -191,6 +192,7 @@
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
+    <jedis-client-bundle-version>2.1.0_1</jedis-client-bundle-version>
     <jetty-version>7.6.8.v20121106</jetty-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
@@ -217,7 +219,7 @@
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
     <jt400-version>6.7</jt400-version>
     <jt400-bundle-version>6.7_1</jt400-bundle-version>
-    <juel-bundle-version>2.1.2_2</juel-bundle-version> <!-- FIXME cmueller: not in sync! -->
+    <juel-bundle-version>2.1.3_1</juel-bundle-version>
     <juel-version>2.1.3</juel-version>
     <junit-bundle-version>4.11_1</junit-bundle-version>
     <junit-version>4.11</junit-version>
@@ -228,9 +230,10 @@
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.5</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
-    <lucene-bundle-version>3.6.0_1</lucene-bundle-version> <!-- FIXME cmueller: not in sync! -->
+    <!-- we await upgrade for lucene 4.x to sync -->
+    <lucene-bundle-version>3.6.0_1</lucene-bundle-version>
     <lucene-version>3.6.1</lucene-version>
-    <lightcouch-version>0.0.4</lightcouch-version>
+    <lightcouch-version>0.0.5</lightcouch-version>
     <!-- needed from tooling/archetypes -->
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
@@ -259,6 +262,7 @@
     <maven-surefire-report-plugin-version>2.13</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>2.3</maven-war-plugin-version>
     <maven-version>2.0</maven-version>
+    <neo4j-version>1.8</neo4j-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.7</mina2-version>
@@ -266,6 +270,7 @@
     <mockito-version>1.9.5</mockito-version>
     <mongo-java-driver-version>2.9.1</mongo-java-driver-version>
     <mqtt-client-version>1.4</mqtt-client-version>
+    <msv-version>20050913</msv-version>
     <mvel-version>2.1.3.Final</mvel-version>
     <mybatis-version>3.1.1</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
@@ -274,7 +279,7 @@
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
     <ognl-version>3.0.6_1</ognl-version>
-    <openejb-version>3.1.4</openejb-version>
+    <openejb-version>4.5.1</openejb-version>
     <openjpa-version>2.2.1</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
@@ -305,7 +310,7 @@
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
-    <saxon-bundle-version>9.4.0.4_1</saxon-bundle-version>
+    <saxon-bundle-version>9.4.0.4_2</saxon-bundle-version>
     <saxon-version>9.4.0.4</saxon-version>
     <scala-version>2.10.0</scala-version>
     <scala29-version>2.9.2</scala29-version>
@@ -338,7 +343,7 @@
     <!-- spring 3.0 support is @deprecated -->
     <spring30-version>3.0.7.RELEASE</spring30-version>
     <spring31-version>3.1.3.RELEASE</spring31-version>
-    <spring32-version>3.2.0.RELEASE</spring32-version>
+    <spring32-version>3.2.1.RELEASE</spring32-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.3.RELEASE</spring-security-version>
     <spring-ws-version>2.1.2.RELEASE</spring-ws-version>
@@ -353,9 +358,10 @@
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.8</testng-version>
-    <twitter4j-bundle-version>3.0.1_1</twitter4j-bundle-version>
+    <twitter4j-bundle-version>3.0.3_1</twitter4j-bundle-version>
     <twitter4j-version>3.0.3</twitter4j-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
+    <urlrewritefilter-bundle-version>4.0.4_1</urlrewritefilter-bundle-version>
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>

@@ -32,33 +32,23 @@ public class GLoginEndpoint extends DefaultEndpoint {
     private OutboundBinding<GLoginEndpoint, GLoginData, GLoginData> outboundBinding;
 
     private String hostName;
-
     private String clientName;
-
     private String userName;
-
     private String password;
-
     private int devPort;
-    
     private boolean devAdmin;
-
     private boolean devMode;
-    
     private GLoginService service;
 
     /**
      * Creates a new GLoginEndpoint.
      * 
-     * @param endpointUri
-     * @param component
-     *            component that created this endpoint.
-     * @param hostName
-     *            internet hostname of a GAE application, for example
+     * @param endpointUri the endpoint uri
+     * @param component component that created this endpoint.
+     * @param hostName internet hostname of a GAE application, for example
      *            <code>example.appspot.com</code>, or <code>localhost</code> if
      *            the application is running on a local development server.
-     * @param devPort
-     *            port for connecting to the local development server.
+     * @param devPort port for connecting to the local development server.
      */
     public GLoginEndpoint(String endpointUri, Component component, String hostName, int devPort) {
         super(endpointUri, component);
@@ -102,8 +92,6 @@ public class GLoginEndpoint extends DefaultEndpoint {
     /**
      * Sets the client name used for authentication. The default name is
      * <code>apache-camel-2.x</code>.
-     * 
-     * @param clientName
      */
     public void setClientName(String clientName) {
         this.clientName = clientName;
@@ -115,8 +103,6 @@ public class GLoginEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the login username (a Google mail address).
-     * 
-     * @param userName
      */
     public void setUserName(String userName) {
         this.userName = userName;
@@ -128,8 +114,6 @@ public class GLoginEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the login password.
-     * 
-     * @param password
      */
     public void setPassword(String password) {
         this.password = password;
@@ -151,8 +135,6 @@ public class GLoginEndpoint extends DefaultEndpoint {
      * Set to <code>true</code> for logging in as admin to a development server.
      * Only used if {@link #devMode} is <code>true</code>. Default is
      * <code>false</code>.
-     * 
-     * @param devAdmin
      */
     public void setDevAdmin(boolean devAdmin) {
         this.devAdmin = devAdmin;
@@ -164,8 +146,6 @@ public class GLoginEndpoint extends DefaultEndpoint {
 
     /**
      * Set to <code>true</code> for connecting to a development server.
-     * 
-     * @param devMode
      */
     public void setDevMode(boolean devMode) {
         this.devMode = devMode;
@@ -179,8 +159,6 @@ public class GLoginEndpoint extends DefaultEndpoint {
      * Sets the service that makes the remote calls to Google services or the
      * local development server. Testing code should inject a mock service here
      * (using serviceRef in endpoint URI).
-     * 
-     * @param service
      */
     public void setService(GLoginService service) {
         this.service = service;

@@ -14,30 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gae.context;
+package org.apache.camel.processor;
 
-import java.util.List;
+/**
+ *
+ */
+// START SNIPPET: e1
+public enum Customer {
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringCamelContext;
-
-public class GaeSpringCamelContext extends SpringCamelContext {
-
-    @Override
-    protected void doStart() throws Exception {
-        // JMX not allowed on GAE
-        disableJMX();
-        super.doStart();
-    }
-
-    public void setRouteBuilders(List<RouteBuilder> routeBuilders) throws Exception {
-        for (RouteBuilder routebuilder : routeBuilders) {
-            addRoutes(routebuilder);
-        }
-    }
-
-    public void setRouteBuilder(RouteBuilder routeBuilder) throws Exception {
-        addRoutes(routeBuilder);
-    }
-    
+    GOLD, SILVER, BRONZE
 }
+// END SNIPPET: e1

@@ -34,17 +34,11 @@ import org.apache.camel.impl.DefaultEndpoint;
 public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSupport<GMailEndpoint, Message, Void> {
 
     private OutboundBinding<GMailEndpoint, Message, Void> outboundBinding;
-    
     private MailService mailService;
-    
     private String sender;
-    
     private String subject;
-    
     private String to;
-    
     private String cc;
-    
     private String bcc;
     
     public GMailEndpoint(String endpointUri, Component component, String sender) {

@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
@@ -1184,6 +1185,15 @@ public class SimpleTest extends LanguageTestSupport {
     public void testCamelContextOGNL() throws Exception {
         assertExpression("${camelContext.getName()}", context.getName());
         assertExpression("${camelContext.version}", context.getVersion());
+    }
+
+    public void testTypeConstant() throws Exception {
+        assertExpression("${type:org.apache.camel.Exchange.FILE_NAME}", Exchange.FILE_NAME);
+        assertExpression("${type:org.apache.camel.ExchangePattern.InOut}", ExchangePattern.InOut);
+
+        // non existing fields
+        assertExpression("${type:org.apache.camel.ExchangePattern.}", null);
+        assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null);
     }
 
     protected String getLanguageName() {
