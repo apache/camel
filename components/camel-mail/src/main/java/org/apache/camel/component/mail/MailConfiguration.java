@@ -62,6 +62,7 @@ public class MailConfiguration implements Cloneable {
     private boolean useInlineAttachments;
     private boolean ignoreUnsupportedCharset;
     private boolean disconnect;
+    private boolean closeFolder = true;
     private SSLContextParameters sslContextParameters;
 
     public MailConfiguration() {
@@ -468,7 +469,15 @@ public class MailConfiguration implements Cloneable {
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
     }
-    
+
+    public boolean isCloseFolder() {
+        return closeFolder;
+    }
+
+    public void setCloseFolder(boolean closeFolder) {
+        this.closeFolder = closeFolder;
+    }
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
