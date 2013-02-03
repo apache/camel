@@ -175,6 +175,7 @@
     <bundle dependency='true'>mvn:org.apache.abdera/abdera-i18n/${abdera-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.abdera/abdera-parser/${abdera-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.james/apache-mime4j-core/${apache-mime4j-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-atom/${project.version}</bundle>
   </feature>
   <feature name='camel-aws' version='${project.version}' resolver='(obr)' start-level='50'>

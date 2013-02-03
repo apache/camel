@@ -39,6 +39,7 @@
     <activemq-version>5.5.1</activemq-version>
     <ahc-version>1.6.5</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
+    <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
     <atomikos-trascations-version>3.7.0</atomikos-trascations-version>
     <axiom-version>1.2.14</axiom-version>
