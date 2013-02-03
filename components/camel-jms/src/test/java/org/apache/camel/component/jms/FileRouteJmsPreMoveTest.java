@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import java.io.File;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +29,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  *
  */
-public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
+public class FileRouteJmsPreMoveTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
 
@@ -42,17 +41,13 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
     }
 
     @Test
-    public void testKeepLastModified() throws Exception {
+    public void testPreMove() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedFileExists("target/outbox/hello.txt", "Hello World");
 
         template.sendBodyAndHeader("file://target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-
-        File inbox = new File("trarget/inbox/hello.txt");
-        File outbox = new File("trarget/outbox/hello.txt");
-
-        assertEquals("Should keep last modified", inbox.lastModified(), outbox.lastModified());
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -67,12 +62,11 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/inbox?noop=true").to("activemq:queue:hello");
+                from("file://target/inbox?preMove=transfer").to("activemq:queue:hello");
 
                 from("activemq:queue:hello")
-                    // just a little delay so the write of the file happens later
-                    .delayer(100)
-                    .to("file://target/outbox?keepLastModified=true")
+                    .to("log:outbox")
+                    .to("file://target/outbox")
                     .to("mock:result");
             }
         };
