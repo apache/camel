@@ -26,7 +26,7 @@ public class MyBatisPollingDelayRouteTest extends MyBatisTestSupport {
     public void testSendAccountBean() throws Exception {
         long start = System.currentTimeMillis();
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+        mock.expectedMinimumMessageCount(2);
 
         assertMockEndpointsSatisfied();
         long delta = System.currentTimeMillis() - start;

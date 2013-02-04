@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Session;
@@ -183,7 +184,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     public void setCacheLevelName(String cacheName) {
         getConfiguration().setCacheLevelName(cacheName);
     }
-    
+
     public void setReplyToCacheLevelName(String cacheName) {
         getConfiguration().setReplyToCacheLevelName(cacheName);
     }
@@ -235,7 +236,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     public void setIdleTaskExecutionLimit(int idleTaskExecutionLimit) {
         getConfiguration().setIdleTaskExecutionLimit(idleTaskExecutionLimit);
     }
-    
+
     public void setIdleConsumerLimit(int idleConsumerLimit) {
         getConfiguration().setIdleConsumerLimit(idleConsumerLimit);
     }

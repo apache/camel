@@ -49,7 +49,7 @@ import org.springframework.util.ErrorHandler;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
 /**
- * @version 
+ * @version
  */
 public class JmsConfiguration implements Cloneable {
 
@@ -137,6 +137,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean allowNullBody = true;
     private MessageListenerContainerFactory messageListenerContainerFactory;
     private boolean includeSentJMSMessageID;
+    private DefaultTaskExecutorType defaultTaskExecutorType;
 
     public JmsConfiguration() {
     }
@@ -386,7 +387,7 @@ public class JmsConfiguration implements Cloneable {
         case Default:
             return new DefaultJmsMessageListenerContainer(endpoint);
         case Custom:
-            return getCustomMessageListenerContainer(endpoint);            
+            return getCustomMessageListenerContainer(endpoint);
         default:
             throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
@@ -1312,5 +1313,17 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
         this.includeSentJMSMessageID = includeSentJMSMessageID;
+    }
+
+    public DefaultTaskExecutorType getDefaultTaskExecutorType() {
+        return defaultTaskExecutorType;
+    }
+
+    /**
+     * Indicates what type of {@link TaskExecutor} to use by default for JMS consumers.
+     * Refer to the documentation of {@link DefaultTaskExecutorType} for available options.
+     */
+    public void setDefaultTaskExecutorType(DefaultTaskExecutorType defaultTaskExecutorType) {
+        this.defaultTaskExecutorType = defaultTaskExecutorType;
     }
 }

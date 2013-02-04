@@ -62,7 +62,7 @@ import org.springframework.util.ErrorHandler;
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
  *
- * @version 
+ * @version
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
@@ -176,24 +176,32 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         listenerContainer.setPubSubDomain(pubSubDomain);
 
         // include destination name as part of thread and transaction name
-        String consumerName = "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
+        String consumerName = getThreadName();
 
         if (configuration.getTaskExecutor() != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Using custom TaskExecutor: {} on listener container: {}", configuration.getTaskExecutor(), listenerContainer);
             }
             setContainerTaskExecutor(listenerContainer, configuration.getTaskExecutor());
-        } else {
+        } else if ((listenerContainer instanceof DefaultJmsMessageListenerContainer && configuration.getDefaultTaskExecutorType() == null)
+                || !(listenerContainer instanceof DefaultJmsMessageListenerContainer)) {
+            // preserve backwards compatibility if an explicit Default TaskExecutor Type was not set;
+            // otherwise, defer the creation of the TaskExecutor
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
             ExecutorService executor = getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, consumerName);
             setContainerTaskExecutor(listenerContainer, executor);
+        } else {
+            // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
+            // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
+            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}", 
+                    listenerContainer, configuration.getDefaultTaskExecutorType());
         }
-        
+
         // set a default transaction name if none provided
         if (configuration.getTransactionName() == null) {
             if (listenerContainer instanceof DefaultMessageListenerContainer) {
                 ((DefaultMessageListenerContainer) listenerContainer).setTransactionName(consumerName);
-            }            
+            }
         }
     }
 
@@ -271,6 +279,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return true;
     }
 
+    public String getThreadName() {
+        return "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
+    }
+    
     // Properties
     // -------------------------------------------------------------------------
 
@@ -448,7 +460,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public String getCacheLevelName() {
         return getConfiguration().getCacheLevelName();
     }
-    
+
     @ManagedAttribute
     public String getReplyToCacheLevelName() {
         return getConfiguration().getReplyToCacheLevelName();
@@ -489,7 +501,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public LoggingLevel getErrorHandlerLoggingLevel() {
         return getConfiguration().getErrorHandlerLoggingLevel();
     }
-    
+
     @ManagedAttribute
     public boolean isErrorHandlerLogStackTrace() {
         return getConfiguration().isErrorHandlerLogStackTrace();
@@ -509,7 +521,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public int getIdleConsumerLimit() {
         return getConfiguration().getIdleConsumerLimit();
     }
-    
+
     public JmsOperations getJmsOperations() {
         return getConfiguration().getJmsOperations();
     }
@@ -724,7 +736,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setCacheLevelName(String cacheName) {
         getConfiguration().setCacheLevelName(cacheName);
     }
-    
+
     @ManagedAttribute
     public void setReplyToCacheLevelName(String cacheName) {
         getConfiguration().setReplyToCacheLevelName(cacheName);
@@ -795,7 +807,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setIdleConsumerLimit(int idleConsumerLimit) {
         getConfiguration().setIdleConsumerLimit(idleConsumerLimit);
     }
-    
+
     public void setJmsOperations(JmsOperations jmsOperations) {
         getConfiguration().setJmsOperations(jmsOperations);
     }
@@ -1040,7 +1052,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setAllowNullBody(boolean allowNullBody) {
         configuration.setAllowNullBody(allowNullBody);
     }
-    
+
     @ManagedAttribute
     public boolean isIncludeSentJMSMessageID() {
         return configuration.isIncludeSentJMSMessageID();
@@ -1049,6 +1061,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
         configuration.setIncludeSentJMSMessageID(includeSentJMSMessageID);
+    }
+
+    public DefaultTaskExecutorType getDefaultTaskExecutorType() {
+        return configuration.getDefaultTaskExecutorType();
+    }
+
+    public void setDefaultTaskExecutorType(DefaultTaskExecutorType type) {
+        configuration.setDefaultTaskExecutorType(type);
     }
 
     public MessageListenerContainerFactory getMessageListenerContainerFactory() {
