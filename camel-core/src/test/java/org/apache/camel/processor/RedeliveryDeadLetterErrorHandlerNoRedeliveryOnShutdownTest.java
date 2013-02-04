@@ -16,18 +16,23 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Ignore;
 
-@Ignore
 public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends ContextTestSupport {
+
+    private final AtomicInteger counter = new AtomicInteger();
 
     public void testRedeliveryErrorHandlerNoRedeliveryOnShutdown() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:deadLetter").expectedMessageCount(1);
+        getMockEndpoint("mock:deadLetter").setResultWaitTime(25000);
 
         template.sendBody("seda:foo", "Hello World");
 
@@ -35,13 +40,26 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
 
         // should not take long to stop the route
         StopWatch watch = new StopWatch();
+        // sleep 3 seconds to do some redeliveries before we stop
+        Thread.sleep(3000);
+        log.info("==== stopping route foo ====");
         context.stopRoute("foo");
         watch.stop();
 
-        getMockEndpoint("mock:deadLetter").setResultWaitTime(25000);
         getMockEndpoint("mock:deadLetter").assertIsSatisfied();
 
-        assertTrue("Should stop route faster, was " + watch.taken(), watch.taken() < 4000);
+        log.info("OnRedelivery processor counter {}", counter.get());
+
+        assertTrue("Should stop route faster, was " + watch.taken(), watch.taken() < 7000);
+        assertTrue("Redelivery counter should be >= 2 and < 12, was: " + counter.get(), counter.get() >= 2 && counter.get() < 12);
+    }
+
+    private final class MyRedeliverProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            counter.incrementAndGet();
+        }
     }
 
     @Override
@@ -51,6 +69,7 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:deadLetter")
                         .allowRedeliveryWhileStopping(false)
+                        .onRedelivery(new MyRedeliverProcessor())
                         .maximumRedeliveries(20).redeliveryDelay(1000).retryAttemptedLogLevel(LoggingLevel.INFO));
 
                 from("seda:foo").routeId("foo")
