@@ -20,6 +20,7 @@ import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * The default {@link DefaultMessageListenerContainer container} which listen for messages
@@ -46,19 +47,38 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
 
     /**
      * Create a default TaskExecutor. Called if no explicit TaskExecutor has been specified.
-     * <p>The default implementation builds a {@link org.springframework.core.task.SimpleAsyncTaskExecutor}
-     * with the specified bean name and using Camel's {@link org.apache.camel.spi.ExecutorServiceManager}
+     * <p />
+     * The type of {@link TaskExecutor} will depend on the value of
+     * {@link JmsConfiguration#getDefaultTaskExecutorType()}. For more details, refer to the Javadoc of
+     * {@link DefaultTaskExecutorType}.
+     * <p />
+     * In all cases, it uses the specified bean name and Camel's {@link org.apache.camel.spi.ExecutorServiceManager}
      * to resolve the thread name.
-     * @see org.springframework.core.task.SimpleAsyncTaskExecutor#SimpleAsyncTaskExecutor(String)
+     * @see JmsConfiguration#setDefaultTaskExecutorType(DefaultTaskExecutorType)
+     * @see ThreadPoolTaskExecutor#setBeanName(String)
      */
     @Override
     protected TaskExecutor createDefaultTaskExecutor() {
         String pattern = endpoint.getCamelContext().getExecutorServiceManager().getThreadNamePattern();
-        String beanName = getBeanName();
+        String beanName = getBeanName() == null ? endpoint.getThreadName() : getBeanName();
 
-        SimpleAsyncTaskExecutor answer = new SimpleAsyncTaskExecutor(beanName);
-        answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
-        return answer;
+        if (endpoint.getDefaultTaskExecutorType() == DefaultTaskExecutorType.ThreadPool) {
+            ThreadPoolTaskExecutor answer = new ThreadPoolTaskExecutor();
+            answer.setBeanName(beanName);
+            answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+            answer.setCorePoolSize(endpoint.getConcurrentConsumers());
+            // Direct hand-off mode. Do not queue up tasks: assign it to a thread immediately.
+            // We set no upper-bound on the thread pool (no maxPoolSize) as it's already implicitly constrained by
+            // maxConcurrentConsumers on the DMLC itself (i.e. DMLC will only grow up to a level of concurrency as
+            // defined by maxConcurrentConsumers).
+            answer.setQueueCapacity(0);
+            answer.initialize();
+            return answer;
+        } else {
+            SimpleAsyncTaskExecutor answer = new SimpleAsyncTaskExecutor(beanName);
+            answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+            return answer;
+        }
     }
-
+    
 }
