@@ -33,10 +33,9 @@
   <modules>
     <module>maven</module>
     <module>archetypes</module>
-    <module>camel-manual</module>
   </modules>
 
-  <!-- profiles>
+  <profiles>
     <profile>
       <id>build.manual</id>
       <modules>
@@ -61,6 +60,6 @@
         <module>camel-manual</module>
       </modules>
     </profile>
-  </profiles -->
+  </profiles>
 
 </project>
