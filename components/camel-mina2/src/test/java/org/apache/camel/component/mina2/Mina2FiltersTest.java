@@ -17,6 +17,7 @@
 package org.apache.camel.component.mina2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.naming.Context;
 
@@ -61,7 +62,7 @@ public class Mina2FiltersTest extends BaseMina2Test {
         });
 
         MockEndpoint mock = this.getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived(Arrays.asList(null,null,"Hello World"));
 
         Endpoint endpoint = context.getEndpoint(uri);
         Exchange exchange = endpoint.createExchange();

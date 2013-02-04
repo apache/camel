@@ -1,18 +1,18 @@
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * contributor license agreements. See the NOTICE file distributed with this
+ * work for additional information regarding copyright ownership. The ASF
+ * licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.camel.component.mina2;
 
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
  *
- * @version 
+ * @version
  */
 public class Mina2Consumer extends DefaultConsumer {
 
@@ -108,7 +108,6 @@ public class Mina2Consumer extends DefaultConsumer {
         super.doShutdown();
     }
 
-
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void setupVmProtocol(String uri, Mina2Configuration configuration) {
@@ -127,7 +126,7 @@ public class Mina2Consumer extends DefaultConsumer {
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using vm protocol"
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+                    + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
     }
 
@@ -185,9 +184,9 @@ public class Mina2Consumer extends DefaultConsumer {
             addCodecFactory(service, codecFactory);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                          new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
+                        new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
                 LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
-                          codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
+                        codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
             }
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
@@ -214,13 +213,14 @@ public class Mina2Consumer extends DefaultConsumer {
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using datagram protocol, " + configuration.getProtocol()
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+                    + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
     }
 
     /**
-     * For datagrams the entire message is available as a single IoBuffer so lets just pass those around by default
-     * and try converting whatever they payload is into IoBuffer unless some custom converter is specified
+     * For datagrams the entire message is available as a single IoBuffer so
+     * lets just pass those around by default and try converting whatever they
+     * payload is into IoBuffer unless some custom converter is specified
      */
     protected void configureDataGramCodecFactory(final String type, final IoService service, final Mina2Configuration configuration) {
         ProtocolCodecFactory codecFactory = configuration.getCodec();
@@ -247,18 +247,18 @@ public class Mina2Consumer extends DefaultConsumer {
         }
 
         switch (delimiter) {
-        case DEFAULT:
-            return LineDelimiter.DEFAULT;
-        case AUTO:
-            return LineDelimiter.AUTO;
-        case UNIX:
-            return LineDelimiter.UNIX;
-        case WINDOWS:
-            return LineDelimiter.WINDOWS;
-        case MAC:
-            return LineDelimiter.MAC;
-        default:
-            throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
+            case DEFAULT:
+                return LineDelimiter.DEFAULT;
+            case AUTO:
+                return LineDelimiter.AUTO;
+            case UNIX:
+                return LineDelimiter.UNIX;
+            case WINDOWS:
+                return LineDelimiter.WINDOWS;
+            case MAC:
+                return LineDelimiter.MAC;
+            default:
+                throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
         }
     }
 
@@ -298,17 +298,17 @@ public class Mina2Consumer extends DefaultConsumer {
         this.acceptor = acceptor;
     }
 
+    
     /**
      * Handles consuming messages and replying if the exchange is out capable.
      */
     private final class ReceiveHandler extends IoHandlerAdapter {
 
-    private Exchange exchange;
-
+        //private Exchange exchange;
         @Override
         public void sessionCreated(IoSession session) throws Exception {
             log.debug("-----------SESSION CREATED");
-            exchange = getEndpoint().createExchange(session);
+            Exchange exchange = getEndpoint().createExchange(session);
             exchange.setProperty(Mina2Constants.MINA2_SESSION_CREATED, Boolean.TRUE);
             getProcessor().process(exchange);
         }
@@ -316,7 +316,7 @@ public class Mina2Consumer extends DefaultConsumer {
         @Override
         public void sessionOpened(IoSession session) throws Exception {
             log.debug("-----------SESSION OPENED");
-            exchange.setProperty(Mina2Constants.MINA2_SESSION_OPENED, Boolean.TRUE);
+            Exchange exchange = getEndpoint().createExchange(session);
             exchange.removeProperty(Mina2Constants.MINA2_SESSION_CREATED);
             getProcessor().process(exchange);
         }
@@ -324,14 +324,16 @@ public class Mina2Consumer extends DefaultConsumer {
         @Override
         public void sessionClosed(IoSession session) throws Exception {
             log.debug("-----------SESSION CLOSED");
+            Exchange exchange = getEndpoint().createExchange(session);
             exchange.setProperty(Mina2Constants.MINA2_SESSION_CLOSED, Boolean.TRUE);
-            exchange.removeProperty(Mina2Constants.MINA2_SESSION_OPENED);
+//            exchange.removeProperty(Mina2Constants.MINA2_SESSION_OPENED);
             getProcessor().process(exchange);
         }
 
         @Override
         public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
             log.debug("-----------SESSION IDLE");
+            Exchange exchange = getEndpoint().createExchange(session);
             exchange.setProperty(Mina2Constants.MINA2_SESSION_IDLE, Boolean.TRUE);
             getProcessor().process(exchange);
         }
@@ -354,21 +356,22 @@ public class Mina2Consumer extends DefaultConsumer {
 
         @Override
         public void messageReceived(IoSession session, Object object) throws Exception {
+            Exchange exchange = getEndpoint().createExchange(session);
             Mina2PayloadHelper.setIn(exchange, object);
             // log what we received
-            if (LOG.isDebugEnabled()) {
-                Object in = object;
-                if (in instanceof byte[]) {
-                    // byte arrays is not readable so convert to string
-                    in = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, in);
-                }
-                LOG.debug("Received body: {}", in);
+//            if (LOG.isDebugEnabled()) {
+            Object in = object;
+            if (in instanceof byte[]) {
+                // byte arrays is not readable so convert to string
+                in = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, in);
             }
+            LOG.debug("Received body: {}", in);
+//            }
 
             //Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().
-                    getConfiguration().getCharsetName()));
+                        getConfiguration().getCharsetName()));
             }
 
             try {

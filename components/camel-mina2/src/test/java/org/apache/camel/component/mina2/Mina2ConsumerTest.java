@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 
 /**
@@ -27,14 +30,19 @@ import org.junit.Test;
  */
 public class Mina2ConsumerTest extends BaseMina2Test {
 
-    int port1;
-    int port2;
+    int port1 = AvailablePortFinder.getNextAvailable();
+    int port2 = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSendTextlineText() throws Exception {
         // START SNIPPET: e2
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+        // sessionCreated event has body null in exchange
+        // sessionOpened event has body null in exchange
+        // messageReceived event has the message body
+        // sessionClosed event has body null in exchange
+        mock.expectedBodiesReceived(Arrays.asList(null, null, "Hello World", null));
+        mock.setResultWaitTime(5000);
 
         template.sendBody("mina2:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
 
@@ -54,8 +62,6 @@ public class Mina2ConsumerTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
 
                 // START SNIPPET: e1
                 from("mina2:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");

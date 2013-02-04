@@ -36,7 +36,8 @@ public class Mina2SpringMultipleUDPTest extends CamelSpringTestSupport {
     @Test
     public void testMinaSpringProtobufEndpoint() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedMessageCount(7);
+        // Send 7 messages, receive 28
+        result.expectedMessageCount(28);
 
         for (int i = 0; i < 7; i++) {
             template.requestBody("myMinaEndpoint", "Hello World" + i + LS);

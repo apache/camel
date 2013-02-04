@@ -66,35 +66,35 @@ public class Mina2IoHandlerTest extends BaseMina2Test {
     public void testSendOneCloseToServer() throws InterruptedException {
         latch = new CountDownLatch(1);
         closeIoHandler.setLatch(latch);
-        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&ioHandler=#closeIoHandler", getPort()), "Chad");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false&ioHandler=#closeIoHandler", getPort()), "Chad");
         latch.await(2, TimeUnit.SECONDS);
         assertEquals("Hello Chad", closeIoHandler.getMessage());
     }
 
-    //@Test
+    @Test
     public void testSendTwoCloseToServer() throws InterruptedException {
         latch = new CountDownLatch(1);
         closeIoHandler.setLatch(latch);
-        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&ioHandler=#closeIoHandler", getPort()), "Chad");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false&ioHandler=#closeIoHandler", getPort()), "Chad");
         latch.await(2, TimeUnit.SECONDS);
         assertEquals("Hello Chad", closeIoHandler.getMessage());
         latch = new CountDownLatch(1);
         closeIoHandler.setLatch(latch);
-        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&ioHandler=#closeIoHandler", getPort()), "Alexander");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false&ioHandler=#closeIoHandler", getPort()), "Alexander");
         latch.await(2, TimeUnit.SECONDS);
         assertEquals("Hello Alexander", closeIoHandler.getMessage());
     }
 
-    //@Test
+    @Test
     public void testSendTwoNoCloseToServer() throws InterruptedException {
         latch = new CountDownLatch(1);
         noCloseIoHandler.setLatch(latch);
-        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&ioHandler=#noCloseIoHandler", getPort()), "Chad");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false&ioHandler=#noCloseIoHandler", getPort()), "Chad");
         latch.await(2, TimeUnit.SECONDS);
         assertEquals("Hello Chad", noCloseIoHandler.getMessage());
         latch = new CountDownLatch(1);
         noCloseIoHandler.setLatch(latch);
-        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&ioHandler=#noCloseIoHandler", getPort()), "Alexander");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false&ioHandler=#noCloseIoHandler", getPort()), "Alexander");
         latch.await(2, TimeUnit.SECONDS);
         assertEquals("Hello Alexander", noCloseIoHandler.getMessage());
     }

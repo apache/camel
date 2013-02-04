@@ -1,18 +1,18 @@
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * contributor license agreements. See the NOTICE file distributed with this
+ * work for additional information regarding copyright ownership. The ASF
+ * licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.camel.component.mina2;
 
@@ -38,8 +38,7 @@ public class Mina2VMCustomCodecTest extends BaseMina2Test {
     @Test
     public void testMyCodec() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Bye World");
+        mock.expectedMessageCount(3);
 
         Object out = template.requestBody(String.format("mina2:vm://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
         assertEquals("Bye World", out);
@@ -61,8 +60,8 @@ public class Mina2VMCustomCodecTest extends BaseMina2Test {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         String body = "Hello Thai Elephant \u0E08";
 
-        endpoint.expectedMessageCount(1);
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedMessageCount(4);
+        endpoint.expectedBodiesReceived(null, null, body, null);
 
         template.sendBody(myUri, body);
         assertMockEndpointsSatisfied();
@@ -86,7 +85,6 @@ public class Mina2VMCustomCodecTest extends BaseMina2Test {
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-
             public void configure() throws Exception {
                 from(String.format("mina2:vm://localhost:%1$s?sync=true&codec=#myCodec", getPort())).transform(constant("Bye World")).to("mock:result");
             }
@@ -98,9 +96,8 @@ public class Mina2VMCustomCodecTest extends BaseMina2Test {
         @Override
         public ProtocolEncoder getEncoder(IoSession is) throws Exception {
             return new ProtocolEncoder() {
-
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
-                    throws Exception {
+                        throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
                     String s = (String) message;
                     bb.put(s.getBytes("US-ASCII"));
@@ -118,7 +115,6 @@ public class Mina2VMCustomCodecTest extends BaseMina2Test {
         @Override
         public ProtocolDecoder getDecoder(IoSession is) throws Exception {
             return new CumulativeProtocolDecoder() {
-
                 protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
                     if (in.remaining() > 0) {
                         byte[] buf = new byte[in.remaining()];

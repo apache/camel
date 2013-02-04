@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -64,7 +65,6 @@ public class Mina2ProducerAnotherConcurrentTest extends BaseMina2Test {
             });
             responses.put(index, out);
         }
-
         assertMockEndpointsSatisfied();
         assertEquals(files, responses.size());
 

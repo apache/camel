@@ -18,6 +18,7 @@ package org.apache.camel.component.mina2;
 
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -39,7 +40,11 @@ public class Mina2ProducerShutdownMockTest extends BaseMina2Test {
     @Test
     public void testProducerShutdownTestingWithMock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+        // null = sessionCreated
+        // null = sessionOpened
+        // "Hello World" = message body
+        // null = sessionClosed
+        mock.expectedBodiesReceived(Arrays.asList(null,null,"Hello World",null));
 
         // create our mock and record expected behavior = that worker timeout should be set to 0
         SocketConnector mockConnector = createMock(SocketConnector.class);

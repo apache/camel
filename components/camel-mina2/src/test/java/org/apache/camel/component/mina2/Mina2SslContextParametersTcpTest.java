@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.util.Arrays;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class Mina2SslContextParametersTcpTest extends BaseMina2Test {
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         Object body = "Hello there!";
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedBodiesReceived(Arrays.asList(null,null,body));
 
         template.sendBodyAndHeader(String.format("mina2:tcp://localhost:%1$s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
                 getPort()), body, "cheese", 123);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.util.Arrays;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -46,8 +47,8 @@ public class Mina2EncodingTest extends BaseMina2Test {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         byte[] body = "Hello Thai Elephant \u0E08".getBytes("UTF-8");
 
-        endpoint.expectedMessageCount(1);
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedMessageCount(3);
+        endpoint.expectedBodiesReceived(Arrays.asList(null,null,body));
 
         template.sendBody(uri, body);
         assertMockEndpointsSatisfied();
@@ -68,8 +69,8 @@ public class Mina2EncodingTest extends BaseMina2Test {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         String body = "Hello Thai Elephant \u0E08";
 
-        endpoint.expectedMessageCount(1);
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedMessageCount(3);
+        endpoint.expectedBodiesReceived(Arrays.asList(null,null,body));
 
         template.sendBody(uri, body);
         assertMockEndpointsSatisfied();
@@ -90,8 +91,8 @@ public class Mina2EncodingTest extends BaseMina2Test {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         String body = "Hello Thai Elephant \u0E08";
 
-        endpoint.expectedMessageCount(1);
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedMessageCount(3);
+        endpoint.expectedBodiesReceived(Arrays.asList(null,null,body));
 
         template.sendBody(uri, body);
         assertMockEndpointsSatisfied();
@@ -114,8 +115,8 @@ public class Mina2EncodingTest extends BaseMina2Test {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         byte[] body = "Hello Thai Elephant \u0E08".getBytes();
 
-        endpoint.expectedMessageCount(1);
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedMessageCount(3);
+        endpoint.expectedBodiesReceived(Arrays.asList(null,null,body));
 
         template.sendBody(uri, body);
         assertMockEndpointsSatisfied();
@@ -137,8 +138,8 @@ public class Mina2EncodingTest extends BaseMina2Test {
         String body = "Hello Thai Elephant \u0E08";
         //String body = "Hello Thai Elephant Yay";
 
-        endpoint.expectedMessageCount(1);
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedMessageCount(3);
+        endpoint.expectedBodiesReceived(Arrays.asList(null,null,body));
 
         template.sendBody(uri, body);
 
