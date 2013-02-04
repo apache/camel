@@ -52,18 +52,7 @@
 		xmlns:person="http://camel.apache.org/wsdl-first">
 	</cxf:cxfEndpoint>
 
-    <!-- setup our error handler as the deal letter channel -->
-    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="deadLetterUri" value="mock:error"/>
-        <property name="redeliveryPolicy" ref="myRedeliveryPolicy"/>
-    </bean>
-
-    <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
-        <property name="maximumRedeliveries" value="5"/>
-        <property name="redeliveryDelay" value="0"/>
-    </bean>
-
-	<camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <endpoint id="ep1" uri="jetty:http://localhost:${CxfBeanTest.1}/?matchOnUriPrefix=true"/>
         <endpoint id="ep2" uri="jetty:http://localhost:${CxfBeanTest.2}/?matchOnUriPrefix=true"/>
 
