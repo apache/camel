@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultManagementAgent extends ServiceSupport implements ManagementAgent, CamelContextAware {
 
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
-    public static final String DEFAULT_HOST = "localhost";
+    public static final String DEFAULT_HOST = "0.0.0.0";
     public static final int DEFAULT_REGISTRY_PORT = 1099;
     public static final int DEFAULT_CONNECTION_PORT = -1;
     public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi/camel";
@@ -337,28 +337,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     protected void createMBeanServer() {
         String hostName;
-        boolean canAccessSystemProps = true;
-        try {
-            // we'll do it this way mostly to determine if we should lookup the hostName
-            SecurityManager sm = System.getSecurityManager();
-            if (sm != null) {
-                sm.checkPropertiesAccess();
-            }
-        } catch (SecurityException se) {
-            canAccessSystemProps = false;
-        }
 
-        if (canAccessSystemProps) {
-            try {
-                hostName = InetAddress.getLocalHost().getHostName();
-            } catch (UnknownHostException uhe) {
-                LOG.info("Cannot determine localhost name. Using default: " + DEFAULT_REGISTRY_PORT, uhe);
-                hostName = DEFAULT_HOST;
-            }
-        } else {
-            hostName = DEFAULT_HOST;
-        }
-
+        hostName = DEFAULT_HOST;
         server = findOrCreateMBeanServer();
 
         try {
