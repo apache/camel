@@ -55,16 +55,6 @@
       <lineEnding>dos</lineEnding>
     </fileSet>
 
-    <!-- copy the manual docs -->
-    <fileSet>
-      <directory>${basedir}/../tooling/camel-manual/target/site/manual/</directory>
-      <outputDirectory>/doc/manual</outputDirectory>
-      <includes>
-        <include>*.pdf</include>
-        <include>*.html</include>
-      </includes>
-    </fileSet>
-
    <!-- copy the java docs -->
    <fileSet>
     <directory>${basedir}/target/javadoc/</directory>
@@ -76,6 +66,19 @@
   </fileSets>
 
   <files>
+    <!-- copy the manual docs -->
+    <file>
+      <source>${basedir}/../tooling/camel-manual/target/site/manual/camel-manual-${project.version}-SNAPSHOT.html</source>
+      <outputDirectory>/doc/manual</outputDirectory>
+      <fileMode>0444</fileMode>
+      <destName>camel-manual-${project.version}.html</destName>
+    </file>
+    <file>
+      <source>${basedir}/../tooling/camel-manual/target/site/manual/camel-manual-${project.version}-SNAPSHOT.pdf</source>
+      <outputDirectory>/doc/manual</outputDirectory>
+      <fileMode>0444</fileMode>
+      <destName>camel-manual-${project.version}.pdf</destName>
+    </file>
     <!--filtering README.txt-->
     <file>
       <source>../examples/camel-example-reportincident-wssecurity/README.txt</source>
