@@ -29,7 +29,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsDefaultTaskExecutorTypeTest.class);
+    @Rule public TestName name = new TestName();
     
     @Test
     public void testThreadPoolTaskExecutor() throws Exception {
@@ -87,6 +90,23 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
                 + "800 with default behaviour", numberThreadsCreated >= 800);
     }
     
+    @Test
+    public void testDefaultTaskExecutorThreadPoolAtComponentConfig() throws Exception {
+        // the default behaviour changes in this test, see createCamelContext method below
+        // the behaviour is the same as with testThreadPoolTaskExecutor test method above
+        context.startRoute("default");
+        Long beforeThreadCount = currentThreadCount();
+        getMockEndpoint("mock:result.default").expectedMessageCount(1000);
+        doSendMessages("foo.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
+        Thread.sleep(100);
+        doSendMessages("foo.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
+        assertMockEndpointsSatisfied();
+        Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
+        LOG.info("Number of threads created, testDefaultTaskExecutorThreadPoolAtComponentConfig: " + numberThreadsCreated);
+        assertTrue("Number of threads created should be equal or lower than " 
+                + "100 with ThreadPoolTaskExecutor as a component default", numberThreadsCreated <= 100);
+    }
+    
     private Long currentThreadCount() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
         Method m = ThreadHelper.class.getDeclaredMethod("nextThreadCounter", (Class<?>[]) null);
@@ -104,6 +124,9 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         jmsComponent.getConfiguration().setConcurrentConsumers(3);
         jmsComponent.getConfiguration().setMaxConcurrentConsumers(10);
         jmsComponent.getConfiguration().setReceiveTimeout(50);
+        if ("testDefaultTaskExecutorThreadPoolAtComponentConfig".equals(testName.getMethodName())) {
+            jmsComponent.getConfiguration().setDefaultTaskExecutorType(DefaultTaskExecutorType.ThreadPool);
+        }
         camelContext.addComponent("activemq", jmsComponent);
         return camelContext;
     }
