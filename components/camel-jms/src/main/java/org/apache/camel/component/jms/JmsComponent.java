@@ -382,6 +382,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
         getConfiguration().setIncludeSentJMSMessageID(includeSentJMSMessageID);
     }
+    
+    public void setDefaultTaskExecutorType(DefaultTaskExecutorType type) {
+        getConfiguration().setDefaultTaskExecutorType(type);
+    }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

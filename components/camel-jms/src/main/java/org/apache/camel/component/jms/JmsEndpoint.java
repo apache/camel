@@ -1063,6 +1063,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         configuration.setIncludeSentJMSMessageID(includeSentJMSMessageID);
     }
 
+    @ManagedAttribute
     public DefaultTaskExecutorType getDefaultTaskExecutorType() {
         return configuration.getDefaultTaskExecutorType();
     }
