@@ -34,6 +34,7 @@ import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
 import org.apache.camel.processor.RouteContextProcessor;
+import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -228,6 +229,10 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
                 wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, bridge, next);
                 bridge.setTarget(wrapped);
                 wrapped = bridge;
+            }
+            // ensure target gets wrapped so we can control its lifecycle
+            if (!(wrapped instanceof WrapProcessor)) {
+                wrapped = new WrapProcessor(wrapped, target);
             }
             target = wrapped;
         }
