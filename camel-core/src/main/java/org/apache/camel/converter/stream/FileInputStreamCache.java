@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,6 +27,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 
+import javax.crypto.CipherInputStream;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
@@ -33,10 +36,16 @@ import org.apache.camel.util.IOHelper;
 public class FileInputStreamCache extends InputStream implements StreamCache {
     private InputStream stream;
     private File file;
+    private CipherPair ciphers;
 
     public FileInputStreamCache(File file) throws FileNotFoundException {
+        this(file, null);
+    }
+    
+    FileInputStreamCache(File file, CipherPair ciphers) throws FileNotFoundException {
         this.file = file;
         this.stream = null;
+        this.ciphers = ciphers;
     }
     
     @Override
@@ -59,7 +68,7 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
     }
 
     public void writeTo(OutputStream os) throws IOException {
-        if (stream == null) {
+        if (stream == null && ciphers == null) {
             FileInputStream s = new FileInputStream(file);
             long len = file.length();
             WritableByteChannel out;
@@ -92,8 +101,25 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
 
     protected InputStream getInputStream() throws IOException {
         if (stream == null) {
-            stream = IOHelper.buffered(new FileInputStream(file));
+            stream = createInputStream(file);
         }
         return stream;
     }
+
+    private InputStream createInputStream(File file) throws IOException {
+        InputStream in = new BufferedInputStream(new FileInputStream(file));
+        if (ciphers != null) {
+            in = new CipherInputStream(in, ciphers.getDecryptor()) {
+                boolean closed;
+                public void close() throws IOException {
+                    if (!closed) {
+                        super.close();
+                        closed = true;
+                    }
+                }
+            };
+        }
+        return in;
+    }
+
 }

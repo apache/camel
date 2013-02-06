@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,12 +25,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
+
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +52,7 @@ public class CachedOutputStream extends OutputStream {
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
     public static final String BUFFER_SIZE = "CamelCachedOutputStreamBufferSize";
     public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
+    public static final String CIPHER_TRANSFORMATION = "CamelCachedOutputStreamCipherTransformation";
     private static final transient Logger LOG = LoggerFactory.getLogger(CachedOutputStream.class);
     
     private OutputStream currentStream;
@@ -57,6 +64,9 @@ public class CachedOutputStream extends OutputStream {
     private long threshold = 64 * 1024;
     private int bufferSize = 2 * 1024;
     private File outputDir;
+    private String cipherTransformation;
+    private CipherPair ciphers;
+
     
     public CachedOutputStream(Exchange exchange) {
         this(exchange, true);
@@ -76,6 +86,7 @@ public class CachedOutputStream extends OutputStream {
         if (dir != null) {
             this.outputDir = exchange.getContext().getTypeConverter().convertTo(File.class, dir);
         }
+        this.cipherTransformation = exchange.getContext().getProperty(CIPHER_TRANSFORMATION);
        
         currentStream = new ByteArrayOutputStream(this.bufferSize);
         
@@ -159,7 +170,7 @@ public class CachedOutputStream extends OutputStream {
         } else {
             try {
                 if (fileInputStreamCache == null) {
-                    fileInputStreamCache = new FileInputStreamCache(tempFile);
+                    fileInputStreamCache = new FileInputStreamCache(tempFile, ciphers);
                 }
                 return fileInputStreamCache;
             } catch (FileNotFoundException e) {
@@ -185,7 +196,7 @@ public class CachedOutputStream extends OutputStream {
         } else {
             try {
                 if (fileInputStreamCache == null) {
-                    fileInputStreamCache = new FileInputStreamCache(tempFile);
+                    fileInputStreamCache = new FileInputStreamCache(tempFile, ciphers);
                 }
                 return fileInputStreamCache;
             } catch (FileNotFoundException e) {
@@ -215,7 +226,7 @@ public class CachedOutputStream extends OutputStream {
         LOG.trace("Creating temporary stream cache file: {}", tempFile);
 
         try {
-            currentStream = IOHelper.buffered(new FileOutputStream(tempFile));
+            currentStream = createOutputStream(tempFile);
             bout.writeTo(currentStream);
         } finally {
             // ensure flag is flipped to file based
@@ -259,4 +270,26 @@ public class CachedOutputStream extends OutputStream {
         }
     }
 
+    private OutputStream createOutputStream(File file) throws IOException {
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+        if (ObjectHelper.isNotEmpty(cipherTransformation)) {
+            try {
+                if (ciphers == null) {
+                    ciphers = new CipherPair(cipherTransformation);
+                }
+            } catch (GeneralSecurityException e) {
+                throw new IOException(e.getMessage(), e);
+            }
+            out = new CipherOutputStream(out, ciphers.getEncryptor()) {
+                boolean closed;
+                public void close() throws IOException {
+                    if (!closed) {
+                        super.close();
+                        closed = true;
+                    }
+                }
+            };
+        }
+        return out;
+    }
 }

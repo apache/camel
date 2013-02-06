@@ -66,12 +66,12 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     public void testCacheStreamToFileAndCloseStream() throws IOException {       
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
-
+        
         File file = new File("target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
-        
+
         StreamCache cache = cos.getStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
         String temp = toString((InputStream)cache);
@@ -94,6 +94,45 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("we should have no temp file", files.length, 0);
     }
     
+    public void testCacheStreamToFileAndCloseStreamEncrypted() throws IOException {
+        // set some stream or 8-bit block cipher transformation name
+        exchange.getContext().getProperties().put(CachedOutputStream.CIPHER_TRANSFORMATION, "RC4");
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        cos.write(TEST_STRING.getBytes("UTF-8"));
+        cos.flush();
+        
+        File file = new File("target/cachedir");
+        String[] files = file.list();
+        assertEquals("we should have a temp file", files.length, 1);
+        assertTrue("The content is written" , new File(file, files[0]).length() > 10);
+        
+        java.io.FileInputStream tmpin = new java.io.FileInputStream(new File(file, files[0]));
+        String temp = toString(tmpin);
+        assertTrue("The content is not encrypted", temp.length() > 0 && temp.indexOf("aaa") < 0);
+        tmpin.close();
+        
+        StreamCache cache = cos.getStreamCache();
+        assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
+        temp = toString((InputStream)cache);
+
+        ((InputStream)cache).close();
+        assertEquals("we should have a temp file", files.length, 1);
+        assertEquals("Cached a wrong file", temp, TEST_STRING);
+        exchange.getUnitOfWork().done(exchange);
+
+        try {
+            cache.reset();
+            // The stream is closed, so the temp file is gone.
+            fail("we expect the exception here");
+        } catch (Exception exception) {
+            // do nothing
+        }
+
+
+        files = file.list();
+        assertEquals("we should have no temp file", files.length, 0);
+    }
+
     public void testCacheStreamToFileCloseStreamBeforeDone() throws IOException {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
