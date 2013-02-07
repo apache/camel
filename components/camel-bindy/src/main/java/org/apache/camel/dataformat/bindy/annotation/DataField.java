@@ -31,7 +31,9 @@ import java.lang.annotation.RetentionPolicy;
  * precision(optional) reflects the precision to be used with BigDecimal number
  * The position (optional) identify the position of the field in the CSV
  * generated The required (optional) property identifies a field which is
- * mandatory.
+ * mandatory. The lengthPos (optional) identifies a field in this record that 
+ * defines the fixed length for this field.  The delimiter (optional) defines a
+ * character that is used to demarcate the field, if it has a variable length.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -61,6 +63,11 @@ public @interface DataField {
      * Length of the data block if the record is set to a fixed length
      */
     int length() default 0;
+    
+    /**
+     * Identifies a data field in the record that defines the expected fixed length for this field
+     */
+    int lengthPos() default 0;
     
     /**
      * Align the text to the right or left. Use values <tt>R</tt> or <tt>L</tt>.
@@ -96,6 +103,11 @@ public @interface DataField {
      * Indicates to clip data in the field if it exceeds the allowed length when using fixed length.
      */
     boolean clip() default false;
+    
+    /**
+     * Optional delimiter to be used if the field has a variable length
+     */
+    String delimiter() default "";
     
     /**
      * Field's default value in case no value is set 

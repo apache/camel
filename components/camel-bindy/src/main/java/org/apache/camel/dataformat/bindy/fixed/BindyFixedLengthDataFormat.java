@@ -25,16 +25,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
+import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +48,15 @@ import org.slf4j.LoggerFactory;
  * {@link DataFormat}) using Bindy to marshal to and from Fixed Length
  */
 public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyFixedLengthDataFormat.class);
+    
+    public static final String CAMEL_BINDY_FIXED_LENGTH_HEADER = "CamelBindyFixedLengthHeader";
+    public static final String CAMEL_BINDY_FIXED_LENGTH_FOOTER = "CamelBindyFixedLengthFooter";
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindyFixedLengthDataFormat.class);
+    
+    private BindyFixedLengthFactory headerFactory;
+    private BindyFixedLengthFactory footerFactory;
+    
     public BindyFixedLengthDataFormat() {
     }
 
@@ -58,8 +70,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-
-        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(exchange.getContext().getPackageScanClassResolver());
+        PackageScanClassResolver resolver = exchange.getContext().getPackageScanClassResolver();
+        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(resolver);
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -82,11 +94,55 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             // cast to the expected type
             models = (List<Map<String, Object>>) body;
         }
+        
+        // add the header if it is in the exchange header
+        Map<String, Object> headerRow = (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_HEADER);
+        if (headerRow != null) {
+            models.add(0, headerRow);
+        }
+        
+        // add the footer if it is in the exchange header
+        Map<String, Object> footerRow = (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_FOOTER);
+        if (headerRow != null) {
+            models.add(models.size(), footerRow);
+        }
 
+        int row = 0;
         for (Map<String, Object> model : models) {
-
-            String result = factory.unbind(model);
-
+            row++;
+            String result = null;
+            
+            if (row == 1 && headerFactory != null) {
+                // marshal the first row as a header if the models match
+                Set<String> modelClassNames = model.keySet();
+                // only use the header factory if the row is the header
+                if (headerFactory.supportsModel(modelClassNames)) {
+                    if (factory.skipHeader())  {
+                        LOG.warn("Skipping marshal of header row; 'skipHeader=true'");
+                        continue;
+                    } else {
+                        result = headerFactory.unbind(model);
+                    }    
+                }
+            } else if (row == models.size() && footerFactory != null) {
+                // marshal the last row as a footer if the models match
+                Set<String> modelClassNames = model.keySet();
+                // only use the header factory if the row is the header
+                if (footerFactory.supportsModel(modelClassNames)) {
+                    if (factory.skipFooter()) {
+                        LOG.warn("Skipping marshal of footer row; 'skipFooter=true'");
+                        continue;
+                    } else {
+                        result = footerFactory.unbind(model);
+                    }
+                }
+            }
+            
+            if (result == null) {
+                // marshal as a normal / default row
+                result = factory.unbind(model);
+            }
+            
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
 
@@ -96,9 +152,10 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(exchange.getContext().getPackageScanClassResolver());
+        PackageScanClassResolver resolver = exchange.getContext().getPackageScanClassResolver();
+        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(resolver);
         ObjectHelper.notNull(factory, "not instantiated");
-
+        
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
@@ -110,52 +167,59 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         // Scanner is used to read big file
         Scanner scanner = new Scanner(in);
 
-        int count = 0;
+        AtomicInteger count = new AtomicInteger(0);
 
         try {
 
-            // TODO Test if we have a Header
-            // TODO Test if we have a Footer (containing by example checksum)
-
-            while (scanner.hasNextLine()) {
-                String line;
+            // Parse the header if it exists
+            if (scanner.hasNextLine() && factory.hasHeader()) {
                 
                 // Read the line (should not trim as its fixed length)
-                line = scanner.nextLine();
-
-                if (ObjectHelper.isEmpty(line)) {
-                    // skip if line is empty
-                    continue;
-                }
-
-                // Increment counter
-                count++;
+                String line = getNextNonEmptyLine(scanner, count);
                 
-                // Check if the record length corresponds to the parameter
-                // provided in the @FixedLengthRecord
-                if ((line.length() < factory.recordLength()) || (line.length() > factory.recordLength())) {
-                    throw new java.lang.IllegalArgumentException("Size of the record: " + line.length() + " is not equal to the value provided in the model: " + factory.recordLength());
+                if (!factory.skipHeader()) {
+                    Map<String, Object> headerObjMap = createModel(headerFactory, line, count.intValue());
+                    exchange.getOut().setHeader(CAMEL_BINDY_FIXED_LENGTH_HEADER, headerObjMap);
                 }
+            }
 
-                // Create POJO where Fixed data will be stored
-                model = factory.factory();
+            String thisLine = getNextNonEmptyLine(scanner, count);
+
+            String nextLine = null;
+            if (thisLine != null) {
+                nextLine = getNextNonEmptyLine(scanner, count);
+            }
+
+            // Parse the main file content
+            while (thisLine != null && nextLine != null) {
                 
-                // Bind data from Fixed record with model classes
-                factory.bind(line, model, count);
-
-                // Link objects together
-                factory.link(model);
+                model = createModel(factory, thisLine, count.intValue());
 
                 // Add objects graph to the list
                 models.add(model);
 
-                LOG.debug("Graph of objects created: {}", model);
+                thisLine = nextLine;
+                nextLine = getNextNonEmptyLine(scanner, count);
+            }
+            
+            // this line should be the last non-empty line from the file
+            // optionally parse the line as a footer
+            if (thisLine != null) {
+                if (factory.hasFooter()) {
+                    if (!factory.skipFooter()) {
+                        Map<String, Object> footerObjMap = createModel(footerFactory, thisLine, count.intValue());
+                        exchange.getOut().setHeader(CAMEL_BINDY_FIXED_LENGTH_FOOTER, footerObjMap);
+                    }
+                } else {
+                    model = createModel(factory, thisLine, count.intValue());
+                    models.add(model);
+                }
             }
 
             // Test if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
-                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
+                throw new java.lang.IllegalArgumentException("No records have been defined in the the file");
             } else {
                 return extractUnmarshalResult(models);
             }
@@ -167,13 +231,98 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     }
 
-    @Override
-    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        if (getClassType() != null) {
-            return new BindyFixedLengthFactory(resolver, getClassType());
+    private String getNextNonEmptyLine(Scanner scanner, AtomicInteger count) {
+        String line = "";
+        while (ObjectHelper.isEmpty(line) && scanner.hasNextLine()) {
+            count.incrementAndGet();
+            line = scanner.nextLine();
+        }
+        
+        if (ObjectHelper.isEmpty(line)) {
+            return null;
         } else {
-            return new BindyFixedLengthFactory(resolver, getPackages());
+            return line;
         }
     }
 
+    protected Map<String, Object> createModel(BindyFixedLengthFactory factory, String line, int count) throws Exception {
+        // Check if the record length corresponds to the parameter
+        // provided in the @FixedLengthRecord
+        if (factory.recordLength() > 0) {
+            if ((line.length() < factory.recordLength()) || (line.length() > factory.recordLength())) {
+                throw new java.lang.IllegalArgumentException("Size of the record: " + line.length() 
+                        + " is not equal to the value provided in the model: " + factory.recordLength());
+            }
+        }
+
+        // Create POJO where Fixed data will be stored
+        Map<String, Object> model = factory.factory();
+        
+        // Bind data from Fixed record with model classes
+        factory.bind(line, model, count);
+
+        // Link objects together
+        factory.link(model);
+        
+        LOG.debug("Graph of objects created: {}", model);
+        return model;
+    }
+
+    @Override
+    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
+        
+        // Initialize the primary (body) model factory ignoring header and footer model classes
+        PackageScanFilter defaultRecordScanFilter = new PackageScanFilter() {
+            @Override
+            public boolean matches(Class<?> type) {
+                FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
+                return record != null && !record.isFooter() && !record.isHeader();
+            }
+        };
+
+        BindyFixedLengthFactory factory;
+        if (getClassType() != null) {
+            factory = new BindyFixedLengthFactory(resolver, defaultRecordScanFilter, getClassType());
+        } else {
+            factory = new BindyFixedLengthFactory(resolver, defaultRecordScanFilter, getPackages());
+        }
+        
+        // Optionally initialize the header factory... using header model classes
+        if (factory.hasHeader()) {
+            PackageScanFilter headerScanFilter = new PackageScanFilter() {
+                @Override
+                public boolean matches(Class<?> type) {
+                    FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
+                    return record != null && record.isHeader();
+                }
+            };
+            
+            if (getClassType() != null) {
+                this.headerFactory = new BindyFixedLengthFactory(resolver, headerScanFilter, getClassType());
+            } else {
+                this.headerFactory = new BindyFixedLengthFactory(resolver, headerScanFilter, getPackages());
+            }
+        }
+        
+        // Optionally initialize the footer factory... using footer model classes
+        if (factory.hasFooter()) {
+            
+            PackageScanFilter footerScanFilter = new PackageScanFilter() {
+                @Override
+                public boolean matches(Class<?> type) {
+                    FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
+                    return record != null && record.isFooter();
+                }
+            };
+            
+            if (getClassType() != null) {
+                this.footerFactory = new BindyFixedLengthFactory(resolver, footerScanFilter, getClassType());
+            } else {
+                this.footerFactory = new BindyFixedLengthFactory(resolver, footerScanFilter, getPackages());
+            }
+        }
+        
+        return factory;
+    }
+    
 }
