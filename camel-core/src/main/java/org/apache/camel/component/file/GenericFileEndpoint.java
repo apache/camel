@@ -416,7 +416,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.charset = charset;
     }
 
-    boolean isIdempotentSet() {
+    protected boolean isIdempotentSet() {
         return idempotent != null;
     }
 
