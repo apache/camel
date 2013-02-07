@@ -62,6 +62,40 @@ public class DefaultClassResolverTest extends TestCase {
         assertNotNull(clazz);
     }
 
+    public void testResolveMandatorySimpleClassType()throws Exception {
+        DefaultClassResolver resolver = new DefaultClassResolver();
+
+        Class<Byte> clazz = resolver.resolveMandatoryClass("Byte", Byte.class);
+        assertNotNull(clazz);
+        clazz = resolver.resolveMandatoryClass("java.lang.Byte", Byte.class);
+        assertNotNull(clazz);
+
+        Class<Long> clazz2 = resolver.resolveMandatoryClass("Long", Long.class);
+        assertNotNull(clazz2);
+        clazz2 = resolver.resolveMandatoryClass("java.lang.Long", Long.class);
+        assertNotNull(clazz2);
+
+        Class<String> clazz3 = resolver.resolveMandatoryClass("String", String.class);
+        assertNotNull(clazz3);
+        clazz3 = resolver.resolveMandatoryClass("java.lang.String", String.class);
+        assertNotNull(clazz3);
+
+        Class<Byte[]> clazz4 = resolver.resolveMandatoryClass("Byte[]", Byte[].class);
+        assertNotNull(clazz4);
+        clazz4 = resolver.resolveMandatoryClass("java.lang.Byte[]", Byte[].class);
+        assertNotNull(clazz4);
+
+        Class<Object[]> clazz5 = resolver.resolveMandatoryClass("Object[]", Object[].class);
+        assertNotNull(clazz5);
+        clazz5 = resolver.resolveMandatoryClass("java.lang.Object[]", Object[].class);
+        assertNotNull(clazz5);
+
+        Class<String[]> clazz6 = resolver.resolveMandatoryClass("String[]", String[].class);
+        assertNotNull(clazz6);
+        clazz6 = resolver.resolveMandatoryClass("java.lang.String[]", String[].class);
+        assertNotNull(clazz6);
+    }
+
     public void testResolveMandatoryClassClassLoader() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
         Class<?> clazz = resolver.resolveMandatoryClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
