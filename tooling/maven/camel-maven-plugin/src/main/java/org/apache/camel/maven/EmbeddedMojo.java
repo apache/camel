@@ -54,7 +54,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     /**
      * The DOT File name used to generate the DOT diagram of the route definitions
      *
-     * @parameter property="${project.build.directory}/site/cameldoc/routes.dot"
+     * @parameter default-value="${project.build.directory}/site/cameldoc/routes.dot"
      * @readonly
      */
     protected String outputDirectory;

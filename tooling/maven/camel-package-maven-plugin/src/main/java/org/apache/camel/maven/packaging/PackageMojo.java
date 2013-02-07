@@ -46,7 +46,7 @@ public class PackageMojo extends AbstractMojo {
     /**
      * The output directory of classes
      *
-     * @parameter property="${project.build.directory}/classes"
+     * @parameter default-value="${project.build.directory}/classes"
      * @readonly
      */
     protected File outDir;

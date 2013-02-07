@@ -94,7 +94,7 @@ public class RunMojo extends AbstractExecMojo {
      * The DOT output directory name used to generate the DOT diagram of the
      * route definitions
      *
-     * @parameter property="${project.build.directory}/site/cameldoc"
+     * @parameter default-value="${project.build.directory}/site/cameldoc"
      * @readonly
      */
     protected String dotDir;
