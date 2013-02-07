@@ -54,6 +54,24 @@ public class XmlJsonOptionsTest extends CamelTestSupport {
     }
 
     @Test
+    public void testXmlWithTypeAttributesToJSON() throws Exception {
+        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage4.xml");
+        String in = context.getTypeConverter().convertTo(String.class, inStream);
+
+        MockEndpoint mockJSON = getMockEndpoint("mock:json");
+        mockJSON.expectedMessageCount(1);
+        mockJSON.message(0).body().isInstanceOf(byte[].class);
+
+        Object json = template.requestBody("direct:marshal", in);
+        String jsonString = context.getTypeConverter().convertTo(String.class, json);
+        JSONObject obj = (JSONObject) JSONSerializer.toJSON(jsonString);
+        assertEquals("JSON must contain 1 top-level element", 1, obj.entrySet().size());
+        assertTrue("Top-level element must be named root", obj.has("root"));
+
+        mockJSON.assertIsSatisfied();
+    }
+
+    @Test
     public void testSomeOptionsToXML() throws Exception {
         InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
