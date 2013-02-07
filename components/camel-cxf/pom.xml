@@ -142,6 +142,13 @@
       <artifactId>camel-core-xml</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <!-- Try to test convert PayLoad into POJO -->
+    <dependency>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>camel-jaxb</artifactId>
+       <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
