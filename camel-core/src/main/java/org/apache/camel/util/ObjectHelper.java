@@ -787,9 +787,15 @@ public final class ObjectHelper {
      * @return the class or <tt>null</tt> if it could not be loaded
      */
     public static Class<?> loadSimpleType(String name) {
-        // special for byte[] as its common to use
+        // special for byte[] or Object[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
             return byte[].class;
+        } else if ("java.lang.Byte[]".equals(name) || "Byte[]".equals(name)) {
+            return Byte[].class;
+        } else if ("java.lang.Object[]".equals(name) || "Object[]".equals(name)) {
+            return Object[].class;
+        } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
+            return String[].class;
         // and these is common as well
         } else if ("java.lang.String".equals(name) || "String".equals(name)) {
             return String.class;
