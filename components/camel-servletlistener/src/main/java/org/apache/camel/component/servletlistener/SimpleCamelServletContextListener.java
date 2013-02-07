@@ -25,20 +25,20 @@ import org.apache.camel.spi.Registry;
  * An implementation of {@link CamelServletContextListener} that uses the {@link SimpleRegistry}
  * as its {@link Registry}.
  */
-public class SimpleCamelServletContextListener extends CamelServletContextListener {
+public class SimpleCamelServletContextListener extends CamelServletContextListener<SimpleRegistry> {
 
-    private Map map;
+    private SimpleRegistry map;
 
     @Override
-    public Registry createRegistry() throws Exception {
+    public SimpleRegistry createRegistry() throws Exception {
         map = new SimpleRegistry();
-        return (Registry) map;
+        return map;
     }
 
     /**
      * Gets the {@link Map} that contains the data for the {@link SimpleRegistry}
      */
-    public Map getMap() {
+    public Map<String, Object> getMap() {
         return map;
     }
 }

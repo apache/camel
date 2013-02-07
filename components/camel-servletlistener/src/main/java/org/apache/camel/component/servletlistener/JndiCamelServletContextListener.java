@@ -23,15 +23,15 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 
 /**
- * An implementation of {@link CamelServletContextListener} that uses the {@link org.apache.camel.impl.JndiRegistry}
+ * An implementation of {@link CamelServletContextListener} that uses the {@link JndiRegistry}
  * as its {@link Registry}.
  */
-public class JndiCamelServletContextListener extends CamelServletContextListener {
+public class JndiCamelServletContextListener extends CamelServletContextListener<JndiRegistry> {
 
     private Context jndiContext;
 
     @Override
-    public Registry createRegistry() throws Exception {
+    public JndiRegistry createRegistry() throws Exception {
         jndiContext = new InitialContext();
         return new JndiRegistry(jndiContext);
     }
