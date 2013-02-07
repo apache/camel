@@ -59,6 +59,7 @@ public class OsgiServletRegisterer {
     public void setHttpService(HttpService httpService) {
         this.httpService = httpService;
     }
+
     public void setAlias(String alias) {
         this.alias = alias;
     }
@@ -66,6 +67,7 @@ public class OsgiServletRegisterer {
     public void setServletName(String servletName) {
         this.servletName = servletName;
     }
+
     public void setServlet(HttpServlet servlet) {
         this.servlet = servlet;
     }

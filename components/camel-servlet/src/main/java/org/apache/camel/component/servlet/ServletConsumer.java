@@ -16,30 +16,20 @@
  */
 package org.apache.camel.component.servlet;
 
-import org.apache.camel.component.http.CamelServlet;
+import org.apache.camel.Processor;
 import org.apache.camel.component.http.HttpConsumer;
 
 /**
- * Keeps track of HttpConsumers and CamelServlets and 
- * connects them to each other. In OSGi there should
- * be one HttpRegistry per bundle.
- * 
- * A CamelServlet that should serve more than one
- * bundle should be registered as an OSGi service.
- * The HttpRegistryImpl can then be configured to listen
- * to service changes. See /tests/camel-itest-osgi/../servlet
- * for an example how to use this.
+ *
  */
-public interface HttpRegistry {
+public class ServletConsumer extends HttpConsumer {
 
-    void register(HttpConsumer consumer);
+    public ServletConsumer(ServletEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+    }
 
-    void unregister(HttpConsumer consumer);
-
-    void register(CamelServlet provider);
-
-    void unregister(CamelServlet provider);
-
-    CamelServlet getCamelServlet(String servletName);
-
+    @Override
+    public ServletEndpoint getEndpoint() {
+        return (ServletEndpoint) super.getEndpoint();
+    }
 }

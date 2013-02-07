@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.servlet;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.servlet.Servlet;
 
 import org.apache.camel.component.http.CamelServlet;
@@ -31,30 +31,40 @@ import org.slf4j.LoggerFactory;
 public class DefaultHttpRegistry implements HttpRegistry {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultHttpRegistry.class);
 
-    private static HttpRegistry singleton;
+    private static Map<String, HttpRegistry> registries = new HashMap<String, HttpRegistry>();
     
     private final Set<HttpConsumer> consumers;
     private final Set<CamelServlet> providers;
-    
+
     public DefaultHttpRegistry() {
         consumers = new HashSet<HttpConsumer>();
         providers = new HashSet<CamelServlet>();
     }
     
     /**
-     * Lookup or create a HttpRegistry
+     * Lookup or create a new registry if none exists with the given name
      */
-    public static synchronized HttpRegistry getSingletonHttpRegistry() {
-        if (singleton == null) {
-            singleton = new DefaultHttpRegistry();
+    public static synchronized HttpRegistry getHttpRegistry(String name) {
+        HttpRegistry answer = registries.get(name);
+        if (answer == null) {
+            answer = new DefaultHttpRegistry();
+            registries.put(name, answer);
         }
-        return singleton;
+        return answer;
+    }
+
+    /**
+     * Removes the http registry with the given name
+     */
+    public static synchronized void removeHttpRegistry(String name) {
+        registries.remove(name);
     }
     
     @Override
     public void register(HttpConsumer consumer) {
-        LOG.debug("Registering consumer for path {} providers present: {}",
-                consumer.getPath(), providers.size());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Registering consumer for path {} providers present: {}", consumer.getPath(), providers.size());
+        }
         consumers.add(consumer);
         for (CamelServlet provider : providers) {
             provider.connect(consumer);
@@ -63,7 +73,9 @@ public class DefaultHttpRegistry implements HttpRegistry {
     
     @Override
     public void unregister(HttpConsumer consumer) {
-        LOG.debug("Unregistering consumer for path {} ", consumer.getPath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Unregistering consumer for path {}", consumer.getPath());
+        }
         consumers.remove(consumer);
         for (CamelServlet provider : providers) {
             provider.disconnect(consumer);
@@ -72,7 +84,6 @@ public class DefaultHttpRegistry implements HttpRegistry {
     
     @SuppressWarnings("rawtypes")
     public void register(CamelServlet provider, Map properties) {
-        LOG.debug("Registering provider through OSGi service listener {}", properties);
         CamelServlet camelServlet = provider;
         camelServlet.setServletName((String) properties.get("servlet-name"));
         register(camelServlet);
@@ -84,8 +95,9 @@ public class DefaultHttpRegistry implements HttpRegistry {
     
     @Override
     public void register(CamelServlet provider) {
-        LOG.debug("Registering CamelServlet with name {} consumers present: {}", 
-                provider.getServletName(), consumers.size());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Registering CamelServlet with name {} consumers present: {}", provider.getServletName(), consumers.size());
+        }
         providers.add(provider);
         for (HttpConsumer consumer : consumers) {
             provider.connect(consumer);
@@ -94,9 +106,22 @@ public class DefaultHttpRegistry implements HttpRegistry {
 
     @Override
     public void unregister(CamelServlet provider) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Unregistering CamelServlet with name {}", provider.getServletName());
+        }
         providers.remove(provider);
     }
-    
+
+    @Override
+    public CamelServlet getCamelServlet(String servletName) {
+        for (CamelServlet provider : providers) {
+            if (provider.getServletName().equals(servletName)) {
+                return provider;
+            }
+        }
+        return null;
+    }
+
     public void setServlets(List<Servlet> servlets) {
         providers.clear();
         for (Servlet servlet : servlets) {

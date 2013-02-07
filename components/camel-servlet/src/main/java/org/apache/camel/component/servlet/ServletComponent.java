@@ -37,7 +37,6 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 public class ServletComponent extends HttpComponent {
 
     private String servletName = "CamelServlet";
-    private HttpRegistry httpRegistry;
 
     public String getServletName() {
         return servletName;
@@ -47,16 +46,8 @@ public class ServletComponent extends HttpComponent {
         this.servletName = servletName;
     }
 
-    public void setHttpRegistry(HttpRegistry httpRegistry) {
-        this.httpRegistry = httpRegistry;
-    }
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (httpRegistry == null) {
-            httpRegistry = DefaultHttpRegistry.getSingletonHttpRegistry();
-        }
-
         HttpClientParams params = new HttpClientParams();
         IntrospectionSupport.setProperties(params, parameters, "httpClient.");
 
@@ -125,12 +116,18 @@ public class ServletComponent extends HttpComponent {
 
     @Override
     public void connect(HttpConsumer consumer) throws Exception {
-        httpRegistry.register(consumer);
+        ServletConsumer sc = (ServletConsumer) consumer;
+        String name = sc.getEndpoint().getServletName();
+        HttpRegistry registry = DefaultHttpRegistry.getHttpRegistry(name);
+        registry.register(consumer);
     }
 
     @Override
     public void disconnect(HttpConsumer consumer) throws Exception {
-        httpRegistry.unregister(consumer);
+        ServletConsumer sc = (ServletConsumer) consumer;
+        String name = sc.getEndpoint().getServletName();
+        HttpRegistry registry = DefaultHttpRegistry.getHttpRegistry(name);
+        registry.unregister(consumer);
     }
 
 }

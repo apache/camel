@@ -23,7 +23,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
@@ -55,7 +54,7 @@ public class ServletEndpoint extends HttpEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new HttpConsumer(this, processor);
+        return new ServletConsumer(this, processor);
     }
 
     @Override
