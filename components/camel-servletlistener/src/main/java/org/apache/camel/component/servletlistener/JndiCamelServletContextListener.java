@@ -16,31 +16,27 @@
  */
 package org.apache.camel.component.servletlistener;
 
-import org.apache.camel.util.jndi.JndiContext;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 
 /**
- * Support class for {@link CamelContextLifecycle} to make sub-classing easier,
- * allowing to only override methods needed.
+ * An implementation of {@link CamelServletContextListener} that uses the {@link org.apache.camel.impl.JndiRegistry}
+ * as its {@link Registry}.
  */
-public class CamelContextLifecycleSupport implements CamelContextLifecycle {
+public class JndiCamelServletContextListener extends CamelServletContextListener {
+
+    private Context jndiContext;
 
     @Override
-    public void beforeStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
-        // noop
+    public Registry createRegistry() throws Exception {
+        jndiContext = new InitialContext();
+        return new JndiRegistry(jndiContext);
     }
 
-    @Override
-    public void afterStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
-        // noop
-    }
-
-    @Override
-    public void beforeStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
-        // noop
-    }
-
-    @Override
-    public void afterStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
-        // noop
+    public Context getJndiContext() {
+        return jndiContext;
     }
 }

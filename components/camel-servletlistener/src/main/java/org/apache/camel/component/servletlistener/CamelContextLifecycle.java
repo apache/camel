@@ -16,48 +16,48 @@
  */
 package org.apache.camel.component.servletlistener;
 
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.spi.Registry;
 
 /**
  * A callback lifecycle allows end users to implement custom logic before
  * the {@link ServletCamelContext} is started and stopped.
  */
-public interface CamelContextLifecycle {
+public interface CamelContextLifecycle<R extends Registry> {
 
     /**
      * Callback before starting {@link ServletCamelContext}.
      *
      * @param camelContext the Camel context
-     * @param jndi         the JNDI context.
+     * @param registry     the registry
      * @throws Exception is thrown if any error.
      */
-    void beforeStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
+    void beforeStart(ServletCamelContext camelContext, R registry) throws Exception;
 
     /**
      * Callback after {@link ServletCamelContext} has been started.
      *
      * @param camelContext the Camel context
-     * @param jndi         the JNDI context.
+     * @param registry     the registry
      * @throws Exception is thrown if any error.
      */
-    void afterStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
+    void afterStart(ServletCamelContext camelContext, R registry) throws Exception;
 
     /**
      * Callback before stopping {@link ServletCamelContext}.
      *
      * @param camelContext the Camel context
-     * @param jndi         the JNDI context.
+     * @param registry     the registry
      * @throws Exception is thrown if any error.
      */
-    void beforeStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
+    void beforeStop(ServletCamelContext camelContext, R registry) throws Exception;
 
     /**
      * Callback after {@link ServletCamelContext} has been stopped.
      *
      * @param camelContext the Camel context
-     * @param jndi         the JNDI context.
+     * @param registry     the registry
      * @throws Exception is thrown if any error.
      */
-    void afterStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception;
+    void afterStop(ServletCamelContext camelContext, R registry) throws Exception;
 
 }

@@ -47,7 +47,7 @@
 
   <!-- register Camel as a listener so we can bootstrap Camel when the web application starts -->
   <listener>
-    <listener-class>org.apache.camel.component.servletlistener.CamelServletContextListener</listener-class>
+    <listener-class>org.apache.camel.component.servletlistener.SimpleCamelServletContextListener</listener-class>
   </listener>
 
 </web-app>

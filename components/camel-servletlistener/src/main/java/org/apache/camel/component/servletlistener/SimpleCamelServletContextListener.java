@@ -16,24 +16,29 @@
  */
 package org.apache.camel.component.servletlistener;
 
-import javax.servlet.ServletContext;
+import java.util.Map;
 
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Registry;
 
 /**
- * A servlet based {@link org.apache.camel.CamelContext}.
+ * An implementation of {@link CamelServletContextListener} that uses the {@link SimpleRegistry}
+ * as its {@link Registry}.
  */
-public class ServletCamelContext extends DefaultCamelContext {
+public class SimpleCamelServletContextListener extends CamelServletContextListener {
 
-    private final ServletContext servletContext;
+    private Map map;
 
-    public ServletCamelContext(Registry registry, ServletContext servletContext) {
-        super(registry);
-        this.servletContext = servletContext;
+    @Override
+    public Registry createRegistry() throws Exception {
+        map = new SimpleRegistry();
+        return (Registry) map;
     }
 
-    public ServletContext getServletContext() {
-        return servletContext;
+    /**
+     * Gets the {@link Map} that contains the data for the {@link SimpleRegistry}
+     */
+    public Map getMap() {
+        return map;
     }
 }
