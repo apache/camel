@@ -45,7 +45,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * A value <= 0 will run forever.
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter expression="-1"
+     * @parameter property="-1"
      * @readonly
      */
     protected String duration;
@@ -53,7 +53,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     /**
      * The DOT File name used to generate the DOT diagram of the route definitions
      *
-     * @parameter expression="${project.build.directory}/site/cameldoc/routes.dot"
+     * @parameter property="${project.build.directory}/site/cameldoc/routes.dot"
      * @readonly
      */
     protected String outputDirectory;
@@ -61,7 +61,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     /**
      * Allows the DOT file generation to be disabled
      *
-     * @parameter expression="true"
+     * @parameter property="true"
      * @readonly
      */
     protected boolean dotEnabled;
@@ -69,7 +69,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     /**
      * Allows the routes from multiple contexts to be aggregated into one DOT file (in addition to the individual files)
      *
-     * @parameter expression="false"
+     * @parameter property="false"
      * @readonly
      */
     protected boolean dotAggregationEnabled;
@@ -77,7 +77,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     /**
      * Project classpath.
      *
-     * @parameter expression="${project.testClasspathElements}"
+     * @parameter property="project.testClasspathElements"
      * @required
      * @readonly
      */
@@ -86,7 +86,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     /**
      * The main class to execute.
      *
-     * @parameter expression="${camel.mainClass}"
+     * @parameter property="camel.mainClass"
      *            default-value="org.apache.camel.guice.Main"
      * @required
      */

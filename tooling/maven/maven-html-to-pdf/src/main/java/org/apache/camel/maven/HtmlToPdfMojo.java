@@ -58,7 +58,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     /**
      * The URL to the confluence page to convert.
      *
-     * @parameter expression="${page}"
+     * @parameter property="page"
      * @required
      */
     private String page;
@@ -66,7 +66,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     /**
      * The output file name for the pdf.
      *
-     * @parameter expression="${pdf}"
+     * @parameter property="pdf"
      *            default-value="${project.build.directory}/site/manual/${project.artifactId}-${project.version}.pdf"
      */
     private String pdf;
@@ -136,7 +136,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -298,7 +298,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
         String previousTransformerFactoryClassName = null;
         if (transformerFactoryClassName != null) {
             previousTransformerFactoryClassName = System.setProperty(XSLT_SYSTEM_PROPERTY_KEY, transformerFactoryClassName);
-            getLog().info("Set the XSL transformer factory class name to be '" + transformerFactoryClassName + "'");
+            getLog().info("Set the XSLT factory class name to be '" + transformerFactoryClassName + "'");
         }
 
         String contentTag = "<div class=\"" + contentDivClass + "\"";
@@ -328,11 +328,11 @@ public class HtmlToPdfMojo extends AbstractMojo {
                 if (previousTransformerFactoryClassName == null) {
                     // remove the set system property
                     System.getProperties().remove(XSLT_SYSTEM_PROPERTY_KEY);
-                    getLog().info("Removed the set XSL transformer factory class name '" + transformerFactoryClassName + "' from the system properties");
+                    getLog().info("Removed the set XSLT factory class name '" + transformerFactoryClassName + "' from the system properties");
                 } else {
                     // reset the previous system property value to whatever it was before
                     System.setProperty(XSLT_SYSTEM_PROPERTY_KEY, previousTransformerFactoryClassName);
-                    getLog().info("Resetted the XSL transformer factory class name to be '" + previousTransformerFactoryClassName + "'");
+                    getLog().info("Resetted the XSLT factory class name to be '" + previousTransformerFactoryClassName + "'");
                 }
             }
         }

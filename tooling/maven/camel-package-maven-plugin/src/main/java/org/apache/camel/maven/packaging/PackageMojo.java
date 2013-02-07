@@ -37,7 +37,7 @@ public class PackageMojo extends AbstractMojo {
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -46,7 +46,7 @@ public class PackageMojo extends AbstractMojo {
     /**
      * The output directory of classes
      *
-     * @parameter expression="${project.build.directory}/classes"
+     * @parameter property="${project.build.directory}/classes"
      * @readonly
      */
     protected File outDir;

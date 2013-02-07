@@ -74,7 +74,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -85,7 +85,7 @@ public class RunMojo extends AbstractExecMojo {
      * milliseconds. A value <= 0 will run forever.
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter expression="-1"
+     * @parameter property="-1"
      *
      */
     protected String duration;
@@ -94,7 +94,7 @@ public class RunMojo extends AbstractExecMojo {
      * The DOT output directory name used to generate the DOT diagram of the
      * route definitions
      *
-     * @parameter expression="${project.build.directory}/site/cameldoc"
+     * @parameter property="${project.build.directory}/site/cameldoc"
      * @readonly
      */
     protected String dotDir;
@@ -102,7 +102,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Allows the DOT file generation to be disabled
      *
-     * @parameter expression="true"
+     * @parameter property="true"
      * @readonly
      */
     protected boolean dotEnabled;
@@ -123,14 +123,14 @@ public class RunMojo extends AbstractExecMojo {
     private ArtifactMetadataSource metadataSource;
 
     /**
-     * @parameter expression="${localRepository}"
+     * @parameter property="localRepository"
      * @required
      * @readonly
      */
     private ArtifactRepository localRepository;
 
     /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter property="project.remoteArtifactRepositories"
      */
     private List<?> remoteRepositories;
 
@@ -140,7 +140,7 @@ public class RunMojo extends AbstractExecMojo {
     private MavenProjectBuilder projectBuilder;
 
     /**
-     * @parameter expression="${plugin.artifacts}"
+     * @parameter property="plugin.artifacts"
      * @readonly
      */
     private List<Artifact> pluginDependencies;
@@ -148,7 +148,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Whether to enable the debugger or not
      *
-     * @parameter expression="${camel.debug}"
+     * @parameter property="camel.debug"
      *            default-value="false"
      * @required
      */
@@ -157,7 +157,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Whether to enable the tracer or not
      *
-     * @parameter expression="${camel.trace}"
+     * @parameter property="camel.trace"
      *            default-value="false"
      * @required
      */
@@ -166,14 +166,14 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Output all routes to the specified XML file
      *
-     * @parameter expression="${camel.routesOutputFile}"
+     * @parameter property="camel.routesOutputFile"
      */
     private String routesOutputFile;
 
     /**
      * The main class to execute.
      *
-     * @parameter expression="${camel.mainClass}"
+     * @parameter property="camel.mainClass"
      *            default-value="org.apache.camel.guice.Main"
      * @required
      */
@@ -182,7 +182,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * The class arguments.
      *
-     * @parameter expression="${camel.arguments}"
+     * @parameter property="camel.arguments"
      */
     private String[] arguments;
 
@@ -201,7 +201,7 @@ public class RunMojo extends AbstractExecMojo {
      * running after the mainclass terminates. Usefull for serverlike apps with
      * deamonthreads.
      *
-     * @parameter expression="${camel.keepAlive}" default-value="false"
+     * @parameter property="camel.keepAlive" default-value="false"
      */
     private boolean keepAlive;
 
@@ -209,7 +209,7 @@ public class RunMojo extends AbstractExecMojo {
      * Indicates if the project dependencies should be used when executing the
      * main class.
      *
-     * @parameter expression="${camel.includeProjectDependencies}"
+     * @parameter property="camel.includeProjectDependencies"
      *            default-value="true"
      */
     private boolean includeProjectDependencies;
@@ -222,7 +222,7 @@ public class RunMojo extends AbstractExecMojo {
      * using the csharp plugins only expects to see dotnet libraries as
      * dependencies.
      *
-     * @parameter expression="${camel.includePluginDependencies}"
+     * @parameter property="camel.includePluginDependencies"
      *            default-value="false"
      */
     private boolean includePluginDependencies;
@@ -255,7 +255,7 @@ public class RunMojo extends AbstractExecMojo {
      * {@link #stopUnresponsiveDaemonThreads} for further tuning.
      * </p>
      *
-     * @parameter expression="${camel.cleanupDaemonThreads} default-value="true"
+     * @parameter property="camel.cleanupDaemonThreads" default-value="true"
      */
     private boolean cleanupDaemonThreads;
 
@@ -276,7 +276,7 @@ public class RunMojo extends AbstractExecMojo {
      * future based on user feedback.
      * </p>
      *
-     * @parameter expression="${camel.daemonThreadJoinTimeout}"
+     * @parameter property="camel.daemonThreadJoinTimeout"
      *            default-value="15000"
      */
     private long daemonThreadJoinTimeout;
@@ -296,7 +296,7 @@ public class RunMojo extends AbstractExecMojo {
      * href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6336543">this
      * bug</a>.
      *
-     * @parameter expression="${camel.stopUnresponsiveDaemonThreads}
+     * @parameter property="camel.stopUnresponsiveDaemonThreads"
      *            default-value="false"
      */
     private boolean stopUnresponsiveDaemonThreads;
@@ -304,7 +304,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Deprecated this is not needed anymore.
      *
-     * @parameter expression="${camel.killAfter}" default-value="-1"
+     * @parameter property="camel.killAfter" default-value="-1"
      */
     private long killAfter;
 
