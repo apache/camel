@@ -22,6 +22,7 @@ package org.apache.camel.test.blueprint;
 public class MyCoolBean {
 
     private String say;
+    private String echo;
 
     public String getSay() {
         return say;
@@ -31,7 +32,21 @@ public class MyCoolBean {
         this.say = say;
     }
 
+    public String getEcho() {
+        return echo;
+    }
+
+    public void setEcho(String echo) {
+        this.echo = echo;
+    }
+
     public String saySomething(String s) {
         return say + " " + s;
     }
+
+    public String echoSomething(String s) {
+        return echo + " " + s + echo + " " + s;
+    }
+
+
 }
