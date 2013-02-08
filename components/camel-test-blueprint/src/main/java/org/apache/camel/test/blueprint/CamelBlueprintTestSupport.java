@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.blueprint;
 
+import java.util.Dictionary;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -26,6 +27,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * Base class for OSGi Blueprint unit tests with Camel.
@@ -47,11 +50,34 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             bundleContext.registerService(PropertiesComponent.OVERRIDE_PROPERTIES, extra, null);
         }
 
+        // allow end users to override config admin service with extra properties
+        Dictionary props = new Properties();
+        String pid = useOverridePropertiesWithConfigAdmin(props);
+        if (pid != null) {
+            ConfigurationAdmin configAdmin = getOsgiService(ConfigurationAdmin.class);
+            Configuration config = configAdmin.getConfiguration(pid);
+            if (config == null) {
+                throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
+            }
+            log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
+            config.update(props);
+        }
+
         super.setUp();
 
         // must wait for blueprint container to be published then the namespace parser is complete and we are ready for testing
         log.debug("Waiting for BlueprintContainer to be published with symbolicName: {}", symbolicName);
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=" + symbolicName + ")");
+    }
+
+    /**
+     * Override this method to override config admin properties.
+     *
+     * @param props properties where you add the properties to override
+     * @return the PID of the OSGi {@link ConfigurationAdmin} which are defined in the Blueprint XML file.
+     */
+    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) {
+        return null;
     }
 
     @After
