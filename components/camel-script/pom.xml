@@ -67,12 +67,6 @@
 
         <!-- test dependencies -->
         <dependency>
-            <groupId>com.sun.script</groupId>
-            <artifactId>jython-engine</artifactId>
-            <version>${jython-engine-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
