@@ -118,6 +118,7 @@
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
     <felix-configadmin-version>1.4.0</felix-configadmin-version>
+    <felix-fileinstall-version>3.2.6</felix-fileinstall-version>
     <felix-framework-version>3.2.2</felix-framework-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
@@ -304,7 +305,7 @@
     <quickfix-bundle-version>1.5.2_1</quickfix-bundle-version>
     <quickfix-version>1.5.2-bd</quickfix-version>
     <regexp-bundle-version>1.3_3</regexp-bundle-version>
-    <restlet-version>2.0.10</restlet-version>
+    <restlet-version>2.0.15</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
