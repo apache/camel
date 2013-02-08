@@ -31,6 +31,10 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.dataformat.avro*,org.apache.camel.component.avro*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>
+          org.apache.camel.spi.ComponentResolver;component=avro,
+          org.apache.camel.spi.DataFormatResolver;dataformat=avro
+      </camel.osgi.export.service>
     </properties>
 
     <build>

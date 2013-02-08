@@ -30,6 +30,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.syslog.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=syslog</camel.osgi.export.service>
     </properties>
 
     <dependencies>

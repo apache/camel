@@ -30,7 +30,11 @@
   <description>Camel HTTP support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.http.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.http.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=http,
+      org.apache.camel.spi.ComponentResolver;component=https
+    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

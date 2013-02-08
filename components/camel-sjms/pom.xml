@@ -49,6 +49,7 @@
       org.apache.camel.component.sjms.taskmanager,
       org.apache.camel.component.sjms.tx
     </camel.osgi.private.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=sjms</camel.osgi.export.service>
   </properties>
 
   <dependencies>

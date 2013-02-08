@@ -31,6 +31,14 @@
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.gae.*</camel.osgi.export.pkg>
+	<camel.osgi.export.service>
+		org.apache.camel.spi.ComponentResolver;component=gauth,
+		org.apache.camel.spi.ComponentResolver;component=ghttp,
+		org.apache.camel.spi.ComponentResolver;component=ghttps,
+		org.apache.camel.spi.ComponentResolver;component=glogin,
+		org.apache.camel.spi.ComponentResolver;component=gmail,
+		org.apache.camel.spi.ComponentResolver;component=gtask
+	</camel.osgi.export.service>
   </properties>
 
   <dependencies>

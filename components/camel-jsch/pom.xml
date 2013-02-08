@@ -37,6 +37,7 @@
         org.apache.camel.component.file.strategy;${camel.osgi.import.strict.version}
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.jsch.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=scp</camel.osgi.export.service>
   </properties>
 
   <dependencies>

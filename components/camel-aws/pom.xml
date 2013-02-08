@@ -33,6 +33,15 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.aws.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>
+          org.apache.camel.spi.ComponentResolver;component=aws-cw,
+          org.apache.camel.spi.ComponentResolver;component=aws-ddb,
+          org.apache.camel.spi.ComponentResolver;component=aws-s3,
+          org.apache.camel.spi.ComponentResolver;component=aws-sdb,
+          org.apache.camel.spi.ComponentResolver;component=aws-ses,
+          org.apache.camel.spi.ComponentResolver;component=aws-sns,
+          org.apache.camel.spi.ComponentResolver;component=aws-sqs
+        </camel.osgi.export.service>
     </properties>
 
     <dependencies>

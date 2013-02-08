@@ -55,6 +55,10 @@
         org.apache.camel.core.osgi*,
         org.apache.camel.core.xml*
       </camel.osgi.private.pkg>
+      <camel.osgi.export.service>
+        org.apache.camel.spi.ComponentResolver;component=spring-event,
+        org.apache.camel.spi.LanguageResolver;language=spel
+      </camel.osgi.export.service>
       <camel.osgi.activator>
         org.apache.camel.osgi.Activator
       </camel.osgi.activator>

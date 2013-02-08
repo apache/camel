@@ -30,6 +30,10 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.smpp.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>
+          org.apache.camel.spi.ComponentResolver;component=smpp,
+          org.apache.camel.spi.ComponentResolver;component=smpps
+        </camel.osgi.export.service>
     </properties>
 
     <dependencies>

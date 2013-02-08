@@ -40,6 +40,7 @@
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=websocket</camel.osgi.export.service>
         <!-- ><jetty-version>8.1.3.v20120416</jetty-version>-->
     </properties>
 

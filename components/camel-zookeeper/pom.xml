@@ -32,6 +32,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.zookeeper.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=zookeeper</camel.osgi.export.service>
   </properties>
 
   <dependencies>

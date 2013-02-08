@@ -33,6 +33,7 @@
         <camel.osgi.activator>org.apache.camel.component.paxlogging.Activator</camel.osgi.activator>
         <camel.osgi.export.pkg>!*</camel.osgi.export.pkg>
         <camel.osgi.private.pkg>org.apache.camel.component.paxlogging</camel.osgi.private.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=paxlogging</camel.osgi.export.service>
     </properties>
 
     <dependencies>

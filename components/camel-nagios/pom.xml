@@ -34,6 +34,7 @@
     <camel.osgi.export.pkg>
       org.apache.camel.component.nagios.*
     </camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=nagios</camel.osgi.export.service>
   </properties>
 
   <repositories>

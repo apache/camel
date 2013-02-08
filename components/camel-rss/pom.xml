@@ -32,6 +32,10 @@
   
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.rss.*;${camel.osgi.version},org.apache.camel.dataformat.rss.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=rss,
+      org.apache.camel.spi.DataFormatResolver;dataformat=rss
+    </camel.osgi.export.service>
   </properties>
  
   <dependencies>

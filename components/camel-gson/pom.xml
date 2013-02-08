@@ -31,6 +31,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.gson.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=json-gson</camel.osgi.export.service>
     </properties>
 
     <dependencies>

@@ -33,10 +33,10 @@
 
   <properties>
     <camel.osgi.export.pkg>
-        org.apache.camel.*
+        org.apache.camel.*;-noimport:=true
     </camel.osgi.export.pkg>
     <camel.osgi.import>
-        !org.apache.camel.*,
+        org.osgi.framework*,
         !com.googlecode.concurrentlinkedhashmap,
         ${camel.osgi.import.defaults},
         org.apache.xalan.xsltc.trax;resolution:=optional,
@@ -48,6 +48,38 @@
         javax.xml.transform.stax;resolution:=optional,
         *
     </camel.osgi.import>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=direct,
+      org.apache.camel.spi.ComponentResolver;component=vm,
+      org.apache.camel.spi.ComponentResolver;component=bean,
+      org.apache.camel.spi.ComponentResolver;component=mock,
+      org.apache.camel.spi.ComponentResolver;component=test,
+      org.apache.camel.spi.ComponentResolver;component=stub,
+      org.apache.camel.spi.ComponentResolver;component=validator,
+      org.apache.camel.spi.ComponentResolver;component=class,
+      org.apache.camel.spi.ComponentResolver;component=properties,
+      org.apache.camel.spi.ComponentResolver;component=direct-vm,
+      org.apache.camel.spi.ComponentResolver;component=log,
+      org.apache.camel.spi.ComponentResolver;component=ref,
+      org.apache.camel.spi.ComponentResolver;component=xslt,
+      org.apache.camel.spi.ComponentResolver;component=browse,
+      org.apache.camel.spi.ComponentResolver;component=dataset,
+      org.apache.camel.spi.ComponentResolver;component=timer,
+      org.apache.camel.spi.ComponentResolver;component=file,
+      org.apache.camel.spi.ComponentResolver;component=controlbus,
+      org.apache.camel.spi.ComponentResolver;component=binding,
+      org.apache.camel.spi.ComponentResolver;component=seda,
+      org.apache.camel.spi.ComponentResolver;component=language,
+      org.apache.camel.spi.LanguageResolver;language=ref,
+      org.apache.camel.spi.LanguageResolver;language=constant,
+      org.apache.camel.spi.LanguageResolver;language=bean,
+      org.apache.camel.spi.LanguageResolver;language=simple,
+      org.apache.camel.spi.LanguageResolver;language=file,
+      org.apache.camel.spi.LanguageResolver;language=property,
+      org.apache.camel.spi.LanguageResolver;language=header,
+      org.apache.camel.spi.LanguageResolver;language=xpath,
+      org.apache.camel.spi.LanguageResolver;language=tokenize
+    </camel.osgi.export.service>
     <camel.osgi.dynamic>
         org.apache.camel.spring.util;${camel.osgi.import.strict.version},org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version}
     </camel.osgi.dynamic>

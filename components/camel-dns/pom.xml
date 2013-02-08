@@ -38,6 +38,7 @@
       !org.apache.camel.component.dns*,
       *
     </camel.osgi.import.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=dns</camel.osgi.export.service>
   </properties>
 
   <dependencies>

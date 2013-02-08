@@ -35,6 +35,11 @@
         org.apache.camel.component.file.strategy;${camel.osgi.import.strict.version}
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.file.remote.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=ftp,
+      org.apache.camel.spi.ComponentResolver;component=ftps,
+      org.apache.camel.spi.ComponentResolver;component=sftp
+    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

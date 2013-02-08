@@ -30,7 +30,8 @@
   <description>Camel iBatis support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.ibatis.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.ibatis.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=ibatis</camel.osgi.export.service>
   </properties>
 
   <dependencies>

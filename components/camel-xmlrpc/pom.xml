@@ -32,6 +32,10 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.xmlrpc.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=xmlrpc,
+      org.apache.camel.spi.DataFormatResolver;dataformat=xmlrpc
+    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

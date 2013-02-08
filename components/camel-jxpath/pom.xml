@@ -30,7 +30,8 @@
   <description>Camel JXPath support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.language.jxpath.*</camel.osgi.export.pkg>
+	  <camel.osgi.export.pkg>org.apache.camel.language.jxpath.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=jxpath</camel.osgi.export.service>
   </properties>
 
   <dependencies>

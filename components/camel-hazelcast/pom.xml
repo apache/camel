@@ -36,7 +36,8 @@
       <camel.osgi.export.pkg>
             org.apache.camel.component.hazelcast.*;${camel.osgi.version},
             org.apache.camel.processor.idempotent.hazelcast.*
-	      </camel.osgi.export.pkg>
+	    </camel.osgi.export.pkg>
+      <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=hazelcast</camel.osgi.export.service>
     </properties>
 
     <dependencies>

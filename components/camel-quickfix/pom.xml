@@ -32,6 +32,7 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.quickfixj.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>org.slf4j*;resolution:=optional</camel.osgi.import.additional>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=quickfix</camel.osgi.export.service>
   </properties>
 
   <repositories>

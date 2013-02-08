@@ -32,6 +32,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.neo4j.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=neo4j</camel.osgi.export.service>
   </properties>
 
   <dependencies>

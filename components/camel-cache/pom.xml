@@ -41,6 +41,7 @@
             org.apache.camel.component.cache.*;${camel.osgi.version},
             org.apache.camel.processor.cache.*;${camel.osgi.version}
         </camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=cache</camel.osgi.export.service>
     </properties>
 
     <dependencies>

@@ -31,7 +31,8 @@
   <description>Camel StringTemplate support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.stringtemplate.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.stringtemplate.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=string-template</camel.osgi.export.service>
   </properties>
 
   <dependencies>

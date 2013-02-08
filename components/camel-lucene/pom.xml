@@ -33,12 +33,13 @@
 			org.apache.camel.component.lucene.*;${camel.osgi.version},
 			org.apache.camel.processor.lucene.*
 		</camel.osgi.export.pkg>
-        <camel.osgi.import.pkg>
-            !org.apache.camel.component.lucene.*,
-            !org.apache.camel.processor.lucene.*,
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import.pkg>
+		<camel.osgi.import.pkg>
+			!org.apache.camel.component.lucene.*,
+			!org.apache.camel.processor.lucene.*,
+			${camel.osgi.import.defaults},
+			*
+		</camel.osgi.import.pkg>
+		<camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=lucene</camel.osgi.export.service>
 	</properties>
 
 	<dependencies>
