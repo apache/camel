@@ -56,8 +56,34 @@ public @interface FixedLengthRecord {
      */
     int length() default 0;
 
+    /**
+     * Indicates that the record(s) of this type may be preceded by a single header record at the beginning of in the file
+     */
     boolean hasHeader() default false;
     
+    /**
+     * Indicates that the record(s) of this type may be followed by a single footer record at the end of the file
+     */
     boolean hasFooter() default false;
+    
+    /**
+     * Configures the data format to skip marshalling / unmarshalling of the header record
+     */
+    boolean skipHeader() default false;
+    
+    /**
+     * Configures the data format to skip marshalling / unmarshalling of the footer record
+     */
+    boolean skipFooter() default false;
+    
+    /**
+     * Identifies this FixedLengthRecord as a header record, which may precede all other records in the file
+     */
+    boolean isHeader() default false;
+    
+    /**
+     * Identifies this FixedLengthRecord as a footer record, which may be used as the last record in the file
+     */
+    boolean isFooter() default false;
 
 }

@@ -224,6 +224,15 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             // are we in progress of rebuilding a broken token
             boolean currentInProgress = current.length() > 0;
 
+            // situation when field ending with a separator symbol. 
+            if (currentInProgress && startQuote && s.isEmpty()) {
+                // Add separator, append current and reset it
+                current.append(separator);
+                answer.add(current.toString());
+                current.setLength(0);
+                continue;
+            }
+            
             // if we hit a start token then rebuild a broken token
             if (currentInProgress || startQuote) {
                 // append to current if we are in the middle of a start quote

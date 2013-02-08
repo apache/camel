@@ -304,26 +304,25 @@ public class MailBinding {
                 extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
             } else {
                 String disposition = part.getDisposition();
+                String fileName = part.getFileName();
+
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Part #{}: Disposition: {}", i, part.getDisposition());
+                    LOG.trace("Part #{}: Disposition: {}", i, disposition);
                     LOG.trace("Part #{}: Description: {}", i, part.getDescription());
                     LOG.trace("Part #{}: ContentType: {}", i, part.getContentType());
-                    LOG.trace("Part #{}: FileName: {}", i, part.getFileName());
+                    LOG.trace("Part #{}: FileName: {}", i, fileName);
                     LOG.trace("Part #{}: Size: {}", i, part.getSize());
                     LOG.trace("Part #{}: LineCount: {}", i, part.getLineCount());
                 }
 
-                if (disposition != null && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE))) {
-                    // only add named attachments
-                    String fileName = part.getFileName();
-                    if (fileName != null) {
-                        LOG.debug("Mail contains file attachment: " + fileName);
-                        if (!map.containsKey(fileName)) {
-                            // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
-                            map.put(fileName, part.getDataHandler());
-                        } else {
-                            LOG.warn("Cannot extract duplicate attachment: " + fileName);
-                        }
+                if ((disposition != null && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE)))
+                        || fileName != null) {
+                    LOG.debug("Mail contains file attachment: {}", fileName);
+                    if (!map.containsKey(fileName)) {
+                        // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
+                        map.put(fileName, part.getDataHandler());
+                    } else {
+                        LOG.warn("Cannot extract duplicate file attachment: {}.", fileName);
                     }
                 }
             }

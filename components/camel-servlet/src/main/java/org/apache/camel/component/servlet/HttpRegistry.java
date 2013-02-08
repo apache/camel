@@ -40,4 +40,6 @@ public interface HttpRegistry {
 
     void unregister(CamelServlet provider);
 
+    CamelServlet getCamelServlet(String servletName);
+
 }

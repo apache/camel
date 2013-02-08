@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.converter.ObjectConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,20 +33,53 @@ public class CamelHttpTransportServlet extends CamelServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelHttpTransportServlet.class);
 
     private HttpRegistry httpRegistry;
+    private boolean ignoreDuplicateServletName;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        if (httpRegistry == null) {
-            httpRegistry = DefaultHttpRegistry.getSingletonHttpRegistry();
+
+        String ignore = config.getInitParameter("ignoreDuplicateServletName");
+        Boolean bool = ObjectConverter.toBoolean(ignore);
+        if (bool != null) {
+            ignoreDuplicateServletName = bool;
+        } else {
+            // always log so people can see it easier
+            String msg = "Invalid parameter value for init-parameter ignoreDuplicateServletName with value: " + ignore;
+            LOG.error(msg);
+            throw new ServletException(msg);
         }
-        httpRegistry.register(this);
-        LOG.info("Initialized CamelHttpTransportServlet[{}]", getServletName());
+
+        String name = config.getServletName();
+        String contextPath = config.getServletContext().getContextPath();
+
+        if (httpRegistry == null) {
+            httpRegistry = DefaultHttpRegistry.getHttpRegistry(name);
+            CamelServlet existing = httpRegistry.getCamelServlet(name);
+            if (existing != null) {
+                String msg = "Duplicate ServetName detected: " + name + ". Existing: " + existing + " This: " + this.toString()
+                        + ". Its advised to use unique ServletName per Camel application.";
+                // always log so people can see it easier
+                if (isIgnoreDuplicateServletName()) {
+                    LOG.warn(msg);
+                } else {
+                    LOG.error(msg);
+                    throw new ServletException(msg);
+                }
+            }
+            httpRegistry.register(this);
+        }
+
+        LOG.info("Initialized CamelHttpTransportServlet[name={}, contextPath={}]", getServletName(), contextPath);
     }
     
     @Override
     public void destroy() {
-        httpRegistry.unregister(this);
+        DefaultHttpRegistry.removeHttpRegistry(getServletName());
+        if (httpRegistry != null) {
+            httpRegistry.unregister(this);
+            httpRegistry = null;
+        }
         LOG.info("Destroyed CamelHttpTransportServlet[{}]", getServletName());
     }
     
@@ -65,5 +99,13 @@ public class CamelHttpTransportServlet extends CamelServlet {
         }
     }
 
+    public boolean isIgnoreDuplicateServletName() {
+        return ignoreDuplicateServletName;
+    }
+
+    @Override
+    public String toString() {
+        return "CamelHttpTransportServlet[name=" + getServletName() + ", contextPath=" + getServletConfig().getServletContext().getContextPath() + "]";
+    }
 }
 

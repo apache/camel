@@ -120,6 +120,7 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
             }
         } else {
             serializer.setTypeHintsEnabled(false);
+            serializer.setTypeHintsCompatibility(false);
         }
     }
 

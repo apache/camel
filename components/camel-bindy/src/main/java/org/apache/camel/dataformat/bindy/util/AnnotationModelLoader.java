@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy.util;
 
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanFilter;
 
 /**
  * Annotation based loader for model classes with Bindy annotations.
@@ -33,6 +35,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 public class AnnotationModelLoader {
 
     private PackageScanClassResolver resolver;
+    private PackageScanFilter filter;
     private Set<Class<? extends Annotation>> annotations;
 
     public AnnotationModelLoader(PackageScanClassResolver resolver) {
@@ -45,8 +48,27 @@ public class AnnotationModelLoader {
         annotations.add(Section.class);
         annotations.add(FixedLengthRecord.class);
     }
+    
+    public AnnotationModelLoader(PackageScanClassResolver resolver, PackageScanFilter filter) {
+        this(resolver);
+        this.filter = filter;
+    }
 
     public Set<Class<?>> loadModels(String... packageNames) throws Exception {
-        return resolver.findAnnotated(annotations, packageNames);
+        Set<Class<?>> results = resolver.findAnnotated(annotations, packageNames);
+        
+        //TODO;  this logic could be moved into the PackageScanClassResolver by creating:
+        //          findAnnotated(annotations, packageNames, filter) 
+        Set<Class<?>> resultsToRemove = new HashSet<Class<?>>();
+        if (filter != null) {
+            for (Class<?> clazz : results) {
+                if (!filter.matches(clazz)) {
+                    resultsToRemove.add(clazz);
+                }
+            }
+        }
+        results.removeAll(resultsToRemove);
+        return results;
     }
+    
 }

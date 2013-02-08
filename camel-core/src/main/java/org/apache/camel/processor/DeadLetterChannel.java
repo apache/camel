@@ -79,4 +79,11 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
         // DeadLetterChannel handles errors before sending to DLQ
         return ExpressionToPredicateAdapter.toPredicate(ExpressionBuilder.constantExpression(true));
     }
+
+    @Override
+    protected boolean isRunAllowedOnPreparingShutdown() {
+        // allow tu run as we want to move the message eto DLC, instead of rejecting the message
+        return true;
+    }
+
 }

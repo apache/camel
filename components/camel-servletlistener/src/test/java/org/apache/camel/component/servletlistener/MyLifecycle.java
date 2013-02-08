@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.servletlistener;
 
+import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.util.jndi.JndiContext;
 
 // START SNIPPET: e1
@@ -25,18 +26,28 @@ import org.apache.camel.util.jndi.JndiContext;
  * <p/>
  * We can of course also do other kind of custom logic as well.
  */
-public class MyLifecycle extends CamelContextLifecycleSupport {
+public class MyLifecycle implements CamelContextLifecycle<SimpleRegistry> {
 
     @Override
-    public void beforeStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
+    public void beforeStart(ServletCamelContext camelContext, SimpleRegistry registry) throws Exception {
         // enlist our bean(s) in the registry
-        jndi.bind("myBean", new HelloBean());
+        registry.put("myBean", new HelloBean());
     }
 
     @Override
-    public void afterStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
+    public void afterStart(ServletCamelContext camelContext, SimpleRegistry registry) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void beforeStop(ServletCamelContext camelContext, SimpleRegistry registry) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void afterStop(ServletCamelContext camelContext, SimpleRegistry registry) throws Exception {
         // unbind our bean when Camel has been stopped
-        jndi.unbind("myBean");
+        registry.remove("myBean");
     }
 }
 // END SNIPPET: e1

@@ -50,7 +50,12 @@ public class OsgiManagementNameStrategy extends DefaultManagementNameStrategy {
     @Override
     protected String customResolveManagementName(String pattern, String answer) {
         String bundleId = "" + bundleContext.getBundle().getBundleId();
-        String symbolicName = Matcher.quoteReplacement(bundleContext.getBundle().getSymbolicName());
+        String symbolicName = bundleContext.getBundle().getSymbolicName();
+        if (symbolicName != null) {
+            symbolicName = Matcher.quoteReplacement(symbolicName);
+        } else {
+            symbolicName = "";
+        }
         String version = Matcher.quoteReplacement(bundleContext.getBundle().getVersion().toString());
 
         answer = answer.replaceFirst("#bundleId#", bundleId);

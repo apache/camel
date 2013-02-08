@@ -16,31 +16,29 @@
  */
 package org.apache.camel.component.servletlistener;
 
-import org.apache.camel.util.jndi.JndiContext;
+import java.util.Map;
+
+import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
 
 /**
- * Support class for {@link CamelContextLifecycle} to make sub-classing easier,
- * allowing to only override methods needed.
+ * An implementation of {@link CamelServletContextListener} that uses the {@link SimpleRegistry}
+ * as its {@link Registry}.
  */
-public class CamelContextLifecycleSupport implements CamelContextLifecycle {
+public class SimpleCamelServletContextListener extends CamelServletContextListener<SimpleRegistry> {
+
+    private SimpleRegistry map;
 
     @Override
-    public void beforeStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
-        // noop
+    public SimpleRegistry createRegistry() throws Exception {
+        map = new SimpleRegistry();
+        return map;
     }
 
-    @Override
-    public void afterStart(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
-        // noop
-    }
-
-    @Override
-    public void beforeStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
-        // noop
-    }
-
-    @Override
-    public void afterStop(ServletCamelContext camelContext, JndiContext jndi) throws Exception {
-        // noop
+    /**
+     * Gets the {@link Map} that contains the data for the {@link SimpleRegistry}
+     */
+    public Map<String, Object> getMap() {
+        return map;
     }
 }

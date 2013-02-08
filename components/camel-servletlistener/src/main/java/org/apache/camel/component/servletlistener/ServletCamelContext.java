@@ -16,27 +16,21 @@
  */
 package org.apache.camel.component.servletlistener;
 
-import javax.naming.Context;
 import javax.servlet.ServletContext;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Registry;
 
 /**
  * A servlet based {@link org.apache.camel.CamelContext}.
  */
 public class ServletCamelContext extends DefaultCamelContext {
 
-    private final Context jndiContext;
     private final ServletContext servletContext;
 
-    public ServletCamelContext(Context jndiContext, ServletContext servletContext) {
-        super(jndiContext);
-        this.jndiContext = jndiContext;
+    public ServletCamelContext(Registry registry, ServletContext servletContext) {
+        super(registry);
         this.servletContext = servletContext;
-    }
-
-    public Context getJndiContext() {
-        return jndiContext;
     }
 
     public ServletContext getServletContext() {

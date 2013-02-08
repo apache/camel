@@ -219,7 +219,11 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isRunAllowed() {
-        return !(stopping.get() || stopped.get());
+        return !isStoppingOrStopped();
+    }
+
+    public boolean isStoppingOrStopped() {
+        return stopping.get() || stopped.get();
     }
 
     /**

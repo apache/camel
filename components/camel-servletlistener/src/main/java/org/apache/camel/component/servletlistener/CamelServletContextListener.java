@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -42,31 +41,34 @@ import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.apache.camel.util.jndi.JndiContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ServletContextListener} which is used to bootstrap
  * {@link org.apache.camel.CamelContext} in web applications.
+ * 
+ * @param <R> the type of the {@link Registry} being {@link #createRegistry() created}
  */
-public class CamelServletContextListener implements ServletContextListener {
+public abstract class CamelServletContextListener<R extends Registry> implements ServletContextListener {
 
     /**
      * instance is used for testing purpose
      */
     public static ServletCamelContext instance;
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelServletContextListener.class);
-    private JndiContext jndiContext;
-    private ServletCamelContext camelContext;
-    private CamelContextLifecycle camelContextLifecycle;
-    private boolean test;
+    protected static final Logger LOG = LoggerFactory.getLogger(CamelServletContextListener.class);
+    protected ServletCamelContext camelContext;
+    protected CamelContextLifecycle<R> camelContextLifecycle;
+    protected boolean test;
+    protected R registry;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -74,8 +76,8 @@ public class CamelServletContextListener implements ServletContextListener {
 
         // create jndi and camel context
         try {
-            jndiContext = new JndiContext();
-            camelContext = new ServletCamelContext(jndiContext, sce.getServletContext());
+            registry = createRegistry();
+            camelContext = new ServletCamelContext(registry, sce.getServletContext());
         } catch (Exception e) {
             throw new RuntimeException("Error creating CamelContext.", e);
         }
@@ -113,11 +115,11 @@ public class CamelServletContextListener implements ServletContextListener {
                 }
             } else if (route instanceof Set) {
                 // its a set of route builders
-                for (Object clazz : (Set) route) {
+                for (Object routesBuilder : (Set<?>) route) {
                     try {
-                        camelContext.addRoutes((RoutesBuilder) clazz);
+                        camelContext.addRoutes((RoutesBuilder) routesBuilder);
                     } catch (Exception e) {
-                        throw new RuntimeException("Error adding route " + clazz, e);
+                        throw new RuntimeException("Error adding route " + routesBuilder, e);
                     }
                 }
             } else if (route instanceof RoutesDefinition) {
@@ -141,7 +143,7 @@ public class CamelServletContextListener implements ServletContextListener {
         String lifecycle = (String) map.remove("CamelContextLifecycle");
         if (lifecycle != null) {
             try {
-                Class<CamelContextLifecycle> clazz = camelContext.getClassResolver().resolveMandatoryClass(lifecycle, CamelContextLifecycle.class);
+                Class<CamelContextLifecycle<R>> clazz = CastUtils.cast(camelContext.getClassResolver().resolveMandatoryClass(lifecycle, CamelContextLifecycle.class));
                 camelContextLifecycle = camelContext.getInjector().newInstance(clazz);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("Error creating CamelContextLifecycle class with name " + lifecycle, e);
@@ -155,11 +157,11 @@ public class CamelServletContextListener implements ServletContextListener {
 
         try {
             if (camelContextLifecycle != null) {
-                camelContextLifecycle.beforeStart(camelContext, jndiContext);
+                camelContextLifecycle.beforeStart(camelContext, registry);
             }
             camelContext.start();
             if (camelContextLifecycle != null) {
-                camelContextLifecycle.afterStart(camelContext, jndiContext);
+                camelContextLifecycle.afterStart(camelContext, registry);
             }
         } catch (Exception e) {
             LOG.error("Error starting CamelContext.", e);
@@ -179,30 +181,35 @@ public class CamelServletContextListener implements ServletContextListener {
         if (camelContext != null) {
             try {
                 if (camelContextLifecycle != null) {
-                    camelContextLifecycle.beforeStop(camelContext, jndiContext);
+                    camelContextLifecycle.beforeStop(camelContext, registry);
                 }
                 camelContext.stop();
                 if (camelContextLifecycle != null) {
-                    camelContextLifecycle.afterStop(camelContext, jndiContext);
+                    camelContextLifecycle.afterStop(camelContext, registry);
                 }
             } catch (Exception e) {
                 LOG.warn("Error stopping CamelContext. This exception will be ignored.", e);
             }
         }
         camelContext = null;
-        jndiContext = null;
+        registry = null;
         instance = null;
         LOG.info("CamelContextServletListener destroyed");
     }
 
     /**
-     * Extracts all the init parameters, and will do reference lookup in {@link JndiContext}
-     * if the value starts with a # sign.
+     * Creates the {@link Registry} implementation to use.
+     */
+    public abstract R createRegistry() throws Exception;
+
+    /**
+     * Extracts all the init parameters, and will do reference lookup in {@link #createRegistry() registry}
+     * in case the value starts with a {@code #} sign.
      */
     private Map<String, Object> extractInitParameters(ServletContextEvent sce) {
         // configure CamelContext with the init parameter
         Map<String, Object> map = new LinkedHashMap<String, Object>();
-        Enumeration names = sce.getServletContext().getInitParameterNames();
+        Enumeration<?> names = sce.getServletContext().getInitParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             String value = sce.getServletContext().getInitParameter(name);
@@ -210,9 +217,10 @@ public class CamelServletContextListener implements ServletContextListener {
             if (ObjectHelper.isNotEmpty(value)) {
                 Object target = value;
                 if (value.startsWith("#")) {
-                    // a reference lookup in jndi
+                    // a reference lookup in registry
                     value = value.substring(1);
-                    target = lookupJndi(jndiContext, value);
+                    target = lookupRegistryByName(value);
+                    LOG.debug("Resolved the servlet context's initialization parameter {} to {}", value, target);
                 }
                 map.put(name, target);
             }
@@ -264,7 +272,7 @@ public class CamelServletContextListener implements ServletContextListener {
                 ManagementStrategy managementStrategy = new ManagedManagementStrategy(camelContext, agent);
                 camelContext.setManagementStrategy(managementStrategy);
 
-                // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
+                // clear the existing lifecycle strategies defined by the DefaultCamelContext constructor
                 camelContext.getLifecycleStrategies().clear();
                 camelContext.addLifecycleStrategy(new DefaultManagementLifecycleStrategy(camelContext));
                 // set additional configuration from agent
@@ -347,7 +355,7 @@ public class CamelServletContextListener implements ServletContextListener {
     /**
      * Extract the routes from the parameters.
      *
-     * @param map  parameters
+     * @param map parameters
      * @return a list of routes, which can be of different types. See source code for more details.
      */
     private List<Object> extractRoutes(Map<String, Object> map) {
@@ -359,7 +367,7 @@ public class CamelServletContextListener implements ServletContextListener {
                 names.add(entry.getKey());
                 // we can have multiple values assigned, separated by comma, so create an iterator
                 String value = (String) entry.getValue();
-                Iterator it = ObjectHelper.createIterator(value);
+                Iterator<Object> it = ObjectHelper.createIterator(value);
                 while (it.hasNext()) {
                     value = (String) it.next();
                     if (ObjectHelper.isNotEmpty(value)) {
@@ -370,7 +378,7 @@ public class CamelServletContextListener implements ServletContextListener {
                         if (value.startsWith("#")) {
                             // a reference lookup in jndi
                             value = value.substring(1);
-                            target = lookupJndi(jndiContext, value);
+                            target = lookupRegistryByName(value);
                         } else if (ResourceHelper.hasScheme(value)) {
                             // XML resource from classpath or file system
                             InputStream is = null;
@@ -423,12 +431,8 @@ public class CamelServletContextListener implements ServletContextListener {
         return answer;
     }
 
-    private static Object lookupJndi(JndiContext jndiContext, String name) {
-        try {
-            return jndiContext.lookup(name);
-        } catch (NamingException e) {
-            throw new RuntimeException("Error looking up in jndi with name: " + name, e);
-        }
+    private Object lookupRegistryByName(String name) {
+        return registry.lookupByName(name);
     }
 
 }

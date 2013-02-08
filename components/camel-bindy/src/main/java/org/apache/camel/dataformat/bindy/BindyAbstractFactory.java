@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy;
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 import org.apache.camel.dataformat.bindy.util.AnnotationModelLoader;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +40,10 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     private static final transient Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
     protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<String, List<Field>>();
     protected Set<Class<?>> models;
+    protected Set<String> modelClassNames;
     protected String crlf;
-
     private AnnotationModelLoader modelsLoader;
+    
     private String[] packageNames;
     private String locale;
     private Class<?> type;
@@ -57,13 +60,37 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
         initModel();
     }
-
+    
     public BindyAbstractFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
         this.modelsLoader = new AnnotationModelLoader(resolver);
         this.type = type;
-
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("Class name: {}", type.getName());
+        }
+        
+        initModel();
+    }
+
+    public BindyAbstractFactory(PackageScanClassResolver resolver, Class<?> type, PackageScanFilter scanFilter) throws Exception {
+        this.modelsLoader = new AnnotationModelLoader(resolver, scanFilter);
+        this.type = type;
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Class name: {}", type.getName());
+        }
+        
+        initModel();
+    }
+
+    public BindyAbstractFactory(PackageScanClassResolver resolver, String[] packageNames, PackageScanFilter scanFilter) throws Exception {
+        this.modelsLoader = new AnnotationModelLoader(resolver, scanFilter);
+        this.packageNames = packageNames;
+        
+        if (LOG.isDebugEnabled()) {
+            for (String str : this.packageNames) {
+                LOG.debug("Package name: {}", str);
+            }
         }
 
         initModel();
@@ -84,8 +111,14 @@ public abstract class BindyAbstractFactory implements BindyFactory {
             // use the package name from the type as it may refer to types in the same package
             String pckName = type.getPackage().getName();
             initModelClasses(pckName);
+
         } else {
             throw new IllegalArgumentException("Either packagenames or type should be configured");
+        }
+        
+        modelClassNames = new HashSet<String>();
+        for (Class<?> clazz : models) {
+            modelClassNames.add(clazz.getName());
         }
     }
 
@@ -149,6 +182,15 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         }
 
         return mapModel;
+    }
+    
+    /**
+     * Indicates whether this factory can support a row comprised of the identified classes
+     * @param classes  the names of the classes in the row
+     * @return true if the model supports the identified classes
+     */
+    public boolean supportsModel(Set<String> classes) {
+        return modelClassNames.containsAll(classes);
     }
 
     /**
@@ -217,7 +259,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     /**
      * Format the object into a string according to the format rule defined
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     public String formatString(Format format, Object value) throws Exception {
         String strValue = "";
 

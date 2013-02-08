@@ -73,7 +73,7 @@ public class DotMojo extends AbstractMavenReport {
      * milliseconds. A value <= 0 will run forever.
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter expression="2s"
+     * @parameter property="2s"
      */
     protected String duration;
 
@@ -81,7 +81,7 @@ public class DotMojo extends AbstractMavenReport {
      * Whether we should boot up camel with the META-INF/services/*.xml to
      * generate the DOT file
      *
-     * @parameter expression="true"
+     * @parameter property="true"
      */
     protected boolean runCamel;
     
@@ -89,28 +89,28 @@ public class DotMojo extends AbstractMavenReport {
      * Should we try run the DOT executable on the generated .DOT file to
      * generate images
      *
-     * @parameter expression="true"
+     * @parameter property="true"
      */
     protected boolean useDot;
 
     /**
      * The classpath based application context uri that spring wants to get.
      *
-     * @parameter expression="${camel.applicationContextUri}"
+     * @parameter property="camel.applicationContextUri"
      */
     protected String applicationContextUri;
 
     /**
      * The filesystem based application context uri that spring wants to get.
      *
-     * @parameter expression="${camel.fileApplicationContextUri}"
+     * @parameter property="camel.fileApplicationContextUri"
      */
     protected String fileApplicationContextUri;
 
     /**
      * The main class to execute.
      *
-     * @parameter expression="${camel.mainClass}"
+     * @parameter property="camel.mainClass"
      *            default-value="org.apache.camel.spring.Main"
      * @required
      */
@@ -119,7 +119,7 @@ public class DotMojo extends AbstractMavenReport {
     /**
      * Reference to Maven 2 Project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -128,7 +128,7 @@ public class DotMojo extends AbstractMavenReport {
     /**
      * Base output directory.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter property="project.build.directory"
      * @required
      */
     private File buildDirectory;
@@ -156,7 +156,7 @@ public class DotMojo extends AbstractMavenReport {
      * only if you install this program and set this property to the executable
      * dot (dot.exe on Win).
      *
-     * @parameter expression="dot"
+     * @parameter property="dot"
      */
     private String executable;
 
