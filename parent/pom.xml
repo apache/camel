@@ -79,6 +79,7 @@
     <easymock-version>3.0</easymock-version>
     <ehcache-bundle-version>2.5.2_1</ehcache-bundle-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
+    <felix-fileinstall-version>3.2.6</felix-fileinstall-version>
     <flatpack-version>3.2.0_2</flatpack-version>
     <fop-version>1.0</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
