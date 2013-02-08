@@ -64,7 +64,7 @@ public class BindyCVSFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
     @Test
     public void testBindyMoreSeparators() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
-        ctx.addRoutes(createRoute()); // new ReconciliationRoute()
+        ctx.addRoutes(createRoute()); 
         ctx.start();
 
         String addressLine1 = "8506 SIX FORKS ROAD, , ,,, ,";
@@ -108,7 +108,7 @@ public class BindyCVSFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:fromCsv").unmarshal().bindy(BindyType.Csv, Record.class)
+                from("direct:fromCsv").unmarshal().bindy(BindyType.Csv, MyCsvRecord.class)
                     .setProperty("addressLine1", simple("${in.body.addressLine1}"))
                     .setProperty("addressLine2", simple("${in.body.addressLine2}")).log("${in.body}")
                     .to("mock:result");

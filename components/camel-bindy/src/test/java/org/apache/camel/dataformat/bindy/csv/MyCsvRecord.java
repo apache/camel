@@ -23,7 +23,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 @SuppressWarnings("serial")
 @CsvRecord(separator = "," , skipFirstLine = false)
-public class Record implements Serializable {
+public class MyCsvRecord implements Serializable {
 
     @DataField(pos = 1)
     private String attention;
@@ -44,7 +44,7 @@ public class Record implements Serializable {
     @DataField(pos = 9)
     private String dummy2;
 
-    public Record() {
+    public MyCsvRecord() {
         super();
     }
 
