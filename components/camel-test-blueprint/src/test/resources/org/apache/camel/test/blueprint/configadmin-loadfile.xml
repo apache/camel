@@ -22,6 +22,7 @@
              http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
              http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
+  <!-- START SNIPPET: e1 -->
   <!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
   <cm:property-placeholder persistent-id="stuff"/>
 
@@ -39,5 +40,6 @@
     </route>
 
   </camelContext>
+  <!-- END SNIPPET: e1 -->
 
 </blueprint>
