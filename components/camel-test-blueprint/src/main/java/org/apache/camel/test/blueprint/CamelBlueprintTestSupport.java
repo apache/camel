@@ -72,6 +72,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             if (configAdmin != null) {
                 // ensure we update
                 Configuration config = configAdmin.getConfiguration(file[1]);
+                // NOTE: setting bundle location to null is only needed for Camel 2.10.x to avoid ugly ERROR logging by pojosr/blueprint
+                config.setBundleLocation(null);
                 log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
                 config.update(props);
             }
@@ -86,6 +88,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             if (config == null) {
                 throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
             }
+            // NOTE: setting bundle location to null is only needed for Camel 2.10.x to avoid ugly ERROR logging by pojosr/blueprint
+            config.setBundleLocation(null);
             log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
             config.update(props);
         }
