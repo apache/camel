@@ -200,7 +200,7 @@ public abstract class CamelServletContextListener<R extends Registry> implements
     /**
      * Creates the {@link Registry} implementation to use.
      */
-    public abstract R createRegistry() throws Exception;
+    protected abstract R createRegistry() throws Exception;
 
     /**
      * Extracts all the init parameters, and will do reference lookup in {@link #createRegistry() registry}
