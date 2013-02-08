@@ -55,10 +55,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the metadata about a bean type created via a combination of
  * introspection and annotations together with some useful sensible defaults
- *
- * @version 
  */
 public class BeanInfo {
+    public static final String BEAN_INFO_CACHE_REGISTRY_KEY = "CamelBeanInfoCache";
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
@@ -105,6 +104,21 @@ public class BeanInfo {
         this.type = type;
         this.strategy = strategy;
 
+        Map<CacheKey, BeanInfo> cache = (Map<CacheKey, BeanInfo>) camelContext.getRegistry().lookupByNameAndType(BEAN_INFO_CACHE_REGISTRY_KEY, Map.class);
+        CacheKey cacheKey = new CacheKey(type, explicitMethod, strategy);
+        if (cache != null) {
+            BeanInfo beanInfo = cache.get(cacheKey);
+            if (beanInfo != null) {
+                defaultMethod = beanInfo.defaultMethod;
+                operations = beanInfo.operations;
+                operationsWithBody = beanInfo.operationsWithBody;
+                operationsWithNoBody = beanInfo.operationsWithNoBody;
+                operationsWithCustomAnnotation = beanInfo.operationsWithCustomAnnotation;
+                operationsWithHandlerAnnotation = beanInfo.operationsWithHandlerAnnotation;
+                methodMap = beanInfo.methodMap;
+                return;
+            }
+        }
         if (explicitMethod != null) {
             // must be a valid method
             if (!isValidMethod(type, explicitMethod)) {
@@ -133,6 +147,10 @@ public class BeanInfo {
         operationsWithCustomAnnotation = Collections.unmodifiableList(operationsWithCustomAnnotation);
         operationsWithHandlerAnnotation = Collections.unmodifiableList(operationsWithHandlerAnnotation);
         methodMap = Collections.unmodifiableMap(methodMap);
+        
+        if (cache != null) {
+            cache.put(cacheKey, this);
+        }
     }
 
     public Class<?> getType() {
@@ -1006,6 +1024,50 @@ public class BeanInfo {
         }
 
         return null;
+    }
+    
+    private static final class CacheKey {
+        private final Class<?> type;
+        private final Method explicitMethod;
+        private final Class<? extends ParameterMappingStrategy> strategyClass;
+
+        public CacheKey(Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy) {
+            this.type = type;
+            this.explicitMethod = explicitMethod;
+            this.strategyClass = strategy.getClass();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            CacheKey cacheKey = (CacheKey) o;
+
+            if (explicitMethod != null ? !explicitMethod.equals(cacheKey.explicitMethod) : cacheKey.explicitMethod != null) {
+                return false;
+            }
+            if (!strategyClass.equals(cacheKey.strategyClass)) {
+                return false;
+            }
+            if (!type.equals(cacheKey.type)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = type.hashCode();
+            result = 31 * result + (explicitMethod != null ? explicitMethod.hashCode() : 0);
+            result = 31 * result + strategyClass.hashCode();
+            return result;
+        }
     }
 
 }
