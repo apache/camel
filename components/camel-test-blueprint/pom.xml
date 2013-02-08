@@ -119,6 +119,27 @@
                     </exclusion>
                 </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.fileinstall</artifactId>
+            <version>${felix-fileinstall-version}</version>
+                <!-- exclude the following dependency which otherwise would pop up a lot of compilation
+                     errors both by this and the camel-maven-plugin modules under eclipse. -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>org.osgi.foundation</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>org.osgi.core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>org.osgi.compendium</artifactId>
+                    </exclusion>
+                </exclusions>
+        </dependency>
 
         <!-- optional dependencies for running tests -->
         <dependency>

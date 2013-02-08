@@ -118,6 +118,7 @@
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fastinfoset-version>1.2.7_4</fastinfoset-version>
     <felix-configadmin-version>1.4.0</felix-configadmin-version>
+    <felix-fileinstall-version>3.2.6</felix-fileinstall-version>
     <felix-framework-version>3.2.2</felix-framework-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
