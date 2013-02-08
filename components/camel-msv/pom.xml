@@ -61,7 +61,7 @@
     <dependency>
       <groupId>com.sun.msv.datatype.xsd</groupId>
       <artifactId>xsdlib</artifactId>
-      <version>20060615</version>
+      <version>2013.2</version>
     </dependency>
 
     <!-- for testing -->
