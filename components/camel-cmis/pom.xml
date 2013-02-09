@@ -35,6 +35,7 @@
         <camel.osgi.activator>
            org.apache.camel.component.cmis.osgi.Activator
         </camel.osgi.activator>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=cmis</camel.osgi.export.service>
     </properties>
 
     <dependencies>

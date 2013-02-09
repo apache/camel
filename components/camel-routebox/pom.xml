@@ -30,9 +30,10 @@
 	<packaging>bundle</packaging>
 
 	<properties>
-		<camel.osgi.export.pkg>
+		  <camel.osgi.export.pkg>
 		    org.apache.camel.component.routebox.*
-		</camel.osgi.export.pkg>
+		  </camel.osgi.export.pkg>
+      <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=routebox</camel.osgi.export.service>
     </properties>
 
 	<dependencies>

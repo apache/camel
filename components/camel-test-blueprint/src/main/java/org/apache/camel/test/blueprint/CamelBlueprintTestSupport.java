@@ -53,15 +53,20 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             bundleContext.registerService(PropertiesComponent.OVERRIDE_PROPERTIES, extra, null);
         }
 
+        // must reuse props as we can do both load from .cfg file and override afterwards
+        Dictionary props = new Properties();
+
         // load configuration file
         String[] file = loadConfigAdminConfigurationFile();
         if (file != null && file.length != 2) {
             throw new IllegalArgumentException("The returned String[] from loadConfigAdminConfigurationFile must be of length 2, was " + file.length);
         }
-        if (file != null && file[0] != null) {
-            Dictionary props = new Properties();
 
-            File load = new File(file[0]);
+        if (file != null) {
+            String fileName = file[0];
+            String pid = file[1];
+
+            File load = new File(fileName);
             log.debug("Loading properties from OSGi config admin file: {}", load);
             org.apache.felix.utils.properties.Properties cfg = new org.apache.felix.utils.properties.Properties(load);
             for (Map.Entry entry : cfg.entrySet()) {
@@ -71,14 +76,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             ConfigurationAdmin configAdmin = getOsgiService(ConfigurationAdmin.class);
             if (configAdmin != null) {
                 // ensure we update
-                Configuration config = configAdmin.getConfiguration(file[1]);
+                Configuration config = configAdmin.getConfiguration(pid);
                 log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
                 config.update(props);
             }
         }
 
         // allow end user to override properties
-        Dictionary props = new Properties();
         String pid = useOverridePropertiesWithConfigAdmin(props);
         if (pid != null) {
             ConfigurationAdmin configAdmin = getOsgiService(ConfigurationAdmin.class);

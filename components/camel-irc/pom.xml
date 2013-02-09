@@ -30,7 +30,11 @@
   <description>Camel IRC support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.irc.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.irc.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=irc,
+      org.apache.camel.spi.ComponentResolver;component=ircs,
+    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

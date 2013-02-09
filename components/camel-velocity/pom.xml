@@ -32,6 +32,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.velocity.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=velocity</camel.osgi.export.service>
     </properties>
 
     <dependencies>

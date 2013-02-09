@@ -34,6 +34,7 @@
 	  org.apache.ibatis.*;version="[3,4)"
 	</camel.osgi.import.before.defaults>
 	<camel.osgi.export.pkg>org.apache.camel.component.mybatis.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=mybatis</camel.osgi.export.service>
   </properties>
 
   <dependencies>

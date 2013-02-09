@@ -31,7 +31,7 @@ public class JndiCamelServletContextListener extends CamelServletContextListener
     private Context jndiContext;
 
     @Override
-    public JndiRegistry createRegistry() throws Exception {
+    protected JndiRegistry createRegistry() throws Exception {
         jndiContext = new InitialContext();
         return new JndiRegistry(jndiContext);
     }

@@ -32,6 +32,7 @@
         <camel.osgi.export.pkg>org.apache.camel.component.spring.batch.*</camel.osgi.export.pkg>
         <camel.osgi.import.before.defaults>org.springframework.batch.*;version="[2,3)"
         </camel.osgi.import.before.defaults>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=spring-batch</camel.osgi.export.service>
     </properties>
 
     <dependencies>

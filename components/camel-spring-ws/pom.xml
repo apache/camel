@@ -32,6 +32,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.spring.ws.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=spring-ws</camel.osgi.export.service>
     </properties>
 
     <dependencies>

@@ -30,7 +30,7 @@ public class SimpleCamelServletContextListener extends CamelServletContextListen
     private SimpleRegistry map;
 
     @Override
-    public SimpleRegistry createRegistry() throws Exception {
+    protected SimpleRegistry createRegistry() throws Exception {
         map = new SimpleRegistry();
         return map;
     }

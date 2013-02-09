@@ -71,6 +71,11 @@
       org.apache.camel.component.cxf.spring;${camel.osgi.version},
       org.apache.camel.component.cxf.util;${camel.osgi.version}
     </camel.osgi.export>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=cxf,
+      org.apache.camel.spi.ComponentResolver;component=cxfrs,
+      org.apache.camel.spi.ComponentResolver;component=cxfbean
+    </camel.osgi.export.service>
     <camel.osgi.failok>true</camel.osgi.failok>
 
   </properties>

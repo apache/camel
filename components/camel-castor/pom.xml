@@ -32,6 +32,7 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.dataformat.castor.*</camel.osgi.export.pkg>
         <camel.osgi.import.before.defaults>org.exolab.castor.*;version="[1.2.0,2)"</camel.osgi.import.before.defaults>
+        <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=castor</camel.osgi.export.service>
     </properties>
 
     <dependencies>

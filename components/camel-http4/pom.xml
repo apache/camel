@@ -35,6 +35,10 @@
 			org.apache.http.*;version="[4.2,5)"
 		</camel.osgi.import.before.defaults>
 		<camel.osgi.export.pkg>org.apache.camel.component.http4.*</camel.osgi.export.pkg>
+      <camel.osgi.export.service>
+        org.apache.camel.spi.ComponentResolver;component=http4,
+        org.apache.camel.spi.ComponentResolver;component=https4
+      </camel.osgi.export.service>
     </properties>
 
     <dependencies>

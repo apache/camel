@@ -34,6 +34,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.fop.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=fop</camel.osgi.export.service>
     </properties>
 
     <dependencies>

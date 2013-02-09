@@ -34,6 +34,7 @@
 		<camel.osgi.export.pkg>
 			org.apache.camel.component.sip.*
 		</camel.osgi.export.pkg>
+		<camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=sip</camel.osgi.export.service>
 	</properties>
 	
   	<dependencies>

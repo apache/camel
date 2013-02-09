@@ -31,7 +31,8 @@
 
   <properties>
     <camel.osgi.import.before.defaults>javax.el;version="[2,3)"</camel.osgi.import.before.defaults>
-	<camel.osgi.export.pkg>org.apache.camel.language.juel.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.language.juel.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=el</camel.osgi.export.service>
   </properties>
 
   <dependencies>

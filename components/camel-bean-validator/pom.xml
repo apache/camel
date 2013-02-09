@@ -31,6 +31,7 @@
     <properties>
         <hibernate-validator-version>4.1.0.Final</hibernate-validator-version>
         <camel.osgi.export.pkg>org.apache.camel.component.bean.validator.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=bean-validator</camel.osgi.export.service>
     </properties>
 
     <repositories>

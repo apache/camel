@@ -28,10 +28,11 @@
 	<artifactId>camel-protobuf</artifactId>
 	<packaging>bundle</packaging>
 	<name>Camel :: Protobuf</name>
-	
+
 	<properties>
-    	<camel.osgi.export.pkg>org.apache.camel.dataformat.protobuf.*</camel.osgi.export.pkg>
-  	</properties>
+		<camel.osgi.export.pkg>org.apache.camel.dataformat.protobuf.*</camel.osgi.export.pkg>
+		<camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=protobuf</camel.osgi.export.service>
+	</properties>
 
 	<dependencies>	
         <dependency>

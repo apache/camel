@@ -36,6 +36,7 @@
           org.xmlsoap.schemas.soap.envelope.*,
           org.w3._2003._05.soap_envelope.*
         </camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=soapjaxb</camel.osgi.export.service>
     </properties>
 
     <dependencies>
