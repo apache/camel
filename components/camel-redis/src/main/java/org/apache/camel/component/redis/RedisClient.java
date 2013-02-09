@@ -399,8 +399,8 @@ public class RedisClient {
         return redisTemplate.getExpire(key);
     }
 
-    public DataType type(String key) {
-        return redisTemplate.type(key);
+    public String type(String key) {
+        return redisTemplate.type(key).toString();
     }
 
     public List<Object> sort(String key) {

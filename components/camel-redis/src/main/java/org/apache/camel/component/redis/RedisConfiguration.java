@@ -26,7 +26,6 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 public class RedisConfiguration {
     private String command;
     private String channels;
-    private Integer timeout;
     private String host;
     private Integer port;
     private RedisTemplate redisTemplate;
@@ -58,14 +57,6 @@ public class RedisConfiguration {
 
     public void setHost(String host) {
         this.host = host;
-    }
-
-    public Integer getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout;
     }
 
     public RedisTemplate getRedisTemplate() {

@@ -243,6 +243,6 @@ public class RedisKeyTest extends RedisTestSupport {
                 RedisConstants.KEY, "key");
 
         verify(redisTemplate).type("key");
-        assertEquals(DataType.STRING, result);
+        assertEquals(DataType.STRING.toString(), result);
     }
 }
