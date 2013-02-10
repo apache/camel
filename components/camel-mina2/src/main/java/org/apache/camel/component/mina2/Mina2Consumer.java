@@ -316,7 +316,7 @@ public class Mina2Consumer extends DefaultConsumer {
         public void sessionOpened(IoSession session) throws Exception {
             log.debug("-----------SESSION OPENED");
             Exchange exchange = getEndpoint().createExchange(session);
-            exchange.removeProperty(Mina2Constants.MINA2_SESSION_CREATED);
+            exchange.setProperty(Mina2Constants.MINA2_SESSION_OPENED, Boolean.TRUE);
             getProcessor().process(exchange);
         }
 
