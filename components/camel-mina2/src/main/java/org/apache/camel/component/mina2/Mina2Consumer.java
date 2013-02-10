@@ -298,7 +298,6 @@ public class Mina2Consumer extends DefaultConsumer {
         this.acceptor = acceptor;
     }
 
-    
     /**
      * Handles consuming messages and replying if the exchange is out capable.
      */
@@ -359,14 +358,14 @@ public class Mina2Consumer extends DefaultConsumer {
             Exchange exchange = getEndpoint().createExchange(session);
             Mina2PayloadHelper.setIn(exchange, object);
             // log what we received
-//            if (LOG.isDebugEnabled()) {
-            Object in = object;
-            if (in instanceof byte[]) {
-                // byte arrays is not readable so convert to string
-                in = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, in);
+            if (LOG.isDebugEnabled()) {
+                Object in = object;
+                if (in instanceof byte[]) {
+                    // byte arrays is not readable so convert to string
+                    in = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, in);
+                }
+                LOG.debug("Received body: {}", in);
             }
-            LOG.debug("Received body: {}", in);
-//            }
 
             //Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {
