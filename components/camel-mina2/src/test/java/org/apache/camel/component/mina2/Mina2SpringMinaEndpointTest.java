@@ -29,7 +29,7 @@ public class Mina2SpringMinaEndpointTest extends CamelSpringTestSupport {
     @Test
     public void testMinaSpringEndpoint() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(4);
 
         template.sendBody("myMinaEndpoint", "Hello World");
 
