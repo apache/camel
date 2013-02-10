@@ -29,7 +29,7 @@ public class CamelUrlrewriteTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        // urlrewrite is not a Camel component
     }
 
     @Configuration
