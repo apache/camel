@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -75,13 +76,13 @@ public class ApplicationContextRegistry implements Registry {
 
     @Override
     public <T> Set<T> findByType(Class<T> type) {
-        Map<String, T> map = applicationContext.getBeansOfType(type);
+        Map<String, T> map = findByTypeWithName(type);
         return new HashSet<T>(map.values());
     }
 
     @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        return applicationContext.getBeansOfType(type);
+        return BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, type);
     }
 
     @Override
