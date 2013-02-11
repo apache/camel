@@ -30,8 +30,10 @@
   <description>Camel MVEL support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.language.mvel.*</camel.osgi.export.pkg>
-	<camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=mvel</camel.osgi.export.service>
+    <!-- need to import spi as felix-bundle-plugin has a bug and do not include this package despite we use in the source code -->
+    <camel.osgi.import.before.defaults>org.apache.camel.spi;${camel.osgi.import.strict.version}</camel.osgi.import.before.defaults>
+    <camel.osgi.export.pkg>org.apache.camel.language.mvel.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=mvel</camel.osgi.export.service>
   </properties>
 
   <dependencies>
@@ -40,11 +42,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    
+
     <dependency>
-	<groupId>org.mvel</groupId>
-	<artifactId>mvel2</artifactId>
-	<version>${mvel-version}</version>
+      <groupId>org.mvel</groupId>
+      <artifactId>mvel2</artifactId>
+      <version>${mvel-version}</version>
     </dependency>
 
     <!-- test dependency -->
