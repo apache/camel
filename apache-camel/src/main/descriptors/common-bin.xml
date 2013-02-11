@@ -31,6 +31,7 @@
         <include>org.apache.camel:camel-aws</include>
         <include>org.apache.camel:camel-avro</include>
         <include>org.apache.camel:camel-bam</include>
+        <include>org.apache.camel:camel-base64</include>
         <include>org.apache.camel:camel-beanio</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-bindy</include>
