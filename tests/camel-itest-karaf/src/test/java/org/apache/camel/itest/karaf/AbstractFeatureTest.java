@@ -27,6 +27,7 @@ import org.apache.camel.osgi.CamelContextFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption;
+import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.BundleContext;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
 import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.logLevel;
 import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -162,7 +164,9 @@ public abstract class AbstractFeatureTest {
                 // override the config.properties (to fix pax-exam bug)
                 replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
                 replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
-                // install the cxf jaxb spec as the karaf doesn't provide it by default
+                // we need INFO logging otherwise we cannot see what happens
+                logLevel(LogLevelOption.LogLevel.INFO),
+                 // install the cxf jaxb spec as the karaf doesn't provide it by default
                 scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)};
 
         return options;
