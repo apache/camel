@@ -154,7 +154,7 @@ public class WireTapProcessor extends SendProcessor {
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {
             try {
-                onPrepare.process(exchange);
+                onPrepare.process(answer);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
