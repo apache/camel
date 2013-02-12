@@ -25,6 +25,7 @@ public class HazelcastSedaConfiguration {
     private int pollInterval = 1000;
     private String queueName;
     private boolean transferExchange;
+    private boolean transacted;
 
     public HazelcastSedaConfiguration() {
     }
@@ -59,6 +60,14 @@ public class HazelcastSedaConfiguration {
 
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
+    }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
     }
 
 }
