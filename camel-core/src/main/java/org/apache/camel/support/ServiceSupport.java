@@ -145,6 +145,10 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public void shutdown() throws Exception {
+        if (shutdown.get()) {
+            LOG.trace("Service already shut down");
+            return;
+        }
         // ensure we are stopped first
         stop();
 
