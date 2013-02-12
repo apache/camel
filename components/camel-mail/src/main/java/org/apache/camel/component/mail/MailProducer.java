@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Producer to send messages using JavaMail.
- *  
- * @version 
  */
 public class MailProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(MailProducer.class);
@@ -40,9 +38,18 @@ public class MailProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
-        MimeMessage mimeMessage = new MimeMessage(sender.getSession());
         try {
-            getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
+            MimeMessage mimeMessage;
+
+            final Object body = exchange.getIn().getBody();
+            if (body instanceof MimeMessage) {
+                // Body is directly a MimeMessage
+                mimeMessage = (MimeMessage) body;
+            } else {
+                // Create a message with exchange data
+                mimeMessage = new MimeMessage(sender.getSession());
+                getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
+            }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
             }
@@ -55,7 +62,7 @@ public class MailProducer extends DefaultProducer {
             exchange.setException(e);
         }
     }
-    
+
     @Override
     public MailEndpoint getEndpoint() {
         return (MailEndpoint) super.getEndpoint();
