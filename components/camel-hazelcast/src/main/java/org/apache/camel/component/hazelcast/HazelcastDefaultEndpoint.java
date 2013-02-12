@@ -45,4 +45,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return true;
     }
+
+    public HazelcastInstance getHazelcastInstance() {
+        return hazelcastInstance;
+    }
 }

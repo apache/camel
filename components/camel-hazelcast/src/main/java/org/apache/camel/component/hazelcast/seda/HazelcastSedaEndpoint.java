@@ -36,7 +36,7 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
     private final HazelcastSedaConfiguration configuration;
 
     public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri, final HazelcastComponent component, final HazelcastSedaConfiguration configuration) {
-        super(component.getHazelcastInstance(), uri, component);
+        super(hazelcastInstance, uri, component);
         this.queue = hazelcastInstance.getQueue(configuration.getQueueName());
         this.configuration = configuration;
         if (ObjectHelper.isEmpty(configuration.getQueueName())) {
