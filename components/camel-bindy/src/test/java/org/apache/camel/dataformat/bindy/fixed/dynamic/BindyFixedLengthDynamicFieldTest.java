@@ -146,7 +146,7 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
         @DataField(pos = 6, length = 2, align = "R", paddingChar = '0')
         private int instrumentNumberLen;
         
-        @DataField(pos = 7, length = 10)
+        @DataField(pos = 7, lengthPos = 6)
         private String instrumentNumber;
 
         @DataField(pos = 8, length = 3)
