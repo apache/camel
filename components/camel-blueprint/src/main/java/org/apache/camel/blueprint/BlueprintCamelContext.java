@@ -121,8 +121,9 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             LOG.debug("Service {} changed to {}", event, event.getType());
         }
         // look for blueprint container to be registered, and then we can start the CamelContext
-        if (event.getType() == ServiceEvent.REGISTERED && event.getServiceReference().isAssignableTo(bundleContext.getBundle(),
-                "org.osgi.service.blueprint.container.BlueprintContainer")) {
+        if (event.getType() == ServiceEvent.REGISTERED
+                && event.getServiceReference().isAssignableTo(bundleContext.getBundle(), "org.osgi.service.blueprint.container.BlueprintContainer")
+                && bundleContext.getBundle().equals(event.getServiceReference().getBundle())) {
             try {
                 maybeStart();
             } catch (Exception e) {
