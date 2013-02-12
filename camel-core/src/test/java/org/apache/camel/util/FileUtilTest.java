@@ -192,4 +192,14 @@ public class FileUtilTest extends TestCase {
         assertTrue("Should be a file", tmp.isFile());
     }
 
+    public void testCreateNewFile() throws Exception {
+        File file = new File("target/foo.txt");
+        if (file.exists()) {
+            FileUtil.deleteFile(file);
+        }
+
+        assertFalse("File should not exist " + file, file.exists());
+        assertTrue("A new file should be created " + file, FileUtil.createNewFile(file));
+    }
+
 }

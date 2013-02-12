@@ -476,4 +476,23 @@ public final class FileUtil {
         return file.isAbsolute();
     }
 
+    /**
+     * Creates a new file.
+     *
+     * @param file the file
+     * @return <tt>true</tt> if created a new file, <tt>false</tt> otherwise
+     * @throws IOException is thrown if error creating the new file
+     */
+    public static boolean createNewFile(File file) throws IOException {
+        try {
+            return file.createNewFile();
+        } catch (IOException e) {
+            if (file.exists()) {
+                return true;
+            } else {
+                throw e;
+            }
+        }
+    }
+
 }

@@ -57,8 +57,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         LOG.trace("Locking the file: {} using the lock file name: {}", file, lockFileName);
 
         // create a plain file as marker filer for locking (do not use FileLock)
-        File lock = new File(lockFileName);
-        boolean acquired = lock.createNewFile();
+        boolean acquired = FileUtil.createNewFile(new File(lockFileName));
         exchange.setProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, acquired);
 
         return acquired;
