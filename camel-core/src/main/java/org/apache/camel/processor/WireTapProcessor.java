@@ -143,7 +143,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {
             try {
-                onPrepare.process(exchange);
+                onPrepare.process(answer);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
