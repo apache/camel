@@ -28,6 +28,7 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
@@ -231,7 +232,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         try {
             // create store if missing
             if (!fileStore.exists()) {
-                fileStore.createNewFile();
+                FileUtil.createNewFile(fileStore);
             }
             // append to store
             fos = new FileOutputStream(fileStore, true);

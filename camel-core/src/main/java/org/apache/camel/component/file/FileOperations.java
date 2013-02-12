@@ -404,7 +404,7 @@ public class FileOperations implements GenericFileOperations<File> {
     private void writeFileEmptyBody(File target) throws IOException {
         if (!target.exists()) {
             LOG.debug("Creating new empty file: {}", target);
-            target.createNewFile();
+            FileUtil.createNewFile(target);
         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
             LOG.debug("Truncating existing file: {}", target);
             FileChannel out = new FileOutputStream(target).getChannel();
