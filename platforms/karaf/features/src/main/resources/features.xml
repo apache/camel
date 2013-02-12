@@ -323,6 +323,8 @@
     <bundle>mvn:org.apache.camel/camel-hazelcast/${project.version}</bundle>
   </feature>
   <feature name='camel-hbase' version='${project.version}' resolver='(obr)' start-level='50'>
+    <!-- see https://issues.apache.org/jira/browse/HADOOP-7101 -->
+    <details>Hadoop does not currently work properly in OSGi environment.</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
     <feature>war</feature>
@@ -379,6 +381,8 @@
     <bundle dependency='true'>wrap:mvn:bsf/bsf/2.4.0</bundle>
   </feature>
   <feature name='camel-hdfs' version='${project.version}' resolver='(obr)' start-level='50'>
+    <!-- see https://issues.apache.org/jira/browse/HADOOP-7101 -->
+    <details>Hadoop does not currently work properly in OSGi environment.</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
@@ -738,7 +742,7 @@
     <bundle>mvn:org.apache.camel/camel-scala/${project.version}</bundle>
   </feature>
   <feature name='camel-scala_2.9' version='${project.version}' resolver='(obr)' start-level='50'>
-	<details>The camel-scala_2.9 feature is deprecated and will be removed in Camel 3.0/2.12 onwards.</details>
+    <details>The camel-scala_2.9 feature is deprecated and will be removed in Camel 3.0/2.12 onwards.</details>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.scala-library/${scala29-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala_2.9/${project.version}</bundle>
