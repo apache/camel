@@ -32,9 +32,16 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:b").message(0).body(String.class).isEqualTo("1 Tiger");
 
-        template.sendBody("direct:start", new Animal(1, "Tiger"));
+        final Animal original = new Animal(1, "Tiger");
+        template.sendBody("direct:start", original);
 
         assertMockEndpointsSatisfied();
+
+        final Animal aAnimal = getMockEndpoint("mock:a").getExchanges().get(0).getIn().getBody(Animal.class);
+        final Animal bAnimal = getMockEndpoint("mock:b").getExchanges().get(0).getIn().getBody(Animal.class);
+
+        assertSame("Original instance should stay in main route", original, bAnimal);
+        assertNotSame("Copy should go to Wire Tap Endpoint", original, aAnimal);
     }
 
     @Override
