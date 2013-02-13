@@ -16,49 +16,25 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version 
  */
-public class VmMultipleContextsStartStopTest extends ContextTestSupport {
+public class VmMultipleContextsStartStopTest extends AbstractVmTestSupport {
 
     public void testStartStop() throws Exception {
-        DefaultCamelContext c1 = new DefaultCamelContext();
-        c1.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:test")
-                    .to("vm:foo");
-            }
-        });
-        c1.start();
-        ProducerTemplate template = c1.createProducerTemplate();
-
-        DefaultCamelContext c2 = new DefaultCamelContext();
-        c2.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("vm:foo")
-                    .to("mock:result");
-            }
-        });
-        c2.start();
-        
         /* Check that contexts are communicated */
-        MockEndpoint mock = c2.getEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint mock = context2.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
         template.requestBody("direct:test", "Hello world!");
         mock.assertIsSatisfied();
         mock.reset();
         
         /* Restart the consumer Camel Context */
-        c2.stop();
-        c2.start();
+        context2.stop();
+        context2.start();
         
         /* Send a message again and assert that it's received */
         template.requestBody("direct:test", "Hello world!");
@@ -71,8 +47,20 @@ public class VmMultipleContextsStartStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
+                from("direct:test").to("vm:foo");
             }
         };
     }
+
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("vm:foo").to("mock:result");            
+            }
+        };
+       
+    }
+    
 }
