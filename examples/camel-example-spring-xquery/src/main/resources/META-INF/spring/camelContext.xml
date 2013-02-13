@@ -28,6 +28,7 @@
     <!-- lets parse files, transform them with XQuery and send them to JMS -->
     <route>
       <from uri="file:src/data?noop=true"/>
+      <log message="Transforming input file ${header.CamelFileName}"/>
       <to uri="xquery:myTransform.xquery"/>
       <to uri="jms:MyQueue"/>
     </route>
@@ -35,6 +36,7 @@
     <!-- now lets write messages from the queue to a directory -->
     <route>
       <from uri="jms:MyQueue"/>
+      <log message="Writing output file ${header.CamelFileName}"/>
       <to uri="file:target/outputFiles"/>
     </route>
 
