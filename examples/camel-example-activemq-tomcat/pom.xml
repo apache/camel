@@ -93,22 +93,21 @@
 		<!-- embed ActiveMQ broker -->
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-core</artifactId>
-			<!-- exclude stuff we dont need (not needed with AMQ 5.7.0) -->
-			<exclusions>
-				<exclusion>
-					<groupId>org.fusesource.fuse-extra</groupId>
-					<artifactId>fusemq-leveldb</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.fusesource.mqtt-client</groupId>
-					<artifactId>mqtt-client</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.osgi</groupId>
-					<artifactId>org.osgi.core</artifactId>
-				</exclusion>
-			</exclusions>
+			<artifactId>activemq-broker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-kahadb-store</artifactId>
+		</dependency>
+
+        <!-- ActiveMQ client -->
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>

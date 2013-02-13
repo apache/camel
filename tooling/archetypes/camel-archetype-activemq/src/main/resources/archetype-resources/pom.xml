@@ -48,14 +48,38 @@
       <artifactId>camel-spring</artifactId>
       <version>${camel-version}</version>
     </dependency>
+
+    <!-- the ActiveMQ client with connection pooling -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-core</artifactId>
+      <artifactId>activemq-client</artifactId>
       <version>${activemq-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-camel</artifactId>
+      <version>${activemq-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-pool</artifactId>
+      <version>${activemq-version}</version>
+    </dependency>
+
+    <!-- the ActiveMQ broker is optional and can be removed if connecting to a remote broker only -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <version>${activemq-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-spring</artifactId>
+      <version>${activemq-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-kahadb-store</artifactId>
       <version>${activemq-version}</version>
     </dependency>
     <dependency>
