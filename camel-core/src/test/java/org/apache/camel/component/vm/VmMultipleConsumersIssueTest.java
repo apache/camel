@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.issues;
+package org.apache.camel.component.vm;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
@@ -23,9 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  *
  */
-public class SedaMultipleConsumersIssueTest extends ContextTestSupport {
+public class VmMultipleConsumersIssueTest extends ContextTestSupport {
 
-    public void testSedaMultipleConsumersIssue() throws Exception {
+    public void testVmMultipleConsumersIssue() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:done").expectedBodiesReceived("Hello World");
