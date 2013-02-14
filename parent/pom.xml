@@ -59,8 +59,7 @@
     <avro-bundle-version>1.7.3_1</avro-bundle-version>
     <aws-java-sdk-bundle-version>1.3.27_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.3.27</aws-java-sdk-version>
-    <!-- axiom 1.2.13 and 1.2.14 does not work with OSGi -->
-    <axiom-version>1.2.12</axiom-version>
+    <axiom-version>1.2.14</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk15on-bundle-version>1.47_1</bcpg-jdk15on-bundle-version>
     <beanio-version>2.0.3</beanio-version>
