@@ -76,8 +76,6 @@
   <feature name='camel-atom' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.ws.commons.axiom/axiom-impl/${axiom-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.ws.commons.axiom/axiom-api/${axiom-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.abdera/abdera-core/${abdera-version}</bundle>
     <!--bundle dependency='true'>mvn:org.apache.abdera/abdera-extensions-json/${abdera-version}</bundle-->
     <bundle dependency='true'>mvn:org.apache.abdera/abdera-extensions-main/${abdera-version}</bundle>
@@ -153,6 +151,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cache/${project.version}</bundle>
   </feature>
+<!-- TODO: https://issues.apache.org/jira/browse/SMX4-1377
   <feature name='camel-castor' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
@@ -160,6 +159,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.castor/${castor-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-castor/${project.version}</bundle>
   </feature>
+-->
 <!-- TODO: Karaf does not yet support CDI seamless in the container 
   <feature name='camel-cdi' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
