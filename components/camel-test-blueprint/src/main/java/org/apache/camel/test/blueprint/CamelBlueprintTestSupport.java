@@ -18,8 +18,10 @@ package org.apache.camel.test.blueprint;
 
 import java.io.File;
 import java.util.Dictionary;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.aries.blueprint.compendium.cm.CmPropertyPlaceholder;
 import org.apache.camel.CamelContext;
@@ -69,8 +71,12 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             File load = new File(fileName);
             log.debug("Loading properties from OSGi config admin file: {}", load);
             org.apache.felix.utils.properties.Properties cfg = new org.apache.felix.utils.properties.Properties(load);
-            for (Map.Entry entry : cfg.entrySet()) {
-                props.put(entry.getKey(), entry.getValue());
+            Iterator<String> it = cfg.keySet().iterator();
+            while (it.hasNext()) {
+                String key = it.next();
+                // must force type cast to have code compile with both java6 and 7 with the (org.apache.felix.utils.properties.Properties)
+                String value = (String) cfg.get(key);
+                props.put(key, value);
             }
 
             ConfigurationAdmin configAdmin = getOsgiService(ConfigurationAdmin.class);
