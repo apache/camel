@@ -245,7 +245,8 @@ public final class ExchangeHelper {
 
     /**
      * Copies the results of a message exchange from the source exchange to the result exchange
-     * which will copy the out and fault message contents and the exception
+     * which will copy the message contents, exchange properties and the exception.
+     * Notice the {@link ExchangePattern} is <b>not</b> copied/altered.
      *
      * @param result the result exchange which will have the output and error state added
      * @param source the source exchange which is not modified
