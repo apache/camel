@@ -35,21 +35,24 @@ public class GzipDataFormat implements DataFormat {
         try {
             IOHelper.copy(is, zipOutput);
         } finally {
+            // must close all input streams
             IOHelper.close(is, zipOutput);
         }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
-        GZIPInputStream unzipInput = new GZIPInputStream(is);
-        
+        GZIPInputStream unzipInput = null;
+
         // Create an expandable byte array to hold the inflated data
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
+            unzipInput = new GZIPInputStream(is);
             IOHelper.copy(unzipInput, bos);
             return bos.toByteArray();
         } finally {
-            IOHelper.close(unzipInput);
+            // must close all input streams
+            IOHelper.close(unzipInput, is);
         }
     }
 
