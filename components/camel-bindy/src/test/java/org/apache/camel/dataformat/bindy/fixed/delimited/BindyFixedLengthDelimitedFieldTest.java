@@ -44,6 +44,9 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
     public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
     
     private static final String TEST_RECORD = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
+    private static final String TEST_RECORD_WITH_EXTRA_CHARS = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009xxx\r\n";
+    private static final String TEST_RECORD_WITH_SINGLE_EXTRA_CHAR = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009x\r\n";
+    private static final String TEST_RECORD_WITH_WHITSPACE_THEN_EXTRA_CHAR = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009   x\r\n";
 
     @EndpointInject(uri = URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
@@ -68,6 +71,54 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
         Assert.assertEquals(10, order.getOrderNr());
         Assert.assertEquals("Pauline", order.getFirstName());
         Assert.assertEquals("M", order.getLastName());
+    }
+    
+    @Test
+    public void testFailWhenUnmarshallMessageWithUnmappedChars() throws Exception {
+
+        unmarshallResult.reset();
+        unmarshallResult.expectedMessageCount(0);
+        try {
+            template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD_WITH_EXTRA_CHARS);
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertTrue(e.getCause().getMessage().contains("unmapped characters"));
+            return;
+        }
+        
+        fail("An error is expected when unmapped characters are encountered in the fixed length record");
+    }
+    
+    @Test
+    public void testFailWhenUnmarshallMessageWithWhitespaceThenUnmappedChar() throws Exception {
+
+        unmarshallResult.reset();
+        unmarshallResult.expectedMessageCount(0);
+        try {
+            template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD_WITH_WHITSPACE_THEN_EXTRA_CHAR);
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertTrue(e.getCause().getMessage().contains("unmapped characters"));
+            return;
+        }
+        
+        fail("An error is expected when unmapped characters are encountered in the fixed length record");
+    }
+    
+    @Test
+    public void testFailWhenUnmarshallMessageWithUnmappedChar() throws Exception {
+
+        unmarshallResult.reset();
+        unmarshallResult.expectedMessageCount(0);
+        try {
+            template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD_WITH_SINGLE_EXTRA_CHAR);
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertTrue(e.getCause().getMessage().contains("unmapped characters"));
+            return;
+        }
+        
+        fail("An error is expected when unmapped characters are encountered in the fixed length record");
     }
     
     @Test

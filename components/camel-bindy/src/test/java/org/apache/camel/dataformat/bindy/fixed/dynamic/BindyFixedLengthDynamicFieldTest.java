@@ -46,6 +46,7 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
     public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
     
     private static final String TEST_RECORD = "10A9Pauline^M^ISIN10XD12345678BUYShare000002500.45USD01-08-2009\r\n";
+    private static final String TEST_RECORD_WITH_EXTRA_CHARS = "10A9Pauline^M^ISIN10XD12345678BUYShare000002500.45USD01-08-2009x\r\n";
 
     @EndpointInject(uri = URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
@@ -73,6 +74,22 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
         Assert.assertEquals("Pauline", order.getFirstName());
         Assert.assertEquals("M", order.getLastName());
         Assert.assertEquals("XD12345678", order.getInstrumentNumber());
+    }
+    
+    @Test
+    public void testFailWhenUnmarshallMessageWithUnmappedChars() throws Exception {
+
+        unmarshallResult.reset();
+        unmarshallResult.expectedMessageCount(0);
+        try {
+            template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD_WITH_EXTRA_CHARS);
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertTrue(e.getCause().getMessage().contains("unmapped characters"));
+            return;
+        }
+        
+        fail("An error is expected when unmapped characters are encountered in the fixed length record");
     }
     
     @Test
@@ -146,7 +163,7 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
         @DataField(pos = 6, length = 2, align = "R", paddingChar = '0')
         private int instrumentNumberLen;
         
-        @DataField(pos = 7, lengthPos = 6)
+        @DataField(pos = 7, length = 10)
         private String instrumentNumber;
 
         @DataField(pos = 8, length = 3)
