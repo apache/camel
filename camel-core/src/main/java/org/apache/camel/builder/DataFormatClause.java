@@ -21,10 +21,11 @@ import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
 
-
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.Base64DataFormat;
+import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CastorDataFormat;
@@ -51,7 +52,6 @@ import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
-
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
  * options.
@@ -74,7 +74,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         this.operation = operation;
     }
 
-
     /**
      * Uses the Avro data format
      */
@@ -90,6 +89,61 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T avro(String instanceClassName) {
         return dataFormat(new AvroDataFormat(instanceClassName));
+    }
+
+    /**
+     * Uses the base64 data format
+     */
+    public T base64() {
+        Base64DataFormat dataFormat = new Base64DataFormat();
+        return dataFormat(dataFormat);
+    }
+
+    /**
+     * Uses the base64 data format
+     */
+    public T base64(int lineLength, String lineSeparator, boolean urlSafe) {
+        Base64DataFormat dataFormat = new Base64DataFormat();
+        dataFormat.setLineLength(lineLength);
+        dataFormat.setLineSeparator(lineSeparator);
+        dataFormat.setUrlSafe(urlSafe);
+        return dataFormat(dataFormat);
+    }
+
+    /**
+     * Uses the beanio data format
+     */
+    public T beanio(String mapping, String streamName) {
+        BeanioDataFormat dataFormat = new BeanioDataFormat();
+        dataFormat.setMapping(mapping);
+        dataFormat.setStreamName(streamName);
+        return dataFormat(dataFormat);
+    }
+
+    /**
+     * Uses the beanio data format
+     */
+    public T beanio(String mapping, String streamName, String encoding) {
+        BeanioDataFormat dataFormat = new BeanioDataFormat();
+        dataFormat.setMapping(mapping);
+        dataFormat.setStreamName(streamName);
+        dataFormat.setEncoding(encoding);
+        return dataFormat(dataFormat);
+    }
+
+    /**
+     * Uses the beanio data format
+     */
+    public T beanio(String mapping, String streamName, String encoding,
+                    boolean ignoreUnidentifiedRecords, boolean ignoreUnexpectedRecords, boolean ignoreInvalidRecords) {
+        BeanioDataFormat dataFormat = new BeanioDataFormat();
+        dataFormat.setMapping(mapping);
+        dataFormat.setStreamName(streamName);
+        dataFormat.setEncoding(encoding);
+        dataFormat.setIgnoreInvalidRecords(ignoreInvalidRecords);
+        dataFormat.setIgnoreUnexpectedRecords(ignoreUnexpectedRecords);
+        dataFormat.setIgnoreInvalidRecords(ignoreInvalidRecords);
+        return dataFormat(dataFormat);
     }
 
     /**

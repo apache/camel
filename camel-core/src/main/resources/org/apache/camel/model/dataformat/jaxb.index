@@ -15,6 +15,7 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 AvroDataFormat
+Base64DataFormat
 BeanioDataFormat
 BindyDataFormat
 BindyType
