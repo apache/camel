@@ -17,24 +17,50 @@
 package org.apache.camel.processor.aggregate;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 
 /**
- * A memory based {@link org.apache.camel.spi.AggregationRepository} which stores in memory only.
+ * A memory based {@link org.apache.camel.spi.AggregationRepository} which stores {@link Exchange}s in memory only.
+ *
+ * Supports both optimistic locking and non-optimistic locking modes. Defaults to non-optimistic locking mode.
  *
  * @version 
  */
-public class MemoryAggregationRepository extends ServiceSupport implements AggregationRepository {
-    private final Map<String, Exchange> cache = new ConcurrentHashMap<String, Exchange>();
+public class MemoryAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
+    private final ConcurrentMap<String, Exchange> cache = new ConcurrentHashMap<String, Exchange>();
+    private final boolean optimisticLocking;
+
+    public MemoryAggregationRepository() {
+        this(false);
+    }
+
+    public MemoryAggregationRepository(boolean optimisticLocking) {
+        this.optimisticLocking = optimisticLocking;
+    }
+
+    public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
+        if (!optimisticLocking) { throw new UnsupportedOperationException(); }
+        if (oldExchange == null) {
+            if (cache.putIfAbsent(key, newExchange) != null) {
+                throw new OptimisticLockingException();
+            }
+        } else {
+            if (!cache.replace(key, oldExchange, newExchange)) {
+                throw new OptimisticLockingException();
+            }
+        }
+        return oldExchange;
+    }
 
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
+        if (optimisticLocking) { throw new UnsupportedOperationException(); }
         return cache.put(key, exchange);
     }
 
@@ -43,7 +69,13 @@ public class MemoryAggregationRepository extends ServiceSupport implements Aggre
     }
 
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        cache.remove(key);
+        if (optimisticLocking) {
+            if (!cache.remove(key, exchange)) {
+                throw new OptimisticLockingException();
+            }
+        } else {
+            cache.remove(key);
+        }
     }
 
     public void confirm(CamelContext camelContext, String exchangeId) {

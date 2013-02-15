@@ -17,13 +17,12 @@
 package org.apache.camel.processor.aggregate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +45,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.Synchronization;
@@ -94,10 +94,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     // store correlation key -> exchange id in timeout map
     private TimeoutMap<String, String> timeoutMap;
     private ExceptionHandler exceptionHandler = new LoggingExceptionHandler(getClass());
-    private AggregationRepository aggregationRepository = new MemoryAggregationRepository();
-    private Map<Object, Object> closedCorrelationKeys;
-    private Set<String> batchConsumerCorrelationKeys = new LinkedHashSet<String>();
-    private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
+    private AggregationRepository aggregationRepository;
+    private Map<String, String> closedCorrelationKeys;
+    private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<String>();
+    private final Set<String> inProgressCompleteExchanges = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
 
     // keep booking about redelivery
@@ -109,6 +109,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private boolean ignoreInvalidCorrelationKeys;
     private Integer closeCorrelationKeyOnCompletion;
     private boolean parallelProcessing;
+    private boolean optimisticLocking;
 
     // different ways to have completion triggered
     private boolean eagerCheckCompletion;
@@ -189,18 +190,38 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             throw new ClosedCorrelationKeyException(key, exchange);
         }
 
-        // copy exchange, and do not share the unit of work
-        // the aggregated output runs in another unit of work
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        //
+        // todo: explain optimistic lock handling
+        if (optimisticLocking) {
+            boolean done = false;
+            int attempt = 0;
+            while (!done) {
+                attempt++;
+                // copy exchange, and do not share the unit of work
+                // the aggregated output runs in another unit of work
+                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+                try {
+                    doAggregation(key, copy);
+                    done = true;
+                } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+                    LOG.trace("On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to add() key: {} and exchange: {}",
+                              new Object[]{attempt, aggregationRepository, key, copy, e});
+                }
+            }
+        } else {
+            // copy exchange, and do not share the unit of work
+            // the aggregated output runs in another unit of work
+            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
-        // when memory based then its fast using synchronized, but if the aggregation repository is IO
-        // bound such as JPA etc then concurrent aggregation per correlation key could
-        // improve performance as we can run aggregation repository get/add in parallel
-        lock.lock();
-        try {
-            doAggregation(key, copy);
-        } finally {
-            lock.unlock();
+            // when memory based then its fast using synchronized, but if the aggregation repository is IO
+            // bound such as JPA etc then concurrent aggregation per correlation key could
+            // improve performance as we can run aggregation repository get/add in parallel
+            lock.lock();
+            try {
+                doAggregation(key, copy);
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
@@ -211,19 +232,24 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * in parallel.
      *
      * @param key      the correlation key
-     * @param exchange the exchange
+     * @param newExchange the exchange
      * @return the aggregated exchange
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
-    private Exchange doAggregation(String key, Exchange exchange) throws CamelExchangeException {
+    private Exchange doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
         Exchange answer;
-        Exchange oldExchange = aggregationRepository.get(exchange.getContext(), key);
-        Exchange newExchange = exchange;
+        Exchange originalExchange = aggregationRepository.get(newExchange.getContext(), key);
+        Exchange oldExchange = originalExchange;
 
         Integer size = 1;
         if (oldExchange != null) {
+            // hack to support legacy AggregationStrategy's that modify and return the oldExchange, these will not
+            // working when using an identify based approach for optimistic locking like the MemoryAggregationRepository.
+            if (optimisticLocking && aggregationRepository instanceof MemoryAggregationRepository) {
+                oldExchange = originalExchange.copy();
+            }
             size = oldExchange.getProperty(Exchange.AGGREGATED_SIZE, 0, Integer.class);
             size++;
         }
@@ -238,16 +264,16 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             newExchange.removeProperty(Exchange.AGGREGATED_SIZE);
         }
 
-        // prepare the exchanges for aggregation and aggregate it
+        // prepare the exchanges for aggregation and then aggregate them
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
         // must catch any exception from aggregation
         try {
-            answer = onAggregation(oldExchange, exchange);
+            answer = onAggregation(oldExchange, newExchange);
         } catch (Throwable e) {
-            throw new CamelExchangeException("Error occurred during aggregation", exchange, e);
+            throw new CamelExchangeException("Error occurred during aggregation", newExchange, e);
         }
         if (answer == null) {
-            throw new CamelExchangeException("AggregationStrategy " + aggregationStrategy + " returned null which is not allowed", exchange);
+            throw new CamelExchangeException("AggregationStrategy " + aggregationStrategy + " returned null which is not allowed", newExchange);
         }
 
         // update the aggregated size
@@ -260,8 +286,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         // only need to update aggregation repository if we are not complete
         if (complete == null) {
-            LOG.trace("In progress aggregated exchange: {} with correlation key: {}", answer, key);
-            aggregationRepository.add(exchange.getContext(), key, answer);
+            doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
         } else {
             // if batch consumer completion is enabled then we need to complete the group
             if ("consumer".equals(complete)) {
@@ -276,20 +301,42 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
                     if (batchAnswer != null) {
                         batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
-                        onCompletion(batchKey, batchAnswer, false);
+                        onCompletion(batchKey, originalExchange, batchAnswer, false);
                     }
                 }
                 batchConsumerCorrelationKeys.clear();
             } else {
                 // we are complete for this exchange
                 answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
-                onCompletion(key, answer, false);
+                onCompletion(key, originalExchange, answer, false);
             }
         }
 
         LOG.trace("onAggregation +++  end  +++ with correlation key: {}", key);
 
         return answer;
+    }
+
+    protected void doAggregationRepositoryAdd(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
+        LOG.trace("In progress aggregated oldExchange: {}, newExchange: {} with correlation key: {}", new Object[]{oldExchange, newExchange, key});
+        if (optimisticLocking) {
+            try {
+                ((OptimisticLockingAggregationRepository)aggregationRepository).add(camelContext, key, oldExchange, newExchange);
+            } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+                onOptimisticLockingFailure(oldExchange, newExchange);
+                throw e;
+            }
+        } else {
+            aggregationRepository.add(camelContext, key, newExchange);
+        }
+    }
+
+    protected void onOptimisticLockingFailure(Exchange oldExchange, Exchange newExchange) {
+        if (aggregationStrategy instanceof OptimisticLockingAwareAggregationStrategy) {
+            LOG.trace("onOptimisticLockFailure with AggregationStrategy: {}, oldExchange: {}, newExchange: {}",
+                      new Object[]{aggregationStrategy, oldExchange, newExchange});
+            ((OptimisticLockingAwareAggregationStrategy)aggregationStrategy).onOptimisticLockFailure(oldExchange, newExchange);
+        }
     }
 
     /**
@@ -368,11 +415,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         return aggregationStrategy.aggregate(oldExchange, newExchange);
     }
 
-    protected void onCompletion(final String key, final Exchange exchange, boolean fromTimeout) {
+    protected void onCompletion(final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout) {
+        // remove from repository as its completed, we do this first as to trigger any OptimisticLockingException's
+        aggregationRepository.remove(aggregated.getContext(), key, original);
+
         // store the correlation key as property
-        exchange.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);
-        // remove from repository as its completed
-        aggregationRepository.remove(exchange.getContext(), key, exchange);
+        aggregated.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);
+
         if (!fromTimeout && timeoutMap != null) {
             // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
             timeoutMap.remove(key);
@@ -388,24 +437,24 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             // to allow any custom processing before discarding the exchange
             if (aggregationStrategy instanceof TimeoutAwareAggregationStrategy) {
                 long timeout = getCompletionTimeout() > 0 ? getCompletionTimeout() : -1;
-                ((TimeoutAwareAggregationStrategy) aggregationStrategy).timeout(exchange, -1, -1, timeout);
+                ((TimeoutAwareAggregationStrategy) aggregationStrategy).timeout(aggregated, -1, -1, timeout);
             }
         }
 
         if (fromTimeout && isDiscardOnCompletionTimeout()) {
             // discard due timeout
-            LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: ()", key, exchange);
+            LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
             // must confirm the discarded exchange
-            aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
+            aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
             // and remove redelivery state as well
-            redeliveryState.remove(exchange.getExchangeId());
+            redeliveryState.remove(aggregated.getExchangeId());
         } else {
             // the aggregated exchange should be published (sent out)
-            onSubmitCompletion(key, exchange);
+            onSubmitCompletion(key, aggregated);
         }
     }
 
-    private void onSubmitCompletion(final Object key, final Exchange exchange) {
+    private void onSubmitCompletion(final String key, final Exchange exchange) {
         LOG.debug("Aggregation complete for correlation key {} sending aggregated exchange: {}", key, exchange);
 
         // add this as in progress before we submit the task
@@ -445,7 +494,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * Restores the timeout map with timeout values from the aggregation repository.
      * <p/>
      * This is needed in case the aggregator has been stopped and started again (for example a server restart).
-     * Then the existing exchanges from the {@link AggregationRepository} must have its timeout conditions restored.
+     * Then the existing exchanges from the {@link AggregationRepository} must have their timeout conditions restored.
      */
     protected void restoreTimeoutMapFromAggregationRepository() throws Exception {
         // grab the timeout value for each partly aggregated exchange
@@ -581,6 +630,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.parallelProcessing = parallelProcessing;
     }
 
+    public boolean isOptimisticLocking() {
+        return optimisticLocking;
+    }
+
+    public void setOptimisticLocking(boolean optimisticLocking) {
+        this.optimisticLocking = optimisticLocking;
+    }
+
     public AggregationRepository getAggregationRepository() {
         return aggregationRepository;
     }
@@ -663,17 +720,17 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
             // do NOT use locking on the timeout map as this aggregator has its own shared lock we will use instead
-            super(executor, requestMapPollTimeMillis, false);
+            super(executor, requestMapPollTimeMillis, optimisticLocking);
         }
 
         @Override
         public void purge() {
             // must acquire the shared aggregation lock to be able to purge
-            lock.lock();
+            if (!optimisticLocking) { lock.lock(); }
             try {
                 super.purge();
             } finally {
-                lock.unlock();
+                if (!optimisticLocking) { lock.unlock(); }
             }
         }
 
@@ -688,11 +745,23 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
 
             // get the aggregated exchange
+            boolean evictionStolen = false;
             Exchange answer = aggregationRepository.get(camelContext, key);
-            if (answer != null) {
+            if (answer == null) {
+                evictionStolen = true;
+            } else {
                 // indicate it was completed by timeout
                 answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
-                onCompletion(key, answer, true);
+                try {
+                    onCompletion(key, answer, answer, true);
+                } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+                    evictionStolen = true;
+                }
+            }
+
+            if (optimisticLocking && evictionStolen) {
+                LOG.debug("Another Camel instance has already successfully correlated or processed this timeout eviction "
+                          + "for exchange with id: {} and correlation id: {}", exchangeId, key);
             }
             return true;
         }
@@ -717,19 +786,29 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
             if (keys != null && !keys.isEmpty()) {
                 // must acquire the shared aggregation lock to be able to trigger interval completion
-                lock.lock();
+                if (!optimisticLocking) { lock.lock(); }
                 try {
                     for (String key : keys) {
+                        boolean stolenInterval = false;
                         Exchange exchange = aggregationRepository.get(camelContext, key);
-                        if (exchange != null) {
+                        if (exchange == null) {
+                            stolenInterval = true;
+                        } else {
                             LOG.trace("Completion interval triggered for correlation key: {}", key);
                             // indicate it was completed by interval
                             exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "interval");
-                            onCompletion(key, exchange, false);
+                            try {
+                                onCompletion(key, exchange, exchange, false);
+                            } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+                                stolenInterval = true;
+                            }
+                        }
+                        if (optimisticLocking && stolenInterval) {
+                            LOG.debug("Another Camel instance has already processed this interval aggregation for exchange with correlation id: {}", key);
                         }
                     }
                 } finally {
-                    lock.unlock();
+                    if (!optimisticLocking) { lock.unlock(); }
                 }
             }
 
@@ -842,11 +921,23 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (getCloseCorrelationKeyOnCompletion() != null) {
             if (getCloseCorrelationKeyOnCompletion() > 0) {
                 LOG.info("Using ClosedCorrelationKeys with a LRUCache with a capacity of " + getCloseCorrelationKeyOnCompletion());
-                closedCorrelationKeys = new LRUCache<Object, Object>(getCloseCorrelationKeyOnCompletion());
+                closedCorrelationKeys = new LRUCache<String, String>(getCloseCorrelationKeyOnCompletion());
             } else {
                 LOG.info("Using ClosedCorrelationKeys with unbounded capacity");
-                closedCorrelationKeys = new HashMap<Object, Object>();
+                closedCorrelationKeys = new ConcurrentHashMap<String, String>();
             }
+        }
+
+        if (aggregationRepository == null) {
+            aggregationRepository = new MemoryAggregationRepository(optimisticLocking);
+            LOG.info("Defaulting to MemoryAggregationRepository");
+        }
+
+        if (optimisticLocking) {
+            if (!(aggregationRepository instanceof OptimisticLockingAggregationRepository)) {
+                throw new IllegalArgumentException("Optimistic locking cannot be enabled without using an AggregationRepository that implements OptimisticLockingAggregationRepository");
+            }
+            LOG.info("Optimistic locking is enabled");
         }
 
         ServiceHelper.startServices(aggregationStrategy, processor, aggregationRepository);
@@ -1000,7 +1091,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         int total = 0;
         if (keys != null && !keys.isEmpty()) {
             // must acquire the shared aggregation lock to be able to trigger force completion
-            lock.lock();
+            if (!optimisticLocking) { lock.lock(); }
             total = keys.size();
             try {
                 for (String key : keys) {
@@ -1009,11 +1100,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         LOG.trace("Force completion triggered for correlation key: {}", key);
                         // indicate it was completed by a force completion request
                         exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
-                        onCompletion(key, exchange, false);
+                        onCompletion(key, exchange, exchange, false);
                     }
                 }
             } finally {
-                lock.unlock();
+                if (!optimisticLocking) { lock.unlock(); }
             }
         }
         LOG.trace("Completed force completion of all groups task");

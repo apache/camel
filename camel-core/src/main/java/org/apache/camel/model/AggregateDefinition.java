@@ -73,6 +73,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Boolean parallelProcessing;
     @XmlAttribute
+    private Boolean optimisticLocking;
+    @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
     private String timeoutCheckerExecutorServiceRef;
@@ -195,6 +197,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
         // set other options
         answer.setParallelProcessing(isParallelProcessing());
+        answer.setOptimisticLocking(isOptimisticLocking());
         if (getCompletionPredicate() != null) {
             Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
             answer.setCompletionPredicate(predicate);
@@ -383,6 +386,18 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public Boolean getOptimisticLocking() {
+        return optimisticLocking;
+    }
+
+    public void setOptimisticLocking(boolean optimisticLocking) {
+        this.optimisticLocking = optimisticLocking;
+    }
+
+    public boolean isOptimisticLocking() {
+        return optimisticLocking != null && optimisticLocking;
     }
 
     public Boolean getParallelProcessing() {
@@ -716,6 +731,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition parallelProcessing() {
         setParallelProcessing(true);
+        return this;
+    }
+
+    public AggregateDefinition optimisticLocking() {
+        setOptimisticLocking(true);
         return this;
     }
     
