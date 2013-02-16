@@ -33,7 +33,7 @@ public interface ManagementMBeanAssembler {
      * @param mBeanServer the mbean server
      * @param obj         the object
      * @param name        the object name to use in JMX
-     * @return the assembled {@link javax.management.modelmbean.ModelMBean}
+     * @return the assembled {@link javax.management.modelmbean.ModelMBean}, or <tt>null</tt> if not possible to assemble an MBean
      * @throws JMException is thrown if error assembling the mbean
      */
     ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException;

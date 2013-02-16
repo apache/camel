@@ -69,6 +69,10 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
             mbi = assembler.getMBeanInfo(obj, null, name.toString());
         }
 
+        if (mbi == null) {
+            return null;
+        }
+
         RequiredModelMBean mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
         mbean.setModelMBeanInfo(mbi);
 
@@ -77,7 +81,7 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
         } catch (InvalidTargetObjectTypeException e) {
             throw new JMException(e.getMessage());
         }
-        
+
         // Allows the managed object to send notifications
         if (obj instanceof NotificationSenderAware) {
             ((NotificationSenderAware)obj).setNotificationSender(new NotificationSenderAdapter(mbean));

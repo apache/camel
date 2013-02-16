@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.lang.reflect.Proxy;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -55,10 +56,16 @@ public class MBeanInfoAssembler {
      * @param defaultManagedBean  the default managed bean
      * @param customManagedBean   an optional custom managed bean
      * @param objectName   the object name
-     * @return the model info
+     * @return the model info, or <tt>null</tt> if not possible to create, for example due the managed bean is a proxy class
      * @throws JMException is thrown if error creating the model info
      */
     public ModelMBeanInfo getMBeanInfo(Object defaultManagedBean, Object customManagedBean, String objectName) throws JMException {
+        // skip proxy classes
+        if (Proxy.isProxyClass(defaultManagedBean.getClass())) {
+            LOG.trace("Skip creating ModelMBeanInfo due proxy class {}", defaultManagedBean.getClass());
+            return null;
+        }
+
         // maps and lists to contain information about attributes and operations
         Map<String, ManagedAttributeInfo> attributes = new HashMap<String, ManagedAttributeInfo>();
         Set<ManagedOperationInfo> operations = new LinkedHashSet<ManagedOperationInfo>();

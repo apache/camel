@@ -229,8 +229,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             ManagementMBeanAssembler assembler = camelContext.getManagementMBeanAssembler();
             ObjectHelper.notNull(assembler, "ManagementMBeanAssembler", camelContext);
             Object mbean = assembler.assemble(server, obj, name);
-            // and register the mbean
-            registerMBeanWithServer(mbean, name, forceRegistration);
+            if (mbean != null) {
+                // and register the mbean
+                registerMBeanWithServer(mbean, name, forceRegistration);
+            }
         }
     }
 
