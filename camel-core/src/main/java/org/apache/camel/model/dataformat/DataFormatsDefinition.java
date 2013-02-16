@@ -64,7 +64,8 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
         @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
-        @XmlElement(required = false, name = "zip", type = ZipDataFormat.class)}
+        @XmlElement(required = false, name = "zip", type = ZipDataFormat.class),
+        @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
         )
     private List<DataFormatDefinition> dataFormats;
 

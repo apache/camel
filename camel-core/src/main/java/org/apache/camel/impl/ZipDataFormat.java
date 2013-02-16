@@ -27,6 +27,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 
+/**
+ * "Deflate" compression data format.
+ * See {@link org.apache.camel.model.dataformat.ZipFileDataFormat} for Zip file compression.
+ */
 public class ZipDataFormat implements DataFormat {
 
     private final int compressionLevel;
@@ -61,7 +65,8 @@ public class ZipDataFormat implements DataFormat {
             IOHelper.copy(unzipInput, bos);
             return bos.toByteArray();
         } finally {
-            IOHelper.close(unzipInput);
+            // must close input streams
+            IOHelper.close(is, unzipInput);
         }
     }
 

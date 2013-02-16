@@ -50,6 +50,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
+import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
@@ -680,6 +681,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T zip(int compressionLevel) {
         ZipDataFormat zdf = new ZipDataFormat(compressionLevel);
         return dataFormat(zdf);
+    }
+
+    /**
+     * Uses the ZIP file data format
+     */
+    public T zipFile() {
+        ZipFileDataFormat zfdf = new ZipFileDataFormat();
+        return dataFormat(zfdf);
     }
 
     @SuppressWarnings("unchecked")

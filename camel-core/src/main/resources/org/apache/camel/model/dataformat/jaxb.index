@@ -42,3 +42,4 @@ XMLBeansDataFormat
 XMLSecurityDataFormat
 XStreamDataFormat
 ZipDataFormat
+ZipFileDataFormat

@@ -292,6 +292,11 @@ public class XmlParseTest extends XmlTestSupport {
         assertFrom(route, "seda:a");
     }
 
+    public void testParseZipFileDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithZipFileDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
     public void testParseBindyDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithBindyDataFormat.xml");
         assertFrom(route, "seda:a");
