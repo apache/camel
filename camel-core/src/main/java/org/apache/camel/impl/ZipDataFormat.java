@@ -61,7 +61,8 @@ public class ZipDataFormat implements DataFormat {
             IOHelper.copy(unzipInput, bos);
             return bos.toByteArray();
         } finally {
-            IOHelper.close(unzipInput);
+            // must close input streams
+            IOHelper.close(is, unzipInput);
         }
     }
 
