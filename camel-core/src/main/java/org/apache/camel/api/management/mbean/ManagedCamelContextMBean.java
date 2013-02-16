@@ -42,6 +42,26 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Camel Properties")
     Map<String, String> getProperties();
 
+    /**
+     * Gets the value of a CamelContext property name
+     *
+     * @param name the name of the property
+     * @return String the value of the property
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Get the value of a Camel property")
+    String getProperty(String name) throws Exception;
+    
+    /**
+     * Sets the value of a CamelContext property name
+     *
+     * @param name the name of the property
+     * @param value the new value of the property
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Set the value of a Camel property")
+    void setProperty(String name, String value) throws Exception;
+    
     @ManagedAttribute(description = "Tracing")
     Boolean getTracing();
 
@@ -140,5 +160,5 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Removes endpoints by the given pattern")
     int removeEndpoints(String pattern) throws Exception;
-
+    
 }

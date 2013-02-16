@@ -86,6 +86,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
         return context.getProperties();
     }
+    
+    @Override
+    public String getProperty(String name) throws Exception {
+        return context.getProperty(name);
+    }
+
+    @Override
+    public void setProperty(String name, String value) throws Exception {
+        context.getProperties().put(name, value);
+    }
 
     public Boolean getTracing() {
         return context.isTracing();
