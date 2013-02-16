@@ -32,8 +32,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
-    <!-- The test module has the dependency of Spring 3.1.1, but the module can run with Spring 3.0.x out of box -->
-    <spring-version>3.1.1.RELEASE</spring-version>
+    <spring-version>${spring31-version}</spring-version>
   </properties>
   
   <dependencies>
