@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
@@ -26,6 +28,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.junit.Test;
+import org.restlet.data.CacheDirective;
+import org.restlet.engine.http.header.HeaderConstants;
 
 /**
  *
@@ -46,17 +50,39 @@ public class RestletResponseTest extends RestletTestSupport {
                         exchange.getOut().setBody("{" + userName + "}");
                         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "417");
                         exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/JSON");
+                        // set the cache control with String
+                        exchange.getOut().setHeader(HeaderConstants.HEADER_CACHE_CONTROL, "max-age=20");
                     }        
+                });
+                
+                from("restlet:http://localhost:" + portNum + "/cached/{username}?restletMethod=POST").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String userName = exchange.getIn().getHeader("username", String.class);                        
+                        assertNotNull("userName should not be null", userName);
+                        exchange.getOut().setBody("{" + userName + "}");
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "417");
+                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/JSON");
+                        // set cache control with cacheDirectives
+                        List<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
+                        cacheDirectives.add(CacheDirective.maxAge(20));
+                        exchange.getOut().setHeader(HeaderConstants.HEADER_CACHE_CONTROL, cacheDirectives);
+                        
+                    }       
                 });
             }
         };
     }
     
+    private void getCustomResponse(String address) throws Exception {
+        HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + address));
+        assertHttpResponse(response, 417, "application/JSON");
+        assertEquals("Get a wrong http header", "Cache-Control: max-age=20", response.getFirstHeader(HeaderConstants.HEADER_CACHE_CONTROL).toString());
+    }
+    
     @Test
     public void testCustomResponse() throws Exception {
-        HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + "/users/homer"));
-
-        assertHttpResponse(response, 417, "application/JSON");
+        getCustomResponse("/users/homer");
+        getCustomResponse("/cached/homer");
     }
     
     @Test(expected = CamelExecutionException.class)

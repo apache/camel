@@ -22,8 +22,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
@@ -38,6 +40,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.MessageHelper;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.data.CacheDirective;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.CharacterSet;
@@ -289,6 +292,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
     }
 
+    
+    @SuppressWarnings("unchecked")
     protected void setResponseHeader(Exchange exchange, org.restlet.Message message, String header, Object value) {
         // put the header first
         message.getAttributes().put(header, value);
@@ -297,9 +302,20 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (value == null) {
             return;
         }
-
+        
         // special for certain headers
         if (message.getEntity() != null) {
+            if (header.equalsIgnoreCase(HeaderConstants.HEADER_CACHE_CONTROL)) {
+                if (value instanceof List) {
+                    message.setCacheDirectives((List<CacheDirective>) value);
+                }
+                if (value instanceof String) {
+                    List<CacheDirective> list = new ArrayList<CacheDirective>();
+                    // set the cache control value directive
+                    list.add(new CacheDirective((String) value));
+                    message.setCacheDirectives(list);
+                }
+            }
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_EXPIRES)) {
                 if (value instanceof Calendar) {
                     message.getEntity().setExpirationDate(((Calendar) value).getTime());
