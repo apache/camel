@@ -20,7 +20,6 @@ package org.apache.camel.component.aws.cw;
 import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
-import org.apache.camel.component.aws.sns.SnsComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -45,7 +44,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
-        SnsComponent component = new SnsComponent(context);
+        CwComponent component = new CwComponent(context);
         component.createEndpoint("aws-cw://camel.apache.org/test?secretKey=yyy");
     }
 
