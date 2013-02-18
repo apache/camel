@@ -16,44 +16,20 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.karaf.commands.internal.RegexUtil;
-import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * Command to resume a route.
  */
 @Command(scope = "camel", name = "route-resume", description = "Resume a Camel route or a group of routes.")
-public class RouteResume extends OsgiCommandSupport {
+public class RouteResume extends AbstractRouteCommand {
 
-    @Argument(index = 0, name = "route", description = "The Camel route ID or a wildcard expression.", required = true, multiValued = false)
-    String route;
-
-    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
-    String context;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
-
-    public Object doExecute() throws Exception {
-        List<Route> camelRoutes = camelController.getRoutes(context, RegexUtil.wildcardAsRegex(route));
-        if (camelRoutes == null) {
-            System.err.println("Camel routes using  " + route + " not found.");
-            return null;
-        }
-        for (Route camelRoute : camelRoutes) {
-            CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
-            camelContext.resumeRoute(camelRoute.getId());
-        }
-        return null;
-    }
+	@Override
+	public void executeOnRoute(CamelContext camelContext, Route camelRoute)
+			throws Exception {
+		camelContext.resumeRoute(camelRoute.getId());
+	}
 
 }
