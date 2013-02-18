@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
@@ -33,13 +34,15 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
 
     public void setUp() throws Exception {
         super.setUp();
+        context.setUseMDCLogging(true);
 
         context2 = new DefaultCamelContext();
+        context2.setUseMDCLogging(true);
         template2 = context2.createProducerTemplate();
         ServiceHelper.startServices(template2, context2);
 
         // add routes after CamelContext has been started
-        context2.addRoutes(createRouteBuilder());
+        context2.addRoutes(createRouteBuilder2());
     }
 
     public void tearDown() throws Exception {
@@ -50,5 +53,9 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
 
     protected MockEndpoint getMockEndpoint2(String uri) {
         return context2.getEndpoint(uri, MockEndpoint.class);
+    }
+
+    protected RouteBuilder createRouteBuilder2() throws Exception {
+        return createRouteBuilder();
     }
 }

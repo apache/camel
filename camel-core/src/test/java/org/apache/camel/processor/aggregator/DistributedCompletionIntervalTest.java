@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
@@ -27,16 +28,37 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
 
-    public void testAggregateInterval() throws Exception {
+    private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
+
+    public void testCamelContext1Wins() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Message 19");
         MockEndpoint mock2 = getMockEndpoint2("mock:result");
-        // by default the use latest aggregation strategy is used so we get message 18 and message 19
-        mock.expectedBodiesReceived("Message 18");
+        mock2.expectedMessageCount(0);
+
+        // ensure messages are send after the 1s
+        Thread.sleep(2000);
+        sendMessages();
+
+        mock.assertIsSatisfied();
+        mock2.assertIsSatisfied();
+    }
+
+    public void testCamelContext2Wins() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        MockEndpoint mock2 = getMockEndpoint2("mock:result");
         mock2.expectedBodiesReceived("Message 19");
 
         // ensure messages are send after the 1s
         Thread.sleep(2000);
-        
+        sendMessages();
+
+        mock2.assertIsSatisfied();
+        mock.assertIsSatisfied();
+    }
+
+    private void sendMessages() {
         for (int i = 0; i < 20; i++) {
             int choice = i % 2;
             if (choice == 0) {
@@ -45,9 +67,6 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
                 template2.sendBodyAndHeader("direct:start", "Message " + i, "id", "1");
             }
         }
-
-        mock.assertIsSatisfied();
-        mock2.assertIsSatisfied();
     }
 
     @Override
@@ -58,8 +77,28 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
                 // START SNIPPET: e1
                 from("direct:start")
                     .aggregate(header("id"), new UseLatestAggregationStrategy())
+                        .aggregationRepository(sharedAggregationRepository)
+                        .optimisticLocking()
                         // trigger completion every 5th second
-                        .completionInterval(5000)
+                        .completionInterval(getName().equals("testCamelContext1Wins") ? 5000 : 10000)
+                    .to("mock:result");
+                // END SNIPPET: e1
+            }
+        };
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder2() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // START SNIPPET: e1
+                from("direct:start")
+                    .aggregate(header("id"), new UseLatestAggregationStrategy())
+                        .aggregationRepository(sharedAggregationRepository)
+                        .optimisticLocking()
+                        // trigger completion every 5th second
+                        .completionInterval(getName().equals("testCamelContext1Wins") ? 10000 : 5000)
                     .to("mock:result");
                 // END SNIPPET: e1
             }

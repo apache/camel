@@ -22,14 +22,18 @@ import org.apache.camel.Exchange;
  * A specialized {@link AggregationStrategy} which gets a callback when the aggregated {@link Exchange} fails to add
  * in the {@link org.apache.camel.spi.OptimisticLockingAggregationRepository} because of
  * an {@link org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException}.
- *
+ * <p/>
  * Please note that when aggregating {@link Exchange}'s to be careful not to modify and return the {@code oldExchange}
- * from the {@code aggregate()} method. If you are using the default MemoryAggregationRepository this will mean you have
- * modified the value of an object already referenced/stored by the MemoryAggregationRepository. This makes it impossible
- * for optimistic locking to work correctly with the MemoryAggregationRepository.
- *
+ * from the {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} method.
+ * If you are using the default MemoryAggregationRepository this will mean you have modified the value of an object
+ * already referenced/stored by the MemoryAggregationRepository. This makes it impossible for optimistic locking
+ * to work correctly with the MemoryAggregationRepository.
+ * <p/>
  * You should instead return either the new {@code newExchange} or a completely new instance of {@link Exchange}. This
- * is due to the nature of how the underlying {@link java.util.concurrent.ConcurrentHashMap} performs CAS operations on the value identity.
+ * is due to the nature of how the underlying {@link java.util.concurrent.ConcurrentHashMap} performs CAS operations
+ * on the value identity.
+ *
+ * @see java.util.concurrent.ConcurrentHashMap
  *
  * @version
  */
