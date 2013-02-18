@@ -79,7 +79,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
                 + "&DefaultVisibilityTimeout=1000&visibilityTimeout=2000&maximumMessageSize=65536&messageRetentionPeriod=1209600&policy="
                 + "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyQueue%2FSQSDefaultPolicy%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22Queue1ReceiveMessage%22%2C%22"
                 + "Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22AWS%22%3A%22*%22%7D%2C%22Action%22%3A%22SQS%3AReceiveMessage%22%2C%22Resource%22%3A%22%2F195004372649%2FMyQueue%22%7D%5D%7D"
-                + "&delaySeconds=123");
+                + "&delaySeconds=123&receiveMessageWaitTimeSeconds=10&waitTimeSeconds=20");
         
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -95,6 +95,8 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
                 + "{\"AWS\":\"*\"},\"Action\":\"SQS:ReceiveMessage\",\"Resource\":\"/195004372649/MyQueue\"}]}",
                 endpoint.getConfiguration().getPolicy());
         assertEquals(new Integer(123), endpoint.getConfiguration().getDelaySeconds());
+        assertEquals(Integer.valueOf(10), endpoint.getConfiguration().getReceiveMessageWaitTimeSeconds());
+        assertEquals(Integer.valueOf(20), endpoint.getConfiguration().getWaitTimeSeconds());
     }
     
     @Test

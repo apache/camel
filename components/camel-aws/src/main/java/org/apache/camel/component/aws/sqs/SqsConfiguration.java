@@ -37,6 +37,7 @@ public class SqsConfiguration {
     private Boolean deleteAfterRead = Boolean.TRUE;
     private Integer visibilityTimeout;
     private Collection<String> attributeNames;
+    private Integer waitTimeSeconds;
     private Integer defaultVisibilityTimeout;
     private Boolean extendMessageVisibility = Boolean.FALSE;
     
@@ -46,6 +47,7 @@ public class SqsConfiguration {
     // queue properties
     private Integer maximumMessageSize;
     private Integer messageRetentionPeriod;
+    private Integer receiveMessageWaitTimeSeconds;
     private String policy;
     
     public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
@@ -160,6 +162,22 @@ public class SqsConfiguration {
         this.extendMessageVisibility = extendMessageVisibility;
     }
 
+    public Integer getReceiveMessageWaitTimeSeconds() {
+        return receiveMessageWaitTimeSeconds;
+    }
+
+    public void setReceiveMessageWaitTimeSeconds(Integer receiveMessageWaitTimeSeconds) {
+        this.receiveMessageWaitTimeSeconds = receiveMessageWaitTimeSeconds;
+    }
+
+    public Integer getWaitTimeSeconds() {
+        return waitTimeSeconds;
+    }
+
+    public void setWaitTimeSeconds(Integer waitTimeSeconds) {
+        this.waitTimeSeconds = waitTimeSeconds;
+    }
+
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
@@ -169,9 +187,11 @@ public class SqsConfiguration {
             + ", deleteAfterRead=" + deleteAfterRead
             + ", visibilityTimeout=" + visibilityTimeout
             + ", attributeNames=" + attributeNames
+            + ", waitTimeSeconds=" + waitTimeSeconds
             + ", defaultVisibilityTimeout=" + defaultVisibilityTimeout
             + ", maximumMessageSize=" + maximumMessageSize
             + ", messageRetentionPeriod=" + messageRetentionPeriod
+            + ", receiveMessageWaitTimeSeconds=" + receiveMessageWaitTimeSeconds
             + ", delaySeconds=" + delaySeconds
             + ", policy=" + policy
             + ", extendMessageVisibility=" + extendMessageVisibility
