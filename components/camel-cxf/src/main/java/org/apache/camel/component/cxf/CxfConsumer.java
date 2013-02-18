@@ -76,7 +76,8 @@ public class CxfConsumer extends DefaultConsumer {
                 }
             }            
             
-            // NOTE this code cannot work with CXF 2.2.x
+            // NOTE this code cannot work with CXF 2.2.x and JMSContinuation
+            // as it doesn't break out the interceptor chain when we call it 
             private Object asyncInvoke(Exchange cxfExchange, final Continuation continuation) {
                 synchronized (continuation) {
                     if (continuation.isNew()) {
@@ -114,7 +115,14 @@ public class CxfConsumer extends DefaultConsumer {
             private Continuation getContinuation(Exchange cxfExchange) {
                 ContinuationProvider provider = 
                     (ContinuationProvider)cxfExchange.getInMessage().get(ContinuationProvider.class.getName());
-                return provider == null ? null : provider.getContinuation();
+                Continuation continuation = provider == null ? null : provider.getContinuation();
+                // Make sure we don't return the JMSContinuation, as it doesn't support the Continuation we wants
+                // Don't want to introduce the dependency of cxf-rt-transprot-jms here
+                if (continuation != null && continuation.getClass().getName().equals("org.apache.cxf.transport.jms.continuations.JMSContinuation")) {
+                    return null;
+                } else {
+                    return continuation;
+                }
             }
             
             private Object syncInvoke(Exchange cxfExchange) {

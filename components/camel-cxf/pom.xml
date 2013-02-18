@@ -160,6 +160,26 @@
       <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <!-- test for the cxf jms transport -->
+    <dependency>
+       <groupId>org.apache.activemq</groupId>
+       <artifactId>activemq-broker</artifactId>
+       <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-kahadb-store</artifactId>
+        <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-jms</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.cxf</groupId>
