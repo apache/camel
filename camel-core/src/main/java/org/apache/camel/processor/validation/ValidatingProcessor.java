@@ -55,8 +55,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which validates the XML version of the inbound message body
  * against some schema either in XSD or RelaxNG
- * 
- * @version
  */
 public class ValidatingProcessor implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(ValidatingProcessor.class);
@@ -72,6 +70,8 @@ public class ValidatingProcessor implements Processor {
     private boolean useSharedSchema = true;
     private LSResourceResolver resourceResolver;
     private boolean failOnNullBody = true;
+    private boolean failOnNullHeader = true;
+    private String headerName;
 
     public void process(Exchange exchange) throws Exception {
         Schema schema;
@@ -90,19 +90,26 @@ public class ValidatingProcessor implements Processor {
             Result result = null;
             // only convert to input stream if really needed
             if (isInputStreamNeeded(exchange)) {
-                is = exchange.getIn().getBody(InputStream.class);
+                is = getContentToValidate(exchange, InputStream.class);
                 if (is != null) {
                     source = getSource(exchange, is);
                 }
             } else {
-                Object body = exchange.getIn().getBody();
-                if (body != null) {
-                    source = getSource(exchange, body);
+                Object content = getContentToValidate(exchange);
+                if (content != null) {
+                    source = getSource(exchange, content);
                 }
             }
 
-            if (source == null && isFailOnNullBody()) {
-                throw new NoXmlBodyValidationException(exchange);
+            if (shouldUseHeader()) {
+                if (source == null && isFailOnNullHeader()) {
+                    throw new NoXmlHeaderValidationException(exchange,
+                            headerName);
+                }
+            } else {
+                if (source == null && isFailOnNullBody()) {
+                    throw new NoXmlBodyValidationException(exchange);
+                }
             }
 
             if (source instanceof DOMSource) {
@@ -129,13 +136,33 @@ public class ValidatingProcessor implements Processor {
                 } catch (SAXParseException e) {
                     // can be thrown for non well formed XML
                     throw new SchemaValidationException(exchange, schema, Collections.singletonList(e),
-                            Collections.<SAXParseException> emptyList(),
-                            Collections.<SAXParseException> emptyList());
+                            Collections.<SAXParseException>emptyList(),
+                            Collections.<SAXParseException>emptyList());
                 }
             }
         } finally {
             IOHelper.close(is);
         }
+    }
+
+    private Object getContentToValidate(Exchange exchange) {
+        if (shouldUseHeader()) {
+            return exchange.getIn().getHeader(headerName);
+        } else {
+            return exchange.getIn().getBody();
+        }
+    }
+
+    private <T> T getContentToValidate(Exchange exchange, Class<T> clazz) {
+        if (shouldUseHeader()) {
+            return exchange.getIn().getHeader(headerName, clazz);
+        } else {
+            return exchange.getIn().getBody(clazz);
+        }
+    }
+
+    private boolean shouldUseHeader() {
+        return headerName != null;
     }
 
     public void loadSchema() throws Exception {
@@ -250,6 +277,22 @@ public class ValidatingProcessor implements Processor {
         this.failOnNullBody = failOnNullBody;
     }
 
+    public boolean isFailOnNullHeader() {
+        return failOnNullHeader;
+    }
+
+    public void setFailOnNullHeader(boolean failOnNullHeader) {
+        this.failOnNullHeader = failOnNullHeader;
+    }
+
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
 
@@ -280,31 +323,31 @@ public class ValidatingProcessor implements Processor {
     }
 
     /**
-     * Checks whether we need an {@link InputStream} to access the message body.
+     * Checks whether we need an {@link InputStream} to access the message body or header.
      * <p/>
-     * Depending on the content in the message body, we may not need to convert
+     * Depending on the content in the message body or header, we may not need to convert
      * to {@link InputStream}.
      *
      * @param exchange the current exchange
      * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source} afterwards.
      */
     protected boolean isInputStreamNeeded(Exchange exchange) {
-        Object body = exchange.getIn().getBody();
-        if (body == null) {
+        Object content = getContentToValidate(exchange);
+        if (content == null) {
             return false;
         }
 
-        if (body instanceof InputStream) {
+        if (content instanceof InputStream) {
             return true;
-        } else if (body instanceof Source) {
+        } else if (content instanceof Source) {
             return false;
-        } else if (body instanceof String) {
+        } else if (content instanceof String) {
             return false;
-        } else if (body instanceof byte[]) {
+        } else if (content instanceof byte[]) {
             return false;
-        } else if (body instanceof Node) {
+        } else if (content instanceof Node) {
             return false;
-        } else if (exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass()) != null) {
+        } else if (exchange.getContext().getTypeConverterRegistry().lookup(Source.class, content.getClass()) != null) {
             //there is a direct and hopefully optimized converter to Source
             return false;
         }
@@ -313,48 +356,48 @@ public class ValidatingProcessor implements Processor {
     }
 
     /**
-     * Converts the inbound body to a {@link Source}, if the body is <b>not</b> already a {@link Source}.
+     * Converts the inbound body or header to a {@link Source}, if it is <b>not</b> already a {@link Source}.
      * <p/>
      * This implementation will prefer to source in the following order:
      * <ul>
-     *   <li>DOM - DOM if explicit configured to use DOM</li>
-     *   <li>SAX - SAX as 2nd choice</li>
-     *   <li>Stream - Stream as 3rd choice</li>
-     *   <li>DOM - DOM as 4th choice</li>
+     * <li>DOM - DOM if explicit configured to use DOM</li>
+     * <li>SAX - SAX as 2nd choice</li>
+     * <li>Stream - Stream as 3rd choice</li>
+     * <li>DOM - DOM as 4th choice</li>
      * </ul>
      */
-    protected Source getSource(Exchange exchange, Object body) {
+    protected Source getSource(Exchange exchange, Object content) {
         if (isUseDom()) {
             // force DOM
-            return exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, body);
+            return exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, content);
         }
 
-        // body may already be a source
-        if (body instanceof Source) {
-            return (Source) body;
+        // body or header may already be a source
+        if (content instanceof Source) {
+            return (Source) content;
         }
         Source source = null;
-        if (body instanceof InputStream) {
-            return new StreamSource((InputStream)body);
+        if (content instanceof InputStream) {
+            return new StreamSource((InputStream) content);
         }
-        if (body != null) {
-            TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, body.getClass());
+        if (content != null) {
+            TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, content.getClass());
             if (tc != null) {
-                source = tc.convertTo(Source.class, exchange, body);
+                source = tc.convertTo(Source.class, exchange, content);
             }
         }
 
         if (source == null) {
             // then try SAX
-            source = exchange.getContext().getTypeConverter().tryConvertTo(SAXSource.class, exchange, body);
+            source = exchange.getContext().getTypeConverter().tryConvertTo(SAXSource.class, exchange, content);
         }
         if (source == null) {
             // then try stream
-            source = exchange.getContext().getTypeConverter().tryConvertTo(StreamSource.class, exchange, body);
+            source = exchange.getContext().getTypeConverter().tryConvertTo(StreamSource.class, exchange, content);
         }
         if (source == null) {
             // and fallback to DOM
-            source = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, body);
+            source = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, content);
         }
         if (source == null) {
             if (isFailOnNullBody()) {
