@@ -85,6 +85,12 @@ public class NettyEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    protected String createEndpointUri() {
+        ObjectHelper.notNull(configuration, "configuration");
+        return "netty:" + getConfiguration().getProtocol() + "://" + getConfiguration().getHost() + ":" + getConfiguration().getPort();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(timer, "timer");
     }
