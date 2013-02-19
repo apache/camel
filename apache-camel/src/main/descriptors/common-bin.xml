@@ -136,6 +136,7 @@
         <include>org.apache.camel:camel-spring-batch</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
+        <include>org.apache.camel:camel-spring-ldap</include>
         <include>org.apache.camel:camel-spring-security</include>
         <include>org.apache.camel:camel-spring-ws</include>
         <include>org.apache.camel:camel-sql</include>

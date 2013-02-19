@@ -845,6 +845,17 @@
     <feature version='${spring-version-range}'>spring-test</feature>
     <bundle>mvn:org.apache.camel/camel-spring-javaconfig/${project.version}</bundle>
   </feature>
+<!-- TODO: spring-ldap is not OSGI bundles
+  <feature name='camel-spring-ldap' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-spring</feature>
+    <bundle dependency='true'>mvn:org.springframework.ldap/spring-ldap-core/${spring-ldap-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ldap/spring-ldap-core-tiger/${spring-ldap-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ldap/spring-ldap-odm/${spring-ldap-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ldap/spring-ldap-ldif-core/${spring-ldap-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ldap/spring-ldap-ldif-batch/${spring-ldap-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
+  </feature>
+-->
   <feature name='camel-spring-security' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>http</feature>
     <feature version='${project.version}'>camel-spring</feature>
