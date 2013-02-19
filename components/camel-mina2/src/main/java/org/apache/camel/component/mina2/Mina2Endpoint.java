@@ -55,14 +55,23 @@ public class Mina2Endpoint extends DefaultEndpoint implements MultipleConsumersS
         return new Mina2Consumer(this, processor);
     }
 
-    public Exchange createExchange(IoSession session, Object payload) {
+    public Exchange createExchange(IoSession session) {
         Exchange exchange = createExchange();
-        exchange.getIn().setHeader(Mina2Constants.MINA_IOSESSION, session);
-        exchange.getIn().setHeader(Mina2Constants.MINA_LOCAL_ADDRESS, session.getLocalAddress());
-        exchange.getIn().setHeader(Mina2Constants.MINA_REMOTE_ADDRESS, session.getRemoteAddress());
-        Mina2PayloadHelper.setIn(exchange, payload);
+        exchange.getIn().setHeader(Mina2Constants.MINA2_IOSESSION, session);
+        exchange.getIn().setHeader(Mina2Constants.MINA2_LOCAL_ADDRESS, session.getLocalAddress());
+        exchange.getIn().setHeader(Mina2Constants.MINA2_REMOTE_ADDRESS, session.getRemoteAddress());
+        //Mina2PayloadHelper.setIn(exchange, payload);
         return exchange;
     }
+    
+//    public Exchange createExchange(IoSession session, Object payload) {
+//        Exchange exchange = createExchange();
+//        exchange.getIn().setHeader(Mina2Constants.MINA2_IOSESSION, session);
+//        exchange.getIn().setHeader(Mina2Constants.MINA2_LOCAL_ADDRESS, session.getLocalAddress());
+//        exchange.getIn().setHeader(Mina2Constants.MINA2_REMOTE_ADDRESS, session.getRemoteAddress());
+//        Mina2PayloadHelper.setIn(exchange, payload);
+//        return exchange;
+//    }
 
     @Override
     public boolean isSingleton() {

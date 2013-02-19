@@ -29,7 +29,7 @@ public class Mina2SslContextParametersVmTest extends BaseMina2Test {
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         Object body = "Hello there!";
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedBodiesReceived(null,null,body);
 
         template.sendBodyAndHeader(String.format("mina2:vm://localhost:%1$s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
                 getPort()), body, "cheese", 123);

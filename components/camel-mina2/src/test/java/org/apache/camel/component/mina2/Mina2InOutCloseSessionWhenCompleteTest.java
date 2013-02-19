@@ -42,7 +42,7 @@ public class Mina2InOutCloseSessionWhenCompleteTest extends BaseMina2Test {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);
-                        exchange.getOut().setHeader(Mina2Constants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
+                        exchange.getOut().setHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, true);
                     }
                 });
             }

@@ -1,18 +1,18 @@
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * contributor license agreements. See the NOTICE file distributed with this
+ * work for additional information regarding copyright ownership. The ASF
+ * licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.camel.component.mina2;
 
@@ -196,9 +196,9 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         // should session be closed after complete?
         Boolean close;
         if (ExchangeHelper.isOutCapable(exchange)) {
-            close = exchange.getOut().getHeader(Mina2Constants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+            close = exchange.getOut().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
         } else {
-            close = exchange.getIn().getHeader(Mina2Constants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+            close = exchange.getIn().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
         }
 
         // should we disconnect, the header can override the configuration
@@ -259,7 +259,12 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             connector.getSessionConfig().setAll(connectorConfig);
         }
 
-        connector.setHandler(new ResponseHandler());
+        if (configuration.getIoHandler() != null) {
+            connector.setHandler(configuration.getIoHandler());
+        } else {
+            connector.setHandler(new ResponseHandler());
+        }
+
         ConnectFuture future = connector.connect(address);
         future.awaitUninterruptibly();
         session = future.getSession();
@@ -281,7 +286,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using vm protocol"
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+                    + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
         configureCodecFactory("Mina2Producer", connector);
     }
@@ -338,7 +343,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             }
             addCodecFactory(service, codecFactory);
             LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                      new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
+                    new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
             LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
                     codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
         } else {
@@ -374,7 +379,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using datagram protocol, " + configuration.getProtocol()
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+                    + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
         configureDataGramCodecFactory("Mina2Producer", connector, configuration);
         // set connect timeout to mina in seconds
@@ -382,8 +387,9 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     }
 
     /**
-     * For datagrams the entire message is available as a single IoBuffer so lets just pass those around by default
-     * and try converting whatever they payload is into IoBuffer unless some custom converter is specified
+     * For datagrams the entire message is available as a single IoBuffer so
+     * lets just pass those around by default and try converting whatever they
+     * payload is into IoBuffer unless some custom converter is specified
      */
     protected void configureDataGramCodecFactory(final String type, final IoService service, final Mina2Configuration configuration) {
         ProtocolCodecFactory codecFactory = configuration.getCodec();
@@ -412,18 +418,18 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
 
         switch (delimiter) {
-        case DEFAULT:
-            return LineDelimiter.DEFAULT;
-        case AUTO:
-            return LineDelimiter.AUTO;
-        case UNIX:
-            return LineDelimiter.UNIX;
-        case WINDOWS:
-            return LineDelimiter.WINDOWS;
-        case MAC:
-            return LineDelimiter.MAC;
-        default:
-            throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
+            case DEFAULT:
+                return LineDelimiter.DEFAULT;
+            case AUTO:
+                return LineDelimiter.AUTO;
+            case UNIX:
+                return LineDelimiter.UNIX;
+            case WINDOWS:
+                return LineDelimiter.WINDOWS;
+            case MAC:
+                return LineDelimiter.MAC;
+            default:
+                throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
         }
     }
 
@@ -495,7 +501,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         @Override
         public void exceptionCaught(IoSession ioSession, Throwable cause) {
             LOG.error("Exception on receiving message from address: " + address
-                      + " using connector: " + connector, cause);
+                    + " using connector: " + connector, cause);
             this.message = null;
             this.messageReceived = false;
             this.cause = cause;

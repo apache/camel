@@ -27,20 +27,41 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.junit.Test;
 
-public class Mina2ClientServerTest extends BaseMina2Test {
+/**
+ * IoHandler tests demonstrate how Mina IoHandlers are used with the camel-mina2
+ * component to achieve full-async messaging behavior.
+ *
+ * @author Chad Beaulac
+ */
+public class Mina2IoHandlerTest extends BaseMina2Test {
 
     private CountDownLatch latch = null;
     private CloseIoHandler closeIoHandler = new CloseIoHandler();
     private NoCloseIoHandler noCloseIoHandler = new NoCloseIoHandler();
 
+    /**
+     * This test illustrates the standard Camel request-reply pattern using
+     * Mina2. This test does not use an IoHandler and thus, uses the
+     * producerTemplate.requestBody(...) method to execute a simple
+     * request-reply message.
+     *
+     * @throws InterruptedException
+     */
     @Test
-    public void testSendToServer() throws InterruptedException {
-        // START SNIPPET: e3
-        String out = (String) template.requestBody(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()), "Chad");
-        assertEquals("Hello Chad", out);
-        // END SNIPPET: e3
+    public void testSendOneNoHandlerServer() throws InterruptedException {
+        latch = new CountDownLatch(1);
+        closeIoHandler.setLatch(latch);
+        String body = (String) template.requestBody(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()), "Chad");
+        latch.await(2, TimeUnit.SECONDS);
+        assertEquals("Hello Chad", body);
     }
 
+    /**
+     * Test sending one message to a consumer using an IoHander. The IoHandler
+     * closes the socket after the message is received.
+     *
+     * @throws InterruptedException
+     */
     @Test
     public void testSendOneCloseToServer() throws InterruptedException {
         latch = new CountDownLatch(1);
@@ -80,7 +101,6 @@ public class Mina2ClientServerTest extends BaseMina2Test {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-
         jndi.bind("closeIoHandler", closeIoHandler);
         jndi.bind("noCloseIoHandler", noCloseIoHandler);
         return jndi;
@@ -89,6 +109,7 @@ public class Mina2ClientServerTest extends BaseMina2Test {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
@@ -104,11 +125,8 @@ public class Mina2ClientServerTest extends BaseMina2Test {
         public void process(Exchange exchange) throws Exception {
             // get the input from the IN body
             String name = exchange.getIn().getBody(String.class);
-            // Ignore sessionCreated and sessionOpened events with null body
-            if (name != null) {
-                // send back a response on the OUT body
-                exchange.getOut().setBody("Hello " + name);
-            }
+            // send back a response on the OUT body
+            exchange.getOut().setBody("Hello " + name);
         }
     }
 

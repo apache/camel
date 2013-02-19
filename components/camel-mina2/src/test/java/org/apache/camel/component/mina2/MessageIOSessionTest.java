@@ -34,12 +34,12 @@ public class MessageIOSessionTest extends BaseMina2Test {
     public void testIoSession() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()), "Hello World");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false", getPort()), "Hello World");
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
         Message message = exchange.getIn();
-        assertNotNull(message.getHeader(Mina2Constants.MINA_IOSESSION));
+        assertNotNull(message.getHeader(Mina2Constants.MINA2_IOSESSION));
 
     }
 
@@ -47,14 +47,14 @@ public class MessageIOSessionTest extends BaseMina2Test {
     public void testLocalAndRemoteAddressHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()), "Hello World");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false", getPort()), "Hello World");
         assertMockEndpointsSatisfied();
 
         Message message = mock.getExchanges().get(0).getIn();
         // Not making assumptions on what these headers contain, because it might differ 
         // on different machines/OSs.
-        assertNotNull(message.getHeader(Mina2Constants.MINA_LOCAL_ADDRESS, SocketAddress.class));
-        assertNotNull(message.getHeader(Mina2Constants.MINA_REMOTE_ADDRESS, SocketAddress.class));
+        assertNotNull(message.getHeader(Mina2Constants.MINA2_LOCAL_ADDRESS, SocketAddress.class));
+        assertNotNull(message.getHeader(Mina2Constants.MINA2_REMOTE_ADDRESS, SocketAddress.class));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class MessageIOSessionTest extends BaseMina2Test {
 
             @Override
             public void configure() throws Exception {
-                from(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()))
+                from(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false", getPort()))
                     .to("log://mytest")
                     .to("mock:result");
             }

@@ -38,7 +38,8 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
     @Test
     public void testNoResponse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
+        // session open, session created, (no message body), session closed
+        mock.expectedMessageCount(3);
 
         try {
             template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");

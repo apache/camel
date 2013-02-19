@@ -28,8 +28,8 @@ public class Mina2FileUdpTest extends BaseMina2Test {
     @Test
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
-        endpoint.expectedMessageCount(1);
-        endpoint.message(0).body().startsWith("Hello World");
+        endpoint.expectedMessageCount(3);
+        endpoint.message(2).body().startsWith("Hello World");
 
         assertMockEndpointsSatisfied();
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.util.Arrays;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -38,8 +39,7 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
     @Test
     public void testMyCodec() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Bye World");
+        mock.expectedMessageCount(3);
 
         Object out = template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
         assertEquals("Bye World", out);
@@ -61,8 +61,8 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         String body = "Hello Thai Elephant \u0E08";
 
-        endpoint.expectedMessageCount(1);
-        endpoint.expectedBodiesReceived(body);
+        endpoint.expectedMessageCount(3);
+        endpoint.expectedBodiesReceived(Arrays.asList(null,null,body));
 
         template.sendBody(myUri, body);
         assertMockEndpointsSatisfied();
