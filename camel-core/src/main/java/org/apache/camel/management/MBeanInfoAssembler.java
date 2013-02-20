@@ -17,8 +17,8 @@
 package org.apache.camel.management;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;

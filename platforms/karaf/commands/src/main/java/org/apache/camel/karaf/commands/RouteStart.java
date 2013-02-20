@@ -26,9 +26,9 @@ import org.apache.felix.gogo.commands.Command;
 @Command(scope = "camel", name = "route-start", description = "Start a Camel route or a group of routes")
 public class RouteStart extends AbstractRouteCommand {
 
-	@Override
-	public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-		camelContext.startRoute(camelRoute.getId());
-	}
+    @Override
+    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
+        camelContext.startRoute(camelRoute.getId());
+    }
 
 }
