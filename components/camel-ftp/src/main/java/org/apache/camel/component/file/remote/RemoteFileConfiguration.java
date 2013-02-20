@@ -49,6 +49,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private String siteCommand;
     private boolean stepwise = true;
     private PathSeparator separator = PathSeparator.Auto;
+    private boolean streamDownload;
 
     public RemoteFileConfiguration() {
     }
@@ -259,6 +260,21 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setSeparator(PathSeparator separator) {
         this.separator = separator;
+    }
+    
+    public boolean isStreamDownload() {
+        return streamDownload;
+    }
+
+    /**
+     * Sets the download method to use when not using a local working directory.  If set to true,
+     * the remote files are streamed to the route as they are read.  When set to false, the remote files
+     * are loaded into memory before being sent into the route.
+     *
+     * @param streamDownload 
+     */
+    public void setStreamDownload(boolean streamDownload) {
+        this.streamDownload = streamDownload;
     }
 
     /**

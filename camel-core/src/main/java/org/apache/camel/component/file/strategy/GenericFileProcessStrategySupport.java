@@ -62,6 +62,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         }
 
         deleteLocalWorkFile(exchange);
+        operations.releaseRetreivedFileResources(exchange);
     }
 
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
@@ -70,6 +71,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         }
 
         deleteLocalWorkFile(exchange);
+        operations.releaseRetreivedFileResources(exchange);
     }
 
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
@@ -78,6 +80,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         }
 
         deleteLocalWorkFile(exchange);
+        operations.releaseRetreivedFileResources(exchange);
     }
 
     public GenericFileExclusiveReadLockStrategy<T> getExclusiveReadLockStrategy() {

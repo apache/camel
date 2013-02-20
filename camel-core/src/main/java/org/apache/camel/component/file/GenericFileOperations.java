@@ -77,6 +77,14 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException;
+    
+    /**
+     * Releases the resources consumed by a retrieved file
+     * 
+     * @param exchange exchange with the content of the file
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException;
 
     /**
      * Stores the content as a new remote file (upload)

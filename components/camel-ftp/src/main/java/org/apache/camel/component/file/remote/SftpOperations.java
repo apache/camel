@@ -489,18 +489,29 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             return retrieveFileToStreamInBody(name, exchange);
         }
     }
+    
+    @Override
+    public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+        InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
+        
+        if (is != null) {
+            try {
+                is.close();
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException(e.getMessage(), e);
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         OutputStream os = null;
         String currentDir = null;
         try {
-            os = new ByteArrayOutputStream();
             GenericFile<ChannelSftp.LsEntry> target =
                     (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
-            target.setBody(os);
-
+            
             String remoteName = name;
             if (endpoint.getConfiguration().isStepwise()) {
                 // remember current directory
@@ -518,7 +529,15 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
             // use input stream which works with Apache SSHD used for testing
             InputStream is = channel.get(remoteName);
-            IOHelper.copyAndCloseInput(is, os);
+            
+            if (endpoint.getConfiguration().isStreamDownload()) {
+                target.setBody(is);
+                exchange.getIn().setHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, is);
+            } else {
+                os = new ByteArrayOutputStream();
+                target.setBody(os);
+                IOHelper.copyAndCloseInput(is, os);
+            }
 
             return true;
         } catch (IOException e) {

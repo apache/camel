@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote.sftp;
+package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,24 +24,28 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class SftpSimpleConsumeTest extends SftpServerTestSupport {
+public class FtpSimpleConsumeStreamingWithMultipleFilesTest extends FtpServerTestSupport {
 
     @Test
-    public void testSftpSimpleConsume() throws Exception {
+    public void testFtpSimpleConsumeAbsolute() throws Exception {
         if (!canTest()) {
             return;
         }
 
         String expected = "Hello World";
+        String expected2 = "Goodbye World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, expected, Exchange.FILE_NAME, "hello.txt");
+
+        // FTP Server does not support absolute path, so lets simulate it
+        String path = FTP_ROOT_DIR + "/tmp/mytemp";
+        template.sendBodyAndHeader("file:" + path, expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:" + path, expected2, Exchange.FILE_NAME, "goodbye.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
-        mock.expectedBodiesReceived(expected);
-        
+        mock.expectedMessageCount(2);
+        mock.expectedBodiesReceivedInAnyOrder(expected, expected2);
+
         context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
@@ -52,7 +56,9 @@ public class SftpSimpleConsumeTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true")
+                // notice we use an absolute starting path: /tmp/mytemp
+                // - we must remember to use // slash because of the url separator
+                from("ftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

@@ -24,7 +24,7 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class SftpSimpleConsumeTest extends SftpServerTestSupport {
+public class SftpSimpleConsumeStreamingWithMultipleFilesTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
@@ -33,14 +33,15 @@ public class SftpSimpleConsumeTest extends SftpServerTestSupport {
         }
 
         String expected = "Hello World";
+        String expected2 = "Goodbye World";
 
         // create file using regular file
         template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, expected2, Exchange.FILE_NAME, "goodbye.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
-        mock.expectedBodiesReceived(expected);
+        mock.expectedMessageCount(2);
+        mock.expectedBodiesReceivedInAnyOrder(expected, expected2);
         
         context.startRoute("foo");
 
@@ -52,7 +53,7 @@ public class SftpSimpleConsumeTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true")
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

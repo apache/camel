@@ -155,6 +155,11 @@ public class FileOperations implements GenericFileOperations<File> {
         // noop as we use type converters to read the body content for java.io.File
         return true;
     }
+    
+    @Override
+    public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+        // noop as we used type converters to read the body content for java.io.File
+    }
 
     public boolean storeFile(String fileName, Exchange exchange) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");

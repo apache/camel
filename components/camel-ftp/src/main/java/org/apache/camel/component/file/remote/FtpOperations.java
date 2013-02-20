@@ -298,17 +298,29 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             return retrieveFileToStreamInBody(name, exchange);
         }
     }
+    
+    @Override
+    public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+        InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
+        
+        if (is != null) {
+            try {
+                is.close();
+                client.completePendingCommand();
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException(e.getMessage(), e);
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         OutputStream os = null;
         boolean result;
         try {
-            os = new ByteArrayOutputStream();
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
-            target.setBody(os);
-
+            
             String remoteName = name;
             String currentDir = null;
             if (endpoint.getConfiguration().isStepwise()) {
@@ -326,7 +338,17 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
 
             log.trace("Client retrieveFile: {}", remoteName);
-            result = client.retrieveFile(remoteName, os);
+            
+            if (endpoint.getConfiguration().isStreamDownload()) {
+                InputStream is = client.retrieveFileStream(remoteName); 
+                target.setBody(is);
+                exchange.getIn().setHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, is);
+                result = true;
+            } else {
+                os = new ByteArrayOutputStream();
+                target.setBody(os);
+                result = client.retrieveFile(remoteName, os);
+            }
 
             // change back to current directory
             if (endpoint.getConfiguration().isStepwise()) {
