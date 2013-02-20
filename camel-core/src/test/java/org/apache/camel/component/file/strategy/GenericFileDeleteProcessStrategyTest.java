@@ -70,6 +70,10 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
             return false;
         }
+        @Override
+        public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+            // No-op
+        }
 
         public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
             return false;
