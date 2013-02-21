@@ -63,7 +63,7 @@ public class RsClientDefinitionParser extends AbstractBeanDefinitionParser {
                 Metadata map = parseMapData(context, beanMetadata, elem);
                 beanMetadata.addProperty(name, map);
             } else if ("binding".equals(name)) {
-                setFirstChildAsProperty(element, context, beanMetadata, "bindingConfig");
+                setFirstChildAsProperty(elem, context, beanMetadata, "bindingConfig");
             } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name) || "outInterceptors".equals(name)
                 || "outFaultInterceptors".equals(name) || "features".equals(name) || "schemaLocations".equals(name) || "handlers".equals(name)) {
                 Metadata list = parseListData(context, beanMetadata, elem);
@@ -79,7 +79,7 @@ public class RsClientDefinitionParser extends AbstractBeanDefinitionParser {
                 value.setObject(resources);
                 beanMetadata.addProperty(name, value);
             } else {
-                setFirstChildAsProperty(element, context, beanMetadata, name);
+                setFirstChildAsProperty(elem, context, beanMetadata, name);
             }
         } 
  

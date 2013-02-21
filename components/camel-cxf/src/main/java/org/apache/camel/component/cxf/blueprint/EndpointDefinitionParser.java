@@ -74,13 +74,13 @@ public class EndpointDefinitionParser extends AbstractBeanDefinitionParser {
                 Metadata map = parseMapData(context, endpointConfig, elem);
                 endpointConfig.addProperty(name, map);
             } else if ("binding".equals(name)) {
-                setFirstChildAsProperty(element, context, endpointConfig, "bindingConfig");
+                setFirstChildAsProperty(elem, context, endpointConfig, "bindingConfig");
             } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name) || "outInterceptors".equals(name)
                 || "outFaultInterceptors".equals(name) || "features".equals(name) || "schemaLocations".equals(name) || "handlers".equals(name)) {
                 Metadata list = parseListData(context, endpointConfig, elem);
                 endpointConfig.addProperty(name, list);
             } else {
-                setFirstChildAsProperty(element, context, endpointConfig, name);
+                setFirstChildAsProperty(elem, context, endpointConfig, name);
             }
 
             elem = DOMUtils.getNextElement(elem);
