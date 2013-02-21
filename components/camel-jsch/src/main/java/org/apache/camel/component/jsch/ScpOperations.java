@@ -88,6 +88,11 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         // TODO: implement
         return false;
     }
+    
+    @Override
+    public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+        // No-op   
+    }
 
     @Override
     public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
