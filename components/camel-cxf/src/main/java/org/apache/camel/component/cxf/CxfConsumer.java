@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.xml.ws.WebFault;
 import org.w3c.dom.Element;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultConsumer;
@@ -145,7 +146,7 @@ public class CxfConsumer extends DefaultConsumer {
                 CxfEndpoint endpoint = (CxfEndpoint)getEndpoint();
                 CxfBinding binding = endpoint.getCxfBinding();
 
-                // create a Camel exchange
+                // create a Camel exchange, the default MEP is InOut
                 org.apache.camel.Exchange camelExchange = endpoint.createExchange();
                 DataFormat dataFormat = endpoint.getDataFormat();
 
@@ -159,6 +160,10 @@ public class CxfConsumer extends DefaultConsumer {
                 if (boi != null) {
                     camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
                     LOG.trace("Set exchange property: BindingOperationInfo: {}", boi);
+                    // set the message exchange patter with the boi
+                    if (boi.getOperationInfo().isOneWay()) {
+                        camelExchange.setPattern(ExchangePattern.InOnly);
+                    }
                 }
                 
                 // set data format mode in Camel exchange

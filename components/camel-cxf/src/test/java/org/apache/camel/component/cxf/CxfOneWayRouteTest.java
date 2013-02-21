@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -88,6 +89,8 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         static final byte[] MAGIC = {(byte)0xca, 0x3e, 0x1e};
 
         public void process(Exchange exchange) throws Exception {
+            // just check the MEP here
+            assertEquals("Don't get the right MEP", ExchangePattern.InOnly, exchange.getPattern());
             // adding some binary segment
             String msg = exchange.getIn().getBody(String.class);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
