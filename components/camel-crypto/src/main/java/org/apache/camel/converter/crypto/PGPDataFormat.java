@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
@@ -139,7 +140,13 @@ public class PGPDataFormat implements DataFormat {
         PGPSignatureGenerator sigGen = createSignatureGenerator(exchange, comOut);
 
         PGPLiteralDataGenerator litData = new PGPLiteralDataGenerator();
-        OutputStream litOut = litData.open(comOut, PGPLiteralData.BINARY, PGPLiteralData.CONSOLE, new Date(), new byte[BUFFER_SIZE]);
+        String fileName = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+        if (ObjectHelper.isEmpty(fileName)) {
+            // This marks the file as For Your Eyes Only... may cause problems for the receiver if they use
+            // an automated process to decrypt as the filename is appended with _CONSOLE
+            fileName = PGPLiteralData.CONSOLE;
+        }
+        OutputStream litOut = litData.open(comOut, PGPLiteralData.BINARY, fileName, new Date(), new byte[BUFFER_SIZE]);
 
         try {
             byte[] buffer = new byte[BUFFER_SIZE];
