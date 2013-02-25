@@ -26,9 +26,9 @@ import org.apache.felix.gogo.commands.Command;
 @Command(scope = "camel", name = " route-suspend", description = "Suspend a Camel route.")
 public class RouteSuspend extends AbstractRouteCommand {
 
-	@Override
-	public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-		camelContext.suspendRoute(route);
-	}
+    @Override
+    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
+        camelContext.suspendRoute(route);
+    }
 
 }

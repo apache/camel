@@ -48,9 +48,9 @@ public abstract class AbstractRouteCommand extends OsgiCommandSupport {
         ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(camelContext.getApplicationContextClassLoader());
         try {
-        	executeOnRoute(camelContext, camelRoute);
+            executeOnRoute(camelContext, camelRoute);
         } finally {
-        	Thread.currentThread().setContextClassLoader(oldClassloader);
+            Thread.currentThread().setContextClassLoader(oldClassloader);
         }
         return null;
     }
