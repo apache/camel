@@ -26,4 +26,5 @@ public interface SqsConstants {
     String MD5_OF_BODY = "CamelAwsSqsMD5OfBody";
     String MESSAGE_ID = "CamelAwsSqsMessageId";
     String RECEIPT_HANDLE = "CamelAwsSqsReceiptHandle";
+    String DELAY_HEADER = "CamelAwsSqsDelaySeconds";
 }

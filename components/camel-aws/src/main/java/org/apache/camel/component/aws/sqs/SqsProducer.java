@@ -44,7 +44,7 @@ public class SqsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
-        request.setDelaySeconds(getEndpoint().getConfiguration().getDelaySeconds());
+        addDelay(request, exchange);
 
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
         
@@ -55,6 +55,20 @@ public class SqsProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setHeader(SqsConstants.MESSAGE_ID, result.getMessageId());
         message.setHeader(SqsConstants.MD5_OF_BODY, result.getMD5OfMessageBody());
+    }
+
+    private void addDelay(SendMessageRequest request, Exchange exchange) {
+        Integer headerValue = exchange.getIn().getHeader(SqsConstants.DELAY_HEADER, Integer.class);
+        Integer delayValue = Integer.valueOf(0);
+        if (headerValue == null) {
+            LOG.trace("Using the config delay");
+            delayValue = getEndpoint().getConfiguration().getDelaySeconds();
+        } else {
+            LOG.trace("Using the header delay");
+            delayValue = headerValue;
+        }
+        LOG.trace("found delay: " + delayValue);
+        request.setDelaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
     }
 
     private Message getMessageForResponse(Exchange exchange) {
