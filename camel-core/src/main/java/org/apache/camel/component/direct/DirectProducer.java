@@ -20,7 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DirectProducer extends DefaultProducer implements AsyncProcessor {
+public class DirectProducer extends DefaultAsyncProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
-    private DirectEndpoint endpoint;
+    private final DirectEndpoint endpoint;
 
     public DirectProducer(DirectEndpoint endpoint) {
         super(endpoint);
