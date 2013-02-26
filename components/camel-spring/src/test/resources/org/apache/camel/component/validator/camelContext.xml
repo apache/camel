@@ -22,8 +22,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- START SNIPPET: example -->
         <route>
             <from uri="direct:start"/>
             <doTry>
@@ -38,7 +38,34 @@
                 </doFinally>
             </doTry>
         </route>
+        <!-- END SNIPPET: example -->
+
+        <route>
+            <from uri="direct:startHeaders"/>
+            <doTry>
+                <to uri="validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate"/>
+                <to uri="mock:valid"/>
+                <doCatch>
+                    <exception>org.apache.camel.ValidationException</exception>
+                    <to uri="mock:invalid"/>
+                </doCatch>
+                <doFinally>
+                    <to uri="mock:finally"/>
+                </doFinally>
+            </doTry>
+        </route>
+
+        <route>
+            <from uri="direct:startNoHeaderException"/>
+            <to uri="validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate"/>
+            <to uri="mock:valid"/>
+        </route>
+
+        <route>
+            <from uri="direct:startNullHeaderNoFail"/>
+            <to uri="validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate&amp;failOnNullHeader=false"/>
+            <to uri="mock:valid"/>
+        </route>
     </camelContext>
-    <!-- END SNIPPET: example -->
 
 </beans>
