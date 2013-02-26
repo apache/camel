@@ -16,33 +16,53 @@
  */
 package org.apache.camel.component.directvm;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The direct-vm producer
  */
-public class DirectVmProducer extends DefaultProducer {
+public class DirectVmProducer extends DefaultAsyncProducer {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(DirectVmProducer.class);
+    private DirectVmEndpoint endpoint;
 
     public DirectVmProducer(DirectVmEndpoint endpoint) {
         super(endpoint);
-    }
-
-    @Override
-    public DirectVmEndpoint getEndpoint() {
-        return (DirectVmEndpoint) super.getEndpoint();
+        this.endpoint = endpoint;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         // send to consumer
-        DirectVmConsumer consumer = getEndpoint().getComponent().getConsumer(getEndpoint());
+        DirectVmConsumer consumer = endpoint.getComponent().getConsumer(endpoint);
         if (consumer == null) {
-            log.warn("No consumers available on endpoint: " + getEndpoint() + " to process: " + exchange);
-            throw new CamelExchangeException("No consumers available on endpoint: " + getEndpoint(), exchange);
+            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
+            throw new CamelExchangeException("No consumers available on endpoint: " + endpoint, exchange);
         } else {
             consumer.getProcessor().process(exchange);
+        }
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        // send to consumer
+        DirectVmConsumer consumer = endpoint.getComponent().getConsumer(endpoint);
+        if (consumer == null) {
+            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
+            exchange.setException(new CamelExchangeException("No consumers available on endpoint: " + endpoint, exchange));
+            callback.done(true);
+            return true;
+        } else {
+            AsyncProcessor processor = AsyncProcessorConverterHelper.convert(consumer.getProcessor());
+            return AsyncProcessorHelper.process(processor, exchange, callback);
         }
     }
 }
