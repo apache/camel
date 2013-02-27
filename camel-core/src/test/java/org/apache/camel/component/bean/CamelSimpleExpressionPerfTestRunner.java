@@ -27,7 +27,7 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Registry;
 
 public final class CamelSimpleExpressionPerfTestRunner {
-    private static final int MESSAGE_LOOP_COUNT = 10000;
+    private static final int MESSAGE_LOOP_COUNT = 1000;
     private static final int TEST_EXECUTION_COUNT = 5;
     
     private CamelSimpleExpressionPerfTestRunner() {
@@ -37,10 +37,7 @@ public final class CamelSimpleExpressionPerfTestRunner {
     public static void main(String[] args) throws Exception {
         long bodyOnly = executePerformanceTest(new SimpleRegistry(), "${body}");
         long bodyProperty = executePerformanceTest(new SimpleRegistry(), "${body[p]}");
-
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put(BeanInfo.BEAN_INFO_CACHE_REGISTRY_KEY, new HashMap());
-        long bodyPropertyWithCache = executePerformanceTest(registry, "${body[p]}");
+        long bodyPropertyWithCache = executePerformanceTest(new SimpleRegistry(), "${body[p]}");
 
         System.out.printf("${body}: %dms%n", bodyOnly);
         System.out.printf("${body[p]} : %dms%n", bodyProperty);
@@ -73,6 +70,8 @@ public final class CamelSimpleExpressionPerfTestRunner {
             template.sendBody("direct:start", body);
             totalNsDuration += System.nanoTime() - tick;
         }
+
+        ctx.stop();
 
         // Return the average duration in milliseconds
         return totalNsDuration / TEST_EXECUTION_COUNT / 1000 / 1000;

@@ -22,6 +22,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.util.LRUSoftCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/bean.html">Bean Component</a>
@@ -30,6 +33,11 @@ import org.apache.camel.impl.ProcessorEndpoint;
  * @version 
  */
 public class BeanComponent extends DefaultComponent {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanComponent.class);
+    // use an internal soft cache for BeanInfo as they are costly to introspect
+    // for example the bean language using OGNL expression runs much faster reusing the BeanInfo from this cache
+    private final LRUSoftCache<BeanInfoCacheKey, BeanInfo> cache = new LRUSoftCache<BeanInfoCacheKey, BeanInfo>(1000);
 
     public BeanComponent() {
     }
@@ -66,5 +74,21 @@ public class BeanComponent extends DefaultComponent {
     
     protected BeanEndpoint createEndpoint(String uri, BeanProcessor processor) {
         return new BeanEndpoint(uri, this, processor);
+    }
+
+    BeanInfo getBeanInfoFromCache(BeanInfoCacheKey key) {
+        return cache.get(key);
+    }
+
+    void addBeanInfoToCache(BeanInfoCacheKey key, BeanInfo beanInfo) {
+        cache.put(key, beanInfo);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
+        }
+        cache.clear();
     }
 }
