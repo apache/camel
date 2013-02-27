@@ -47,7 +47,15 @@ public abstract class AbstractRouteCommand extends OsgiCommandSupport {
         }
         for (Route camelRoute : camelRoutes) {
             CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
-            executeOnRoute(camelContext, camelRoute);
+            // Setting thread context classloader to the bundle classloader to enable
+            // legacy code that relies on it
+            ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(camelContext.getApplicationContextClassLoader());
+            try {
+                executeOnRoute(camelContext, camelRoute);
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldClassloader);
+            }
         }
 
         return null;
