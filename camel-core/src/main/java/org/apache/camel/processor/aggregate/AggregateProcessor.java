@@ -416,11 +416,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     }
 
     protected void onCompletion(final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout) {
+        // store the correlation key as property before we remove so the repository has that information
+        if (original != null) {
+            original.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);
+        }
+        aggregated.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);
+
         // remove from repository as its completed, we do this first as to trigger any OptimisticLockingException's
         aggregationRepository.remove(aggregated.getContext(), key, original);
-
-        // store the correlation key as property
-        aggregated.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);
 
         if (!fromTimeout && timeoutMap != null) {
             // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
