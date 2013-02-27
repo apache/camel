@@ -853,7 +853,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the property value that can be referenced in the camel context
      *
      * @return the string value of property
-     * 
      */
     String getProperty(String name);
     
