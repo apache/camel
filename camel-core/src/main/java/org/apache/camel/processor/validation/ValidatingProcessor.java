@@ -103,8 +103,7 @@ public class ValidatingProcessor implements Processor {
 
             if (shouldUseHeader()) {
                 if (source == null && isFailOnNullHeader()) {
-                    throw new NoXmlHeaderValidationException(exchange,
-                            headerName);
+                    throw new NoXmlHeaderValidationException(exchange, headerName);
                 }
             } else {
                 if (source == null && isFailOnNullBody()) {
