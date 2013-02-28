@@ -47,6 +47,13 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-blueprint</artifactId>
+            <!-- exclude aries blueprint as we add these dependencies explicit -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.aries.blueprint</groupId>
+                    <artifactId>org.apache.aries.blueprint.core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- the ordering of the dependencies can matter as we load the dependencies from the classpath
