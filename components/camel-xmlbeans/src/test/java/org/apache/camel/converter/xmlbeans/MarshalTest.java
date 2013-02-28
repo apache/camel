@@ -16,7 +16,7 @@
  */
 package org.apache.camel.converter.xmlbeans;
 
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -31,14 +31,12 @@ import org.junit.Test;
 
 import samples.services.xsd.BuyStocksDocument;
 import samples.services.xsd.BuyStocksDocument.BuyStocks;
+import samples.services.xsd.Order;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class UnmarshalTest {
+public class MarshalTest {
 
-    private static final String PAYLOAD = "<m:buyStocks xmlns:m=\"http://services.samples/xsd\"><order><symbol>IBM</symbol><buyerID>cmueller</buyerID><price>140.34</price><volume>2000</volume>"
-        + "</order></m:buyStocks>";
     private XmlBeansDataFormat dataFormat;
     private Exchange exchange;
 
@@ -49,23 +47,27 @@ public class UnmarshalTest {
     }
 
     @Test
-    public void unmarshal() throws Exception {
-        Object result = dataFormat.unmarshal(exchange, new ByteArrayInputStream(PAYLOAD.getBytes()));
+    public void marshal() throws Exception {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        assertBuyStocks(result);
+        dataFormat.marshal(exchange, createBuyStocksDocument(), outputStream);
+
+        assertBuyStocksXml(new String(outputStream.toByteArray()));
     }
 
     @Test
-    public void unmarshalConcurrent() throws Exception {
+    public void marshalConcurrent() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(10);
         final CountDownLatch latch = new CountDownLatch(100);
 
         for (int i = 0; i < 100; i++) {
             executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    Object result = dataFormat.unmarshal(exchange, new ByteArrayInputStream(PAYLOAD.getBytes()));
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-                    assertBuyStocks(result);
+                    dataFormat.marshal(exchange, createBuyStocksDocument(), outputStream);
+
+                    assertBuyStocksXml(new String(outputStream.toByteArray()));
                     latch.countDown();
 
                     return null;
@@ -77,12 +79,27 @@ public class UnmarshalTest {
         assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
-    private void assertBuyStocks(Object result) {
-        BuyStocks buyStocks = ((BuyStocksDocument) result).getBuyStocks();
-        assertEquals(1, buyStocks.getOrderArray().length);
-        assertEquals("IBM", buyStocks.getOrderArray(0).getSymbol());
-        assertEquals("cmueller", buyStocks.getOrderArray(0).getBuyerID());
-        assertEquals(140.34, buyStocks.getOrderArray(0).getPrice(), 0);
-        assertEquals(2000, buyStocks.getOrderArray(0).getVolume());
+    private void assertBuyStocksXml(String result) {
+        assertTrue(result.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
+        assertTrue(result.contains("<xsd:buyStocks xmlns:xsd=\"http://services.samples/xsd\">"));
+        assertTrue(result.contains("<order>"));
+        assertTrue(result.contains("<symbol>IBM</symbol>"));
+        assertTrue(result.contains("<buyerID>cmueller</buyerID>"));
+        assertTrue(result.contains("<price>140.34</price>"));
+        assertTrue(result.contains("volume>2000</volume>"));
+        assertTrue(result.contains("</order>"));
+        assertTrue(result.contains("</xsd:buyStocks>"));
+    }
+
+    private BuyStocksDocument createBuyStocksDocument() {
+        BuyStocksDocument document = BuyStocksDocument.Factory.newInstance();
+        BuyStocks payload = document.addNewBuyStocks();
+        Order order = payload.addNewOrder();
+        order.setSymbol("IBM");
+        order.setBuyerID("cmueller");
+        order.setPrice(140.34);
+        order.setVolume(2000);
+
+        return document;
     }
 }
