@@ -27,8 +27,6 @@ import org.apache.xmlbeans.XmlObject;
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XmlBeans to marshal to and from XML
- *
- * @version 
  */
 public class XmlBeansDataFormat implements DataFormat {
 

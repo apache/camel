@@ -16,16 +16,42 @@
  */
 package org.apache.camel.converter.xmlbeans;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.ByteBuffer;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
 import org.junit.Test;
 
-/**
- * @version 
- */
+import samples.services.xsd.BuyStocksDocument;
+import samples.services.xsd.BuyStocksDocument.BuyStocks;
+
 public class XmlBeansConverterTest extends CamelTestSupport {
+
+    private static final String PAYLOAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xsd:buyStocks xmlns:xsd=\"http://services.samples/xsd\"><order><symbol>IBM</symbol><buyerID>cmueller"
+        + "</buyerID><price>140.34</price><volume>2000</volume></order></xsd:buyStocks>";
+
     @Test
     public void testConvertToXmlObject() throws Exception {
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");
@@ -35,6 +61,75 @@ public class XmlBeansConverterTest extends CamelTestSupport {
 
         log.info("Found: " + object);
         assertEquals("body as String", in.getBody(String.class), object.toString());
+    }
 
+    @Test
+    public void toXmlObjectFromFile() throws IOException, XmlException {
+        XmlObject result = XmlBeansConverter.toXmlObject(new File("src/test/data/buyStocks.xml"));
+        assertBuyStocks(result);
+    }
+
+    @Test
+    public void toXmlObjectFromReader() throws IOException, XmlException {
+        XmlObject result = XmlBeansConverter.toXmlObject(new FileReader("src/test/data/buyStocks.xml"));
+        assertBuyStocks(result);
+    }
+
+    @Test
+    public void toXmlObjectFromNode() throws IOException, XmlException, ParserConfigurationException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(new InputSource(new StringReader(PAYLOAD)));
+        
+        XmlObject result = XmlBeansConverter.toXmlObject(document);
+        assertBuyStocks(result);
+    }
+
+    @Test
+    public void toXmlObjectFromInputStream() throws IOException, XmlException {
+        XmlObject result = XmlBeansConverter.toXmlObject(new FileInputStream("src/test/data/buyStocks.xml"));
+        assertBuyStocks(result);
+    }
+
+    @Test
+    public void toXmlObjectFromString() throws IOException, XmlException {
+        XmlObject result = XmlBeansConverter.toXmlObject(PAYLOAD, new DefaultExchange(new DefaultCamelContext()));
+        assertBuyStocks(result);
+    }
+
+    @Test
+    public void toXmlObjectFromByteArray() throws IOException, XmlException {
+        XmlObject result = XmlBeansConverter.toXmlObject(PAYLOAD.getBytes());
+        assertBuyStocks(result);
+    }
+
+    @Test
+    public void toXmlObjectFromByteBuffer() throws IOException, XmlException {
+        XmlObject result = XmlBeansConverter.toXmlObject(ByteBuffer.wrap(PAYLOAD.getBytes()));
+        assertBuyStocks(result);
+    }
+
+    @Test
+    public void toXmlObjectFromXMLStreamReader() throws IOException, XmlException {
+        XmlObject result = XmlBeansConverter.toXmlObject(new XMLStreamReader(new ByteArrayInputStream(PAYLOAD.getBytes()), false));
+        assertBuyStocks(result);
+    }
+
+    @Test
+    public void toXmlObjectFromSource() throws IOException, XmlException, NoTypeConversionAvailableException {
+        XmlObject result = XmlBeansConverter.toXmlObject(new BytesSource(PAYLOAD.getBytes()), new DefaultExchange(new DefaultCamelContext()));
+        assertBuyStocks(result);
+    }
+
+    private void assertBuyStocks(Object result) {
+        BuyStocks buyStocks = ((BuyStocksDocument) result).getBuyStocks();
+        assertEquals(1, buyStocks.getOrderArray().length);
+        assertEquals("IBM", buyStocks.getOrderArray(0).getSymbol());
+        assertEquals("cmueller", buyStocks.getOrderArray(0).getBuyerID());
+        assertEquals(140.34, buyStocks.getOrderArray(0).getPrice(), 0);
+        assertEquals(2000, buyStocks.getOrderArray(0).getVolume());
     }
 }
