@@ -37,8 +37,6 @@ import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
 /**
  * A <a href="http://camel.apache.org/type-coverter.html">Type Converter</a>
  * of XMLBeans objects
- *
- * @version 
  */
 @Converter
 public final class XmlBeansConverter {
@@ -87,9 +85,8 @@ public final class XmlBeansConverter {
     }
 
     @Converter
-    public XmlObject toXmlObject(Source value, Exchange exchange) throws IOException, XmlException, NoTypeConversionAvailableException {
+    public static XmlObject toXmlObject(Source value, Exchange exchange) throws IOException, XmlException, NoTypeConversionAvailableException {
         Reader reader = exchange.getContext().getTypeConverter().mandatoryConvertTo(Reader.class, value);
         return XmlObject.Factory.parse(reader);
     }
-
 }
