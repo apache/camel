@@ -49,6 +49,11 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
      
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        // parent must be a try
+        if (!(getParent() instanceof TryDefinition)) {
+            throw new IllegalArgumentException("This doFinally should have a doTry as its parent on " + this);
+        }
+
         // do finally does mandate a child processor
         return this.createChildProcessor(routeContext, true);
     }

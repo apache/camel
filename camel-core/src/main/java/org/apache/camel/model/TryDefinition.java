@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -87,6 +86,11 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             for (CatchDefinition catchClause : catchClauses) {
                 catchProcessors.add(catchClause.createProcessor(routeContext));
             }
+        }
+
+        // must have either a catch or finally
+        if (finallyClause == null && catchClauses == null) {
+            throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
         }
 
         return new TryProcessor(tryProcessor, catchProcessors, finallyProcessor);

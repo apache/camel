@@ -95,6 +95,11 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
             throw new IllegalArgumentException("At least one Exception must be configured to catch");
         }
 
+        // parent must be a try
+        if (!(getParent() instanceof TryDefinition)) {
+            throw new IllegalArgumentException("This doCatch should have a doTry as its parent on " + this);
+        }
+
         // do catch does not mandate a child processor
         Processor childProcessor = this.createChildProcessor(routeContext, false);
 
