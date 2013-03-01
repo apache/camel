@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -756,6 +757,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
             LOG.trace("Starting recover check");
 
+            // copy the current in progress before doing scan
+            final Set<String> copyOfInProgress = new LinkedHashSet<String>(inProgressCompleteExchanges);
+
             Set<String> exchangeIds = recoverable.scan(camelContext);
             for (String exchangeId : exchangeIds) {
 
@@ -765,7 +769,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                     return;
                 }
 
-                boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
+                // consider in progress if it was in progress before we did the scan, or currently after we did the scan
+                // its safer to consider it in progress than risk duplicates due both in progress + recovered
+                boolean inProgress = copyOfInProgress.contains(exchangeId) || inProgressCompleteExchanges.contains(exchangeId);
                 if (inProgress) {
                     LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                 } else {
