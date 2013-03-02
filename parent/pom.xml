@@ -112,7 +112,7 @@
     <ehcache-bundle-version>2.6.3_1</ehcache-bundle-version>
     <!-- The 0.20 bundle is flawed, see SMX4-1372 -->
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
-    <elasticsearch-version>0.20.4</elasticsearch-version>
+    <elasticsearch-version>0.20.5</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
