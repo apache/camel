@@ -224,6 +224,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 lock.unlock();
             }
         }
+
+        // check for the special header to force completion of all groups (inclusive of the message)
+        boolean completeAllGroupsInclusive = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, false, boolean.class);
+        if (completeAllGroupsInclusive) {
+            forceCompletionOfAllGroups();
+        }
     }
 
     /**

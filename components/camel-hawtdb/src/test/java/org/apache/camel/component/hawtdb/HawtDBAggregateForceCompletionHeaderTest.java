@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -34,7 +37,7 @@ public class HawtDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testForceCompletionTrue() throws Exception {
+    public void testForceCompletionTrueExclusive() throws Exception {
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(0);
 
@@ -46,11 +49,36 @@ public class HawtDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(2);
-        getMockEndpoint("mock:aggregated").expectedBodiesReceived("test1test3", "test2test4");
+        getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
 
         //now send the signal message to trigger completion of all groups, message should NOT be aggregated
         template.sendBodyAndHeader("direct:start", "test5", Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testForceCompletionTrueInclusive() throws Exception {
+
+        getMockEndpoint("mock:aggregated").expectedMessageCount(0);
+
+        template.sendBodyAndHeader("direct:start", "test1", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test2", "id", "2");
+        template.sendBodyAndHeader("direct:start", "test3", "id", "1");
+        template.sendBodyAndHeader("direct:start", "test4", "id", "2");
+
+        assertMockEndpointsSatisfied();
+
+        getMockEndpoint("mock:aggregated").expectedMessageCount(3);
+        getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4", "test5");
+        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+
+        //now send a message to trigger completion of all groups, message should be aggregated
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("id", "3");
+        headers.put(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, true);
+        template.sendBodyAndHeaders("direct:start", "test5", headers);
 
         assertMockEndpointsSatisfied();
     }
