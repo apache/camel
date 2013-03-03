@@ -35,7 +35,8 @@ public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
             template.sendBody("direct:foo", "Hello World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+            DirectConsumerNotAvailableException cause = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
+            assertIsInstanceOf(CamelExchangeException.class, cause); // ensure backwards compatibility
             assertEquals("No consumers available on endpoint: Endpoint[direct://foo]. Exchange[Message: Hello World]", cause.getMessage());
             assertNotNull(cause.getExchange());
         }
