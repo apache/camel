@@ -225,7 +225,7 @@
     <junit-bundle-version>4.11_1</junit-bundle-version>
     <junit-version>4.11</junit-version>
     <jython-version>2.5.3</jython-version>
-    <karaf-version>2.3.0</karaf-version>
+    <karaf-version>2.3.1</karaf-version>
     <krati-version>0.4.8</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.6</leveldbjni-version>
