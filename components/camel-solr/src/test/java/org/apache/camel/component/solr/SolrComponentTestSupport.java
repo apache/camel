@@ -35,14 +35,19 @@ public class SolrComponentTestSupport extends CamelTestSupport {
     public static final int PORT = AvailablePortFinder.getNextAvailable(8899);
     public static final String SOLR_ROUTE_URI = "solr://localhost:" + PORT + "/solr";
 
-    protected static final String TEST_ID = "1234";
+    protected static final String TEST_ID = "test1";
+    protected static final String TEST_ID2 = "test2";
     protected static JettySolrRunner solrRunner;
     protected static HttpSolrServer solrServer;
 
     protected void solrInsertTestEntry() {
+        solrInsertTestEntry(TEST_ID);
+    }
+
+    protected void solrInsertTestEntry(String id) {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
-        headers.put("SolrField.id", TEST_ID);
+        headers.put("SolrField.id", id);
         template.sendBodyAndHeaders("direct:start", null, headers);
     }
 
@@ -83,6 +88,12 @@ public class SolrComponentTestSupport extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to(SOLR_ROUTE_URI);
+                from("direct:splitThenCommit")
+                    .split(body())
+                        .to(SOLR_ROUTE_URI)
+                    .end()
+                    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
+                    .to(SOLR_ROUTE_URI);
             }
         };
     }

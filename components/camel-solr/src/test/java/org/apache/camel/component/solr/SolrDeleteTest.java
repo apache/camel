@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.solr;
 
+import java.util.*;
 import org.junit.Test;
 
 public class SolrDeleteTest extends SolrComponentTestSupport {
@@ -37,18 +38,35 @@ public class SolrDeleteTest extends SolrComponentTestSupport {
     }
 
     @Test
+    public void testDeleteListOfIDs() throws Exception {
+
+        //insert, commit and verify
+        solrInsertTestEntry(TEST_ID);
+        solrInsertTestEntry(TEST_ID2);
+        solrCommit();
+        assertEquals("wrong number of entries found", 2, executeSolrQuery("id:test*").getResults().getNumFound());
+
+        //delete
+        template.sendBodyAndHeader("direct:splitThenCommit", Arrays.asList(TEST_ID, TEST_ID2), SolrConstants.OPERATION, SolrConstants.OPERATION_DELETE_BY_ID);
+
+        //verify
+        assertEquals("wrong number of entries found", 0, executeSolrQuery("id:test*").getResults().getNumFound());
+    }
+
+    @Test
     public void testDeleteByQuery() throws Exception {
 
         //insert, commit and verify
-        solrInsertTestEntry();
+        solrInsertTestEntry(TEST_ID);
+        solrInsertTestEntry(TEST_ID2);
         solrCommit();
-        assertEquals("wrong number of entries found", 1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
+        assertEquals("wrong number of entries found", 2, executeSolrQuery("id:test*").getResults().getNumFound());
 
         //delete
-        template.sendBodyAndHeader("direct:start", "id:" + TEST_ID, SolrConstants.OPERATION, SolrConstants.OPERATION_DELETE_BY_QUERY);
+        template.sendBodyAndHeader("direct:start", "id:test*", SolrConstants.OPERATION, SolrConstants.OPERATION_DELETE_BY_QUERY);
         solrCommit();
 
         //verify
-        assertEquals("wrong number of entries found", 0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
+        assertEquals("wrong number of entries found", 0, executeSolrQuery("id:test*").getResults().getNumFound());
     }
 }
