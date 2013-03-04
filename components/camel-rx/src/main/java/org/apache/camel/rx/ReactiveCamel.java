@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.rx.support.EndpointObservable;
 import org.apache.camel.rx.support.EndpointSubscription;
+import org.apache.camel.rx.support.ProducerObserver;
+import org.apache.camel.util.CamelContextHelper;
 
 import rx.Observable;
 import rx.Observer;
@@ -45,7 +47,7 @@ public class ReactiveCamel {
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
      */
     public Observable<Message> toObservable(String uri) {
-        return toObservable(camelContext.getEndpoint(uri));
+        return toObservable(endpoint(uri));
     }
 
     /**
@@ -54,7 +56,7 @@ public class ReactiveCamel {
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
      */
     public <T> Observable<T> toObservable(String uri, final Class<T> bodyType) {
-        return toObservable(camelContext.getEndpoint(uri), bodyType);
+        return toObservable(endpoint(uri), bodyType);
     }
 
 
@@ -87,8 +89,31 @@ public class ReactiveCamel {
         });
     }
 
+    /**
+     * Sends events on the given {@link Observable} to the given camel endpoint
+     */
+    public <T> void sendTo(Observable<T> observable, String endpointUri) {
+        sendTo(observable, endpoint(endpointUri));
+    }
+    /**
+     * Sends events on the given {@link Observable} to the given camel endpoint
+     */
+    public <T> void sendTo(Observable<T> observable, Endpoint endpoint) {
+        try {
+            ProducerObserver observer = new ProducerObserver(endpoint);
+            observable.subscribe(observer);
+        } catch (Exception e) {
+            throw new RuntimeCamelRxException(e);
+        }
+    }
+
+
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    public Endpoint endpoint(String endpointUri) {
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, endpointUri);
     }
 
 
@@ -106,4 +131,5 @@ public class ReactiveCamel {
         };
         return new EndpointObservable(endpoint, func);
     }
+
 }
