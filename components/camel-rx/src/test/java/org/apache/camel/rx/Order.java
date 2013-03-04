@@ -17,31 +17,26 @@
  */
 package org.apache.camel.rx;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Before;
-
 /**
  */
-public abstract class RxTestSupport {
-    protected CamelContext camelContext;
-    protected ReactiveCamel reactiveCamel;
-    protected ProducerTemplate producerTemplate;
+public class Order {
+    private String id;
+    private double amount;
 
-    @Before
-    public void init() throws Exception {
-        camelContext = new DefaultCamelContext();
-        reactiveCamel = new ReactiveCamel(camelContext);
-        producerTemplate = camelContext.createProducerTemplate();
-        camelContext.start();
-        producerTemplate.start();
+    public Order(String id, double amount) {
+        this.amount = amount;
+        this.id = id;
     }
 
-    @After
-    public void destroy() throws Exception {
-        producerTemplate.stop();
-        camelContext.stop();
+    public String toString() {
+        return "Order[id " + id + ", amount " + amount + "]";
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public String getId() {
+        return id;
     }
 }

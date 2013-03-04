@@ -49,6 +49,17 @@ public class ReactiveCamel {
     }
 
     /**
+     * Returns an {@link rx.Observable <T>} for the messages with their payload converted to the given type
+     * to allow the messages sent on the endpoint
+     * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
+     */
+    public <T> Observable<T> toObservable(String uri, final Class<T> bodyType) {
+        return toObservable(camelContext.getEndpoint(uri), bodyType);
+    }
+
+
+
+    /**
      * Returns an {@link rx.Observable < org.apache.camel.Message >} to allow the messages sent on the endpoint
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
      */
@@ -57,6 +68,21 @@ public class ReactiveCamel {
             @Override
             public Message call(Exchange exchange) {
                 return exchange.getIn();
+            }
+        });
+    }
+
+    /**
+     * Returns an {@link rx.Observable <T>} for the messages with their payload converted to the given type
+     * to allow the messages sent on the endpoint
+     * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
+     */
+    public <T> Observable<T> toObservable(Endpoint endpoint, final Class<T> bodyType) {
+        return createEndpointObservable(endpoint, new Func1<Exchange, T>() {
+            @Override
+            public T call(Exchange exchange) {
+                Message in = exchange.getIn();
+                return in.getBody(bodyType);
             }
         });
     }
