@@ -96,7 +96,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
-      <artifactId>org.apache.aries.blueprint</artifactId>
+      <artifactId>org.apache.aries.blueprint.core</artifactId>
+      <version>${aries-blueprint-core-version}</version>
     </dependency>
     
     <!-- for testing -->

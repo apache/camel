@@ -58,25 +58,26 @@
 
         <!-- the ordering of the dependencies can matter as we load the dependencies from the classpath
              with pojosr, and you may get a weird error if wrong order -->
+        <!-- yes this is correct to use aries.blueprint as dependency (as it has all the pieces needed by pojosr) and use the core-version -->     
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint</artifactId>
-          <version>${aries-blueprint-version}</version>
+          <version>${aries-blueprint-core-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.aries</groupId>
             <artifactId>org.apache.aries.util</artifactId>
-            <version>${aries-blueprint-version}</version>
+            <version>${aries-util-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.aries.proxy</groupId>
             <artifactId>org.apache.aries.proxy.impl</artifactId>
-            <version>${aries-blueprint-version}</version>
+            <version>${aries-blueprint-proxy-impl-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.aries.proxy</groupId>
             <artifactId>org.apache.aries.proxy.api</artifactId>
-            <version>${aries-blueprint-version}</version>
+            <version>${aries-blueprint-proxy-version}</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.pojosr</groupId>
