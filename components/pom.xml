@@ -138,8 +138,9 @@
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
-    <module>camel-ruby</module>
     <module>camel-rss</module>
+    <module>camel-ruby</module>
+    <module>camel-rx</module>
     <module>camel-saxon</module>
     <module>camel-script</module>
     <module>camel-servlet</module>
