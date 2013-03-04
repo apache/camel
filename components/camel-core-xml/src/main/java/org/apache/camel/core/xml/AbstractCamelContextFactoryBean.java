@@ -179,7 +179,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().addInterceptStrategy(delayer);
         }
         InflightRepository inflightRepository = getBeanForType(InflightRepository.class);
-        if (delayer != null) {
+        if (inflightRepository != null) {
             LOG.info("Using custom InflightRepository: " + inflightRepository);
             getContext().setInflightRepository(inflightRepository);
         }
