@@ -23,7 +23,8 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-import org.codehaus.jackson.map.ObjectMapper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
