@@ -31,7 +31,7 @@ import rx.util.functions.Func1;
 
 /**
  * Provides the <a href="https://rx.codeplex.com/">Reactive Extensions</a> support for
- * Camel via the <a href="https://github.com/Netflix/RxJava#readme">RxJava library</a>
+ * Camel via the <a href="https://github.com/Netflix/RxJava/wiki">RxJava library</a>
  */
 public class ReactiveCamel {
     private final CamelContext camelContext;
