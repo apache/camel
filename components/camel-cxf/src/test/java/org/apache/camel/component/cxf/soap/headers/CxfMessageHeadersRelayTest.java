@@ -719,8 +719,13 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
     public static class InsertResponseOutHeaderProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
+            // You should be able to get the header if exchange is routed from camel-cxf endpoint
             List<SoapHeader> soapHeaders = CastUtils.cast((List<?>)exchange.getIn().getHeader(Header.HEADER_LIST));
-
+            if (soapHeaders == null) {
+                // we just create a new soap headers in case the header is null
+                soapHeaders = new ArrayList<SoapHeader>();
+            }
+            
             // Insert a new header
             String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><outofbandHeader "
                 + "xmlns=\"http://cxf.apache.org/outofband/Header\" hdrAttribute=\"testHdrAttribute\" "
