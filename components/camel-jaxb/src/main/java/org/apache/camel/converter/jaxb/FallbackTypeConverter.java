@@ -162,8 +162,13 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                 // we cannot filter the XMLStreamReader if necessary
                 XMLStreamReader xmlReader = parentTypeConverter.convertTo(XMLStreamReader.class, exchange, value);
                 if (xmlReader != null) {
-                    Object unmarshalled = unmarshal(unmarshaller, exchange, xmlReader);
-                    return type.cast(unmarshalled);
+                    try {
+                        Object unmarshalled = unmarshal(unmarshaller, exchange, xmlReader);
+                        return type.cast(unmarshalled);
+                    } catch (Exception ex) {
+                        // There is some issue on the StaxStreamReader to CXFPayload message body with different namespaces
+                        LOG.info("Cannot use StaxStreamReader to unmarshal the message, due to {}", ex);
+                    }
                 }
             }
             InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, exchange, value);
