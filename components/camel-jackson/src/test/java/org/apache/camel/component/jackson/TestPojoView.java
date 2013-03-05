@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jackson;
 
-import org.codehaus.jackson.map.annotate.JsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 
 public class TestPojoView {
 
