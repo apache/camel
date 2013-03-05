@@ -32,7 +32,6 @@ import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.future.OpenFuture;
 import org.apache.sshd.common.KeyPairProvider;
-import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,10 +98,10 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         ClientSession session = connectFuture.getSession();
 
         KeyPairProvider keyPairProvider;
-        final String certFilename = getCertFilename();
-        if (certFilename != null) {
-            log.debug("Attempting to authenticate using FileKey '{}'...", certFilename);
-            keyPairProvider = new FileKeyPairProvider(new String[]{certFilename});
+        final String certResource = getCertResource();
+        if (certResource != null) {
+            log.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
+            keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, getCamelContext().getClassResolver());
         } else {
             keyPairProvider = getKeyPairProvider();
         }
@@ -137,10 +136,10 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         openFuture.await(getTimeout());
         if (openFuture.isOpened()) {
             channel.waitFor(ClientChannel.CLOSED, 0);
-            result = new SshResult(command, channel.getExitStatus(), 
-                                       new ByteArrayInputStream(out.toByteArray()),
-                                       new ByteArrayInputStream(err.toByteArray()));
-            
+            result = new SshResult(command, channel.getExitStatus(),
+                    new ByteArrayInputStream(out.toByteArray()),
+                    new ByteArrayInputStream(err.toByteArray()));
+
         }
 
         return result;
@@ -235,12 +234,26 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public void setTimeout(long timeout) {
         getConfiguration().setTimeout(timeout);
     }
-    
+
+    /**
+     * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
+     */
     public String getCertFilename() {
         return getConfiguration().getCertFilename();
     }
-    
+
+    /**
+     * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
+     */
     public void setCertFilename(String certFilename) {
         getConfiguration().setCertFilename(certFilename);
+    }
+
+    public String getCertResource() {
+        return getConfiguration().getCertResource();
+    }
+
+    public void setCertResource(String certResource) {
+        getConfiguration().setCertResource(certResource);
     }
 }

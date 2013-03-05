@@ -32,7 +32,7 @@ public class SshConfiguration implements Cloneable {
     private String pollCommand;
     private KeyPairProvider keyPairProvider;
     private String keyType = KeyPairProvider.SSH_RSA;
-    private String certFilename;
+    private String certResource;
     private long timeout = 30000;
 
     public SshConfiguration() {
@@ -187,18 +187,32 @@ public class SshConfiguration implements Cloneable {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
-    
+
+    /**
+     * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
+     */
     public String getCertFilename() {
-        return this.certFilename;
+        return ((certResource != null) && certResource.startsWith("file:")) ? certResource.substring(5) : null;
     }
 
     /**
-     * Sets the filename of the certificate to use for Authentication.
-     * Will use FileKeyPairProvider to resolve file based certificate, and depends on keyType setting.
-     *
-     * @param certFilename
+     * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
     public void setCertFilename(String certFilename) {
-        this.certFilename = certFilename;
+        this.certResource = "file:" + certFilename;
+    }
+
+    public String getCertResource() {
+        return certResource;
+    }
+
+    /**
+     * Sets the resource path of the certificate to use for Authentication.
+     * Will use {@link ResourceHelperKeyPairProvider} to resolve file based certificate, and depends on keyType setting.
+     *
+     * @param certResource String file, classpath, or http url for the certificate
+     */
+    public void setCertResource(String certResource) {
+        this.certResource = certResource;
     }
 }

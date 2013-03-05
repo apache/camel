@@ -73,7 +73,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
                         .to("mock:rsa");
 
                 from("direct:ssh-rsaFile")
-                        .to("ssh://smx@localhost:" + port + "?certFilename=src/test/resources/hostkey.pem")
+                        .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/hostkey.pem")
                         .to("mock:rsaFile");
             }
         };

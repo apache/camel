@@ -119,11 +119,25 @@ public class SshComponent extends DefaultComponent {
         getConfiguration().setTimeout(timeout);
     }
 
+    /**
+     * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
+     */
     public String getCertFilename() {
         return getConfiguration().getCertFilename();
     }
 
+    /**
+     * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
+     */
     public void setCertFilename(String certFilename) {
         getConfiguration().setCertFilename(certFilename);
+    }
+
+    public String getCertResource() {
+        return getConfiguration().getCertResource();
+    }
+
+    public void setCertResource(String certResource) {
+        getConfiguration().setCertResource(certResource);
     }
 }

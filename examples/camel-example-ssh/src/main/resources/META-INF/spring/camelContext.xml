@@ -17,32 +17,31 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!--
-        Note: you need to XMl or URL encode newlines
-              XML encoding = &#10;
-              URL encoding = %0A
-    -->
-    <camelContext id="camel-example-ssh" xmlns="http://camel.apache.org/schema/spring">
+  <!--
+      Note: you need to XMl or URL encode newlines
+            XML encoding = &#10;
+            URL encoding = %0A
+  -->
+  <camelContext id="camel-example-ssh" xmlns="http://camel.apache.org/schema/spring">
+    <route id="camel-example-ssh-consumer">
+      <from uri="ssh://karaf:karaf@localhost:8101?useFixedDelay=true&amp;delay=5000&amp;pollCommand=features:list%0A"/>
+      <log message="${body}"/>
+    </route>
 
-        <route id="camel-example-ssh-consumer">
-            <from uri="ssh://karaf:karaf@localhost:8101?useFixedDelay=true&amp;delay=5000&amp;pollCommand=features:list%0A"/>
-            <to uri="log:ExampleRouter?showAll=true"/>
-        </route>
-
-        <route id="camel-example-ssh-producer">
-            <from uri="direct:exampleSshProducer"/>
-            <setBody>
-                <constant>features:list&#10;</constant>
-            </setBody>
-            <to uri="ssh://karaf:karaf@localhost:8101"/>
-            <to uri="log:ExampleRouter?showAll=true"/>
-        </route>
-    </camelContext>
+    <route id="camel-example-ssh-producer">
+      <from uri="direct:exampleSshProducer"/>
+      <setBody>
+        <constant>features:list&#10;</constant>
+      </setBody>
+      <to uri="ssh://karaf:karaf@localhost:8101"/>
+      <log message="${body}"/>
+    </route>
+  </camelContext>
 
 </beans>

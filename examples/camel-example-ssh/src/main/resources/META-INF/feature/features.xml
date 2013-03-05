@@ -15,12 +15,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
+<features name="camel-example-ssh-${project.version}"
+          xmlns="http://karaf.apache.org/xmlns/features/v1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.0.0 http://karaf.apache.org/xmlns/features/v1.0.0">
+  <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
 
-    <feature name='camel-example-ssh' version='${project.version}'>
-        <feature version="${project.version}">camel-ssh</feature>
-        <bundle>mvn:org.apache.camel/camel-example-ssh/${project.version}</bundle>
-    </feature>
-
+  <feature name="camel-example-ssh" version="${project.version}">
+    <feature version="${project.version}">camel-ssh</feature>
+    <feature version="${project.version}">camel-spring</feature>
+    <bundle>mvn:org.apache.camel/camel-example-ssh/${project.version}</bundle>
+  </feature>
 </features>
