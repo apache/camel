@@ -215,7 +215,6 @@ public class IOConverterTest extends ContextTestSupport {
     
     public void testInputStreamToString() throws Exception {
         String data = "46\u00B037'00\"N\"";
-        System.out.println(ObjectHelper.getDefaultCharacterSet());
         ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes("UTF-8"));
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
