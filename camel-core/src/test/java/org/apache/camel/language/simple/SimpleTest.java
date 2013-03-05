@@ -124,6 +124,9 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("in.headers.foo", "abc");
         assertExpression("header.foo", "abc");
         assertExpression("headers.foo", "abc");
+        assertExpression("routeId", exchange.getFromRouteId());
+        exchange.setFromRouteId("myRouteId");
+        assertExpression("routeId", "myRouteId");
     }
     
     public void testTrimSimpleExpressions() throws Exception {
