@@ -1394,6 +1394,22 @@ public final class ExpressionBuilder {
         };
     }
 
+    /**
+     * Returns an Expression for the route id
+     */
+    public static Expression routeIdExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getFromRouteId();
+            }
+
+            @Override
+            public String toString() {
+                return "routeId";
+            }
+        };
+    }
+
     public static Expression dateExpression(final String command, final String pattern) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {

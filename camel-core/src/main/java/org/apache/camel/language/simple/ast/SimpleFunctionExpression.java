@@ -315,6 +315,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.threadNameExpression();
         } else if (ObjectHelper.equal(expression, "camelId")) {
             return ExpressionBuilder.camelContextNameExpression();
+        } else if (ObjectHelper.equal(expression, "routeId")) {
+            return ExpressionBuilder.routeIdExpression();
         }
 
         return null;
