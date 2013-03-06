@@ -426,7 +426,8 @@
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
                   <exclude>**/FtpConsumeTest.*</exclude>
-                  <exclude>**/BeanIODataFormatSimpleTest.*</exclude> <!-- CAMEL-5111 -->
+                  <exclude>**/BlobStoreRouteTest.*</exclude> <!-- CAMEL-6134 -->
+                  <exclude>**/BlobStoreBlueprintRouteTest.*</exclude> <!-- CAMEL-6134 -->
               </excludes>
               <systemPropertyVariables>
                   <karafVersion>${karaf-version}</karafVersion>
