@@ -51,16 +51,12 @@ public class CacheRoutesManagementTest extends OSGiIntegrationTestSupport {
 
     @Test
     public void testCache() throws Exception {
-        // Is cache manager initialized before doing any routing?
-        CacheManager cacheManager = cmfRef.getCacheManager();
-        assertNull("CacheManager initialized", cacheManager);
 
         // Now do some routes to let endpoints be initialized
         template.sendBody("direct:add1", "Hello World");
         template.sendBody("direct:add2", "Hello World");
 
-        //Now should not be null
-        cacheManager = cmfRef.getCacheManager();
+        CacheManager cacheManager = cmfRef.getCacheManager();
         assertNotNull("CacheManager initialized", cacheManager);
 
         Cache cache = cmfRef.getCacheManager().getCache("foo");
