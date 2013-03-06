@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
@@ -72,8 +73,29 @@ public class CxfProducerRouterTest extends CamelTestSupport {
                 from("direct:EndpointA").to(getSimpleEndpointUri());
                 from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=MESSAGE");
                 from("direct:EndpointC").to(getSimpleEndpointUri() + "&dataFormat=PAYLOAD");
+                // This route is for checking camel-cxf producer throwing exception
+                from("direct:start")
+                    .doTry()
+                         .to("cxf://http://localhost:10000/false?serviceClass=org.apache.camel.component.cxf.HelloService")
+                    .doCatch(org.apache.cxf.interceptor.Fault.class)
+                         .to("mock:error");
             }
         };
+    }
+    
+    @Test
+    public void testCannotSendRequest() throws Exception {
+        MockEndpoint error = getMockEndpoint("mock:error");
+        error.expectedMessageCount(1);
+    
+        Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
+        final List<String> params = new ArrayList<String>();
+        // Prepare the request message for the camel-cxf procedure
+        params.add(TEST_MESSAGE);
+        senderExchange.getIn().setBody(params);
+        senderExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
+        template.send("direct:start", senderExchange);
+        error.assertIsSatisfied();
     }
     
     @Test
