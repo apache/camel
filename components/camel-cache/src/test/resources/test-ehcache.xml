@@ -19,6 +19,7 @@
          xsi:noNamespaceSchemaLocation="ehcache.xsd" >
 
   <!-- a very simple ehachace configuration only used for unit testing -->
+    <diskStore path="java.io.tmpdir"/>
     <defaultCache
             maxElementsInMemory="10000"
             eternal="false"
