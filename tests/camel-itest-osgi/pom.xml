@@ -426,6 +426,7 @@
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
                   <exclude>**/FtpConsumeTest.*</exclude>
+                  <exclude>**/CxfRsBlueprintRouterTest.*</exclude>
                   <exclude>**/BlobStoreRouteTest.*</exclude> <!-- CAMEL-6134 -->
                   <exclude>**/BlobStoreBlueprintRouteTest.*</exclude> <!-- CAMEL-6134 -->
               </excludes>
@@ -519,7 +520,10 @@
                             <exclude>**/OSGiIntegrationSpringTest.*</exclude>
                             <exclude>**/JaxbFallbackConverterTest.*</exclude>
                             <exclude>**/FtpConsumeTest.*</exclude>
-                        </excludes>               
+                            <exclude>**/CxfRsBlueprintRouterTest.*</exclude>
+                            <exclude>**/BlobStoreRouteTest.*</exclude> <!-- CAMEL-6134 -->
+                            <exclude>**/BlobStoreBlueprintRouteTest.*</exclude> <!-- CAMEL-6134 -->
+                        </excludes>
                         <systemPropertyVariables>
                             <karafVersion>${karaf-version}</karafVersion>
                         </systemPropertyVariables>
