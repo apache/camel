@@ -36,7 +36,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.start();
             fail();
         } catch (FailedToCreateRouteException e) {
-            assertTrue(e.getMessage().startsWith("Failed to create route route1: Route[[From[direct:start?foo=bar]] -> [To[mock:result]]] because of"));
+            assertTrue(e.getMessage().startsWith("Failed to create route route1: Route(route1)[[From[direct:start?foo=bar]] -> [To[mock:resul... because of"));
         }
     }
 
@@ -52,7 +52,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             fail();
         } catch (FailedToCreateRouteException e) {
             assertTrue(e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"
-                    + " Route[[From[direct:start]] -> [To[direct:result?foo=bar]]] because of"));
+                    + " Route(route2)[[From[direct:start]] -> [To[direct:result?foo=... because of"));
         }
     }
 
@@ -70,7 +70,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             assertTrue(e.getMessage().startsWith("Failed to create route route3 at: >>> Bean[ref:] <<< in route:"
-                    + " Route[[From[direct:start]] -> [To[mock:foo], Bean[ref:]]] because of"));
+                    + " Route(route3)[[From[direct:start]] -> [To[mock:foo], Bean[re... because of"));
         }
     }
 

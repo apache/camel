@@ -117,7 +117,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     @Override
     public String toString() {
-        return "Route[" + inputs + " -> " + outputs + "]";
+        if (getId() != null) {
+            return "Route(" + getId() + ")[" + inputs + " -> " + outputs + "]";
+        } else {
+            return "Route[" + inputs + " -> " + outputs + "]";
+        }
     }
 
     @Override
