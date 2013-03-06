@@ -17,35 +17,59 @@
  */
 package org.apache.camel.rx;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Message;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import rx.Observable;
 import rx.util.functions.Action1;
+import rx.util.functions.Func1;
 
-/**
- */
-public class ObservableMessageTest extends RxTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ObservableMessageTest.class);
+public class ObservableMessageTest extends CamelTestSupport {
+    protected MyObservableMessage observableMessage = new MyObservableMessage();
+
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
+
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
 
     @Test
-    public void testConsume() throws Exception {
-        final MockEndpoint mockEndpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
-        mockEndpoint.expectedMessageCount(4);
+    public void testUseObservableInRoute() throws Exception {
+        resultEndpoint.expectedBodiesReceived("Hello James", "Hello Claus");
 
-        Observable<Message> observable = reactiveCamel.toObservable("timer://foo?fixedRate=true&period=100");
-        observable.take(4).subscribe(new Action1<Message>() {
-            @Override
-            public void call(Message message) {
-                String body = "Processing message headers " + message.getHeaders();
-                LOG.info(body);
-                producerTemplate.sendBody(mockEndpoint, body);
+        template.sendBody("James");
+        template.sendBody("Claus");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public class MyObservableMessage extends ObservableMessage {
+        protected void configure(Observable<Message> observable) {
+            // lets process the messages using the RX API
+            observable.map(new Func1<Message, String>() {
+                public String call(Message message) {
+                    return "Hello " + message.getBody(String.class);
+                }
+            }).subscribe(new Action1<String>() {
+                public void call(String body) {
+                    template.sendBody(resultEndpoint, body);
+                }
+            });
+        }
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start").process(observableMessage);
             }
-        });
-
-        mockEndpoint.assertIsSatisfied();
+        };
     }
 }

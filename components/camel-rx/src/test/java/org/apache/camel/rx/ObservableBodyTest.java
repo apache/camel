@@ -17,55 +17,62 @@
  */
 package org.apache.camel.rx;
 
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import rx.Observable;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 
-/**
- */
-public class ObservableBodyTest extends RxTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ObservableBodyTest.class);
+public class ObservableBodyTest extends CamelTestSupport {
+    protected MyObservableBody observableBody = new MyObservableBody();
+
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
+
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
 
     @Test
-    public void testConsume() throws Exception {
-        final MockEndpoint mockEndpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
-        mockEndpoint.expectedBodiesReceived("b", "d");
+    public void testUseObservableInRoute() throws Exception {
+        resultEndpoint.expectedBodiesReceived("Hello James", "Hello Claus");
 
-        // lets consume, filter and map events
-        Observable<Order> observable = reactiveCamel.toObservable("seda:orders", Order.class);
-        Observable<String> largeOrderIds = observable.filter(new Func1<Order, Boolean>() {
-            public Boolean call(Order order) {
-                return order.getAmount() > 100.0;
-            }
-        }).map(new Func1<Order, String>() {
-            public String call(Order order) {
-                return order.getId();
-            }
-        });
+        template.sendBody("James");
+        template.sendBody("Claus");
 
+        assertMockEndpointsSatisfied();
+    }
 
-        // lets route the largeOrderIds to the mock endpoint for testing
-        largeOrderIds.take(2).subscribe(new Action1<String>() {
-            @Override
-            public void call(String body) {
-                LOG.info("Processing  " + body);
-                producerTemplate.sendBody(mockEndpoint, body);
-            }
-        });
-
-
-        // now lets send some orders in
-        Order[] orders = {new Order("a", 49.95), new Order("b", 125.50), new Order("c", 22.95),
-                new Order("d", 259.95), new Order("e", 1.25)};
-        for (Order order : orders) {
-            producerTemplate.sendBody("seda:orders", order);
+    public class MyObservableBody extends ObservableBody<String> {
+        public MyObservableBody() {
+            super(String.class);
         }
 
-        mockEndpoint.assertIsSatisfied();
+        protected void configure(Observable<String> observable) {
+            // lets process the messages using the RX API
+            observable.map(new Func1<String, String>() {
+                public String call(String body) {
+                    return "Hello " + body;
+                }
+            }).subscribe(new Action1<String>() {
+                public void call(String body) {
+                    template.sendBody(resultEndpoint, body);
+                }
+            });
+        }
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start").process(observableBody);
+            }
+        };
     }
 }

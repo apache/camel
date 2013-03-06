@@ -40,13 +40,7 @@ public class EndpointSubscription<T> implements Subscription {
         this.observer = observer;
 
         // lets create the consumer
-        Processor processor = new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                T value = func.call(exchange);
-                observer.onNext(value);
-            }
-        };
+        Processor processor = new ProcessorToObserver<T>(func, observer);
         try {
             this.consumer = endpoint.createConsumer(processor);
             this.consumer.start();
@@ -81,4 +75,5 @@ public class EndpointSubscription<T> implements Subscription {
     public Observer<T> getObserver() {
         return observer;
     }
+
 }

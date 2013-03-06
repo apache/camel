@@ -23,7 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.rx.support.EndpointObservable;
 import org.apache.camel.rx.support.EndpointSubscription;
-import org.apache.camel.rx.support.ProducerObserver;
+import org.apache.camel.rx.support.ExchangeToBodyFunc1;
+import org.apache.camel.rx.support.ExchangeToMessageFunc1;
+import org.apache.camel.rx.support.ObserverSender;
 import org.apache.camel.util.CamelContextHelper;
 
 import rx.Observable;
@@ -66,12 +68,7 @@ public class ReactiveCamel {
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
      */
     public Observable<Message> toObservable(Endpoint endpoint) {
-        return createEndpointObservable(endpoint, new Func1<Exchange, Message>() {
-            @Override
-            public Message call(Exchange exchange) {
-                return exchange.getIn();
-            }
-        });
+        return createEndpointObservable(endpoint, ExchangeToMessageFunc1.getInstance());
     }
 
     /**
@@ -80,13 +77,7 @@ public class ReactiveCamel {
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
      */
     public <T> Observable<T> toObservable(Endpoint endpoint, final Class<T> bodyType) {
-        return createEndpointObservable(endpoint, new Func1<Exchange, T>() {
-            @Override
-            public T call(Exchange exchange) {
-                Message in = exchange.getIn();
-                return in.getBody(bodyType);
-            }
-        });
+        return createEndpointObservable(endpoint, new ExchangeToBodyFunc1<T>(bodyType));
     }
 
     /**
@@ -100,7 +91,7 @@ public class ReactiveCamel {
      */
     public <T> void sendTo(Observable<T> observable, Endpoint endpoint) {
         try {
-            ProducerObserver observer = new ProducerObserver(endpoint);
+            ObserverSender observer = new ObserverSender(endpoint);
             observable.subscribe(observer);
         } catch (Exception e) {
             throw new RuntimeCamelRxException(e);

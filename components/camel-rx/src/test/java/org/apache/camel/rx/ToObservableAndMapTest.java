@@ -29,8 +29,8 @@ import rx.util.functions.Func1;
 
 /**
  */
-public class ObservableMessageMapTest extends RxTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ObservableMessageMapTest.class);
+public class ToObservableAndMapTest extends RxTestSupport {
+    private static final transient Logger LOG = LoggerFactory.getLogger(ToObservableAndMapTest.class);
 
     @Test
     public void testConsume() throws Exception {

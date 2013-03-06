@@ -26,12 +26,13 @@ import org.apache.camel.rx.RuntimeCamelRxException;
 import rx.Observer;
 
 /**
+ * An {@link Observer} which sends events to a given {@link Endpoint}
  */
-public class ProducerObserver implements Observer {
+public class ObserverSender implements Observer {
     private Endpoint endpoint;
     private Producer producer;
 
-    public ProducerObserver(Endpoint endpoint) throws Exception {
+    public ObserverSender(Endpoint endpoint) throws Exception {
         this.endpoint = endpoint;
         this.producer = endpoint.createProducer();
         this.producer.start();
