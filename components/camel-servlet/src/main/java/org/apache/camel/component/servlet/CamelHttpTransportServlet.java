@@ -105,7 +105,12 @@ public class CamelHttpTransportServlet extends CamelServlet {
 
     @Override
     public String toString() {
-        return "CamelHttpTransportServlet[name=" + getServletName() + ", contextPath=" + getServletConfig().getServletContext().getContextPath() + "]";
+        String name = getServletName();
+        if (name != null) {
+            return "CamelHttpTransportServlet[name=" + getServletName() + "]";
+        } else {
+            return "CamelHttpTransportServlet";
+        }
     }
 }
 

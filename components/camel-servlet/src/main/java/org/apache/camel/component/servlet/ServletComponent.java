@@ -37,14 +37,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 public class ServletComponent extends HttpComponent {
 
     private String servletName = "CamelServlet";
-
-    public String getServletName() {
-        return servletName;
-    }
-
-    public void setServletName(String servletName) {
-        this.servletName = servletName;
-    }
+    private HttpRegistry httpRegistry;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -118,7 +111,10 @@ public class ServletComponent extends HttpComponent {
     public void connect(HttpConsumer consumer) throws Exception {
         ServletConsumer sc = (ServletConsumer) consumer;
         String name = sc.getEndpoint().getServletName();
-        HttpRegistry registry = DefaultHttpRegistry.getHttpRegistry(name);
+        HttpRegistry registry = httpRegistry;
+        if (registry == null) {
+            registry = DefaultHttpRegistry.getHttpRegistry(name);
+        }
         registry.register(consumer);
     }
 
@@ -126,8 +122,28 @@ public class ServletComponent extends HttpComponent {
     public void disconnect(HttpConsumer consumer) throws Exception {
         ServletConsumer sc = (ServletConsumer) consumer;
         String name = sc.getEndpoint().getServletName();
-        HttpRegistry registry = DefaultHttpRegistry.getHttpRegistry(name);
+        HttpRegistry registry = httpRegistry;
+        if (registry == null) {
+            registry = DefaultHttpRegistry.getHttpRegistry(name);
+        }
         registry.unregister(consumer);
     }
+
+    public String getServletName() {
+        return servletName;
+    }
+
+    public void setServletName(String servletName) {
+        this.servletName = servletName;
+    }
+
+    public HttpRegistry getHttpRegistry() {
+        return httpRegistry;
+    }
+
+    public void setHttpRegistry(HttpRegistry httpRegistry) {
+        this.httpRegistry = httpRegistry;
+    }
+
 
 }
