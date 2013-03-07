@@ -41,6 +41,7 @@ public class XmlRpcAsyncCallback implements AsyncCallback {
     @Override
     public void handleResult(XmlRpcRequest pRequest, Object pResult) {
         LOG.trace("Get the response {}", pResult);
+        camelExchange.getOut().setHeaders(camelExchange.getIn().getHeaders());
         camelExchange.getOut().setBody(pResult);
         camelAsyncCallback.done(false);
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xmlrpc;
 
+import java.util.HashMap;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -55,6 +57,33 @@ public class XmlRpcComponentTest extends CamelTestSupport {
     public void testXmlRpcFaultMessage() throws Exception {
         invokeServiceFaultResponse("xmlrpc:http://localhost:" + port + "/xmlrpc/fault");
         invokeServiceFaultResponse("xmlrpc:http://localhost:" + port + "/xmlrpc/fault?synchronous=true");
+    }
+    
+    @Test
+    public void verifyHeadersPreservedSync() throws Exception {
+        verifyHeadersPreserved("direct:sync");
+    }
+
+    @Test
+    public void verifyHeadersPreservedAsync() throws Exception {
+        verifyHeadersPreserved("direct:async");
+    }
+
+    @SuppressWarnings("serial")
+    private void verifyHeadersPreserved(String uri) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.reset();
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("UserHeader", "test-header-value");
+        template.requestBodyAndHeaders(uri, new Object[] {"me"},
+                new HashMap<String, Object>() {
+                    {
+                        put(XmlRpcConstants.METHOD_NAME, "hello");
+                        put("UserHeader", "test-header-value");
+                    }
+                });
+
+        assertMockEndpointsSatisfied();
     }
     
     private void invokeService(String uri) throws Exception {
