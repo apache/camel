@@ -42,7 +42,7 @@ public class SpringRouteNoOutputTest extends SpringTestSupport {
             fail("Should have thrown exception");
         } catch (Exception e) {
             IllegalArgumentException iae = (IllegalArgumentException) e.getCause().getCause();
-            assertEquals("Route myRoute has no outputs: Route[[From[direct:start]] -> []]", iae.getMessage());
+            assertEquals("Route myRoute has no outputs: Route(myRoute)[[From[direct:start]] -> []]", iae.getMessage());
             return null;
         }
 

@@ -42,7 +42,7 @@ public class SpringRouteNoFromTest extends SpringTestSupport {
             fail("Should have thrown exception");
         } catch (Exception e) {
             IllegalArgumentException iae = (IllegalArgumentException) e.getCause().getCause();
-            assertEquals("Route myRoute has no inputs: Route[[] -> [To[mock:result]]]", iae.getMessage());
+            assertEquals("Route myRoute has no inputs: Route(myRoute)[[] -> [To[mock:result]]]", iae.getMessage());
             return null;
         }
 
