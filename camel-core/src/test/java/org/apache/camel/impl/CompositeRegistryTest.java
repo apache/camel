@@ -38,7 +38,7 @@ public class CompositeRegistryTest {
     
     @Test
     public void testGetNameAndType() throws Exception {
-        Object result = registry.lookupByNameAndType("name", String.class);
+        Object result = registry.lookup("name", String.class);
         assertNotNull(result);
         assertEquals("Get a wrong result", result, "12");
         
