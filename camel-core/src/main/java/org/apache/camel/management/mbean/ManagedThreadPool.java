@@ -143,4 +143,13 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
         threadPool.purge();
     }
 
+    public int getTaskQueueRemainingCapacity() {
+        if (threadPool.getQueue() != null) {
+            return threadPool.getQueue().remainingCapacity();
+        } else {
+            // no queue found, so no capacity
+            return 0;
+        }
+    }
+
 }

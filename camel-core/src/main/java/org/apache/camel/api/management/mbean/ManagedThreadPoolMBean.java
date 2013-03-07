@@ -78,4 +78,7 @@ public interface ManagedThreadPoolMBean {
     @ManagedOperation(description = "Purges the pool")
     void purge();
 
+    @ManagedOperation(description = "Returns the number of additional elements that the Task queue can"
+            + " ideally (in the absence of memory or resource constraints) accept")
+    int getTaskQueueRemainingCapacity();
 }

@@ -67,6 +67,9 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
 
         Boolean empty = (Boolean) mbeanServer.getAttribute(on, "TaskQueueEmpty");
         assertEquals(true, empty.booleanValue());
+
+        int remainingCapacity = (Integer) mbeanServer.invoke(on, "getTaskQueueRemainingCapacity", null, null);
+        assertEquals("remainingCapacity", 200, remainingCapacity);
     }
 
     @Override
@@ -74,7 +77,7 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").threads(15, 30).to("mock:result");
+                from("direct:start").threads(15, 30).maxQueueSize(200).to("mock:result");
             }
         };
     }
