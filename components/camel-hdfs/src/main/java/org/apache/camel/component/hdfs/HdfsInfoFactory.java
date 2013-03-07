@@ -17,35 +17,30 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
-import java.net.URI;
+import javax.security.auth.login.Configuration;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public final class HdfsInfo {
+public final class HdfsInfoFactory {
 
-    private Configuration conf;
-    private FileSystem fileSystem;
-    private Path path;
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsInputStream.class);
 
-    HdfsInfo(String hdfsPath) throws IOException {
-        this.conf = new Configuration();
-        // this will connect to the hadoop hdfs file system, and in case of no connection
-        // then the hardcoded timeout in hadoop is 45 x 20 sec = 15 minutes
-        this.fileSystem = FileSystem.get(URI.create(hdfsPath), conf);
-        this.path = new Path(hdfsPath);
+    private HdfsInfoFactory() {
     }
 
-    public Configuration getConf() {
-        return conf;
+    public static HdfsInfo newHdfsInfo(String hdfsPath) throws IOException {
+        // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
+        Configuration auth = Configuration.getConfiguration();
+        LOG.trace("Existing JAAS Configuration {}", auth);
+        try {
+            return new HdfsInfo(hdfsPath);
+        } finally {
+            if (auth != null) {
+                LOG.trace("Restoring existing JAAS Configuration {}", auth);
+                Configuration.setConfiguration(auth);
+            }
+        }
     }
 
-    public FileSystem getFileSystem() {
-        return fileSystem;
-    }
-
-    public Path getPath() {
-        return path;
-    }
 }

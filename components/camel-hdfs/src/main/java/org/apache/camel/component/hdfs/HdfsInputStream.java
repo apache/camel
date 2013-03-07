@@ -19,12 +19,16 @@ package org.apache.camel.component.hdfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.security.auth.login.Configuration;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HdfsInputStream implements Closeable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsInputStream.class);
     private HdfsFileType fileType;
     private String actualPath;
     private String suffixedPath;
@@ -43,7 +47,7 @@ public class HdfsInputStream implements Closeable {
         ret.actualPath = hdfsPath;
         ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
         ret.chunkSize = configuration.getChunkSize();
-        HdfsInfo info = new HdfsInfo(ret.actualPath);
+        HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath);
         info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
         ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
         ret.opened = true;
@@ -54,7 +58,7 @@ public class HdfsInputStream implements Closeable {
     public final void close() throws IOException {
         if (opened) {
             IOUtils.closeStream(in);
-            HdfsInfo info = new HdfsInfo(actualPath);
+            HdfsInfo info = HdfsInfoFactory.newHdfsInfo(actualPath);
             info.getFileSystem().rename(new Path(suffixedPath), new Path(actualPath + '.' + HdfsConstants.DEFAULT_READ_SUFFIX));
             opened = false;
         }

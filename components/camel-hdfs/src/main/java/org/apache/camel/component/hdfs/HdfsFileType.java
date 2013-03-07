@@ -96,7 +96,7 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 if (!configuration.isAppend()) {
                     rout = hdfsInfo.getFileSystem().create(hdfsInfo.getPath(), configuration.isOverwrite(), configuration.getBufferSize(),
                             configuration.getReplication(), configuration.getBlockSize(), new Progressable() {
@@ -122,7 +122,7 @@ public enum HdfsFileType {
             try {
                 Closeable rin;
                 if (configuration.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
-                    HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                    HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                     rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
                 } else {
                     rin = new FileInputStream(getHfdsFileToTmpFile(hdfsPath, configuration));
@@ -142,7 +142,7 @@ public enum HdfsFileType {
                     outputDest.delete();
                 }
 
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 FileSystem fileSystem = hdfsInfo.getFileSystem();
                 FileUtil.copy(fileSystem, new Path(hdfsPath), outputDest, false, fileSystem.getConf());
                 try {
@@ -204,7 +204,7 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 Class<?> keyWritableClass = configuration.getKeyType().getWritableClass();
                 Class<?> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = SequenceFile.createWriter(hdfsInfo.getFileSystem(), hdfsInfo.getConf(), hdfsInfo.getPath(), keyWritableClass,
@@ -224,7 +224,7 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 rin = new SequenceFile.Reader(hdfsInfo.getFileSystem(), hdfsInfo.getPath(), hdfsInfo.getConf());
                 return rin;
             } catch (IOException ex) {
@@ -273,7 +273,7 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
                 Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new MapFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, keyWritableClass, valueWritableClass,
@@ -292,7 +292,7 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 rin = new MapFile.Reader(hdfsInfo.getFileSystem(), hdfsPath, hdfsInfo.getConf());
                 return rin;
             } catch (IOException ex) {
@@ -341,7 +341,7 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
                 Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new BloomMapFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, keyWritableClass, valueWritableClass,
@@ -360,7 +360,7 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 rin = new BloomMapFile.Reader(hdfsInfo.getFileSystem(), hdfsPath, hdfsInfo.getConf());
                 return rin;
             } catch (IOException ex) {
@@ -404,7 +404,7 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new ArrayFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, valueWritableClass,
                         configuration.getCompressionType(), new Progressable() {
@@ -422,7 +422,7 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 rin = new ArrayFile.Reader(hdfsInfo.getFileSystem(), hdfsPath, hdfsInfo.getConf());
                 return rin;
             } catch (IOException ex) {

@@ -29,6 +29,7 @@ import org.apache.hadoop.io.IOUtils;
 public class HdfsOutputStream implements Closeable {
 
     private HdfsFileType fileType;
+    private HdfsInfo info;
     private String actualPath;
     private String suffixedPath;
     private Closeable out;
@@ -45,21 +46,21 @@ public class HdfsOutputStream implements Closeable {
         HdfsOutputStream ret = new HdfsOutputStream();
         ret.fileType = configuration.getFileType();
         ret.actualPath = hdfsPath;
-        HdfsInfo info = new HdfsInfo(ret.actualPath);
+        ret.info = new HdfsInfo(ret.actualPath);
 
         ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
         if (configuration.isWantAppend() || configuration.isAppend()) {
-            if (!info.getFileSystem().exists(new Path(ret.actualPath))) {
+            if (!ret.info.getFileSystem().exists(new Path(ret.actualPath))) {
                 configuration.setAppend(false);
             } else {
                 configuration.setAppend(true);
-                info = new HdfsInfo(ret.suffixedPath);
-                info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
+                ret.info = new HdfsInfo(ret.suffixedPath);
+                ret.info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
             }
         } else {
-            if (info.getFileSystem().exists(new Path(ret.actualPath))) {
+            if (ret.info.getFileSystem().exists(new Path(ret.actualPath))) {
                 if (configuration.isOverwrite()) {
-                    info.getFileSystem().delete(new Path(ret.actualPath), true);
+                    ret.info.getFileSystem().delete(new Path(ret.actualPath), true);
                 } else {
                     throw new RuntimeCamelException("The file already exists");
                 }
@@ -74,7 +75,6 @@ public class HdfsOutputStream implements Closeable {
     public void close() throws IOException {
         if (opened) {
             IOUtils.closeStream(out);
-            HdfsInfo info = new HdfsInfo(actualPath);
             info.getFileSystem().rename(new Path(suffixedPath), new Path(actualPath));
             opened = false;
         }
