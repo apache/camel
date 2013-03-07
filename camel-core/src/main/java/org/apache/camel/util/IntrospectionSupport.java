@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -36,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.slf4j.Logger;
@@ -331,10 +333,28 @@ public final class IntrospectionSupport {
         return setProperties(null, target, properties);
     }
 
-    public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
+    /**
+     * This method supports two modes to set a property:
+     *
+     * 1. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
+     * NULL and {@code value} is non-NULL.
+     *
+     * 2. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
+     * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
+     * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
+     *
+     */
+    public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName, boolean allowBuilderPattern) throws Exception {
         Class<?> clazz = target.getClass();
-        // find candidates of setter methods as there can be overloaded setters
-        Set<Method> setters = findSetterMethods(clazz, name, value, allowBuilderPattern);
+        Collection<Method> setters;
+
+        // we need to lookup the value from the registry
+        if (context != null && refName != null && value == null) {
+            setters = findSetterMethodsOrderedByParameterType(clazz, name, allowBuilderPattern);
+        } else {
+            // find candidates of setter methods as there can be overloaded setters
+            setters = findSetterMethods(clazz, name, value, allowBuilderPattern);
+        }
         if (setters.isEmpty()) {
             return false;
         }
@@ -342,8 +362,45 @@ public final class IntrospectionSupport {
         // loop and execute the best setter method
         Exception typeConversionFailed = null;
         for (Method setter : setters) {
+            Class parameterType = setter.getParameterTypes()[0];
+            Object ref = value;
+            // try and lookup the reference based on the method
+            if (context != null && refName != null && ref == null) {
+                ref = CamelContextHelper.lookup(context, refName.replaceAll("#", ""), parameterType);
+                if (ref == null) {
+                    continue; // try the next method if nothing was found
+                }
+            }
+
             try {
-                return setProperty(typeConverter, target, setter, value);
+                try {
+                    // If the type is null or it matches the needed type, just use the value directly
+                    if (value == null || parameterType.isAssignableFrom(ref.getClass())) {
+                        setter.invoke(target, ref);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
+                        }
+                        return true;
+                    } else {
+                        // We need to convert it
+                        Object convertedValue = convert(typeConverter, parameterType, ref);
+                        setter.invoke(target, convertedValue);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
+                        }
+                        return true;
+                    }
+                } catch (InvocationTargetException e) {
+                    // lets unwrap the exception
+                    Throwable throwable = e.getCause();
+                    if (throwable instanceof Exception) {
+                        Exception exception = (Exception)throwable;
+                        throw exception;
+                    } else {
+                        Error error = (Error)throwable;
+                        throw error;
+                    }
+                }
             // ignore exceptions as there could be another setter method where we could type convert successfully
             } catch (NoTypeConversionAvailableException e) {
                 typeConversionFailed = e;
@@ -352,7 +409,7 @@ public final class IntrospectionSupport {
             }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Setter \"{}\" with parameter type \"{}\" could not be used for type conversions of {}",
-                        new Object[]{setter, setter.getParameterTypes()[0], value});
+                        new Object[]{setter, parameterType, ref});
             }
         }
 
@@ -367,38 +424,13 @@ public final class IntrospectionSupport {
         }
     }
 
-    public static boolean setProperty(TypeConverter typeConverter, Object target, Method setter, Object value) throws Exception {
-        try {
-            // If the type is null or it matches the needed type, just use the value directly
-            if (value == null || setter.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
-                setter.invoke(target, value);
-                return true;
-            } else {
-                // We need to convert it
-                Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
-                setter.invoke(target, convertedValue);
-                return true;
-            }
-        } catch (InvocationTargetException e) {
-            // lets unwrap the exception
-            Throwable throwable = e.getCause();
-            if (throwable instanceof Exception) {
-                Exception exception = (Exception)throwable;
-                throw exception;
-            } else {
-                Error error = (Error)throwable;
-                throw error;
-            }
-        }
-    }
-
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
-        return setProperty(typeConverter, target, name, value, true);
+        return setProperty(null, typeConverter, target, name, value, null, true);
     }
     
     public static boolean setProperty(Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
-        return setProperty(null, target, name, value, allowBuilderPattern);
+        return setProperty(null, null, target, name, value, null, allowBuilderPattern);
     }
 
     public static boolean setProperty(Object target, String name, Object value) throws Exception {
@@ -476,7 +508,7 @@ public final class IntrospectionSupport {
         }
     }
 
-    public static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern) {
+    protected static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern) {
         List<Method> answer = new LinkedList<Method>();
         List<Method> primitives = new LinkedList<Method>();
         Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern);

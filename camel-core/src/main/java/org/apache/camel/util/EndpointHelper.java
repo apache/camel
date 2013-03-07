@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -271,40 +269,10 @@ public final class EndpointHelper {
             Object v = entry.getValue();
             String value = v != null ? v.toString() : null;
             if (value != null && isReferenceParameter(value)) {
-                List<Method> candidates = IntrospectionSupport.findSetterMethodsOrderedByParameterType(bean.getClass(), name, false);
-
-                Exception typeConversionFailed = null;
-                for (Method setter : candidates) {
-                    Class parameterType = setter.getParameterTypes()[0];
-                    // For backwards-compatibility reasons, no mandatory lookup is done here
-                    Object ref = resolveReferenceParameter(context, value, parameterType, false);
-                    if (ref != null) {
-                        try {
-                            boolean hit = IntrospectionSupport.setProperty(context.getTypeConverter(), bean, setter, ref);
-
-                            if (hit) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, bean, ref});
-                                }
-                                // must remove as its a valid option and we could configure it
-                                it.remove();
-                                typeConversionFailed = null;
-                                break;
-                            }
-                        } catch (NoTypeConversionAvailableException e) {
-                            typeConversionFailed = e;
-                        } catch (IllegalArgumentException e) {
-                            typeConversionFailed = e;
-                        }
-                    }
-                }
-
-                if (typeConversionFailed != null) {
-                    // we did not find a setter method to use, and if we did try to use a type converter then throw
-                    // this kind of exception as the caused by will hint this error
-                    throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
-                            + " as there isn't a setter method with same type: " + value.getClass().getCanonicalName()
-                            + " nor type conversion possible: " + typeConversionFailed.getMessage());
+                boolean hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), bean, name, null, value, true);
+                if (hit) {
+                    // must remove as its a valid option and we could configure it
+                    it.remove();
                 }
             }
         }
