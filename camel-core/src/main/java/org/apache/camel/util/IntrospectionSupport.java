@@ -25,9 +25,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,6 +56,28 @@ public final class IntrospectionSupport {
         EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
         // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
         EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
+    }
+
+    private static final Set<Class> PRIMITIVE_CLASSES = new HashSet<Class>();
+
+    static {
+        PRIMITIVE_CLASSES.add(String.class);
+        PRIMITIVE_CLASSES.add(Character.class);
+        PRIMITIVE_CLASSES.add(Boolean.class);
+        PRIMITIVE_CLASSES.add(Byte.class);
+        PRIMITIVE_CLASSES.add(Short.class);
+        PRIMITIVE_CLASSES.add(Integer.class);
+        PRIMITIVE_CLASSES.add(Long.class);
+        PRIMITIVE_CLASSES.add(Float.class);
+        PRIMITIVE_CLASSES.add(Double.class);
+        PRIMITIVE_CLASSES.add(char.class);
+        PRIMITIVE_CLASSES.add(boolean.class);
+        PRIMITIVE_CLASSES.add(byte.class);
+        PRIMITIVE_CLASSES.add(short.class);
+        PRIMITIVE_CLASSES.add(int.class);
+        PRIMITIVE_CLASSES.add(long.class);
+        PRIMITIVE_CLASSES.add(float.class);
+        PRIMITIVE_CLASSES.add(double.class);
     }
 
     /**
@@ -308,47 +332,52 @@ public final class IntrospectionSupport {
     }
 
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
-        try {
-            Class<?> clazz = target.getClass();
-            // find candidates of setter methods as there can be overloaded setters
-            Set<Method> setters = findSetterMethods(typeConverter, clazz, name, value, allowBuilderPattern);
-            if (setters.isEmpty()) {
-                return false;
-            }
+        Class<?> clazz = target.getClass();
+        // find candidates of setter methods as there can be overloaded setters
+        Set<Method> setters = findSetterMethods(clazz, name, value, allowBuilderPattern);
+        if (setters.isEmpty()) {
+            return false;
+        }
 
-            // loop and execute the best setter method
-            Exception typeConversionFailed = null;
-            for (Method setter : setters) {
-                // If the type is null or it matches the needed type, just use the value directly
-                if (value == null || setter.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
-                    setter.invoke(target, value);
-                    return true;
-                } else {
-                    // We need to convert it
-                    try {
-                        // ignore exceptions as there could be another setter method where we could type convert successfully
-                        Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
-                        setter.invoke(target, convertedValue);
-                        return true;
-                    } catch (NoTypeConversionAvailableException e) {
-                        typeConversionFailed = e;
-                    } catch (IllegalArgumentException e) {
-                        typeConversionFailed = e;
-                    }
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Setter \"{}\" with parameter type \"{}\" could not be used for type conversions of {}",
-                                new Object[]{setter, setter.getParameterTypes()[0], value});
-                    }
-                }
+        // loop and execute the best setter method
+        Exception typeConversionFailed = null;
+        for (Method setter : setters) {
+            try {
+                return setProperty(typeConverter, target, setter, value);
+            // ignore exceptions as there could be another setter method where we could type convert successfully
+            } catch (NoTypeConversionAvailableException e) {
+                typeConversionFailed = e;
+            } catch (IllegalArgumentException e) {
+                typeConversionFailed = e;
             }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Setter \"{}\" with parameter type \"{}\" could not be used for type conversions of {}",
+                        new Object[]{setter, setter.getParameterTypes()[0], value});
+            }
+        }
+
+        if (typeConversionFailed != null) {
             // we did not find a setter method to use, and if we did try to use a type converter then throw
             // this kind of exception as the caused by will hint this error
-            if (typeConversionFailed != null) {
-                throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
-                        + " as there isn't a setter method with same type: " + value.getClass().getCanonicalName()
-                        + " nor type conversion possible: " + typeConversionFailed.getMessage());
+            throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
+                    + " as there isn't a setter method with same type: " + value.getClass().getCanonicalName()
+                    + " nor type conversion possible: " + typeConversionFailed.getMessage());
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setProperty(TypeConverter typeConverter, Object target, Method setter, Object value) throws Exception {
+        try {
+            // If the type is null or it matches the needed type, just use the value directly
+            if (value == null || setter.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
+                setter.invoke(target, value);
+                return true;
             } else {
-                return false;
+                // We need to convert it
+                Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
+                setter.invoke(target, convertedValue);
+                return true;
             }
         } catch (InvocationTargetException e) {
             // lets unwrap the exception
@@ -362,9 +391,10 @@ public final class IntrospectionSupport {
             }
         }
     }
-    
+
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
-        return setProperty(typeConverter, target, name, value, false);
+        // allow build pattern as a setter as well
+        return setProperty(typeConverter, target, name, value, true);
     }
     
     public static boolean setProperty(Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
@@ -372,7 +402,8 @@ public final class IntrospectionSupport {
     }
 
     public static boolean setProperty(Object target, String name, Object value) throws Exception {
-        return setProperty(target, name, value, false);
+        // allow build pattern as a setter as well
+        return setProperty(target, name, value, true);
     }
 
     private static Object convert(TypeConverter typeConverter, Class<?> type, Object value)
@@ -390,8 +421,8 @@ public final class IntrospectionSupport {
         }
         return null;
     }
-    
-    private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class<?> clazz, String name, Object value, boolean allowBuilderPattern) {
+
+    public static Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern) {
         Set<Method> candidates = new LinkedHashSet<Method>();
 
         // Build the method name.
@@ -402,12 +433,11 @@ public final class IntrospectionSupport {
             Method objectSetMethod = null;
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
-                Class<?> params[] = method.getParameterTypes();
-                if (method.getName().equals(name) && params.length == 1) {
-                    Class<?> paramType = params[0];
-                    if (paramType.equals(Object.class)) {                        
+                if (method.getName().equals(name) && isSetter(method, allowBuilderPattern)) {
+                    Class<?> params[] = method.getParameterTypes();
+                    if (params[0].equals(Object.class)) {
                         objectSetMethod = method;
-                    } else if (typeConverter != null || isSetter(method, allowBuilderPattern) || paramType.isInstance(value)) {
+                    } else {
                         candidates.add(method);
                     }
                 }
@@ -417,6 +447,11 @@ public final class IntrospectionSupport {
             }
             clazz = clazz.getSuperclass();
         }
+        return candidates;
+    }
+
+    private static Set<Method> findSetterMethods(Class<?> clazz, String name, Object value, boolean allowBuilderPattern) {
+        Set<Method> candidates = findSetterMethods(clazz, name, allowBuilderPattern);
 
         if (candidates.isEmpty()) {
             return candidates;
@@ -440,5 +475,22 @@ public final class IntrospectionSupport {
             return candidates;
         }
     }
-    
+
+    public static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern) {
+        List<Method> answer = new LinkedList<Method>();
+        List<Method> primitives = new LinkedList<Method>();
+        Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern);
+        for (Method setter : setters) {
+            Class parameterType = setter.getParameterTypes()[0];
+            if (PRIMITIVE_CLASSES.contains(parameterType)) {
+                primitives.add(setter);
+            } else {
+                answer.add(setter);
+            }
+        }
+        // primitives get added last
+        answer.addAll(primitives);
+        return answer;
+    }
+
 }

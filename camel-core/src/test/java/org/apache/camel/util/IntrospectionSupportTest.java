@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -355,6 +356,16 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Method setupSomething = bean.getClass().getMethod("setupSomething", Object.class);
         assertEquals(false, IntrospectionSupport.isGetter(setupSomething));
         assertEquals(false, IntrospectionSupport.isSetter(setupSomething));
+    }
+
+    public void testFindSetterMethodsOrderedByParameterType() throws Exception {
+        List<Method> setters = IntrospectionSupport.findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean", false);
+
+        assertNotNull(setters);
+        assertEquals(2, setters.size());
+
+        assertEquals(ExampleBean.class, setters.get(0).getParameterTypes()[0]);
+        assertEquals(String.class, setters.get(1).getParameterTypes()[0]);
     }
 }
 
