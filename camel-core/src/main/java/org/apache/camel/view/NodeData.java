@@ -32,6 +32,7 @@ import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.WhenDefinition;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -120,6 +121,9 @@ public class NodeData {
             this.nodeType = "Bean Ref";
             this.label = beanRef.getLabel() + " Bean"; 
             this.shape = "box";
+        } else if (node instanceof TransformDefinition) {
+            this.nodeType = "Transform";
+            this.url = "http://camel.apache.org/message-translator.html";
         }
 
         // lets auto-default as many values as we can
