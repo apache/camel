@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.security.auth.login.Configuration;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -76,7 +78,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         }
 
         // hadoop will cache the connection by default so its faster to get in the poll method
-        HdfsInfo answer = new HdfsInfo(this.hdfsPath.toString());
+        HdfsInfo answer = HdfsInfoFactory.newHdfsInfo(this.hdfsPath.toString());
 
         if (onStartup) {
             log.info("Connected to hdfs file-system {}:{}/{}", new Object[]{config.getHostName(), config.getPort(), hdfsPath.toString()});
@@ -90,6 +92,20 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
+        // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
+        Configuration auth = Configuration.getConfiguration();
+        log.trace("Existing JAAS Configuration {}", auth);
+        try {
+            return doPoll();
+        } finally {
+            if (auth != null) {
+                log.trace("Restoring existing JAAS Configuration {}", auth);
+                Configuration.setConfiguration(auth);
+            }
+        }
+    }
+
+    protected int doPoll() throws Exception {
         class ExcludePathFilter implements PathFilter {
             public boolean accept(Path path) {
                 return !(path.toString().endsWith(config.getOpenedSuffix()) || path.toString().endsWith(config.getReadSuffix()));

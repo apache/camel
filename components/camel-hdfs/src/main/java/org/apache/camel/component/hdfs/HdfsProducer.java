@@ -22,6 +22,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.security.auth.login.Configuration;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
@@ -91,24 +93,34 @@ public class HdfsProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
+        Configuration auth = Configuration.getConfiguration();
+        log.trace("Existing JAAS Configuration {}", auth);
+        try {
+            super.doStart();
 
-        // setup hdfs if configured to do on startup
-        if (getEndpoint().getConfig().isConnectOnStartup()) {
-            ostream = setupHdfs(true);
-        }
-
-        SplitStrategy idleStrategy = null;
-        for (SplitStrategy strategy : config.getSplitStrategies()) {
-            if (strategy.type == SplitStrategyType.IDLE) {
-                idleStrategy = strategy;
-                break;
+            // setup hdfs if configured to do on startup
+            if (getEndpoint().getConfig().isConnectOnStartup()) {
+                ostream = setupHdfs(true);
             }
-        }
-        if (idleStrategy != null) {
-            scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "HdfsIdleCheck");
-            log.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
-            scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
+
+            SplitStrategy idleStrategy = null;
+            for (SplitStrategy strategy : config.getSplitStrategies()) {
+                if (strategy.type == SplitStrategyType.IDLE) {
+                    idleStrategy = strategy;
+                    break;
+                }
+            }
+            if (idleStrategy != null) {
+                scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "HdfsIdleCheck");
+                log.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
+                scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
+            }
+        } finally {
+            if (auth != null) {
+                log.trace("Restoring existing JAAS Configuration {}", auth);
+                Configuration.setConfiguration(auth);
+            }
         }
     }
 
@@ -159,6 +171,20 @@ public class HdfsProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
+        Configuration auth = Configuration.getConfiguration();
+        log.trace("Existing JAAS Configuration {}", auth);
+        try {
+            doProcess(exchange);
+        } finally {
+            if (auth != null) {
+                log.trace("Restoring existing JAAS Configuration {}", auth);
+                Configuration.setConfiguration(auth);
+            }
+        }
+    }
+
+    void doProcess(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         Object key = exchange.getIn().getHeader(HdfsHeader.KEY.name());
 

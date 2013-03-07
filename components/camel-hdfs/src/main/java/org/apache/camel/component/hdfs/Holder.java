@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.hdfs;
 
-public class Holder<T> {
+public final class Holder<T> {
 
     /**
      * The value contained in the holder.
