@@ -79,7 +79,7 @@ public interface Registry {
     Object lookup(String name);
 
     /**
-     * Looks up a service in the registry, returning the service or <tt>null</tt> if it could not be found.
+     * Looks up a service in the registry, returning the service or <tt>null</tt> if it could not be found.                                            cha
      *
      * @param name the name of the service
      * @param type the type of the required service
