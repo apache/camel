@@ -57,6 +57,7 @@ public interface SmppConstants {
     String SYSTEM_ID = "CamelSmppSystemId";
     String PASSWORD = "CamelSmppSystemId";
     String VALIDITY_PERIOD = "CamelSmppValidityPeriod";
+    String OPTIONAL_PARAMETERS = "CamelSmppOptionalParameters";
     
     String UCS2_ENCODING = "UTF-16BE";
     byte UNKNOWN_ALPHABET = -1;
