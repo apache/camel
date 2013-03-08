@@ -202,9 +202,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_TRACER + ",");
-        buffer.append(KEY_NAME + "=")
-            .append("Tracer")
-            .append("(").append(ObjectHelper.getIdentityHashCode(tracer)).append(")");
+        buffer.append(KEY_NAME + "=").append("Tracer");
         return createObjectName(buffer);
     }
 
