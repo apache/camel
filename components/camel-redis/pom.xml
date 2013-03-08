@@ -31,9 +31,8 @@
     <description>Camel Redis Component</description>
 
     <properties>
-        <camel.osgi.export.pkg>
-            org.apache.camel.component.redis.*
-        </camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.redis.*</camel.osgi.export.pkg>
+        <camel.osgi.import.before.defaults>org.springframework.data.*;version="[1.0,2)"</camel.osgi.import.before.defaults>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=redis</camel.osgi.export.service>
     </properties>
 
