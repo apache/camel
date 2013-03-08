@@ -27,14 +27,29 @@ import org.apache.camel.support.LanguageSupport;
  */
 public class JXPathLanguage extends LanguageSupport {
 
+    private boolean lenient;
+
+    public boolean isLenient() {
+        return lenient;
+    }
+
+    public void setLenient(boolean lenient) {
+        this.lenient = lenient;
+    }
+
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
-        return new JXPathExpression(expression, Object.class);
+        return new JXPathExpression(expression, Object.class, lenient);
     }
 
     public Predicate createPredicate(String predicate) {
         predicate = loadResource(predicate);
-        return new JXPathExpression(predicate, Boolean.class);
+        return new JXPathExpression(predicate, Boolean.class, lenient);
     }
 
+    @Override
+    public boolean isSingleton() {
+        // cannot be singleton due lenient option
+        return false;
+    }
 }

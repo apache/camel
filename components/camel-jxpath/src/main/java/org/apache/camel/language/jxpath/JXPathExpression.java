@@ -31,21 +31,43 @@ public class JXPathExpression extends ExpressionSupport {
     private final String expression;
     private CompiledExpression compiledExpression;
     private final Class<?> type;
+    private boolean lenient;
 
     /**
-     * Creates a new JXPathExpression instance
+     * Creates a new JXPathExpression instance (lenient is disabled)
      * 
      * @param expression the JXPath expression to be evaluated
      * @param type the expected result type
      */
     public JXPathExpression(String expression, Class<?> type) {
+        this(expression, type, false);
+    }
+
+    /**
+     * Creates a new JXPathExpression instance
+     *
+     * @param expression the JXPath expression to be evaluated
+     * @param type the expected result type
+     * @param lenient to configure lenient
+     */
+    public JXPathExpression(String expression, Class<?> type, boolean lenient) {
         this.expression = expression;
         this.type = type;
+        this.lenient = lenient;
+    }
+
+    public boolean isLenient() {
+        return lenient;
+    }
+
+    public void setLenient(boolean lenient) {
+        this.lenient = lenient;
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         try {
             JXPathContext context = JXPathContext.newContext(exchange);
+            context.setLenient(lenient);
             Object result = getJXPathExpression().getValue(context, type);
             assertResultType(exchange, result);
             return exchange.getContext().getTypeConverter().convertTo(tClass, result);

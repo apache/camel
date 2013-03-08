@@ -18,7 +18,12 @@ package org.apache.camel.model.language;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 
 /**
  * For <a href="http://commons.apache.org/jxpath/">JXPath</a> expressions and predicates
@@ -29,6 +34,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JXPathExpression extends ExpressionDefinition {
 
+    @XmlAttribute
+    private Boolean lenient;
+
     public JXPathExpression() {
     }
 
@@ -38,5 +46,29 @@ public class JXPathExpression extends ExpressionDefinition {
 
     public String getLanguage() {
         return "jxpath";
+    }
+
+    public Boolean getLenient() {
+        return lenient;
+    }
+
+    public void setLenient(Boolean lenient) {
+        this.lenient = lenient;
+    }
+
+    @Override
+    protected void configureExpression(CamelContext camelContext, Expression expression) {
+        if (lenient != null) {
+            setProperty(expression, "lenient", lenient);
+        }
+        super.configureExpression(camelContext, expression);
+    }
+
+    @Override
+    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        if (lenient != null) {
+            setProperty(predicate, "lenient", lenient);
+        }
+        super.configurePredicate(camelContext, predicate);
     }
 }
