@@ -57,6 +57,7 @@ import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -167,6 +168,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
             LOG.info("Using custom Tracer: " + tracer);
             getContext().addInterceptStrategy(tracer);
+        }
+        BacklogTracer backlogTracer = getBeanForType(BacklogTracer.class);
+        if (backlogTracer != null) {
+            LOG.info("Using custom BacklogTracer: " + backlogTracer);
+            getContext().addInterceptStrategy(backlogTracer);
         }
         HandleFault handleFault = getBeanForType(HandleFault.class);
         if (handleFault != null) {

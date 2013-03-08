@@ -20,6 +20,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
@@ -112,6 +113,9 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         } else if (managedObject instanceof ManagedTracer) {
             ManagedTracer mt = (ManagedTracer) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForTracer(mt.getContext(), mt.getTracer());
+        } else if (managedObject instanceof ManagedBacklogTracer) {
+            ManagedBacklogTracer mt = (ManagedBacklogTracer) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForTracer(mt.getContext(), mt.getBacklogTracer());
         } else if (managedObject instanceof ManagedEventNotifier) {
             ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());

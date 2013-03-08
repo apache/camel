@@ -51,6 +51,7 @@ import org.apache.camel.impl.EndpointRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
 import org.apache.camel.management.mbean.ManagedEndpoint;
@@ -69,6 +70,7 @@ import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -110,6 +112,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private volatile boolean initialized;
     private final Set<String> knowRouteIds = new HashSet<String>();
     private final Map<Tracer, ManagedTracer> managedTracers = new HashMap<Tracer, ManagedTracer>();
+    private final Map<BacklogTracer, ManagedBacklogTracer> managedBacklogTracers = new HashMap<BacklogTracer, ManagedBacklogTracer>();
     private final Map<ThreadPoolExecutor, Object> managedThreadPools = new HashMap<ThreadPoolExecutor, Object>();
 
     public DefaultManagementLifecycleStrategy() {
@@ -410,6 +413,16 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 mt = new ManagedTracer(context, tracer);
                 mt.init(getManagementStrategy());
                 managedTracers.put(tracer, mt);
+            }
+            return mt;
+        } else if (service instanceof BacklogTracer) {
+            // special for backlog tracer
+            BacklogTracer backlogTracer = (BacklogTracer) service;
+            ManagedBacklogTracer mt = managedBacklogTracers.get(backlogTracer);
+            if (mt == null) {
+                mt = new ManagedBacklogTracer(context, backlogTracer);
+                mt.init(getManagementStrategy());
+                managedBacklogTracers.put(backlogTracer, mt);
             }
             return mt;
         } else if (service instanceof EventNotifier) {
@@ -872,6 +885,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         preServices.clear();
         wrappedProcessors.clear();
         managedTracers.clear();
+        managedBacklogTracers.clear();
         managedThreadPools.clear();
     }
 

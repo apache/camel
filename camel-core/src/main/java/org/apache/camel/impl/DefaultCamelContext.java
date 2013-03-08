@@ -81,6 +81,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
@@ -196,6 +197,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private ProcessorFactory processorFactory;
     private InterceptStrategy defaultTracer;
+    private InterceptStrategy defaultBacklogTracer;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
     // start auto assigning route ids using numbering 1000 and upwards
@@ -2370,8 +2372,19 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return defaultTracer;
     }
 
-    public void setDefaultTracer(InterceptStrategy defaultTracer) {
-        this.defaultTracer = defaultTracer;
+    public void setDefaultTracer(InterceptStrategy tracer) {
+        this.defaultTracer = tracer;
+    }
+
+    public InterceptStrategy getDefaultBacklogTracer() {
+        if (defaultBacklogTracer == null) {
+            defaultBacklogTracer = new BacklogTracer(this);
+        }
+        return defaultBacklogTracer;
+    }
+
+    public void setDefaultBacklogTracer(InterceptStrategy backlogTracer) {
+        this.defaultBacklogTracer = backlogTracer;
     }
 
     public void disableJMX() {

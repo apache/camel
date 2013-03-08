@@ -35,6 +35,9 @@ public class EventNotifierExchangeSentParallelTest extends EventNotifierExchange
         assertMockEndpointsSatisfied();
         assertTrue(oneExchangeDone.matchesMockWaitTime());
 
+        // give little delay due parallel stuff
+        Thread.sleep(100);
+
         assertEquals(12, events.size());
 
         // we run parallel so just assert we got 6 sending and 6 sent events

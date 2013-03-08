@@ -198,11 +198,14 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException {
+        // use the simple name of the class as the mbean name (eg Tracer, BacklogTracer)
+        String name = tracer.getClass().getSimpleName();
+
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_TRACER + ",");
-        buffer.append(KEY_NAME + "=").append("Tracer");
+        buffer.append(KEY_NAME + "=").append(name);
         return createObjectName(buffer);
     }
 

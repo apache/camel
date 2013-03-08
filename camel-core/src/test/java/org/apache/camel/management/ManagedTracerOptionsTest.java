@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -32,9 +31,8 @@ public class ManagedTracerOptionsTest extends ManagementTestSupport {
     public void testManagedTracerOptions() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=tracer,*"), null);
-        assertEquals(1, set.size());
-        ObjectName on = set.iterator().next();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=Tracer");
+        mbeanServer.isRegistered(on);
 
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");

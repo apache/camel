@@ -193,8 +193,9 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
             target = managed.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
         }
 
-        // then wrap the output with the tracer
-        TraceInterceptor trace = (TraceInterceptor) getOrCreateTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
+        // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to tracer the backlog)
+        BacklogTracerInterceptor backlog = (BacklogTracerInterceptor) getOrCreateBacklogTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
+        TraceInterceptor trace = (TraceInterceptor) getOrCreateTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, backlog, null);
         // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
         trace.setRouteContext(routeContext);
         target = trace;
@@ -278,6 +279,32 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
                         ((Tracer) tracer).setFormatter(formatter);
                     }
                 }
+            }
+        }
+
+        // which we must manage as well
+        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+            if (tracer instanceof Service) {
+                strategy.onServiceAdd(camelContext, (Service) tracer, null);
+            }
+        }
+
+        return tracer;
+    }
+
+    private InterceptStrategy getOrCreateBacklogTracer() {
+        InterceptStrategy tracer = BacklogTracer.getBacklogTracer(camelContext);
+        if (tracer == null) {
+            if (camelContext.getRegistry() != null) {
+                // lookup in registry
+                Map<String, BacklogTracer> map = camelContext.getRegistry().findByTypeWithName(BacklogTracer.class);
+                if (map.size() == 1) {
+                    tracer = map.values().iterator().next();
+                }
+            }
+            if (tracer == null) {
+                // fallback to use the default tracer
+                tracer = camelContext.getDefaultBacklogTracer();
             }
         }
 

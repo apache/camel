@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -35,9 +34,9 @@ public class ManagedCamelContextTracerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName camel = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=tracer,*"), null);
-        assertEquals(1, set.size());
-        ObjectName on = set.iterator().next();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=Tracer");
+        mbeanServer.isRegistered(camel);
+        mbeanServer.isRegistered(on);
 
         // with tracing
         MockEndpoint traced = getMockEndpoint("mock:traced");
