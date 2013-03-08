@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.management.Notification;
 
 import org.apache.camel.Exchange;
@@ -35,9 +36,9 @@ import org.apache.camel.util.MessageHelper;
 
 public final class JMXNotificationTraceEventHandler implements TraceEventHandler, NotificationSenderAware {
     private static final int MAX_MESSAGE_LENGTH = 60;
-    private long num;
+    private final AtomicLong num = new AtomicLong();
+    private final Tracer tracer;
     private NotificationSender notificationSender;
-    private Tracer tracer;
 
     public JMXNotificationTraceEventHandler(Tracer tracer) {
         this.tracer = tracer;
@@ -60,7 +61,7 @@ public final class JMXNotificationTraceEventHandler implements TraceEventHandler
             String message = body.substring(0, Math.min(body.length(), MAX_MESSAGE_LENGTH));
             Map<String, Object> tm = createTraceMessage(node, exchange, body);
 
-            Notification notification = new Notification("TraceNotification", exchange.toString(), num++, System.currentTimeMillis(), message);
+            Notification notification = new Notification("TraceNotification", exchange.toString(), num.getAndIncrement(), System.currentTimeMillis(), message);
             notification.setUserData(tm);
 
             notificationSender.sendNotification(notification);
