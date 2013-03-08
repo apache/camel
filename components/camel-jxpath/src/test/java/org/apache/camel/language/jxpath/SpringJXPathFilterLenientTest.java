@@ -16,38 +16,28 @@
  */
 package org.apache.camel.language.jxpath;
 
-import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
-import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Language}
- * provider
+ * @version 
  */
-public class JXPathLanguage implements Language, IsSingleton {
+public class SpringJXPathFilterLenientTest extends CamelSpringTestSupport {
 
-    private boolean lenient;
+    @Test
+    public void testLenient() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
-    public boolean isLenient() {
-        return lenient;
-    }
+        template.sendBody("direct:start", new PersonBean("James", "London"));
 
-    public void setLenient(boolean lenient) {
-        this.lenient = lenient;
-    }
-
-    public Expression createExpression(String expression) {
-        return new JXPathExpression(expression, Object.class, lenient);
-    }
-
-    public Predicate createPredicate(String predicate) {
-        return new JXPathExpression(predicate, Boolean.class, lenient);
+        assertMockEndpointsSatisfied();
     }
 
     @Override
-    public boolean isSingleton() {
-        // cannot be singleton due lenient option
-        return false;
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/language/jxpath/SpringJXPathFilterLenientTest-context.xml");
     }
+
 }

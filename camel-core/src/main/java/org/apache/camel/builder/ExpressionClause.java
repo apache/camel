@@ -287,6 +287,17 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param lenient to configure whether lenient is in use or not
+     * @return the builder to continue processing the DSL
+     */
+    public T jxpath(String text, boolean lenient) {
+        return delegate.jxpath(text, lenient);
+    }
+
+    /**
      * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL
      * expression</a>
      * 

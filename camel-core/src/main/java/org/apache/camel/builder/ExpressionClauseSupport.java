@@ -317,7 +317,20 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T jxpath(String text) {
-        return expression(new JXPathExpression(text));
+        return jxpath(text, false);
+    }
+
+    /**
+     * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param lenient to configure whether lenient is in use or not
+     * @return the builder to continue processing the DSL
+     */
+    public T jxpath(String text, boolean lenient) {
+        JXPathExpression answer = new JXPathExpression(text);
+        answer.setLenient(lenient);
+        return expression(answer);
     }
 
     /**

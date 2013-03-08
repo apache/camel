@@ -16,38 +16,31 @@
  */
 package org.apache.camel.language.jxpath;
 
-import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
-import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
- * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Language}
- * provider
+ * @version 
  */
-public class JXPathLanguage implements Language, IsSingleton {
+public class JXPathFilterLenientTest extends CamelTestSupport {
 
-    private boolean lenient;
+    @Test
+    public void testLenient() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
-    public boolean isLenient() {
-        return lenient;
+        template.sendBody("direct:start", new PersonBean("James", "London"));
+
+        assertMockEndpointsSatisfied();
     }
 
-    public void setLenient(boolean lenient) {
-        this.lenient = lenient;
-    }
-
-    public Expression createExpression(String expression) {
-        return new JXPathExpression(expression, Object.class, lenient);
-    }
-
-    public Predicate createPredicate(String predicate) {
-        return new JXPathExpression(predicate, Boolean.class, lenient);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        // cannot be singleton due lenient option
-        return false;
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start").
+                        filter().jxpath("in/body/name2", true).
+                        to("mock:result");
+            }
+        };
     }
 }
