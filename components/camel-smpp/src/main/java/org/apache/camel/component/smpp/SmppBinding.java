@@ -19,7 +19,9 @@ package org.apache.camel.component.smpp;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.jsmpp.bean.AlertNotification;
@@ -29,6 +31,8 @@ import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.COctetString;
+import org.jsmpp.bean.OptionalParameter.Null;
 import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.session.SMPPSession;
 
@@ -102,6 +106,27 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.SUBMIT_DATE, smscDeliveryReceipt.getSubmitDate());
             smppMessage.setHeader(SmppConstants.SUBMITTED, smscDeliveryReceipt.getSubmitted());
             smppMessage.setHeader(SmppConstants.FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
+            if (deliverSm.getOptionalParametes() != null && deliverSm.getOptionalParametes().length > 0) {
+                List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
+
+                Map<String, Object> optParams = new HashMap<String, Object>();
+                for (OptionalParameter optPara : oplist) {
+                    if (OctetString.class.isInstance(optPara)) {
+                        optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), ((OctetString) optPara).getValueAsString());
+                    } else if (org.jsmpp.bean.OptionalParameter.COctetString.class.isInstance(optPara)) {
+                        optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), ((COctetString) optPara).getValueAsString());
+                    } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
+                        optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
+                    } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
+                        optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
+                    } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
+                        optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
+                    } else if (Null.class.isInstance(optPara)) {
+                        optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), null);
+                    }
+                }
+                smppMessage.setHeader(SmppConstants.OPTIONAL_PARAMETERS, optParams);
+            }
         } else {
             smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
 

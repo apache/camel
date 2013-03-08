@@ -18,6 +18,7 @@ package org.apache.camel.component.smpp;
 
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
@@ -29,6 +30,7 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.DeliveryReceiptState;
@@ -118,8 +120,46 @@ public class SmppBindingTest {
         assertEquals(1, smppMessage.getHeader(SmppConstants.SUBMITTED));
         assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppConstants.FINAL_STATUS));
         assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
+        assertNull(smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETERS));
     }
-    
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void createSmppMessageFromDeliveryReceiptWithOptionalParametersShouldReturnASmppMessage() throws Exception {
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSmscDeliveryReceipt();
+        deliverSm.setShortMessage("id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!".getBytes());
+        deliverSm.setOptionalParametes(
+            new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "OctetString"),
+            new OptionalParameter.COctetString((short) 0x001D, "COctetString"),
+            new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 0x01),
+            new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID, (short) 1),
+            new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 1),
+            new OptionalParameter.Null(Tag.ALERT_ON_MESSAGE_DELIVERY));
+        SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+
+        assertEquals("Hello SMPP world!", smppMessage.getBody());
+        assertEquals(9, smppMessage.getHeaders().size());
+        assertEquals("2", smppMessage.getHeader(SmppConstants.ID));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.DELIVERED));
+        // To avoid the test failure when running in different TimeZone
+        //assertEquals(new Date(1251753060000L), smppMessage.getHeader(SmppConstants.DONE_DATE));
+        assertEquals("xxx", smppMessage.getHeader(SmppConstants.ERROR));
+        //assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppConstants.SUBMIT_DATE));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.SUBMITTED));
+        assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppConstants.FINAL_STATUS));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
+        
+        Map<String, String> optionalParameters = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
+        assertEquals(6, optionalParameters.size());
+        assertEquals("OctetString", optionalParameters.get("SOURCE_SUBADDRESS"));
+        assertEquals("COctetStrin", optionalParameters.get("ADDITIONAL_STATUS_INFO_TEXT"));
+        assertEquals(Byte.valueOf((byte) 0x01), optionalParameters.get("DEST_ADDR_SUBUNIT"));
+        assertEquals(Short.valueOf((short) 1), optionalParameters.get("DEST_TELEMATICS_ID"));
+        assertEquals(Integer.valueOf(1), optionalParameters.get("QOS_TIME_TO_LIVE"));
+        assertNull("0x00", optionalParameters.get("ALERT_ON_MESSAGE_DELIVERY"));
+    }
+
     @Test
     public void createSmppMessageFromDeliverSmShouldReturnASmppMessage() throws Exception {
         DeliverSm deliverSm = new DeliverSm();
