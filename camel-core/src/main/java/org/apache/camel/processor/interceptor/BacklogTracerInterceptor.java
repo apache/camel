@@ -64,7 +64,7 @@ public class BacklogTracerInterceptor extends DelegateAsyncProcessor {
                 Date timestamp = new Date();
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
-                String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn());
+                String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4);
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
                 if (first) {

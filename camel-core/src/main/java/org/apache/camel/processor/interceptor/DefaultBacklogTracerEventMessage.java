@@ -74,16 +74,21 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
      *
      * @return xml representation of this event
      */
-    public String toXml() {
+    public String toXml(int indent) {
+        StringBuilder prefix = new StringBuilder();
+        for (int i = 0; i < indent; i++) {
+            prefix.append(" ");
+        }
+
         StringBuilder sb = new StringBuilder();
-        sb.append("<").append(ROOT_TAG).append(">\n");
-        sb.append("<uid>").append(uid).append("</uid>\n");
+        sb.append(prefix).append("<").append(ROOT_TAG).append(">\n");
+        sb.append(prefix).append("  <uid>").append(uid).append("</uid>\n");
         String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
-        sb.append("<timestamp>").append(ts).append("</timestamp>\n");
-        sb.append("<toNode>").append(toNode).append("</toNode>\n");
-        sb.append("<exchangeId>").append(exchangeId).append("</exchangeId>\n");
-        sb.append(messageAsXml).append("\n");
-        sb.append("</").append(ROOT_TAG).append(">");
+        sb.append(prefix).append("  <timestamp>").append(ts).append("</timestamp>\n");
+        sb.append(prefix).append("  <toNode>").append(toNode).append("</toNode>\n");
+        sb.append(prefix).append("  <exchangeId>").append(exchangeId).append("</exchangeId>\n");
+        sb.append(prefix).append(messageAsXml).append("\n");
+        sb.append(prefix).append("</").append(ROOT_TAG).append(">");
         return sb.toString();
     }
 }

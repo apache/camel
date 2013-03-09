@@ -99,9 +99,9 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("to1", event1.getToNode());
-        assertEquals("<message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
-                + "<body type=\"java.lang.String\">Hello World</body>\n"
-                + "</message>", event1.getMessageAsXml());
+        assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
+                + "      <body type=\"java.lang.String\">Hello World</body>\n"
+                + "    </message>", event1.getMessageAsXml());
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[]{"camel"}, new String[]{"java.lang.String"});
@@ -111,9 +111,9 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
 
         event1 = events.get(0);
         assertEquals("camel", event1.getToNode());
-        assertEquals("<message exchangeId=\"" + camelExchanges.get(0).getExchangeId() + "\">\n"
-                + "<body type=\"java.lang.String\">Hello Camel</body>\n"
-                + "</message>", event1.getMessageAsXml());
+        assertEquals("    <message exchangeId=\"" + camelExchanges.get(0).getExchangeId() + "\">\n"
+                + "      <body type=\"java.lang.String\">Hello Camel</body>\n"
+                + "    </message>", event1.getMessageAsXml());
     }
 
     @Override

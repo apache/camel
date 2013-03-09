@@ -148,7 +148,25 @@ public class MessageHelperTest extends TestCase {
         String out = MessageHelper.dumpAsXml(message, false);
 
         assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
-                + "\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">123</header>\n</headers>\n</message>", out);
+                + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>", out);
+
+        context.stop();
+    }
+
+    public void testDumpAsXmlNoBodyIndent() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("Hello World");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsXml(message, false, 2);
+
+        assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
+                + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>", out);
 
         context.stop();
     }

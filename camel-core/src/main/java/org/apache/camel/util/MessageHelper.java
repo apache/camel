@@ -83,7 +83,7 @@ public final class MessageHelper {
      * Will skip java.lang. for the build in Java types.
      * 
      * @param message the message with the body
-     * @return the body typename as String, can return
+     * @return the body type name as String, can return
      *         <tt>null</null> if no body
      */
     public static String getBodyTypeName(Message message) {
@@ -200,7 +200,7 @@ public final class MessageHelper {
             if (obj instanceof StreamSource && !(obj instanceof StringSource || obj instanceof BytesSource)) {
                 /*
                  * Generally do not log StreamSources but as StringSource and
-                 * ByteSoure are memory based they are ok
+                 * ByteSource are memory based they are ok
                  */
                 return prepend + "[Body is instance of java.xml.transform.StreamSource]";
             } else if (obj instanceof StreamCache) {
@@ -274,19 +274,40 @@ public final class MessageHelper {
      * @return the XML
      */
     public static String dumpAsXml(Message message, boolean includeBody) {
+        return dumpAsXml(message, includeBody, 0);
+    }
+
+    /**
+     * Dumps the message as a generic XML structure.
+     *
+     * @param message the message
+     * @param includeBody whether or not to include the message body
+     * @param indent number of spaces to indent
+     * @return the XML
+     */
+    public static String dumpAsXml(Message message, boolean includeBody, int indent) {
         StringBuilder sb = new StringBuilder();
+
+        StringBuilder prefix = new StringBuilder();
+        for (int i = 0; i < indent; i++) {
+            prefix.append(" ");
+        }
+
         // include exchangeId as attribute on the <message> tag
+        sb.append(prefix);
         sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId()).append("\">\n");
 
         // headers
         if (message.hasHeaders()) {
-            sb.append("<headers>\n");
+            sb.append(prefix);
+            sb.append("  <headers>\n");
             // sort the headers so they are listed A..Z
             Map<String, Object> headers = new TreeMap<String, Object>(message.getHeaders());
             for (Map.Entry<String, Object> entry : headers.entrySet()) {
                 Object value = entry.getValue();
                 String type = ObjectHelper.classCanonicalName(value);
-                sb.append("<header key=\"" + entry.getKey() + "\"");
+                sb.append(prefix);
+                sb.append("    <header key=\"" + entry.getKey() + "\"");
                 if (type != null) {
                     sb.append(" type=\"" + type + "\"");
                 }
@@ -309,11 +330,13 @@ public final class MessageHelper {
 
                 sb.append("</header>\n");
             }
-            sb.append("</headers>\n");
+            sb.append(prefix);
+            sb.append("  </headers>\n");
         }
 
         if (includeBody) {
-            sb.append("<body");
+            sb.append(prefix);
+            sb.append("  <body");
             String type = ObjectHelper.classCanonicalName(message.getBody());
             if (type != null) {
                 sb.append(" type=\"" + type + "\"");
@@ -333,6 +356,7 @@ public final class MessageHelper {
             sb.append("</body>\n");
         }
 
+        sb.append(prefix);
         sb.append("</message>");
         return sb.toString();
     }
