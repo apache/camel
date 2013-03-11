@@ -143,36 +143,42 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals(6, events.size());
 
         BacklogTracerEventMessage event0 = events.get(0);
-        assertEquals("route1", event0.getToNode());
+        assertEquals("route1", event0.getRouteId());
+        assertEquals(null, event0.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
                 + "      <body type=\"java.lang.String\">Hello World</body>\n"
                 + "    </message>", event0.getMessageAsXml());
 
         BacklogTracerEventMessage event1 = events.get(1);
+        assertEquals("route1", event1.getRouteId());
         assertEquals("foo", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
                 + "      <body type=\"java.lang.String\">Hello World</body>\n"
                 + "    </message>", event1.getMessageAsXml());
 
         BacklogTracerEventMessage event2 = events.get(2);
+        assertEquals("route1", event2.getRouteId());
         assertEquals("bar", event2.getToNode());
         assertEquals("    <message exchangeId=\"" + barExchanges.get(0).getExchangeId() + "\">\n"
                 + "      <body type=\"java.lang.String\">Hello World</body>\n"
                 + "    </message>", event2.getMessageAsXml());
 
         BacklogTracerEventMessage event3 = events.get(3);
-        assertEquals("route1", event3.getToNode());
+        assertEquals("route1", event3.getRouteId());
+        assertEquals(null, event3.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
                 + "      <body type=\"java.lang.String\">Bye World</body>\n"
                 + "    </message>", event3.getMessageAsXml());
 
         BacklogTracerEventMessage event4 = events.get(4);
+        assertEquals("route1", event4.getRouteId());
         assertEquals("foo", event4.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
                 + "      <body type=\"java.lang.String\">Bye World</body>\n"
                 + "    </message>", event3.getMessageAsXml());
 
         BacklogTracerEventMessage event5 = events.get(5);
+        assertEquals("route1", event5.getRouteId());
         assertEquals("bar", event5.getToNode());
         assertEquals("    <message exchangeId=\"" + barExchanges.get(1).getExchangeId() + "\">\n"
                 + "      <body type=\"java.lang.String\">Bye World</body>\n"

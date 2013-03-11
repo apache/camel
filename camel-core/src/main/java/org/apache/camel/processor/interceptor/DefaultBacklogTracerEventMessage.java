@@ -30,13 +30,15 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     private final long uid;
     private final Date timestamp;
+    private final String routeId;
     private final String toNode;
     private final String exchangeId;
     private final String messageAsXml;
 
-    public DefaultBacklogTracerEventMessage(long uid, Date timestamp, String toNode, String exchangeId, String messageAsXml) {
+    public DefaultBacklogTracerEventMessage(long uid, Date timestamp, String routeId, String toNode, String exchangeId, String messageAsXml) {
         this.uid = uid;
         this.timestamp = timestamp;
+        this.routeId = routeId;
         this.toNode = toNode;
         this.exchangeId = exchangeId;
         this.messageAsXml = messageAsXml;
@@ -48,6 +50,10 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public String getRouteId() {
+        return routeId;
     }
 
     public String getToNode() {
@@ -85,7 +91,13 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         sb.append(prefix).append("  <uid>").append(uid).append("</uid>\n");
         String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
         sb.append(prefix).append("  <timestamp>").append(ts).append("</timestamp>\n");
-        sb.append(prefix).append("  <toNode>").append(toNode).append("</toNode>\n");
+        sb.append(prefix).append("  <routeId>").append(routeId).append("</routeId>\n");
+        if (toNode != null) {
+            sb.append(prefix).append("  <toNode>").append(toNode).append("</toNode>\n");
+        } else {
+            // if first message the use routeId as toNode
+            sb.append(prefix).append("  <toNode>").append(routeId).append("</toNode>\n");
+        }
         sb.append(prefix).append("  <exchangeId>").append(exchangeId).append("</exchangeId>\n");
         sb.append(prefix).append(messageAsXml).append("\n");
         sb.append(prefix).append("</").append(ROOT_TAG).append(">");

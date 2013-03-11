@@ -18,6 +18,9 @@ package org.apache.camel.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringReader;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
@@ -169,6 +172,33 @@ public class MessageHelperTest extends TestCase {
                 + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>", out);
 
         context.stop();
+    }
+
+    public void testMessageDump() throws Exception {
+        JAXBContext jaxb = JAXBContext.newInstance(MessageDump.class);
+        Unmarshaller unmarshaller = jaxb.createUnmarshaller();
+
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("Hello World");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsXml(message, true);
+
+        MessageDump dump = (MessageDump) unmarshaller.unmarshal(new StringReader(out));
+        assertNotNull(dump);
+
+        assertEquals("java.lang.String", dump.getBody().getType());
+        assertEquals("Hello World", dump.getBody().getValue());
+
+        assertEquals(1, dump.getHeaders().size());
+        assertEquals("foo", dump.getHeaders().get(0).getKey());
+        assertEquals("java.lang.Integer", dump.getHeaders().get(0).getType());
+        assertEquals("123", dump.getHeaders().get(0).getValue());
     }
 
 }

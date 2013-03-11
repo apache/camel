@@ -31,6 +31,8 @@ public interface BacklogTracerEventMessage extends Serializable {
 
     Date getTimestamp();
 
+    String getRouteId();
+
     String getToNode();
 
     String getExchangeId();

@@ -67,13 +67,13 @@ public class BacklogTracerInterceptor extends DelegateAsyncProcessor {
                 String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4);
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
+                String routeId = routeDefinition.getId();
                 if (first) {
                     Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
-                    String routeId = routeDefinition.getId();
-                    DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, exchangeId, messageAsXml);
+                    DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
                     queue.add(pseudo);
                 }
-                DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), timestamp, toNode, exchangeId, messageAsXml);
+                DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId, messageAsXml);
                 queue.add(event);
             }
 
