@@ -25,10 +25,10 @@
     <version>2.11-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-neo4j</artifactId>
+  <artifactId>camel-spring-neo4j</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Neo4j</name>
-  <description>Camel Neo4j support</description>
+  <description>Camel Spring Neo4j support</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.neo4j.*</camel.osgi.export.pkg>

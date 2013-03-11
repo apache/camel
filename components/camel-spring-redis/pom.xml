@@ -25,10 +25,10 @@
     </parent>
 
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-redis</artifactId>
+    <artifactId>camel-spring-redis</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Redis</name>
-    <description>Camel Redis Component</description>
+    <description>Camel Spring Redis Component</description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.redis.*</camel.osgi.export.pkg>

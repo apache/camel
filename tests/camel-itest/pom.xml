@@ -119,7 +119,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-redis</artifactId>
+      <artifactId>camel-spring-redis</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -105,7 +105,6 @@
         <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-mybatis</include>
         <include>org.apache.camel:camel-nagios</include>
-        <include>org.apache.camel:camel-neo4j</include>
         <include>org.apache.camel:camel-netty</include>
         <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-paxlogging</include>
@@ -113,7 +112,6 @@
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-quickfix</include>
-        <include>org.apache.camel:camel-redis</include>
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-routebox</include>
@@ -138,6 +136,8 @@
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
         <include>org.apache.camel:camel-spring-ldap</include>
+        <include>org.apache.camel:camel-spring-neo4j</include>
+        <include>org.apache.camel:camel-spring-redis</include>
         <include>org.apache.camel:camel-spring-security</include>
         <include>org.apache.camel:camel-spring-ws</include>
         <include>org.apache.camel:camel-sql</include>

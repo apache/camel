@@ -126,7 +126,6 @@
     <module>camel-mvel</module>
     <module>camel-mybatis</module>
     <module>camel-nagios</module>
-    <module>camel-neo4j</module>
     <module>camel-netty</module>
     <module>camel-ognl</module>
     <module>camel-paxlogging</module>
@@ -134,7 +133,6 @@
     <module>camel-protobuf</module>
     <module>camel-quartz</module>
     <module>camel-quickfix</module>
-    <module>camel-redis</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
@@ -156,6 +154,8 @@
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
+    <module>camel-spring-neo4j</module>
+    <module>camel-spring-redis</module>
     <module>camel-spring-security</module>
     <module>camel-spring-ws</module>
     <module>camel-sql</module>

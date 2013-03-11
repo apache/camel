@@ -23,9 +23,9 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-public class CamelNeo4jTest extends AbstractFeatureTest {
+public class CamelSpringRedisTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelNeo4jTest.class);
+    public static final String COMPONENT = extractName(CamelSpringRedisTest.class);
 
     @Test
     public void test() throws Exception {
