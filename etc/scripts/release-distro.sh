@@ -18,7 +18,7 @@
 
 VERSION=${1}
 DOWNLOAD=${2:-/tmp/camel-release}
-mkdir ${DOWNLOAD} 2>/dev/null
+mkdir -p ${DOWNLOAD} 2>/dev/null
 
 # The following component contain schema definitions that must be published
 RUNDIR=$(cd ${0%/*} && echo $PWD)
@@ -28,15 +28,9 @@ COMPLIST=( "camel-spring:spring"
   "camel-spring-integration:spring/integration"
   "camel-spring-security:spring-security"
   "camel-blueprint:blueprint" )
-DIST_DIR="/www/www.apache.org/dist"
+DIST_REPO="https://dist.apache.org/repos/dist/release/camel/apache-camel/"
 SITE_DIR="/www/camel.apache.org"
 
-if [ ! -d "${DIST_DIR}/camel/apache-camel" ]
-then
- echo "Apache Camel distro repository not present on this box"
- echo "Use this script on people.apache.org to publish release"
- exit 1
-fi
 
 if [ -z "${VERSION}" -o ! -d "${DOWNLOAD}" ]
 then
@@ -66,7 +60,17 @@ echo "##########################################################################
 echo "               MOVE DISTRO TO OFFICIAL APACHE MIRROR REPO                       "
 echo "################################################################################"
 # Move distro to the correct location
-mv "${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}" "${DIST_DIR}/camel/apache-camel/"
+mkdir -p ${DOWNLOAD}/dist 2>/dev/null
+svn mkdir ${DIST_REPO}/${VERSION} -m "Apache Camel ${VERSION} release distro placeholder."
+cd ${DOWNLOAD}/dist; svn co ${DIST_REPO}/${VERSION}
+cp "${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/*" "${DOWNLOAD}/dist/${VERSION}/"
+cd "${DOWNLOAD}/dist/${VERSION}/"; svn add *
 echo
 
+echo "Distro artifacts prepared for upload, but not yet uploaded. Verify distro then complete upload!"
+echo "cd ${DOWNLOAD}/dist/${VERSION}/"
+echo "svn status"
+echo "svn ci -m \"Apache Camel ${VERSION} released artifacts.\""
+echo
+echo "Remove previous distro on same branch if necessary"
 echo "DONE"
