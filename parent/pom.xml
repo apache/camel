@@ -307,7 +307,7 @@
     <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-bundle-version>0.18_1</qpid-bundle-version>
-    <qpid-version>0.18</qpid-version>
+    <qpid-version>0.20</qpid-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quickfix-bundle-version>1.5.3_1</quickfix-bundle-version>
