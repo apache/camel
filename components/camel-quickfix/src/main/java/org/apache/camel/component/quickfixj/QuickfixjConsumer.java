@@ -22,7 +22,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.quickfixj.QFJException;
-import quickfix.MessageUtils;
 import quickfix.Session;
 import quickfix.SessionID;
 
@@ -51,7 +50,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
 
         log.debug("Sending FIX message reply: {}", quickfixjMessage);
 
-        SessionID messageSessionID = MessageUtils.getReverseSessionID(exchange.getIn().getBody(quickfix.Message.class));
+        SessionID messageSessionID = exchange.getIn().getHeader("SessionID", SessionID.class);
 
         Session session = getSession(messageSessionID);
         if (session == null) {
