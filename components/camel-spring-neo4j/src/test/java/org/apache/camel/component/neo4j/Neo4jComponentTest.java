@@ -38,7 +38,7 @@ public class Neo4jComponentTest {
     public void testEndpointCreated() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
 
-        String uri = "neo4j:http://localhost:5984/db";
+        String uri = "spring-neo4j:http://localhost:5984/db";
         String remaining = "http://localhost:5984/db";
 
         Endpoint endpoint = new Neo4jComponent(context).createEndpoint(uri, remaining, params);

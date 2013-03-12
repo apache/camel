@@ -20,12 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Neo4jComponent extends DefaultComponent {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jComponent.class);
 
     public Neo4jComponent() {
     }
@@ -35,11 +31,9 @@ public class Neo4jComponent extends DefaultComponent {
     }
 
     @Override
-    protected Neo4jEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params)
-        throws Exception {
-        Neo4jEndpoint e = new Neo4jEndpoint(uri, remaining, this);
-        setProperties(e, params);
-        LOGGER.info("Created Neo4j Endpoint [{}]", e);
-        return e;
+    protected Neo4jEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
+        Neo4jEndpoint endpoint = new Neo4jEndpoint(uri, remaining, this);
+        setProperties(endpoint, params);
+        return endpoint;
     }
 }

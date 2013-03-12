@@ -27,7 +27,7 @@ public class Neo4jEndpointTest {
 
     @Test
     public void assertSingleton() throws URISyntaxException {
-        Neo4jEndpoint endpoint = new Neo4jEndpoint("neo4j:http://localhost/db", "http://localhost/db", new Neo4jComponent());
+        Neo4jEndpoint endpoint = new Neo4jEndpoint("spring-neo4j:http://localhost/db", "http://localhost/db", new Neo4jComponent());
         assertTrue(endpoint.isSingleton());
     }
 

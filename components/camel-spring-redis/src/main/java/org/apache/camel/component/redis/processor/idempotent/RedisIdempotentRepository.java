@@ -22,12 +22,10 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.redis.RedisConfiguration;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
-@ManagedResource(description = "Redis based message id repository")
+@ManagedResource(description = "Spring Redis based message id repository")
 public class RedisIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
     private final SetOperations<String, String> setOperations;
     private final String processorName;
@@ -78,17 +76,19 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
         return true;
     }
 
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    protected void doStop() throws Exception {
+        // noop
+    }
+
     protected void doShutdown() throws Exception {
         super.doShutdown();
         if (redisConfiguration != null) {
             redisConfiguration.stop();
         }
-    }
-
-    protected void doStart() throws Exception {
-    }
-
-    protected void doStop() throws Exception {
     }
 }
 

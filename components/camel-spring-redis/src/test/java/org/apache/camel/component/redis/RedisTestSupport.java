@@ -36,7 +36,7 @@ public class RedisTestSupport extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("redis://localhost:6379?redisTemplate=#redisTemplate");
+                        .to("spring-redis://localhost:6379?redisTemplate=#redisTemplate");
             }
         };
     }

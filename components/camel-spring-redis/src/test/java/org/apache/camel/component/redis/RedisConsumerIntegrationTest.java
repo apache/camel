@@ -53,11 +53,11 @@ public class RedisConsumerIntegrationTest extends RedisTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("redis://localhost:6379?command=SUBSCRIBE&channels=one,two&listenerContainer=#listenerContainer&redisTemplate=#redisTemplate")
+                from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=one,two&listenerContainer=#listenerContainer&redisTemplate=#redisTemplate")
                         .to("mock:result");
 
                 from("direct:start")
-                        .to("redis://localhost:6379?redisTemplate=#redisTemplate");
+                        .to("spring-redis://localhost:6379?redisTemplate=#redisTemplate");
             }
         };
     }

@@ -26,7 +26,7 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route startupOrder="1">
-            <from uri="redis://localhost:6379?command=SUBSCRIBE&amp;channels=testChannel"/>
+            <from uri="spring-redis://localhost:6379?command=SUBSCRIBE&amp;channels=testChannel"/>
             <idempotentConsumer messageIdRepositoryRef="idempotentRepository">
                 <simple>${in.body}</simple>
                 <to uri="mock:result"/>
@@ -38,7 +38,7 @@
             <delay><!-- give time to listener above to start -->
                 <constant>2000</constant>
             </delay>
-            <to uri="redis://localhost:6379"/>
+            <to uri="spring-redis://localhost:6379"/>
         </route>
     </camelContext>
 </beans>

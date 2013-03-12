@@ -36,7 +36,7 @@ public class RestNeo4jProducerCreateNodeIntegrationTest extends CamelTestSupport
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
-    private final String neo4jEndpoint = "neo4j:http://localhost:7474/db/data/";
+    private final String neo4jEndpoint = "spring-neo4j:http://localhost:7474/db/data/";
 
     private final SpringRestGraphDatabase db = new SpringRestGraphDatabase("http://localhost:7474/db/data/");
 

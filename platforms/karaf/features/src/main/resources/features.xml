@@ -862,7 +862,6 @@
     <bundle>mvn:org.apache.camel/camel-spring-neo4j/${project.version}</bundle>
   </feature>
 -->
-<!-- TODO: requires Karaf 2.3.1
   <feature name='camel-spring-redis' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring-version-range}'>spring</feature>
@@ -873,7 +872,6 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jedis/${jedis-client-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-redis/${project.version}</bundle>
   </feature>
--->
   <feature name='camel-spring-security' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>http</feature>
     <feature version='${project.version}'>camel-spring</feature>
