@@ -49,6 +49,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -793,7 +794,8 @@ public class BeanInfo {
         String types = ObjectHelper.between(methodName, "(", ")");
         if (types != null) {
             // we must qualify based on types to match method
-            Iterator<?> it = ObjectHelper.createIterator(types);
+            String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',');
+            Iterator<?> it = ObjectHelper.createIterator(parameters);
             for (int i = 0; i < method.getParameterTypes().length; i++) {
                 if (it.hasNext()) {
                     Class<?> parameterType = method.getParameterTypes()[i];

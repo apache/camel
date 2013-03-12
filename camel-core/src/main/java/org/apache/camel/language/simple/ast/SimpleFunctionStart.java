@@ -21,6 +21,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Starts a function
@@ -63,19 +64,26 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 StringBuilder sb = new StringBuilder();
+                boolean quoteEmbeddedFunctions = false;
 
                 // we need to concat the block so we have the expression
                 for (SimpleNode child : block.getChildren()) {
                     if (child instanceof LiteralNode) {
                         String text = ((LiteralNode) child).getText();
                         sb.append(text);
-                    } else if (child instanceof SimpleFunctionStart) {
+                        quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
+                    // if its a function or quoted literal, then embed that as text
+                    } else if (child instanceof SimpleFunctionStart || child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
                         try {
                             // pass in null when we evaluate the nested expressions
                             Expression nested = child.createExpression(null);
                             String text = nested.evaluate(exchange, String.class);
                             if (text != null) {
-                                sb.append(text);
+                                if (quoteEmbeddedFunctions && !StringHelper.isQuoted(text)) {
+                                    sb.append("'").append(text).append("'");
+                                } else {
+                                    sb.append(text);
+                                }
                             }
                         } catch (SimpleParserException e) {
                             // must rethrow parser exception as illegal syntax with details about the location
@@ -106,8 +114,9 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
 
     @Override
     public boolean acceptAndAddNode(SimpleNode node) {
-        // only accept literals or embedded functions
-        if (node instanceof LiteralNode || node instanceof SimpleFunctionStart) {
+        // only accept literals, quotes or embedded functions
+        if (node instanceof LiteralNode || node instanceof SimpleFunctionStart
+                || node instanceof SingleQuoteStart || node instanceof DoubleQuoteStart) {
             block.addChild(node);
             return true;
         } else {

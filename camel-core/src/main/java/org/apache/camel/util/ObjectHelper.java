@@ -754,6 +754,9 @@ public final class ObjectHelper {
     public static Class<?> loadClass(String name, ClassLoader loader, boolean needToWarn) {
         // must clean the name so its pure java name, eg removing \n or whatever people can do in the Spring XML
         name = normalizeClassName(name);
+        if (ObjectHelper.isEmpty(name)) {
+            return null;
+        }
 
         // Try simple type first
         Class<?> clazz = loadSimpleType(name);
