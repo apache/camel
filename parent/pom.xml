@@ -345,6 +345,7 @@
     <spring-integration-version>2.2.2.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>1.3.1.RELEASE</spring-ldap-version>
+    <spring-ldap-bundle-version>1.3.1.RELEASE_2</spring-ldap-bundle-version>
     <spring-neo4j-version>2.2.0.RELEASE</spring-neo4j-version>
     <spring-retry-version>1.0.2.RELEASE</spring-retry-version>
     <!-- CAMEL-5768 using spring3.1.x by default -->

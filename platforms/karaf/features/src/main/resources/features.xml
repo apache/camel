@@ -827,19 +827,17 @@
     <feature version='${spring-version-range}'>spring-test</feature>
     <bundle>mvn:org.apache.camel/camel-spring-javaconfig/${project.version}</bundle>
   </feature>
-<!-- does not work due https://issues.apache.org/jira/browse/SMX4-1379   
   <feature name='camel-spring-ldap' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
     <feature version='${spring-version-range}'>spring-tx</feature>
     <feature version='${spring-version-range}'>spring-jdbc</feature>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ldap/${spring-ldap-version}_1</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ldap/${spring-ldap-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.batch/spring-batch-core/${spring-batch-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.batch/spring-batch-infrastructure/${spring-batch-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
   </feature>
--->  
   <!-- TODO: does not work due SMX4-1400 
   <feature name='camel-spring-neo4j' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
