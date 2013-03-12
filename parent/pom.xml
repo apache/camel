@@ -80,11 +80,13 @@
     <commons-codec-version>1.6</commons-codec-version>
     <commons-collections-version>3.2.1</commons-collections-version>
     <commons-configuration-version>1.8</commons-configuration-version>
+    <commons-configuration-bundle-version>1.9_1</commons-configuration-bundle-version>
     <commons-csv-bundle-version>1.0-r706899_5</commons-csv-bundle-version>
     <commons-cli-version>1.2</commons-cli-version>
     <commons-daemon-version>1.0.5</commons-daemon-version>
     <commons-dbcp-bundle-version>1.4_3</commons-dbcp-bundle-version>
     <commons-dbcp-version>1.4</commons-dbcp-version>
+    <commons-digester-1x-version>1.8.1</commons-digester-1x-version>
     <commons-digester-version>2.1</commons-digester-version>
     <commons-exec-version>1.1</commons-exec-version>
     <commons-httpclient-bundle-version>3.1_7</commons-httpclient-bundle-version>
@@ -143,6 +145,7 @@
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
     <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
+    <geronimo-jsp-spec-version>1.1</geronimo-jsp-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.2</geronimo-servlet-spec-version>
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
@@ -267,6 +270,7 @@
     <maven-war-plugin-version>2.3</maven-war-plugin-version>
     <maven-version>2.0</maven-version>
     <neo4j-version>1.8</neo4j-version>
+    <neo4j-bundle-version>1.8_1</neo4j-bundle-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.7</mina2-version>
@@ -336,6 +340,7 @@
     <solr-version>3.6.1</solr-version>
     <spring-batch-version>2.1.9.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
+    <spring-data-commons-version>1.5.0.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.0.3.RELEASE</spring-data-redis-version>
     <spring-integration-version>2.2.2.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>

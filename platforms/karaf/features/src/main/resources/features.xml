@@ -840,10 +840,27 @@
     <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
   </feature>
 -->  
-<!-- TODO: Need SMX4-1374
+  <!-- TODO: does not work due SMX4-1400 
   <feature name='camel-spring-neo4j' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-spring</feature>
+    <bundle dependency='true'>mvn:org.springframework.data/spring-data-neo4j/${spring-neo4j-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.data/spring-data-neo4j-rest/${spring-neo4j-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.data/spring-data-commons/${spring-data-commons-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.neo4j/${neo4j-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene/${lucene-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-configuration/${commons-configuration-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/${geronimo-el-spec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jsp_2.2_spec/${geronimo-jsp-spec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-spec-version}</bundle>
+    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version-xmljson}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
+    <bundle dependency='true'>mvn:commons-digester/commons-digester/${commons-digester-1x-version}</bundle>
+    <bundle dependency='true'>mvn:commons-jxpath/commons-jxpath/${commons-jxpath-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-jexl/${commons-jexl2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-neo4j/${project.version}</bundle>
   </feature>
 -->
