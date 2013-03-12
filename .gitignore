@@ -10,7 +10,3 @@ target
 .checkstyle
 *.log
 dependency-reduced-pom.xml
-
-setEnv.sh
-
-tests/camel-itest/src/test/lib/camel-validator-test-resources-1.0.0-sources.jar.lastUpdated
