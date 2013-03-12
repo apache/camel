@@ -57,9 +57,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
             throw new IllegalStateException("Unknown session: " + messageSessionID);
         }
 
-        if (!session.send(quickfixjMessage)) {
-            throw new CannotSendException("Could not send FIX message reply: " + quickfixjMessage.toString());
-        }
+        session.send(quickfixjMessage);
     }
 
     Session getSession(SessionID messageSessionID) {
