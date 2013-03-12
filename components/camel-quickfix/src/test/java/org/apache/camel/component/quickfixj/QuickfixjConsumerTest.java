@@ -29,7 +29,6 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import quickfix.FixVersions;
 import quickfix.Message;
-import quickfix.MessageUtils;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.field.BeginString;
@@ -40,7 +39,6 @@ public class QuickfixjConsumerTest {
     private Exchange mockExchange;
     private Processor mockProcessor;
     private Endpoint mockEndpoint;
-    private SessionID sessionID;
     private Message inboundFixMessage;
     
     @Before
@@ -54,7 +52,6 @@ public class QuickfixjConsumerTest {
         inboundFixMessage.getHeader().setString(BeginString.FIELD, FixVersions.BEGINSTRING_FIX44);
         inboundFixMessage.getHeader().setString(SenderCompID.FIELD, "SENDER");
         inboundFixMessage.getHeader().setString(TargetCompID.FIELD, "TARGET");
-        sessionID = MessageUtils.getSessionID(inboundFixMessage);
         Mockito.when(mockCamelMessage.getBody(quickfix.Message.class)).thenReturn(inboundFixMessage);
         
         mockProcessor = Mockito.mock(Processor.class);        
@@ -96,40 +93,53 @@ public class QuickfixjConsumerTest {
         
         Mockito.verify(mockExchange).setException(exception);
     }
-    
+
     @Test
     public void setExceptionOnInOutExchange() throws Exception {            
         org.apache.camel.Message mockCamelOutMessage = Mockito.mock(org.apache.camel.Message.class);
+        org.apache.camel.Message mockCamelInMessage = Mockito.mock(org.apache.camel.Message.class);
+        SessionID mockSessionId = Mockito.mock(SessionID.class);
+
+        QuickfixjConsumer consumer = Mockito.spy(new QuickfixjConsumer(mockEndpoint, mockProcessor));
+        Mockito.doReturn(null).when(consumer).getSession(mockSessionId);
+
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
         Mockito.when(mockExchange.getOut()).thenReturn(mockCamelOutMessage);
-        Mockito.when(mockCamelOutMessage.getBody(Message.class)).thenReturn(new Message());
-        
-        QuickfixjConsumer consumer = new QuickfixjConsumer(mockEndpoint, mockProcessor);
+        Message outboundFixMessage = new Message();
+        Mockito.when(mockCamelOutMessage.getBody(Message.class)).thenReturn(outboundFixMessage);
+        Mockito.when(mockExchange.getIn()).thenReturn(mockCamelInMessage);
+        Mockito.when(mockCamelInMessage.getHeader("SessionID", SessionID.class)).thenReturn(mockSessionId);
+
         consumer.start();
-        
+
         // Simulate a message from the FIX engine
         consumer.onExchange(mockExchange);
-        
+
         Mockito.verify(mockExchange).setException(Mockito.isA(IllegalStateException.class));
     }
 
     @Test
     public void processInOutExchange() throws Exception {
         org.apache.camel.Message mockCamelOutMessage = Mockito.mock(org.apache.camel.Message.class);
+        org.apache.camel.Message mockCamelInMessage = Mockito.mock(org.apache.camel.Message.class);
+        SessionID mockSessionId = Mockito.mock(SessionID.class);
+        Session mockSession = Mockito.mock(Session.class);
+
+        QuickfixjConsumer consumer = Mockito.spy(new QuickfixjConsumer(mockEndpoint, mockProcessor));
+        Mockito.doReturn(mockSession).when(consumer).getSession(mockSessionId);
+        Mockito.doReturn(true).when(mockSession).send(Mockito.isA(Message.class));
+
+        Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
         Mockito.when(mockExchange.getOut()).thenReturn(mockCamelOutMessage);
         Message outboundFixMessage = new Message();
         Mockito.when(mockCamelOutMessage.getBody(Message.class)).thenReturn(outboundFixMessage);
-        
-        QuickfixjConsumer consumer = Mockito.spy(new QuickfixjConsumer(mockEndpoint, mockProcessor));
-        Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
-        Mockito.doReturn(mockSession).when(consumer).getSession(MessageUtils.getReverseSessionID(inboundFixMessage));
-        Mockito.doReturn(true).when(mockSession).send(Mockito.isA(Message.class));
-        
+        Mockito.when(mockExchange.getIn()).thenReturn(mockCamelInMessage);
+        Mockito.when(mockCamelInMessage.getHeader("SessionID", SessionID.class)).thenReturn(mockSessionId);
+
         consumer.start();
-        Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        
+
         consumer.onExchange(mockExchange);
         Mockito.verify(mockExchange, Mockito.never()).setException(Mockito.isA(Exception.class));
         Mockito.verify(mockSession).send(outboundFixMessage);
