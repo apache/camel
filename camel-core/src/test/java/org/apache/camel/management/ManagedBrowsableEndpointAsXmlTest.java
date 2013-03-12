@@ -214,7 +214,8 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
 
-        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>\n"
+        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId() 
+                + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>\n"
                 + "<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                 + "</message>\n</messages>", out);
     }
