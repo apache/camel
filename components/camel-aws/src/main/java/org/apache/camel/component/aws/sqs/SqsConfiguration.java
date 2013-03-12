@@ -18,7 +18,7 @@ package org.apache.camel.component.aws.sqs;
 
 import java.util.Collection;
 
-import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.AmazonSQS;
 
 /**
  * The AWS SQS component configuration properties
@@ -28,7 +28,7 @@ public class SqsConfiguration {
 
     // common properties
     private String queueName;
-    private AmazonSQSClient amazonSQSClient;
+    private AmazonSQS amazonSQSClient;
     private String accessKey;
     private String secretKey;
     private String amazonSQSEndpoint;
@@ -90,11 +90,11 @@ public class SqsConfiguration {
         this.deleteAfterRead = deleteAfterRead;
     }
 
-    public AmazonSQSClient getAmazonSQSClient() {
+    public AmazonSQS getAmazonSQSClient() {
         return amazonSQSClient;
     }
 
-    public void setAmazonSQSClient(AmazonSQSClient amazonSQSClient) {
+    public void setAmazonSQSClient(AmazonSQS amazonSQSClient) {
         this.amazonSQSClient = amazonSQSClient;
     }
     

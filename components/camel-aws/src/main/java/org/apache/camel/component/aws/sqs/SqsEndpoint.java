@@ -21,6 +21,7 @@ import java.util.HashMap;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
@@ -47,7 +48,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     
     private static final transient Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
     
-    private AmazonSQSClient client;
+    private AmazonSQS client;
     private String queueUrl;
     private SqsConfiguration configuration;
     private int maxMessagesPerPoll;
@@ -94,7 +95,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    private void createQueue(AmazonSQSClient client) {
+    private void createQueue(AmazonSQS client) {
         LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
 
         // creates a new queue, or returns the URL of an existing one
@@ -122,7 +123,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         LOG.trace("Queue created and available at: {}", queueUrl);
     }
 
-    private void updateQueueAttributes(AmazonSQSClient client) {
+    private void updateQueueAttributes(AmazonSQS client) {
         SetQueueAttributesRequest request = new SetQueueAttributesRequest();
         request.setQueueUrl(queueUrl);
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
@@ -177,14 +178,14 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
     
-    public AmazonSQSClient getClient() {
+    public AmazonSQS getClient() {
         if (client == null) {
             client = createClient();
         }
         return client;
     }
     
-    public void setClient(AmazonSQSClient client) {
+    public void setClient(AmazonSQS client) {
         this.client = client;
     }
 
