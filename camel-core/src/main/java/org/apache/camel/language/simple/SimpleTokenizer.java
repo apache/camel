@@ -172,7 +172,7 @@ public final class SimpleTokenizer {
             StringBuilder sb = new StringBuilder();
             char ch = expression.charAt(index);
             boolean escaped = '\\' == ch;
-            if (escaped && index < expression.length()) {
+            if (escaped && index < expression.length() - 1) {
                 // grab next character to escape
                 char next = expression.charAt(++index);
                 // special for new line, tabs and carriage return
