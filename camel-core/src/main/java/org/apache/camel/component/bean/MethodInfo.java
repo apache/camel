@@ -49,6 +49,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -423,7 +424,10 @@ public class MethodInfo {
                 // use an iterator to walk the parameter values
                 Iterator<?> it = null;
                 if (methodParameters != null) {
-                    it = ObjectHelper.createIterator(methodParameters);
+                    // split the parameters safely separated by comma, but beware that we can have
+                    // quoted parameters which contains comma as well, so do a safe quote split
+                    String[] parameters = StringQuoteHelper.splitSafeQuote(methodParameters, ',');
+                    it = ObjectHelper.createIterator(parameters);
                 }
 
                 // remove headers as they should not be propagated

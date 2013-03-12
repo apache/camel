@@ -47,6 +47,14 @@ public class LiteralExpression extends BaseSimpleNode implements LiteralNode {
     }
 
     @Override
+    public boolean quoteEmbeddedNodes() {
+        // we should quote embedded nodes if using the bean function as the nodes can be parameters
+        // to a bean method call so we want to ensure their parameter value is quoted to avoid parsing
+        // issues with commas in parameter values being mixed up with commas used for parameter separator
+        return text.toString().startsWith("bean:");
+    }
+
+    @Override
     public Expression createExpression(String expression) {
         return ExpressionBuilder.constantExpression(getText());
     }
