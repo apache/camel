@@ -35,23 +35,15 @@
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=quickfix</camel.osgi.export.service>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>marketcetera.m2</id>
-      <name>Marketcetera M2 Repository</name>
-      <url>http://repo.marketcetera.org/maven</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>quickfixj</groupId>
-      <artifactId>quickfixj-all</artifactId>
-      <version>${quickfix-version}</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.quickfix</artifactId>
+      <version>${quickfix-bundle-version}</version>
     </dependency>
 
     <!-- test dependencies -->

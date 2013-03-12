@@ -309,8 +309,7 @@
     <qpid-version>0.18</qpid-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
-    <quickfix-bundle-version>1.5.2_1</quickfix-bundle-version>
-    <quickfix-version>1.5.2-bd</quickfix-version>
+    <quickfix-bundle-version>1.5.3_1</quickfix-bundle-version>
     <regexp-bundle-version>1.3_3</regexp-bundle-version>
     <restlet-version>2.0.15</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
