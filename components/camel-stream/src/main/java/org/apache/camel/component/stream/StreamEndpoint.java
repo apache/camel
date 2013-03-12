@@ -34,6 +34,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     private String fileName;
     private boolean scanStream;
     private boolean retry;
+    private boolean closeOnDone;
     private long scanStreamDelay;
     private long delay;
     private String encoding;
@@ -148,6 +149,14 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public void setRetry(boolean retry) {
         this.retry = retry;
+    }
+    
+    public boolean isCloseOnDone() {
+        return closeOnDone;
+    }
+    
+    public void setCloseOnDone(boolean closeOnDone) {
+        this.closeOnDone = closeOnDone;
     }
 
     public long getScanStreamDelay() {

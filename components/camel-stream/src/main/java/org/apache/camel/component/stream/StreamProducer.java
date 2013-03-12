@@ -67,7 +67,7 @@ public class StreamProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        closeStream(true);
+        closeStream(null, true);
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -76,7 +76,7 @@ public class StreamProducer extends DefaultProducer {
         synchronized (this) {
             openStream(exchange);
             writeToStream(outputStream, exchange);
-            closeStream(false);
+            closeStream(exchange, false);
         }
     }
 
@@ -172,18 +172,23 @@ public class StreamProducer extends DefaultProducer {
             openStream();
         }
     }
+    
+    private Boolean isDone(Exchange exchange) {
+        return exchange != null && exchange.getProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE, Boolean.class);
+    }
 
-    private synchronized void closeStream(boolean force) throws Exception {
+    private synchronized void closeStream(Exchange exchange, boolean force) throws Exception {
         if (outputStream == null) {
             return;
         }
 
         // never close a standard stream (system.out or system.err)
         // always close a 'header' stream (unless it's a system stream)
-        boolean systemStream = outputStream != System.out || outputStream != System.err;
+        boolean systemStream = outputStream == System.out || outputStream == System.err;
         boolean headerStream = "header".equals(uri);
         boolean reachedLimit = endpoint.getAutoCloseCount() > 0 && count.decrementAndGet() <= 0;
-        boolean expiredStream = force || headerStream || reachedLimit;  // evaluation order is important!
+        boolean isDone = endpoint.isCloseOnDone() && isDone(exchange);
+        boolean expiredStream = force || headerStream || isDone || reachedLimit;  // evaluation order is important!
 
         // never ever close a system stream
         if (!systemStream && expiredStream) {
