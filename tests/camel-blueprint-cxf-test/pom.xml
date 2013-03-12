@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-blueprint-cxf-test</artifactId>
-  <name>Camel :: Blueprint CXF :: Tests </name>
+  <name>Camel :: Integration Tests :: Blueprint CXF Tests </name>
   <description>Tests the camel-cxf blueprint features</description>
 
   <dependencies>
