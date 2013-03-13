@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -30,15 +29,13 @@ import org.apache.hadoop.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class HdfsProducerSplitTest extends CamelTestSupport {
-    //Hadoop doesn't run on IBM JDK
-    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
+public class HdfsProducerSplitTest extends HdfsTestSupport {
 
     private static final Path BASE_FILE = new Path(new File("target/test/test-camel-simple-write-BASE_FILE").getAbsolutePath());
 
     @Before
     public void setUp() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         super.setUp();
@@ -56,7 +53,7 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
 
     @Test
     public void testSimpleWriteFileWithIdleSplit() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -92,7 +89,7 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
     }
 
     private void doTest(int routeNr) throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -116,7 +113,7 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 

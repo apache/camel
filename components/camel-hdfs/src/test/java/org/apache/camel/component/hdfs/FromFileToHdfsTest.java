@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -31,16 +30,13 @@ import org.junit.Test;
 /**
  *
  */
-public class FromFileToHdfsTest extends CamelTestSupport {
+public class FromFileToHdfsTest extends HdfsTestSupport {
 
     private static final Path TEMP_DIR = new Path(new File("target/outbox/").getAbsolutePath());
 
-    //Hadoop doesn't run on IBM JDK
-    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
-
     @Before
     public void setUp() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         deleteDirectory("target/inbox");
@@ -50,7 +46,7 @@ public class FromFileToHdfsTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -63,7 +59,7 @@ public class FromFileToHdfsTest extends CamelTestSupport {
 
     @Test
     public void testFileToHdfs() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -82,7 +78,7 @@ public class FromFileToHdfsTest extends CamelTestSupport {
 
     @Test
     public void testTwoFilesToHdfs() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 

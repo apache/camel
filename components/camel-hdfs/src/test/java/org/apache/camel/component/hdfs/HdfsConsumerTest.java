@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -43,9 +42,7 @@ import org.junit.Test;
 import static org.apache.hadoop.io.SequenceFile.CompressionType;
 import static org.apache.hadoop.io.SequenceFile.createWriter;
 
-public class HdfsConsumerTest extends CamelTestSupport {
-    //Hadoop doesn't run on IBM JDK
-    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
+public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -54,16 +51,24 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Before
     public void setUp() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
+
+        // must be able to get security configuration
+        try {
+            javax.security.auth.login.Configuration.getConfiguration();
+        } catch (Exception e) {
+            return;
+        }
+
         deleteDirectory("target/test");
         super.setUp();
     }
     
     @Test
     public void testSimpleConsumer() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -92,7 +97,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadBoolean() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -121,7 +126,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadByte() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -153,7 +158,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadFloat() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -184,9 +189,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadDouble() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
+
         final Path file = new Path(new File("target/test/test-camel-double").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -214,7 +220,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadInt() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -245,7 +251,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadLong() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -276,7 +282,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadBytes() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -307,7 +313,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadString() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -338,7 +344,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadStringArrayFile() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
@@ -371,7 +377,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
 
