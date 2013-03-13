@@ -31,12 +31,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.rx.*</camel.osgi.export.pkg>
-<!--
-    <camel.osgi.export.service>
-    </camel.osgi.export.service>
--->
   </properties>
-
 
   <dependencies>
 
@@ -48,7 +43,7 @@
     <dependency>
       <groupId>com.netflix.rxjava</groupId>
       <artifactId>rxjava-core</artifactId>
-      <version>0.6.0</version>
+      <version>${rxjava-version}</version>
     </dependency>
 
     <!-- test dependencies -->

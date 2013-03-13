@@ -714,6 +714,11 @@
     <feature version='${project.version}'>camel-script</feature>
     <bundle>mvn:org.jruby/jruby/${jruby-version}</bundle>
   </feature>
+  <feature name='camel-rx' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:com.netflix.rxjava/rxjava-core/${rxjava-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-rx/${project.version}</bundle>
+  </feature>
   <feature name='camel-saxon' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
