@@ -98,4 +98,20 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- skip tests on Solaris using sparc CPUs -->
+    <profiles>
+        <profile>
+            <id>sparc</id>
+            <activation>
+                <os>
+                    <arch>sparc</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
