@@ -19,7 +19,6 @@ package org.apache.camel.component.hdfs;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -39,16 +38,13 @@ import org.apache.hadoop.util.ReflectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class HdfsProducerTest extends CamelTestSupport {
+public class HdfsProducerTest extends HdfsTestSupport {
 
     private static final Path TEMP_DIR = new Path(new File("target/test/").getAbsolutePath());
 
-    //Hadoop doesn't run on IBM JDK
-    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
-
     @Before
     public void setUp() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         super.setUp();
@@ -56,7 +52,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testProducer() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         template.sendBody("direct:start1", "PAPPO");
@@ -73,7 +69,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testProducerClose() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         for (int i = 0; i < 10; ++i) {
@@ -98,7 +94,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteBoolean() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         Boolean aBoolean = true;
@@ -117,7 +113,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteByte() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         byte aByte = 8;
@@ -136,7 +132,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteInt() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         int anInt = 1234;
@@ -155,7 +151,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteFloat() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         float aFloat = 12.34f;
@@ -174,7 +170,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteDouble() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         Double aDouble = 12.34D;
@@ -193,7 +189,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteLong() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         long aLong = 1234567890;
@@ -212,7 +208,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteText() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         String txt = "CIAO MONDO !";
@@ -231,7 +227,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteTextWithKey() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         String txtKey = "THEKEY";
@@ -251,7 +247,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testMapWriteTextWithKey() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         String txtKey = "THEKEY";
@@ -271,7 +267,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testArrayWriteText() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         String txtValue = "CIAO MONDO !";
@@ -288,7 +284,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testBloomMapWriteText() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         String txtKey = "THEKEY";
@@ -308,7 +304,7 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
-        if (SKIP) {
+        if (!canTest()) {
             return;
         }
         super.tearDown();
