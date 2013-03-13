@@ -24,6 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
+ * This is a manual test to run
+ *
  * @version
  */
 public class RouteContextProcessorTest extends ContextTestSupport {
@@ -48,6 +50,10 @@ public class RouteContextProcessorTest extends ContextTestSupport {
     private static final int NUMBER_OF_MESSAGES = 10000;
 
     public void testForkAndJoin() throws InterruptedException {
+        // enable the other test method for manual testing
+    }
+
+    public void xxxTestForkAndJoin() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(NUMBER_OF_MESSAGES);
 
