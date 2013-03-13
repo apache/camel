@@ -69,7 +69,8 @@ public class XmlJsonStressTest extends CamelTestSupport {
             });
         }
 
-        assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
+        // give much time as slow servers may take long time
+        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
 
         // test that all messages are equal
         Object jsonBody = mockJSON.getExchanges().get(0).getIn().getBody(String.class);
