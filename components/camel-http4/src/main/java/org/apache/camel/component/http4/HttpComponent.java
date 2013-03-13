@@ -19,6 +19,7 @@ package org.apache.camel.component.http4;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -67,6 +68,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     // options to the default created http connection manager
     protected int maxTotalConnections = 200;
     protected int connectionsPerRoute = 20;
+    // It's MILLISECONDS, the default value is always keep alive
+    protected long connectionTimeToLive = -1;
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -304,14 +307,15 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
     protected ClientConnectionManager createConnectionManager() {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
-
-        PoolingClientConnectionManager answer = new PoolingClientConnectionManager(schemeRegistry);
+        // setup the connection live time
+        PoolingClientConnectionManager answer = new PoolingClientConnectionManager(schemeRegistry, getConnectionTimeToLive(), TimeUnit.MILLISECONDS);
         if (getMaxTotalConnections() > 0) {
             answer.setMaxTotal(getMaxTotalConnections());
         }
         if (getConnectionsPerRoute() > 0) {
             answer.setDefaultMaxPerRoute(getConnectionsPerRoute());
         }
+        
         LOG.info("Created ClientConnectionManager " + answer);
 
         return answer;
@@ -409,7 +413,15 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public void setConnectionsPerRoute(int connectionsPerRoute) {
         this.connectionsPerRoute = connectionsPerRoute;
     }
-
+    
+    public long getConnectionTimeToLive() {
+        return connectionTimeToLive;
+    }
+    
+    public void setConnectionTimeToLive(long connectionTimeToLive) {
+        this.connectionTimeToLive = connectionTimeToLive;
+    }
+ 
     @Override
     public void doStart() throws Exception {
         super.doStart();
