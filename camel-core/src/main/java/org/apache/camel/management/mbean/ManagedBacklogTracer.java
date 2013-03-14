@@ -70,6 +70,14 @@ public class ManagedBacklogTracer implements  ManagedTracerBacklogMBean {
         backlogTracer.setBacklogSize(backlogSize);
     }
 
+    public void setTracePattern(String pattern) {
+        backlogTracer.setTracePattern(pattern);
+    }
+
+    public String getTracePattern() {
+        return backlogTracer.getTracePattern();
+    }
+
     public long getTraceCounter() {
         return backlogTracer.getTraceCounter();
     }

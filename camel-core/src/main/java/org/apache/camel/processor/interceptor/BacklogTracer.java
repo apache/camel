@@ -34,6 +34,7 @@ import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.EndpointHelper;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -50,6 +51,9 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     private final Queue<DefaultBacklogTracerEventMessage> queue = new ArrayBlockingQueue<DefaultBacklogTracerEventMessage>(1000);
     // how many of the last messages per node to keep in the backlog
     private int backlogSize = 10;
+    // a pattern to filter tracing nodes
+    private String tracePattern;
+    private String[] patterns;
     // remember the processors we are tracing, which we need later
     private final Set<ProcessorDefinition<?>> processors = new HashSet<ProcessorDefinition<?>>();
 
@@ -103,7 +107,31 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
      * @return <tt>true</tt> to trace, <tt>false</tt> to skip tracing
      */
     public boolean shouldTrace(ProcessorDefinition<?> definition) {
-        return enabled;
+        if (!enabled) {
+            return false;
+        }
+
+        if (patterns != null) {
+            for (String pattern : patterns) {
+                // match either route id, or node id
+                String id = definition.getId();
+                // use matchPattern method from endpoint helper that has a good matcher we use in Camel
+                if (EndpointHelper.matchPattern(id, pattern)) {
+                    return true;
+                }
+                RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
+                if (route != null) {
+                    id = route.getId();
+                    if (EndpointHelper.matchPattern(id, pattern)) {
+                        return true;
+                    }
+                }
+            }
+            // not matched the pattern
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isEnabled() {
@@ -127,6 +155,20 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
             throw new IllegalArgumentException("The backlog size must be a positive number, was: " + backlogSize);
         }
         this.backlogSize = backlogSize;
+    }
+
+    public String getTracePattern() {
+        return tracePattern;
+    }
+
+    public void setTracePattern(String tracePattern) {
+        this.tracePattern = tracePattern;
+        if (tracePattern != null) {
+            // the pattern can have multiple nodes separated by comma
+            this.patterns = tracePattern.split(",");
+        } else {
+            this.patterns = null;
+        }
     }
 
     public long getTraceCounter() {
