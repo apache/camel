@@ -22,8 +22,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.test.junit4.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
+import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.apache.camel.test.spring.MockEndpoints;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
  * Test for CamelSpringDelegatingTestContextLoader.
  * 
  */
+//START SNIPPET: example
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         classes = {CamelSpringDelegatingTestContextLoaderTest.TestConfig.class},
@@ -80,3 +81,4 @@ public class CamelSpringDelegatingTestContextLoaderTest {
         errorEndpoint.assertIsSatisfied();
     }
 }
+//END SNIPPET: example
