@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -24,14 +23,13 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("camel-spring-neo4j feature does not work yet")
-public class CamelSpringNeo4jTest extends AbstractFeatureTest {
+public class CamelRxTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelSpringNeo4jTest.class);
+    public static final String COMPONENT = extractName(CamelRxTest.class);
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        // noop
     }
 
     @Configuration

@@ -17,7 +17,7 @@
 package org.apache.camel.itest.karaf;
 
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.BeanioDataFormat;
+import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -30,8 +30,7 @@ public class CamelBase64Test extends AbstractFeatureTest {
     public static final String COMPONENT = extractName(CamelBase64Test.class);
     
     protected DataFormatDefinition createDataformatDefinition(String format) {
-        // TODO: add base64 to camel-core
-        return null;
+        return new Base64DataFormat();
     }
 
     @Test
