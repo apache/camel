@@ -39,6 +39,7 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         classes = {CamelSpringDelegatingTestContextLoaderTest.TestConfig.class},
+        // Since Camel 2.11.0 
         loader = CamelSpringDelegatingTestContextLoader.class
 )
 @MockEndpoints
