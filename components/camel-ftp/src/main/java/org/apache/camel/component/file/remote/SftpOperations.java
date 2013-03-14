@@ -47,6 +47,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -722,6 +724,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             if (is == null) {
                 is = exchange.getIn().getMandatoryBody(InputStream.class);
             }
+
+            final StopWatch watch = new StopWatch();
+            LOG.debug("About to store file: {} using stream: {}", targetName, is);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
                 LOG.trace("Client appendFile: {}", targetName);
                 channel.put(is, targetName, ChannelSftp.APPEND);
@@ -729,6 +734,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 LOG.trace("Client storeFile: {}", targetName);
                 // override is default
                 channel.put(is, targetName);
+            }
+            watch.stop();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Took {} ({} millis) to store file: {} and FTP client returned: true",
+                        new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName});
             }
 
             // after storing file, we may set chmod on the file

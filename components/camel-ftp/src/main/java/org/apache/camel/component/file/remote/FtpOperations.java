@@ -38,6 +38,8 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -548,13 +550,25 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
                 }
             }
+
+            final StopWatch watch = new StopWatch();
+            boolean answer;
+            log.debug("About to store file: {} using stream: {}", targetName, is);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
                 log.trace("Client appendFile: {}", targetName);
-                return client.appendFile(targetName, is);
+                answer = client.appendFile(targetName, is);
             } else {
                 log.trace("Client storeFile: {}", targetName);
-                return client.storeFile(targetName, is);
+                answer = client.storeFile(targetName, is);
             }
+            watch.stop();
+            if (log.isDebugEnabled()) {
+                log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
+                        new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName, answer});
+            }
+
+            return answer;
+
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } catch (InvalidPayloadException e) {
