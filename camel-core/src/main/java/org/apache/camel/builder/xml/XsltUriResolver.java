@@ -71,8 +71,12 @@ public class XsltUriResolver implements URIResolver {
         String scheme = ResourceHelper.getScheme(href);
         if (scheme != null) {
             // need to compact paths for file/classpath as it can be relative paths using .. to go backwards
-            if ("file:".equals(scheme) || "classpath:".equals(scheme)) {
+            if ("file:".equals(scheme)) {
+                // compact path use file OS separator
                 href = FileUtil.compactPath(href);
+            } else if ("classpath:".equals(scheme)) {
+                // for classpath always use /
+                href = FileUtil.compactPath(href, '/');
             }
             LOG.debug("Resolving URI from {}: {}", scheme, href);
 
