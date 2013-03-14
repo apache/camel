@@ -29,7 +29,6 @@ import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.cxf.binding.BindingConfiguration;
 import org.apache.cxf.binding.soap.SoapBindingConfiguration;
 import org.apache.hello_world_soap_http.Greeter;
-
 import org.junit.Test;
 
 public class CxfConsumerSoap12Test extends CamelBlueprintTestSupport {
@@ -49,8 +48,14 @@ public class CxfConsumerSoap12Test extends CamelBlueprintTestSupport {
     protected String getBlueprintDescriptor() {
         return "org/apache/camel/test/cxf/blueprint/CxfConsumerSoap12Beans.xml";
     }
-
+   
     @Test
+    public void testBeanDefinitionParserAndInvokeGreeter() throws Exception {
+        // the execution order of the test could cause the test failed
+        testInvokeGreeter();
+        testCxfEndpointBeanDefinitionParser();
+    }
+    
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = context.getEndpoint("routerEndpoint", CxfEndpoint.class);
         assertEquals("Got the wrong endpoint address", routerEndpoint.getAddress(),
@@ -64,8 +69,7 @@ public class CxfConsumerSoap12Test extends CamelBlueprintTestSupport {
                      ((SoapBindingConfiguration)binding).getVersion().getBindingId());
         assertTrue("Mtom not enabled", ((SoapBindingConfiguration)binding).isMtomEnabled());
     }
-
-    @Test
+    
     public void testInvokeGreeter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
