@@ -356,7 +356,7 @@
     <!-- spring 3.0 support is @deprecated -->
     <spring30-version>3.0.7.RELEASE</spring30-version>
     <spring31-version>3.1.4.RELEASE</spring31-version>
-    <spring32-version>3.2.1.RELEASE</spring32-version>
+    <spring32-version>3.2.2.RELEASE</spring32-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.3.RELEASE</spring-security-version>
     <spring-ws-version>2.1.2.RELEASE</spring-ws-version>
