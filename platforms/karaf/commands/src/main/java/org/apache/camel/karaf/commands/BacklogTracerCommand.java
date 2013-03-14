@@ -44,11 +44,13 @@ public class BacklogTracerCommand extends OsgiCommandSupport {
     @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
     String context;
 
-    @Argument(index = 1, name = "nodeId", description = "To dump trace messages only for the given node id (default is all)", required = false, multiValued = false)
-    String route;
+    @Argument(index = 1, name = "pattern", description = "To trace/dump trace messages only for nodes matching the given pattern (default is all)", required = false, multiValued = false)
+    String pattern;
 
     @Argument(index = 2, name = "format", description = "Format to use with the dump action (default is xml)", required = false, multiValued = false)
     String format;
+
+    // TODO: need to work on a better command syntax to make it easier to use
 
     private CamelController camelController;
 
@@ -71,15 +73,22 @@ public class BacklogTracerCommand extends OsgiCommandSupport {
 
         if ("enable".equals(action)) {
             backlogTracer.setEnabled(true);
-            System.out.println("BacklogTracer enabled on " + camel.getName());
+            if (pattern != null) {
+                backlogTracer.setTracePattern(pattern);
+                System.out.println("BacklogTracer enabled on " + camel.getName() + " using pattern: " + pattern);
+            } else {
+                System.out.println("BacklogTracer enabled on " + camel.getName());
+            }
             return null;
         } else if ("disable".equals(action)) {
             backlogTracer.setEnabled(false);
+            backlogTracer.setTracePattern(null);
             System.out.println("BacklogTracer disabled on " + camel.getName());
             return null;
         } else if ("summary".equals(action)) {
             System.out.println("BacklogTracer context:" + camel.getName());
             System.out.println("BacklogTracer enabled:" + backlogTracer.isEnabled());
+            System.out.println("BacklogTracer pattern:" + (backlogTracer.getTracePattern() != null ? backlogTracer.getTracePattern() : ""));
             System.out.println("BacklogTracer backlogSize:" + backlogTracer.getBacklogSize());
             System.out.println("BacklogTracer tracerCount:" + backlogTracer.getTraceCounter());
             return null;
