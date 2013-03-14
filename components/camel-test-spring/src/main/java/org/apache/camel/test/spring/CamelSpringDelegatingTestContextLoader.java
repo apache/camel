@@ -42,11 +42,14 @@ import org.springframework.test.context.support.DelegatingSmartContextLoader;
 
 import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
 
+
+
 /**
- * Custom TestContextLoader which fixes issues in Camel's JavaConfigContextLoader. (adds support for Camel's test annotations)
+ * CamelSpringDelegatingTestContextLoader which fixes issues in Camel's JavaConfigContextLoader. (adds support for Camel's test annotations)
  * <br>
  * <em>This loader can handle either classes or locations for configuring the context.</em>
  * <br>
+ * NOTE: This TestContextLoader doesn't support the annotation of ExcludeRoutes now.
  */
 public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartContextLoader {
 
@@ -64,11 +67,10 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         // Pre CamelContext(s) instantiation setup
         handleDisableJmx(null, testClass);
         
-        try {            
+        try {
             SpringCamelContext.setNoStart(true);
             ConfigurableApplicationContext context = (ConfigurableApplicationContext) super.loadContext(mergedConfig);
             SpringCamelContext.setNoStart(false);
-            
             return loadContext(context, testClass);
         } finally {
             cleanup(testClass);
@@ -101,7 +103,6 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         return context;
     }
     
-
     /**
      * Cleanup/restore global state to defaults / pre-test values after the test setup
      * is complete. 
@@ -254,15 +255,15 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
     }
     
     /**
-     * Handles auto-intercepting of endpoints with mocks based on {@link MockEndpoints} and skipping the
+     * Handles auto-intercepting of endpoints with mocks based on {@link MockEndpointsAndSkip} and skipping the
      * original endpoint.
      *
      * @param context the initialized Spring context
      * @param testClass the test class being executed
      */
     protected void handleMockEndpointsAndSkip(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
-        if (testClass.isAnnotationPresent(MockEndpoints.class)) {
-            final String mockEndpoints = testClass.getAnnotation(MockEndpoints.class).value();
+        if (testClass.isAnnotationPresent(MockEndpointsAndSkip.class)) {
+            final String mockEndpoints = testClass.getAnnotation(MockEndpointsAndSkip.class).value();
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
                 
                 public void execute(String contextName, SpringCamelContext camelContext)
@@ -273,6 +274,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
             });
         }
     }
+    
     
     /**
      * Handles starting of Camel contexts based on {@link UseAdviceWith} and other state in the JVM.

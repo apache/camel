@@ -25,7 +25,7 @@ import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * An implementation bringing the functionality of {@link org.apache.camel.test.junit4.CamelSpringTestSupport} to
+ * An implementation bringing the functionality of {@link org.apache.camel.test.spring.CamelSpringTestSupport} to
  * Spring Test based test cases.  This approach allows developers to implement tests
  * for their Spring based applications/routes using the typical Spring Test conventions
  * for test development.
