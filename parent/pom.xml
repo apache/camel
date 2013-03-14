@@ -65,7 +65,7 @@
     <axiom-version>1.2.14</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk15on-bundle-version>1.47_1</bcpg-jdk15on-bundle-version>
-    <beanio-version>2.0.3</beanio-version>
+    <beanio-version>2.0.5</beanio-version>
     <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.47</bouncycastle-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
