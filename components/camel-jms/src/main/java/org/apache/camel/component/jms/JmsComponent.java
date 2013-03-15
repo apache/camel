@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Session;
@@ -387,6 +386,20 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setDefaultTaskExecutorType(type);
     }
 
+    public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+        getConfiguration().setJmsKeyFormatStrategy(jmsKeyFormatStrategy);
+    }
+
+    public void setJmsKeyFormatStrategy(String jmsKeyFormatStrategyName) {
+        // allow to configure a standard by its name, which is simpler
+        JmsKeyFormatStrategy strategy = resolveStandardJmsKeyFormatStrategy(jmsKeyFormatStrategyName);
+        if (strategy == null) {
+            throw new IllegalArgumentException("JmsKeyFormatStrategy with name " + jmsKeyFormatStrategyName + " is not a standard supported name");
+        } else {
+            getConfiguration().setJmsKeyFormatStrategy(strategy);
+        }
+    }
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
@@ -498,18 +511,18 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
         // jms header strategy
         String strategyVal = getAndRemoveParameter(parameters, KEY_FORMAT_STRATEGY_PARAM, String.class);
-        if ("default".equalsIgnoreCase(strategyVal)) {
-            endpoint.setJmsKeyFormatStrategy(new DefaultJmsKeyFormatStrategy());
-        } else if ("passthrough".equalsIgnoreCase(strategyVal)) {
-            endpoint.setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
-        } else { // a reference
+        JmsKeyFormatStrategy strategy = resolveStandardJmsKeyFormatStrategy(strategyVal);
+        if (strategy != null) {
+            endpoint.setJmsKeyFormatStrategy(strategy);
+        } else {
+            // its not a standard, but a reference
             parameters.put(KEY_FORMAT_STRATEGY_PARAM, strategyVal);
             endpoint.setJmsKeyFormatStrategy(resolveAndRemoveReferenceParameter(
                     parameters, KEY_FORMAT_STRATEGY_PARAM, JmsKeyFormatStrategy.class));
         }
 
-        messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters, "messageListenerContainerFactoryRef",
-                MessageListenerContainerFactory.class);
+        messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
+                "messageListenerContainerFactoryRef", MessageListenerContainerFactory.class);
         if (messageListenerContainerFactory != null) {
             endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
         }
@@ -518,6 +531,26 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
         return endpoint;
+    }
+
+    /**
+     * Resolves the standard supported {@link JmsKeyFormatStrategy} by a name which can be:
+     * <ul>
+     *     <li>default - to use the default strategy</li>
+     *     <li>passthrough - to use the passthrough strategy</li>
+     * </ul>
+     *
+     * @param name  the name
+     * @return the strategy, or <tt>null</tt> if not a standard name.
+     */
+    private static JmsKeyFormatStrategy resolveStandardJmsKeyFormatStrategy(String name) {
+        if ("default".equalsIgnoreCase(name)) {
+            return new DefaultJmsKeyFormatStrategy();
+        } else if ("passthrough".equalsIgnoreCase(name)) {
+            return new PassThroughJmsKeyFormatStrategy();
+        } else {
+            return null;
+        }
     }
 
     /**
