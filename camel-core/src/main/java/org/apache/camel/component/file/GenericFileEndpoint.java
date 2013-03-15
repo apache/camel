@@ -667,8 +667,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
             // skip leading endpoint configured directory
             String endpointPath = getConfiguration().getDirectory() + getFileSeparator();
-            if (ObjectHelper.isNotEmpty(endpointPath) && name.startsWith(endpointPath)) {
-                name = ObjectHelper.after(name, endpointPath);
+
+            // need to normalize paths to ensure we can match using startsWith
+            endpointPath = FileUtil.normalizePath(endpointPath);
+            String copyOfName = FileUtil.normalizePath(name);
+            if (ObjectHelper.isNotEmpty(endpointPath) && copyOfName.startsWith(endpointPath)) {
+                name = name.substring(endpointPath.length());
             }
 
             // adjust filename
