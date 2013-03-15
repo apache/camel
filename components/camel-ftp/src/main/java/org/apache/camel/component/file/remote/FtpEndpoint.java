@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.camel.FailedToCreateConsumerException;
@@ -23,6 +24,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -189,5 +191,22 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
+    }
+
+    @Override
+    public char getFileSeparator() {
+        // the regular ftp component should use the configured separator
+        // as FTP servers may require you to use windows or unix style
+        // and therefore you need to be able to control that
+        PathSeparator pathSeparator = getConfiguration().getSeparator();
+        switch (pathSeparator) {
+        case Windows:
+            return '\\';
+        case UNIX:
+            return '/';
+        default:
+            // use the OS specific separator
+            return File.separatorChar;
+        }
     }
 }
