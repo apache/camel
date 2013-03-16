@@ -169,9 +169,9 @@ public class GenericFile<T> implements WrappedFile<T>  {
     public void changeFileName(String newName) {
         LOG.trace("Changing name to: {}", newName);
 
-        // Make sure the newName is normalized.
-        String newFileName = normalizePath(newName);
-        String newEndpointPath = normalizePath(endpointPath);
+        // Make sure the names is normalized.
+        String newFileName = FileUtil.normalizePath(newName);
+        String newEndpointPath = FileUtil.normalizePath(endpointPath);
 
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: ()", newFileName);
