@@ -205,8 +205,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         case UNIX:
             return '/';
         default:
-            // use the OS specific separator
-            return File.separatorChar;
+            return super.getFileSeparator();
         }
     }
 }

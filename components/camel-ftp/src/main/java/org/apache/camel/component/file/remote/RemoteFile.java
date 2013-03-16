@@ -56,7 +56,10 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
     
     @Override
     protected boolean isAbsolute(String name) {
-        return name.startsWith("" + getFileSeparator());
+        if (name.length() > 0) {
+            return name.charAt(0) == '/' || name.charAt(0) == '\\';
+        }
+        return false;
     }
     
     @Override
