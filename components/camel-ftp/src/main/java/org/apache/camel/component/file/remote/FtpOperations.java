@@ -653,12 +653,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         // must compact path so FTP server can traverse correctly
-        String before = path;
-        char separatorChar = endpoint.getFileSeparator();
-        path = FileUtil.compactPath(path, separatorChar);
-        if (log.isTraceEnabled()) {
-            log.trace("Compacted path: {} -> {} using separator: {}", new Object[]{before, path, separatorChar});
-        }
+        // use the ftp utils implementation of the compact path
+        path = FtpUtils.compactPath(path);
 
         // not stepwise should change directory in one operation
         if (!endpoint.getConfiguration().isStepwise()) {
