@@ -171,19 +171,22 @@ public class GenericFile<T> implements WrappedFile<T>  {
 
         // Make sure the newName is normalized.
         String newFileName = normalizePath(newName);
+        String newEndpointPath = normalizePath(endpointPath);
 
-        LOG.trace("Normalized endpointPath: {}", endpointPath);
+        LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: ()", newFileName);
 
         File file = new File(newFileName);
         if (!absolute) {
             // for relative then we should avoid having the endpoint path duplicated so clip it
-            if (ObjectHelper.isNotEmpty(endpointPath) && newFileName.startsWith(endpointPath)) {
+            if (ObjectHelper.isNotEmpty(newEndpointPath) && newFileName.startsWith(newEndpointPath)) {
                 // clip starting endpoint in case it was added
-                if (endpointPath.endsWith("" + getFileSeparator())) {
-                    newFileName = ObjectHelper.after(newFileName, endpointPath);
+                // use File.separatorChar as the normalizePath uses this as path separator so we should use the same
+                // in this logic here
+                if (newEndpointPath.endsWith("" + File.separatorChar)) {
+                    newFileName = ObjectHelper.after(newFileName, newEndpointPath);
                 } else {
-                    newFileName = ObjectHelper.after(newFileName, endpointPath + getFileSeparator());
+                    newFileName = ObjectHelper.after(newFileName, newEndpointPath + File.separatorChar);
                 }
 
                 // reconstruct file with clipped name
