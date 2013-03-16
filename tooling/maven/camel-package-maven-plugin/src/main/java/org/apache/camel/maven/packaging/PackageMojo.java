@@ -19,6 +19,8 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -98,7 +100,10 @@ public class PackageMojo extends AbstractMojo {
                     getLog().info("Generated " + outFile + " containing the Camel " + (files.length > 1 ? "components " : "component ") + names);
 
                     if (projectHelper != null) {
-                        projectHelper.attachArtifact( this.project, "properties", "camelComponent", outFile);
+                        List<String> includes = new ArrayList<String>();
+                        includes.add("**/component.properties");
+                        projectHelper.addResource(this.project, outDir.getPath(), includes, new ArrayList<String>());
+                        projectHelper.attachArtifact(this.project, "properties", "camelComponent", outFile);
                     }
                 } catch (IOException e) {
                     throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
