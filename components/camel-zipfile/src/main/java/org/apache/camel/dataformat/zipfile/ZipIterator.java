@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.zip;
+package org.apache.camel.dataformat.zipfile;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -43,10 +43,14 @@ class ZipIterator implements Iterator<Message> {
     public ZipIterator(Message inputMessage) {
         this.inputMessage = inputMessage;
         InputStream inputStream = inputMessage.getBody(InputStream.class);
-        zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream));
+        if (inputStream instanceof ZipInputStream) {
+            zipInputStream = (ZipInputStream)inputStream;
+        } else {
+            zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream));
+        }
         parent = null;
     }
-
+    
     @Override
     public boolean hasNext() {
         try {

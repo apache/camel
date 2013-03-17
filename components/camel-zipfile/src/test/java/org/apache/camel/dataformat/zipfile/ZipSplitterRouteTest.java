@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.zip;
+package org.apache.camel.dataformat.zipfile;
 
-import org.apache.camel.ContextTestSupport;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class ZipSplitterRouteTest extends ContextTestSupport {
+public class ZipSplitterRouteTest extends CamelTestSupport {
     
 
     @Test
@@ -37,7 +38,7 @@ public class ZipSplitterRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
-                from("file:src/test/resources/org/apache/camel/builder/zip/?consumer.delay=1000&noop=true")
+                from("file:src/test/resources/org/apache/camel/dataformat/zipfile?consumer.delay=1000&noop=true")
                         .log("Start processing big file: ${header.CamelFileName}").split(new ZipSplitter())
                         .streaming().convertBodyTo(String.class).to("mock:processZipEntry")
                         .end().log("Done processing big file: ${header.CamelFileName}");

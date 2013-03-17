@@ -36,6 +36,11 @@ import static org.apache.camel.Exchange.FILE_NAME;
  * See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
  */
 public class ZipFileDataFormat implements DataFormat {
+    private boolean usingIterator;
+    
+    public void setUsingIterator(boolean usingIterator) {
+        this.usingIterator = usingIterator;
+    }
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -64,26 +69,32 @@ public class ZipFileDataFormat implements DataFormat {
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
-        ZipInputStream zis = new ZipInputStream(is);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if (usingIterator) {
+            return new ZipIterator(exchange.getIn());
+        } else {
+            InputStream is = exchange.getIn().getMandatoryBody(
+                    InputStream.class);
+            ZipInputStream zis = new ZipInputStream(is);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        try {
-            ZipEntry entry = zis.getNextEntry();
-            if (entry != null) {
-                exchange.getOut().setHeader(FILE_NAME, entry.getName());
-                IOHelper.copy(zis, baos);
+            try {
+                ZipEntry entry = zis.getNextEntry();
+                if (entry != null) {
+                    exchange.getOut().setHeader(FILE_NAME, entry.getName());
+                    IOHelper.copy(zis, baos);
+                }
+
+                entry = zis.getNextEntry();
+                if (entry != null) {
+                    throw new IllegalStateException(
+                            "Zip file has more than 1 entry.");
+                }
+
+                return baos.toByteArray();
+
+            } finally {
+                IOHelper.close(zis, baos);
             }
-
-            entry = zis.getNextEntry();
-            if (entry != null) {
-                throw new IllegalStateException("Zip file has more than 1 entry.");
-            }
-
-            return baos.toByteArray();
-
-        } finally {
-            IOHelper.close(zis, baos);
         }
     }
 

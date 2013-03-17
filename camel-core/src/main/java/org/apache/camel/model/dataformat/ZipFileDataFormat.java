@@ -18,9 +18,11 @@ package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.DataFormat;
 
 /**
  * Represents the ZIP file XML {@link org.apache.camel.spi.DataFormat}.
@@ -28,9 +30,26 @@ import org.apache.camel.model.DataFormatDefinition;
 @XmlRootElement(name = "zipFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {
+    @XmlAttribute
+    private Boolean usingIterator;
 
     public ZipFileDataFormat() {
         super("zipfile");
+    }
+    
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat) {
+        if (usingIterator != null) {
+            setProperty(dataFormat, "usingIterator", usingIterator);
+        }
+    }
+
+    public Boolean getUsingIterator() {
+        return usingIterator;
+    }
+
+    public void setUsingIterator(Boolean usingIterator) {
+        this.usingIterator = usingIterator;
     }
 
 }
