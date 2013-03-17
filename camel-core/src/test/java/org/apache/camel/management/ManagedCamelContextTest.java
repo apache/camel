@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -151,6 +152,23 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNull(context.hasEndpoint("seda:bar"));
         registered = mbeanServer.isRegistered(seda);
         assertFalse("Should not be registered " + seda, registered);
+    }
+
+    public void testFindComponentsInClasspath() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
+
+        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+
+        Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findComponents", null, null);
+        assertNotNull(info);
+
+        assertEquals(21, info.size());
+        Properties prop = info.get("seda");
+        assertNotNull(prop);
+        assertEquals("org.apache.camel", prop.get("groupId"));
+        assertEquals("camel-core", prop.get("artifactId"));
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -160,5 +161,14 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Removes endpoints by the given pattern")
     int removeEndpoints(String pattern) throws Exception;
-    
+
+    /**
+     * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
+     *
+     * @return a map with the component name, and value with component details.
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Find all Camel components available in the classpath")
+    Map<String, Properties> findComponents() throws Exception;
+
 }
