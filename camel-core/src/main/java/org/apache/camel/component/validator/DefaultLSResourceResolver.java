@@ -19,6 +19,8 @@ package org.apache.camel.component.validator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
@@ -37,6 +39,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
     private final String resourceUri;
     private final String resourcePath;
     private String relatedURI;
+    private Map<String, String> relatedURIMap = new HashMap<String, String>();
 
     public DefaultLSResourceResolver(CamelContext camelContext, String resourceUri) {
         this.camelContext = camelContext;
@@ -59,13 +62,22 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             throw new IllegalArgumentException(String.format("Resource: %s refers an invalid resource without SystemId."
                     + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s", resourceUri, type, namespaceURI, publicId, systemId, baseURI));
         }
-        // Build up the relative path for using
+        String relatedPath = null;
+        // Build up the relative path for using relatedURI and baseURI
         if (baseURI == null) {
             relatedURI = getUri(systemId);
+            relatedPath = relatedURI.intern();
         } else {
-            relatedURI = FileUtil.onlyPath(relatedURI) + "/" + systemId;
+            relatedPath = relatedURIMap.get(baseURI);
+            if (relatedPath == null) {
+                relatedURI = FileUtil.onlyPath(relatedURI) + "/" + systemId;
+                relatedPath = relatedURI.intern();
+                relatedURIMap.put(baseURI, relatedPath);
+            } else { // build the related path with same relatedURI
+                relatedPath = FileUtil.onlyPath(relatedPath) + "/" + systemId;
+            }
         }
-        return new DefaultLSInput(publicId, systemId, baseURI, relatedURI);
+        return new DefaultLSInput(publicId, systemId, baseURI, relatedPath);
     }
     
     private final class DefaultLSInput implements LSInput {

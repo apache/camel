@@ -5,6 +5,7 @@
         targetNamespace="org.health.check.person"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:common="org.health.check.common">
+    <xs:import schemaLocation="type1.xsd" namespace="org.health.check.type1" />
     <xs:import schemaLocation="common/common.xsd" namespace="org.health.check.common"/>
     <xs:element name="health" type="org:healthType" xmlns:org="org.health.check.person"/>
     
