@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -29,6 +32,9 @@ import org.jsmpp.bean.MessageMode;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.COctetString;
+import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
@@ -51,7 +57,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
             if (log.isDebugEnabled()) {
                 log.debug("Sending short message {} for exchange id '{}'...", i, exchange.getExchangeId());
             }
-            
+
             try {
                 messageID = session.submitShortMessage(
                         submitSm.getServiceType(),
@@ -75,7 +81,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
             } catch (Exception e) {
                 throw new SmppException(e);
             }
-            
+
             messageIDs.add(messageID);
         }
 
@@ -111,6 +117,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         return submitSms;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected SubmitSm createSubmitSmTemplate(Exchange exchange) {
         Message in = exchange.getIn();
         SubmitSm submitSm = new SubmitSm();
@@ -201,11 +208,52 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         } else {
             submitSm.setReplaceIfPresent(config.getReplaceIfPresentFlag());
         }
-        
+
         submitSm.setEsmClass(new ESMClass().value());
-        
-        submitSm.setOptionalParametes();
+
+        Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
+        if (optinalParamaters != null) {
+            List<OptionalParameter> optParams = new ArrayList<OptionalParameter>();
+            for (Entry<String, String> entry : optinalParamaters.entrySet()) {
+                OptionalParameter optParam = null;
+
+                try {
+                    Tag tag = Tag.valueOf(entry.getKey());
+                    Class type = determineTypeClass(tag);
+    
+                    if (OctetString.class.equals(type)) {
+                        optParam = new OptionalParameter.OctetString(tag.code(), entry.getValue());
+                    } else if (COctetString.class.equals(type)) {
+                        optParam = new OptionalParameter.COctetString(tag.code(), entry.getValue());
+                    } else if (org.jsmpp.bean.OptionalParameter.Byte.class.equals(type)) {
+                        optParam = new OptionalParameter.Byte(tag.code(), Byte.valueOf(entry.getValue()));
+                    } else if (org.jsmpp.bean.OptionalParameter.Int.class.equals(type)) {
+                        optParam = new OptionalParameter.Int(tag.code(), Integer.valueOf(entry.getValue()));
+                    } else if (org.jsmpp.bean.OptionalParameter.Short.class.equals(type)) {
+                        optParam = new OptionalParameter.Short(tag.code(), Short.valueOf(entry.getValue()));
+                    } else if (org.jsmpp.bean.OptionalParameter.Null.class.equals(type)) {
+                        optParam = new OptionalParameter.Null(tag);
+                    }
+
+                    optParams.add(optParam);
+                } catch (Exception e) {
+                    log.info("Couldn't determine optional parameter for key {} and value {}. Skip this one.", entry.getKey(), entry.getValue());
+                }
+            }
+
+            submitSm.setOptionalParametes(optParams.toArray(new OptionalParameter[optParams.size()]));
+        } else {
+            submitSm.setOptionalParametes();
+        }
 
         return submitSm;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Class<? extends OptionalParameter> determineTypeClass(Tag tag) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        // we have to use reflection because the type field is private
+        Field f = tag.getClass().getDeclaredField("type");
+        f.setAccessible(true);
+        return (Class<? extends OptionalParameter>) f.get(tag);
     }
 }
