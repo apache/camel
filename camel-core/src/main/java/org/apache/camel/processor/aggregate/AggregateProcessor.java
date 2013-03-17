@@ -354,6 +354,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * @return <tt>null</tt> if not completed, otherwise a String with the type that triggered the completion
      */
     protected String isCompleted(String key, Exchange exchange) {
+        // batch consumer completion must always run first
+        if (isCompletionFromBatchConsumer()) {
+            batchConsumerCorrelationKeys.add(key);
+            batchConsumerCounter.incrementAndGet();
+            int size = exchange.getProperty(Exchange.BATCH_SIZE, 0, Integer.class);
+            if (size > 0 && batchConsumerCounter.intValue() >= size) {
+                // batch consumer is complete then reset the counter
+                batchConsumerCounter.set(0);
+                return "consumer";
+            }
+        }
+
         if (getCompletionPredicate() != null) {
             boolean answer = getCompletionPredicate().matches(exchange);
             if (answer) {
@@ -401,17 +413,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         new Object[]{key, getCompletionTimeout(), exchange});
             }
             addExchangeToTimeoutMap(key, exchange, getCompletionTimeout());
-        }
-
-        if (isCompletionFromBatchConsumer()) {
-            batchConsumerCorrelationKeys.add(key);
-            batchConsumerCounter.incrementAndGet();
-            int size = exchange.getProperty(Exchange.BATCH_SIZE, 0, Integer.class);
-            if (size > 0 && batchConsumerCounter.intValue() >= size) {
-                // batch consumer is complete then reset the counter
-                batchConsumerCounter.set(0);
-                return "consumer";
-            }
         }
 
         // not complete
