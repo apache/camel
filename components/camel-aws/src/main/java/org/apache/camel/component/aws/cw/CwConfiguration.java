@@ -22,11 +22,11 @@ package org.apache.camel.component.aws.cw;
  */
 import java.util.Date;
 
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
+import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 
 public class CwConfiguration implements Cloneable {
 
-    private AmazonCloudWatchClient amazonCwClient;
+    private AmazonCloudWatch amazonCwClient;
     private String amazonCwEndpoint;
     private String accessKey;
     private String secretKey;
@@ -111,11 +111,11 @@ public class CwConfiguration implements Cloneable {
                 + "]";
     }
 
-    public AmazonCloudWatchClient getAmazonCwClient() {
+    public AmazonCloudWatch getAmazonCwClient() {
         return amazonCwClient;
     }
 
-    public void setAmazonCwClient(AmazonCloudWatchClient amazonCwClient) {
+    public void setAmazonCwClient(AmazonCloudWatch amazonCwClient) {
         this.amazonCwClient = amazonCwClient;
     }
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.sns;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
@@ -41,7 +42,7 @@ public class SnsEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);
 
     private SnsConfiguration configuration;
-    private AmazonSNSClient snsClient;
+    private AmazonSNS snsClient;
 
     @Deprecated
     public SnsEndpoint(String uri, CamelContext context, SnsConfiguration configuration) {
@@ -96,11 +97,11 @@ public class SnsEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
     
-    public void setSNSClient(AmazonSNSClient snsClient) {
+    public void setSNSClient(AmazonSNS snsClient) {
         this.snsClient = snsClient;
     }
     
-    public AmazonSNSClient getSNSClient() {
+    public AmazonSNS getSNSClient() {
         if (snsClient == null) {
             snsClient = configuration.getAmazonSNSClient() != null
                 ? configuration.getAmazonSNSClient() : createSNSClient();
@@ -114,9 +115,9 @@ public class SnsEndpoint extends DefaultEndpoint {
      *
      * @return AmazonSNSClient
      */
-    AmazonSNSClient createSNSClient() {
+    AmazonSNS createSNSClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonSNSClient client = new AmazonSNSClient(credentials);
+        AmazonSNS client = new AmazonSNSClient(credentials);
         if (configuration.getAmazonSNSEndpoint() != null) {
             client.setEndpoint(configuration.getAmazonSNSEndpoint());
         }

@@ -18,7 +18,9 @@ package org.apache.camel.component.aws.cw;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -32,7 +34,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 public class CwEndpoint extends DefaultEndpoint {
 
     private CwConfiguration configuration;
-    private AmazonCloudWatchClient cloudWatchClient;
+    private AmazonCloudWatch cloudWatchClient;
 
     @Deprecated
     public CwEndpoint(String uri, CamelContext context, CwConfiguration configuration) {
@@ -70,11 +72,11 @@ public class CwEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public void setCloudWatchClient(AmazonCloudWatchClient cloudWatchClient) {
+    public void setCloudWatchClient(AmazonCloudWatch cloudWatchClient) {
         this.cloudWatchClient = cloudWatchClient;
     }
 
-    public AmazonCloudWatchClient getCloudWatchClient() {
+    public AmazonCloudWatch getCloudWatchClient() {
         if (cloudWatchClient == null) {
             cloudWatchClient = configuration.getAmazonCwClient() != null
                     ? configuration.getAmazonCwClient() : createCloudWatchClient();
@@ -82,9 +84,9 @@ public class CwEndpoint extends DefaultEndpoint {
         return cloudWatchClient;
     }
 
-    AmazonCloudWatchClient createCloudWatchClient() {
+    AmazonCloudWatch createCloudWatchClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonCloudWatchClient client = new AmazonCloudWatchClient(credentials);
+        AmazonCloudWatch client = new AmazonCloudWatchClient(credentials);
         if (configuration.getAmazonCwEndpoint() != null) {
             client.setEndpoint(configuration.getAmazonCwEndpoint());
         }

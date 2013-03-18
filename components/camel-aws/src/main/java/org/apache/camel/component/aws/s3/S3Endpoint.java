@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.s3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
@@ -46,7 +47,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
 
-    private AmazonS3Client s3Client;
+    private AmazonS3 s3Client;
     private S3Configuration configuration;
     private int maxMessagesPerPoll = 10;
 
@@ -153,11 +154,11 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
     
-    public void setS3Client(AmazonS3Client s3Client) {
+    public void setS3Client(AmazonS3 s3Client) {
         this.s3Client = s3Client;
     }
     
-    public AmazonS3Client getS3Client() {
+    public AmazonS3 getS3Client() {
         if (s3Client == null) {
             s3Client = configuration.getAmazonS3Client() != null
                 ? configuration.getAmazonS3Client() : createS3Client();
@@ -171,9 +172,9 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      *
      * @return AmazonS3Client
      */
-    AmazonS3Client createS3Client() {
+    AmazonS3 createS3Client() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonS3Client client = new AmazonS3Client(credentials);
+        AmazonS3 client = new AmazonS3Client(credentials);
         if (configuration.getAmazonS3Endpoint() != null) {
             client.setEndpoint(configuration.getAmazonS3Endpoint());
         }
