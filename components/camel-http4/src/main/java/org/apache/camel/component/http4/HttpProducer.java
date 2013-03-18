@@ -122,10 +122,7 @@ public class HttpProducer extends DefaultProducer {
                     // we should not add headers for the parameters in the uri if we bridge the endpoint
                     // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
                     if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
-                        Object skipValue = skipRequestHeaders.get(key);
-                        if (ObjectHelper.equal(skipValue, value)) {
-                            continue;
-                        }
+                        continue;
                     }
                     if (value != null && strategy != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
                         values.add(value);
