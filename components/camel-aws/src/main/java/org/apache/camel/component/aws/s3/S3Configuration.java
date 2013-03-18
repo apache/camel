@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 
 /**
  * The AWS S3 component configuration properties
@@ -26,7 +26,7 @@ public class S3Configuration implements Cloneable {
 
     private String accessKey;
     private String secretKey;
-    private AmazonS3Client amazonS3Client;
+    private AmazonS3 amazonS3Client;
     
     private String bucketName;
     private String prefix;
@@ -60,11 +60,11 @@ public class S3Configuration implements Cloneable {
         this.secretKey = secretKey;
     }
     
-    public AmazonS3Client getAmazonS3Client() {
+    public AmazonS3 getAmazonS3Client() {
         return amazonS3Client;
     }
 
-    public void setAmazonS3Client(AmazonS3Client amazonS3Client) {
+    public void setAmazonS3Client(AmazonS3 amazonS3Client) {
         this.amazonS3Client = amazonS3Client;
     }
 

@@ -20,13 +20,13 @@ package org.apache.camel.component.aws.sns;
  * The AWS SNS component configuration properties
  * 
  */
-import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.AmazonSNS;
 
 public class SnsConfiguration implements Cloneable {
 
     // Common properties
     private String topicName;
-    private AmazonSNSClient amazonSNSClient;
+    private AmazonSNS amazonSNSClient;
     private String accessKey;
     private String secretKey;
     private String amazonSNSEndpoint;
@@ -76,11 +76,11 @@ public class SnsConfiguration implements Cloneable {
         this.secretKey = secretKey;
     }
 
-    public AmazonSNSClient getAmazonSNSClient() {
+    public AmazonSNS getAmazonSNSClient() {
         return amazonSNSClient;
     }
 
-    public void setAmazonSNSClient(AmazonSNSClient amazonSNSClient) {
+    public void setAmazonSNSClient(AmazonSNS amazonSNSClient) {
         this.amazonSNSClient = amazonSNSClient;
     }
 

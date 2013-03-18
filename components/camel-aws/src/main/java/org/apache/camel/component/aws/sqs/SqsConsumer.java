@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
@@ -208,7 +208,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         return getEndpoint().getConfiguration();
     }
     
-    protected AmazonSQSClient getClient() {
+    protected AmazonSQS getClient() {
         return getEndpoint().getClient();
     }
     
