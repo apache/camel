@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.ByteArrayInputStream;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,8 +28,7 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
 
     @Test
     public void testJettyHttpClient() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222",
-                new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "text/plain", String.class);
+        String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null, String.class);
         assertEquals("Get a wrong response", "param1=+447777111222", response);
     }
 
@@ -48,9 +45,8 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
                         // %2B becomes decoded to a space
                         Object s = exchange.getIn().getHeader("param1");
-                        assertEquals(" 447777111222", exchange.getIn().getHeader("param1"));
-                        // and in the http query %20 becomes a + sign
-                        assertEquals("param1=+447777111222", exchange.getIn().getHeader(Exchange.HTTP_QUERY));
+                        // can be either + or %2B
+                        assertTrue(s.equals(" 447777111222") || s.equals("+447777111222") || s.equals("%2B447777111222"));
 
                         // send back the query
                         exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
@@ -58,9 +54,7 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
                 };
                 from("jetty://http://localhost:" + port2 + "/jettyTestRouteA?matchOnUriPrefix=true")
                     .log("Using JettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
-                    // TODO: Jetty has a bug in its client so use http for now
-                    // .to("jetty://http://localhost:" + port1 + "/jettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
-                    .to("http://localhost:" + port1 + "/jettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                    .to("jetty://http://localhost:" + port1 + "/jettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:" + port1 + "/jettyTestRouteB?matchOnUriPrefix=true")
                     .log("Using JettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
