@@ -35,30 +35,15 @@
     <camel.osgi.export.pkg>org.apache.camel.component.quickfixj.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>org.slf4j*;resolution:=optional</camel.osgi.import.additional>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>marketcetera.m2</id>
-      <name>Marketcetera M2 Repository</name>
-      <url>http://repo.marketcetera.org/maven</url>
-    </repository>
-    <!-- ServiceMix repo -->
-    <repository>
-      <id>servicemix</id>
-      <name>Apache ServiceMix Repository</name>
-      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.quickfixj</groupId>
-      <artifactId>quickfixj-all</artifactId>
-      <version>${quickfix-version}</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.quickfix</artifactId>
+      <version>${quickfix-bundle-version}</version>
     </dependency>
 
     <dependency>

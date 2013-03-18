@@ -162,9 +162,9 @@ public class TradeExecutor {
 
     private boolean isOrderExecutable(Message order, Price price) throws FieldNotFound {
         if (order.getChar(OrdType.FIELD) == OrdType.LIMIT) {
-            Double limitPrice = new Double(order.getString(Price.FIELD));
+            BigDecimal limitPrice = new BigDecimal(order.getString(Price.FIELD));
             char side = order.getChar(Side.FIELD);
-            Double thePrice = price.getValue();
+            BigDecimal thePrice = new BigDecimal(price.getValue());
 
             return (side == Side.BUY && thePrice.compareTo(limitPrice) <= 0) 
                 || ((side == Side.SELL || side == Side.SELL_SHORT) && thePrice.compareTo(limitPrice) >= 0);
