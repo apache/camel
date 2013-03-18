@@ -32,6 +32,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("one", "einz");
         mock.expectedHeaderReceived("two", "twei");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
@@ -44,6 +45,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Test
     public void testHttpGetWithUTF8EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("message", "Keine g\u00FCltige GPS-Daten!");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
@@ -56,10 +58,37 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Ignore
     public void testHttpGetWithISO8859EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("message", "Keine g\u00C6ltige GPS-Daten!");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-        
+
         template.requestBody(serverUri + "?message=Keine+g%C6ltige+GPS-Daten%21", null, Object.class);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpGetWithSpaceInParams() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("message", " World");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+
+        // parameter starts with a space using %2B as decimal encoded
+        template.requestBody(serverUri + "?message=%2BWorld", null, Object.class);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpGetWithSpaceAsPlusInParams() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("message", " World");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+
+        // parameter starts with a space using + decoded
+        template.requestBody(serverUri + "?message=+World", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -67,6 +96,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Test
     public void testHttpGetWithParamsViaHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("one", "uno");
         mock.expectedHeaderReceived("two", "dos");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
@@ -79,6 +109,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Test
     public void testHttpPost() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
