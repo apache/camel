@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Queue;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
@@ -218,7 +218,7 @@ public class S3Consumer extends ScheduledPollConsumer implements BatchConsumer, 
         return getEndpoint().getConfiguration();
     }
     
-    protected AmazonS3Client getAmazonS3Client() {
+    protected AmazonS3 getAmazonS3Client() {
         return getEndpoint().getS3Client();
     }
     

@@ -92,9 +92,9 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         return configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
     }
 
-    AmazonSimpleDBClient createSdbClient() {
+    AmazonSimpleDB createSdbClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonSimpleDBClient client = new AmazonSimpleDBClient(credentials);
+        AmazonSimpleDB client = new AmazonSimpleDBClient(credentials);
         if (configuration.getAmazonSdbEndpoint() != null) {
             client.setEndpoint(configuration.getAmazonSdbEndpoint());
         }

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Queue;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
@@ -218,7 +218,7 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
         return getEndpoint().getConfiguration();
     }
     
-    protected AmazonSQSClient getClient() {
+    protected AmazonSQS getClient() {
         return getEndpoint().getClient();
     }
     

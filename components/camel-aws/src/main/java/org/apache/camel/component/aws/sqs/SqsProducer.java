@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 
@@ -67,7 +67,7 @@ public class SqsProducer extends DefaultProducer {
         return exchange.getIn();
     }
     
-    protected AmazonSQSClient getClient() {
+    protected AmazonSQS getClient() {
         return getEndpoint().getClient();
     }
     
