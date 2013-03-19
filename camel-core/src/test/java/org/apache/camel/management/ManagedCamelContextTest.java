@@ -161,6 +161,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
+        @SuppressWarnings("unchecked")
         Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findComponents", null, null);
         assertNotNull(info);
 
