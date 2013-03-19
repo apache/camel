@@ -73,7 +73,7 @@ public final class IntrospectionSupport {
         EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
     }
 
-    private static final Set<Class> PRIMITIVE_CLASSES = new HashSet<Class>();
+    private static final Set<Class<?>> PRIMITIVE_CLASSES = new HashSet<Class<?>>();
 
     static {
         PRIMITIVE_CLASSES.add(String.class);
@@ -469,7 +469,7 @@ public final class IntrospectionSupport {
         // loop and execute the best setter method
         Exception typeConversionFailed = null;
         for (Method setter : setters) {
-            Class parameterType = setter.getParameterTypes()[0];
+            Class<?> parameterType = setter.getParameterTypes()[0];
             Object ref = value;
             // try and lookup the reference based on the method
             if (context != null && refName != null && ref == null) {
