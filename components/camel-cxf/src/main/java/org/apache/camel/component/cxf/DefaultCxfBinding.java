@@ -574,6 +574,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 continue;
             }
             
+            // need to filter the User-Agent ignore the case, as CXF just check the header with "User-Agent"
+            if (entry.getKey().equalsIgnoreCase("User-Agent")) {
+                List<String> listValue = new ArrayList<String>();
+                listValue.add(entry.getValue().toString());
+                transportHeaders.put("User-Agent", listValue);
+            }
+            
             // this header should be filtered, continue to the next header
             if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
                 continue;
