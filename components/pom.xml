@@ -188,9 +188,9 @@
         <executions>
           <execution>
             <goals>
-              <goal>package</goal>
+              <goal>generate-components-list</goal>
             </goals>
-            <phase>compile</phase>
+            <phase>generate-resources</phase>
           </execution>
         </executions>
       </plugin>
