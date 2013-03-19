@@ -122,8 +122,35 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/backlog-tracer">
-            <action class="org.apache.camel.karaf.commands.BacklogTracerCommand">
+        <command name="camel/backlog-tracer-info">
+            <action class="org.apache.camel.karaf.commands.BacklogTracerInfo">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="camelContextCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="camel/backlog-tracer-dump">
+            <action class="org.apache.camel.karaf.commands.BacklogTracerDump">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="camelContextCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="camel/backlog-tracer-start">
+            <action class="org.apache.camel.karaf.commands.BacklogTracerStart">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="camelContextCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="camel/backlog-tracer-stop">
+            <action class="org.apache.camel.karaf.commands.BacklogTracerStop">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
