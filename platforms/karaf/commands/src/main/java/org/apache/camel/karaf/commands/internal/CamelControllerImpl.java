@@ -44,9 +44,9 @@ public class CamelControllerImpl implements CamelController {
     public List<CamelContext> getCamelContexts() {
         List<CamelContext> camelContexts = new ArrayList<CamelContext>();
         try {
-            ServiceReference[] references = bundleContext.getServiceReferences(CamelContext.class.getName(), null);
+            ServiceReference<?>[] references = bundleContext.getServiceReferences(CamelContext.class.getName(), null);
             if (references != null) {
-                for (ServiceReference reference : references) {
+                for (ServiceReference<?> reference : references) {
                     if (reference != null) {
                         CamelContext camelContext = (CamelContext) bundleContext.getService(reference);
                         if (camelContext != null) {

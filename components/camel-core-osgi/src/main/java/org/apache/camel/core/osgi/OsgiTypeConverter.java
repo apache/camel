@@ -39,23 +39,24 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterRegistry, ServiceTrackerCustomizer {
+public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterRegistry,
+    ServiceTrackerCustomizer<TypeConverterLoader, Object> {
     private static final Logger LOG = LoggerFactory.getLogger(OsgiTypeConverter.class);
 
     private final BundleContext bundleContext;
     private final Injector injector;
     private final FactoryFinder factoryFinder;
-    private final ServiceTracker tracker;
+    private final ServiceTracker<TypeConverterLoader, Object> tracker;
     private volatile DefaultTypeConverter delegate;
 
     public OsgiTypeConverter(BundleContext bundleContext, Injector injector, FactoryFinder factoryFinder) {
         this.bundleContext = bundleContext;
         this.injector = injector;
         this.factoryFinder = factoryFinder;
-        this.tracker = new ServiceTracker(bundleContext, TypeConverterLoader.class.getName(), this);
+        this.tracker = new ServiceTracker<TypeConverterLoader, Object>(bundleContext, TypeConverterLoader.class.getName(), this);
     }
 
-    public Object addingService(ServiceReference serviceReference) {
+    public Object addingService(ServiceReference<TypeConverterLoader> serviceReference) {
         LOG.trace("AddingService: {}", serviceReference);
         TypeConverterLoader loader = (TypeConverterLoader) bundleContext.getService(serviceReference);
         if (loader != null) {
@@ -68,10 +69,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         return loader;
     }
 
-    public void modifiedService(ServiceReference serviceReference, Object o) {
+    public void modifiedService(ServiceReference<TypeConverterLoader> serviceReference, Object o) {
     }
 
-    public void removedService(ServiceReference serviceReference, Object o) {
+    public void removedService(ServiceReference<TypeConverterLoader> serviceReference, Object o) {
         LOG.trace("RemovedService: {}", serviceReference);
         try {
             ServiceHelper.stopService(this.delegate);

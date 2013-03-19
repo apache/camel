@@ -67,9 +67,9 @@ public class OsgiComponentResolver implements ComponentResolver {
     protected Component getComponent(String name, CamelContext context) throws Exception {
         LOG.trace("Finding Component: {}", name);
         try {
-            ServiceReference[] refs = bundleContext.getServiceReferences(ComponentResolver.class.getName(), "(component=" + name + ")");
+            ServiceReference<?>[] refs = bundleContext.getServiceReferences(ComponentResolver.class.getName(), "(component=" + name + ")");
             if (refs != null) {
-                for (ServiceReference ref : refs) {
+                for (ServiceReference<?> ref : refs) {
                     Object service = bundleContext.getService(ref);
                     if (ComponentResolver.class.isAssignableFrom(service.getClass())) {
                         ComponentResolver resolver = (ComponentResolver) service;

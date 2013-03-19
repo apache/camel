@@ -66,9 +66,9 @@ public class OsgiLanguageResolver implements LanguageResolver {
     protected Language getLanguage(String name, CamelContext context) {
         LOG.trace("Finding Language: {}", name);
         try {
-            ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(language=" + name + ")");
+            ServiceReference<?>[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(language=" + name + ")");
             if (refs != null) {
-                for (ServiceReference ref : refs) {
+                for (ServiceReference<?> ref : refs) {
                     Object service = bundleContext.getService(ref);
                     if (LanguageResolver.class.isAssignableFrom(service.getClass())) {
                         LanguageResolver resolver = (LanguageResolver) service;
@@ -86,9 +86,9 @@ public class OsgiLanguageResolver implements LanguageResolver {
     protected LanguageResolver getLanguageResolver(String name, CamelContext context) {
         LOG.trace("Finding LanguageResolver: {}", name);
         try {
-            ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(resolver=" + name + ")");
+            ServiceReference<?>[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(resolver=" + name + ")");
             if (refs != null) {
-                for (ServiceReference ref : refs) {
+                for (ServiceReference<?> ref : refs) {
                     Object service = bundleContext.getService(ref);
                     if (LanguageResolver.class.isAssignableFrom(service.getClass())) {
                         LanguageResolver resolver = (LanguageResolver) service;

@@ -219,7 +219,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             BlueprintPropertiesResolver resolver = new BlueprintPropertiesResolver(pc.getPropertiesResolver(), parser);
 
             // any extra properties
-            ServiceReference ref = bundleContext.getServiceReference(PropertiesComponent.OVERRIDE_PROPERTIES);
+            ServiceReference<?> ref = bundleContext.getServiceReference(PropertiesComponent.OVERRIDE_PROPERTIES);
             if (ref != null) {
                 Properties extra = (Properties) bundleContext.getService(ref);
                 if (extra != null) {

@@ -260,7 +260,6 @@ public final class EndpointHelper {
      * @param parameters parameters
      * @throws Exception is thrown if setting property fails
      */
-    @SuppressWarnings("unchecked")
     public static void setReferenceProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
         Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
         while (it.hasNext()) {

@@ -40,9 +40,9 @@ public class SqlResourceTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"rawtypes"})
     private List createBody() {
-        List list = new ArrayList();
+        List<Person> list = new ArrayList<Person>();
         list.add(new Person("James", "London"));
         list.add(new Person("Guillaume", "Normandy"));
         list.add(new Person("Hiram", "Tampa"));

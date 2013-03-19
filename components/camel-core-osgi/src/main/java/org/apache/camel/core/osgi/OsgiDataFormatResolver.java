@@ -57,9 +57,9 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
     protected DataFormat getDataFormat(String name, CamelContext context) {
         LOG.trace("Finding DataFormat: {}", name);
         try {
-            ServiceReference[] refs = bundleContext.getServiceReferences(DataFormatResolver.class.getName(), "(dataformat=" + name + ")");
+            ServiceReference<?>[] refs = bundleContext.getServiceReferences(DataFormatResolver.class.getName(), "(dataformat=" + name + ")");
             if (refs != null) {
-                for (ServiceReference ref : refs) {
+                for (ServiceReference<?> ref : refs) {
                     Object service = bundleContext.getService(ref);
                     if (DataFormatResolver.class.isAssignableFrom(service.getClass())) {
                         DataFormatResolver resolver = (DataFormatResolver) service;

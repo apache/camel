@@ -625,7 +625,7 @@ public final class IntrospectionSupport {
         List<Method> primitives = new LinkedList<Method>();
         Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern);
         for (Method setter : setters) {
-            Class parameterType = setter.getParameterTypes()[0];
+            Class<?> parameterType = setter.getParameterTypes()[0];
             if (PRIMITIVE_CLASSES.contains(parameterType)) {
                 primitives.add(setter);
             } else {

@@ -97,7 +97,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     public static ScriptEngine resolveScriptEngine(String scriptEngineName) throws InvalidSyntaxException {
-        ServiceReference[] refs = context.getServiceReferences(ScriptEngineResolver.class.getName(), null);
+        ServiceReference<?>[] refs = context.getServiceReferences(ScriptEngineResolver.class.getName(), null);
         if (refs == null) {
             LOG.info("No OSGi script engine resolvers available!");
             return null;
@@ -105,7 +105,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         
         LOG.debug("Found " + refs.length + " OSGi ScriptEngineResolver services");
         
-        for (ServiceReference ref : refs) {
+        for (ServiceReference<?> ref : refs) {
             ScriptEngineResolver resolver = (ScriptEngineResolver) context.getService(ref);
             ScriptEngine engine = resolver.resolveScriptEngine(scriptEngineName);
             context.ungetService(ref);

@@ -78,7 +78,6 @@ public class BacklogTracerTest extends ManagementTestSupport {
                 + "    </message>", event2.getMessageAsXml());
     }
 
-    @SuppressWarnings("unchecked")
     public void testBacklogTracerEventMessageAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
@@ -188,7 +187,6 @@ public class BacklogTracerTest extends ManagementTestSupport {
                 + "    </message>", event4.getMessageAsXml());
     }
 
-    @SuppressWarnings("unchecked")
     public void testBacklogTracerEventMessageDumpAllAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
