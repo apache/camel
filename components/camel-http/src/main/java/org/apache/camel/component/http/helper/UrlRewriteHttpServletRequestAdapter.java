@@ -16,18 +16,8 @@
  */
 package org.apache.camel.component.http.helper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * Special adapter when {@link org.apache.camel.component.http.HttpServletUrlRewrite} is in use,
@@ -39,9 +29,8 @@ import javax.servlet.http.HttpSession;
  * camel-jetty/camel-servlet server implementation uses the root ("/") context-path
  * for all the servlets/endpoints.
  */
-public final class UrlRewriteHttpServletRequestAdapter implements HttpServletRequest {
+public final class UrlRewriteHttpServletRequestAdapter extends HttpServletRequestWrapper {
 
-    private final HttpServletRequest delegate;
     private final String contextPath;
 
     /**
@@ -50,223 +39,12 @@ public final class UrlRewriteHttpServletRequestAdapter implements HttpServletReq
      * @param contextPath use to override and return this context-path
      */
     public UrlRewriteHttpServletRequestAdapter(HttpServletRequest delegate, String contextPath) {
-        this.delegate = delegate;
+        super(delegate);
         this.contextPath = contextPath;
     }
 
-    public String getAuthType() {
-        return delegate.getAuthType();
-    }
-
-    public Enumeration getHeaderNames() {
-        return delegate.getHeaderNames();
-    }
-
-    public String getPathInfo() {
-        return delegate.getPathInfo();
-    }
-
-    public Object getAttribute(String name) {
-        return delegate.getAttribute(name);
-    }
-
-    public Enumeration getParameterNames() {
-        return delegate.getParameterNames();
-    }
-
-    public String getProtocol() {
-        return delegate.getProtocol();
-    }
-
-    public String getHeader(String name) {
-        return delegate.getHeader(name);
-    }
-
-    public String getQueryString() {
-        return delegate.getQueryString();
-    }
-
-    public Enumeration getHeaders(String name) {
-        return delegate.getHeaders(name);
-    }
-
-    public String getRemoteUser() {
-        return delegate.getRemoteUser();
-    }
-
-    public int getRemotePort() {
-        return delegate.getRemotePort();
-    }
-
-    public void removeAttribute(String name) {
-        delegate.removeAttribute(name);
-    }
-
-    public long getDateHeader(String name) {
-        return delegate.getDateHeader(name);
-    }
-
-    public HttpSession getSession() {
-        return delegate.getSession();
-    }
-
-    public boolean isSecure() {
-        return delegate.isSecure();
-    }
-
-    public int getContentLength() {
-        return delegate.getContentLength();
-    }
-
-    public BufferedReader getReader() throws IOException {
-        return delegate.getReader();
-    }
-
-    public Locale getLocale() {
-        return delegate.getLocale();
-    }
-
-    public Map getParameterMap() {
-        return delegate.getParameterMap();
-    }
-
-    public Enumeration getLocales() {
-        return delegate.getLocales();
-    }
-
-    public HttpSession getSession(boolean create) {
-        return delegate.getSession(create);
-    }
-
-    public int getLocalPort() {
-        return delegate.getLocalPort();
-    }
-
-    public String getServerName() {
-        return delegate.getServerName();
-    }
-
-    public void setAttribute(String name, Object o) {
-        delegate.setAttribute(name, o);
-    }
-
-    public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
-        delegate.setCharacterEncoding(env);
-    }
-
-    public Enumeration getAttributeNames() {
-        return delegate.getAttributeNames();
-    }
-
-    public String getRequestedSessionId() {
-        return delegate.getRequestedSessionId();
-    }
-
-    public String getRemoteHost() {
-        return delegate.getRemoteHost();
-    }
-
-    public boolean isRequestedSessionIdValid() {
-        return delegate.isRequestedSessionIdValid();
-    }
-
-    public String getPathTranslated() {
-        return delegate.getPathTranslated();
-    }
-
-    public String getMethod() {
-        return delegate.getMethod();
-    }
-
-    public RequestDispatcher getRequestDispatcher(String path) {
-        return delegate.getRequestDispatcher(path);
-    }
-
-    public String getScheme() {
-        return delegate.getScheme();
-    }
-
-    public String getCharacterEncoding() {
-        return delegate.getCharacterEncoding();
-    }
-
-    public StringBuffer getRequestURL() {
-        return delegate.getRequestURL();
-    }
-
-    public int getServerPort() {
-        return delegate.getServerPort();
-    }
-
-    public boolean isRequestedSessionIdFromCookie() {
-        return delegate.isRequestedSessionIdFromCookie();
-    }
-
-    public String getLocalAddr() {
-        return delegate.getLocalAddr();
-    }
-
-    public boolean isRequestedSessionIdFromUrl() {
-        return delegate.isRequestedSessionIdFromUrl();
-    }
-
-    public Cookie[] getCookies() {
-        return delegate.getCookies();
-    }
-
-    public String getRemoteAddr() {
-        return delegate.getRemoteAddr();
-    }
-
-    public Principal getUserPrincipal() {
-        return delegate.getUserPrincipal();
-    }
-
-    public String[] getParameterValues(String name) {
-        return delegate.getParameterValues(name);
-    }
-
-    public String getContentType() {
-        return delegate.getContentType();
-    }
-
-    public String getParameter(String name) {
-        return delegate.getParameter(name);
-    }
-
-    public String getLocalName() {
-        return delegate.getLocalName();
-    }
 
     public String getContextPath() {
-        return contextPath != null ? contextPath : delegate.getContextPath();
-    }
-
-    public String getRealPath(String path) {
-        return delegate.getRealPath(path);
-    }
-
-    public int getIntHeader(String name) {
-        return delegate.getIntHeader(name);
-    }
-
-    public boolean isUserInRole(String role) {
-        return delegate.isUserInRole(role);
-    }
-
-    public boolean isRequestedSessionIdFromURL() {
-        return delegate.isRequestedSessionIdFromURL();
-    }
-
-    public ServletInputStream getInputStream() throws IOException {
-        return delegate.getInputStream();
-    }
-
-    public String getRequestURI() {
-        return delegate.getRequestURI();
-    }
-
-    public String getServletPath() {
-        return delegate.getServletPath();
+        return contextPath != null ? contextPath : super.getContextPath();
     }
 }
