@@ -73,7 +73,6 @@ public class PackageMojo extends AbstractMojo {
         File camelMetaDir = new File(outDir, "META-INF/services/org/apache/camel/");
 
         StringBuilder buffer = new StringBuilder();
-        boolean found = false;
         int count = 0;
         for (Resource r : project.getBuild().getResources()) {
             File f = new File(r.getDirectory());
@@ -85,18 +84,19 @@ public class PackageMojo extends AbstractMojo {
             if (f.exists()) {
                 File[] files = f.listFiles();
                 for (File file : files) {
-                    found = true;
-                    count++;
                     String name = file.getName();
-                    if (buffer.length() > 0) {
-                        buffer.append(" ");
+                    if (name.charAt(0) != '.') {
+                        count++;
+                        if (buffer.length() > 0) {
+                            buffer.append(" ");
+                        }
+                        buffer.append(name);
                     }
-                    buffer.append(name);
                 }
             }
         }
         
-        if (found) {
+        if (count > 0) {
             Properties properties = new Properties();
             String names = buffer.toString();
             properties.put("components", names);
