@@ -125,6 +125,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-blueprint</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
@@ -140,6 +141,7 @@
       <groupId>org.apache.aries.blueprint</groupId>
       <artifactId>org.apache.aries.blueprint</artifactId>
       <version>${aries-blueprint-core-version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!--  Test Dependencies -->
