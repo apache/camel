@@ -55,6 +55,8 @@ public class BacklogTracerInterceptor extends DelegateAsyncProcessor {
             if (backlogTracer.shouldTrace(processorDefinition)) {
                 // ensure there is space on the queue
                 int drain = queue.size() - backlogTracer.getBacklogSize();
+                // and we need room for ourselves and possible also a first pseudo message as well
+                drain += first ? 2 : 1;
                 if (drain > 0) {
                     for (int i = 0; i < drain; i++) {
                         queue.poll();

@@ -21,12 +21,11 @@ import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 public class BacklogTracerTest extends ManagementTestSupport {
 
@@ -332,6 +331,80 @@ public class BacklogTracerTest extends ManagementTestSupport {
                 new Object[]{"bar"}, new String[]{"java.lang.String"});
         assertNotNull(events);
         assertEquals(3, events.size());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testBacklogTracerNotRemoveOverflow() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
+        assertEquals(Boolean.TRUE, removeOnDump);
+        // disable it
+        mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
+
+        Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
+        assertEquals("Should be 1000", 1000, size.intValue());
+        // change size to 2 x 10 (as we need for first as well)
+        mbeanServer.setAttribute(on, new Attribute("BacklogSize", 20));
+        // set the pattern to match only foo
+        mbeanServer.setAttribute(on, new Attribute("TracePattern", "foo"));
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable it
+        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+
+        getMockEndpoint("mock:foo").expectedMessageCount(10);
+        getMockEndpoint("mock:bar").expectedMessageCount(10);
+
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("direct:start", "###" + i + "###");
+        }
+
+        assertMockEndpointsSatisfied();
+
+        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
+                new Object[]{"foo"}, new String[]{"java.lang.String"});
+        assertEquals(10, events.size());
+
+        // the first should be 0 and the last 9
+        String xml = events.get(0).getMessageAsXml();
+        assertTrue(xml.contains("###0###"));
+        xml = events.get(9).getMessageAsXml();
+        assertTrue(xml.contains("###9###"));
+
+        // send in another message
+        template.sendBody("direct:start", "###" + 10 + "###");
+
+        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
+                new Object[]{"foo"}, new String[]{"java.lang.String"});
+        assertEquals(10, events.size());
+
+        // and we are shifted one now
+        xml = events.get(0).getMessageAsXml();
+        assertTrue(xml.contains("###1###"));
+        xml = events.get(9).getMessageAsXml();
+        assertTrue(xml.contains("###10###"));
+
+        // send in 4 messages
+        template.sendBody("direct:start", "###" + 11 + "###");
+        template.sendBody("direct:start", "###" + 12 + "###");
+        template.sendBody("direct:start", "###" + 13 + "###");
+        template.sendBody("direct:start", "###" + 14 + "###");
+
+        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
+                new Object[]{"foo"}, new String[]{"java.lang.String"});
+        assertEquals(10, events.size());
+
+        // and we are shifted +4 now
+        xml = events.get(0).getMessageAsXml();
+        assertTrue(xml.contains("###5###"));
+        xml = events.get(9).getMessageAsXml();
+        assertTrue(xml.contains("###14###"));
     }
 
     @Override
