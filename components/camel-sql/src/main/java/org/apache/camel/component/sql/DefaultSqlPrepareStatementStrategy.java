@@ -56,10 +56,10 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
             // create an iterator that returns the value in the named order
             try {
                 // the body may be a map which we look at first
-                final Map bodyMap = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, value);
-                final Map headerMap = exchange.getIn().hasHeaders() ? exchange.getIn().getHeaders() : null;
+                final Map<?, ?> bodyMap = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, value);
+                final Map<?, ?> headerMap = exchange.getIn().hasHeaders() ? exchange.getIn().getHeaders() : null;
 
-                return new Iterator() {
+                return new Iterator<Object>() {
                     private NamedQueryParser parser = new NamedQueryParser(query);
                     private Object next;
                     private boolean done;

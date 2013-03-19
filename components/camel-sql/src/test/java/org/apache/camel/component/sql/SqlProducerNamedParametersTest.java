@@ -57,7 +57,7 @@ public class SqlProducerNamedParametersTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("lic", "ASF");
         map.put("min", 1);
 
@@ -76,7 +76,7 @@ public class SqlProducerNamedParametersTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("lic", "ASF");
         map.put("min", 1);
 
