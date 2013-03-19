@@ -171,7 +171,7 @@
           <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
-  	  <plugin>
+      <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
         <version>${cxf-version}</version>
@@ -180,7 +180,7 @@
             <id>generate-test-sources</id>
             <phase>generate-sources</phase>
             <configuration>
-              <sourceRoot>${basedir}/target/generated</sourceRoot>
+              <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
               <wsdlOptions>
                 <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
