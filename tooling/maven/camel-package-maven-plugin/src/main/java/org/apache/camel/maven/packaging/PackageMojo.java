@@ -81,16 +81,18 @@ public class PackageMojo extends AbstractMojo {
             }
             f = new File(f, "META-INF/services/org/apache/camel/component");
             
-            if (f.exists()) {
+            if (f.exists() && f.isDirectory()) {
                 File[] files = f.listFiles();
-                for (File file : files) {
-                    String name = file.getName();
-                    if (name.charAt(0) != '.') {
-                        count++;
-                        if (buffer.length() > 0) {
-                            buffer.append(" ");
+                if (files != null) {
+                    for (File file : files) {
+                        String name = file.getName();
+                        if (name.charAt(0) != '.') {
+                            count++;
+                            if (buffer.length() > 0) {
+                                buffer.append(" ");
+                            }
+                            buffer.append(name);
                         }
-                        buffer.append(name);
                     }
                 }
             }
