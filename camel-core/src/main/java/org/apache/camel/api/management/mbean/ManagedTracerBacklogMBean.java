@@ -29,10 +29,10 @@ public interface ManagedTracerBacklogMBean {
     @ManagedAttribute(description = "Is tracing enabled")
     void setEnabled(boolean enabled);
 
-    @ManagedAttribute(description = "Number of traced messages to keep in the backlog (FIFO queue)")
+    @ManagedAttribute(description = "Number of maximum traced messages in total to keep in the backlog (FIFO queue)")
     int getBacklogSize();
 
-    @ManagedAttribute(description = "Number of traced messages to keep in the backlog (FIFO queue)")
+    @ManagedAttribute(description = "Number of maximum traced messages in total to keep in the backlog (FIFO queue)")
     void setBacklogSize(int backlogSize);
 
     @ManagedAttribute(description = "Whether to remove traced message from backlog when dumping trace messages")
@@ -53,16 +53,34 @@ public interface ManagedTracerBacklogMBean {
     @ManagedOperation(description = "Resets the trace counter")
     void resetTraceCounter();
 
-    @ManagedOperation(description = "Dumps the traced messages for the given node")
-    List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId);
+    @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
+    int getBodyMaxChars();
 
-    @ManagedOperation(description = "Dumps the traced messages for the given node in xml format")
-    String dumpTracedMessagesAsXml(String nodeId);
+    @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
+    void setBodyMaxChars(int bodyMaxChars);
 
-    @ManagedOperation(description = "Dumps the traced messages for all nodes")
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    boolean isBodyIncludeStreams();
+
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    void setBodyIncludeStreams(boolean bodyIncludeStreams);
+
+    @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
+    boolean isBodyIncludeFiles();
+
+    @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
+    void setBodyIncludeFiles(boolean bodyIncludeFiles);
+
+    @ManagedOperation(description = "Dumps the traced messages for the given node or route")
+    List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId);
+
+    @ManagedOperation(description = "Dumps the traced messages for the given node or route in xml format")
+    String dumpTracedMessagesAsXml(String nodeOrRouteId);
+
+    @ManagedOperation(description = "Dumps all the traced messages")
     List<BacklogTracerEventMessage> dumpAllTracedMessages();
 
-    @ManagedOperation(description = "Dumps the traced messages for all nodes in xml format")
+    @ManagedOperation(description = "Dumps all the traced messages in xml format")
     String dumpAllTracedMessagesAsXml();
 
 }

@@ -44,16 +44,19 @@ import org.apache.camel.util.EndpointHelper;
  */
 public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
 
-    // lets limit the tracer to 1000 messages per node
-    public static final int MAX_BACKLOG_SIZE = 1000;
+    // lets limit the tracer to 100 thousand messages in total
+    public static final int MAX_BACKLOG_SIZE = 100 * 1000;
     private final CamelContext camelContext;
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
     // use a queue with a upper limit to avoid storing too many messages
     private final Queue<DefaultBacklogTracerEventMessage> queue = new ArrayBlockingQueue<DefaultBacklogTracerEventMessage>(MAX_BACKLOG_SIZE);
-    // how many of the last messages per node to keep in the backlog
-    private int backlogSize = MAX_BACKLOG_SIZE;
+    // how many of the last messages to keep in the backlog at total
+    private int backlogSize = 1000;
     private boolean removeOnDump = true;
+    private int bodyMaxChars = 128 * 1024;
+    private boolean bodyIncludeStreams;
+    private boolean bodyIncludeFiles = true;
     // a pattern to filter tracing nodes
     private String tracePattern;
     private String[] patterns;
@@ -169,6 +172,30 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
 
     public void setRemoveOnDump(boolean removeOnDump) {
         this.removeOnDump = removeOnDump;
+    }
+
+    public int getBodyMaxChars() {
+        return bodyMaxChars;
+    }
+
+    public void setBodyMaxChars(int bodyMaxChars) {
+        this.bodyMaxChars = bodyMaxChars;
+    }
+
+    public boolean isBodyIncludeStreams() {
+        return bodyIncludeStreams;
+    }
+
+    public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
+        this.bodyIncludeStreams = bodyIncludeStreams;
+    }
+
+    public boolean isBodyIncludeFiles() {
+        return bodyIncludeFiles;
+    }
+
+    public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
+        this.bodyIncludeFiles = bodyIncludeFiles;
     }
 
     public String getTracePattern() {

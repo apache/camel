@@ -286,6 +286,21 @@ public final class MessageHelper {
      * @return the XML
      */
     public static String dumpAsXml(Message message, boolean includeBody, int indent) {
+        return dumpAsXml(message, includeBody, indent, false, true, 128 * 1024);
+    }
+
+    /**
+     * Dumps the message as a generic XML structure.
+     *
+     * @param message the message
+     * @param includeBody whether or not to include the message body
+     * @param indent number of spaces to indent
+     * @param allowStreams whether to include message body if they are stream based
+     * @param allowFiles whether to include message body if they are file based
+     * @param maxChars clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not limit at all.
+     * @return the XML
+     */
+    public static String dumpAsXml(Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars) {
         StringBuilder sb = new StringBuilder();
 
         StringBuilder prefix = new StringBuilder();
@@ -343,11 +358,7 @@ public final class MessageHelper {
             }
             sb.append(">");
 
-            // dump body value as XML, use Camel type converter to convert to
-            // String
-            // do not allow streams, but allow files, and clip very big message
-            // bodies (128kb)
-            String xml = extractBodyForLogging(message, "", false, true, 128 * 1024);
+            String xml = extractBodyForLogging(message, "", allowStreams, allowFiles, maxChars);
             if (xml != null) {
                 // must always xml encode
                 sb.append(StringHelper.xmlEncode(xml));

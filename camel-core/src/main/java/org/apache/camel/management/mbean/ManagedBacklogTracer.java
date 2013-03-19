@@ -94,16 +94,40 @@ public class ManagedBacklogTracer implements  ManagedTracerBacklogMBean {
         backlogTracer.resetTraceCounter();
     }
 
-    public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId) {
-        return backlogTracer.dumpTracedMessages(nodeId);
+    public int getBodyMaxChars() {
+        return backlogTracer.getBodyMaxChars();
+    }
+
+    public void setBodyMaxChars(int bodyMaxChars) {
+        backlogTracer.setBodyMaxChars(bodyMaxChars);
+    }
+
+    public boolean isBodyIncludeStreams() {
+        return backlogTracer.isBodyIncludeStreams();
+    }
+
+    public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
+        backlogTracer.setBodyIncludeStreams(bodyIncludeStreams);
+    }
+
+    public boolean isBodyIncludeFiles() {
+        return backlogTracer.isBodyIncludeFiles();
+    }
+
+    public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
+        backlogTracer.setBodyIncludeFiles(bodyIncludeFiles);
+    }
+
+    public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId) {
+        return backlogTracer.dumpTracedMessages(nodeOrRouteId);
     }
 
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
         return backlogTracer.dumpAllTracedMessages();
     }
 
-    public String dumpTracedMessagesAsXml(String nodeId) {
-        return backlogTracer.dumpTracedMessagesAsXml(nodeId);
+    public String dumpTracedMessagesAsXml(String nodeOrRouteId) {
+        return backlogTracer.dumpTracedMessagesAsXml(nodeOrRouteId);
     }
 
     public String dumpAllTracedMessagesAsXml() {
