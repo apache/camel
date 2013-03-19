@@ -70,6 +70,14 @@ public class ManagedBacklogTracer implements  ManagedTracerBacklogMBean {
         backlogTracer.setBacklogSize(backlogSize);
     }
 
+    public boolean isRemoveOnDump() {
+        return backlogTracer.isRemoveOnDump();
+    }
+
+    public void setRemoveOnDump(boolean removeOnDump) {
+        backlogTracer.setRemoveOnDump(removeOnDump);
+    }
+
     public void setTracePattern(String pattern) {
         backlogTracer.setTracePattern(pattern);
     }

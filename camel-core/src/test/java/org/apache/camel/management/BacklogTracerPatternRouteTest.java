@@ -37,7 +37,7 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
         assertEquals("Should not be enabled", Boolean.FALSE, enabled);
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 10", 10, size.intValue());
+        assertEquals("Should be 1000", 1000, size.intValue());
 
         // set the pattern to match only coolRoute
         mbeanServer.setAttribute(on, new Attribute("TracePattern", "coolRoute"));

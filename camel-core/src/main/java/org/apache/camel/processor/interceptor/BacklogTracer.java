@@ -44,13 +44,16 @@ import org.apache.camel.util.EndpointHelper;
  */
 public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
 
+    // lets limit the tracer to 1000 messages per node
+    public static final int MAX_BACKLOG_SIZE = 1000;
     private final CamelContext camelContext;
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
     // use a queue with a upper limit to avoid storing too many messages
-    private final Queue<DefaultBacklogTracerEventMessage> queue = new ArrayBlockingQueue<DefaultBacklogTracerEventMessage>(1000);
+    private final Queue<DefaultBacklogTracerEventMessage> queue = new ArrayBlockingQueue<DefaultBacklogTracerEventMessage>(MAX_BACKLOG_SIZE);
     // how many of the last messages per node to keep in the backlog
-    private int backlogSize = 10;
+    private int backlogSize = MAX_BACKLOG_SIZE;
+    private boolean removeOnDump = true;
     // a pattern to filter tracing nodes
     private String tracePattern;
     private String[] patterns;
@@ -154,7 +157,18 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         if (backlogSize <= 0) {
             throw new IllegalArgumentException("The backlog size must be a positive number, was: " + backlogSize);
         }
+        if (backlogSize > MAX_BACKLOG_SIZE) {
+            throw new IllegalArgumentException("The backlog size cannot be greater than the max size of " + MAX_BACKLOG_SIZE + ", was: " + backlogSize);
+        }
         this.backlogSize = backlogSize;
+    }
+
+    public boolean isRemoveOnDump() {
+        return removeOnDump;
+    }
+
+    public void setRemoveOnDump(boolean removeOnDump) {
+        this.removeOnDump = removeOnDump;
     }
 
     public String getTracePattern() {
@@ -188,6 +202,11 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
                 }
             }
         }
+
+        if (removeOnDump) {
+            queue.removeAll(answer);
+        }
+
         return answer;
     }
 
@@ -206,7 +225,9 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
         List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
         answer.addAll(queue);
-        queue.clear();
+        if (isRemoveOnDump()) {
+            queue.clear();
+        }
         return answer;
     }
 

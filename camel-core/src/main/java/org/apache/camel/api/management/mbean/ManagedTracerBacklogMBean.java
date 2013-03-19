@@ -35,6 +35,12 @@ public interface ManagedTracerBacklogMBean {
     @ManagedAttribute(description = "Number of traced messages to keep in the backlog (FIFO queue)")
     void setBacklogSize(int backlogSize);
 
+    @ManagedAttribute(description = "Whether to remove traced message from backlog when dumping trace messages")
+    boolean isRemoveOnDump();
+
+    @ManagedAttribute(description = "Whether to remove traced message from backlog when dumping trace messages")
+    void setRemoveOnDump(boolean removeOnDump);
+
     @ManagedAttribute(description = "To filter tracing by nodes (pattern)")
     void setTracePattern(String pattern);
 

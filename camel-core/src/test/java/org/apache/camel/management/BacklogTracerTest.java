@@ -41,7 +41,10 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("Should not be enabled", Boolean.FALSE, enabled);
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 10", 10, size.intValue());
+        assertEquals("Should be 1000", 1000, size.intValue());
+
+        Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
+        assertEquals(Boolean.TRUE, removeOnDump);
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -86,7 +89,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("Should not be enabled", Boolean.FALSE, enabled);
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 10", 10, size.intValue());
+        assertEquals("Should be 1000", 1000, size.intValue());
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -217,6 +220,118 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         NodeList list = dom.getElementsByTagName("backlogTracerEventMessage");
         assertEquals(6, list.getLength());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testBacklogTracerNotRemoveOnDump() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
+        assertEquals(Boolean.TRUE, removeOnDump);
+        // disable it
+        mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable it
+        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+
+        getMockEndpoint("mock:foo").expectedMessageCount(2);
+        getMockEndpoint("mock:bar").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+
+        assertNotNull(events);
+        assertEquals(6, events.size());
+
+        // and if we get again they are still there
+        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+        assertNotNull(events);
+        assertEquals(6, events.size());
+
+        // send in another message
+        resetMocks();
+
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hi World");
+
+        assertMockEndpointsSatisfied();
+
+        // and now we should have 3 more messages
+        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+        assertNotNull(events);
+        assertEquals(9, events.size());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testBacklogTracerNotRemoveOnDumpPattern() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
+        assertEquals(Boolean.TRUE, removeOnDump);
+        // disable it
+        mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable it
+        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+
+        getMockEndpoint("mock:foo").expectedMessageCount(2);
+        getMockEndpoint("mock:bar").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
+                new Object[]{"foo"}, new String[]{"java.lang.String"});
+
+        assertNotNull(events);
+        assertEquals(2, events.size());
+
+        // and if we get again they are still there
+        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
+                new Object[]{"foo"}, new String[]{"java.lang.String"});
+        assertEquals(2, events.size());
+
+        // send in another message
+        resetMocks();
+
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hi World");
+
+        assertMockEndpointsSatisfied();
+
+        // and now we should have 3 more messages
+        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
+                new Object[]{"foo"}, new String[]{"java.lang.String"});
+        assertNotNull(events);
+        assertEquals(3, events.size());
+
+        // and bar should also have 3 traced messages
+        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
+                new Object[]{"bar"}, new String[]{"java.lang.String"});
+        assertNotNull(events);
+        assertEquals(3, events.size());
     }
 
     @Override
