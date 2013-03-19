@@ -83,4 +83,7 @@ public interface ManagedTracerBacklogMBean {
     @ManagedOperation(description = "Dumps all the traced messages in xml format")
     String dumpAllTracedMessagesAsXml();
 
+    @ManagedOperation(description = "Clears the backlog")
+    void clear();
+
 }

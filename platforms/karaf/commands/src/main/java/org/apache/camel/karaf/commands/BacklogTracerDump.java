@@ -44,8 +44,11 @@ public class BacklogTracerDump extends OsgiCommandSupport {
     @Argument(index = 1, name = "pattern", description = "To dump trace messages only for nodes or routes matching the given pattern (default is all)", required = false, multiValued = false)
     String pattern;
 
-    @Option(name = "--format", aliases = "-f", description = "Format to use with the dump action (table or xml)", required = false, multiValued = false, valueToShowInHelp = "xml")
+    @Option(name = "--format", aliases = "-f", description = "Format to use with the dump action (text or xml)", required = false, multiValued = false, valueToShowInHelp = "text")
     String format;
+
+    @Option(name = "--bodySize", aliases = "-bs", description = "To limit the body size when using text format", required = false, multiValued = false)
+    Integer bodySize;
 
     private CamelController camelController;
 
@@ -66,20 +69,11 @@ public class BacklogTracerDump extends OsgiCommandSupport {
             backlogTracer = (BacklogTracer) camel.getDefaultBacklogTracer();
         }
 
-        if (format == null || "xml".equals(format)) {
-            System.out.println("--------------------------------------------------------");
-            if (pattern != null) {
-                System.out.println("BacklogTracer messages:\n" + backlogTracer.dumpTracedMessages(pattern));
-            } else {
-                System.out.println("BacklogTracer messages:\n" + backlogTracer.dumpAllTracedMessagesAsXml());
-            }
-            return null;
-        } else if ("table".equals(format)) {
+        if (format == null || "text".equals(format)) {
             JAXBContext context = JAXBContext.newInstance(MessageDump.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-
-            // assume its a table
             SimpleDateFormat sdf = new SimpleDateFormat(BacklogTracerEventMessage.TIMESTAMP_FORMAT);
+
             List<BacklogTracerEventMessage> events;
             if (pattern != null) {
                 events = backlogTracer.dumpTracedMessages(pattern);
@@ -87,18 +81,37 @@ public class BacklogTracerDump extends OsgiCommandSupport {
                 events = backlogTracer.dumpAllTracedMessages();
             }
             for (BacklogTracerEventMessage event : events) {
-                System.out.println("--------------------------------------------------------");
-                System.out.println("#" + event.getUid() + "\tExchangeId: " + event.getExchangeId());
-                System.out.println("Timestamp: " + sdf.format(event.getTimestamp()));
-                System.out.println("Route: " + event.getRouteId() + " --> " + event.getToNode());
-
                 MessageDump msg = (MessageDump) unmarshaller.unmarshal(new StringReader(event.getMessageAsXml()));
                 String breadcrumb = getBreadcrumbId(msg.getHeaders());
+
+                System.out.println("#" + event.getUid() + "\tTimestamp:\t" + sdf.format(event.getTimestamp()));
                 if (breadcrumb != null) {
                     System.out.println("Breadcrumb: " + breadcrumb);
                 }
-                System.out.println("Body: " + msg.getBody().getValue());
+                System.out.println("ExchangeId: " + event.getExchangeId());
+
+                if (event.getToNode() != null) {
+                    System.out.println("Route: " + event.getRouteId() + "\t--> " + event.getToNode());
+                } else {
+                    System.out.println("Route: " + event.getRouteId());
+                }
+
+                String body = msg.getBody().getValue();
+                if (bodySize != null && bodySize > 0) {
+                    if (body.length() > bodySize) {
+                        body = body.substring(0, bodySize);
+                    }
+                }
+                System.out.println(body);
+                System.out.println("");
             }
+        } else if ("xml".equals(format)) {
+            if (pattern != null) {
+                System.out.println("BacklogTracer messages:\n" + backlogTracer.dumpTracedMessages(pattern));
+            } else {
+                System.out.println("BacklogTracer messages:\n" + backlogTracer.dumpAllTracedMessagesAsXml());
+            }
+            return null;
         }
 
         return null;

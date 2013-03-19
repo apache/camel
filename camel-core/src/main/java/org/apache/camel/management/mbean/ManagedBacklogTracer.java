@@ -133,4 +133,8 @@ public class ManagedBacklogTracer implements  ManagedTracerBacklogMBean {
     public String dumpAllTracedMessagesAsXml() {
         return backlogTracer.dumpAllTracedMessagesAsXml();
     }
+
+    public void clear() {
+        backlogTracer.clear();
+    }
 }

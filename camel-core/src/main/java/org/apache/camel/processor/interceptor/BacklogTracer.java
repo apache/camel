@@ -270,6 +270,10 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         return sb.toString();
     }
 
+    public void clear() {
+        queue.clear();
+    }
+
     long incrementTraceCounter() {
         return traceCounter.incrementAndGet();
     }

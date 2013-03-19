@@ -50,7 +50,10 @@ public class BacklogTracerStop extends OsgiCommandSupport {
             backlogTracer = (BacklogTracer) camel.getDefaultBacklogTracer();
         }
 
+        // disable tracer and clear counter and the backlog queue
         backlogTracer.setEnabled(false);
+        backlogTracer.resetTraceCounter();
+        backlogTracer.clear();
         System.out.println("BacklogTracer stopped on " + camel.getName());
         return null;
     }
