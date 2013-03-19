@@ -19,16 +19,12 @@ package org.apache.camel.component.hdfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.security.auth.login.Configuration;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HdfsInputStream implements Closeable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HdfsInputStream.class);
     private HdfsFileType fileType;
     private String actualPath;
     private String suffixedPath;

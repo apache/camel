@@ -27,6 +27,7 @@ import com.amazonaws.services.cloudwatch.model.StandardUnit;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -52,7 +53,7 @@ public class CwProducer extends DefaultProducer {
     private List<MetricDatum> getMetricData(Exchange exchange) {
         Object body = exchange.getIn().getBody();
         if (body instanceof List) {
-            return (List<MetricDatum>) body;
+            return CastUtils.cast((List<?>)body);
         }
 
         if (body instanceof MetricDatum) {

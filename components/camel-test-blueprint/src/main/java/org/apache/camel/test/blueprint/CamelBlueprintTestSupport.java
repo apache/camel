@@ -19,11 +19,8 @@ package org.apache.camel.test.blueprint;
 import java.io.File;
 import java.util.Dictionary;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
-import org.apache.aries.blueprint.compendium.cm.CmPropertyPlaceholder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelCamelContext;

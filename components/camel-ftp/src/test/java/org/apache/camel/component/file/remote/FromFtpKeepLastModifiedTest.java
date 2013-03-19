@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
-import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

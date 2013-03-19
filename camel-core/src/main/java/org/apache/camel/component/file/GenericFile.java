@@ -17,7 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.camel.Exchange;

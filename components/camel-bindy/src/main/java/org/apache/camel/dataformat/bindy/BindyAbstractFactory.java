@@ -259,13 +259,13 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     /**
      * Format the object into a string according to the format rule defined
      */
-    @SuppressWarnings({"unchecked"})
-    public String formatString(Format format, Object value) throws Exception {
+    @SuppressWarnings("unchecked")
+    public String formatString(Format<?> format, Object value) throws Exception {
         String strValue = "";
 
         if (value != null) {
             try {
-                strValue = format.format(value);
+                strValue = ((Format<Object>)format).format(value);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Formatting error detected for the value: " + value, e);
             }

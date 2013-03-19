@@ -17,10 +17,8 @@
 package org.apache.camel.language.simple;
 
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.spi.Language;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.ObjectHelper;
 
