@@ -137,6 +137,11 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     @Override
+    protected boolean isUploadFile() {
+        return getEndpoint().isUpload();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         log.debug("Starting");
         // do not connect when component starts, just wait until we process as we will

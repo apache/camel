@@ -18,27 +18,42 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.IOConverter;
 import org.junit.Test;
 
 public class FtpProducerSiteCommandTest extends FtpServerTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=help site";
     }
 
-    @Test
-    public void testSiteCommand() throws Exception {
-        sendFile(getFtpUrl(), "Hello World", "hello.txt");
-
-        File file = new File(FTP_ROOT_DIR + "/site/hello.txt");
-        assertTrue("The uploaded file should exists", file.exists());
-        assertEquals("Hello World", IOConverter.toString(file, null));
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from( "direct:callSiteCommandWithoutUpload" )
+                        .to( "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=STAT&upload=false" );
+            }
+        };
     }
 
+    @Test
+    public void testSiteCommandWithoutUploadingFile() throws Exception {
+        template.sendBodyAndHeader( "direct:callSiteCommandWithoutUpload", "Hello world", Exchange.FILE_NAME, "hello.txt" );
+
+        File file = new File( FTP_ROOT_DIR + "/site/hello.txt" );
+        assertFalse( "No file should be uploaded", file.exists() );
+    }
+
+    @Test
+    public void testSiteCommand() throws Exception {
+        sendFile( getFtpUrl(), "Hello World", "hello.txt" );
+
+        File file = new File( FTP_ROOT_DIR + "/site/hello.txt" );
+        assertTrue( "The uploaded file should exist", file.exists() );
+        assertEquals( "Hello World", IOConverter.toString( file, null ) );
+    }
 }
