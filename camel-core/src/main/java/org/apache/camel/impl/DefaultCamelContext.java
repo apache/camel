@@ -355,17 +355,22 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public Component removeComponent(String componentName) {
         synchronized (components) {
-            Component answer = components.remove(componentName);
-            if (answer != null) {
+            Component oldComponent = components.remove(componentName);
+            if (oldComponent != null) {
+                try {
+                    stopServices(oldComponent);
+                } catch (Exception e) {
+                    log.warn("Error stopping component " + oldComponent + ". This exception will be ignored.", e);
+                }
                 for (LifecycleStrategy strategy : lifecycleStrategies) {
-                    strategy.onComponentRemove(componentName, answer);
+                    strategy.onComponentRemove(componentName, oldComponent);
                 }
             }
             // keep reference to properties component up to date
-            if (answer != null && "properties".equals(componentName)) {
+            if (oldComponent != null && "properties".equals(componentName)) {
                 propertiesComponent = null;
             }
-            return answer;
+            return oldComponent;
         }
     }
 
@@ -416,11 +421,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
                     try {
                         stopServices(oldEndpoint);
-                        answer.add(oldEndpoint);
-                        endpoints.remove(entry.getKey());
                     } catch (Exception e) {
-                        log.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint);
+                        log.warn("Error stopping endpoint " + oldEndpoint + ". This exception will be ignored.", e);
                     }
+                    answer.add(oldEndpoint);
+                    endpoints.remove(entry.getKey());
                 }
             }
         }

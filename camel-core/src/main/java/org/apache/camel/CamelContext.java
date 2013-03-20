@@ -240,6 +240,8 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Removes a previously added component.
+     * <p/>
+     * The component being removed will be stopped first.
      *
      * @param componentName the component name to remove
      * @return the previously added component or null if it had not been previously added.
@@ -305,6 +307,8 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Removes all endpoints with the given URI.
+     * <p/>
+     * The endpoints being removed will be stopped first.
      *
      * @param pattern an uri or pattern to match
      * @return a collection of endpoints removed which could be empty if there are no endpoints found for the given <tt>pattern</tt>
