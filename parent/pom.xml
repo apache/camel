@@ -170,7 +170,7 @@
     <hbase-version>0.94.3</hbase-version>
     <hbase-bundle-version>0.94.3_1</hbase-bundle-version>
     <hibernate-validator-bundle-version>4.1.0.Final_3</hibernate-validator-bundle-version>
-    <hibernate-version>4.1.9.Final</hibernate-version>
+    <hibernate-version>4.1.11.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.2.3</httpcore4-version>
     <httpclient4-version>4.2.3</httpclient4-version>
