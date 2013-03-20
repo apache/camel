@@ -20,11 +20,12 @@ import com.google.common.eventbus.EventBus;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
-public class GuavaEventBusEndpoint extends DefaultEndpoint {
+public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private EventBus eventBus;
     private Class<?> eventClass;
@@ -70,4 +71,10 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint {
     public void setEventClass(Class<?> eventClass) {
         this.eventClass = eventClass;
     }
+
+    @Override
+    public boolean isMultipleConsumersSupported() {
+        return true;
+    }
+
 }

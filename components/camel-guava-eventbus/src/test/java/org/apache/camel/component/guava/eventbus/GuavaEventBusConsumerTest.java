@@ -32,6 +32,7 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("guava-eventbus:eventBus").to("mock:allEvents");
+                from("guava-eventbus:eventBus").to("mock:multipliedConsumer");
 
                 from("guava-eventbus:eventBus?eventClass=org.apache.camel.component.guava.eventbus.MessageWrapper").
                         to("mock:wrapperEvents");
@@ -58,6 +59,22 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
         getMockEndpoint("mock:allEvents").setExpectedMessageCount(1);
         assertMockEndpointsSatisfied();
         assertEquals(message, getMockEndpoint("mock:allEvents").getExchanges().get(0).getIn().getBody());
+    }
+
+    @Test
+    public void shouldForwardMessageToMultipleConsumers() throws InterruptedException {
+        // Given
+        String message = "message";
+
+        // When
+        eventBus.post(message);
+
+        // Then
+        getMockEndpoint("mock:allEvents").setExpectedMessageCount(1);
+        getMockEndpoint("mock:multipliedConsumer").setExpectedMessageCount(1);
+        assertMockEndpointsSatisfied();
+        assertEquals(message, getMockEndpoint("mock:allEvents").getExchanges().get(0).getIn().getBody());
+        assertEquals(message, getMockEndpoint("mock:multipliedConsumer").getExchanges().get(0).getIn().getBody());
     }
 
     @Test
