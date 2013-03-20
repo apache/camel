@@ -36,10 +36,13 @@ import org.slf4j.LoggerFactory;
  * for performing XSLT transforms of messages
  */
 public class XsltComponent extends DefaultComponent {
+
+    private static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
     private static final transient Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
     private XmlConverter xmlConverter;
     private URIResolver uriResolver;
     private boolean contentCache = true;
+    private boolean saxon;
 
     public XmlConverter getXmlConverter() {
         return xmlConverter;
@@ -65,6 +68,14 @@ public class XsltComponent extends DefaultComponent {
         this.contentCache = contentCache;
     }
 
+    public boolean isSaxon() {
+        return saxon;
+    }
+
+    public void setSaxon(boolean saxon) {
+        this.saxon = saxon;
+    }
+
     protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
         String resourceUri = remaining;
         LOG.debug("{} using schema resource: {}", this, resourceUri);
@@ -80,15 +91,17 @@ public class XsltComponent extends DefaultComponent {
         }
 
         String transformerFactoryClassName = getAndRemoveParameter(parameters, "transformerFactoryClass", String.class);
+        Boolean saxon = getAndRemoveParameter(parameters, "saxon", Boolean.class, isSaxon());
+        if (transformerFactoryClassName == null && saxon) {
+            transformerFactoryClassName = SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
+        }
+
         TransformerFactory factory = null;
         if (transformerFactoryClassName != null) {
             // provide the class loader of this component to work in OSGi environments
-            Class<?> factoryClass = getCamelContext().getClassResolver().resolveClass(transformerFactoryClassName, XsltComponent.class.getClassLoader());
-            if (factoryClass != null) {
-                factory = (TransformerFactory) getCamelContext().getInjector().newInstance(factoryClass);
-            } else {
-                LOG.warn("Cannot find the TransformerFactoryClass with the class name: {}", transformerFactoryClassName);
-            }
+            Class<?> factoryClass = getCamelContext().getClassResolver().resolveMandatoryClass(transformerFactoryClassName, XsltComponent.class.getClassLoader());
+            LOG.debug("Using TransformerFactoryClass {}", factoryClass);
+            factory = (TransformerFactory) getCamelContext().getInjector().newInstance(factoryClass);
         }
 
         if (parameters.get("transformerFactory") != null) {
@@ -96,6 +109,7 @@ public class XsltComponent extends DefaultComponent {
         }
 
         if (factory != null) {
+            LOG.debug("Using TransformerFactory {}", factory);
             xslt.getConverter().setTransformerFactory(factory);
         }
 
