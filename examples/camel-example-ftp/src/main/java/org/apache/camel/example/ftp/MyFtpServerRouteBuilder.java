@@ -34,8 +34,8 @@ public class MyFtpServerRouteBuilder extends RouteBuilder {
         getContext().getShutdownStrategy().setTimeout(10);
 
         from("{{ftp.server}}")
-            .log("Downloading file ${file:name}")
-            .to("file:target/download");
+            .to("file:target/download")
+            .log("Downloaded file ${file:name} complete.");
 
         // use system out so it stand out
         System.out.println("*********************************************************************************");

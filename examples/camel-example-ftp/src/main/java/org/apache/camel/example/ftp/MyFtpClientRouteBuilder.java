@@ -35,7 +35,8 @@ public class MyFtpClientRouteBuilder extends RouteBuilder {
 
         from("file:target/upload?moveFailed=../error")
             .log("Uploading file ${file:name}")
-            .to("{{ftp.server}}");
+            .to("{{ftp.client}}")
+            .log("Uploaded file ${file:name} complete.");
 
         // use system out so it stand out
         System.out.println("*********************************************************************************");
