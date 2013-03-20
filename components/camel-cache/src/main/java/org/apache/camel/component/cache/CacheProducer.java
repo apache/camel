@@ -101,7 +101,8 @@ public class CacheProducer extends DefaultProducer {
             }
         } else if (checkIsEqual(operation, CacheConstants.CACHE_OPERATION_URL_CHECK)) {
             LOG.debug("Querying an element with key {} from the Cache", key);
-            if (cache.isKeyInCache(key)) {
+            Element element = cache.getQuiet(key); // getQuiet checks for element expiry
+            if (element != null) {
                 exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
             } else {
                 exchange.getIn().removeHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND);
