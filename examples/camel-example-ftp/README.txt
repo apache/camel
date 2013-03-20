@@ -1,0 +1,39 @@
+Camel FTP example
+=================
+
+An example which shows how to integrate Camel with an FTP server.
+
+This example requires that an existing FTP server is available.
+You can configure the location of this FTP server in the file:
+  src/main/resources/ftp.properties
+
+You will need to compile this example first:
+  mvn compile
+
+This example can either run as a Camel client or server.
+
+* The client will upload files from the target/upload directory
+  to the FTP server.
+
+* The server will download files from the FTP server to the local
+  file system in the target/download directory.
+
+To run the client you type:
+  mvn compile exec:java -Pclient
+... and instructions will be printed on the console.
+
+To run the server you type:
+  mvn compile exec:java -Pserver
+... and instructions will be printed on the console.
+
+This example is documented at
+  http://camel.apache.org/ftp-example.html
+
+If you hit any problems please let us know on the Camel Forums
+  http://camel.apache.org/discussion-forums.html
+
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
+
+------------------------
+The Camel riders!
