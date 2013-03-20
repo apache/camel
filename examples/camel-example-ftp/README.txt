@@ -29,6 +29,9 @@ To run the server you type:
 This example is documented at
   http://camel.apache.org/ftp-example.html
 
+You can enable verbose logging by adjustung the src/main/resources/log4j.properties
+  file as documented in the file.
+
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
 
