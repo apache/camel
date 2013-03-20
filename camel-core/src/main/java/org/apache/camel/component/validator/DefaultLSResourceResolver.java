@@ -62,22 +62,23 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             throw new IllegalArgumentException(String.format("Resource: %s refers an invalid resource without SystemId."
                     + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s", resourceUri, type, namespaceURI, publicId, systemId, baseURI));
         }
-        String relatedPath = null;
+        String resourceURI = null;
         // Build up the relative path for using relatedURI and baseURI
         if (baseURI == null) {
             relatedURI = getUri(systemId);
-            relatedPath = relatedURI.intern();
+            resourceURI = relatedURI.intern();
         } else {
-            relatedPath = relatedURIMap.get(baseURI);
+            String relatedPath = relatedURIMap.get(baseURI);
             if (relatedPath == null) {
+                relatedPath = FileUtil.onlyPath(relatedURI).intern();
                 relatedURI = FileUtil.onlyPath(relatedURI) + "/" + systemId;
-                relatedPath = relatedURI.intern();
+                resourceURI = relatedURI.intern();
                 relatedURIMap.put(baseURI, relatedPath);
-            } else { // build the related path with same relatedURI
-                relatedPath = FileUtil.onlyPath(relatedPath) + "/" + systemId;
+            } else { 
+                resourceURI = relatedPath + "/" + systemId;
             }
         }
-        return new DefaultLSInput(publicId, systemId, baseURI, relatedPath);
+        return new DefaultLSInput(publicId, systemId, baseURI, resourceURI);
     }
     
     private final class DefaultLSInput implements LSInput {
