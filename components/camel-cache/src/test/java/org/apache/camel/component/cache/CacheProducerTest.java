@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Element;
-import net.sf.ehcache.ElementEvictionData;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -655,49 +654,6 @@ public class CacheProducerTest extends CamelTestSupport {
         context.start();
         LOG.debug("------------Beginning CacheProducer Check An Element Does Not Exist Test---------------");
         sendOriginalFile();
-        resultEndpoint.assertIsSatisfied();
-        cacheExceptionEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testCheckExpiredDataFromCache() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                onException(CacheException.class).
-                        handled(true).
-                        to("log:LOGGER").
-                        to("mock:CacheProducerTest.cacheException");
-
-                from("direct:a").
-                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD)).
-                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
-                        setBody(constant("Test body")).
-                        to("cache://TestCache1?timeToLiveSeconds=1");
-
-                from("direct:b").
-                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_URL_CHECK)).
-                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
-                        to("cache://TestCache1").
-                        choice().when(header(CacheConstants.CACHE_ELEMENT_WAS_FOUND).isNull()).
-                        to("mock:CacheProducerTest.result").end();
-            }
-        });
-
-        // Put an element to the cache
-        resultEndpoint.expectedMessageCount(1);
-        cacheExceptionEndpoint.expectedMessageCount(0);
-        context.start();
-        LOG.debug("------------Beginning CacheProducer Check An Element Does Not Exist After Expiry Test---------------");
-        sendOriginalFile();
-
-        // Alter the cache element so it appears "expired" (without having to wait for it to happen)
-        Cache testCache = cache.getCacheManagerFactory().getInstance().getCache("TestCache1");
-        Element element = testCache.getQuiet("Ralph_Waldo_Emerson");
-        element.getElementEvictionData().setCreationTime(System.currentTimeMillis() - 10000);
-        testCache.putQuiet(element);
-
-        // Check that the element is not found when expired
-        template.sendBody("direct:b", "dummy");
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
     }
