@@ -91,6 +91,17 @@ public final class FtpUtils {
             sb.append(File.separator);
         }
 
+        // there has been problems with double slashes,
+        // so avoid this by removing any 2nd slash
+        if (sb.length() >= 2) {
+            boolean firstSlash = sb.charAt(0) == '/' || sb.charAt(0) == '\\';
+            boolean secondSlash = sb.charAt(1) == '/' || sb.charAt(1) == '\\';
+            if (firstSlash && secondSlash) {
+                // remove 2nd clash
+                sb = sb.replace(1, 2, "");
+            }
+        }
+
         return sb.toString();
     }
 
