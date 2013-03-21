@@ -50,6 +50,8 @@ public class CxfEndpointBeansTest extends CamelBlueprintTestSupport {
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         Properties extra = new Properties();
         extra.put("router.address", "http://localhost:" + CXFTestSupport.getPort1() + "/CxfEndpointBeansRouterTest/router");
+        extra.put("service.address", "http://localhost:" + CXFTestSupport.getPort2() + "/CxfEndpointBeansRouterTest/service");
+        extra.put("test.address", "http://localhost:" + CXFTestSupport.getPort3() + "/testEndpoint");
         return extra;
     }
     
@@ -104,7 +106,8 @@ public class CxfEndpointBeansTest extends CamelBlueprintTestSupport {
         QName endpointName = QName.valueOf("{http://org.apache.camel.component.cxf}myEndpoint");
         QName serviceName = QName.valueOf("{http://org.apache.camel.component.cxf}myService");
 
-        assertEquals("Got a wrong address", "http://localhost:9000/testEndpoint", testEndpoint.getAddress());
+        assertEquals("Got a wrong address", 
+                     "http://localhost:" + CXFTestSupport.getPort3() + "/testEndpoint", testEndpoint.getAddress());
         assertEquals("Got a wrong bindingId", "http://schemas.xmlsoap.org/wsdl/soap12/", testEndpoint.getBindingId());
         assertEquals("Got a wrong transportId", "http://cxf.apache.org/transports/http", testEndpoint.getTransportId());
         assertEquals("Got a wrong endpointName", endpointName, testEndpoint.getPortName());
