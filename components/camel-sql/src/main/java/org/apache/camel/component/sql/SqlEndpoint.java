@@ -40,6 +40,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private String onConsumeFailed;
     private String onConsumeBatchComplete;
     private boolean allowNamedParameters = true;
+    private boolean alwaysPopulateStatement;
 
     public SqlEndpoint() {
     }
@@ -61,7 +62,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new SqlProducer(this, query, jdbcTemplate, batch);
+        return new SqlProducer(this, query, jdbcTemplate, batch, alwaysPopulateStatement);
     }
 
     public boolean isSingleton() {
@@ -146,6 +147,14 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public void setAllowNamedParameters(boolean allowNamedParameters) {
         this.allowNamedParameters = allowNamedParameters;
+    }
+
+    public boolean isAlwaysPopulateStatement() {
+        return alwaysPopulateStatement;
+    }
+
+    public void setAlwaysPopulateStatement(boolean alwaysPopulateStatement) {
+        this.alwaysPopulateStatement = alwaysPopulateStatement;
     }
 
     @Override

@@ -33,12 +33,14 @@ public class SqlProducer extends DefaultProducer {
     private String query;
     private JdbcTemplate jdbcTemplate;
     private boolean batch;
+    private boolean alwaysPopulateStatement;
 
-    public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate, boolean batch) {
+    public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate, boolean batch, boolean alwaysPopulateStatement) {
         super(endpoint);
         this.jdbcTemplate = jdbcTemplate;
         this.query = query;
         this.batch = batch;
+        this.alwaysPopulateStatement = alwaysPopulateStatement;
     }
 
     @Override
@@ -56,18 +58,21 @@ public class SqlProducer extends DefaultProducer {
             public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = ps.getParameterMetaData().getParameterCount();
 
-                // transfer incoming message body data to prepared statement parameters, if necessary
-                if (batch) {
-                    Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
-                    while (iterator != null && iterator.hasNext()) {
-                        Object value = iterator.next();
-                        Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                // only populate if really needed
+                if (alwaysPopulateStatement || expected > 0) {
+                    // transfer incoming message body data to prepared statement parameters, if necessary
+                    if (batch) {
+                        Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
+                        while (iterator != null && iterator.hasNext()) {
+                            Object value = iterator.next();
+                            Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                            getEndpoint().getPrepareStatementStrategy().populateStatement(ps, i, expected);
+                            ps.addBatch();
+                        }
+                    } else {
+                        Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, exchange.getIn().getBody());
                         getEndpoint().getPrepareStatementStrategy().populateStatement(ps, i, expected);
-                        ps.addBatch();
                     }
-                } else {
-                    Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, exchange.getIn().getBody());
-                    getEndpoint().getPrepareStatementStrategy().populateStatement(ps, i, expected);
                 }
 
                 // execute the prepared statement and populate the outgoing message
