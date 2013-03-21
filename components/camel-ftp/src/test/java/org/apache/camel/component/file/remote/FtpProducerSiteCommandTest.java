@@ -17,11 +17,15 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.IOConverter;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 public class FtpProducerSiteCommandTest extends FtpServerTestSupport {
 
@@ -34,26 +38,48 @@ public class FtpProducerSiteCommandTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from( "direct:callSiteCommandWithoutUpload" )
-                        .to( "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=STAT&upload=false" );
+                from("direct:callSiteCommandWithoutUpload")
+                        .to("ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=STAT&upload=false");
+
+                from("direct:callSiteCommandAndCaptureOutput")
+                        .inOut("ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=STAT&upload=false&siteCommandCapture=true");
+
+                from("direct:callTwoSiteCommands")
+                        .inOut("ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=STAT%0AZONE&upload=false&siteCommandCapture=true");
             }
         };
     }
 
     @Test
     public void testSiteCommandWithoutUploadingFile() throws Exception {
-        template.sendBodyAndHeader( "direct:callSiteCommandWithoutUpload", "Hello world", Exchange.FILE_NAME, "hello.txt" );
+        template.sendBodyAndHeader("direct:callSiteCommandWithoutUpload", "Hello world", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File( FTP_ROOT_DIR + "/site/hello.txt" );
-        assertFalse( "No file should be uploaded", file.exists() );
+        File file = new File(FTP_ROOT_DIR + "/site/hello.txt");
+        assertFalse("No file should be uploaded", file.exists());
+    }
+
+    @Test
+    public void testCaptureSiteCommandOutput() throws Exception {
+        List<String> output = template.requestBody("direct:callSiteCommandAndCaptureOutput", null, List.class);
+
+        assertThat("Body should contain one line of site command output", output.size(), is(1));
+        assertThat("Site command output should start with response code 200", output.get(0), startsWith("200"));
+    }
+
+    @Test
+    public void testCallsTwoSiteCommands() throws Exception {
+        List<String> output = template.requestBody("direct:callTwoSiteCommands", null, List.class);
+        System.out.println(output.get(0));
+        System.out.println(output.get(1));
+        assertThat("Body should contain one line of site command output", output.size(), is(2));
     }
 
     @Test
     public void testSiteCommand() throws Exception {
-        sendFile( getFtpUrl(), "Hello World", "hello.txt" );
+        sendFile(getFtpUrl(), "Hello World", "hello.txt");
 
-        File file = new File( FTP_ROOT_DIR + "/site/hello.txt" );
-        assertTrue( "The uploaded file should exist", file.exists() );
-        assertEquals( "Hello World", IOConverter.toString( file, null ) );
+        File file = new File(FTP_ROOT_DIR + "/site/hello.txt");
+        assertTrue("The uploaded file should exist", file.exists());
+        assertEquals("Hello World", IOConverter.toString(file, null));
     }
 }

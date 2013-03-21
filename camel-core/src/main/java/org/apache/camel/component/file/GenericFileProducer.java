@@ -111,7 +111,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         log.trace("Processing file: {} for exchange: {}", target, exchange);
 
         try {
-            preWriteCheck();
+            preWriteCheck(exchange);
 
             if (isUploadFile()) {
                 // should we write to a temporary name and then afterwards rename to real target
@@ -232,7 +232,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     /**
      * Perform any actions that need to occur before we write such as connecting to an FTP server etc.
      */
-    public void preWriteCheck() throws Exception {
+    public void preWriteCheck(Exchange exchange) throws Exception {
         // nothing needed to check
     }
 

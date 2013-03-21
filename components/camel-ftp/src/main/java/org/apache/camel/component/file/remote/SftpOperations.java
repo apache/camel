@@ -867,4 +867,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         // is not implemented
         return true;
     }
+
+    @Override
+    public void sendSiteCommands(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
+        throw new GenericFileOperationFailedException("Operation 'site ..' not supported by the sftp: protocol");
+    }
 }
