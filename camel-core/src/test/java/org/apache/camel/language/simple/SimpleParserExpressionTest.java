@@ -16,8 +16,12 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 
 /**
  *
@@ -163,6 +167,22 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertNotNull(obj);
         Integer num = assertIsInstanceOf(Integer.class, obj);
         assertEquals(123, num.intValue());
+    }
+
+    public void testSimpleMap() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("foo", "123");
+        map.put("foo bar", "456");
+
+        exchange.getIn().setBody(map);
+
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body[foo]}", true);
+        Expression exp = parser.parseExpression();
+        assertEquals("123", exp.evaluate(exchange, Object.class));
+
+        parser = new SimpleExpressionParser("${body['foo bar']}", true);
+        exp = parser.parseExpression();
+        assertEquals("456", exp.evaluate(exchange, Object.class));
     }
 
 }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
 
@@ -183,6 +186,22 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("number", "1234");
         SimplePredicateParser parser = new SimplePredicateParser("${in.header.number} regex '\\d{4}'", true);
         Predicate pre = parser.parsePredicate();
+        assertTrue("Should match", pre.matches(exchange));
+    }
+
+    public void testSimpleMap() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("foo", "123");
+        map.put("foo bar", "456");
+
+        exchange.getIn().setBody(map);
+
+        SimplePredicateParser parser = new SimplePredicateParser("${body[foo]} == 123", true);
+        Predicate pre = parser.parsePredicate();
+        assertTrue("Should match", pre.matches(exchange));
+
+        parser = new SimplePredicateParser("${body['foo bar']} == 456", true);
+        pre = parser.parsePredicate();
         assertTrue("Should match", pre.matches(exchange));
     }
 
