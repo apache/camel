@@ -17,9 +17,7 @@
 package org.apache.camel.component.mail;
 
 import javax.mail.Folder;
-import javax.mail.Message;
 import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,7 +28,7 @@ import org.jvnet.mock_javamail.Mailbox;
 /**
  * Unit test with poll enrich
  */
-public class MailPollEnrichTest extends CamelTestSupport {
+public class MailPollEnrichNoMailTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
@@ -40,11 +38,8 @@ public class MailPollEnrichTest extends CamelTestSupport {
 
     @Test
     public void testPollEnrich() throws Exception {
-        Mailbox mailbox = Mailbox.get("bill@localhost");
-        assertEquals(5, mailbox.size());
-
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Message 0");
+        mock.message(0).body().isNull();
 
         template.sendBody("direct:start", "");
 
@@ -53,11 +48,8 @@ public class MailPollEnrichTest extends CamelTestSupport {
 
     @Test
     public void testPollEnrichNullBody() throws Exception {
-        Mailbox mailbox = Mailbox.get("bill@localhost");
-        assertEquals(5, mailbox.size());
-
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Message 0");
+        mock.message(0).body().isNull();
 
         template.sendBody("direct:start", null);
 
@@ -73,22 +65,13 @@ public class MailPollEnrichTest extends CamelTestSupport {
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
-
-        // inserts 5 new messages
-        Message[] messages = new Message[5];
-        for (int i = 0; i < 5; i++) {
-            messages[i] = new MimeMessage(sender.getSession());
-            messages[i].setText("Message " + i);
-        }
-        folder.appendMessages(messages);
-        folder.close(true);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .pollEnrich("pop3://bill@localhost?password=secret", 5000)
+                    .pollEnrich("pop3://bill@localhost?password=secret&delay=1000", 0)
                     .to("log:mail", "mock:result");
             }
         };
