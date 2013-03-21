@@ -57,19 +57,17 @@ public class SqlProducer extends DefaultProducer {
                 int expected = ps.getParameterMetaData().getParameterCount();
 
                 // transfer incoming message body data to prepared statement parameters, if necessary
-                if (exchange.getIn().getBody() != null) {
-                    if (batch) {
-                        Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
-                        while (iterator != null && iterator.hasNext()) {
-                            Object value = iterator.next();
-                            Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, value);
-                            getEndpoint().getPrepareStatementStrategy().populateStatement(ps, i, expected);
-                            ps.addBatch();
-                        }
-                    } else {
-                        Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, exchange.getIn().getBody());
+                if (batch) {
+                    Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
+                    while (iterator != null && iterator.hasNext()) {
+                        Object value = iterator.next();
+                        Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, value);
                         getEndpoint().getPrepareStatementStrategy().populateStatement(ps, i, expected);
+                        ps.addBatch();
                     }
+                } else {
+                    Iterator<?> i = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expected, exchange, exchange.getIn().getBody());
+                    getEndpoint().getPrepareStatementStrategy().populateStatement(ps, i, expected);
                 }
 
                 // execute the prepared statement and populate the outgoing message
