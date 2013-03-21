@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
@@ -50,6 +51,8 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
         context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
+        GenericFile<?> remoteFile1 = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
+        assertTrue(remoteFile1.getBody() instanceof InputStream);
         
         // Wait a little bit for the move to finish.
         Thread.sleep(2000);
@@ -73,7 +76,6 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             exchange.getIn().getBody(InputStream.class).read();
-                            
                         }
                     })
                     .to("mock:result")

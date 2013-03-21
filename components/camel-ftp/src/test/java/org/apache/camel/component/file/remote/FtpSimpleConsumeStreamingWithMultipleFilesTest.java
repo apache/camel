@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.InputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
@@ -49,6 +52,11 @@ public class FtpSimpleConsumeStreamingWithMultipleFilesTest extends FtpServerTes
         context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
+
+        GenericFile<?> remoteFile1 = mock.getExchanges().get(0).getIn().getBody(GenericFile.class);
+        GenericFile<?> remoteFile2 = mock.getExchanges().get(1).getIn().getBody(GenericFile.class);
+        assertTrue(remoteFile1.getBody() instanceof InputStream);
+        assertTrue(remoteFile2.getBody() instanceof InputStream);
     }
 
     @Override
