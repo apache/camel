@@ -215,7 +215,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public void sendSiteCommands(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
-        throw new GenericFileOperationFailedException("Operation 'site ..' not supported by the scp: protocol");
+        // TODO: not really used, maybe implement at a later time
     }
 
     private Session createSession(ScpConfiguration config) {
