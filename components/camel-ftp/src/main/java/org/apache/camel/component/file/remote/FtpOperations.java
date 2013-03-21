@@ -172,7 +172,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public void sendSiteCommands(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
         if (configuration.getSiteCommand() != null) {
-            List<String> siteOutput = new ArrayList<String>();
+            final boolean captureOutput = exchange != null && configuration.isSiteCommandCapture();
+            final List<String> siteOutput = new ArrayList<String>();
             // commands can be separated using new line
             Iterator<?> it = ObjectHelper.createIterator(endpoint.getConfiguration().getSiteCommand(), "\n");
             while (it.hasNext()) {
@@ -182,9 +183,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 if (command != null) {
                     boolean result = sendSiteCommand(command);
 
-                    if (configuration.isSiteCommandCapture()) {
+                    if (captureOutput) {
                         String reply = getFtpClient().getReplyString();
-                        siteOutput.add(reply);
+                        siteOutput.add( reply );
                     }
 
                     if (!result) {
@@ -192,7 +193,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     }
                 }
             }
-            if (configuration.isSiteCommandCapture()) {
+            if ( captureOutput ) {
                 exchange.getIn().setBody(siteOutput);
             }
         }

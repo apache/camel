@@ -71,9 +71,11 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      * configuration option siteCommand. If option siteCommandCapture is true,
      * the output of each site command will be captured and returned as a List<String>
      * in the body.
+     * <p/>
+     * Works with the producer only.
      *
      * @param configuration the configuration
-     * @param exchange the exchange
+     * @param exchange the exchange; if null, output will not be captured
      * @throws GenericFileOperationFailedException can be thrown
      */
     void sendSiteCommands(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException;

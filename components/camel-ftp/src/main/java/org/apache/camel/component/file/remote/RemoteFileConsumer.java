@@ -55,6 +55,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             } else {
                 connectIfNecessary();
             }
+            getOperations().sendSiteCommands( getEndpoint().getConfiguration(), null );
         } catch (Exception e) {
             loggedIn = false;
 
