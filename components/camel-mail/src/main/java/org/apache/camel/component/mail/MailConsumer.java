@@ -216,6 +216,13 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             Message message = messages[i];
             if (!message.getFlags().contains(Flags.Flag.DELETED)) {
                 Exchange exchange = getEndpoint().createExchange(message);
+                if (getEndpoint().getConfiguration().isMapMailMessage()) {
+                    // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
+                    LOG.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
+                    exchange.getIn().getBody();
+                    exchange.getIn().getHeaders();
+                    exchange.getIn().getAttachments();
+                }
 
                 // If the protocol is POP3 we need to remember the uid on the exchange
                 // so we can find the mail message again later to be able to delete it
