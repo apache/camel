@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +45,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.soap.Soap11;
@@ -56,6 +58,7 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.DOMUtils;
+import org.apache.cxf.helpers.HttpHeaderHelper;
 import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Attachment;
@@ -253,6 +256,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             camelExchange.getIn().setHeader(Client.REQUEST_CONTEXT, value);
             LOG.trace("Populate context from CXF message {} value={}", Client.REQUEST_CONTEXT, value);
         }
+        
+        // setup the charset from content-type header
+        setCharsetWithContentType(camelExchange);
            
         // set body
         Object body = DefaultCxfBinding.getContentFromCxf(cxfMessage, 
@@ -386,7 +392,18 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     // HeaderFilterStrategyAware Methods
     // -------------------------------------------------------------------------
-
+    protected void setCharsetWithContentType(Exchange camelExchange) {
+        // setup the charset from content-type header
+        String contentTypeHeader = ExchangeHelper.getContentType(camelExchange);
+        if (contentTypeHeader != null) {
+            String charset = HttpHeaderHelper.findCharset(contentTypeHeader);
+            String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, Charset.forName("UTF-8").name());
+            if (normalizedEncoding != null) {
+                camelExchange.setProperty(Exchange.CHARSET_NAME, normalizedEncoding);
+            }
+        }
+    }
+    
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }

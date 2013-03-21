@@ -31,10 +31,12 @@ import javax.activation.FileDataSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.Binding;
 import org.apache.cxf.endpoint.Client;
@@ -60,6 +62,23 @@ public class DefaultCxfBindingTest extends Assert {
         
         cxfBinding.setHeaderFilterStrategy(hfs);        
         assertSame("The header filter strategy is set", hfs, cxfBinding.getHeaderFilterStrategy());
+    }
+    
+    @Test
+    public void testSetCharsetWithContentType() {
+        DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
+        cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml;charset=ISO-8859-1");
+        cxfBinding.setCharsetWithContentType(exchange);
+        
+        String charset = IOHelper.getCharsetName(exchange);
+        assertEquals("Get a wrong charset", "ISO-8859-1", charset);
+        
+        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
+        cxfBinding.setCharsetWithContentType(exchange);
+        charset = IOHelper.getCharsetName(exchange);
+        assertEquals("Get a worng charset name", "UTF-8", charset);
     }
     
     @Test
