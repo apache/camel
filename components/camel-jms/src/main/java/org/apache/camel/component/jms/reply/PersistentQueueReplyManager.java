@@ -74,11 +74,8 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         }
 
         if (handler != null) {
-            try {
-                handler.onReply(correlationID, message);
-            } finally {
-                correlation.remove(correlationID);
-            }
+            correlation.remove(correlationID);
+            handler.onReply(correlationID, message);
         } else {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
