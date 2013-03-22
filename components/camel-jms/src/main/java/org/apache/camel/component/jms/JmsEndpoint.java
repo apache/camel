@@ -183,6 +183,12 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 log.debug("Using custom TaskExecutor: {} on listener container: {}", configuration.getTaskExecutor(), listenerContainer);
             }
             setContainerTaskExecutor(listenerContainer, configuration.getTaskExecutor());
+            // we are using a shared thread pool that this listener container is using.
+            // store a reference to the consumer, but we should not shutdown the thread pool when the consumer stops
+            // as the lifecycle of the shared thread pool is handled elsewhere
+            if (configuration.getTaskExecutor() instanceof ExecutorService) {
+                consumer.setListenerContainerExecutorService((ExecutorService) configuration.getTaskExecutor(), false);
+            }
         } else if ((listenerContainer instanceof DefaultJmsMessageListenerContainer && configuration.getDefaultTaskExecutorType() == null)
                 || !(listenerContainer instanceof DefaultJmsMessageListenerContainer)) {
             // preserve backwards compatibility if an explicit Default TaskExecutor Type was not set;
@@ -190,6 +196,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
             ExecutorService executor = getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, consumerName);
             setContainerTaskExecutor(listenerContainer, executor);
+            // we created a new private thread pool that this listener container is using, now store a reference on the consumer
+            // so when the consumer is stopped we can shutdown the thread pool also, to ensure all resources is shutdown
+            consumer.setListenerContainerExecutorService(executor, true);
         } else {
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
