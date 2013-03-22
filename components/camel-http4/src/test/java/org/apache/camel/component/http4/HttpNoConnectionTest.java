@@ -45,6 +45,7 @@ public class HttpNoConnectionTest extends BaseHttpTest {
         String url = "http4://" + getHostName() + ":" + getPort() + "/search";
         // stop server so there are no connection
         localServer.stop();
+        localServer.awaitTermination(1000);
 
         Exchange reply = template.request(url, null);
         Exception e = reply.getException();
