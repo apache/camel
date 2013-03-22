@@ -38,7 +38,11 @@ public class BlueprintContainerRegistry implements Registry {
     }
 
     public Object lookup(String name) {
-        return blueprintContainer.getComponentInstance(name);
+        try {
+            return blueprintContainer.getComponentInstance(name);
+        } catch (NoSuchComponentException e) {
+            return null;
+        }
     }
 
     public <T> T lookup(String name, Class<T> type) {
