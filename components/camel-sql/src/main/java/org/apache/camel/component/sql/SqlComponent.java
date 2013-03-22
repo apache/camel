@@ -42,10 +42,19 @@ public class SqlComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
-        if (dataSourceRef != null) {
-            dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
+        DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
+        if (ds != null) {
+            dataSource = ds;
         }
+
+        //TODO cmueller: remove the 'dataSourceRef' lookup in Camel 3.0
+        if (dataSource == null) {
+            String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
+            if (dataSourceRef != null) {
+                dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
+            }
+        }
+
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
         
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
