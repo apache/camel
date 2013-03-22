@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.ExecutorService;
 import javax.jms.Connection;
 
 import org.apache.camel.FailedToCreateConsumerException;
@@ -37,6 +38,8 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
     private volatile AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
+    private volatile ExecutorService executorService;
+    private volatile boolean shutdownExecutorService;
 
     public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
@@ -73,6 +76,23 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         listenerContainer = getEndpoint().createMessageListenerContainer();
         getEndpoint().configureListenerContainer(listenerContainer, this);
         listenerContainer.setMessageListener(getEndpointMessageListener());
+    }
+
+    /**
+     * Sets the {@link ExecutorService} the {@link AbstractMessageListenerContainer} is using (if any).
+     * <p/>
+     * The {@link AbstractMessageListenerContainer} may use a private thread pool, and then when this consumer
+     * is stopped, we need to shutdown this thread pool as well, to clean up all resources.
+     * If a shared thread pool is used by the {@link AbstractMessageListenerContainer} then the lifecycle
+     * of that shared thread pool is handled elsewhere (not by this consumer); and therefore
+     * the <tt>shutdownExecutorService</tt> parameter should be <tt>false</tt>.
+     *
+     * @param executorService         the thread pool
+     * @param shutdownExecutorService whether to shutdown the thread pool when this consumer stops
+     */
+    void setListenerContainerExecutorService(ExecutorService executorService, boolean shutdownExecutorService) {
+        this.executorService = executorService;
+        this.shutdownExecutorService = shutdownExecutorService;
     }
 
     /**
@@ -160,6 +180,12 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         // then we will use updated configuration from jms endpoint that may have been managed using JMX
         listenerContainer = null;
         messageListener = null;
+
+        // shutdown thread pool if listener container was using a private thread pool
+        if (shutdownExecutorService && executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
+        executorService = null;
     }
 
     @Override
