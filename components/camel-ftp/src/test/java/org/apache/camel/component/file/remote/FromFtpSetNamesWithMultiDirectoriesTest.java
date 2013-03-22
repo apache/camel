@@ -35,7 +35,7 @@ import org.junit.Test;
 public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true&recursive=true";
+        return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true&recursive=true&initialDelay=0&delay=100";
     }
 
     @Override
