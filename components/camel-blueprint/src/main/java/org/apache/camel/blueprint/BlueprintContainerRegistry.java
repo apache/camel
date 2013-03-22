@@ -40,7 +40,11 @@ public class BlueprintContainerRegistry implements Registry {
 
     @Override
     public Object lookupByName(String name) {
-        return blueprintContainer.getComponentInstance(name);
+        try {
+            return blueprintContainer.getComponentInstance(name);
+        } catch (NoSuchComponentException e) {
+            return null;
+        }
     }
 
     @Override
