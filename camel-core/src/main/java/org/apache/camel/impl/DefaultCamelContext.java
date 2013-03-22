@@ -311,6 +311,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             Component component = components.get(name);
             if (component == null && autoCreateComponents) {
                 try {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
+                    }
                     component = getComponentResolver().resolveComponent(name, this);
                     if (component != null) {
                         addComponent(name, component);
@@ -325,6 +328,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     throw new RuntimeCamelException("Cannot auto create component: " + name, e);
                 }
             }
+            log.trace("getComponent({}) -> {}", name, component);
             return component;
         }
     }
@@ -453,10 +457,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
                 if (splitURI[1] != null) {
                     scheme = splitURI[0];
+                    log.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
                     Component component = getComponent(scheme);
 
                     // Ask the component to resolve the endpoint.
                     if (component != null) {
+                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+
                         // Have the component create the endpoint if it can.
                         answer = component.createEndpoint(uri);
 
@@ -469,6 +476,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (answer == null) {
                     // no component then try in registry and elsewhere
                     answer = createEndpoint(uri);
+                    log.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
                 }
 
                 if (answer != null) {
