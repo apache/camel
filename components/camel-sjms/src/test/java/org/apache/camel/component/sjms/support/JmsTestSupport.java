@@ -26,6 +26,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 /**
@@ -33,9 +34,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
  * for unit testing.
  */
 public class JmsTestSupport extends CamelTestSupport {
-    private static final String BROKER_URI = "tcp://localhost:33333";
+
     @Produce
     protected ProducerTemplate template;
+    private String brokerUri;
     private BrokerService broker;
     private Connection connection;
     private Session session;
@@ -49,11 +51,13 @@ public class JmsTestSupport extends CamelTestSupport {
      */
     @Override
     protected void doPreSetup() throws Exception {
+        brokerUri = "tcp://localhost:" + AvailablePortFinder.getNextAvailable(33333);
+
         broker = new BrokerService();
         broker.setUseJmx(true);
         broker.setPersistent(false);
         broker.deleteAllMessages();
-        broker.addConnector(BROKER_URI);
+        broker.addConnector(brokerUri);
         broker.start();
     }
 
@@ -89,7 +93,7 @@ public class JmsTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(BROKER_URI);
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUri);
         connection = connectionFactory.createConnection();
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -107,5 +111,4 @@ public class JmsTestSupport extends CamelTestSupport {
     public Session getSession() {
         return session;
     }
-
 }
