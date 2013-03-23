@@ -41,23 +41,14 @@ public abstract class AvroProducer extends DefaultAsyncProducer implements Servi
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         Object request = exchange.getIn().getBody();
 
-        if (transceiver == null) {
-            try {
-                transceiver = createTransceiver();
-                requestor = new AvroRequestor(getEndpoint().getProtocol(), transceiver);
-            } catch (Exception e) {
-                exchange.setException(e);
-                callback.done(true);
-                return true;
-            }
-        }
-
         try {
             requestor.request(exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class), wrapObjectToArray(request), new Callback<Object>() {
                 @Override
                 public void handleResult(Object result) {
                     // got result from avro, so set it on the exchange and invoke the callback
                     try {
+                        // propagate headers
+                        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
                         exchange.getOut().setBody(result);
                     } finally {
                         callback.done(false);
@@ -97,6 +88,8 @@ public abstract class AvroProducer extends DefaultAsyncProducer implements Servi
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        transceiver = createTransceiver();
+        requestor = new AvroRequestor(getEndpoint().getProtocol(), transceiver);
     }
 
     @Override
@@ -105,6 +98,7 @@ public abstract class AvroProducer extends DefaultAsyncProducer implements Servi
         if (transceiver != null) {
             transceiver.close();
         }
+        requestor = null;
     }
 
     @Override
