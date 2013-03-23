@@ -59,9 +59,15 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // give it a little tine to delete
-        Thread.sleep(1000);
-
+        // some servers may be a bit slow for this
+        for (int i = 0; i < 5; i++) {
+            // give it a little tine to delete
+            Thread.sleep(1000);
+            int rows = jdbcTemplate.queryForInt("select count(*) from projects");
+            if (rows == 0) {
+                break;
+            }
+        }
         assertEquals("Should have deleted all 3 rows", 0, jdbcTemplate.queryForInt("select count(*) from projects"));
     }
 

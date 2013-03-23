@@ -73,7 +73,7 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
         assertEquals("Linux", exchanges.get(1).getIn().getBody(Map.class).get("PROJECT"));
 
         // give it a little tine to delete
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         assertEquals("Should have deleted 2 rows", 1, jdbcTemplate.queryForInt("select count(*) from projects"));
         assertEquals("Should be AMQ project that is BAD", "AMQ", jdbcTemplate.queryForObject("select PROJECT from projects where license = 'BAD'", String.class));
