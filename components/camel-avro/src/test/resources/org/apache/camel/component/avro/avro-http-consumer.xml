@@ -23,7 +23,7 @@
 
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <propertyPlaceholder id="properties" location="file:target/custom.properties"/>
+        <propertyPlaceholder id="properties" ignoreMissingLocation="true" location="classpath:custom.properties"/>
         <route>
             <from uri="avro:http:localhost:{{avroport}}?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
             <choice>
@@ -37,7 +37,6 @@
                 </when>
             </choice>
         </route>
-
     </camelContext>
 
     <bean id="keyValue" class="org.apache.camel.avro.impl.KeyValueProtocolImpl"/>

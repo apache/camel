@@ -28,6 +28,7 @@ import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,13 +41,14 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     protected abstract void initializeTranceiver() throws IOException;
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
+
         if (transceiver != null) {
             transceiver.close();
         }
     }
-
 
     @Test
     public void testInOnly() throws Exception {
@@ -56,7 +58,6 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         Object[] request = {key, value};
         requestor.request("put", request);
     }
-
 
     @Test
     public void testInOut() throws Exception {

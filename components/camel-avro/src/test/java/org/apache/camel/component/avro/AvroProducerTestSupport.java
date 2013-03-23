@@ -21,14 +21,13 @@ import java.io.IOException;
 
 import org.apache.avro.Protocol;
 import org.apache.avro.ipc.Server;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.component.mock.MockEndpoint;
-
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,14 +39,17 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     protected abstract void initializeServer() throws IOException;
 
     @Override
-    public void setUp() throws Exception {
+    protected void doPreSetup() throws Exception {
+        super.doPreSetup();
+
         initializeServer();
-        super.setUp();
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
+
         if (server != null) {
             server.close();
         }
@@ -61,7 +63,6 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
         template.sendBodyAndHeader("direct:in", request, AvroConstants.AVRO_MESSAGE_NAME, "put");
         Assert.assertEquals(value, keyValue.getStore().get(key));
     }
-
 
     @Test
     public void testInOut() throws InterruptedException {

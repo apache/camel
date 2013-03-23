@@ -16,58 +16,18 @@
  */
 package org.apache.camel.component.avro;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import java.util.Properties;
-
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class AvroTestSupport extends CamelTestSupport {
 
+    int avroPort;
 
-    public static int setupFreePort(String name) {
-        int port = -1;
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        try {
-            Properties properties = new Properties();
-            File propertiesFile = new File("target/custom.properties");
-            if (!propertiesFile.exists()) {
-                propertiesFile.createNewFile();
-            }
-            fis = new FileInputStream(propertiesFile);
-            fos = new FileOutputStream(propertiesFile);
-            properties.load(fis);
-            if (properties.contains(name)) {
-                return Integer.parseInt((String) properties.get(name));
-            } else {
-                // find a free port number from 9100 onwards, and write that in the custom.properties file
-                // which we will use for the unit tests, to avoid port number in use problems
-                port = AvailablePortFinder.getNextAvailable(9100);
-                properties.put(name, String.valueOf(port));
-                properties.store(fos, "avro");
-            }
-        } catch (IOException e) {
-            //Ignore
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception ex) {
-                }
-            }
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception ex) {
-                }
-            }
-        }
-        return port;
+    @Override
+    protected void doPreSetup() throws Exception {
+        avroPort = AvailablePortFinder.getNextAvailable(9100);
+        System.setProperty("avroport", String.valueOf(avroPort));
+
+        super.doPreSetup();
     }
-
 }

@@ -22,15 +22,12 @@ import java.net.InetSocketAddress;
 
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
-
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.avro.processors.GetProcessor;
 import org.apache.camel.component.avro.processors.PutProcessor;
 
 public class AvroNettyConsumerTest extends AvroConsumerTestSupport {
-
-    static int avroPort = setupFreePort("avroport");
 
     @Override
     protected void initializeTranceiver() throws IOException {
@@ -44,8 +41,8 @@ public class AvroNettyConsumerTest extends AvroConsumerTestSupport {
             public void configure() throws Exception {
                 //In Only
                 from("avro:netty:localhost:" + avroPort).choice()
-                        .when().el("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + " == 'put'}").process(new PutProcessor(keyValue))
-                        .when().el("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + " == 'get'}").process(new GetProcessor(keyValue));
+                    .when().el("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + " == 'put'}").process(new PutProcessor(keyValue))
+                    .when().el("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + " == 'get'}").process(new GetProcessor(keyValue));
             }
         };
     }

@@ -19,10 +19,7 @@ package org.apache.camel.component.avro;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-
 import org.junit.After;
-import org.junit.Before;
-
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,28 +28,18 @@ public class AvroHttpSpringProducerTest extends AvroHttpProducerTest {
     private AbstractApplicationContext applicationContext;
 
     @Override
-    @Before
-    public void setUp() throws Exception {
-        initializeServer();
-        applicationContext = createApplicationContext();
-        super.setUp();
-    }
-
-    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
+
         if (applicationContext != null) {
             applicationContext.destroy();
         }
     }
 
-    public AbstractApplicationContext createApplicationContext() throws Exception {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-http-producer.xml");
-    }
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-http-producer.xml");
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 

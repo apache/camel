@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.avro;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.spring.SpringCamelContext;
 
@@ -33,23 +34,25 @@ public class AvroNettySpringConsumerTest extends AvroNettyConsumerTest {
     @Override
     @Before
     public void setUp() throws Exception {
-        applicationContext = createApplicationContext();
-        context = SpringCamelContext.springCamelContext(applicationContext);
-        keyValue = (KeyValueProtocolImpl) applicationContext.getBean("keyValue");
         super.setUp();
+
+        keyValue = (KeyValueProtocolImpl) applicationContext.getBean("keyValue");
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
+
         if (applicationContext != null) {
             applicationContext.destroy();
         }
     }
 
-    public AbstractApplicationContext createApplicationContext() throws Exception {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-netty-consumer.xml");
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-netty-consumer.xml");
+        return SpringCamelContext.springCamelContext(applicationContext);
     }
 
     @Override

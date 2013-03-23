@@ -21,13 +21,10 @@ import java.io.IOException;
 
 import org.apache.avro.ipc.HttpServer;
 import org.apache.avro.ipc.specific.SpecificResponder;
-
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.builder.RouteBuilder;
 
 public class AvroHttpProducerTest extends AvroProducerTestSupport {
-
-    static int avroPort = setupFreePort("avroport");
 
     @Override
     protected void initializeServer() throws IOException {
@@ -49,5 +46,4 @@ public class AvroHttpProducerTest extends AvroProducerTestSupport {
             }
         };
     }
-
 }

@@ -27,13 +27,6 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
     private AbstractApplicationContext applicationContext;
 
     @Override
-    public void setUp() throws Exception {
-        initializeServer();
-        applicationContext = createApplicationContext();
-        super.setUp();
-    }
-
-    @Override
     public void tearDown() throws Exception {
         super.tearDown();
         if (applicationContext != null) {
@@ -41,12 +34,9 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
         }
     }
 
-    public AbstractApplicationContext createApplicationContext() throws Exception {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-netty-producer.xml");
-    }
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-netty-producer.xml");
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
