@@ -36,6 +36,9 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
 
                 from("guava-eventbus:eventBus?eventClass=org.apache.camel.component.guava.eventbus.MessageWrapper").
                         to("mock:wrapperEvents");
+
+                from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomListener").
+                        to("mock:customListenerEvents");
             }
         };
     }
@@ -90,6 +93,21 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
         getMockEndpoint("mock:wrapperEvents").setExpectedMessageCount(1);
         assertMockEndpointsSatisfied();
         assertEquals(wrappedMessage, getMockEndpoint("mock:wrapperEvents").getExchanges().get(0).getIn().getBody());
+    }
+
+    @Test
+    public void shouldUseCustomListener() throws InterruptedException {
+        // Given
+        MessageWrapper wrappedMessage = new MessageWrapper("message");
+
+        // When
+        eventBus.post(wrappedMessage);
+        eventBus.post("String message.");
+
+        // Then
+        getMockEndpoint("mock:customListenerEvents").setExpectedMessageCount(1);
+        assertMockEndpointsSatisfied();
+        assertEquals(wrappedMessage, getMockEndpoint("mock:customListenerEvents").getExchanges().get(0).getIn().getBody());
     }
 
 }

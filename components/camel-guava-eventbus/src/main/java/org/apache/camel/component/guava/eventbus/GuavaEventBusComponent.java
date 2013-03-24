@@ -26,6 +26,7 @@ import org.apache.camel.util.CamelContextHelper;
 public class GuavaEventBusComponent extends DefaultComponent {
 
     private EventBus eventBus;
+    private Class<?> listenerInterface;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -33,7 +34,8 @@ public class GuavaEventBusComponent extends DefaultComponent {
         if (resolvedEventBus == null) {
             resolvedEventBus = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, EventBus.class);
         }
-        return new GuavaEventBusEndpoint(uri, this, resolvedEventBus);
+
+        return new GuavaEventBusEndpoint(uri, this, resolvedEventBus, listenerInterface);
     }
 
     public EventBus getEventBus() {
@@ -42,6 +44,14 @@ public class GuavaEventBusComponent extends DefaultComponent {
 
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
+    }
+
+    public Class<?> getListenerInterface() {
+        return listenerInterface;
+    }
+
+    public void setListenerInterface(Class<?> listenerInterface) {
+        this.listenerInterface = listenerInterface;
     }
 
 }

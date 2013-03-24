@@ -29,10 +29,12 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
 
     private EventBus eventBus;
     private Class<?> eventClass;
+    private Class<?> listenerInterface;
 
-    public GuavaEventBusEndpoint(String endpointUri, Component component, EventBus eventBus) {
+    public GuavaEventBusEndpoint(String endpointUri, Component component, EventBus eventBus, Class<?> listenerInterface) {
         super(endpointUri, component);
         this.eventBus = eventBus;
+        this.listenerInterface = listenerInterface;
     }
 
     @Override
@@ -42,11 +44,16 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new GuavaEventBusConsumer(this, processor, eventBus, eventClass);
+        return new GuavaEventBusConsumer(this, processor, eventBus, eventClass, listenerInterface);
     }
 
     @Override
     public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
+    public boolean isMultipleConsumersSupported() {
         return true;
     }
 
@@ -72,9 +79,12 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
         this.eventClass = eventClass;
     }
 
-    @Override
-    public boolean isMultipleConsumersSupported() {
-        return true;
+    public Class<?> getListenerInterface() {
+        return listenerInterface;
+    }
+
+    public void setListenerInterface(Class<?> listenerInterface) {
+        this.listenerInterface = listenerInterface;
     }
 
 }

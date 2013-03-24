@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.guava.eventbus;
 
-import com.google.common.eventbus.Subscribe;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -26,50 +25,40 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Class with public method marked with Guava @Subscribe annotation. Responsible for receiving events from the bus and
- * sending them to the Camel infrastructure.
+/*
+ * Handler responsible for receiving events from the Guava event bus and sending them to the Camel infrastructure.
  */
 public class CamelEventHandler {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelEventHandler.class);
-    private final GuavaEventBusEndpoint eventBusEndpoint;
-    private final AsyncProcessor processor;
-    private final Class<?> eventClass;
+    protected final transient Logger log = LoggerFactory.getLogger(CamelEventHandler.class);
+    protected final GuavaEventBusEndpoint eventBusEndpoint;
+    protected final AsyncProcessor processor;
 
-    public CamelEventHandler(GuavaEventBusEndpoint eventBusEndpoint, Processor processor, Class<?> eventClass) {
+    public CamelEventHandler(GuavaEventBusEndpoint eventBusEndpoint, Processor processor) {
         ObjectHelper.notNull(eventBusEndpoint, "eventBusEndpoint");
         ObjectHelper.notNull(processor, "processor");
 
         this.eventBusEndpoint = eventBusEndpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
-        this.eventClass = eventClass;
     }
 
     /**
-     * Guava callback when an event was received
-     * @param event the event
-     * @throws Exception is thrown if error processing the even
+     * Callback executed to propagate event from Guava listener to Camel route.
+     *
+     * @param event the event received by Guava
+     * @throws Exception is thrown if error processing the event
      */
-    @Subscribe
-    public void eventReceived(Object event) throws Exception {
-        LOG.trace("Received event: {}");
-        if (eventClass == null || eventClass.isAssignableFrom(event.getClass())) {
-            final Exchange exchange = eventBusEndpoint.createExchange(event);
-            LOG.debug("Processing event: {}", event);
-            // use async processor to support async routing engine
-            processor.process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    // noop
-                }
-            });
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot process event: {} as its class type: {} is not assignable with: {}",
-                        new Object[]{event, event.getClass().getName(), eventClass.getName()});
+    public void doEventReceived(Object event) throws Exception {
+        log.trace("Received event: {}");
+        final Exchange exchange = eventBusEndpoint.createExchange(event);
+        log.debug("Processing event: {}", event);
+        // use async processor to support async routing engine
+        processor.process(exchange, new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+                // noop
             }
-        }
+        });
     }
 
 }

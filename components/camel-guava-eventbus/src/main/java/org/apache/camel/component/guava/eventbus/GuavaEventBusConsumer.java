@@ -16,19 +16,35 @@
  */
 package org.apache.camel.component.guava.eventbus;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GuavaEventBusConsumer extends DefaultConsumer {
 
     private final EventBus eventBus;
-    private final CamelEventHandler eventHandler;
+    private final Object eventHandler;
 
-    public GuavaEventBusConsumer(GuavaEventBusEndpoint endpoint, Processor processor, EventBus eventBus, Class<?> eventClass) {
+    public GuavaEventBusConsumer(GuavaEventBusEndpoint endpoint, Processor processor, EventBus eventBus, Class<?> eventClass, Class<?> listenerInterface) {
         super(endpoint, processor);
+
+        if (eventClass != null && listenerInterface != null) {
+            throw new IllegalStateException("You cannot set both 'eventClass' and 'listenerInterface' parameters.");
+        }
+
         this.eventBus = eventBus;
-        this.eventHandler = new CamelEventHandler(endpoint, processor, eventClass);
+        if (listenerInterface != null) {
+            this.eventHandler = createListenerInterfaceProxy(endpoint, processor, listenerInterface);
+        } else {
+            this.eventHandler = new FilteringCamelEventHandler(endpoint, processor, eventClass);
+        }
     }
 
     @Override
@@ -44,5 +60,33 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
         eventBus.unregister(eventHandler);
         super.doStop();
     }
+
+    private Object createListenerInterfaceProxy(GuavaEventBusEndpoint endpoint, Processor processor, Class<?> listenerInterface) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        return Proxy.newProxyInstance(classLoader, new Class[]{listenerInterface}, new ListenerInterfaceHandler(endpoint, processor));
+    }
+
+    private static final class ListenerInterfaceHandler implements InvocationHandler {
+
+        private static final Logger LOG = LoggerFactory.getLogger(ListenerInterfaceHandler.class);
+
+        private final CamelEventHandler delegateHandler;
+
+        private ListenerInterfaceHandler(GuavaEventBusEndpoint endpoint, Processor processor) {
+            this.delegateHandler = new CamelEventHandler(endpoint, processor);
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if (method.getAnnotation(Subscribe.class) != null) {
+                delegateHandler.doEventReceived(args[0]);
+            } else {
+                LOG.warn("Non @Subscribe method {} called on ListenerInterface proxy.", method);
+            }
+            return null;
+        }
+
+    }
+
 }
 
