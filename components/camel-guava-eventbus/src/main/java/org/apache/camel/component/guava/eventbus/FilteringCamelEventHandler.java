@@ -20,7 +20,8 @@ import com.google.common.eventbus.Subscribe;
 import org.apache.camel.Processor;
 
 /**
- * Subtype of CamelEventHandler with public method marked with Guava @Subscribe annotation.
+ * Subtype of CamelEventHandler with public method marked with Guava @Subscribe annotation. Supports
+ * filtering the messages by event type on the Camel level.
  */
 public class FilteringCamelEventHandler extends CamelEventHandler {
 

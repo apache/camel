@@ -23,6 +23,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 
+/**
+ * Camel component for Guava EventBus
+ * (http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html). Supports both
+ * producer and consumer endpoints.
+ */
 public class GuavaEventBusComponent extends DefaultComponent {
 
     private EventBus eventBus;
