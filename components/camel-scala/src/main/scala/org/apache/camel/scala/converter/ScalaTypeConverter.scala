@@ -32,6 +32,12 @@ import org.apache.camel.{Exchange, Converter}
 object ScalaTypeConverter {
 
    @Converter
+   def toString(symbol: Symbol): String = symbol.name
+
+   @Converter
+   def toSymbol(string: String): Symbol = Symbol(string)
+
+   @Converter
    def convertToDocument(xml: Elem, exchange : Exchange) : Document = {
      exchange.getContext.getTypeConverter.convertTo(classOf[Document], exchange, xml.toString())
    }

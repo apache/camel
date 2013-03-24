@@ -16,3 +16,6 @@
 #
 
 org.apache.camel.scala.converter.ScalaTypeConverter
+org.apache.camel.scala.converter.ScalaImmutableCollections
+org.apache.camel.scala.converter.ScalaMutableCollections
+org.apache.camel.scala.converter.ScalaOption
