@@ -59,7 +59,7 @@ class SMulticastParallelTest extends MulticastParallelTest with RouteBuilderSupp
       if (oldExchange == null) {
         newExchange
       } else {
-        oldExchange.in= oldExchange.in[String] + newExchange.in[String]
+        oldExchange.in = oldExchange.in[String] + newExchange.in[String]
         oldExchange
       }
     }
