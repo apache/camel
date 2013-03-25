@@ -43,11 +43,6 @@
       <artifactId>camel-core</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-blueprint</artifactId>
-      <scope>test</scope>
-    </dependency>
      <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
@@ -63,9 +58,25 @@
       <artifactId>camel-http</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- exclude bluerprint from camel-cxf as we have them already from camel-blueprint
+         and we need to avoid duplicate JARs in the classpath as then blueprint start up twice -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cxf</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.aries.blueprint</groupId>
+          <artifactId>org.apache.aries.blueprint.core</artifactId>         
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.aries.blueprint</groupId>
+          <artifactId>org.apache.aries.blueprint.api</artifactId>         
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.aries.quiesce</groupId>
+          <artifactId>org.apache.aries.quiesce.api</artifactId>         
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
     
@@ -101,11 +112,6 @@
     </dependency>
 
     <!--  test -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
