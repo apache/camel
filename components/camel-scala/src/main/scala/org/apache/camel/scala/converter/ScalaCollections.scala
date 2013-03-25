@@ -75,8 +75,7 @@ class ScalaImmutableCollections {
 
 @Converter
 class ScalaMutableCollections {
-  import collection.mutable.{Buffer, Map, Seq, Set}
-  import collection.concurrent.{Map => ConcurrentMap}
+  import collection.mutable.{ConcurrentMap, Buffer, Map, Seq, Set}
   import java.util.{Dictionary => JDictionary, List => JList, Map => JMap, Set => JSet}
   import java.util.concurrent.{ConcurrentMap => JConcurrentMap}
 

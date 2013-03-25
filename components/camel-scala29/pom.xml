@@ -52,6 +52,12 @@
 
     <!-- test dependencies -->
     <dependency>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest_${scala29-version}</artifactId>
+        <version>1.8</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>

@@ -90,8 +90,7 @@ class ConverterSpec extends FunSpec with CamelSpec with MustMatchers {
   }
 
   describe("mutable collections converter") {
-    import collection.mutable.{Buffer, Map, Seq, Set}
-    import collection.concurrent.{Map => ConcurrentMap}
+    import collection.mutable.{ConcurrentMap, Buffer, Map, Seq, Set}
     import java.util.{Dictionary => JDictionary, Hashtable => JHashtable, Collections, List => JList, Map => JMap, Set => JSet}
     import java.util.concurrent.{ConcurrentHashMap => JConcurrentHashMap}
 
@@ -162,5 +161,5 @@ class ConverterSpec extends FunSpec with CamelSpec with MustMatchers {
     }
   }
 
-  private def to[T](x: AnyRef)(implicit m: Manifest[T]): Option[T] = Option( context.getTypeConverter.mandatoryConvertTo(m.runtimeClass, x).asInstanceOf[T] )
+  private def to[T](x: AnyRef)(implicit m: Manifest[T]): Option[T] = Option( context.getTypeConverter.mandatoryConvertTo(m.erasure, x).asInstanceOf[T] )
 }
