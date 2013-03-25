@@ -18,6 +18,8 @@ package org.apache.camel
 package scala.dsl
 
 import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.scala.ScalaProcessor
+import org.apache.camel.Exchange
 
 class RichTestUri(uri: String, support: ScalaTestSupport) {
 
@@ -27,6 +29,13 @@ class RichTestUri(uri: String, support: ScalaTestSupport) {
         case exchange: Exchange => support.getTemplate.send(uri, exchange)
         case anything: Any => support.getTemplate.sendBody(uri, anything)
       }
+    }
+  }
+
+  def !?(message: Any) = {
+    message match {
+      case fn : (Exchange => Unit) => support.getTemplate.request(uri, new ScalaProcessor(fn))
+      case body : Object => support.getTemplate.requestBody(uri, body)
     }
   }
 
