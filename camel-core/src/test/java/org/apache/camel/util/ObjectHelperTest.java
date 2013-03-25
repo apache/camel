@@ -16,7 +16,9 @@
  */
 package org.apache.camel.util;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,10 +40,27 @@ import org.apache.camel.component.bean.MyStaticClass;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 
+
 /**
  * @version 
  */
 public class ObjectHelperTest extends TestCase {
+
+    public void testLoadResourceAsStream() {
+        InputStream res1 = ObjectHelper.loadResourceAsStream("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+        InputStream res2 = ObjectHelper.loadResourceAsStream("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+
+        assertNotNull("Cannot load resource without leading \"/\"", res1);
+        assertNotNull("Cannot load resource with leading \"/\"", res2);
+    }
+
+    public void testLoadResource() {
+        URL url1 = ObjectHelper.loadResourceAsURL("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+        URL url2 = ObjectHelper.loadResourceAsURL("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+
+        assertNotNull("Cannot load resource without leading \"/\"", url1);
+        assertNotNull("Cannot load resource with leading \"/\"", url2);
+    }
 
     public void testRemoveInitialCharacters() throws Exception {
         assertEquals(ObjectHelper.removeStartingCharacters("foo", '/'), "foo");
