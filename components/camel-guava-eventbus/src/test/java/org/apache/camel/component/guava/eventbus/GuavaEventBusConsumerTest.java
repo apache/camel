@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.guava.eventbus;
 
+import java.util.Date;
+
 import com.google.common.eventbus.EventBus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -39,6 +41,9 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
 
                 from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomListener").
                         to("mock:customListenerEvents");
+
+                from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomMultiEventListener").
+                        to("mock:customMultiEventListenerEvents");
             }
         };
     }
@@ -108,6 +113,23 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
         getMockEndpoint("mock:customListenerEvents").setExpectedMessageCount(1);
         assertMockEndpointsSatisfied();
         assertEquals(wrappedMessage, getMockEndpoint("mock:customListenerEvents").getExchanges().get(0).getIn().getBody());
+    }
+
+    @Test
+    public void shouldSupportMultiEventCustomListener() throws InterruptedException {
+        // Given
+        String stringEvent = "stringEvent";
+        Date dateEvent = new Date();
+
+        // When
+        eventBus.post(stringEvent);
+        eventBus.post(dateEvent);
+
+        // Then
+        getMockEndpoint("mock:customMultiEventListenerEvents").setExpectedMessageCount(2);
+        assertMockEndpointsSatisfied();
+        assertEquals(stringEvent, getMockEndpoint("mock:customMultiEventListenerEvents").getExchanges().get(0).getIn().getBody());
+        assertEquals(dateEvent, getMockEndpoint("mock:customMultiEventListenerEvents").getExchanges().get(1).getIn().getBody());
     }
 
 }
