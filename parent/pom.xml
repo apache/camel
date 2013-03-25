@@ -382,7 +382,7 @@
     <!-- should be in-sync with deltaspike -->
     <weld-version>1.1.5.Final</weld-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
-    <woodstox-version>4.1.4</woodstox-version>
+    <woodstox-version>4.2.0</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
     <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
