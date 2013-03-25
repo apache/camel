@@ -30,6 +30,12 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
         super.setUp();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
+        super.tearDown();
+    }
+
     public void testShouldBeInstrumentedOk() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
