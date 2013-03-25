@@ -21,6 +21,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
+/**
+ * Guava EventBus (http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html)
+ * producer forwarding messages from Camel routes to the bus.
+ */
 public class GuavaEventBusProducer extends DefaultProducer {
 
     private final EventBus eventBus;

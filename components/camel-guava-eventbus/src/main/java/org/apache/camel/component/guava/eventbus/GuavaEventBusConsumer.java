@@ -27,6 +27,10 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Guava EventBus (http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html)
+ * consumer reading messages from the bus and forwarding them to the Camel routes.
+ */
 public class GuavaEventBusConsumer extends DefaultConsumer {
 
     private final EventBus eventBus;
