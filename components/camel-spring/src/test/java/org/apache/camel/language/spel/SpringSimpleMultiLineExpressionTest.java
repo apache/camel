@@ -20,9 +20,6 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class SpringSimpleMultiLineExpressionTest extends SpringTestSupport {
 
     @Override
@@ -32,6 +29,6 @@ public class SpringSimpleMultiLineExpressionTest extends SpringTestSupport {
 
     public void testSimpleMultiLineExpression() {
         String result = template.requestBodyAndHeader("direct:start", "Camel", "h", "some text", String.class);
-        assertThat(result, is("correct"));
+        assertEquals("correct", result);
     }
 }
