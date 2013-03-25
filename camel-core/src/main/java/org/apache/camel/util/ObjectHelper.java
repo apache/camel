@@ -57,6 +57,7 @@ import org.apache.camel.WrappedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * A number of useful helper methods for working with Objects
  *
@@ -891,6 +892,9 @@ public final class ObjectHelper {
         if (in == null) {
             in = ObjectHelper.class.getClassLoader().getResourceAsStream(resolvedName);
         }
+        if (in == null) {
+            in = ObjectHelper.class.getResourceAsStream(resolvedName);
+        }
 
         return in;
     }
@@ -912,6 +916,9 @@ public final class ObjectHelper {
         }
         if (url == null) {
             url = ObjectHelper.class.getClassLoader().getResource(resolvedName);
+        }
+        if (url == null) {
+            url = ObjectHelper.class.getResource(resolvedName);
         }
 
         return url;
