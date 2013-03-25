@@ -34,6 +34,9 @@ public final class SimpleTokenizer {
     static {
         // add known tokens
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, " "));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\t"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\n"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\r"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.singleQuote, "'"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.doubleQuote, "\""));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
