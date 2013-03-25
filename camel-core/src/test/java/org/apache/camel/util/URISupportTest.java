@@ -20,6 +20,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.ContextTestSupport;
 
@@ -235,6 +237,51 @@ public class URISupportTest extends ContextTestSupport {
     public void testSpecialUriFromXmppComponent() throws Exception {
         String out1 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
         assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat", out1);
+    }
+
+    public void testRawParameter() throws Exception {
+        String out = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat");
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some+chat", out);
+
+        String out2 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat");
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some+chat", out2);
+    }
+
+    public void testParseQuery() throws Exception {
+        Map<String, Object> map = URISupport.parseQuery("password=secret&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("secret", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+
+        map = URISupport.parseQuery("password=RAW(++?w0rd)&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("RAW(++?w0rd)", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+
+        map = URISupport.parseQuery("password=RAW(++?)w&rd)&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("RAW(++?)w&rd)", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+    }
+
+    public void testResolveRawParameterValues() throws Exception {
+        Map<String, Object> map = URISupport.parseQuery("password=secret&serviceName=somechat");
+        URISupport.resolveRawParameterValues(map);
+        assertEquals(2, map.size());
+        assertEquals("secret", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+
+        map = URISupport.parseQuery("password=RAW(++?w0rd)&serviceName=somechat");
+        URISupport.resolveRawParameterValues(map);
+        assertEquals(2, map.size());
+        assertEquals("++?w0rd", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+
+        map = URISupport.parseQuery("password=RAW(++?)w&rd)&serviceName=somechat");
+        URISupport.resolveRawParameterValues(map);
+        assertEquals(2, map.size());
+        assertEquals("++?)w&rd", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
     }
 
 }
