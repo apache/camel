@@ -48,12 +48,13 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
         String os = System.getProperty("os.name");
         boolean aix = os.toLowerCase(Locale.ENGLISH).contains("aix");
         boolean windows = os.toLowerCase(Locale.ENGLISH).contains("windows");
+        boolean solaris = os.toLowerCase(Locale.ENGLISH).contains("sunos");
 
-        // Does not work on AIX and the problem is hard to identify, could be issues not allowing to use a custom port
+        // Does not work on AIX / solaris and the problem is hard to identify, could be issues not allowing to use a custom port
         // java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.NameNotFoundException: jmxrmi/camel
 
         // windows CI servers is often slow/tricky so skip as well
-        return !aix && !windows;
+        return !aix && !solaris && !windows;
     }
 
     @Override
@@ -81,6 +82,14 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
             }
             clientConnector = null;
         }
+        // restore environment to original state
+        // the following properties may have been set by specialization of this test class
+        System.clearProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
+        System.clearProperty(JmxSystemPropertyKeys.DOMAIN);
+        System.clearProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN);
+        System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
+        System.clearProperty(JmxSystemPropertyKeys.REGISTRY_PORT);
+
         super.tearDown();
     }
 
