@@ -46,7 +46,7 @@ abstract class ScalaTestSupport extends CamelTestSupport with RouteBuilderSuppor
   val builder : RouteBuilder
   
   override protected def createRouteBuilder = builder
-  
+
   override def setUp() {
     super.setUp()
     endpoints.foreach(_.reset())
@@ -54,6 +54,10 @@ abstract class ScalaTestSupport extends CamelTestSupport with RouteBuilderSuppor
   
   def test(block : => Unit) {
     block
+    endpoints.foreach(_.assertIsSatisfied())
+  }
+
+  def assertEndpoints() {
     endpoints.foreach(_.assertIsSatisfied())
   }
 
