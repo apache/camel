@@ -52,7 +52,7 @@ public class BacklogTracerInterceptor extends DelegateAsyncProcessor {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            if (backlogTracer.shouldTrace(processorDefinition)) {
+            if (backlogTracer.shouldTrace(processorDefinition, exchange)) {
                 // ensure there is space on the queue
                 int drain = queue.size() - backlogTracer.getBacklogSize();
                 // and we need room for ourselves and possible also a first pseudo message as well

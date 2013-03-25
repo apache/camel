@@ -47,6 +47,12 @@ public interface ManagedTracerBacklogMBean {
     @ManagedAttribute(description = "To filter tracing by nodes (pattern)")
     String getTracePattern();
 
+    @ManagedAttribute(description = "To filter tracing by predicate (uses simple language by default)")
+    void setTraceFilter(String predicate);
+
+    @ManagedAttribute(description = "To filter tracing by predicate (uses simple language by default)")
+    String getTraceFilter();
+
     @ManagedAttribute(description = "Number of total traced messages")
     long getTraceCounter();
 

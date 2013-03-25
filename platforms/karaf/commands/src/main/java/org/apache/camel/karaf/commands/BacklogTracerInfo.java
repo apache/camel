@@ -53,6 +53,7 @@ public class BacklogTracerInfo extends OsgiCommandSupport {
         System.out.println("BacklogTracer context:\t\t" + camel.getName());
         System.out.println("BacklogTracer enabled:\t\t" + backlogTracer.isEnabled());
         System.out.println("BacklogTracer pattern:\t\t" + (backlogTracer.getTracePattern() != null ? backlogTracer.getTracePattern() : ""));
+        System.out.println("BacklogTracer filter:\t\t" + (backlogTracer.getTraceFilter() != null ? backlogTracer.getTraceFilter() : ""));
         System.out.println("BacklogTracer removeOnDump:\t" + backlogTracer.isRemoveOnDump());
         System.out.println("BacklogTracer backlogSize:\t" + backlogTracer.getBacklogSize());
         System.out.println("BacklogTracer tracerCount:\t" + backlogTracer.getTraceCounter());

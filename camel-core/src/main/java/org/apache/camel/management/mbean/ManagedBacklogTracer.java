@@ -86,6 +86,14 @@ public class ManagedBacklogTracer implements  ManagedTracerBacklogMBean {
         return backlogTracer.getTracePattern();
     }
 
+    public void setTraceFilter(String predicate) {
+        backlogTracer.setTraceFilter(predicate);
+    }
+
+    public String getTraceFilter() {
+        return backlogTracer.getTraceFilter();
+    }
+
     public long getTraceCounter() {
         return backlogTracer.getTraceCounter();
     }

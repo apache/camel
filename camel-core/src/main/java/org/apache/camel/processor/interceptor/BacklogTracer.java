@@ -25,6 +25,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.model.ProcessorDefinition;
@@ -35,6 +37,9 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -44,6 +49,7 @@ import org.apache.camel.util.EndpointHelper;
  */
 public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(BacklogTracer.class);
     // lets limit the tracer to 100 thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 100 * 1000;
     private final CamelContext camelContext;
@@ -60,6 +66,8 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     // a pattern to filter tracing nodes
     private String tracePattern;
     private String[] patterns;
+    private String traceFilter;
+    private Predicate predicate;
     // remember the processors we are tracing, which we need later
     private final Set<ProcessorDefinition<?>> processors = new HashSet<ProcessorDefinition<?>>();
 
@@ -110,34 +118,52 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
      * Whether or not to trace the given processor definition.
      *
      * @param definition the processor definition
+     * @param exchange   the exchange
      * @return <tt>true</tt> to trace, <tt>false</tt> to skip tracing
      */
-    public boolean shouldTrace(ProcessorDefinition<?> definition) {
+    public boolean shouldTrace(ProcessorDefinition<?> definition, Exchange exchange) {
         if (!enabled) {
             return false;
         }
 
+        boolean pattern = true;
+        boolean filter = true;
+
         if (patterns != null) {
-            for (String pattern : patterns) {
-                // match either route id, or node id
-                String id = definition.getId();
-                // use matchPattern method from endpoint helper that has a good matcher we use in Camel
+            pattern = shouldTracePattern(definition);
+        }
+        if (predicate != null) {
+            filter = shouldTraceFilter(exchange);
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Should trace evaluated {} -> pattern: {}, filter: {}", new Object[]{definition.getId(), pattern, filter});
+        }
+        return pattern && filter;
+    }
+
+    private boolean shouldTracePattern(ProcessorDefinition<?> definition) {
+        for (String pattern : patterns) {
+            // match either route id, or node id
+            String id = definition.getId();
+            // use matchPattern method from endpoint helper that has a good matcher we use in Camel
+            if (EndpointHelper.matchPattern(id, pattern)) {
+                return true;
+            }
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
+            if (route != null) {
+                id = route.getId();
                 if (EndpointHelper.matchPattern(id, pattern)) {
                     return true;
                 }
-                RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
-                if (route != null) {
-                    id = route.getId();
-                    if (EndpointHelper.matchPattern(id, pattern)) {
-                        return true;
-                    }
-                }
             }
-            // not matched the pattern
-            return false;
         }
+        // not matched the pattern
+        return false;
+    }
 
-        return true;
+    private boolean shouldTraceFilter(Exchange exchange) {
+        return predicate.matches(exchange);
     }
 
     public boolean isEnabled() {
@@ -209,6 +235,23 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
             this.patterns = tracePattern.split(",");
         } else {
             this.patterns = null;
+        }
+    }
+
+    public String getTraceFilter() {
+        return traceFilter;
+    }
+
+    public void setTraceFilter(String filter) {
+        this.traceFilter = filter;
+        if (filter != null) {
+            // assume simple language
+            String name = ObjectHelper.before(filter, ":");
+            if (name == null) {
+                // use simple language by default
+                name = "simple";
+            }
+            predicate = camelContext.resolveLanguage(name).createPredicate(filter);
         }
     }
 

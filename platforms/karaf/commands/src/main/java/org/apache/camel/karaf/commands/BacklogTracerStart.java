@@ -33,9 +33,13 @@ public class BacklogTracerStart extends OsgiCommandSupport {
             required = true, multiValued = false)
     String context;
 
-    @Argument(index = 1, name = "pattern", description = "To trace messages only for nodes or routes matching the given pattern (default is all)",
+    @Option(name = "--pattern", aliases = "-p", description = "To trace messages only for nodes or routes matching the given pattern (default is all)",
             required = false, multiValued = false)
     String pattern;
+
+    @Option(name = "--filter", aliases = "-f", description = "To trace messages only for nodes or routes matching the given filter (using simple language by default)",
+            required = false, multiValued = false)
+    String filter;
 
     @Option(name = "--backlogSize", aliases = "-s", description = "Number of maximum traced messages in total to keep in the backlog (FIFO queue)",
             required = false, multiValued = false, valueToShowInHelp = "1000")
@@ -71,12 +75,10 @@ public class BacklogTracerStart extends OsgiCommandSupport {
         if (removeOnDump != null) {
             backlogTracer.setRemoveOnDump(removeOnDump);
         }
-        if (pattern != null) {
-            backlogTracer.setTracePattern(pattern);
-            System.out.println("BacklogTracer started on " + camel.getName() + " using pattern: " + pattern + " with size: " + backlogTracer.getBacklogSize());
-        } else {
-            System.out.println("BacklogTracer started on " + camel.getName() + " with size: " + backlogTracer.getBacklogSize());
-        }
+        backlogTracer.setTracePattern(pattern);
+        backlogTracer.setTraceFilter(filter);
+
+        System.out.println("BacklogTracer started on " + camel.getName() + " with size: " + backlogTracer.getBacklogSize());
         return null;
     }
 
