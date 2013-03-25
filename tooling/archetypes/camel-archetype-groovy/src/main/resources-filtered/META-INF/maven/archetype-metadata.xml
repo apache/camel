@@ -30,6 +30,9 @@
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="maven-eclipse-plugin-version">
+      <defaultValue>${maven-eclipse-plugin-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="maven-resources-plugin-version">
       <defaultValue>${maven-resources-plugin-version}</defaultValue>
     </requiredProperty>
