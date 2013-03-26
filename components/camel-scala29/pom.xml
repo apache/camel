@@ -105,6 +105,16 @@
     <testSourceDirectory>target/test/scala</testSourceDirectory>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Test.class</include>
+            <include>**/*Spec.class</include>
+          </includes>
+        </configuration>
+      </plugin>
 
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
