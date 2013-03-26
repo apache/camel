@@ -34,7 +34,6 @@ class RichTestUri(uri: String, support: ScalaTestSupport) {
 
   def !?(message: Any) = {
     message match {
-      case fn : (Exchange => Unit) => support.getTemplate.request(uri, new ScalaProcessor(fn))
       case processor: Processor => support.getTemplate.request(uri, processor)
       case body : Object => support.getTemplate.requestBody(uri, body)
     }
@@ -42,7 +41,6 @@ class RichTestUri(uri: String, support: ScalaTestSupport) {
 
   def !!(message: Any) = {
     message match {
-      case fn : (Exchange => Unit) => support.getTemplate.asyncSend(uri, new ScalaProcessor(fn))
       case exchange : Exchange => support.getTemplate.asyncSend(uri, exchange)
       case processor : Processor => support.getTemplate.asyncSend(uri, processor)
       case body : Object => support.getTemplate.asyncRequestBody(uri, body)
