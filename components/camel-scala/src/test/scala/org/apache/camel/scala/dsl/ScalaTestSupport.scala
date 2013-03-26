@@ -54,7 +54,7 @@ abstract class ScalaTestSupport extends CamelTestSupport with RouteBuilderSuppor
   
   def test(block : => Unit) {
     block
-    endpoints.foreach(_.assertIsSatisfied())
+    assertEndpoints
   }
 
   def assertEndpoints() {

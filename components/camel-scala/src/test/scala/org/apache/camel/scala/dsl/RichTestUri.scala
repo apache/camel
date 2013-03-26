@@ -18,7 +18,6 @@ package org.apache.camel
 package scala.dsl
 
 import org.apache.camel.component.mock.MockEndpoint
-import org.apache.camel.scala.ScalaProcessor
 import org.apache.camel.Exchange
 
 class RichTestUri(uri: String, support: ScalaTestSupport) {
