@@ -23,6 +23,10 @@ import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 
 import reflect.Manifest
+import org.w3c.dom.Document
+import xml.Elem
+import scala.Some
+import javax.xml.parsers.DocumentBuilderFactory
 
 @RunWith(classOf[JUnitRunner])
 class ConverterSpec extends FunSpec with CamelSpec with MustMatchers {
@@ -161,5 +165,40 @@ class ConverterSpec extends FunSpec with CamelSpec with MustMatchers {
     }
   }
 
-  private def to[T](x: AnyRef)(implicit m: Manifest[T]): Option[T] = Option( context.getTypeConverter.mandatoryConvertTo(m.erasure, x).asInstanceOf[T] )
+  describe("scala xml converter") {
+    it("must convert to document") {
+      val v = <persons/>
+      val result = to[Document](v)
+      result must be('defined)
+      Option(result.get.getElementsByTagName("persons")) must be('defined)
+    }
+
+    it("must convert string to document") {
+      val result = to[Elem]("<persons/>")
+      result.get must equal(<persons/>)
+    }
+
+    it("must convert dom to elem") {
+      val doc = createDocument
+      val element = doc.createElement("persons")
+      doc.appendChild(element)
+
+      val result = to[Elem](doc)
+      result must be('defined)
+      result.get must equal(<persons/>)
+    }
+
+    it("must convert dom node to elem") {
+      val result = to[Elem](createDocument.createElement("persons"))
+      result must be('defined)
+      result.get must equal(<persons/>)
+    }
+
+
+    def createDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
+
+
+  }
+
+  private def to[T](x: AnyRef)(implicit m: Manifest[T]): Option[T] = Option( context.getTypeConverter.mandatoryConvertTo(m.erasure, createExchange, x).asInstanceOf[T] )
 }
