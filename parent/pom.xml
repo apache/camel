@@ -322,7 +322,7 @@
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.4.0.4_2</saxon-bundle-version>
     <saxon-version>9.4.0.4</saxon-version>
-    <scala-version>2.10.0</scala-version>
+    <scala-version>2.10.1</scala-version>
     <scala29-version>2.9.2</scala29-version>
     <scala29-bundle-version>2.9.2_1</scala29-bundle-version>
     <scala-maven-plugin-version>3.1.2</scala-maven-plugin-version>
