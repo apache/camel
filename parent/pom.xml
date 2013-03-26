@@ -333,7 +333,7 @@
     <shiro-version>1.2.1</shiro-version>
     <!-- use slf4j-api 1.6.x to be easy compatible with older Camel releases -->
     <slf4j-api-version>1.6.6</slf4j-api-version>
-    <slf4j-version>1.7.2</slf4j-version>
+    <slf4j-version>1.7.5</slf4j-version>
     <smack-bundle-version>3.2.1_1</smack-bundle-version>
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
