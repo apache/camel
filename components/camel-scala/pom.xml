@@ -51,8 +51,8 @@
         <!-- test dependencies -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scala-version}</artifactId>
-            <version>1.8</version>
+            <artifactId>scalatest_2.10</artifactId>
+            <version>1.9.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
