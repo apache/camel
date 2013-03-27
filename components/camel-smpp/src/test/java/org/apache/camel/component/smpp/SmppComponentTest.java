@@ -125,13 +125,15 @@ public class SmppComponentTest {
     }
 
     @Test
-    public void allowEmptySystemTypeOption() throws Exception {
+    public void allowEmptySystemTypeAndServiceTypeOption() throws Exception {
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("systemType", null);
-        Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=", parameters);
+        parameters.put("serviceType", null);
+        Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=&serviceType=", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
 
         assertEquals("", smppEndpoint.getConfiguration().getSystemType());
+        assertEquals("", smppEndpoint.getConfiguration().getServiceType());
     }
 
     @Test
