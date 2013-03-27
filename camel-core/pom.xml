@@ -191,6 +191,8 @@
           <!-- skip file stress tests as they are intended to run manually -->
           <excludes>
             <exclude>org/apache/camel/component/file/stress/**.java</exclude>
+            <exclude>**/DistributedCompletionIntervalTest.java</exclude>
+            <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
           </excludes>
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
         </configuration>

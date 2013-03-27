@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -191,8 +192,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             throw new ClosedCorrelationKeyException(key, exchange);
         }
 
-        //
-        // todo: explain optimistic lock handling
+        // when optimist locking is enabled we keep trying until we succeed
         if (optimisticLocking) {
             boolean done = false;
             int attempt = 0;
@@ -208,6 +208,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                     LOG.trace("On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to add() key: {} and exchange: {}",
                               new Object[]{attempt, aggregationRepository, key, copy, e});
                 }
+                // use a little random delay to avoid being to aggressive when retrying, and avoid potential clashing
+                int ran = new Random().nextInt(1000);
+                LOG.trace("Sleeping for {} millis before attempting again", ran);
+                Thread.sleep(ran);
             }
         } else {
             // copy exchange, and do not share the unit of work
