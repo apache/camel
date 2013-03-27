@@ -205,7 +205,16 @@ public class FlatpackDataFormat implements DataFormat {
             } else {
                 InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
                 InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
-                return getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+                Parser parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+                if (allowShortLines) {
+                    parser.setHandlingShortLines(true);
+                    parser.setIgnoreParseWarnings(true);
+                }
+                if (ignoreExtraColumns) {
+                    parser.setIgnoreExtraColumns(true);
+                    parser.setIgnoreParseWarnings(true);
+                }
+                return parser;
             }
         }
     }
