@@ -36,10 +36,9 @@ public class FilteringCamelEventHandler extends CamelEventHandler {
      * Guava callback executed when an event was received.
      *
      * @param event the event
-     * @throws Exception is thrown if error processing the event
      */
     @Subscribe
-    public void eventReceived(Object event) throws Exception {
+    public void eventReceived(Object event) {
         if (eventClass == null || eventClass.isAssignableFrom(event.getClass())) {
             doEventReceived(event);
         } else {

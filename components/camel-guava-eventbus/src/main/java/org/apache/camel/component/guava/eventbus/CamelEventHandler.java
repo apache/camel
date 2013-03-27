@@ -46,9 +46,8 @@ public class CamelEventHandler {
      * Callback executed to propagate event from Guava listener to Camel route.
      *
      * @param event the event received by Guava EventBus.
-     * @throws Exception is thrown if error processing the event
      */
-    public void doEventReceived(Object event) throws Exception {
+    public void doEventReceived(Object event) {
         log.trace("Received event: {}");
         final Exchange exchange = eventBusEndpoint.createExchange(event);
         log.debug("Processing event: {}", event);
