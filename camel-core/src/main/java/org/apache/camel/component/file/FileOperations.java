@@ -354,9 +354,7 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, source.getName(), LOG);
-            // force updates to be written, and then close afterwards
-            IOHelper.force(out, target.getName(), LOG);
-            IOHelper.close(out, target.getName(), LOG);
+            IOHelper.close(out, target.getName(), LOG, endpoint.isForceWrites());
         }
     }
 
@@ -378,25 +376,24 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, target.getName(), LOG);
-            // force updates to be written, and then close afterwards
-            IOHelper.force(out, target.getName(), LOG);
-            IOHelper.close(out, target.getName(), LOG);
+            IOHelper.close(out, target.getName(), LOG, endpoint.isForceWrites());
         }
     }
 
     private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-        Writer out = IOConverter.toWriter(target, append, charset);
+        FileOutputStream os = new FileOutputStream(target, append);
+        Writer out = IOConverter.toWriter(os, charset);
         try {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);
         } finally {
             IOHelper.close(in, target.getName(), LOG);
-            IOHelper.close(out, target.getName(), LOG);
+            IOHelper.close(out, os, target.getName(), LOG, endpoint.isForceWrites());
         }
     }
-    
+
     /**
      * Creates a new file if the file doesn't exist.
      * If the endpoint's existing file logic is set to 'Override' then the target file will be truncated
@@ -411,8 +408,7 @@ public class FileOperations implements GenericFileOperations<File> {
             try {
                 out.truncate(0);
             } finally {
-                IOHelper.force(out, target.getName(), LOG);
-                IOHelper.close(out, target.getName(), LOG);
+                IOHelper.close(out, target.getName(), LOG, endpoint.isForceWrites());
             }
         }
     }

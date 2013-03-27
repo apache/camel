@@ -130,16 +130,21 @@ public final class IOConverter {
      */
     @Deprecated
     public static BufferedWriter toWriter(File file) throws IOException {
-        return toWriter(file, false, IOHelper.getCharsetName(null, true));
+        FileOutputStream os = new FileOutputStream(file, false);
+        return toWriter(os, IOHelper.getCharsetName(null, true));
     }
     
     @Converter
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
-        return toWriter(file, false, IOHelper.getCharsetName(exchange));
+        FileOutputStream os = new FileOutputStream(file, false);
+        return toWriter(os, IOHelper.getCharsetName(exchange));
     }
 
     public static BufferedWriter toWriter(File file, boolean append, String charset) throws IOException {
-        FileOutputStream os = new FileOutputStream(file, append);
+        return toWriter(new FileOutputStream(file, append), charset);
+    }
+
+    public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {
         return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
 
