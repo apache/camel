@@ -51,7 +51,16 @@ public class DelimitedEndpoint extends FixedLengthEndpoint {
         } else {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), definition);
             InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
-            return getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+            Parser parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+            if (isAllowShortLines()) {
+                parser.setHandlingShortLines(true);
+                parser.setIgnoreParseWarnings(true);
+            }
+            if (isIgnoreExtraColumns()) {
+                parser.setIgnoreExtraColumns(true);
+                parser.setIgnoreParseWarnings(true);
+            }
+            return parser;
         }
     }
 
