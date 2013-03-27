@@ -34,6 +34,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private FileOperations operations = new FileOperations(this);
     private File file;
     private boolean copyAndDeleteOnRenameFail = true;
+    private boolean forceWrites = true;
 
     public FileEndpoint() {
         // use marker file as default exclusive read locks
@@ -164,5 +165,13 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     public void setCopyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
         this.copyAndDeleteOnRenameFail = copyAndDeleteOnRenameFail;
+    }
+
+    public boolean isForceWrites() {
+        return forceWrites;
+    }
+
+    public void setForceWrites(boolean forceWrites) {
+        this.forceWrites = forceWrites;
     }
 }

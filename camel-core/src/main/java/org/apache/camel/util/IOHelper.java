@@ -21,6 +21,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.Closeable;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -230,6 +231,62 @@ public final class IOHelper {
     }
 
     /**
+     * Forces any updates to a FileOutputStream be written to the storage device that contains it.
+     *
+     * @param os the file output stream
+     * @param name the name of the resource
+     * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
+     */
+    public static void force(FileOutputStream os, String name, Logger log) {
+        try {
+            if (os != null) {
+                os.getFD().sync();
+            }
+        } catch (Exception e) {
+            if (log == null) {
+                // then fallback to use the own Logger
+                log = LOG;
+            }
+            if (name != null) {
+                log.warn("Cannot sync FileDescriptor: " + name + ". Reason: " + e.getMessage(), e);
+            } else {
+                log.warn("Cannot sync FileDescriptor. Reason: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * Closes the given writer, logging any closing exceptions to the given log.
+     * An associated FileOutputStream can optionally be forced to disk.
+     *
+     * @param writer the writer to close
+     * @param os an underlying FileOutputStream that will to be forced to disk according to the the force parameter
+     * @param name the name of the resource
+     * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
+     * @param force forces the FileOutputStream to disk
+     */
+    public static void close(Writer writer, FileOutputStream os, String name, Logger log, boolean force) {
+        if (writer != null && force) {
+            // flush the writer prior to syncing the FD
+            try {
+                writer.flush();
+            } catch (Exception e) {
+                if (log == null) {
+                    // then fallback to use the own Logger
+                    log = LOG;
+                }
+                if (name != null) {
+                    log.warn("Cannot flush Writer: " + name + ". Reason: " + e.getMessage(), e);
+                } else {
+                    log.warn("Cannot flush Writer. Reason: " + e.getMessage(), e);
+                }
+            }
+            force(os, name, log);
+        }
+        close(writer, name, log);
+    }
+
+    /**
      * Closes the given resource if it is available, logging any closing exceptions to the given log.
      *
      * @param closeable the object to close
@@ -252,6 +309,22 @@ public final class IOHelper {
                 }
             }
         }
+    }
+
+    /**
+     * Closes the given channel if it is available, logging any closing exceptions to the given log.
+     * The file's channel can optionally be forced to disk.
+     *
+     * @param channel the file channel
+     * @param name the name of the resource
+     * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
+     * @param force forces the file channel to disk
+     */
+    public static void close(FileChannel channel, String name, Logger log, boolean force) {
+        if (force) {
+            force(channel, name, log);
+        }
+        close(channel, name, log);
     }
 
     /**
