@@ -45,7 +45,7 @@ public class CamelEventHandler {
     /**
      * Callback executed to propagate event from Guava listener to Camel route.
      *
-     * @param event the event received by Guava
+     * @param event the event received by Guava EventBus.
      * @throws Exception is thrown if error processing the event
      */
     public void doEventReceived(Object event) throws Exception {
