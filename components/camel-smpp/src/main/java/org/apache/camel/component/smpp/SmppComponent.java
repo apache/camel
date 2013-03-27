@@ -52,6 +52,11 @@ public class SmppComponent extends DefaultComponent {
         SmppConfiguration config = this.configuration.copy();
 
         config.configureFromURI(new URI(uri));
+        // special handling to set the system type to an empty string
+        if (parameters.containsKey("systemType") && parameters.get("systemType") == null) {
+            config.setSystemType("");
+            parameters.remove("systemType");
+        }
         setProperties(config, parameters);
 
         return createEndpoint(uri, config);
