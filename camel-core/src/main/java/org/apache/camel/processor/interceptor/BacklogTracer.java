@@ -49,9 +49,9 @@ import org.slf4j.LoggerFactory;
  */
 public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BacklogTracer.class);
     // lets limit the tracer to 100 thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 100 * 1000;
+    private static final transient Logger LOG = LoggerFactory.getLogger(BacklogTracer.class);
     private final CamelContext camelContext;
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
