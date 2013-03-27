@@ -36,4 +36,5 @@ public interface S3Constants {
     String VERSION_ID          = "CamelAwsS3VersionId";
     String CANNED_ACL          = "CamelAwsS3CannedAcl";
     String ACL                 = "CamelAwsS3Acl";
+    String USER_METADATA       = "CamelAwsS3UserMetadata";
 }

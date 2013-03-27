@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.s3;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Map;
 
 import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -82,6 +83,11 @@ public class S3Producer extends DefaultProducer {
         Date lastModified = exchange.getIn().getHeader(S3Constants.LAST_MODIFIED, Date.class);
         if (lastModified != null) {
             objectMetadata.setLastModified(lastModified);
+        }
+
+        Map<String, String> userMetadata = exchange.getIn().getHeader(S3Constants.USER_METADATA, Map.class);
+        if (userMetadata != null) {
+            objectMetadata.setUserMetadata(userMetadata);
         }
 
         PutObjectRequest putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(),
