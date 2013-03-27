@@ -49,13 +49,11 @@ public class CxfConsumerSoap12Test extends CamelBlueprintTestSupport {
         return "org/apache/camel/test/cxf/blueprint/CxfConsumerSoap12Beans.xml";
     }
    
-    @Test
-    public void testBeanDefinitionParserAndInvokeGreeter() throws Exception {
-        // the execution order of the test could cause the test failed
-        testInvokeGreeter();
-        testCxfEndpointBeanDefinitionParser();
+    public boolean isCreateCamelContextPerClass() {
+        return true;
     }
     
+    @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = context.getEndpoint("routerEndpoint", CxfEndpoint.class);
         assertEquals("Got the wrong endpoint address", routerEndpoint.getAddress(),
@@ -70,6 +68,7 @@ public class CxfConsumerSoap12Test extends CamelBlueprintTestSupport {
         assertTrue("Mtom not enabled", ((SoapBindingConfiguration)binding).isMtomEnabled());
     }
     
+    @Test
     public void testInvokeGreeter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
