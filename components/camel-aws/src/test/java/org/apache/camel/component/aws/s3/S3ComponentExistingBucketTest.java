@@ -18,6 +18,8 @@ package org.apache.camel.component.aws.s3;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
@@ -91,6 +93,8 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
     public void sendCustomHeaderValues() throws Exception {
         result.expectedMessageCount(1);
         final Date now = new Date();
+        final Map<String, String> userMetadata = new HashMap<String, String>();
+        userMetadata.put("CamelName", "Camel");
         
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -103,6 +107,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
                 exchange.getIn().setHeader(S3Constants.CONTENT_ENCODING, "gzip");
                 exchange.getIn().setHeader(S3Constants.CONTENT_MD5, "TWF");
                 exchange.getIn().setHeader(S3Constants.LAST_MODIFIED, now);
+                exchange.getIn().setHeader(S3Constants.USER_METADATA, userMetadata);
                 
                 exchange.getIn().setBody("This is my bucket content.");
             }
@@ -122,6 +127,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         assertEquals("gzip", putObjectRequest.getMetadata().getContentEncoding());
         assertEquals("TWF", putObjectRequest.getMetadata().getContentMD5());
         assertEquals(now, putObjectRequest.getMetadata().getLastModified());
+        assertEquals(userMetadata, putObjectRequest.getMetadata().getUserMetadata());
         
         assertResponseMessage(exchange.getIn());
     }
@@ -140,6 +146,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_DISPOSITION));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_MD5));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
+        assertNull(resultExchange.getIn().getHeader(S3Constants.USER_METADATA));
     }
     
     private void assertResponseMessage(Message message) {
