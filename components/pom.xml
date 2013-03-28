@@ -154,7 +154,6 @@
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
-    <module>camel-spring-neo4j</module>
     <module>camel-spring-redis</module>
     <module>camel-spring-security</module>
     <module>camel-spring-ws</module>

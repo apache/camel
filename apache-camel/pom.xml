@@ -496,10 +496,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-neo4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-redis</artifactId>
     </dependency>
     <dependency>
