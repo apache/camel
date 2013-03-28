@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.util.CamelLogger;
 
 /**
@@ -35,6 +36,8 @@ import org.apache.camel.util.CamelLogger;
  */
 public class LogComponent extends DefaultComponent {
 
+    private ExchangeFormatter exchangeFormatter;
+    
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
         String marker = getAndRemoveParameter(parameters, "marker", String.class);
@@ -50,10 +53,19 @@ public class LogComponent extends DefaultComponent {
             Long groupDelay = getAndRemoveParameter(parameters, "groupDelay", Long.class);
             logger = new ThroughputLogger(camelLogger, this.getCamelContext(), groupInterval, groupDelay, groupActiveOnly);
         } else {
-            LogFormatter formatter = new LogFormatter();
-            setProperties(formatter, parameters);
-
-            logger = new CamelLogProcessor(camelLogger, formatter);
+            // first, try to use the user-specified formatter (or the one picked up from the Registry and transferred to 
+            // the property by a previous endpoint initialisation); if null, try to pick it up from the Registry now
+            ExchangeFormatter localFormatter = exchangeFormatter;
+            if (localFormatter == null) {
+                localFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
+                exchangeFormatter = localFormatter;
+            }
+            // if no formatter is available in the Registry, create a local one of the default type, for a single use
+            if (localFormatter == null) {
+                localFormatter = new LogFormatter();
+                setProperties(localFormatter, parameters);
+            }
+            logger = new CamelLogProcessor(camelLogger, localFormatter);
         }
 
         LogEndpoint endpoint = new LogEndpoint(uri, this);
@@ -67,6 +79,20 @@ public class LogComponent extends DefaultComponent {
     protected LoggingLevel getLoggingLevel(Map<String, Object> parameters) {
         String levelText = getAndRemoveParameter(parameters, "level", String.class, "INFO");
         return LoggingLevel.valueOf(levelText.toUpperCase(Locale.ENGLISH));
+    }
+
+    public ExchangeFormatter getExchangeFormatter() {
+        return exchangeFormatter;
+    }
+
+    /**
+     * Sets a custom {@link ExchangeFormatter} to convert the Exchange to a String suitable for logging.
+     * <p />
+     * If not specified, we default to {@link LogFormatter}.
+     * @param exchangeFormatter
+     */
+    public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
+        this.exchangeFormatter = exchangeFormatter;
     }
 
 }
