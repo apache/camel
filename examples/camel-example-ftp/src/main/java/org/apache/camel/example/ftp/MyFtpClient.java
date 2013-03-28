@@ -21,7 +21,10 @@ import org.apache.camel.main.Main;
 /**
  * Main class that can upload files to an existing FTP server.
  */
-public class MyFtpClient {
+public final class MyFtpClient {
+
+    private MyFtpClient() {
+    }
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
