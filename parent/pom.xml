@@ -2281,11 +2281,6 @@
           <version>${maven-surefire-report-plugin-version}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <version>0.8</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.servicemix.tooling</groupId>
           <artifactId>depends-maven-plugin</artifactId>
           <version>1.2</version>
@@ -2478,38 +2473,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <configuration>
-          <excludeSubProjects>false</excludeSubProjects>
-          <excludes>
-            <exclude>**/README</exclude>
-            <exclude>**/README.txt</exclude>
-            <exclude>**/resources/**/*.xsd</exclude>
-            <exclude>**/webapp/js/**/*</exclude>
-            <exclude>**/test/resources/**/*</exclude>
-            <exclude>**/test/data*/**/*</exclude>
-            <exclude>.gitignore</exclude>
-            <exclude>.git/**/*</exclude>
-            <!-- tooling/camel-manual/src/styles/print.css use a different 
-              license -->
-            <exclude>**/src/styles/print.css</exclude>
-            <!-- cxf does not handle comments here -->
-            <excludes>**/src/main/resources/META-INF/cxf/cxf.extension</excludes>
-            <excludes>**/src/main/resources/META-INF/cxf/bus-extensions.txt</excludes>
-            <!-- generated files -->
-            <exclude>**/target/**/*</exclude>
-            <exclude>**/eclipse-classes/**/*</exclude>
-            <exclude>**/.*</exclude>
-            <exclude>**/.settings/**/*</exclude>
-            <exclude>**/*.iml</exclude>
-            <exclude>.idea/**/*</exclude>
-            <exclude>**/avro/**/*.avpr</exclude>
-            <exclude>**/OSGI-INF/bundle.info</exclude>
-          </excludes>
-        </configuration>
       </plugin>
     </plugins>
   </build>
