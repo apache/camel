@@ -116,8 +116,8 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     }
     
     public static class TestExchangeFormatter implements ExchangeFormatter {
-        private int counter = 0;
-        private boolean addTen = false;
+        private int counter;
+        private boolean addTen;
         
         @Override
         public String format(Exchange exchange) {
