@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
+import com.google.common.base.Optional;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +47,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private final TransactionStrategy template;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
+    private Optional<Method> preConsumedMethod;
     private String query;
     private String namedQuery;
     private String nativeQuery;
@@ -122,7 +124,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         return endpoint.getCamelContext().getTypeConverter().convertTo(int.class, messagePolled);
     }
 
-
+    
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
@@ -146,8 +148,14 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
-
+            
             if (lockEntity(result, entityManager)) {
+                // Run the @PreConsumed callback - User supplied preprocessing
+                Optional<Method> preConsumed = getPreConsumedMethod();
+                if (preConsumed.isPresent()) {
+                    preConsumed.get().invoke(result);
+                }
+                
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
                 getProcessor().process(exchange);
@@ -170,6 +178,34 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         return endpoint;
     }
 
+    public Optional<Method> getPreConsumedMethod() {
+        if (preConsumedMethod == null) {
+            // Look for @PreConsumed to allow custom callback before the Entity has been consumed
+            Class<?> entityType = getEndpoint().getEntityType();
+            if (entityType != null) {
+                // Inspect the method(s) annotated with @PreConsumed
+                List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, PreConsumed.class);
+                if (methods.size() > 1) {
+                    throw new IllegalStateException("Only one method can be annotated with the @PreConsumed annotation but found: " + methods);
+                } else if (methods.size() == 1) {
+                    // Inspect the parameters of the @PreConsumed method
+                    Class<?>[] parameters = methods.get(0).getParameterTypes();
+                    if (parameters.length != 0) {
+                        throw new IllegalStateException("@PreConsumed annotated method cannot have parameters!");
+                    }
+                    
+                    preConsumedMethod = Optional.of(methods.get(0));
+                } else {
+                    preConsumedMethod = Optional.absent();
+                }
+            } else {
+                throw new IllegalStateException("Jpa endpoint did not contain a defined entity type!");
+            }
+        }
+        
+        return preConsumedMethod;
+    }
+    
     public QueryFactory getQueryFactory() {
         if (queryFactory == null) {
             queryFactory = createQueryFactory();
