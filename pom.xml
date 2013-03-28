@@ -195,6 +195,20 @@
               </excludes>
             </configuration>
           </plugin>
+          
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
+            <useReleaseProfile>false</useReleaseProfile>
+            <preparationGoals>clean install</preparationGoals>
+            <goals>deploy</goals>
+            <arguments>-Papache-release,enable-schemagen,sourcecheck,validate,hibernate-derby</arguments>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>

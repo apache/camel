@@ -260,7 +260,6 @@
     <maven-jar-plugin-version>2.4</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>2.9</maven-javadoc-plugin-version>
     <maven-plugin-plugin-version>3.2</maven-plugin-plugin-version>
-    <maven-release-plugin-version>2.4</maven-release-plugin-version>
     <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
@@ -2209,19 +2208,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
           <version>${maven-plugin-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>${maven-release-plugin-version}</version>
-          <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
-            <useReleaseProfile>false</useReleaseProfile>
-            <preparationGoals>clean install</preparationGoals>
-            <goals>deploy</goals>
-            <arguments>-Papache-release,enable-schemagen,sourcecheck,validate,hibernate-derby</arguments>
-            <autoVersionSubmodules>true</autoVersionSubmodules>
-          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
