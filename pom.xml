@@ -191,6 +191,7 @@
                 <exclude>.idea/**/*</exclude>
                 <exclude>**/avro/**/*.avpr</exclude>
                 <exclude>**/OSGI-INF/bundle.info</exclude>
+                <exclude>**/test_rsa*</exclude>
               </excludes>
             </configuration>
           </plugin>
