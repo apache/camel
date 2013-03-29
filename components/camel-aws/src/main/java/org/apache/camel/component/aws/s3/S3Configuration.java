@@ -32,6 +32,7 @@ public class S3Configuration implements Cloneable {
     private String prefix;
     private String region;
     private boolean deleteAfterRead = true;
+    private boolean deleteAfterWrite;
     private String amazonS3Endpoint;
     private String policy;
     private String storageClass;
@@ -98,6 +99,14 @@ public class S3Configuration implements Cloneable {
 
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
+    }
+
+    public boolean isDeleteAfterWrite() {
+        return deleteAfterWrite;
+    }
+
+    public void setDeleteAfterWrite(boolean deleteAfterWrite) {
+        this.deleteAfterWrite = deleteAfterWrite;
     }
     
     public String getPolicy() {

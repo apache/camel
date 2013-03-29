@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
@@ -28,8 +29,10 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +93,12 @@ public class S3Producer extends DefaultProducer {
             objectMetadata.setUserMetadata(userMetadata);
         }
 
+        File filePayload = null;
+
+        Object obj = exchange.getIn().getMandatoryBody();
+        if (obj instanceof File) {
+            filePayload = (File)obj;
+        }
         PutObjectRequest putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(),
                 determineKey(exchange), exchange.getIn().getMandatoryBody(InputStream.class), objectMetadata);
 
@@ -120,6 +129,10 @@ public class S3Producer extends DefaultProducer {
         message.setHeader(S3Constants.E_TAG, putObjectResult.getETag());
         if (putObjectResult.getVersionId() != null) {
             message.setHeader(S3Constants.VERSION_ID, putObjectResult.getVersionId());
+        }
+
+        if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
+            FileUtil.deleteFile(filePayload);
         }
     }
 
