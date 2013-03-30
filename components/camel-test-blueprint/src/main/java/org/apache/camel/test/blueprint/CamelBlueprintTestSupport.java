@@ -38,7 +38,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
  */
 public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
-    private volatile  BundleContext bundleContext;
+    private volatile BundleContext bundleContext;
     
     protected BundleContext createBundleContext() throws Exception {
         String symbolicName = getClass().getSimpleName();
