@@ -190,14 +190,14 @@ public final class CamelBlueprintHelper {
             Object svc = tracker.waitForService(timeout);
             if (svc == null) {
                 Dictionary<?, ?> dic = bundleContext.getBundle().getHeaders();
-                System.err.println("Test bundle headers: " + explode(dic));
+                LOG.warn("Test bundle headers: " + explode(dic));
 
                 for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
-                    System.err.println("ServiceReference: " + ref + ", bundle: " + ref.getBundle() + ", symbolicName: " + ref.getBundle().getSymbolicName());
+                    LOG.warn("ServiceReference: " + ref + ", bundle: " + ref.getBundle() + ", symbolicName: " + ref.getBundle().getSymbolicName());
                 }
 
                 for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
-                    System.err.println("Filtered ServiceReference: " + ref + ", bundle: " + ref.getBundle() + ", symbolicName: " + ref.getBundle().getSymbolicName());
+                    LOG.warn("Filtered ServiceReference: " + ref + ", bundle: " + ref.getBundle() + ", symbolicName: " + ref.getBundle().getSymbolicName());
                 }
 
                 throw new RuntimeException("Gave up waiting for service " + flt);
