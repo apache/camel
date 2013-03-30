@@ -29,6 +29,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -39,20 +40,18 @@ import org.osgi.service.cm.ConfigurationAdmin;
  * Base class for OSGi Blueprint unit tests with Camel.
  */
 public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
-
-    private BundleContext bundleContext;
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
+    private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
+    private volatile BundleContext bundleContext;
+    
+    protected BundleContext createBundleContext() throws Exception {
         String symbolicName = getClass().getSimpleName();
-        this.bundleContext = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
+        BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
                 true, getBundleFilter(), getBundleVersion(), getBundleDirectives());
 
         // must register override properties early in OSGi containers
         Properties extra = useOverridePropertiesWithPropertiesComponent();
         if (extra != null) {
-            bundleContext.registerService(PropertiesComponent.OVERRIDE_PROPERTIES, extra, null);
+            answer.registerService(PropertiesComponent.OVERRIDE_PROPERTIES, extra, null);
         }
 
         // must reuse props as we can do both load from .cfg file and override afterwards
@@ -79,7 +78,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
                 props.put(key, value);
             }
 
-            ConfigurationAdmin configAdmin = getOsgiService(ConfigurationAdmin.class);
+            ConfigurationAdmin configAdmin = CamelBlueprintHelper.getOsgiService(answer, ConfigurationAdmin.class);
             if (configAdmin != null) {
                 // ensure we update
                 Configuration config = configAdmin.getConfiguration(pid);
@@ -93,7 +92,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         // allow end user to override properties
         String pid = useOverridePropertiesWithConfigAdmin(props);
         if (pid != null) {
-            ConfigurationAdmin configAdmin = getOsgiService(ConfigurationAdmin.class);
+            ConfigurationAdmin configAdmin = CamelBlueprintHelper.getOsgiService(answer, ConfigurationAdmin.class);
             Configuration config = configAdmin.getConfiguration(pid);
             if (config == null) {
                 throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
@@ -103,9 +102,25 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
             config.update(props);
         }
+        return answer;
+    }
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        String symbolicName = getClass().getSimpleName();
+        if (isCreateCamelContextPerClass()) {
+            // test is per class, so only setup once (the first time)
+            boolean first = threadLocalBundleContext.get() == null;
+            if (first) {
+                threadLocalBundleContext.set(createBundleContext());
+            }
+            bundleContext = threadLocalBundleContext.get();
+        } else {
+            bundleContext = createBundleContext();
+        }
 
         super.setUp();
-
         // must wait for blueprint container to be published then the namespace parser is complete and we are ready for testing
         log.debug("Waiting for BlueprintContainer to be published with symbolicName: {}", symbolicName);
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=" + symbolicName + ")");
@@ -135,7 +150,20 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
+        if (isCreateCamelContextPerClass()) {
+            // we tear down in after class
+            return;
+        }
         CamelBlueprintHelper.disposeBundleContext(bundleContext);
+    }
+    
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+        if (threadLocalBundleContext.get() != null) {
+            CamelBlueprintHelper.disposeBundleContext(threadLocalBundleContext.get());
+            threadLocalBundleContext.remove();
+        }
+        CamelTestSupport.tearDownAfterClass();
     }
 
     /**
@@ -195,6 +223,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         context = (ModelCamelContext) answer;
         return answer;
     }
+   
 
     protected <T> T getOsgiService(Class<T> type) {
         return CamelBlueprintHelper.getOsgiService(bundleContext, type);
