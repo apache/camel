@@ -208,6 +208,13 @@
       <version>${httpclient4-version}</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpmime</artifactId>
+  	    <version>${httpclient4-version}</version>
+      	<scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>

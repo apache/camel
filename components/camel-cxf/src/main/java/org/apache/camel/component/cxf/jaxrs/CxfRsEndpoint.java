@@ -45,6 +45,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
+    
+    public enum BindingStyle {
+        /**
+         * <i>Only available for consumers.</i>
+         * This binding style processes request parameters, multiparts, etc. and maps them to IN headers, IN attachments and to the message body.
+         * It aims to eliminate low-level processing of {@link org.apache.cxf.message.MessageContentsList}.
+         * It also also adds more flexibility and simplicity to the response mapping.
+         */
+        SimpleConsumer,
+        
+        /**
+         * This is the traditional binding style, which simply dumps the {@link org.apache.cxf.message.MessageContentsList} coming in from the CXF stack
+         * onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature.
+         */
+        Default
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
 
     protected Bus bus;
@@ -60,6 +77,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean loggingFeatureEnabled;
     private int loggingSizeLimit;
     private boolean skipFaultLogging;
+    private BindingStyle bindingStyle = BindingStyle.Default;
     
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
@@ -115,6 +133,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public Producer createProducer() throws Exception {
+        if (bindingStyle == BindingStyle.SimpleConsumer) {
+            throw new IllegalArgumentException("The SimpleConsumer Binding Style cannot be used in a camel-cxfrs producer");
+        }
         return new CxfRsProducer(this);
     }
 
@@ -338,14 +359,25 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return isSetDefaultBus;
     }
     
+    public BindingStyle getBindingStyle() {
+        return bindingStyle;
+    }
+
+    /**
+     * See documentation of {@link BindingStyle}.
+     */
+    public void setBindingStyle(BindingStyle bindingStyle) {
+        this.bindingStyle = bindingStyle;
+    }
+    
     @Override
     protected void doStart() throws Exception {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new CxfRsHeaderFilterStrategy();
         }
-        if (binding == null) {
-            binding = new DefaultCxfRsBinding();
-        }
+        
+        binding = bindingStyle == null || bindingStyle == BindingStyle.Default ? new DefaultCxfRsBinding() : new SimpleCxfRsBinding();
+        
         if (binding instanceof HeaderFilterStrategyAware) {
             ((HeaderFilterStrategyAware) binding).setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
@@ -355,4 +387,5 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     protected void doStop() throws Exception {
         // noop
     }
+
 }
