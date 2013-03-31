@@ -70,7 +70,7 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Creates a payload object with the information from the given exchange.
      *
-     * @param exchange the exchange
+     * @param exchange the exchange, must <b>not</b> be <tt>null</tt>
      * @return the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange) {
@@ -80,11 +80,13 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Creates a payload object with the information from the given exchange.
      *
-     * @param exchange the exchange
+     * @param exchange the exchange, must <b>not</b> be <tt>null</tt>
      * @param includeProperties whether or not to include exchange properties
      * @return the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties) {
+        ObjectHelper.notNull(exchange, "exchange");
+
         // we do not support files
         Object body = exchange.getIn().getBody();
         if (body instanceof WrappedFile || body instanceof File) {
@@ -112,10 +114,13 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Transfers the information from the payload to the exchange.
      *
-     * @param exchange the exchange to set values from the payload
-     * @param payload  the payload with the values
+     * @param exchange the exchange to set values from the payload, must <b>not</b> be <tt>null</tt>
+     * @param payload  the payload with the values, must <b>not</b> be <tt>null</tt>
      */
     public static void unmarshal(Exchange exchange, DefaultExchangeHolder payload) {
+        ObjectHelper.notNull(exchange, "exchange");
+        ObjectHelper.notNull(payload, "payload");
+
         exchange.setExchangeId(payload.exchangeId);
         exchange.getIn().setBody(payload.inBody);
         if (payload.inHeaders != null) {
@@ -126,7 +131,9 @@ public class DefaultExchangeHolder implements Serializable {
             if (payload.outHeaders != null) {
                 exchange.getOut().setHeaders(payload.outHeaders);
             }
-            exchange.getOut().setFault(payload.outFaultFlag.booleanValue());
+            if (payload.outFaultFlag != null) {
+                exchange.getOut().setFault(payload.outFaultFlag);
+            }
         }
         if (payload.properties != null) {
             for (String key : payload.properties.keySet()) {
