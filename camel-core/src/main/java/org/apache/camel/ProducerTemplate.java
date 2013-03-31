@@ -25,20 +25,21 @@ import java.util.concurrent.TimeoutException;
 import org.apache.camel.spi.Synchronization;
 
 /**
- * Template (named like Spring's TransactionTemplate & JmsTemplate
- * et al) for working with Camel and sending {@link Message} instances in an
+ * Template for working with Camel and sending {@link Message} instances in an
  * {@link Exchange} to an {@link Endpoint}.
- * <br/><br/>
+ * <br/>
  * <p/><b>Important:</b> Read the javadoc of each method carefully to ensure the behavior of the method is understood.
  * Some methods is for <tt>InOnly</tt>, others for <tt>InOut</tt> MEP. And some methods throws
  * {@link org.apache.camel.CamelExecutionException} while others stores any thrown exception on the returned
  * {@link Exchange}.
- * <br/><br/>
+ * <br/>
+ * <p/>The {@link ProducerTemplate} is <b>thread safe</b>.
+ * <br/>
  * <p/>All the methods which sends a message may throw {@link FailedToCreateProducerException} in
  * case the {@link Producer} could not be created. Or a {@link NoSuchEndpointException} if the endpoint could
  * not be resolved. There may be other related exceptions being thrown which occurs <i>before</i> the {@link Producer}
  * has started sending the message.
- * <br/><br/>
+ * <br/>
  * <p/>All the sendBody or requestBody methods will return the content according to this strategy:
  * <ul>
  *   <li>throws {@link org.apache.camel.CamelExecutionException} if processing failed <i>during</i> routing
@@ -47,9 +48,8 @@ import org.apache.camel.spi.Synchronization;
  *   <li>Either <tt>IN</tt> or <tt>OUT</tt> body according to the message exchange pattern. If the pattern is
  *   Out capable then the <tt>OUT</tt> body is returned, otherwise <tt>IN</tt>.
  * </ul>
- * <p/>
  * <br/>
- * Before using the template it must be started.
+ * <p/>Before using the template it must be started.
  * And when you are done using the template, make sure to {@link #stop()} the template.
  * <br/>
  * <p/><b>Important note on usage:</b> See this

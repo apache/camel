@@ -17,29 +17,29 @@
 package org.apache.camel;
 
 /**
- * Template (named like Spring's TransactionTemplate & JmsTemplate
- * et al) for working with Camel and consuming {@link Message} instances in an
+ * Template for working with Camel and consuming {@link Message} instances in an
  * {@link Exchange} from an {@link Endpoint}.
- * <p/>
- * This template is an implementation of the
+ * <br/>
+ * <p/>This template is an implementation of the
  * <a href="http://camel.apache.org/polling-consumer.html">Polling Consumer EIP</a>.
  * This is <b>not</b> the <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer EIP</a>.
- * <p/>
- * <b>All</b> methods throws {@link RuntimeCamelException} if consuming of
+ * <br/>
+ * <p/>The {@link ConsumerTemplate} is <b>thread safe</b>.
+ * <br/>
+ * <p/><b>All</b> methods throws {@link RuntimeCamelException} if consuming of
  * the {@link Exchange} failed and an Exception occurred. The <tt>getCause</tt>
  * method on {@link RuntimeCamelException} returns the wrapper original caused
  * exception.
- * <p/>
- * All the receive<b>Body</b> methods will return the content according to this strategy
- * <ul>
- * <li>throws {@link RuntimeCamelException} as stated above</li>
- * <li>The <tt>fault.body</tt> if there is a fault message set and its not <tt>null</tt></li>
- * <li>The <tt>out.body</tt> if there is a out message set and its not <tt>null</tt></li>
- * <li>The <tt>in.body</tt></li>
- * </ul>
- * <p/>
  * <br/>
- * Before using the template it must be started.
+ * <p/>All the receive<b>Body</b> methods will return the content according to this strategy
+ * <ul>
+ *   <li>throws {@link RuntimeCamelException} as stated above</li>
+ *   <li>The <tt>fault.body</tt> if there is a fault message set and its not <tt>null</tt></li>
+ *   <li>The <tt>out.body</tt> if there is a out message set and its not <tt>null</tt></li>
+ *   <li>The <tt>in.body</tt></li>
+ * </ul>
+ * <br/>
+ * <p/>Before using the template it must be started.
  * And when you are done using the template, make sure to {@link #stop()} the template.
  * <br/>
  * <p/><b>Important note on usage:</b> See this
