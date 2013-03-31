@@ -22,23 +22,36 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.LongSerializationPolicy;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
  */
-public class GsonDataFormat implements DataFormat {
+public class GsonDataFormat extends ServiceSupport implements DataFormat {
 
-    private final Gson gson;
+    private Gson gson;
     private Class<?> unmarshalType;
+    private List<ExclusionStrategy> exclusionStrategies;
+    private LongSerializationPolicy longSerializationPolicy;
+    private FieldNamingPolicy fieldNamingPolicy;
+    private FieldNamingStrategy fieldNamingStrategy;
+    private Boolean serializeNulls;
+    private Boolean prettyPrinting;
+    private String dateFormatPattern;
 
     public GsonDataFormat() {
         this(Map.class);
@@ -51,7 +64,7 @@ public class GsonDataFormat implements DataFormat {
      * @param unmarshalType the custom unmarshal type
      */
     public GsonDataFormat(Class<?> unmarshalType) {
-        this(new Gson(), unmarshalType);
+        this(null, unmarshalType);
     }
 
     /**
@@ -60,9 +73,12 @@ public class GsonDataFormat implements DataFormat {
      *
      * @param unmarshalType the custom unmarshal type
      * @param exclusionStrategies one or more custom ExclusionStrategy implementations
+     * @deprecated use the setter instead
      */
+    @Deprecated
     public GsonDataFormat(Class<?> unmarshalType, ExclusionStrategy... exclusionStrategies) {
-        this(createGsonWithExclusionStrategy(exclusionStrategies), unmarshalType);
+        this(null, unmarshalType);
+        setExclusionStrategies(Arrays.asList(exclusionStrategies));
     }
 
     /**
@@ -74,10 +90,6 @@ public class GsonDataFormat implements DataFormat {
     public GsonDataFormat(Gson gson, Class<?> unmarshalType) {
         this.gson = gson;
         this.unmarshalType = unmarshalType;
-    }
-
-    private static Gson createGsonWithExclusionStrategy(ExclusionStrategy... exclusionStrategies) {
-        return exclusionStrategies != null ? new GsonBuilder().setExclusionStrategies(exclusionStrategies).create() : new Gson();
     }
 
     @Override
@@ -95,6 +107,39 @@ public class GsonDataFormat implements DataFormat {
         return result;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        GsonBuilder builder = new GsonBuilder();
+        if (exclusionStrategies != null && !exclusionStrategies.isEmpty()) {
+            ExclusionStrategy[] strategies = exclusionStrategies.toArray(new ExclusionStrategy[exclusionStrategies.size()]);
+            builder.setExclusionStrategies(strategies);
+        }
+        if (longSerializationPolicy != null) {
+            builder.setLongSerializationPolicy(longSerializationPolicy);
+        }
+        if (fieldNamingPolicy != null) {
+            builder.setFieldNamingPolicy(fieldNamingPolicy);
+        }
+        if (fieldNamingStrategy != null) {
+            builder.setFieldNamingStrategy(fieldNamingStrategy);
+        }
+        if (serializeNulls != null && serializeNulls) {
+            builder.serializeNulls();
+        }
+        if (prettyPrinting != null && prettyPrinting) {
+            builder.setPrettyPrinting();
+        }
+        if (dateFormatPattern != null) {
+            builder.setDateFormat(dateFormatPattern);
+        }
+        gson = builder.create();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -104,6 +149,62 @@ public class GsonDataFormat implements DataFormat {
 
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    public List<ExclusionStrategy> getExclusionStrategies() {
+        return exclusionStrategies;
+    }
+
+    public void setExclusionStrategies(List<ExclusionStrategy> exclusionStrategies) {
+        this.exclusionStrategies = exclusionStrategies;
+    }
+
+    public LongSerializationPolicy getLongSerializationPolicy() {
+        return longSerializationPolicy;
+    }
+
+    public void setLongSerializationPolicy(LongSerializationPolicy longSerializationPolicy) {
+        this.longSerializationPolicy = longSerializationPolicy;
+    }
+
+    public FieldNamingPolicy getFieldNamingPolicy() {
+        return fieldNamingPolicy;
+    }
+
+    public void setFieldNamingPolicy(FieldNamingPolicy fieldNamingPolicy) {
+        this.fieldNamingPolicy = fieldNamingPolicy;
+    }
+
+    public FieldNamingStrategy getFieldNamingStrategy() {
+        return fieldNamingStrategy;
+    }
+
+    public void setFieldNamingStrategy(FieldNamingStrategy fieldNamingStrategy) {
+        this.fieldNamingStrategy = fieldNamingStrategy;
+    }
+
+    public Boolean getSerializeNulls() {
+        return serializeNulls;
+    }
+
+    public void setSerializeNulls(Boolean serializeNulls) {
+        this.serializeNulls = serializeNulls;
+    }
+
+    public Boolean getPrettyPrinting() {
+        return prettyPrinting;
+    }
+
+    public void setPrettyPrinting(Boolean prettyPrinting) {
+        this.prettyPrinting = prettyPrinting;
+    }
+
+    public String getDateFormatPattern() {
+        return dateFormatPattern;
+    }
+
+    public void setDateFormatPattern(String dateFormatPattern) {
+        this.dateFormatPattern = dateFormatPattern;
     }
 
     public Gson getGson() {
