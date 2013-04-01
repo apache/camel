@@ -61,7 +61,7 @@
     </cxf:binding>
   </cxf:cxfEndpoint>
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
      <route>
         <from uri="direct:start" />
         <to uri="cxf:bean:myEndpoint" />

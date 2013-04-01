@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.spring;
 
 import javax.xml.namespace.QName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfProducer;
@@ -65,6 +66,20 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         SoapBindingConfiguration configuration = (SoapBindingConfiguration)myEndpoint.getBindingConfig();
         assertEquals("We should get a right soap version", "1.2", String.valueOf(configuration.getVersion().getVersion()));
         
+    }
+    
+    @Test
+    public void testCxfEndpointsWithCamelContext() {
+        CamelContext context = ctx.getBean("myCamelContext", CamelContext.class);
+        // try to create a new CxfEndpoint which could override the old bean's setting
+        CxfEndpoint myLocalCxfEndpoint = (CxfEndpoint)context.getEndpoint("cxf:bean:routerEndpoint?address=http://localhost:" 
+        + port1 + "/CxfEndpointBeanTest/myCamelContext/");
+        assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
+                + "/CxfEndpointBeanTest/myCamelContext/", myLocalCxfEndpoint.getAddress());
+
+        CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
+        assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
+                     + "/CxfEndpointBeanTest/router", routerEndpoint.getAddress());
     }
     
     @Test
