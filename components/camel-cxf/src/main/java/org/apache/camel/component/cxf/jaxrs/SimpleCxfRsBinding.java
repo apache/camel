@@ -102,28 +102,29 @@ import org.apache.cxf.message.MessageContentsList;
 public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     /** The JAX-RS annotations to be injected as headers in the IN message */
-    private static Set<Class<?>> HEADER_ANNOTATIONS = Collections.unmodifiableSet(
+    private static final Set<Class<?>> HEADER_ANNOTATIONS = Collections.unmodifiableSet(
             new HashSet<Class<?>>(Arrays.asList(new Class<?>[]{ 
-                    CookieParam.class, 
-                    FormParam.class, 
-                    PathParam.class,
-                    HeaderParam.class, 
-                    MatrixParam.class, 
-                    QueryParam.class})));
+                CookieParam.class, 
+                FormParam.class, 
+                PathParam.class,
+                HeaderParam.class, 
+                MatrixParam.class, 
+                QueryParam.class})));
     
-    private static Set<Class<?>> BINARY_ATTACHMENT_TYPES = Collections.unmodifiableSet(
+    private static final Set<Class<?>> BINARY_ATTACHMENT_TYPES = Collections.unmodifiableSet(
             new HashSet<Class<?>>(Arrays.asList(new Class<?>[] {
-                    Attachment.class,
-                    DataHandler.class,
-                    DataSource.class,
-                    InputStream.class,
+                Attachment.class,
+                DataHandler.class,
+                DataSource.class,
+                InputStream.class,
             })));
+    
+    private static final Class<?>[] NO_PARAMETER_TYPES = (Class<?>[]) null;
+    private static final Object[] NO_PARAMETERS = (Object[]) null;
     
     /** Caches the Method to Parameters associations to avoid reflection with every request */
     private Map<Method, MethodSpec> methodSpecCache = new ConcurrentHashMap<Method, MethodSpec>();
-    
-    private final static Class<?>[] NO_PARAMETER_TYPES = (Class<?>[]) null;
-    private final static Object[] NO_PARAMETERS = (Object[]) null;
+   
 
     @Override
     public void populateExchangeFromCxfRsRequest(Exchange cxfExchange, org.apache.camel.Exchange camelExchange,
@@ -236,8 +237,9 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      * @param numberParameters
      */
     protected void bindParameters(Message in, Object[] paramArray, String[] paramNames, int numberParameters) {
-        if (numberParameters == 0) return;
-        
+        if (numberParameters == 0) {
+            return;
+        }
         for (int i = 0; i < paramNames.length; i++) {
             if (paramNames[i] != null) {
                 in.setHeader(paramNames[i], paramArray[i]);
@@ -253,13 +255,17 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      * @param singleBodyIndex
      */
     protected void bindBody(Message in, Object[] paramArray, int singleBodyIndex) {
-        if (singleBodyIndex == -1) return;
+        if (singleBodyIndex == -1) { 
+            return;
+        }
         in.setBody(paramArray[singleBodyIndex]);
     }
    
     private void transferMultipartParameters(Object[] paramArray, String[] multipartNames, String[] multipartTypes, Message in) {
         for (int i = 0; i < multipartNames.length; i++) {
-            if (multipartNames[i] == null || paramArray[i] == null) continue;
+            if (multipartNames[i] == null || paramArray[i] == null) {
+                continue;
+            }
             if (BINARY_ATTACHMENT_TYPES.contains(paramArray[i].getClass())) {
                 transferBinaryMultipartParameter(paramArray[i], multipartNames[i], multipartTypes[i], in);
             } else {
@@ -285,8 +291,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     }
     
     protected static class MethodSpec {
-        private boolean multipart = false;
-        private int numberParameters = 0;
+        private boolean multipart;
+        private int numberParameters;
         private int entityIndex = -1;
         private String[] paramNames;
         private String[] multipartNames;
