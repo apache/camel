@@ -71,5 +71,4 @@ public class JaxbDataFormatTest {
 
         assertFalse(jaxbDataFormat.needFiltering(exchange));
     }
-
 }

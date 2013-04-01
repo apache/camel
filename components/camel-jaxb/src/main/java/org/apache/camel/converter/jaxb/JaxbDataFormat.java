@@ -16,22 +16,35 @@
  */
 package org.apache.camel.converter.jaxb;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
+
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -42,6 +55,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +68,11 @@ import org.slf4j.LoggerFactory;
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
+    private static final transient SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
     private CamelContext camelContext;
     private JAXBContext context;
     private String contextPath;
+    private String schema;
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
     private boolean filterNonXmlChars;
@@ -83,10 +99,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         this.contextPath = contextPath;
     }
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException, SAXException {
         try {            
             // must create a new instance of marshaller as its not thread safe
-            Marshaller marshaller = getContext().createMarshaller();
+            Marshaller marshaller = createMarshaller();
+            
             if (isPrettyPrint()) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             } 
@@ -136,7 +153,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         return filteringWriter;
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, SAXException {
         try {
             Object answer;
 
@@ -195,6 +212,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
     }
 
     public boolean isPrettyPrint() {
@@ -315,8 +340,44 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         }
     }
     
-    protected Unmarshaller createUnmarshaller() throws JAXBException {
-        return getContext().createUnmarshaller();
+    protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException, FileNotFoundException, MalformedURLException {
+        Unmarshaller unmarshaller = getContext().createUnmarshaller();
+        if (schema != null) {
+            Schema newSchema = SCHEMA_FACTORY.newSchema(getSources());
+            unmarshaller.setSchema(newSchema);
+            unmarshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    // stop unmarshalling if the event is an ERROR or FATAL ERROR
+                    return event.getSeverity() == 0;
+                }
+            });
+        }
+        return unmarshaller;
     }
 
+    protected Marshaller createMarshaller() throws JAXBException, SAXException, FileNotFoundException, MalformedURLException {
+        Marshaller marshaller = getContext().createMarshaller();
+        if (schema != null) {
+            Schema newSchema = SCHEMA_FACTORY.newSchema(getSources());
+            marshaller.setSchema(newSchema);
+            marshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    // stop marshalling if the event is an ERROR or FATAL ERROR
+                    return event.getSeverity() == 0;
+                }
+            });
+        }
+        return marshaller;
+    }
+
+    private Source[] getSources() throws FileNotFoundException, MalformedURLException {
+        // we support multiple schema by delimiting they by ','
+        String[] schemas = schema.split(",");
+        Source[] sources = new Source[schemas.length];
+        for (int i = 0; i < schemas.length; i++) {
+            URL schemaUrl = ResourceHelper.resolveMandatoryResourceAsUrl(camelContext.getClassResolver(), schemas[i]);
+            sources[i] = new StreamSource(schemaUrl.toExternalForm());
+        }
+        return sources;
+    }
 }

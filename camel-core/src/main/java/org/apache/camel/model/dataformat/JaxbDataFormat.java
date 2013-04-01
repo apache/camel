@@ -37,6 +37,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private String contextPath;
     @XmlAttribute
+    private String schema;
+    @XmlAttribute
     private Boolean prettyPrint;
     @XmlAttribute
     private Boolean ignoreJAXBElement;
@@ -69,6 +71,14 @@ public class JaxbDataFormat extends DataFormatDefinition {
 
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
     }
 
     public Boolean getPrettyPrint() {
@@ -174,6 +184,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
             setProperty(dataFormat, "namespacePrefixRef", namespacePrefixRef);
         }
         setProperty(dataFormat, "contextPath", contextPath);
+        if (schema != null) {
+            setProperty(dataFormat, "schema", schema);
+        }
     }
-
 }
