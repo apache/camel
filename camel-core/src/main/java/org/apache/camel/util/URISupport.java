@@ -105,6 +105,24 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {
+        return parseQuery(uri, false);
+    }
+
+    /**
+     * Parses the query part of the uri (eg the parameters).
+     * <p/>
+     * The URI parameters will by default be URI encoded. However you can define a parameter
+     * values with the syntax: <tt>key=RAW(value)</tt> which tells Camel to not encode the value,
+     * and use the value as is (eg key=value) and the value has <b>not</b> been encoded.
+     *
+     * @param uri the uri
+     * @param useRaw whether to force using raw values
+     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     * @see #RAW_TOKEN_START
+     * @see #RAW_TOKEN_END
+     */
+    public static Map<String, Object> parseQuery(String uri, boolean useRaw) throws URISyntaxException {
         // must check for trailing & as the uri.split("&") will ignore those
         if (uri != null && uri.endsWith("&")) {
             throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
@@ -157,7 +175,7 @@ public final class URISupport {
                     boolean end = ch == RAW_TOKEN_END.charAt(0) && (next == '&' || next == '\u0000');
                     if (end) {
                         // raw value end, so add that as a parameter, and reset flags
-                        addParameter(key.toString(), value.toString(), rc, isRaw);
+                        addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
                         key.setLength(0);
                         value.setLength(0);
                         isKey = true;
@@ -180,7 +198,7 @@ public final class URISupport {
                 // the & denote parameter is ended
                 if (ch == '&') {
                     // parameter is ended, as we hit & separator
-                    addParameter(key.toString(), value.toString(), rc, isRaw);
+                    addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
                     key.setLength(0);
                     value.setLength(0);
                     isKey = true;
@@ -199,7 +217,7 @@ public final class URISupport {
 
             // any left over parameters, then add that
             if (key.length() > 0) {
-                addParameter(key.toString(), value.toString(), rc, isRaw);
+                addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
             }
 
             return rc;
@@ -324,7 +342,7 @@ public final class URISupport {
      * @return the value without the prefix
      */
     public static String stripPrefix(String value, String prefix) {
-        if (value.startsWith(prefix)) {
+        if (value != null && value.startsWith(prefix)) {
             return value.substring(prefix.length());
         }
         return value;

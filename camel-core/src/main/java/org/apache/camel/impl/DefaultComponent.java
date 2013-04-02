@@ -82,7 +82,24 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             path = path.substring(0, idx);
         }
 
-        Map<String, Object> parameters = URISupport.parseParameters(u);
+        Map<String, Object> parameters;
+        if (useRawUri()) {
+            // when using raw uri then the query is taking from the uri as is
+            String query;
+            idx = uri.indexOf('?');
+            if (idx > -1) {
+                query = uri.substring(idx + 1);
+            } else {
+                query = u.getRawQuery();
+            }
+            // and use method parseQuery
+            parameters = URISupport.parseQuery(query, true);
+        } else {
+            // however when using the encoded (default mode) uri then the query,
+            // is taken from the URI (ensures values is URI encoded)
+            // and use method parseParameters
+            parameters = URISupport.parseParameters(u);
+        }
         // parameters using raw syntax: RAW(value)
         // should have the token removed, so its only the value we have in parameters, as we are about to create
         // an endpoint and want to have the parameter values without the RAW tokens
