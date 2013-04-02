@@ -118,7 +118,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 // only use the header factory if the row is the header
                 if (headerFactory.supportsModel(modelClassNames)) {
                     if (factory.skipHeader())  {
-                        LOG.warn("Skipping marshal of header row; 'skipHeader=true'");
+                        LOG.info("Skipping marshal of header row; 'skipHeader=true'");
                         continue;
                     } else {
                         result = headerFactory.unbind(model);
@@ -130,7 +130,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 // only use the header factory if the row is the header
                 if (footerFactory.supportsModel(modelClassNames)) {
                     if (factory.skipFooter()) {
-                        LOG.warn("Skipping marshal of footer row; 'skipFooter=true'");
+                        LOG.info("Skipping marshal of footer row; 'skipFooter=true'");
                         continue;
                     } else {
                         result = footerFactory.unbind(model);

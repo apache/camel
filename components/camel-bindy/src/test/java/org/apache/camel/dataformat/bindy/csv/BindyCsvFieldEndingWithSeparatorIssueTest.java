@@ -20,8 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.model.csv.MyCsvRecord;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.BindyType;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,7 +36,7 @@ import org.junit.Test;
  * !!! The separator in the beginning of the quoted field is still not handled.
  *
  */
-public class BindyCVSFieldEndingWithSeparatorIssueTest extends CamelTestSupport {
+public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport {
 
     @Test
     public void testBindy() throws Exception {

@@ -102,8 +102,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public void initAnnotatedFields() {
 
+    	int maxpos = 0;
         for (Class<?> cl : models) {
-
             List<Field> linkFields = new ArrayList<Field>();
 
             if (LOG.isDebugEnabled()) {
@@ -124,8 +124,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         ++numberOptionalFields;
                     }
 
-                    dataFields.put(dataField.pos(), dataField);
-                    annotatedFields.put(dataField.pos(), field);
+                    int pos = dataField.pos();
+                    if (annotatedFields.containsKey(pos)) {
+                    	Field f = annotatedFields.get(pos);
+                    	LOG.warn("Potentially invalid model: existing @DataField '{}' replaced by '{}'", f.getName(), field.getName());
+                    }
+                    dataFields.put(pos, dataField);
+                    annotatedFields.put(pos, field);
+                    maxpos = Math.max(maxpos, pos);
                 }
 
                 Link linkField = field.getAnnotation(Link.class);
@@ -136,7 +142,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }
                     linkFields.add(field);
                 }
-
             }
 
             if (!linkFields.isEmpty()) {
@@ -150,6 +155,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 LOG.debug("Number of mandatory fields: {}", numberMandatoryFields);
                 LOG.debug("Total: {}", totalFields);
             }
+        }
+
+        if (annotatedFields.size() < maxpos) {
+        	LOG.info("Potentially incomplete model: some csv fields may not be mapped to @DataField members");
         }
     }
 
@@ -512,7 +521,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
-     * Get parameters defined in @Csvrecord annotation
+     * Get parameters defined in @CsvRecord annotation
      */
     private void initCsvRecordParameters() {
         if (separator == null) {
