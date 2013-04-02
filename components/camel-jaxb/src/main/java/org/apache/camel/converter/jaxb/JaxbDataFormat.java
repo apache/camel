@@ -59,6 +59,7 @@ import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML

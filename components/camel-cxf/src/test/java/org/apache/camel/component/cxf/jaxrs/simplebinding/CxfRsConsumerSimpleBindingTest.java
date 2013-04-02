@@ -58,7 +58,8 @@ import org.junit.Test;
  */
 public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     private static final String PORT_PATH = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT_PATH + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource&bindingStyle=SimpleConsumer";
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT_PATH
+        + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource&bindingStyle=SimpleConsumer";
     
     private JAXBContext jaxb;
     private HttpClient httpclient;
@@ -75,10 +76,8 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
-                
         return new RouteBuilder() {
             public void configure() {
-                
                 from(CXF_RS_ENDPOINT_URI)
                     .recipientList(simple("direct:${header.operationName}"));
                     
@@ -99,14 +98,14 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                     }
                 });
                             
-               from("direct:updateCustomer").process(new Processor() {
+                from("direct:updateCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("123", exchange.getIn().getHeader("id"));
                         Customer c = exchange.getIn().getBody(Customer.class);
                         assertEquals(123, c.getId());
                         assertNotNull(c);
                     }
-               });
+                });
                         
                 from("direct:newCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -193,9 +192,8 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         exchange.getOut().setBody(null);
                     }
                 });
-        
-        }};
-            
+            }
+        };
     }
     
     @Test

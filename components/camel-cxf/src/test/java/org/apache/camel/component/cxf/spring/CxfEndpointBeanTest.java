@@ -75,11 +75,11 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         CxfEndpoint myLocalCxfEndpoint = (CxfEndpoint)context.getEndpoint("cxf:bean:routerEndpoint?address=http://localhost:" 
             + port1 + "/CxfEndpointBeanTest/myCamelContext/");
         assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
-                + "/CxfEndpointBeanTest/myCamelContext/", myLocalCxfEndpoint.getAddress());
+            + "/CxfEndpointBeanTest/myCamelContext/", myLocalCxfEndpoint.getAddress());
 
         CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
         assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
-                     + "/CxfEndpointBeanTest/router", routerEndpoint.getAddress());
+            + "/CxfEndpointBeanTest/router", routerEndpoint.getAddress());
     }
     
     @Test
