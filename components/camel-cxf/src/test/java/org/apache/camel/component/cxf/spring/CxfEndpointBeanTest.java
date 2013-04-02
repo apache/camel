@@ -73,7 +73,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         CamelContext context = ctx.getBean("myCamelContext", CamelContext.class);
         // try to create a new CxfEndpoint which could override the old bean's setting
         CxfEndpoint myLocalCxfEndpoint = (CxfEndpoint)context.getEndpoint("cxf:bean:routerEndpoint?address=http://localhost:" 
-        + port1 + "/CxfEndpointBeanTest/myCamelContext/");
+            + port1 + "/CxfEndpointBeanTest/myCamelContext/");
         assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
                 + "/CxfEndpointBeanTest/myCamelContext/", myLocalCxfEndpoint.getAddress());
 
