@@ -80,11 +80,10 @@ public class MailAttachmentTest extends CamelTestSupport {
         DataHandler handler = out.getIn().getAttachment("logo.jpeg");
         assertNotNull("The logo should be there", handler);
 
-        if (isJava16()) {
-            assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
-        } else {
-            assertEquals("application/octet-stream; name=logo.jpeg", handler.getContentType());
-        }
+        // content type should match
+        boolean match1 = "image/jpeg; name=logo.jpeg".equals(handler.getContentType());
+        boolean match2 = "application/octet-stream; name=logo.jpeg".equals(handler.getContentType());
+        assertTrue("Should match 1 or 2", match1 || match2);
 
         assertEquals("Handler name should be the file name", "logo.jpeg", handler.getName());
 
