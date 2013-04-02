@@ -84,11 +84,9 @@ public class MailHtmlAttachmentTest extends CamelTestSupport {
         assertTrue("logo should be more than 1000 bytes", bytes.length > 1000);
 
         // content type should match
-        if (isJava16()) {
-            assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
-        } else {
-            assertEquals("application/octet-stream; name=logo.jpeg", handler.getContentType());
-        }
+        boolean match1 = "image/jpeg; name=logo.jpeg".equals(handler.getContentType());
+        boolean match2 = "application/octet-stream; name=logo.jpeg".equals(handler.getContentType());
+        assertTrue("Should match 1 or 2", match1 || match2);
 
         // save logo for visual inspection
         template.sendBodyAndHeader("file://target", bytes, Exchange.FILE_NAME, "maillogo.jpg");
