@@ -40,6 +40,7 @@ import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * Data format supporting SOAP 1.1 and 1.2.
@@ -125,8 +126,9 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * 
      * To determine the name of the top level xml elements the elementNameStrategy
      * is used.
+     * @throws IOException,SAXException 
      */
-    public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException {
+    public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException, SAXException {
         checkElementNameStrategy(exchange);
 
         String soapAction = getSoapActionFromExchange(exchange);
@@ -253,8 +255,9 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     
     /**
      * Unmarshal a given SOAP xml stream and return the content of the SOAP body
+     * @throws IOException,SAXException
      */
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, SAXException {
         checkElementNameStrategy(exchange);
         
         String soapAction = getSoapActionFromExchange(exchange);
