@@ -86,9 +86,11 @@ import org.apache.cxf.message.MessageContentsList;
  * The original {@link MessageContentsList} is preserved, even though it only contains the 2 parameters.
  * <p />
  * 
- * <b><tt>public Response doAction(@Multipart(value="body1") BusinessObject request, @Multipart(value="body2") BusinessObject request2);</tt></b><br/>
- * The first parameter is transferred as a header with name <tt>body1</tt>, and the second one is mapped as header <tt>body2</tt>. The original
- * {@link MessageContentsList} is preserved as the IN message body.
+ * <b><tt>public Response doAction(@Multipart(value="body1", type="application/json") BusinessObject request, @Multipart(value="image", 
+ *          type="image/jpeg") DataHandler image);</tt></b><br/>
+ * The first parameter is transferred as a POJO in a header named <tt>body1</tt>, while the second parameter gets injected as an  
+ * attachment with name <tt>image</tt>. The MIME type is observed by the CXF stack. The IN message body is the original 
+ * {@link MessageContentsList} handed over from CXF.
  * <p />
  * 
  * <b><tt>public Response doAction(InputStream abcd);</tt></b><br/>
