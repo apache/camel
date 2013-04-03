@@ -42,19 +42,53 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     private String id;
     private PropertyPlaceholderHelper helper;
 
+    // to support both Spring 3.0 / 3.1+ we need to keep track of these as they have private modified in Spring 3.0
+    private String configuredPlaceholderPrefix;
+    private String configuredPlaceholderSuffix;
+    private String configuredValueSeparator;
+    private Boolean configuredIgnoreUnresolvablePlaceholders;
+
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
         super.processProperties(beanFactoryToProcess, props);
         // store all the spring properties so we can refer to them later
         properties.putAll(props);
         // create helper
-        helper = new PropertyPlaceholderHelper(placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
+        helper = new PropertyPlaceholderHelper(
+                configuredPlaceholderPrefix != null ? configuredPlaceholderPrefix : DEFAULT_PLACEHOLDER_PREFIX,
+                configuredPlaceholderSuffix != null ? configuredPlaceholderSuffix : DEFAULT_PLACEHOLDER_SUFFIX,
+                configuredValueSeparator != null ? configuredValueSeparator : DEFAULT_VALUE_SEPARATOR,
+                configuredIgnoreUnresolvablePlaceholders != null ? configuredIgnoreUnresolvablePlaceholders : false);
     }
 
     @Override
     public void setBeanName(String beanName) {
         this.id = beanName;
         super.setBeanName(beanName);
+    }
+
+    @Override
+    public void setPlaceholderPrefix(String placeholderPrefix) {
+        super.setPlaceholderPrefix(placeholderPrefix);
+        this.configuredPlaceholderPrefix = placeholderPrefix;
+    }
+
+    @Override
+    public void setPlaceholderSuffix(String placeholderSuffix) {
+        super.setPlaceholderSuffix(placeholderSuffix);
+        this.configuredPlaceholderSuffix = placeholderSuffix;
+    }
+
+    @Override
+    public void setValueSeparator(String valueSeparator) {
+        super.setValueSeparator(valueSeparator);
+        this.configuredValueSeparator = valueSeparator;
+    }
+
+    @Override
+    public void setIgnoreUnresolvablePlaceholders(boolean ignoreUnresolvablePlaceholders) {
+        super.setIgnoreUnresolvablePlaceholders(ignoreUnresolvablePlaceholders);
+        this.configuredIgnoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
     }
 
     @Override
