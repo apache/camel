@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -161,8 +163,19 @@ public class SplitterTest extends ContextTestSupport {
         assertMessageHeader(out, "foo", "bar");
         assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
     }
+    
+    public void testSplitterWithStreamingAndFileBody() throws Exception {
+        URL url = this.getClass().getResource("/org/apache/camel/processor/simple.txt");
+        assertNotNull("We should find this simple file here.", url);
+        File file = new File(url.getFile());
+        sendToSplitterWithStreaming(file);
+    }
+    
+    public void testSplitterWithStreamingAndStringBody() throws Exception {
+        sendToSplitterWithStreaming("James,Guillaume,Hiram,Rob,Roman");
+    }
 
-    public void testSplitterWithStreaming() throws Exception {
+    public void sendToSplitterWithStreaming(final Object body) throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
         resultEndpoint.expectedHeaderReceived("foo", "bar");
@@ -170,7 +183,7 @@ public class SplitterTest extends ContextTestSupport {
         template.request("direct:streaming", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
-                in.setBody("James,Guillaume,Hiram,Rob,Roman");
+                in.setBody(body);
                 in.setHeader("foo", "bar");
             }
         });
