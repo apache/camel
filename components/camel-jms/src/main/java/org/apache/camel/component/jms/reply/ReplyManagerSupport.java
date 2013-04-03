@@ -133,17 +133,19 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
                     JmsMessage response = new JmsMessage(message, endpoint.getBinding());
+                    // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
+                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access 
+                    // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
+                    exchange.setOut(response);
                     Object body = response.getBody();
 
                     if (endpoint.isTransferException() && body instanceof Exception) {
-                        log.debug("Reply received. Setting reply as an Exception: {}", body);
+                        log.debug("Reply was an Exception. Setting the Exception on the Exchange: {}", body);
                         // we got an exception back and endpoint was configured to transfer exception
                         // therefore set response as exception
                         exchange.setException((Exception) body);
                     } else {
-                        log.debug("Reply received. Setting reply as OUT message: {}", body);
-                        // regular response
-                        exchange.setOut(response);
+                        log.debug("Reply received. OUT message body set to reply payload: {}", body);
                     }
 
                     // restore correlation id in case the remote server messed with it
