@@ -124,6 +124,7 @@ public interface Exchange {
     String FILE_LENGTH          = "CamelFileLength";
     String FILTER_MATCHED       = "CamelFilterMatched";
     String FILE_LOCK_FILE_ACQUIRED   = "CamelFileLockFileAcquired"; 
+    String FILE_LOCK_FILE_NAME  = "CamelFileLockFileName";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     

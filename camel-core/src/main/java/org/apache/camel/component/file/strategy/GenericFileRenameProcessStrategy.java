@@ -32,20 +32,19 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     @Override
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
 
-        // We need to invoke super, but to the file that we are going to use for processing, so we do super after renaming.
-        GenericFile<T> to = file;
+        // must invoke super
+        boolean result = super.begin(operations, endpoint, exchange, file);
+        if (!result) {
+            return false;
+        }
 
+        // okay we got the file then execute the begin renamer
         if (beginRenamer != null) {
             GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
-            to = renameFile(operations, file, newName);
+            GenericFile<T> to = renameFile(operations, file, newName);
             if (to != null) {
                 to.bindToExchange(exchange);
             }
-        }
-        // must invoke super
-        boolean result = super.begin(operations, endpoint, exchange, to);
-        if (!result) {
-            return false;
         }
 
         return true;
