@@ -250,8 +250,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
             // replace existing resolver with us
             configurer.setResolver(pc.getPropertiesResolver());
+            configurer.setParser(pc.getPropertiesParser());
             String ref = "ref:" + id;
+            // use the bridge to handle the resolve and parsing
             pc.setPropertiesResolver(configurer);
+            pc.setPropertiesParser(configurer);
             // and update locations to have our as ref first
             String[] locations = pc.getLocations();
             String[] updatedLocations;

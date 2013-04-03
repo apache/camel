@@ -19,29 +19,36 @@ package org.apache.camel.spring.spi;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.properties.AugmentedPropertyNameAwarePropertiesParser;
+import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.util.PropertyPlaceholderHelper;
 
 /**
  * A {@link PropertyPlaceholderConfigurer} that bridges Camel's <a href="http://camel.apache.org/using-propertyplaceholder.html">
  * property placeholder</a> with the Spring property placeholder mechanism.
  */
-public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements PropertiesResolver {
+public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements PropertiesResolver, AugmentedPropertyNameAwarePropertiesParser {
 
     // NOTE: this class must be in the spi package as if its in the root package, then Spring fails to parse the XML
     // files due some weird spring issue. But that is okay as having this class in the spi package is fine anyway.
 
     private final Properties properties = new Properties();
     private PropertiesResolver resolver;
+    private PropertiesParser parser;
     private String id;
+    private PropertyPlaceholderHelper helper;
 
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
+        super.processProperties(beanFactoryToProcess, props);
         // store all the spring properties so we can refer to them later
         properties.putAll(props);
-        super.processProperties(beanFactoryToProcess, props);
+        // create helper
+        helper = new PropertyPlaceholderHelper(placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
     }
 
     @Override
@@ -69,7 +76,67 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         return answer;
     }
 
+    @Override
+    public String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
+                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty) throws IllegalArgumentException {
+
+        // first let Camel parse the text as it may contain Camel placeholders
+        String answer;
+        if (parser instanceof AugmentedPropertyNameAwarePropertiesParser) {
+            answer = ((AugmentedPropertyNameAwarePropertiesParser) parser).parseUri(text, properties, prefixToken, suffixToken,
+                    propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+        } else {
+            answer = parser.parseUri(text, properties, prefixToken, suffixToken);
+        }
+
+        // then let Spring parse it to resolve any Spring placeholders
+        if (answer != null) {
+            answer = springResolvePlaceholders(answer, properties);
+        } else {
+            answer = springResolvePlaceholders(text, properties);
+        }
+        return answer;
+    }
+
+    @Override
+    public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
+        String answer = parser.parseUri(text, properties, prefixToken, suffixToken);
+        if (answer != null) {
+            answer = springResolvePlaceholders(answer, properties);
+        } else {
+            answer = springResolvePlaceholders(text, properties);
+        }
+        return answer;
+    }
+
+    @Override
+    public String parseProperty(String key, String value, Properties properties) {
+        String answer = parser.parseProperty(key, value, properties);
+        if (answer != null) {
+            answer = springResolvePlaceholders(answer, properties);
+        } else {
+            answer = springResolvePlaceholders(value, properties);
+        }
+        return answer;
+    }
+
+    /**
+     * Resolves the placeholders using Spring's property placeholder functionality.
+     *
+     * @param text   the text which may contain spring placeholders
+     * @param properties the properties
+     * @return the parsed text with replaced placeholders, or the original text as is
+     */
+    protected String springResolvePlaceholders(String text, Properties properties) {
+        return helper.replacePlaceholders(text, properties);
+    }
+
     public void setResolver(PropertiesResolver resolver) {
         this.resolver = resolver;
     }
+
+    public void setParser(PropertiesParser parser) {
+        this.parser = parser;
+    }
+
 }
