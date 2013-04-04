@@ -72,6 +72,9 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         assertTrue("Should take around 3 sec: was " + last, last > 2900);
         assertTrue("Should be around 5 sec now: was " + total, total > 4900);
 
+        Date reset = (Date) mbeanServer.getAttribute(on, "ResetTimestamp");
+        assertNotNull(reset);
+
         Date lastFailed = (Date) mbeanServer.getAttribute(on, "LastExchangeFailureTimestamp");
         Date firstFailed = (Date) mbeanServer.getAttribute(on, "FirstExchangeFailureTimestamp");
         assertNull(lastFailed);

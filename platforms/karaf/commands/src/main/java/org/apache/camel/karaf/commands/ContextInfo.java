@@ -104,8 +104,18 @@ public class ContextInfo extends OsgiCommandSupport {
                 System.out.println(StringEscapeUtils.unescapeJava("\tLoad Avg: " + load01 + ", " + load05 + ", " + load15));
 
                 // Test for null to see if a any exchanges have been processed first to avoid NPE
-                Object firstExchangeTimestampObj = mBeanServer.getAttribute(contextMBean, "FirstExchangeCompletedTimestamp");
+                Object resetTimestampObj = mBeanServer.getAttribute(contextMBean, "ResetTimestamp");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                if (resetTimestampObj == null) {
+                    // Print an empty value for scripting
+                    System.out.println(StringEscapeUtils.unescapeJava("\tReset Statistics Date:"));
+                } else {
+                    Date firstExchangeTimestamp = (Date) resetTimestampObj;
+                    System.out.println(StringEscapeUtils.unescapeJava("\tReset Statistics Date: " + format.format(firstExchangeTimestamp)));
+                }
+
+                // Test for null to see if a any exchanges have been processed first to avoid NPE
+                Object firstExchangeTimestampObj = mBeanServer.getAttribute(contextMBean, "FirstExchangeCompletedTimestamp");
                 if (firstExchangeTimestampObj == null) {
                     // Print an empty value for scripting
                     System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date:"));

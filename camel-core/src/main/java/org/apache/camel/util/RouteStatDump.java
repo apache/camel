@@ -63,6 +63,9 @@ public final class RouteStatDump {
     private Long meanProcessingTime;
 
     @XmlAttribute
+    private String resetTimestamp;
+
+    @XmlAttribute
     private String firstExchangeCompletedTimestamp;
 
     @XmlAttribute
@@ -170,6 +173,14 @@ public final class RouteStatDump {
 
     public void setMeanProcessingTime(Long meanProcessingTime) {
         this.meanProcessingTime = meanProcessingTime;
+    }
+
+    public String getResetTimestamp() {
+        return resetTimestamp;
+    }
+
+    public void setResetTimestamp(String resetTimestamp) {
+        this.resetTimestamp = resetTimestamp;
     }
 
     public String getFirstExchangeCompletedTimestamp() {

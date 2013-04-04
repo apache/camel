@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Date;
+
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedCounterMBean;
 import org.apache.camel.spi.ManagementStrategy;
@@ -23,13 +25,22 @@ import org.apache.camel.spi.ManagementStrategy;
 @ManagedResource(description = "Managed Counter")
 public abstract class ManagedCounter implements ManagedCounterMBean {
     protected Statistic exchangesTotal;
+    protected Statistic resetTimestamp;
 
     public void init(ManagementStrategy strategy) {
         this.exchangesTotal = new Statistic("org.apache.camel.exchangesTotal", this, Statistic.UpdateMode.COUNTER);
+        this.resetTimestamp = new Statistic("org.apache.camel.resetTimestamp", this, Statistic.UpdateMode.VALUE);
+        resetTimestamp.updateValue(new Date().getTime());
     }
 
     public synchronized void reset() {
         exchangesTotal.reset();
+        resetTimestamp.updateValue(new Date().getTime());
+    }
+
+    public Date getResetTimestamp() {
+        long value = resetTimestamp.getValue();
+        return value > 0 ? new Date(value) : null;
     }
 
     public long getExchangesTotal() throws Exception {
