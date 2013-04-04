@@ -16,6 +16,8 @@
  */
 package org.apache.camel.karaf.commands;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -45,6 +47,9 @@ public abstract class AbstractRouteCommand extends OsgiCommandSupport {
             System.err.println("Camel routes using " + route + " not found.");
             return null;
         }
+        // we want the routes sorted
+        Collections.sort(camelRoutes, new RouteComparator());
+
         for (Route camelRoute : camelRoutes) {
             CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
             // Setting thread context classloader to the bundle classloader to enable
@@ -60,4 +65,25 @@ public abstract class AbstractRouteCommand extends OsgiCommandSupport {
 
         return null;
     }
+
+    /**
+     * To sort the routes.
+     */
+    private static final class RouteComparator implements Comparator<Route> {
+
+        @Override
+        public int compare(Route o1, Route o2) {
+            // sort by camel context first
+            String camel1 = o1.getRouteContext().getCamelContext().getName();
+            String camel2 = o2.getRouteContext().getCamelContext().getName();
+
+            if (camel1.equals(camel2)) {
+                // and then route names in the same context
+                return o1.getId().compareTo(o2.getId());
+            } else {
+                return camel1.compareTo(camel2);
+            }
+        }
+    }
+
 }
