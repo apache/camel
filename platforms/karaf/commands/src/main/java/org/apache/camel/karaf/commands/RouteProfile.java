@@ -41,8 +41,8 @@ import org.apache.karaf.util.StringEscapeUtils;
 @Command(scope = "camel", name = "route-profile", description = "Display profile information about a Camel route.")
 public class RouteProfile extends OsgiCommandSupport {
 
-    protected static final String HEADER_FORMAT = "%-30s %10s %10s %12s %12s %12s %12s %12s";
-    protected static final String OUTPUT_FORMAT = "[%-28s] [%8d] [%8d] [%10d] [%10d] [%10d] [%10d] [%10d]";
+    protected static final String HEADER_FORMAT = "%-30s %10s %10s %12s %12s %12s %12s %12s %12s";
+    protected static final String OUTPUT_FORMAT = "[%-28s] [%8d] [%8d] [%10d] [%10d] [%10d] [%10d] [%10d] [%10d]";
 
     @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
     String route;
@@ -87,9 +87,9 @@ public class RouteProfile extends OsgiCommandSupport {
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{Boolean.FALSE, Boolean.TRUE}, new String[]{"boolean", "boolean"});
                     RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
 
-                    System.out.println(String.format(HEADER_FORMAT, "Id", "Completed", "Failed", "Last (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Self (ms)"));
+                    System.out.println(String.format(HEADER_FORMAT, "Id", "Completed", "Failed", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Self (ms)"));
                     System.out.println(String.format(OUTPUT_FORMAT, route.getId(), route.getExchangesCompleted(), route.getExchangesFailed(), route.getLastProcessingTime(),
-                            route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), 0));
+                            route.getDeltaProcessingTime(), route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), 0));
 
                     // output in reverse order which prints the route as we want
                     for (ProcessorStatDump ps : route.getProcessorStats()) {
@@ -97,7 +97,7 @@ public class RouteProfile extends OsgiCommandSupport {
                         long selfTime = ps.getTotalProcessingTime();
                         // indent route id with 2 spaces
                         System.out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), ps.getExchangesCompleted(), ps.getExchangesFailed(), ps.getLastProcessingTime(),
-                                ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), selfTime));
+                                ps.getDeltaProcessingTime(), ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), selfTime));
                     }
                 }
             } else {

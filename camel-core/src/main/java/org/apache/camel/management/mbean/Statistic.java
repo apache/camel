@@ -29,6 +29,9 @@ public class Statistic {
      * <li>DIFFERENCE - A statistic with this update mode is a value that represents the difference
      * between the last two recorded values (or the initial value if two updates have
      * not been recorded).</li>
+     * <li>DELTA - A statistic with this update mode is a value that represents the delta
+     * between the last two recorded values (or the initial value if two updates have
+     * not been recorded). This value can be negative if the delta goes up or down.</li>
      * <li>COUNTER - A statistic with this update mode interprets updates as increments (positive values)
      * or decrements (negative values) to the current value.</li>
      * <li>MAXIMUM - A statistic with this update mode is a value that represents the maximum value
@@ -38,10 +41,11 @@ public class Statistic {
      * <ul>
      */
     public enum UpdateMode {
-        VALUE, DIFFERENCE, COUNTER, MAXIMUM, MINIMUM
+        VALUE, DIFFERENCE, DELTA, COUNTER, MAXIMUM, MINIMUM
     }
 
     private final UpdateMode updateMode;
+    private long lastValue;
     private long value;
     private long updateCount;
 
@@ -70,6 +74,12 @@ public class Statistic {
                 this.value = -this.value;
             }
             break;
+        case DELTA:
+            if (updateCount > 0) {
+                this.lastValue = this.value;
+            }
+            this.value = newValue;
+            break;
         case MAXIMUM:
             // initialize value at first time
             if (this.updateCount == 0 || this.value < newValue) {
@@ -92,7 +102,15 @@ public class Statistic {
     }
 
     public synchronized long getValue() {
-        return this.value;
+        if (updateMode == UpdateMode.DELTA) {
+            if (updateCount == 0) {
+                return this.value;
+            } else {
+                return this.value - this.lastValue;
+            }
+        } else {
+            return this.value;
+        }
     }
 
     public synchronized long getUpdateCount() {
@@ -101,6 +119,7 @@ public class Statistic {
 
     public synchronized void reset() {
         this.value = 0;
+        this.lastValue = 0;
         this.updateCount = 0;
     }
 

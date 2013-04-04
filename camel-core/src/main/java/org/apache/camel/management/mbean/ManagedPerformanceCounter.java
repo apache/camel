@@ -40,6 +40,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     private Statistic maxProcessingTime;
     private Statistic totalProcessingTime;
     private Statistic lastProcessingTime;
+    private Statistic deltaProcessingTime;
     private Statistic meanProcessingTime;
     private Statistic firstExchangeCompletedTimestamp;
     private String firstExchangeCompletedExchangeId;
@@ -64,6 +65,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         this.maxProcessingTime = new Statistic("org.apache.camel.maximumProcessingTime", this, Statistic.UpdateMode.MAXIMUM);
         this.totalProcessingTime = new Statistic("org.apache.camel.totalProcessingTime", this, Statistic.UpdateMode.COUNTER);
         this.lastProcessingTime = new Statistic("org.apache.camel.lastProcessingTime", this, Statistic.UpdateMode.VALUE);
+        this.deltaProcessingTime = new Statistic("org.apache.camel.deltaProcessingTime", this, Statistic.UpdateMode.DELTA);
         this.meanProcessingTime = new Statistic("org.apache.camel.meanProcessingTime", this, Statistic.UpdateMode.VALUE);
 
         this.firstExchangeCompletedTimestamp = new Statistic("org.apache.camel.firstExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
@@ -84,6 +86,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         maxProcessingTime.reset();
         totalProcessingTime.reset();
         lastProcessingTime.reset();
+        deltaProcessingTime.reset();
         meanProcessingTime.reset();
         firstExchangeCompletedTimestamp.reset();
         firstExchangeCompletedExchangeId = null;
@@ -133,6 +136,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
 
     public long getLastProcessingTime() throws Exception {
         return lastProcessingTime.getValue();
+    }
+
+    public long getDeltaProcessingTime() throws Exception {
+        return deltaProcessingTime.getValue();
     }
 
     public Date getLastExchangeCompletedTimestamp() {
@@ -195,6 +202,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         maxProcessingTime.updateValue(time);
         totalProcessingTime.updateValue(time);
         lastProcessingTime.updateValue(time);
+        deltaProcessingTime.updateValue(time);
 
         long now = new Date().getTime();
         if (firstExchangeCompletedTimestamp.getUpdateCount() == 0) {
@@ -249,6 +257,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         sb.append(String.format(" maxProcessingTime=\"%s\"", maxProcessingTime.getValue()));
         sb.append(String.format(" totalProcessingTime=\"%s\"", totalProcessingTime.getValue()));
         sb.append(String.format(" lastProcessingTime=\"%s\"", lastProcessingTime.getValue()));
+        sb.append(String.format(" deltaProcessingTime=\"%s\"", deltaProcessingTime.getValue()));
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
 
         if (fullStats) {

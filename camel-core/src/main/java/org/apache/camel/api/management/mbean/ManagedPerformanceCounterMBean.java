@@ -53,6 +53,9 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "Last Processing Time [milliseconds]")
     long getLastProcessingTime() throws Exception;
 
+    @ManagedAttribute(description = "Delta Processing Time [milliseconds]")
+    long getDeltaProcessingTime() throws Exception;
+
     @ManagedAttribute(description = "Last Exchange Completed Timestamp")
     Date getLastExchangeCompletedTimestamp();
 

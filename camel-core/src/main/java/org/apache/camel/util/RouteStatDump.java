@@ -60,6 +60,9 @@ public final class RouteStatDump {
     private Long lastProcessingTime;
 
     @XmlAttribute
+    private Long deltaProcessingTime;
+
+    @XmlAttribute
     private Long meanProcessingTime;
 
     @XmlAttribute
@@ -165,6 +168,14 @@ public final class RouteStatDump {
 
     public void setLastProcessingTime(Long lastProcessingTime) {
         this.lastProcessingTime = lastProcessingTime;
+    }
+
+    public Long getDeltaProcessingTime() {
+        return deltaProcessingTime;
+    }
+
+    public void setDeltaProcessingTime(Long deltaProcessingTime) {
+        this.deltaProcessingTime = deltaProcessingTime;
     }
 
     public Long getMeanProcessingTime() {

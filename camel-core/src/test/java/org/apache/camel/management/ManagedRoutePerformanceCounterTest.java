@@ -32,6 +32,9 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
 
+        Long delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
+        assertEquals(0, delta.intValue());
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.asyncSendBody("direct:start", "Hello World");
@@ -55,9 +58,11 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, completed.longValue());
 
+        delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         Long last = (Long) mbeanServer.getAttribute(on, "LastProcessingTime");
         Long total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
+        assertNotNull(delta);
         assertTrue("Should take around 3 sec: was " + last, last > 2900);
         assertTrue("Should take around 3 sec: was " + total, total > 2900);
 
@@ -66,9 +71,11 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
+        delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         last = (Long) mbeanServer.getAttribute(on, "LastProcessingTime");
         total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
+        assertNotNull(delta);
         assertTrue("Should take around 3 sec: was " + last, last > 2900);
         assertTrue("Should be around 5 sec now: was " + total, total > 4900);
 
