@@ -349,7 +349,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             unmarshaller.setEventHandler(new ValidationEventHandler() {
                 public boolean handleEvent(ValidationEvent event) {
                     // stop unmarshalling if the event is an ERROR or FATAL ERROR
-                    return event.getSeverity() == 0;
+                    return event.getSeverity() == ValidationEvent.WARNING;
                 }
             });
         }
@@ -364,7 +364,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             marshaller.setEventHandler(new ValidationEventHandler() {
                 public boolean handleEvent(ValidationEvent event) {
                     // stop marshalling if the event is an ERROR or FATAL ERROR
-                    return event.getSeverity() == 0;
+                    return event.getSeverity() == ValidationEvent.WARNING;
                 }
             });
         }
