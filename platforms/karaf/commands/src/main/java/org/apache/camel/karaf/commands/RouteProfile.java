@@ -30,6 +30,7 @@ import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.util.ProcessorStatDump;
 import org.apache.camel.util.RouteStatDump;
+import org.apache.camel.util.URISupport;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
@@ -68,6 +69,7 @@ public class RouteProfile extends OsgiCommandSupport {
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1m\u001B[33mCamel Route " + camelRoute.getId() + "\u001B[0m"));
+        System.out.println(StringEscapeUtils.unescapeJava("\tEndpoint uri: " + URISupport.sanitizeUri(camelRoute.getEndpoint().getEndpointUri())));
         System.out.println(StringEscapeUtils.unescapeJava("\tCamel Context: " + camelRoute.getRouteContext().getCamelContext().getName()));
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mProfile\u001B[0m"));
@@ -81,7 +83,6 @@ public class RouteProfile extends OsgiCommandSupport {
                 if (iterator.hasNext()) {
                     ObjectName routeMBean = iterator.next();
 
-                    // TODO: add a row with the route endpoint, so you can see that
                     // TODO: add column with total time (delta for self time)
 
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{Boolean.FALSE, Boolean.TRUE}, new String[]{"boolean", "boolean"});

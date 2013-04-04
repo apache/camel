@@ -77,6 +77,15 @@
                 <null/>
             </completers>
         </command>
+        <command name="camel/route-reset-stats">
+            <action class="org.apache.camel.karaf.commands.RouteResetStats">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="routeCompleter"/>
+                <null/>
+            </completers>
+        </command>
         <command name="camel/route-show">
             <action class="org.apache.camel.karaf.commands.RouteShow">
                 <property name="camelController" ref="camelController"/>

@@ -231,7 +231,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             sb.append("  <processorStats>\n");
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
-                // get all the processor mbeans and sort them accordinly to their index
+                // get all the processor mbeans and sort them accordingly to their index
                 ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
