@@ -271,7 +271,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     /**
      * Used for sorting the processor mbeans accordingly to their index.
      */
-    private final static class OrderProcessorMBeans implements Comparator<ManagedProcessorMBean> {
+    private static final class OrderProcessorMBeans implements Comparator<ManagedProcessorMBean> {
 
         @Override
         public int compare(ManagedProcessorMBean o1, ManagedProcessorMBean o2) {

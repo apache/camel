@@ -79,15 +79,15 @@ import org.slf4j.LoggerFactory;
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
+    private static final AtomicInteger COUNTER = new AtomicInteger();
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
+
     protected Boolean inheritErrorHandler;
     private final LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition<?> parent;
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
-
     // use xs:any to support optional property placeholders
     private Map<QName, Object> otherAttributes;
-    private static final AtomicInteger COUNTER = new AtomicInteger();
     private final int index;
 
     protected ProcessorDefinition() {
@@ -100,7 +100,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <p/>
      * This can be used to know the order in which the definition was created when assembled as a route.
      *
-     * @return the current COUNTER value
+     * @return the index number
      */
     @XmlTransient // do not expose this in the XML DSL
     public int getIndex() {

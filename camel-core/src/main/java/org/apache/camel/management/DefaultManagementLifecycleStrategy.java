@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicLong;
 import javax.management.JMException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -101,8 +100,6 @@ import org.slf4j.LoggerFactory;
 public class DefaultManagementLifecycleStrategy extends ServiceSupport implements LifecycleStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
-    // unique counter we use when registering a new mbean which allows to know the order they were registered
-    private final AtomicLong counter = new AtomicLong();
     // the wrapped processors is for performance counters, which are in use for the created routes
     // when a route is removed, we should remove the associated processors from this map
     private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors =
