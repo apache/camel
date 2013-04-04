@@ -26,6 +26,8 @@ import org.apache.camel.karaf.commands.internal.RegexUtil;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
+import static org.apache.camel.util.CamelContextHelper.getRouteStartupOrder;
+
 public abstract class AbstractRouteCommand extends OsgiCommandSupport {
     @Argument(index = 0, name = "route", description = "The Camel route ID or a wildcard expression", required = true, multiValued = false)
     String route;
@@ -74,14 +76,21 @@ public abstract class AbstractRouteCommand extends OsgiCommandSupport {
         @Override
         public int compare(Route o1, Route o2) {
             // sort by camel context first
-            String camel1 = o1.getRouteContext().getCamelContext().getName();
-            String camel2 = o2.getRouteContext().getCamelContext().getName();
+            CamelContext camel1 = o1.getRouteContext().getCamelContext();
+            CamelContext camel2 = o2.getRouteContext().getCamelContext();
 
-            if (camel1.equals(camel2)) {
-                // and then route names in the same context
-                return o1.getId().compareTo(o2.getId());
+            if (camel1.getName().equals(camel2.getName())) {
+                // and then accordingly to startup order
+                int order1 = getRouteStartupOrder(camel1, o1.getId());
+                int order2 = getRouteStartupOrder(camel2, o2.getId());
+                if (order1 == 0 && order2 == 0) {
+                    // fallback and use name if not startup order was found
+                    return o1.getId().compareTo(o2.getId());
+                } else {
+                    return Integer.compare(order1, order2);
+                }
             } else {
-                return camel1.compareTo(camel2);
+                return camel1.getName().compareTo(camel2.getName());
             }
         }
     }

@@ -611,14 +611,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     // Route Management Methods
     // -----------------------------------------------------------------------
 
-    /**
-     * Returns the order in which the route inputs was started.
-     * <p/>
-     * The order may not be according to the startupOrder defined on the route.
-     * For example a route could be started manually later, or new routes added at runtime.
-     *
-     * @return a list in the order how routes was started
-     */
     public List<RouteStartupOrder> getRouteStartupOrder() {
         return routeStartupOrder;
     }

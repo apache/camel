@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
@@ -63,7 +64,24 @@ public class CamelContextHelperTest extends ContextTestSupport {
         assertNotNull(foo);
     }
 
+    public void testRouteStartupOrder() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").routeId("foo").startupOrder(222).to("mock:foo");
+                from("direct:bar").routeId("bar").startupOrder(111).to("mock:bar");
+            }
+        });
+
+        assertEquals(111, CamelContextHelper.getRouteStartupOrder(context, "bar"));
+        assertEquals(222, CamelContextHelper.getRouteStartupOrder(context, "foo"));
+
+        // no route with that name
+        assertEquals(0, CamelContextHelper.getRouteStartupOrder(context, "zzz"));
+    }
+
     public static class MyFooBean {
 
     }
+
 }

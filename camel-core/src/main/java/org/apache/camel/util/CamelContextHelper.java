@@ -33,6 +33,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.spi.RouteStartupOrder;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -390,4 +391,21 @@ public final class CamelContextHelper {
         }
         return map;
     }
+
+    /**
+     * Gets the route startup order for the given route id
+     *
+     * @param camelContext  the camel context
+     * @param routeId       the id of the route
+     * @return the startup order, or <tt>0</tt> if not possible to determine
+     */
+    public static int getRouteStartupOrder(CamelContext camelContext, String routeId) {
+        for (RouteStartupOrder order : camelContext.getRouteStartupOrder()) {
+            if (order.getRoute().getId().equals(routeId)) {
+                return order.getStartupOrder();
+            }
+        }
+        return 0;
+    }
+
 }

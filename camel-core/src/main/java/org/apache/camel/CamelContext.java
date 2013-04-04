@@ -48,6 +48,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -348,6 +349,16 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     @Deprecated
     RouteDefinition getRouteDefinition(String id);
+
+    /**
+     * Returns the order in which the route inputs was started.
+     * <p/>
+     * The order may not be according to the startupOrder defined on the route.
+     * For example a route could be started manually later, or new routes added at runtime.
+     *
+     * @return a list in the order how routes was started
+     */
+    List<RouteStartupOrder> getRouteStartupOrder();
 
     /**
      * Returns the current routes in this context
