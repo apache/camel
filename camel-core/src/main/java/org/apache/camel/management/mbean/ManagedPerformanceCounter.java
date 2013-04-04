@@ -26,7 +26,7 @@ import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ExchangeHelper;
 
-@ManagedResource(description = "PerformanceCounter")
+@ManagedResource(description = "Managed PerformanceCounter")
 public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter, ManagedPerformanceCounterMBean {
 
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";

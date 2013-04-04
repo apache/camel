@@ -62,6 +62,14 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return definition;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public Integer getIndex() {
+        return definition.getIndex();
+    }
+
     public Route getRoute() {
         return route;
     }

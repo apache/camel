@@ -83,7 +83,6 @@ public class RouteProfile extends OsgiCommandSupport {
 
                     // TODO: add a row with the route endpoint, so you can see that
                     // TODO: add column with total time (delta for self time)
-                    // TODO: ensure the jmx mbeans for processors is sorted correctly
 
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{Boolean.FALSE, Boolean.TRUE}, new String[]{"boolean", "boolean"});
                     RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
@@ -93,8 +92,7 @@ public class RouteProfile extends OsgiCommandSupport {
                             route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), 0));
 
                     // output in reverse order which prints the route as we want
-                    for (int i = route.getProcessorStats().size() - 1; i >= 0; i--) {
-                        ProcessorStatDump ps = route.getProcessorStats().get(i);
+                    for (ProcessorStatDump ps : route.getProcessorStats()) {
                         // the self time is the total time of the processor itself
                         long selfTime = ps.getTotalProcessingTime();
                         // indent route id with 2 spaces

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -86,6 +87,25 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // use xs:any to support optional property placeholders
     private Map<QName, Object> otherAttributes;
+    private static final AtomicInteger COUNTER = new AtomicInteger();
+    private final int index;
+
+    protected ProcessorDefinition() {
+        // every time we create a definition we should inc the COUNTER counter
+        index = COUNTER.getAndIncrement();
+    }
+
+    /**
+     * Gets the unique index number for when this {@link ProcessorDefinition} was created by its constructor.
+     * <p/>
+     * This can be used to know the order in which the definition was created when assembled as a route.
+     *
+     * @return the current COUNTER value
+     */
+    @XmlTransient // do not expose this in the XML DSL
+    public int getIndex() {
+        return index;
+    }
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition<?>> getOutputs();

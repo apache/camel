@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -228,13 +231,21 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             sb.append("  <processorStats>\n");
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
+                // get all the processor mbeans and sort them accordinly to their index
                 ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
+                List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
                 for (ObjectName on : names) {
                     ManagedProcessorMBean processor = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedProcessorMBean.class, true);
+                    mps.add(processor);
+                }
+                Collections.sort(mps, new OrderProcessorMBeans());
+
+                // and now add the sorted list of processors to the xml output
+                for (ManagedProcessorMBean processor : mps) {
                     // the processor must belong to this route
                     if (getRouteId().equals(processor.getRouteId())) {
-                        sb.append("    <processorStat").append(String.format(" id=\"%s\"", processor.getProcessorId()));
+                        sb.append("    <processorStat").append(String.format(" id=\"%s\" index=\"%s\"", processor.getProcessorId(), processor.getIndex()));
                         // use substring as we only want the attributes
                         sb.append(" ").append(processor.dumpStatsAsXml(fullStats).substring(7)).append("\n");
                     }
@@ -256,4 +267,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     public int hashCode() {
         return route.hashCode();
     }
+
+    /**
+     * Used for sorting the processor mbeans accordingly to their index.
+     */
+    private final static class OrderProcessorMBeans implements Comparator<ManagedProcessorMBean> {
+
+        @Override
+        public int compare(ManagedProcessorMBean o1, ManagedProcessorMBean o2) {
+            return o1.getIndex().compareTo(o2.getIndex());
+        }
+    }
+
 }
