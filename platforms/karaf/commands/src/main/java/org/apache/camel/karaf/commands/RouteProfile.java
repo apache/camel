@@ -39,8 +39,8 @@ import org.apache.karaf.util.StringEscapeUtils;
 @Command(scope = "camel", name = "route-profile", description = "Display profile information about Camel route(s).")
 public class RouteProfile extends AbstractRouteCommand {
 
-    protected static final String HEADER_FORMAT = "%-30s %10s %12s %12s %12s %12s %12s %12s";
-    protected static final String OUTPUT_FORMAT = "[%-28s] [%8d] [%10d] [%10d] [%10d] [%10d] [%10d] [%10s]";
+    protected static final String HEADER_FORMAT = "%-30s %10s %12s %12s %12s %12s %12s %12s %12s";
+    protected static final String OUTPUT_FORMAT = "[%-28s] [%8d] [%10d] [%10d] [%10d] [%10d] [%10d] [%10d] [%10d]";
 
     private String previousCamelContextName;
 
@@ -60,7 +60,7 @@ public class RouteProfile extends AbstractRouteCommand {
             System.out.println("");
             System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mProfile\u001B[0m"));
             System.out.println(StringEscapeUtils.unescapeJava("\tCamel Context: " + camelRoute.getRouteContext().getCamelContext().getName()));
-            System.out.println(String.format(HEADER_FORMAT, "Id", "Count", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Self (ms)"));
+            System.out.println(String.format(HEADER_FORMAT, "Id", "Count", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Total (ms)", "Self (ms)"));
         }
 //        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1m\u001B[33mCamel Route " + camelRoute.getId() + "\u001B[0m"));
 //        System.out.println(StringEscapeUtils.unescapeJava("\tEndpoint uri: " + URISupport.sanitizeUri(camelRoute.getEndpoint().getEndpointUri())));
@@ -74,22 +74,20 @@ public class RouteProfile extends AbstractRouteCommand {
                 String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
                 if (camelId != null && camelId.equals(camelContext.getName())) {
 
-                    // TODO: add column with total time (delta for self time)
-
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{Boolean.FALSE, Boolean.TRUE}, new String[]{"boolean", "boolean"});
                     RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
 
                     long count = route.getExchangesCompleted() + route.getExchangesFailed();
                     System.out.println(String.format(OUTPUT_FORMAT, route.getId(), count, route.getLastProcessingTime(), route.getDeltaProcessingTime(),
-                            route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), ""));
+                            route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), route.getSelfProcessingTime()));
 
                     for (ProcessorStatDump ps : route.getProcessorStats()) {
                         // the self time is the total time of the processor itself
-                        String selfTime = "" + ps.getTotalProcessingTime();
+                        long selfTime = ps.getTotalProcessingTime();
                         count = ps.getExchangesCompleted() + ps.getExchangesFailed();
                         // indent route id with 2 spaces
-                        System.out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), count, ps.getLastProcessingTime(),
-                                ps.getDeltaProcessingTime(), ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), selfTime));
+                        System.out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), count, ps.getLastProcessingTime(), ps.getDeltaProcessingTime(),
+                                ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), ps.getAccumulatedProcessingTime(), selfTime));
                     }
                 }
             }

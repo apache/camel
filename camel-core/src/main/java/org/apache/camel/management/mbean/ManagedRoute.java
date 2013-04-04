@@ -19,7 +19,9 @@ package org.apache.camel.management.mbean;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
@@ -219,12 +221,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
+        // in this logic we need to calculate the accumulated processing time for the processor in the route
+        // and hence why the logic is a bit more complicated to do this, as we need to caculate that from
+        // the bottom -> top of the route but this information is valuable for profiling routes
         StringBuilder sb = new StringBuilder();
 
-        sb.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()));
-        // use substring as we only want the attributes
-        String stat = dumpStatsAsXml(fullStats);
-        sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        // need to calculate this value first, as we need that value for the route stat
+        Long processorAccumulatedTime = 0L;
 
         // gather all the processors for this route, which requires JMX
         if (includeProcessors) {
@@ -237,25 +240,59 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
                 for (ObjectName on : names) {
                     ManagedProcessorMBean processor = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedProcessorMBean.class, true);
-                    mps.add(processor);
+
+                    // the processor must belong to this route
+                    if (getRouteId().equals(processor.getRouteId())) {
+                        mps.add(processor);
+                    }
                 }
                 Collections.sort(mps, new OrderProcessorMBeans());
 
+                // walk the processors in reverse order, and calculate the accumulated total time
+                Map<String, Long> accumulatedTimes = new HashMap<String, Long>();
+                Collections.reverse(mps);
+                for (ManagedProcessorMBean processor : mps) {
+                    processorAccumulatedTime += processor.getTotalProcessingTime();
+                    accumulatedTimes.put(processor.getProcessorId(), processorAccumulatedTime);
+                }
+                // and reverse back again
+                Collections.reverse(mps);
+
                 // and now add the sorted list of processors to the xml output
                 for (ManagedProcessorMBean processor : mps) {
-                    // the processor must belong to this route
-                    if (getRouteId().equals(processor.getRouteId())) {
-                        sb.append("    <processorStat").append(String.format(" id=\"%s\" index=\"%s\"", processor.getProcessorId(), processor.getIndex()));
-                        // use substring as we only want the attributes
-                        sb.append(" ").append(processor.dumpStatsAsXml(fullStats).substring(7)).append("\n");
+                    sb.append("    <processorStat").append(String.format(" id=\"%s\" index=\"%s\"", processor.getProcessorId(), processor.getIndex()));
+                    // do we have an accumulated time then append that
+                    Long accTime = accumulatedTimes.get(processor.getProcessorId());
+                    if (accTime != null) {
+                        sb.append(" accumulatedProcessingTime=\"").append(accTime).append("\"");
                     }
+                    // use substring as we only want the attributes
+                    sb.append(" ").append(processor.dumpStatsAsXml(fullStats).substring(7)).append("\n");
                 }
             }
             sb.append("  </processorStats>\n");
         }
 
-        sb.append("</routeStat>");
-        return sb.toString();
+        // route self time is route total - processor accumulated total)
+        long routeSelfTime = getTotalProcessingTime() - processorAccumulatedTime;
+        if (routeSelfTime < 0) {
+            // ensure we don't calculate that as negative
+            routeSelfTime = 0;
+        }
+
+        StringBuilder answer = new StringBuilder();
+        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()));
+        // use substring as we only want the attributes
+        String stat = dumpStatsAsXml(fullStats);
+        answer.append(" selfProcessingTime=\"").append(routeSelfTime).append("\"");
+        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+
+        if (includeProcessors) {
+            answer.append(sb);
+        }
+
+        answer.append("</routeStat>");
+        return answer.toString();
     }
 
     @Override

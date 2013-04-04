@@ -65,6 +65,9 @@ public final class ProcessorStatDump {
     private Long meanProcessingTime;
 
     @XmlAttribute
+    private Long accumulatedProcessingTime;
+
+    @XmlAttribute
     private String resetTimestamp;
 
     @XmlAttribute
@@ -185,6 +188,14 @@ public final class ProcessorStatDump {
 
     public void setMeanProcessingTime(Long meanProcessingTime) {
         this.meanProcessingTime = meanProcessingTime;
+    }
+
+    public Long getAccumulatedProcessingTime() {
+        return accumulatedProcessingTime;
+    }
+
+    public void setAccumulatedProcessingTime(Long accumulatedProcessingTime) {
+        this.accumulatedProcessingTime = accumulatedProcessingTime;
     }
 
     public String getResetTimestamp() {
