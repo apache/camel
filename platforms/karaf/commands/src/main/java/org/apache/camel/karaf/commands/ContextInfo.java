@@ -97,6 +97,8 @@ public class ContextInfo extends OsgiCommandSupport {
                 System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + "ms"));
                 Long lastProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "LastProcessingTime");
                 System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + "ms"));
+                Long deltaProcessingTime = (Long) mBeanServer.getAttribute(contextMBean, "DeltaProcessingTime");
+                System.out.println(StringEscapeUtils.unescapeJava("\tDelta Processing Time: " + deltaProcessingTime + "ms"));
 
                 String load01 = (String) mBeanServer.getAttribute(contextMBean, "Load01");
                 String load05 = (String) mBeanServer.getAttribute(contextMBean, "Load05");

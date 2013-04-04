@@ -83,22 +83,27 @@ public class RouteProfile extends OsgiCommandSupport {
                 if (iterator.hasNext()) {
                     ObjectName routeMBean = iterator.next();
 
-                    // TODO: add column with total time (delta for self time)
+                    // the route must be part of the camel context
+                    String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+                    if (camelId != null && camelId.equals(camelContext.getName())) {
 
-                    String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{Boolean.FALSE, Boolean.TRUE}, new String[]{"boolean", "boolean"});
-                    RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
+                        // TODO: add column with total time (delta for self time)
 
-                    System.out.println(String.format(HEADER_FORMAT, "Id", "Completed", "Failed", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Self (ms)"));
-                    System.out.println(String.format(OUTPUT_FORMAT, route.getId(), route.getExchangesCompleted(), route.getExchangesFailed(), route.getLastProcessingTime(),
-                            route.getDeltaProcessingTime(), route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), 0));
+                        String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{Boolean.FALSE, Boolean.TRUE}, new String[]{"boolean", "boolean"});
+                        RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
 
-                    // output in reverse order which prints the route as we want
-                    for (ProcessorStatDump ps : route.getProcessorStats()) {
-                        // the self time is the total time of the processor itself
-                        long selfTime = ps.getTotalProcessingTime();
-                        // indent route id with 2 spaces
-                        System.out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), ps.getExchangesCompleted(), ps.getExchangesFailed(), ps.getLastProcessingTime(),
-                                ps.getDeltaProcessingTime(), ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), selfTime));
+                        System.out.println(String.format(HEADER_FORMAT, "Id", "Completed", "Failed", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Self (ms)"));
+                        System.out.println(String.format(OUTPUT_FORMAT, route.getId(), route.getExchangesCompleted(), route.getExchangesFailed(), route.getLastProcessingTime(),
+                                route.getDeltaProcessingTime(), route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), 0));
+
+                        // output in reverse order which prints the route as we want
+                        for (ProcessorStatDump ps : route.getProcessorStats()) {
+                            // the self time is the total time of the processor itself
+                            long selfTime = ps.getTotalProcessingTime();
+                            // indent route id with 2 spaces
+                            System.out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), ps.getExchangesCompleted(), ps.getExchangesFailed(), ps.getLastProcessingTime(),
+                                    ps.getDeltaProcessingTime(), ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), selfTime));
+                        }
                     }
                 }
             } else {
