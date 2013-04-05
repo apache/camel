@@ -74,20 +74,20 @@ public abstract class AbstractRouteCommand extends OsgiCommandSupport {
     private static final class RouteComparator implements Comparator<Route> {
 
         @Override
-        public int compare(Route o1, Route o2) {
+        public int compare(Route route1, Route route2) {
             // sort by camel context first
-            CamelContext camel1 = o1.getRouteContext().getCamelContext();
-            CamelContext camel2 = o2.getRouteContext().getCamelContext();
+            CamelContext camel1 = route1.getRouteContext().getCamelContext();
+            CamelContext camel2 = route2.getRouteContext().getCamelContext();
 
             if (camel1.getName().equals(camel2.getName())) {
                 // and then accordingly to startup order
-                int order1 = getRouteStartupOrder(camel1, o1.getId());
-                int order2 = getRouteStartupOrder(camel2, o2.getId());
+                Integer order1 = getRouteStartupOrder(camel1, route1.getId());
+                Integer order2 = getRouteStartupOrder(camel2, route2.getId());
                 if (order1 == 0 && order2 == 0) {
                     // fallback and use name if not startup order was found
-                    return o1.getId().compareTo(o2.getId());
+                    return route1.getId().compareTo(route2.getId());
                 } else {
-                    return Integer.compare(order1, order2);
+                    return order1.compareTo(order2);
                 }
             } else {
                 return camel1.getName().compareTo(camel2.getName());
