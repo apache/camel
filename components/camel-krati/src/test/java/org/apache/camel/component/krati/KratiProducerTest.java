@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.krati;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -45,6 +47,25 @@ public class KratiProducerTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:put", new ValueObject("TEST3"), KratiConstants.KEY, new KeyObject("3"));
         Object result = template.requestBodyAndHeader("direct:get", null, KratiConstants.KEY, new KeyObject("3"));
         assertEquals(new ValueObject("TEST3"), result);
+    }
+
+    @Test
+    public void testPutAndGetPreserveHeaders() throws InterruptedException {
+        ProducerTemplate template = context.createProducerTemplate();
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST1"), KratiConstants.KEY, new KeyObject("1"));
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST2"), KratiConstants.KEY, new KeyObject("2"));
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST3"), KratiConstants.KEY, new KeyObject("3"));
+
+        Exchange out = template.send("direct:get", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("foo", 123);
+                exchange.getIn().setHeader(KratiConstants.KEY, new KeyObject("3"));
+            }
+        });
+        assertNotNull(out);
+        assertEquals(123, out.getOut().getHeader("foo"));
+        assertEquals(new ValueObject("TEST3"), out.getOut().getBody());
     }
 
     @Test

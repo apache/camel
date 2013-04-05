@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.krati;
 
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class KratiDataStoreRegistration {
             try {
                 dataStore.close();
             } catch (IOException e) {
-                LOG.warn("Error while closing datastore.", e);
+                LOG.warn("Error while closing datastore. This exception is ignored.", e);
             }
             return true;
         } else {
