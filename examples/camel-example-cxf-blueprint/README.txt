@@ -13,22 +13,18 @@ the same port.
 You will need to compile this example first:
   mvn install
 
-To run the example on Apache ServiceMix 4.x or Apache Karaf 2.2.5 or better
+To run the example on Apache Karaf 2.3.1 or better
 
 1) launch the server
-   karaf.bat
+   karaf / karaf.bat
   
-Note for Karaf 2.2.5 onwards:
-   a) copy the etc/jre.properties.cxf to override the existing etc/jre.properties file
-
-
 2) Add features required
-   features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
+   features:chooseurl camel ${version}
    features:install war
    features:install cxf
    features:install camel-jaxb
+   features:install camel-blueprint
    features:install camel-cxf
-
 
 3) Deploy the example
    osgi:install -s mvn:org.apache.camel/camel-example-cxf-blueprint/${version}
