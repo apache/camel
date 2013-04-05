@@ -93,7 +93,6 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
 
         public void configure() {
 
@@ -102,6 +101,9 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
             tracer.setLogName("org.apache.camel.bindy");
 
             getContext().addInterceptStrategy(tracer);
+
+            BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+            camelDataFormat.setLocale("en");
 
             // default should errors go to mock:error
             errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliveryDelay(0));

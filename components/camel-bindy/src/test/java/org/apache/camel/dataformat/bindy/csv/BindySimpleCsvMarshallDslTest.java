@@ -30,6 +30,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
+import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
@@ -85,8 +86,13 @@ public class BindySimpleCsvMarshallDslTest extends AbstractJUnit4SpringContextTe
     public static class ContextConfig extends RouteBuilder {
 
         public void configure() {
+            BindyDataFormat bindy = new BindyDataFormat();
+            bindy.setLocale("en");
+            bindy.setPackages(new String[] {"org.apache.camel.dataformat.bindy.model.simple.oneclass"});
+            bindy.setType(BindyType.Csv);
+
             from("direct:start").
-                marshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.oneclass")
+                marshal(bindy)
                 .to("mock:result");
         }
 

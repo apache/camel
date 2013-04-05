@@ -99,6 +99,8 @@ public class BindyComplexCsvGenerateHeaderMarshallTest extends AbstractJUnit4Spr
         public void configure() {
             BindyCsvDataFormat camelDataFormat = 
                 new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.complex.generateheader");
+            camelDataFormat.setLocale("en");
+
             from("direct:start").marshal(camelDataFormat).to("mock:result");
         }
     }

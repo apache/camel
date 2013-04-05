@@ -33,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
+import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.junit.Test;
@@ -107,8 +108,13 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
 
             onException(Exception.class).maximumRedeliveries(0).handled(true);
 
+            BindyDataFormat bindy = new BindyDataFormat();
+            bindy.setLocale("en");
+            bindy.setPackages(new String[] {"org.apache.camel.dataformat.bindy.fixed.marshall.simple"});
+            bindy.setType(BindyType.Fixed);
+
             from(URI_DIRECT_START)
-                    .marshal().bindy(BindyType.Fixed, "org.apache.camel.dataformat.bindy.fixed.marshall.simple")
+                    .marshal(bindy)
                     .to(URI_MOCK_RESULT);
         }
 

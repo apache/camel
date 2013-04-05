@@ -78,8 +78,6 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition");
-
         public void configure() {
 
             Tracer tracer = new Tracer();
@@ -87,6 +85,9 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
             tracer.setLogName("org.apache.camel.bindy");
 
             getContext().addInterceptStrategy(tracer);
+
+            BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition");
+            csvBindyDataFormat.setLocale("en");
 
             // default should errors go to mock:error
             errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliveryDelay(0));

@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
+import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -108,8 +109,13 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
 
     public static class ContextConfig extends RouteBuilder {
         public void configure() {
+            BindyDataFormat bindy = new BindyDataFormat();
+            bindy.setClassType(Record.class);
+            bindy.setLocale("en");
+            bindy.setType(BindyType.Fixed);
+
             from(URI_DIRECT_MARSHALL)
-                .marshal().bindy(BindyType.Fixed, Record.class)
+                .marshal(bindy)
                 .to(URI_MOCK_MARSHALL_RESULT);
             from(URI_DIRECT_UNMARSHALL)
                 .unmarshal().bindy(BindyType.Fixed, Record.class)

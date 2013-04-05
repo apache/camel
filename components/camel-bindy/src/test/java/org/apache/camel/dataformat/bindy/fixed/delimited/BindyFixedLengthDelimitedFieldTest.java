@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 
+import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
@@ -153,9 +154,14 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
         RouteBuilder routeBuilder = new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {      
+            public void configure() throws Exception {
+                BindyDataFormat bindy = new BindyDataFormat();
+                bindy.setClassType(BindyFixedLengthDelimitedFieldTest.Order.class);
+                bindy.setLocale("en");
+                bindy.setType(BindyType.Fixed);
+
                 from(URI_DIRECT_MARSHALL)
-                    .marshal().bindy(BindyType.Fixed, BindyFixedLengthDelimitedFieldTest.Order.class)
+                    .marshal(bindy)
                     .to(URI_MOCK_MARSHALL_RESULT);
             
                 from(URI_DIRECT_UNMARSHALL)

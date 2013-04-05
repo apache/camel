@@ -82,9 +82,11 @@ public class BindySimpleCsvNullMarshallTest extends AbstractJUnit4SpringContextT
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
 
         public void configure() {
+            BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+            camelDataFormat.setLocale("en");
+
             from("direct:start").marshal(camelDataFormat).to("mock:result");
         }
         

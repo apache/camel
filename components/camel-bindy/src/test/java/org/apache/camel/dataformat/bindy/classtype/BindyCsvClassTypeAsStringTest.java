@@ -22,6 +22,7 @@ import java.util.GregorianCalendar;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
+import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -91,8 +92,13 @@ public class BindyCsvClassTypeAsStringTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                BindyDataFormat bindy = new BindyDataFormat();
+                bindy.setClassType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+                bindy.setLocale("en");
+                bindy.setType(BindyType.Csv);
+
                 from("direct:in")
-                    .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
+                    .marshal(bindy)
                     .to("mock:in");
 
                 from("direct:out")

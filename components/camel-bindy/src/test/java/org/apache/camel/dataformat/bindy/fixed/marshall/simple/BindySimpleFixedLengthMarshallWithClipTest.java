@@ -42,6 +42,7 @@ public class BindySimpleFixedLengthMarshallWithClipTest extends CamelTestSupport
             @Override
             public void configure() throws Exception {
                 BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.marshall.simple");
+                bindy.setLocale("en");
 
                 from("direct:start")
                     .marshal(bindy)
