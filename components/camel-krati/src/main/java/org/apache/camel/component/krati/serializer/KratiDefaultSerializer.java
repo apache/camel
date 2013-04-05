@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.krati.serializer;
 
 import java.io.ByteArrayInputStream;
@@ -77,6 +76,7 @@ public class KratiDefaultSerializer<T extends Serializable> implements Serialize
             return null;
         }
 
+        // TODO: should use Camel's ClassResolver for classloading
         ByteArrayInputStream bais = new ByteArrayInputStream(binary);
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {

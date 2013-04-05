@@ -57,7 +57,7 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
 
             }
         } catch (Exception e) {
-            LOG.warn("Error adding item to krati idempotent repository. This exception is ignored.", e);
+            LOG.warn("Error adding item to Krati idempotent repository. This exception is ignored.", e);
             return false;
         }
     }
@@ -69,7 +69,7 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
         try {
             return dataSet.has(bytes);
         } catch (Exception e) {
-            LOG.warn("Error checking item exists in krati idempotent repository. This exception is ignored.", e);
+            LOG.warn("Error checking item exists in Krati idempotent repository. This exception is ignored.", e);
             return false;
         }
     }
@@ -81,7 +81,7 @@ public class KratiIdempotentRepository extends ServiceSupport implements Idempot
         try {
             return dataSet.delete(bytes);
         } catch (Exception e) {
-            LOG.warn("Error removing item from krati idempotent repository. This exception is ignored.", e);
+            LOG.warn("Error removing item from Krati idempotent repository. This exception is ignored.", e);
             return false;
         }
     }

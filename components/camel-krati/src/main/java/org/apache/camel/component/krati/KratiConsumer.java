@@ -40,7 +40,6 @@ public class KratiConsumer extends ScheduledBatchPollingConsumer {
 
     protected final KratiEndpoint endpoint;
     protected DataStore<Object, Object> dataStore;
-    protected int maxMessagesPerPoll = 10;
 
     public KratiConsumer(KratiEndpoint endpoint, Processor processor, DataStore<Object, Object> dataStore) {
         super(endpoint, processor);
@@ -88,12 +87,12 @@ public class KratiConsumer extends ScheduledBatchPollingConsumer {
                     try {
                         dataStore.delete(exchange.getProperty(KratiConstants.KEY));
                     } catch (Exception e) {
-                        LOG.warn("Failed to remove from datastore.", e);
+                        LOG.warn("Failed to remove from datastore. This exception is ignored.", e);
                     }
                 }
 
                 public void onFailure(Exchange exchange) {
-                  //emtpy
+                  // noop
                 }
             });
 

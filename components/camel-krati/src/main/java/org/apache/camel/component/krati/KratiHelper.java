@@ -82,7 +82,7 @@ public final class KratiHelper {
         try {
             result = new DynamicDataSet(homeDir, initialCapacity, segmentFactory);
         } catch (Exception e) {
-            throw new RuntimeCamelException("Failed to create Krati DataSet.", e);
+            throw new RuntimeCamelException("Failed to create Krati DataSet. This exception is ignored.", e);
         }
         return result;
     }

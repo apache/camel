@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 public class KratiProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(KratiProducer.class);
 
-    protected KratiEndpoint endpoint;
-    protected DataStore<Object, Object> dataStore;
+    protected final KratiEndpoint endpoint;
+    protected final DataStore<Object, Object> dataStore;
 
     public KratiProducer(KratiEndpoint endpoint, DataStore<Object, Object> dataStore) {
         super(endpoint);
@@ -43,6 +43,9 @@ public class KratiProducer extends DefaultProducer {
 
         LOG.trace("Processing {} operation on '[{}]'", operation, exchange);
         if (KratiConstants.KRATI_OPERATION_GET.equals(operation) && key != null) {
+            // preserve headers and attachments
+            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getOut().setAttachments(exchange.getIn().getAttachments());
             exchange.getOut().setBody(dataStore.get(key));
         } else if (KratiConstants.KRATI_OPERATION_DELETE.equals(operation) && key != null) {
             boolean status;
@@ -51,16 +54,23 @@ public class KratiProducer extends DefaultProducer {
                 dataStore.persist();
             }
             if (status) {
+                exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                exchange.getOut().setAttachments(exchange.getIn().getAttachments());
                 exchange.getOut().setHeader(KratiConstants.KRATI_OPERATION_STATUS, KratiConstants.KRATI_OPERATION_SUCESSFUL);
             } else {
+                exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                exchange.getOut().setAttachments(exchange.getIn().getAttachments());
                 exchange.getOut().setHeader(KratiConstants.KRATI_OPERATION_STATUS, KratiConstants.KRATI_OPERATION_FAILURE);
             }
         } else if (KratiConstants.KRATI_OPERATION_DELETEALL.equals(operation)) {
             try {
                 dataStore.clear();
+                exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                exchange.getOut().setAttachments(exchange.getIn().getAttachments());
                 exchange.getOut().setHeader(KratiConstants.KRATI_OPERATION_STATUS, KratiConstants.KRATI_OPERATION_SUCESSFUL);
             } catch (Exception e) {
                 LOG.warn("Error clearing all entries from store", e);
+                // This is not so good to ignore exceptions, the end user have not access the exception, and cannot use Camel error handling
                 exchange.getOut().setHeader(KratiConstants.KRATI_OPERATION_STATUS, KratiConstants.KRATI_OPERATION_FAILURE);
             }
         } else {
@@ -74,9 +84,6 @@ public class KratiProducer extends DefaultProducer {
 
     /**
      * Retrieves the operation from the URI or from the exchange headers. The header will take precedence over the URI.
-     *
-     * @param exchange
-     * @return
      */
     public String getOperation(Exchange exchange) {
         String operation = ((KratiEndpoint) getEndpoint()).getOperation();
@@ -90,9 +97,6 @@ public class KratiProducer extends DefaultProducer {
 
     /**
      * Retrieves the key from the URI or from the exchange headers. The header will take precedence over the URI.
-     *
-     * @param exchange
-     * @return
      */
     public Object getKey(Exchange exchange) {
         Object key = ((KratiEndpoint) getEndpoint()).getKey();
@@ -105,9 +109,6 @@ public class KratiProducer extends DefaultProducer {
 
     /**
      * Retrieves the value from the URI or from the exchange headers/body. The header/body will take precedence over the URI.
-     *
-     * @param exchange
-     * @return
      */
     public Object getValue(Exchange exchange) {
         Object value = ((KratiEndpoint) getEndpoint()).getValue();
