@@ -102,7 +102,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public void initAnnotatedFields() {
 
-    	int maxpos = 0;
+        int maxpos = 0;
         for (Class<?> cl : models) {
             List<Field> linkFields = new ArrayList<Field>();
 
@@ -126,8 +126,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     int pos = dataField.pos();
                     if (annotatedFields.containsKey(pos)) {
-                    	Field f = annotatedFields.get(pos);
-                    	LOG.warn("Potentially invalid model: existing @DataField '{}' replaced by '{}'", f.getName(), field.getName());
+                        Field f = annotatedFields.get(pos);
+                        LOG.warn("Potentially invalid model: existing @DataField '{}' replaced by '{}'", f.getName(), field.getName());
                     }
                     dataFields.put(pos, dataField);
                     annotatedFields.put(pos, field);
@@ -158,7 +158,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         if (annotatedFields.size() < maxpos) {
-        	LOG.info("Potentially incomplete model: some csv fields may not be mapped to @DataField members");
+            LOG.info("Potentially incomplete model: some csv fields may not be mapped to @DataField members");
         }
     }
 
