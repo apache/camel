@@ -33,6 +33,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,6 +133,7 @@ public class S3Producer extends DefaultProducer {
         }
 
         if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
+            IOHelper.close(putObjectRequest.getInputStream());
             FileUtil.deleteFile(filePayload);
         }
     }
