@@ -120,7 +120,8 @@ public class S3ComponentFileTest extends CamelTestSupport {
         assertIsInstanceOf(InputStream.class, resultExchange.getIn().getBody());
 
         if (!"sendFileAndDelete".equals(getTestMethodName())) {
-            // as we delete the file using the "deleteAfterWrite=true" option here we can not assert on it's content anymore
+            // assert on the file content only in case the "deleteAfterWrite" option is NOT enabled
+            // in which case we would still have the file and thereby could assert on it's content
             assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
         }
 
