@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+<title>My Simple Ajax Example</title>
+
+<script type="text/javascript" src="dojo/dojo/dojo.js"></script>
+<script type="text/javascript">
+    
+        dojo.require("dojox.cometd");
+    
+        function setupComet(){
+          dojox.cometd.init('/cometd');
+          dojox.cometd.subscribe("/service/test", callback);
+          dojox.cometd.addListener("/meta/handshake", function(message) {
+            if(message.successful) {
+                dojo.byId("send").onclick = function() {
+                    dojox.cometd.publish("/service/test", "Hello");
+                    return false;
+                }
+            }
+          });
+        }
+           
+        dojo.addOnLoad(setupComet);
+        dojo.addOnUnload(dojox.cometd, "disconnect");
+
+        function callback(msg){      
+        	dojo.byId("MSG").innerHTML += msg.data + "\n";              
+        }         
+        
+    </script>
+
+</head>
+<body>
+<h1>CAMEL TEST PAGE</h1>
+<button id="send">Send message</button>
+<pre id="MSG" />
+</body>
+</html>

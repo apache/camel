@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL MAP 2.0//EN"
+	"http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="table">
+	<update id="create">create table t (d int)</update>
+	<select id="values" resultClass="java.lang.Integer">select d from t</select>
+	<insert id="add" parameterClass="java.lang.Integer">insert into t(d) values(#value#)</insert>
+	<insert id="addOne">insert into t(d) values(1)</insert>
+	<update id="doNothing">update t set d=d</update>
+	<delete id="clear">delete from t</delete>
+	<update id="drop">drop table t</update>
+</sqlMap>

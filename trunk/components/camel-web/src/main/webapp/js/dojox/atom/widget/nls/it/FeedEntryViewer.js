@@ -1,0 +1,1 @@
+({"close":"[chiudi]","title":"Titolo","authors":"Autori","summary":"Riepilogo","content":"Contenuto","contributors":"Partecipanti","updated":"Aggiornato","displayOptions":"[opzioni di visualizzazione]","id":"ID"})

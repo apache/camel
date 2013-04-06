@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://services.samples/xsd" xmlns:tns="http://services.samples/xsd" elementFormDefault="unqualified">
+    <xsd:element name="buyStocks">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="order" type="tns:order" maxOccurs="unbounded" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:complexType name="order">
+        <xsd:sequence>
+            <xsd:element name="symbol" type="xsd:string"></xsd:element>
+            <xsd:element name="buyerID" type="xsd:string"></xsd:element>
+            <xsd:element name="price" type="xsd:double"></xsd:element>
+            <xsd:element name="volume" type="xsd:int"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

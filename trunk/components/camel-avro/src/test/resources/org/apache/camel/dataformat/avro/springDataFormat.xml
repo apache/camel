@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <dataFormats>
+            <avro id="avro1" instanceClass="org.apache.camel.dataformat.avro.Message"/>
+        </dataFormats>
+        <route>
+            <from uri="direct:in"/>
+            <marshal>
+                <avro instanceClass="org.apache.camel.dataformat.avro.Message"/>
+            </marshal>
+        </route>
+        <route>
+            <from uri="direct:back"/>
+            <unmarshal>
+                <avro instanceClass="org.apache.camel.dataformat.avro.Message"/>
+            </unmarshal>
+            <to uri="mock:reverse"/>
+        </route>
+        <route>
+            <from uri="direct:marshal"/>
+            <marshal ref="avro1"/>
+        </route>
+        <route>
+            <from uri="direct:unmarshalA"/>
+            <unmarshal ref="avro1"/>
+            <to uri="mock:reverse"/>
+        </route>
+        <route>
+            <from uri="direct:unmarshalB"/>
+            <unmarshal ref="avro1"/>
+            <to uri="mock:reverse"/>
+        </route>
+    </camelContext>
+
+    <bean id="avro2" class="org.apache.camel.datafromat.avro.AvrofDataFormat">
+        <property name="instanceClassName" value="org.apache.camel.dataformat.avro.Message"/>
+    </bean>
+
+</beans>

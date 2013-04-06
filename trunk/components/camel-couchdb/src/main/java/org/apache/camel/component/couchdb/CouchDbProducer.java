@@ -1,0 +1,76 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.couchdb;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.impl.DefaultProducer;
+import org.lightcouch.Response;
+
+public class CouchDbProducer extends DefaultProducer {
+
+    private final CouchDbClientWrapper couchClient;
+
+    public CouchDbProducer(CouchDbEndpoint endpoint, CouchDbClientWrapper couchClient) {
+        super(endpoint);
+        this.couchClient = couchClient;
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        JsonElement json = getBodyAsJsonElement(exchange);
+        Response save = saveJsonElement(json);
+        if (save == null) {
+            throw new CouchDbException("Could not save document [unknown reason]", exchange);
+        }
+
+        if (log.isTraceEnabled()) {
+            log.trace("Document saved [_id={}, _rev={}]", save.getId(), save.getRev());
+        }
+        exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getRev());
+        exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getId());
+    }
+
+    JsonElement getBodyAsJsonElement(Exchange exchange) throws InvalidPayloadException {
+        Object body = exchange.getIn().getMandatoryBody();
+        if (body instanceof String) {
+            return new Gson().toJsonTree(body);
+        } else if (body instanceof JsonElement) {
+            return (JsonElement) body;
+        } else {
+            throw new InvalidPayloadException(exchange, body != null ? body.getClass() : null);
+        }
+    }
+
+    private Response saveJsonElement(JsonElement json) {
+        Response save;
+        if (json instanceof JsonObject) {
+            JsonObject obj = (JsonObject) json;
+            if (obj.get("_rev") == null) {
+                save = couchClient.save(json);
+            } else {
+                save = couchClient.update(json);
+            }
+        } else {
+            save = couchClient.save(json);
+        }
+        return save;
+    }
+}

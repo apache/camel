@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<wsdl:definitions name="CustomerServiceMultiPart"
+    targetNamespace="http://multipart.customerservice.example.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="http://multipart.customerservice.example.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:typens="http://multipart.customerservice.example.com/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+	<wsdl:types>
+
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:tns="http://multipart.customerservice.example.com/" attributeFormDefault="unqualified"
+            elementFormDefault="unqualified" targetNamespace="http://multipart.customerservice.example.com/">
+            
+			<xs:element name="getCustomersByName" type="tns:getCustomersByName" />
+			<xs:element name="getCustomersByNameResponse" type="tns:getCustomersByNameResponse" />
+			<xs:complexType name="getCustomersByName">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="name" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="getCustomersByNameResponse">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="return"
+						type="tns:customer" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="customer">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="name" type="xs:string" />
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="address"
+						nillable="true" type="xs:string" />
+					<xs:element name="numOrders" type="xs:int" />
+					<xs:element name="revenue" type="xs:double" />
+					<xs:element minOccurs="0" name="test" type="xs:decimal" />
+					<xs:element minOccurs="0" name="birthDate" type="xs:dateTime" />
+					<xs:element minOccurs="0" name="type" type="tns:customerType" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:simpleType name="customerType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="PRIVATE" />
+					<xs:enumeration value="BUSINESS" />
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="NoSuchCustomer" type="tns:NoSuchCustomer" />
+			<xs:complexType name="NoSuchCustomer">
+				<xs:sequence>
+					<xs:element name="customerId" nillable="true" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="getAllCustomers">
+			</xs:element>
+			<xs:element name="getAllCustomersResponse" type="tns:getAllCustomersResponse">
+			</xs:element>
+
+			<xs:complexType name="getAllCustomersResponse">
+				<xs:sequence>
+					<xs:element name="return" type="tns:customer" maxOccurs="unbounded"
+						minOccurs="0"></xs:element>
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:element name="saveCustomer" type="tns:saveCustomer">
+			</xs:element>
+			
+			<!--  This element reuses the tns:SaveCustomer type, but applies a different element QName (than above) -->
+			<xs:element name="saveCustomerToo" type="tns:saveCustomer">
+            </xs:element>
+			<xs:complexType name="saveCustomer">
+				<xs:sequence>
+					<xs:element name="customer" type="tns:customer"></xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:element name="company" type="tns:company"></xs:element>
+			<xs:complexType name="company">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" />
+					<xs:element name="president" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:element name="companyType" type="tns:companyType" />
+			<xs:simpleType name="companyType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="PRIVATE" />
+					<xs:enumeration value="PUBLIC" />
+				</xs:restriction>
+			</xs:simpleType>
+
+			<xs:element name="product" type="tns:product" />
+			<xs:complexType name="product">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" />
+					<xs:element name="description" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+
+	</wsdl:types>
+   
+
+    <!--  message with two parts -->
+    <wsdl:message name="getCustomersByName">
+        <wsdl:part name="parameters" element="typens:getCustomersByName"/>
+        <wsdl:part name="product" element="typens:product"/>
+    </wsdl:message>
+    <wsdl:message name="getCustomersByNameResponse">
+        <wsdl:part name="parameters" element="typens:getCustomersByNameResponse"/>
+    </wsdl:message>
+    
+    <wsdl:message name="NoSuchCustomerException">
+        <wsdl:part name="NoSuchCustomerException" element="typens:NoSuchCustomer"/>
+    </wsdl:message>
+     
+     <!--  message with an out part -->
+    <wsdl:message name="getAllCustomers">
+    </wsdl:message>
+    <wsdl:message name="getAllCustomersResponse">
+        <wsdl:part name="parameters" element="typens:getAllCustomersResponse"/>
+        <wsdl:part name="companyType" element="typens:companyType"/>
+    </wsdl:message> 
+        
+    <!--  multiple in parts and an inout -->  
+    <wsdl:message name="saveCustomer">
+        <wsdl:part name="parameters" element="typens:saveCustomer"/>
+        <wsdl:part name="product" element="typens:product"/>
+        <wsdl:part name="company" element="typens:company"/>          
+    </wsdl:message>    
+    <wsdl:message name="saveCustomerResponse">
+       <wsdl:part name="company" element="typens:company"/>
+    </wsdl:message>
+    
+    <wsdl:message name="saveCustomerToo">
+        <wsdl:part name="parameters" element="typens:saveCustomerToo"/>
+        <wsdl:part name="product" element="typens:product"/>
+        <wsdl:part name="company" element="typens:company"/>          
+    </wsdl:message>  
+    <wsdl:message name="saveCustomerResponseToo">
+       <wsdl:part name="company" element="typens:company"/>
+    </wsdl:message>
+    
+    <!--  message with an out part -->   
+    <wsdl:portType name="MultiPartCustomerService">
+        <wsdl:operation name="getCustomersByName">
+            <wsdl:input name="getCustomersByName" message="tns:getCustomersByName"/>
+            <wsdl:output name="getCustomersByNameResponse" message="tns:getCustomersByNameResponse"/>
+            <wsdl:fault name="NoSuchCustomerException" message="tns:NoSuchCustomerException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllCustomers">
+            <wsdl:input message="tns:getAllCustomers"/>
+            <wsdl:output message="tns:getAllCustomersResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="saveCustomer">
+            <wsdl:input message="tns:saveCustomer"/>
+            <wsdl:output message="tns:saveCustomerResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="saveCustomerToo">
+            <wsdl:input message="tns:saveCustomerToo"/>
+            <wsdl:output name="saveCustomerResponseToo" message="tns:saveCustomerResponseToo"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="CustomerServiceMultiPart" type="tns:MultiPartCustomerService">
+    
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    
+        <!--  operation with a single header part in the request -->      
+        <wsdl:operation name="getCustomersByName">
+            <soap:operation soapAction="http://multipart.customerservice.example.com/getCustomersByName" />
+            <wsdl:input>
+                <soap:header use="literal" part="product" message="tns:getCustomersByName" />
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="getCustomersByNameResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+            <wsdl:fault name="NoSuchCustomerException">
+                <soap:fault use="literal" name="NoSuchCustomerException" />
+            </wsdl:fault>
+        </wsdl:operation> 
+            
+        <!--  operation with a single header part in the response -->             
+        <wsdl:operation name="getAllCustomers">
+            <soap:operation soapAction="http://multipart.customerservice.example.com/getAllCustomers" />
+            <wsdl:input></wsdl:input>
+            <wsdl:output>
+                <soap:header use="literal" part="company" message="tns:getAllCustomers" />
+                <soap:body use="literal" />      
+            </wsdl:output>
+        </wsdl:operation>
+              
+        <!--  operation with two header values in request - one is an inout -->
+        <wsdl:operation name="saveCustomer">
+            <soap:operation soapAction="http://multipart.customerservice.example.com/saveCustomer" />
+            <wsdl:input>
+                <soap:header use="literal" part="product" message="tns:saveCustomer" />
+                <soap:header use="literal" part="company" message="tns:saveCustomer" />
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="saveCustomerResponse">
+	            <soap:header use="literal" part="company" message="tns:saveCustomer" />
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <!--  operation to test reused parameters and a parameters that reuses a type but applies a new namespace -->
+        <wsdl:operation name="saveCustomerToo">
+            <soap:operation soapAction="http://multipart.customerservice.example.com/saveCustomerToo" />
+            <wsdl:input>
+                <soap:header use="literal" part="product" message="tns:saveCustomerToo" />
+                <soap:header use="literal" part="company" message="tns:saveCustomerToo" />
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="saveCustomerResponseToo">
+                <soap:header use="literal" part="company" message="tns:saveCustomerToo" />
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>  
+              
+    </wsdl:binding>
+    
+    
+    <wsdl:service name="MultiPartCustomerServiceService">
+        <wsdl:port name="MultiPartCustomerServicePort" binding="tns:CustomerServiceMultiPart">
+            <soap:address location="http://localhost:9090/MultipartCustomerService" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

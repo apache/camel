@@ -1,0 +1,56 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:broker="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd
+		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+		http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	
+    <broker:broker useJmx="false" persistent="false" brokerName="localhost">
+        <broker:transportConnectors>
+            <broker:transportConnector name="vm" uri="vm://localhost"/>
+        </broker:transportConnectors>
+    </broker:broker>
+
+	<import resource="classpath:spring-config/jms-applicationContext.xml" />
+
+	<endpoint xmlns="http://cxf.apache.org/jaxws"
+		id="org.apache.camel.itest.customerrelations.CustomerServiceV1"
+		xmlns:customer="http://camel.apache.org/itest/customerrelations"
+		serviceName="customer:CustomerServiceV1"
+		endpointName="customer:CustomerServiceV1CamelPort"
+		address="camel://direct:serverInbound"
+		wsdlLocation="./src/test/resources/wsdl/CustomerService_noSoapAction.wsdl"
+		implementor="org.apache.camel.itest.customerrelations.CustomerServiceV1Impl">
+		<!-- properties>
+			<entry xmlns="http://www.springframework.org/schema/beans"
+				key="mtom-enabled" value="true" />
+		</properties -->
+		<features>
+			<!-- Enables logging of SOAP messages. -->
+			<logging xmlns="http://cxf.apache.org/core" />
+			<!-- Enables WS-Addressing. -->
+			<addressing xmlns="http://cxf.apache.org/ws/addressing" />
+			<!--  policies xmlns="http://cxf.apache.org/policy" ignoreUnknownAssertions="true" /-->
+		</features>
+
+	</endpoint>
+
+	<destination xmlns="http://cxf.apache.org/transports/camel"
+		name="{http://camel.apache.org/itest/customerrelations}CustomerServiceV1CamelPort.camel-destination">
+		<camelContextRef>camel-server</camelContextRef>
+	</destination>
+
+	<camelContext id="camel-server" xmlns="http://camel.apache.org/schema/spring">
+		<route>
+			<from uri="jms://org.apache.camel.itest.customerrelations.Addressing" />
+			<to uri="direct:serverInbound" />
+		</route>
+	</camelContext>
+
+</beans>

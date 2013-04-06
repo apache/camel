@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version
+    2.0 (the "License"); you may not use this file except in compliance
+    with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+    applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+    OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+    <route>
+      <from uri="direct:start" />
+      <marshal>
+        <csv autogenColumns="false" delimiter="|" configRef="csvConfig1" />
+      </marshal>
+      <convertBodyTo type="java.lang.String" />
+      <to uri="mock:result" />
+    </route>
+
+    <route>
+      <from uri="direct:start2" />
+      <marshal>
+        <!-- make use of a strategy other than the default one which is 'org.apache.commons.csv.CSVStrategy.DEFAULT_STRATEGY' -->
+        <csv autogenColumns="false" delimiter="|" configRef="csvConfig2" strategyRef="excelStrategy" />
+      </marshal>
+      <convertBodyTo type="java.lang.String" />
+      <to uri="mock:result2" />
+    </route>
+
+  </camelContext>
+
+  <bean id="csvConfig1" class="org.apache.commons.csv.writer.CSVConfig">
+    <property name="fields">
+      <list>
+        <!-- here we're only interested in 'item' but not in 'orderId' or 'amount' -->
+        <bean class="org.apache.commons.csv.writer.CSVField">
+          <property name="name" value="item" />
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="csvConfig2" class="org.apache.commons.csv.writer.CSVConfig">
+    <property name="fields">
+      <list>
+        <!-- here we're interested in both 'orderId' and 'amount' but not in 'item' -->
+        <bean class="org.apache.commons.csv.writer.CSVField">
+          <property name="name" value="orderId" />
+        </bean>
+        <bean class="org.apache.commons.csv.writer.CSVField">
+          <property name="name" value="amount" />
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="excelStrategy" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.commons.csv.CSVStrategy.EXCEL_STRATEGY" />
+  </bean>
+
+</beans>

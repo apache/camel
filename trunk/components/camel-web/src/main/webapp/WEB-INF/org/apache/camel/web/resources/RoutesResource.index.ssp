@@ -1,0 +1,84 @@
+<%--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+--%>
+<%@ import val it: RoutesResource %>
+
+#{ attributes("title") = "Routes"}#
+
+
+<h2>Routes</h2>
+
+<table>
+  <tr>
+    <th>Route</th>
+    <th colspan="2">Status</th>
+    <th>Remove</th>
+    <th>Exchanges<br/>(Completed / Failed / Inflight)</th>
+    <th>Processing Time<br/>(Min / Max / Mean)</th>
+    <th>Message Time<br/>(First / Last)</th>
+    <th>Load Average<br/>(1 min / 5 min / 15 min)</th>
+  </tr>
+<ul>
+  #for(i <- it.getRoutes)
+  <tr>
+    <td>
+      <a href='${uri("/routes/" + i.getId)}'>${i.getId}</a> ${i.getDescriptionText}
+    </td>
+    <td class="${i.getStatus}">
+      ${i.getStatus}
+    </td>
+    <td>
+      <form action='${uri("/routes/" + i.getId + "/status")}' method="POST" name="setStatus">
+      #if(i.isStartable)
+        <input type="hidden" name="status" value="start">
+        <input type="submit" value="Start">
+      #end
+      #if(i.isStoppable)
+        <input type="hidden" name="status" value="stop">
+        <input type="submit" value="Stop">
+      #end
+      </form>
+    </td>
+    <td>
+    	#if(i.isStoppable)
+      		(stop first)
+      	#end
+    	#if(i.isStartable)
+      		<a href='${uri("/routes/" + i.getId + "/remove")}'>remove</a>
+      	#end
+    </td>
+    <td>
+      ${i.getStatistic("ExchangesCompleted")} / ${i.getStatistic("ExchangesFailed")} / ${i.getStatistic("InflightExchanges")}
+    </td>
+    <td>
+      ${i.getStatistic("MinProcessingTime")} / ${i.getStatistic("MaxProcessingTime")} / ${i.getStatistic("MeanProcessingTime")}
+    </td>
+    <td>
+      ${i.getStatistic("FirstExchangeCompletedTimestamp")} / ${i.getStatistic("LastExchangeCompletedTimestamp")}
+    </td>
+    <td>
+      ${i.getStatistic("Load01")} / ${i.getStatistic("Load05")} / ${i.getStatistic("Load15")}
+    </td>
+  </tr>
+  #end
+</ul>
+</table>
+
+<ul>
+<li><a href='${uri("/routes/create")}'>Create New Route</a>
+</ul>
+
+

@@ -1,0 +1,115 @@
+/**
+ * Copyright (C) 2009-2010 the original author or authors.
+ * See the notice.md file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* based on the PlayFramework's CSS so it looks the same as when folks get errors in Play - thanks folks! */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica, Arial, Sans;
+    background: #EEEEEE;
+}            
+.block {
+    padding: 20px;
+    border-bottom: 1px solid #aaa;
+}
+#scalate-error .header h1 {
+    font-weight: normal;
+    font-size: 28px;
+    margin: 0;
+}
+#scalate-error .more {
+    color: #666;
+    font-size: 80%;
+    border: none;
+}
+#scalate-error .header {
+    background: #fcd2da;
+}
+#scalate-error .header p {
+    color: #333;
+}
+#scalate-error .details {
+    background: #f6f6f6;
+}
+#scalate-error .details h2 {
+    font-weight: normal;
+    font-size: 18px;
+    margin: 0 0 10px 0;
+}
+#scalate-error .details .lineNumber {
+    float: left;
+    display: block;
+    width: 40px;
+    text-align: right;
+    margin-right: 10px;
+    font-size: 14px;
+    font-family: monospace;
+    background: #333;
+    color: #fff;
+}
+#scalate-error .details .line {
+    clear: both;
+    color: #333;
+    margin-bottom: 1px;
+}
+#scalate-error .details pre {
+    font-size: 14px;
+    margin: 0;
+    overflow-x: hidden;
+}
+#scalate-error .details .error {
+    color: #c00 !important;
+}
+#scalate-error .details .error .lineNumber {
+    background: #c00;
+}
+#scalate-error .details .errorCol {
+    background: #c00;
+    color:#fff;
+}
+#scalate-error .details a {
+    text-decoration: none;
+}
+#scalate-error .details a:hover * {
+    cursor: pointer !important;
+}
+#scalate-error .details a:hover pre {
+    background: #FAFFCF !important;
+}
+
+#scalate-error .details .stacktrace {
+    clear: both;
+    color: #333;
+    margin-bottom: 1px;
+    font-size: 10px;  
+}
+
+#scalate-error .nested {
+  padding-top:10px;
+  padding-left:10px;
+}
+
+#scalate-error .nested .block {
+  padding:10px;
+}
+#scalate-error .nested .header {
+  font-size:10px;
+}
+#scalate-error .nested .header h1 {
+  font-size:16px;
+}
