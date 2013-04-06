@@ -108,4 +108,3 @@ software:
    * camel-mail can be configured for secure communications
    * camel-nagios can be configured for secure communications
    * camel-xmlsecurity can be configured for secure communications
-
