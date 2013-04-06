@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -349,6 +350,8 @@ public class RunMojo extends AbstractExecMojo {
 
     private Properties originalSystemProperties;
 
+    private String extraPluginDependencyArtifactId;
+
     /**
      * Execute goal.
      *
@@ -411,13 +414,13 @@ public class RunMojo extends AbstractExecMojo {
             getLog().info("Using org.apache.camel.spring.javaconfig.Main to initiate a CamelContext");
         } else if (useCdiMain) {
             mainClass = "org.apache.camel.cdi.Main";
-            // must include plugin dependencies for blueprint
-            includePluginDependencies = true;
+            // must include plugin dependencies for cdi
+            extraPluginDependencyArtifactId = "camel-cdi";
             getLog().info("Using " + mainClass + " to initiate a CamelContext");
         } else if (usingBlueprintMain) {
             mainClass = "org.apache.camel.test.blueprint.Main";
             // must include plugin dependencies for blueprint
-            includePluginDependencies = true;
+            extraPluginDependencyArtifactId = "camel-test-blueprint";
             getLog().info("Using org.apache.camel.test.blueprint.Main to initiate a CamelContext");
         } else if (mainClass != null) {
             getLog().info("Using custom " + mainClass + " to initiate a CamelContext");
@@ -652,14 +655,19 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoExecutionException
      */
     private ClassLoader getClassLoader() throws MojoExecutionException {
-        List<URL> classpathURLs = new ArrayList<URL>();
+        Set<URL> classpathURLs = new LinkedHashSet<URL>();
         // project classpath must be first
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
+        // and extra plugin classpath
+        this.addExtraPluginDependenciesToClasspath(classpathURLs);
         // and plugin classpath last
         this.addRelevantPluginDependenciesToClasspath(classpathURLs);
 
         if (logClasspath) {
-            getLog().info("Classpath = " + classpathURLs);
+            getLog().info("Classpath:");
+            for (URL url : classpathURLs) {
+                getLog().info("  " + url.getFile().toString());
+            }
         }
         return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
     }
@@ -671,7 +679,7 @@ public class RunMojo extends AbstractExecMojo {
      * @param path classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
-    private void addRelevantPluginDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
+    private void addRelevantPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
         if (hasCommandlineArgs()) {
             arguments = parseCommandlineArgs();
         }
@@ -699,13 +707,55 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     /**
+     * Add any relevant project dependencies to the classpath. Indirectly takes
+     * includePluginDependencies and ExecutableDependency into consideration.
+     *
+     * @param path classpath of {@link java.net.URL} objects
+     * @throws MojoExecutionException
+     */
+    private void addExtraPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+        if (extraPluginDependencyArtifactId == null) {
+            return;
+        }
+
+        try {
+            Set<Artifact> artifacts = new HashSet<Artifact>(this.pluginDependencies);
+            for (Artifact artifact : artifacts) {
+                // must
+                if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)) {
+                    getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
+                            + " to classpath");
+                    path.add(artifact.getFile().toURI().toURL());
+
+                    // add the transient dependencies of this artifact
+                    Set<Artifact> deps = resolveExecutableDependencies(artifact);
+                    for (Artifact dep : deps) {
+
+                        // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
+                        if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
+                            getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
+                            continue;
+                        }
+
+                        getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
+                                + " to classpath");
+                        path.add(dep.getFile().toURI().toURL());
+                    }
+                }
+            }
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Error during setting up classpath", e);
+        }
+    }
+
+    /**
      * Add any relevant project dependencies to the classpath. Takes
      * includeProjectDependencies into consideration.
      *
      * @param path classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
-    private void addRelevantProjectDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
+    private void addRelevantProjectDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
         if (this.includeProjectDependencies) {
             try {
                 getLog().debug("Project Dependencies will be included.");

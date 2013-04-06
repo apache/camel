@@ -75,11 +75,13 @@
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint.core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.aries</groupId>
             <artifactId>org.apache.aries.util</artifactId>
             <version>${aries-util-version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- for testing -->
