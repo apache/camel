@@ -147,7 +147,13 @@ public final class CamelBlueprintHelper {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error during disposing BundleContext. This exception will be ignored.", e);
+            IllegalStateException ise = ObjectHelper.getException(IllegalStateException.class, e);
+            if (ise != null) {
+                // we dont care about illegal state exception as that may happen from OSGi
+                LOG.debug("Error during disposing BundleContext. This exception will be ignored.", e);
+            } else {
+                LOG.warn("Error during disposing BundleContext. This exception will be ignored.", e);
+            }
         } finally {
             String tempDir = System.clearProperty("org.osgi.framework.storage");
             if (tempDir != null) {
