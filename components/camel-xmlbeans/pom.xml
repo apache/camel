@@ -76,9 +76,11 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>xmlbeans-maven-plugin</artifactId>
-                <version>2.3.3</version>
+                <version>${xmlbeans-maven-plugin-version}</version>
                 <executions>
                     <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>xmlbeans-test</goal>
                         </goals>

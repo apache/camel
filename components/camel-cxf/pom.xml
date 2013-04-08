@@ -328,8 +328,8 @@
         <artifactId>cxf-codegen-plugin</artifactId>
         <executions>
           <execution>
-            <id>generate-test-sources</id>
-            <phase>generate-test-sources</phase>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
             <configuration>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
               <wsdlOptions>

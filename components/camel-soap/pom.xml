@@ -129,7 +129,7 @@
                 <executions>
                     <execution>
                         <id>generate-sources-wsdl</id>
-                        <phase>generate-test-sources</phase>
+                        <phase>generate-sources</phase>
                         <configuration>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <defaultOptions>

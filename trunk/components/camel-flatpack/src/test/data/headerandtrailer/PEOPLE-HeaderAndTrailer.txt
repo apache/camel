@@ -1,6 +1,0 @@
-HBT20080817
-JOHN                               DOE                                1234 CIRCLE CT                                                                                      ELYRIA                                                                                              OH44035
-JIMMY                              SMITH                              180 SOME ST                                                                                         AVON                                                                                                OH44011
-JANE                               DOE                                111 MILKY WY                                                                                        AMHERST                                                                                             OH44001
-FRED                               FLINTSTONE                         123 ROCKY WY                                                                                        BEDROCK                                                                                             AZ12345
-FBTSUCCESS
