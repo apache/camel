@@ -389,6 +389,7 @@
     <xml-apis-version>1.4.01</xml-apis-version>
     <xml-resolver-version>1.2</xml-resolver-version>
     <xmlbeans-bundle-version>2.6.0_2</xmlbeans-bundle-version>
+    <xmlbeans-maven-plugin-version>2.3.3</xmlbeans-maven-plugin-version>
     <xmlbeans-version>2.6.0</xmlbeans-version>
     <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
     <xmlrpc-version>3.1.3</xmlrpc-version>
