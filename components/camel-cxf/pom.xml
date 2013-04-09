@@ -332,6 +332,9 @@
             <phase>generate-sources</phase>
             <configuration>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
+              <defaultOptions>
+                  <frontEnd>jaxws21</frontEnd>
+              </defaultOptions>
               <wsdlOptions>
                 <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/mtom.wsdl</wsdl>
