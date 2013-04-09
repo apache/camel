@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jpa;
 
-import com.google.common.base.Optional;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,7 +46,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private final TransactionStrategy template;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
-    private Optional<Method> preConsumedMethod;
+    private DeleteHandler<Object> preConsumedMethod = null;
     private String query;
     private String namedQuery;
     private String nativeQuery;
@@ -151,10 +150,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             
             if (lockEntity(result, entityManager)) {
                 // Run the @PreConsumed callback - User supplied preprocessing
-                Optional<Method> preConsumed = getPreConsumedMethod();
-                if (preConsumed.isPresent()) {
-                    preConsumed.get().invoke(result);
-                }
+                DeleteHandler<Object> preConsumed = getPreConsumedMethod();
+                preConsumed.deleteObject(entityManager, result);
                 
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
@@ -178,7 +175,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         return endpoint;
     }
 
-    public Optional<Method> getPreConsumedMethod() {
+    public DeleteHandler<Object> getPreConsumedMethod() {
         if (preConsumedMethod == null) {
             // Look for @PreConsumed to allow custom callback before the Entity has been consumed
             Class<?> entityType = getEndpoint().getEntityType();
@@ -193,10 +190,21 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     if (parameters.length != 0) {
                         throw new IllegalStateException("@PreConsumed annotated method cannot have parameters!");
                     }
-                    
-                    preConsumedMethod = Optional.of(methods.get(0));
+
+                    final Method method = methods.get(0);
+                    preConsumedMethod = new DeleteHandler<Object>() {
+                        @Override
+                        public void deleteObject(EntityManager entityManager, Object entityBean) {
+                            ObjectHelper.invokeMethod(method, entityBean);
+                        }
+                    };
                 } else {
-                    preConsumedMethod = Optional.absent();
+                    preConsumedMethod = new DeleteHandler<Object>() {
+                        @Override
+                        public void deleteObject(EntityManager entityManager, Object entityBean) {
+                            // Do nothing
+                        }
+                    };
                 }
             } else {
                 throw new IllegalStateException("Jpa endpoint did not contain a defined entity type!");
