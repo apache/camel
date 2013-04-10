@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventObject;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,7 +44,6 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -289,7 +290,7 @@ public class NotifyBuilder {
     public NotifyBuilder wereSentTo(final String endpointUri) {
         // insert in start of stack but after the previous wereSentTo
         stack.add(wereSentToIndex++, new EventPredicateSupport() {
-            private AtomicBoolean sentTo = new AtomicBoolean();
+            private ConcurrentMap<String, String> sentTo = new ConcurrentHashMap<String, String>();
 
             @Override
             public boolean isAbstract() {
@@ -298,16 +299,9 @@ public class NotifyBuilder {
             }
 
             @Override
-            public boolean onExchangeCreated(Exchange exchange) {
-                // reset when a new exchange is created
-                sentTo.set(false);
-                return onExchange(exchange);
-            }
-
-            @Override
             public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
                 if (EndpointHelper.matchEndpoint(context, endpoint.getEndpointUri(), endpointUri)) {
-                    sentTo.set(true);
+                    sentTo.put(exchange.getExchangeId(), exchange.getExchangeId());
                 }
                 return onExchange(exchange);
             }
@@ -315,7 +309,8 @@ public class NotifyBuilder {
             @Override
             public boolean onExchange(Exchange exchange) {
                 // filter only when sentTo
-                return sentTo.get();
+                String sent = sentTo.get(exchange.getExchangeId());
+                return sent != null;
             }
 
             public boolean matches() {
@@ -325,7 +320,7 @@ public class NotifyBuilder {
 
             @Override
             public void reset() {
-                sentTo.set(false);
+                sentTo.clear();
             }
 
             @Override
