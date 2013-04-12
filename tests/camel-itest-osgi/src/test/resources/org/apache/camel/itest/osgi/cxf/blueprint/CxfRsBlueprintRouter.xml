@@ -25,11 +25,19 @@
    
   <!-- Defined the server endpoint to create the cxf-rs consumer --> 
   <camelcxf:rsServer id="rsServer" address="http://localhost:9000/route"
-    serviceClass="org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService" />
+    serviceClass="org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService">
+     <camelcxf:features>
+         <bean class="org.apache.cxf.feature.LoggingFeature"/>
+     </camelcxf:features> 
+  </camelcxf:rsServer>
 
   <!-- Defined the client endpoint to create the cxf-rs consumer -->
   <camelcxf:rsClient id="rsClient" address="http://localhost:9002/rest"
-    serviceClass="org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService"/>
+    serviceClass="org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService">
+    <camelcxf:features>
+         <bean class="org.apache.cxf.feature.LoggingFeature"/>
+     </camelcxf:features> 
+  </camelcxf:rsClient>
   
   <!-- The camel route context -->
   <camel:camelContext>
