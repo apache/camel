@@ -132,8 +132,9 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
         MultivaluedMap<String, String> answer = new MetadataMap<String, String>();
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {
-            
-            if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
+            // Need to make sure the cxf needed header will not be filtered 
+            if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)
+                && camelToCxfHeaderMap.get(entry.getKey()) == null) {
                 LOG.trace("Drop Camel header: {}={}", entry.getKey(), entry.getValue());
                 continue;
             }

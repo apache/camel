@@ -39,6 +39,8 @@ public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add(Exchange.HTTP_METHOD);
         getOutFilter().add(Exchange.HTTP_PATH);
         getOutFilter().add(Exchange.DESTINATION_OVERRIDE_URL);
+        // filter headers begin with "Camel" or "org.apache.camel"
+        setOutFilterPattern("(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
 
     }
 
