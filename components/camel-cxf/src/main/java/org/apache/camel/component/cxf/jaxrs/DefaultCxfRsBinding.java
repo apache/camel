@@ -139,6 +139,12 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
                 continue;
             }
             
+            // we need to make sure the entry value is not null
+            if (entry.getValue() == null) {
+                LOG.trace("Drop Camel header: {}={}", entry.getKey(), entry.getValue());
+                continue;
+            }
+            
             String mappedHeaderName = camelToCxfHeaderMap.get(entry.getKey());
             if (mappedHeaderName == null) {
                 mappedHeaderName = entry.getKey();
@@ -251,7 +257,9 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     protected void copyProtocolHeader(org.apache.cxf.message.Message cxfMessage, Message camelMessage, Exchange camelExchange) {
         Map<String, List<String>> headers = (Map<String, List<String>>)cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS);
         for (Map.Entry<String, List<String>>entry : headers.entrySet()) {
-            if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
+            // just make sure the first String element is not null
+            if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange) 
+                || entry.getValue().get(0) == null) {
                 LOG.trace("Drop CXF message protocol header: {}={}", entry.getKey(), entry.getValue());
             } else {
                 // just put the first String element, as the complex one is filtered
