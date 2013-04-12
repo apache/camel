@@ -16,12 +16,15 @@
  */
 package org.apache.camel.support;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -273,17 +276,21 @@ public abstract class ServiceSupport implements StatefulService {
         if (version != null) {
             return version;
         }
-
+        InputStream is = null;
         // try to load from maven properties first
         try {
             Properties p = new Properties();
-            InputStream is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-core/pom.properties");
+            is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-core/pom.properties");
             if (is != null) {
                 p.load(is);
                 version = p.getProperty("version", "");
             }
         } catch (Exception e) {
             // ignore
+        } finally {
+            if (is != null) {
+                IOHelper.close(is, null, null);
+            }
         }
 
         // fallback to using Java API
