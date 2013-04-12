@@ -292,9 +292,9 @@ public abstract class ServiceSupport implements StatefulService {
         } catch (Exception e) {
             // ignore
         } finally {
-        	if (is != null) {
-        		IOHelper.close(is, null, null);
-        	}
+            if (is != null) {
+                IOHelper.close(is, null, null);
+            }
         }
 
         // fallback to using Java API
