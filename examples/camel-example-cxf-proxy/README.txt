@@ -10,18 +10,19 @@ To run the example type:
   mvn camel:run
 
 The proxied webservice is located at
-  http://localhost:9080/camel-example-cxf-proxy/webservices/incident
+  http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident
 
 The real webservice is located at
-  http://localhost:9081/real-webservice
+  http://localhost:<port 2>/real-webservice
 
 The webservice WSDL is exposed at:
-  http://localhost:9080/camel-example-cxf-proxy/webservices/incident?wsdl
+  http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident?wsdl
 
+Because we use dynamic port numbers, you have to check the console to get the used one.
 To stop the example hit ctrl + c
 
 To make a SOAP call open soapUI or another SOAP query tool and create a new
-project w/WSDL of http://localhost:9080/camel-example-cxf-proxy/webservices/incident?wsdl.
+project w/WSDL of http://localhost:<port 1>/camel-example-cxf-proxy/webservices/incident?wsdl.
 Then make SOAP requests of this format:
 
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
