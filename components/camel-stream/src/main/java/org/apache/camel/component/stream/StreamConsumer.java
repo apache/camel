@@ -82,8 +82,6 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     public void doStop() throws Exception {
-        // important: do not close the stream as it will close the standard
-        // system.in etc.
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
@@ -98,6 +96,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     public void run() {
         try {
             readFromStream();
+        } catch (InterruptedException e) {
+            // we are closing down so ignore
         } catch (Exception e) {
             getExceptionHandler().handleException(e);
         }
