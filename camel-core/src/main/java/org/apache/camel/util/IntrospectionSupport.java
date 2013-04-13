@@ -225,11 +225,15 @@ public final class IntrospectionSupport {
             if (info.isGetter && info.hasGetterAndSetter) {
                 String name = info.getterOrSetterShorthandName;
                 try {
+                    // we may want to set options on classes that has package view visibility, so override the accessible
+                    method.setAccessible(true);
                     Object value = method.invoke(target);
                     properties.put(optionPrefix + name, value);
                     rc = true;
                 } catch (Exception e) {
-                    // ignore
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Error invoking getter method " + method + ". This exception is ignored.", e);
+                    }
                 }
             }
         }
@@ -483,6 +487,8 @@ public final class IntrospectionSupport {
                 try {
                     // If the type is null or it matches the needed type, just use the value directly
                     if (value == null || parameterType.isAssignableFrom(ref.getClass())) {
+                        // we may want to set options on classes that has package view visibility, so override the accessible
+                        setter.setAccessible(true);
                         setter.invoke(target, ref);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
@@ -491,6 +497,8 @@ public final class IntrospectionSupport {
                     } else {
                         // We need to convert it
                         Object convertedValue = convert(typeConverter, parameterType, ref);
+                        // we may want to set options on classes that has package view visibility, so override the accessible
+                        setter.setAccessible(true);
                         setter.invoke(target, convertedValue);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
@@ -509,6 +517,8 @@ public final class IntrospectionSupport {
                     }
                 }
             // ignore exceptions as there could be another setter method where we could type convert successfully
+            } catch (SecurityException e) {
+                typeConversionFailed = e;
             } catch (NoTypeConversionAvailableException e) {
                 typeConversionFailed = e;
             } catch (IllegalArgumentException e) {
