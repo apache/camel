@@ -49,32 +49,6 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
             }
         }
         assertNotNull("Cannot find DefaultTypeConverter", name);
-
-        Long failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
-        assertEquals(0, failed.intValue());
-        Long miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
-        assertEquals(0, miss.intValue());
-
-        try {
-            template.sendBody("direct:start", "foo");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
-
-        // should now have a failed
-        failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
-        assertEquals(1, failed.intValue());
-        miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
-        assertEquals(0, miss.intValue());
-
-        // reset
-        mbeanServer.invoke(name, "resetTypeConversionCounters", null, null);
-
-        failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
-        assertEquals(0, failed.intValue());
-        miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
-        assertEquals(0, miss.intValue());
     }
 
     @Override
