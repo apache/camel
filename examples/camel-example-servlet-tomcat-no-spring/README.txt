@@ -12,10 +12,10 @@ deploy folder of Apache Tomcat.
 
 And then hit this url from a webbrowser which has further
 instructions (use correct version number)
-  http://localhost:8080/camel-example-servlet-tomcat-no-spring-2.11.0
+  http://localhost:8080/camel-example-servlet-tomcat-no-spring-{version}
 
 The servlet is located at (use correct version number)
-  http://localhost:8080/camel-example-servlet-tomcat-no-spring-2.11.0/camel
+  http://localhost:8080/camel-example-servlet-tomcat-no-spring-{version}/camel
 
 This example is documented at
   http://camel.apache.org/servlet-tomcat-example-no-spring.html
