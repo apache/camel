@@ -80,11 +80,6 @@
         
         <!-- for testing -->
         <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-test-spring</artifactId>
           <scope>test</scope>
