@@ -92,6 +92,11 @@ public class StingQuoteHelperTest extends TestCase {
         assertEquals(2, out.length);
         assertEquals("http:", out[0]);
         assertEquals(" ", out[1]);
+
+        out = StringQuoteHelper.splitSafeQuote("'http:', ''", ',', false);
+        assertEquals(2, out.length);
+        assertEquals("http:", out[0]);
+        assertEquals("", out[1]);
     }
 
 }

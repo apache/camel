@@ -75,11 +75,20 @@ public final class StringQuoteHelper {
 
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
+            char prev = i > 0 ? input.charAt(i - 1) : 0;
 
             if (ch == '\'') {
+                if (singleQuoted && prev == ch && sb.length() == 0) {
+                    // its an empty quote so add empty text
+                    answer.add("");
+                }
                 singleQuoted = !singleQuoted;
                 continue;
             } else if (ch == '"') {
+                if (doubleQuoted && prev == ch && sb.length() == 0) {
+                    // its an empty quote so add empty text
+                    answer.add("");
+                }
                 doubleQuoted = !doubleQuoted;
                 continue;
             } else if (ch == ' ') {
