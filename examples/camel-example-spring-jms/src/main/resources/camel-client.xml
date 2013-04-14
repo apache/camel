@@ -20,8 +20,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
   <!-- END SNIPPET: e1 -->
 
@@ -31,10 +33,14 @@
   </camel:camelContext>
   <!-- END SNIPPET: e2 -->
 
+  <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
+  <context:property-placeholder location="classpath:camel.properties,file:target/custom.properties"
+                                ignore-resource-not-found="true"/>
+
   <!-- START SNIPPET: e3 -->
   <!-- Camel JMSProducer to be able to send messages to a remote Active MQ server -->
   <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="brokerURL" value="tcp://localhost:61610"/>
+    <property name="brokerURL" value="tcp://localhost:${tcp.port}"/>
   </bean>
   <!-- END SNIPPET: e3 -->
 
