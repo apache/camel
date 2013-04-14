@@ -20,20 +20,12 @@ Running inside OSGi container
 =============================
 
 You will need to compile and install this example first:
-  mvn compile install
+  mvn install
 
 If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell
-
-  osgi:install mvn:org.apache.camel/camel-example-osgi/${version}
-
-
-Then start the bundle by starting the id it was assigned during installation
-
-  osgi:start 182
-
-      (substitute 182 with the id of the bundle)
-
+  features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
+  osgi:install -s mvn:org.apache.camel/camel-example-osgi/${version}
 
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
