@@ -481,7 +481,7 @@ public class BeanInfo {
         if (noParameters && localOperationsWithNoBody.size() == 1) {
             // if there was a method name configured and it has no parameters, then use the method with no body (eg no parameters)
             return localOperationsWithNoBody.get(0);
-        } else if (localOperationsWithBody.size() == 1) {
+        } else if (!noParameters && localOperationsWithBody.size() == 1) {
             // if there is one method with body then use that one
             return localOperationsWithBody.get(0);
         }
@@ -790,9 +790,15 @@ public class BeanInfo {
             return false;
         }
 
+        // is it a method with no parameters
+        boolean noParameters = methodName.endsWith("()");
+        if (noParameters) {
+            return method.getParameterTypes().length == 0;
+        }
+
         // match qualifier types which is used to select among overloaded methods
         String types = ObjectHelper.between(methodName, "(", ")");
-        if (types != null) {
+        if (ObjectHelper.isNotEmpty(types)) {
             // we must qualify based on types to match method
             String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',');
             Iterator<?> it = ObjectHelper.createIterator(parameters);
