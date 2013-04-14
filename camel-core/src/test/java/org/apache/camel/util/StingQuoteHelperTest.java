@@ -27,7 +27,8 @@ public class StingQuoteHelperTest extends TestCase {
         assertEquals(null, StringQuoteHelper.splitSafeQuote(null, ','));
 
         String[] out = StringQuoteHelper.splitSafeQuote("", ',');
-        assertEquals(0, out.length);
+        assertEquals(1, out.length);
+        assertEquals("", out[0]);
 
         out = StringQuoteHelper.splitSafeQuote("   ", ',');
         assertEquals(1, out.length);
@@ -82,10 +83,15 @@ public class StingQuoteHelperTest extends TestCase {
         assertEquals("Hello Camel", out[0]);
         assertEquals("Bye World", out[1]);
 
-        out = StringQuoteHelper.splitSafeQuote("'Hello Camel', 'Bye World'", ',', false);
+        out = StringQuoteHelper.splitSafeQuote("'Hello Camel', ' Bye World'", ',', false);
         assertEquals(2, out.length);
         assertEquals("Hello Camel", out[0]);
         assertEquals(" Bye World", out[1]);
+
+        out = StringQuoteHelper.splitSafeQuote("'http:', ' '", ',', false);
+        assertEquals(2, out.length);
+        assertEquals("http:", out[0]);
+        assertEquals(" ", out[1]);
     }
 
 }
