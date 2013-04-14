@@ -23,21 +23,11 @@ If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell
 
 First the camel-rmi feature must be installed
-
+  features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
   features:install camel-rmi
 
 Then install the example
-
-  osgi:install mvn:org.apache.camel/camel-example-osgi-rmi/2.8.0
-
-      (substitute 2.8.0 with the Camel version number)
-
-Then start the bundle by starting the id it was assigned during installation
-
-  osgi:start 182
-
-      (substitute 182 with the id of the bundle)
-
+  osgi:install -s mvn:org.apache.camel/camel-example-osgi-rmi/${version}
 
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
