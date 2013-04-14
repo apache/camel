@@ -25,18 +25,23 @@ import org.apache.camel.api.management.ManagedOperation;
 public interface ManagedTypeConverterRegistryMBean extends ManagedServiceMBean {
 
     @ManagedAttribute(description = "Number of type conversion attempts")
+    @Deprecated
     long getAttemptCounter();
 
     @ManagedAttribute(description = "Number of type conversion hits (successful conversions)")
+    @Deprecated
     long getHitCounter();
 
     @ManagedAttribute(description = "Number of type conversion misses (no suitable type converter)")
+    @Deprecated
     long getMissCounter();
 
     @ManagedAttribute(description = "Number of type conversion failures (failed conversions)")
+    @Deprecated
     long getFailedCounter();
 
     @ManagedOperation(description = "Resets the type conversion counters")
+    @Deprecated
     void resetTypeConversionCounters();
 
 }

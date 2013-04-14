@@ -28,7 +28,9 @@ public interface TypeConverterRegistry extends Service {
 
     /**
      * Utilization statistics of the this registry.
+     * @deprecated the statistics has been disabled and the API will be removed in Camel 2.12
      */
+    @Deprecated
     interface Statistics {
 
         /**
@@ -101,7 +103,9 @@ public interface TypeConverterRegistry extends Service {
      * Gets the utilization statistics of this type converter registry
      *
      * @return the utilization statistics
+     * @deprecated the statistics has been disabled and the API will be removed in Camel 2.12
      */
+    @Deprecated
     Statistics getStatistics();
 
 }

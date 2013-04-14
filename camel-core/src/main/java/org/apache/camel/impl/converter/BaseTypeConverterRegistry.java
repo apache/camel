@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -64,10 +63,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
     protected final Statistics statistics = new UtilizationStatistics();
-    protected final AtomicLong attemptCounter = new AtomicLong();
-    protected final AtomicLong missCounter = new AtomicLong();
-    protected final AtomicLong hitCounter = new AtomicLong();
-    protected final AtomicLong failedCounter = new AtomicLong();
 
     public BaseTypeConverterRegistry(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
         this.resolver = resolver;
@@ -107,10 +102,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            attemptCounter.incrementAndGet();
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
-            failedCounter.incrementAndGet();
             // if its a ExecutionException then we have rethrow it as its not due to failed conversion
             // this is special for FutureTypeConverter
             boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null
@@ -128,11 +121,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
         if (answer == Void.TYPE) {
             // Could not find suitable conversion
-            missCounter.incrementAndGet();
-            // Could not find suitable conversion
             return null;
         } else {
-            hitCounter.incrementAndGet();
             return (T) answer;
         }
     }
@@ -151,10 +141,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            attemptCounter.incrementAndGet();
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
-            failedCounter.incrementAndGet();
             // error occurred during type conversion
             if (e instanceof TypeConversionException) {
                 throw (TypeConversionException) e;
@@ -164,11 +152,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
         if (answer == Void.TYPE || value == null) {
             // Could not find suitable conversion
-            missCounter.incrementAndGet();
-            // Could not find suitable conversion
             throw new NoTypeConversionAvailableException(value, type);
         } else {
-            hitCounter.incrementAndGet();
             return (T) answer;
         }
     }
@@ -187,18 +172,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            attemptCounter.incrementAndGet();
             answer = doConvertTo(type, exchange, value, true);
         } catch (Exception e) {
-            failedCounter.incrementAndGet();
             return null;
         }
         if (answer == Void.TYPE) {
-            missCounter.incrementAndGet();
             // Could not find suitable conversion
             return null;
         } else {
-            hitCounter.incrementAndGet();
             return (T) answer;
         }
     }
@@ -516,11 +497,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
     @Override
     protected void doStop() throws Exception {
-        // log utilization statistics when stopping, including mappings
-        String info = statistics.toString();
-        info += String.format(" mappings[total=%s, misses=%s]", typeMappings.size(), misses.size());
-        log.info(info);
-
         typeMappings.clear();
         misses.clear();
         statistics.reset();
@@ -529,34 +505,32 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     /**
      * Represents utilization statistics
      */
+    @Deprecated
     private final class UtilizationStatistics implements Statistics {
 
         @Override
         public long getAttemptCounter() {
-            return attemptCounter.get();
+            return 0;
         }
 
         @Override
         public long getHitCounter() {
-            return hitCounter.get();
+            return 0;
         }
 
         @Override
         public long getMissCounter() {
-            return missCounter.get();
+            return 0;
         }
 
         @Override
         public long getFailedCounter() {
-            return failedCounter.get();
+            return 0;
         }
 
         @Override
         public void reset() {
-            attemptCounter.set(0);
-            hitCounter.set(0);
-            missCounter.set(0);
-            failedCounter.set(0);
+            // noop
         }
 
         @Override
