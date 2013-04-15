@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,7 +23,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -289,7 +287,7 @@ public abstract class ServiceSupport implements StatefulService {
             // ignore
         } finally {
             if (is != null) {
-                IOHelper.close(is, null, null);
+                IOHelper.close(is);
             }
         }
 
