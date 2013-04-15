@@ -2150,7 +2150,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
         }
         setTypeConverterRegistry(answer);
-        answer.getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
         return answer;
     }
 
