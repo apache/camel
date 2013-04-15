@@ -19,7 +19,7 @@
     <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
     
     <feature name='camel-example-osgi' version='${project.version}'>
-        <feature version="${project.version}">camel</feature>
+        <feature version="${project.version}">camel-spring</feature>
         <bundle>mvn:org.apache.camel/camel-example-osgi/${project.version}</bundle>
     </feature>
 
