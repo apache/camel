@@ -14,19 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.impl;
 
-import java.util.Set;
-import javax.management.Attribute;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * @version 
  */
-public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
+public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.setTypeConverterStatisticsEnabled(true);
+        return context;
+    }
 
     public void testTypeConverterRegistry() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(2);
@@ -36,31 +41,12 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        MBeanServer mbeanServer = getMBeanServer();
+        TypeConverterRegistry reg = context.getTypeConverterRegistry();
+        assertTrue("Should be enabled", reg.getStatistics().isStatisticsEnabled());
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
-
-        // number of services
-        Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        ObjectName name = null;
-        for (ObjectName service : names) {
-            if (service.toString().contains("DefaultTypeConverter")) {
-                name = service;
-                break;
-            }
-        }
-        assertNotNull("Cannot find DefaultTypeConverter", name);
-
-        // is disabled by default
-        Boolean enabled = (Boolean) mbeanServer.getAttribute(name, "StatisticsEnabled");
-        assertEquals(Boolean.FALSE, enabled);
-
-        // need to enable statistics
-        mbeanServer.setAttribute(name, new Attribute("StatisticsEnabled", Boolean.TRUE));
-
-        Long failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
+        Long failed = reg.getStatistics().getFailedCounter();
         assertEquals(0, failed.intValue());
-        Long miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
+        Long miss = reg.getStatistics().getMissCounter();
         assertEquals(0, miss.intValue());
 
         try {
@@ -71,17 +57,17 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         }
 
         // should now have a failed
-        failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
+        failed = reg.getStatistics().getFailedCounter();
         assertEquals(1, failed.intValue());
-        miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
+        miss = reg.getStatistics().getMissCounter();
         assertEquals(0, miss.intValue());
 
         // reset
-        mbeanServer.invoke(name, "resetTypeConversionCounters", null, null);
+        reg.getStatistics().reset();
 
-        failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
+        failed = reg.getStatistics().getFailedCounter();
         assertEquals(0, failed.intValue());
-        miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
+        miss = reg.getStatistics().getMissCounter();
         assertEquals(0, miss.intValue());
     }
 
