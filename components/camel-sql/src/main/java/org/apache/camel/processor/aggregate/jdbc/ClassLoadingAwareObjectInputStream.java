@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
 
@@ -30,11 +29,6 @@ import org.apache.camel.CamelContext;
  */
 public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
 
-    /**
-     * <p>Maps primitive type names to corresponding class objects.</p>
-     */
-    private static final HashMap<String, Class<?>> PRIM_CLASSES = new HashMap<String, Class<?>>(8, 1.0F);
-    
     private CamelContext camelContext;
 
     public ClassLoadingAwareObjectInputStream(CamelContext camelContext, InputStream in) throws IOException {
@@ -44,16 +38,14 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
 
     @Override
     protected Class<?> resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return camelContext.getClassResolver().resolveClass(classDesc.getName(), cl);
+        return camelContext.getClassResolver().resolveClass(classDesc.getName());
     }
 
     @Override
     protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Class<?>[] cinterfaces = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {
-            cinterfaces[i] = camelContext.getClassResolver().resolveClass(interfaces[i], cl);
+            cinterfaces[i] = camelContext.getClassResolver().resolveClass(interfaces[i]);
         }
 
         try {
@@ -61,18 +53,6 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         } catch (IllegalArgumentException e) {
             throw new ClassNotFoundException(null, e);
         }
-    }
-
-    static {
-        PRIM_CLASSES.put("boolean", boolean.class);
-        PRIM_CLASSES.put("byte", byte.class);
-        PRIM_CLASSES.put("char", char.class);
-        PRIM_CLASSES.put("short", short.class);
-        PRIM_CLASSES.put("int", int.class);
-        PRIM_CLASSES.put("long", long.class);
-        PRIM_CLASSES.put("float", float.class);
-        PRIM_CLASSES.put("double", double.class);
-        PRIM_CLASSES.put("void", void.class);
     }
 
 }
