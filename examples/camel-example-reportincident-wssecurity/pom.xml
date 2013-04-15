@@ -137,14 +137,12 @@
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
 			<version>${cxf-version}</version>
-			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>${velocity-version}</version>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -174,19 +172,11 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- so we can run mvn jetty:run -->
+            
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <configuration>
-                   <connectors>
-                      <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                        <port>9080</port>
-                        <maxIdleTime>60000</maxIdleTime>
-                      </connector>
-                   </connectors>                   
-                </configuration>
+                <groupId>org.apache.camel</groupId>
+				<artifactId>camel-maven-plugin</artifactId>
+				<version>${project.version}</version>
             </plugin>
             
             <!-- to generate the MANIFEST-FILE of the bundle -->
