@@ -136,7 +136,9 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
             from("servlet:///hello?matchOnUriPrefix=true").process(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                    String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+                    String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+                    path = path.substring(path.lastIndexOf("/"));
+
                     assertEquals("Get a wrong content type", CONTENT_TYPE, contentType);
                     // assert camel http header
                     String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
