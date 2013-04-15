@@ -175,6 +175,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean lazyLoadTypeConverters = Boolean.FALSE;
+    private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.TRUE;
     private Long delay;
@@ -2152,6 +2153,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         getLanguageResolver();
         getTypeConverterRegistry();
         getTypeConverter();
+
+        if (isTypeConverterStatisticsEnabled() != null) {
+            getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
+        }
     }
 
     /**
@@ -2175,6 +2180,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
         }
         setTypeConverterRegistry(answer);
+        answer.getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
         return answer;
     }
 
@@ -2420,6 +2426,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
+    }
+
+    public Boolean isTypeConverterStatisticsEnabled() {
+        return typeConverterStatisticsEnabled != null && typeConverterStatisticsEnabled;
+    }
+
+    public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
+        this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
     }
 
     public Boolean isUseMDCLogging() {

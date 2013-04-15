@@ -490,6 +490,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     @Deprecated
     public abstract Boolean getLazyLoadTypeConverters();
 
+    public abstract Boolean getTypeConverterStatisticsEnabled();
+
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();
 
     public abstract List<RouteBuilderDefinition> getBuilderRefs();
@@ -560,6 +562,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getDataFormats() != null) {
             ctx.setDataFormats(getDataFormats().asMap());
+        }
+        if (getTypeConverterStatisticsEnabled() != null) {
+            ctx.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
         }
     }
 
