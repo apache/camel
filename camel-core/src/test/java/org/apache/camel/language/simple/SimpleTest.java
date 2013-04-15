@@ -1124,6 +1124,16 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.replace('\\', '\\\\')}", "foo\\\\bar\\\\baz");
     }
 
+    public void testBodyOgnlReplaceFirst() throws Exception {
+        exchange.getIn().setBody("http:camel.apache.org");
+
+        assertExpression("${body.replaceFirst('http:', 'http4:')}", "http4:camel.apache.org");
+        assertExpression("${body.replaceFirst('http:', '')}", "camel.apache.org");
+        assertExpression("${body.replaceFirst('http:', ' ')}", " camel.apache.org");
+        assertExpression("${body.replaceFirst('http:',    ' ')}", " camel.apache.org");
+        assertExpression("${body.replaceFirst('http:',' ')}", " camel.apache.org");
+    }
+
     public void testClassSimpleName() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         exchange.getIn().setBody(tiger);
