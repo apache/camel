@@ -27,6 +27,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
@@ -58,7 +59,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
         
         String bucketName = getConfiguration().getBucketName();
-        LOG.trace("Quering objects in bucket [{}]...", bucketName);
+        LOG.trace("Queueing objects in bucket [{}]...", bucketName);
         
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
         listObjectsRequest.setBucketName(bucketName);
@@ -66,15 +67,19 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
         
         ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
-        
-        LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
+        }
         
         Queue<Exchange> exchanges = createExchanges(listObjects.getObjectSummaries());
         return processBatch(CastUtils.cast(exchanges));
     }
     
     protected Queue<Exchange> createExchanges(List<S3ObjectSummary> s3ObjectSummaries) {
-        LOG.trace("Received {} messages in this poll", s3ObjectSummaries.size());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Received {} messages in this poll", s3ObjectSummaries.size());
+        }
         
         Queue<Exchange> answer = new LinkedList<Exchange>();
         for (S3ObjectSummary s3ObjectSummary : s3ObjectSummaries) {
@@ -91,7 +96,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
+            final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);
@@ -117,8 +122,12 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             });
 
             LOG.trace("Processing exchange [{}]...", exchange);
-
-            getProcessor().process(exchange);
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    LOG.trace("Processing exchange [{}] done.", exchange);
+                }
+            });
         }
 
         return total;
@@ -138,12 +147,11 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
                 
                 getAmazonS3Client().deleteObject(bucketName, key);
-                
-                LOG.trace("Object deleted");
+
+                LOG.trace("Deleted object from bucket {} with key {}...", bucketName, key);
             }
         } catch (AmazonClientException e) {
-            LOG.warn("Error occurred during deleting object", e);
-            exchange.setException(e);
+            getExceptionHandler().handleException("Error occurred during deleting object. This exception is ignored.", exchange, e);
         }
     }
 
