@@ -34,8 +34,10 @@ public class MyRouteBuilder extends RouteBuilder {
         from("file:src/data?noop=true")
             .choice()
                 .when(xpath("/person/city = 'London'"))
+                    .log("UK message")
                     .to("file:target/messages/uk")
                 .otherwise()
+                    .log("Other message")
                     .to("file:target/messages/others");
     }
 

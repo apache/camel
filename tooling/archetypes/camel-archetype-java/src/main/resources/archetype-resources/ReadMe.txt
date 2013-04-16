@@ -5,7 +5,7 @@ To build this project use
 
     mvn install
 
-To run this example from within Maven use
+To run this project from within Maven use
 
     mvn exec:java
 

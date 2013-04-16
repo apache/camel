@@ -5,8 +5,7 @@ To build this project use
 
     mvn install
 
-To run this example either embed the jar inside Spring
-or to run the route from within Maven try
+To run this project with Maven use
 
     mvn camel:run
 
