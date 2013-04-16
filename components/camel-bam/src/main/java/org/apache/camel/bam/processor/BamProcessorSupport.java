@@ -82,7 +82,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
                 try {
                     Thread.sleep(retrySleep);
                 } catch (InterruptedException e) {
-                    LOG.debug("Caught: " + e, e);
+                    // ignore
                 }
             }
             try {
@@ -104,11 +104,11 @@ public abstract class BamProcessorSupport<T> implements Processor {
                     }
                 });
                 if (i > 1) {
-                    LOG.info("Attempt {} worked!", i);
+                    LOG.debug("Attempt {} worked!", i);
                 }
                 return;
             } catch (Exception e) {
-                LOG.warn("Failed to complete transaction: " + e, e);
+                LOG.warn("Failed to complete transaction. This exception is ignored.", e);
             }
         }
     }
@@ -147,7 +147,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
     protected void onError(TransactionStatus status, Exception e) throws RuntimeCamelException {
         status.setRollbackOnly();
-        LOG.error("Caught: " + e, e);
+        LOG.warn("Caught: " + e, e);
         throw wrapRuntimeCamelException(e);
     }
 
