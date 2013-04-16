@@ -17,12 +17,16 @@
 package org.apache.camel.example.bam;
 
 /**
+ * Main class to make it easy to run this example.
+ *
  * @version 
  */
 public final class Main {
+
     private Main() {
         // do nothing here
     }
+
     public static void main(String[] args) throws Exception {
         org.apache.camel.spring.Main.main(args);
     }
