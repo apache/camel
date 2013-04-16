@@ -13,18 +13,6 @@ For a background in tracer and JPA see
 To run the example with Maven, type
   mvn camel:run
 
-In the HSQL Database Explorer type
-  select * from camel_messagetraced
-
-to see the trace events of the Exchanges. Notice how the Exchange correlates with
-fromNode/toNode so you exactly can see how a given Exchange was routed in Camel.
-
-Using the query:
-  select shortExchangeId, previousNode, toNode, body from camel_messagetraced order by id
-
-is a bit more easier to read as it uses the fields we are most interested in to see how Exchanges
-was routed in Camel.
-
 In the console you can enter some words separated with space. Try to enter:
   nice beer
   beer whiskey

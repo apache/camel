@@ -24,7 +24,7 @@ You will need to compile and install this example first:
 
 If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell
-  features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
+  features:chooseurl camel ${version}
   features:install camel-spring
   osgi:install -s mvn:org.apache.camel/camel-example-osgi/${version}
 

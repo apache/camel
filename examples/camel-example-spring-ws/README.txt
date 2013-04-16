@@ -4,10 +4,10 @@ Camel Spring Web Services Example
 This example shows how to expose a SOAP-based web service using Camel and Spring Web Services.
 
 The web service endpoint address is:
- "http://localhost:8080/increment"
+  http://localhost:8080/increment
  
 The WSDL is available at:
- "http://localhost:8080/increment/increment.wsdl"
+  http://localhost:8080/increment/increment.wsdl
 
 You will need to compile this example first:
   mvn clean install

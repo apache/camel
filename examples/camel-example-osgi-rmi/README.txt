@@ -23,7 +23,7 @@ If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell
 
 First the camel-rmi feature must be installed
-  features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
+  features:chooseurl camel ${version}
   features:install camel-rmi
 
 Then install the example
