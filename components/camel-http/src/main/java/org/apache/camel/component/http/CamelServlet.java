@@ -98,11 +98,18 @@ public class CamelServlet extends HttpServlet {
         ClassLoader oldTccl = overrideTccl(exchange);
         HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
         exchange.setIn(new HttpMessage(exchange, request, response));
-
         // set context path as header
         String contextPath = consumer.getEndpoint().getPath();
         exchange.getIn().setHeader("CamelServletContextPath", contextPath);
 
+        String httpPath = (String)exchange.getIn().getHeader(Exchange.HTTP_PATH);
+        // here we just remove the CamelServletContextPath part from the HTTP_PATH
+        if (contextPath != null
+            && httpPath.startsWith(contextPath)) {
+            exchange.getIn().setHeader(Exchange.HTTP_PATH,
+                    httpPath.substring(contextPath.length()));
+        }
+        
         try {
             log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
             // process the exchange

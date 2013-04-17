@@ -108,12 +108,20 @@ public class CamelContinuationServlet extends CamelServlet {
             }
             
             HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
+            
             exchange.setIn(new HttpMessage(exchange, request, response));
-
             // set context path as header
             String contextPath = consumer.getEndpoint().getPath();
             exchange.getIn().setHeader("CamelServletContextPath", contextPath);
-
+            
+            String httpPath = (String)exchange.getIn().getHeader(Exchange.HTTP_PATH);
+            // here we just remove the CamelServletContextPath part from the HTTP_PATH
+            if (contextPath != null
+                && httpPath.startsWith(contextPath)) {
+                exchange.getIn().setHeader(Exchange.HTTP_PATH,
+                        httpPath.substring(contextPath.length()));
+            }
+            
             log.trace("Suspending continuation of exchangeId: {}", exchange.getExchangeId());
             continuation.setAttribute(EXCHANGE_ATTRIBUTE_ID, exchange.getExchangeId());
             // must suspend before we process the exchange

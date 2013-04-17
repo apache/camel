@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.directvm;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
 *
 */
-public final class DirectVmProcessor extends DelegateProcessor {
+public final class DirectVmProcessor extends DelegateAsyncProcessor {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DirectVmProcessor.class);
     private final DirectVmEndpoint endpoint;
@@ -37,9 +38,9 @@ public final class DirectVmProcessor extends DelegateProcessor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // need to use a copy of the incoming exchange, so we route using this camel context
-        Exchange copy = prepareExchange(exchange);
+        final Exchange copy = prepareExchange(exchange);
 
         ClassLoader current = Thread.currentThread().getContextClassLoader();
         boolean changed = false;
@@ -51,10 +52,19 @@ public final class DirectVmProcessor extends DelegateProcessor {
                 Thread.currentThread().setContextClassLoader(appClassLoader);
                 changed = true;
             }
-            getProcessor().process(copy);
+            return getProcessor().process(copy, new AsyncCallback() {
+                @Override
+                public void done(boolean done) {
+                    try {
+                        // make sure to copy results back
+                        ExchangeHelper.copyResults(exchange, copy);
+                    } finally {
+                        // must call callback when we are done
+                        callback.done(done);
+                    }
+                }
+            });
         } finally {
-            // make sure to copy results back
-            ExchangeHelper.copyResults(exchange, copy);
             // restore TCCL if it was changed during processing
             if (changed) {
                 LOG.trace("Restoring Thread ContextClassLoader to {}", current);

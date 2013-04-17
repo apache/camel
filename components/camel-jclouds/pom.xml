@@ -34,6 +34,7 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.jclouds.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jclouds</camel.osgi.export.service>
+        <google-guava-version>${jclouds-google-guava-version}</google-guava-version>
     </properties>
 
     <dependencies>

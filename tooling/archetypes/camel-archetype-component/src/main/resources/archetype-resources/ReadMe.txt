@@ -1,7 +1,7 @@
 Camel Component Project
 =======================
 
-This Project is a template of a Camel component.
+This project is a template of a Camel component.
 
 To build this project use
 

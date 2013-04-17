@@ -65,7 +65,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
 
                 from("jetty://http://localhost:{{port}}/bye").transform(header("foo").prepend("Bye "));
                 
-                from("jetty://http://localhost:{{port}}/otherEndpoint?matchOnUriPrefix=true").transform(header(Exchange.HTTP_PATH));
+                from("jetty://http://localhost:{{port}}/otherEndpoint?matchOnUriPrefix=true").transform(header(Exchange.HTTP_URI));
                 
                 from("jetty://http://localhost:{{port}}/proxyServer")
                     .to("http://localhost:{{port2}}/host?bridgeEndpoint=true");

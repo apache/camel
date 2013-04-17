@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.bam;
+package org.apache.camel.spring.impl;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.TypeConverterRegistryStatisticsEnabledTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * Main class to make it easy to run this example.
  *
- * @version 
  */
-public final class Main {
+public class SpringTypeConverterRegistryStatisticsEnabledTest extends TypeConverterRegistryStatisticsEnabledTest {
 
-    private Main() {
-        // do nothing here
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/impl/SpringTypeConverterRegistryStatisticsEnabledTest.xml");
     }
 
-    public static void main(String[] args) throws Exception {
-        org.apache.camel.spring.Main.main(args);
-    }
 }

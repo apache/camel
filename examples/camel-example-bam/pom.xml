@@ -54,20 +54,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-juel</artifactId>
     </dependency>
-    <dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-aop</artifactId>
-	</dependency>
 
     <!-- lets use log4j -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
     </dependency>
 
     <!-- lets use hibernate by default -->
@@ -84,8 +75,8 @@
       <artifactId>geronimo-jta_1.1_spec</artifactId>
     </dependency>
     <dependency>
-		<groupId>commons-dbcp</groupId>
-		<artifactId>commons-dbcp</artifactId>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
 	</dependency>
 
     <!-- testing -->

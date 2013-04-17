@@ -115,7 +115,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     protected T loadEntity(Exchange exchange, Object key) throws Exception {
         LOCK.lock();
         try {
-            LOG.info(">> LoadEntity call");
+            LOG.trace("LoadEntity call");
             T entity = findEntityByCorrelationKey(key);
             if (entity == null) {
                 entity = createEntity(exchange, key);
@@ -127,7 +127,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
 
                 // Now we must flush to avoid concurrent updates clashing trying to
                 // insert the same row
-                LOG.debug("About to flush on entity: " + entity + " with key: " + key);
+                LOG.debug("About to flush on entity: {} with key: {}", entity, key);
                 template.flush();
             }
             return entity;
@@ -157,7 +157,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
             Method getter = IntrospectionSupport.getPropertyGetter(getEntityType(), getKeyPropertyName());
             return getter.getReturnType();
         } catch (NoSuchMethodException e) {
-            LOG.warn("no such getter for: " + getKeyPropertyName() + " on " + getEntityType() + ". Reason: " + e, e);
+            LOG.warn("no such getter for: " + getKeyPropertyName() + " on " + getEntityType() + ". This exception will be ignored.", e);
             return null;
         }
     }

@@ -180,33 +180,10 @@ public final class HttpHelper {
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
         String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+        // NOW the HTTP_PATH is just related path, we don't need to trim it
         if (path != null) {
             if (path.startsWith("/")) {
-                URI baseURI;
-                String baseURIString = exchange.getIn().getHeader(Exchange.HTTP_BASE_URI, String.class);
-                try {
-                    if (baseURIString == null) {
-                        if (exchange.getFromEndpoint() != null) {
-                            baseURIString = exchange.getFromEndpoint().getEndpointUri();
-                        } else {
-                            // will set a default one for it
-                            baseURIString = "/";
-                        }
-                    }
-                    baseURI = new URI(baseURIString);
-                    String basePath = baseURI.getPath();
-                    if (path.startsWith(basePath)) {
-                        path = path.substring(basePath.length());
-                        if (path.startsWith("/")) {
-                            path = path.substring(1);
-                        }
-                    } else {
-                        throw new RuntimeExchangeException("Cannot analyze the Exchange.HTTP_PATH header, due to: cannot find the right HTTP_BASE_URI", exchange);
-                    }
-                } catch (Throwable t) {
-                    throw new RuntimeExchangeException("Cannot analyze the Exchange.HTTP_PATH header, due to: " + t.getMessage(), exchange, t);
-                }
-
+                path = path.substring(1);
             }
             if (path.length() > 0) {
                 // make sure that there is exactly one "/" between HTTP_URI and

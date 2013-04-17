@@ -426,8 +426,8 @@ public class MethodInfo {
                 if (methodParameters != null) {
                     // split the parameters safely separated by comma, but beware that we can have
                     // quoted parameters which contains comma as well, so do a safe quote split
-                    String[] parameters = StringQuoteHelper.splitSafeQuote(methodParameters, ',');
-                    it = ObjectHelper.createIterator(parameters);
+                    String[] parameters = StringQuoteHelper.splitSafeQuote(methodParameters, ',', false);
+                    it = ObjectHelper.createIterator(parameters, ",", true);
                 }
 
                 // remove headers as they should not be propagated
@@ -490,8 +490,6 @@ public class MethodInfo {
                 // convert the parameter value to a String
                 String exp = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, parameterValue);
                 if (exp != null) {
-                    // must trim first as there may be spaces between parameters
-                    exp = exp.trim();
                     // check if its a valid parameter value
                     boolean valid = BeanHelper.isValidParameterValue(exp);
 

@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.BytesSource;
@@ -185,9 +186,8 @@ public final class MessageHelper {
      * @param message the message
      * @param prepend a message to prepend
      * @param allowStreams whether or not streams is allowed
-     * @param allowFiles whether or not files is allowed
-     * @param maxChars limit to maximum number of chars. Use 0 or negative value
-     *            to not limit at all.
+     * @param allowFiles whether or not files is allowed (currently not in use)
+     * @param maxChars limit to maximum number of chars. Use 0 or negative value to not limit at all.
      * @return the logging message
      */
     public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, boolean allowFiles, int maxChars) {
@@ -197,12 +197,10 @@ public final class MessageHelper {
         }
 
         if (!allowStreams) {
-            if (obj instanceof StreamSource && !(obj instanceof StringSource || obj instanceof BytesSource)) {
-                /*
-                 * Generally do not log StreamSources but as StringSource and
-                 * ByteSource are memory based they are ok
-                 */
-                return prepend + "[Body is instance of java.xml.transform.StreamSource]";
+            if (obj instanceof Source && !(obj instanceof StringSource || obj instanceof BytesSource)) {
+                // for Source its only StringSource or BytesSource that is okay as they are memory based
+                // all other kinds we should not touch the body
+                return prepend + "[Body is instance of java.xml.transform.Source]";
             } else if (obj instanceof StreamCache) {
                 return prepend + "[Body is instance of org.apache.camel.StreamCache]";
             } else if (obj instanceof InputStream) {

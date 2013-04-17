@@ -15,19 +15,22 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<persistence xmlns="http://java.sun.com/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             version="1.0">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
 
-  <persistence-unit name="bam" transaction-type="RESOURCE_LOCAL">
-    <class>org.apache.camel.bam.model.ActivityDefinition</class>
-    <class>org.apache.camel.bam.model.ActivityState</class>
-    <class>org.apache.camel.bam.model.ProcessDefinition</class>
-    <class>org.apache.camel.bam.model.ProcessInstance</class>
+  <!-- START SNIPPET: e1 -->
+  <!-- enable type converter statistics by setting the attribute to true -->
+  <camelContext xmlns="http://camel.apache.org/schema/spring" typeConverterStatisticsEnabled="true">
+    <route id="foo">
+      <from uri="direct:start"/>
+      <convertBodyTo type="int"/>
+      <to uri="mock:a"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e1 -->
 
-    <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect"/>
-	  <property name="hibernate.hbm2ddl.auto" value="create"/>
-    </properties>
-  </persistence-unit>
-</persistence>
+</beans>

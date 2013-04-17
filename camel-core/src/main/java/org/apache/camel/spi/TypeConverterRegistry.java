@@ -21,6 +21,9 @@ import org.apache.camel.TypeConverter;
 
 /**
  * Registry for type converters.
+ * <p/>
+ * The utilization {@link Statistics} is by default disabled, as it has a slight performance impact under very high
+ * concurrent load. The statistics can be enabled using {@link Statistics#setStatisticsEnabled(boolean)} method.
  *
  * @version 
  */
@@ -55,6 +58,18 @@ public interface TypeConverterRegistry extends Service {
          * Reset the counters
          */
         void reset();
+
+        /**
+         * Whether statistics is enabled.
+         */
+        boolean isStatisticsEnabled();
+
+        /**
+         * Sets whether statistics is enabled.
+         *
+         * @param statisticsEnabled <tt>true</tt> to enable
+         */
+        void setStatisticsEnabled(boolean statisticsEnabled);
     }
 
     /**

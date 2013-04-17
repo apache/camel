@@ -61,21 +61,40 @@ public final class StringQuoteHelper {
             return null;
         }
 
+        if (input.indexOf(separator) == -1) {
+            // no separator in data, so return single string with input as is
+            return new String[]{trim ? input.trim() : input};
+        }
+
         List<String> answer = new ArrayList<String>();
         StringBuilder sb = new StringBuilder();
 
         boolean singleQuoted = false;
         boolean doubleQuoted = false;
+        boolean skipLeadingWhitespace = true;
 
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
+            char prev = i > 0 ? input.charAt(i - 1) : 0;
 
             if (ch == '\'') {
+                if (singleQuoted && prev == ch && sb.length() == 0) {
+                    // its an empty quote so add empty text
+                    answer.add("");
+                }
                 singleQuoted = !singleQuoted;
                 continue;
             } else if (ch == '"') {
+                if (doubleQuoted && prev == ch && sb.length() == 0) {
+                    // its an empty quote so add empty text
+                    answer.add("");
+                }
                 doubleQuoted = !doubleQuoted;
                 continue;
+            } else if (ch == ' ') {
+                if (!singleQuoted && !doubleQuoted && skipLeadingWhitespace) {
+                    continue;
+                }
             } else if (ch == separator) {
                 // add as answer if we are not in a quote
                 if (!singleQuoted && !doubleQuoted && sb.length() > 0) {

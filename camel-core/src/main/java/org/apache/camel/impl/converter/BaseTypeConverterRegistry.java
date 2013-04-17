@@ -107,10 +107,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            attemptCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                attemptCounter.incrementAndGet();
+            }
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
-            failedCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                failedCounter.incrementAndGet();
+            }
             // if its a ExecutionException then we have rethrow it as its not due to failed conversion
             // this is special for FutureTypeConverter
             boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null
@@ -127,12 +131,15 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             }
         }
         if (answer == Void.TYPE) {
-            // Could not find suitable conversion
-            missCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                missCounter.incrementAndGet();
+            }
             // Could not find suitable conversion
             return null;
         } else {
-            hitCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                hitCounter.incrementAndGet();
+            }
             return (T) answer;
         }
     }
@@ -151,10 +158,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            attemptCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                attemptCounter.incrementAndGet();
+            }
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
-            failedCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                failedCounter.incrementAndGet();
+            }
             // error occurred during type conversion
             if (e instanceof TypeConversionException) {
                 throw (TypeConversionException) e;
@@ -163,12 +174,15 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             }
         }
         if (answer == Void.TYPE || value == null) {
-            // Could not find suitable conversion
-            missCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                missCounter.incrementAndGet();
+            }
             // Could not find suitable conversion
             throw new NoTypeConversionAvailableException(value, type);
         } else {
-            hitCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                hitCounter.incrementAndGet();
+            }
             return (T) answer;
         }
     }
@@ -187,18 +201,26 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         Object answer;
         try {
-            attemptCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                attemptCounter.incrementAndGet();
+            }
             answer = doConvertTo(type, exchange, value, true);
         } catch (Exception e) {
-            failedCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                failedCounter.incrementAndGet();
+            }
             return null;
         }
         if (answer == Void.TYPE) {
-            missCounter.incrementAndGet();
             // Could not find suitable conversion
+            if (statistics.isStatisticsEnabled()) {
+                missCounter.incrementAndGet();
+            }
             return null;
         } else {
-            hitCounter.incrementAndGet();
+            if (statistics.isStatisticsEnabled()) {
+                hitCounter.incrementAndGet();
+            }
             return (T) answer;
         }
     }
@@ -517,9 +539,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @Override
     protected void doStop() throws Exception {
         // log utilization statistics when stopping, including mappings
-        String info = statistics.toString();
-        info += String.format(" mappings[total=%s, misses=%s]", typeMappings.size(), misses.size());
-        log.info(info);
+        if (statistics.isStatisticsEnabled()) {
+            String info = statistics.toString();
+            info += String.format(" mappings[total=%s, misses=%s]", typeMappings.size(), misses.size());
+            log.info(info);
+        }
 
         typeMappings.clear();
         misses.clear();
@@ -530,6 +554,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
      * Represents utilization statistics
      */
     private final class UtilizationStatistics implements Statistics {
+
+        private boolean statisticsEnabled;
 
         @Override
         public long getAttemptCounter() {
@@ -557,6 +583,16 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             hitCounter.set(0);
             missCounter.set(0);
             failedCounter.set(0);
+        }
+
+        @Override
+        public boolean isStatisticsEnabled() {
+            return statisticsEnabled;
+        }
+
+        @Override
+        public void setStatisticsEnabled(boolean statisticsEnabled) {
+            this.statisticsEnabled = statisticsEnabled;
         }
 
         @Override

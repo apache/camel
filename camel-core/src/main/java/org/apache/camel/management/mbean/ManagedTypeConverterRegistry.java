@@ -57,4 +57,12 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
     public void resetTypeConversionCounters() {
         registry.getStatistics().reset();
     }
+
+    public boolean isStatisticsEnabled() {
+        return registry.getStatistics().isStatisticsEnabled();
+    }
+
+    public void setStatisticsEnabled(boolean statisticsEnabled) {
+        registry.getStatistics().setStatisticsEnabled(statisticsEnabled);
+    }
 }

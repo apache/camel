@@ -69,8 +69,7 @@ public class RsClientDefinitionParser extends AbstractBeanDefinitionParser {
                 Metadata list = parseListData(context, beanMetadata, elem);
                 beanMetadata.addProperty(name, list);
             } else if ("features".equals(name) || "providers".equals(name)
-                || "schemaLocations".equals(name) || "modelBeans".equals(name)
-                || "serviceBeans".equals(name)) {
+                || "schemaLocations".equals(name) || "modelBeans".equals(name)) {
                 Metadata list = parseListData(context, beanMetadata, elem);
                 beanMetadata.addProperty(name, list);
             } else if ("model".equals(name)) {
@@ -81,6 +80,7 @@ public class RsClientDefinitionParser extends AbstractBeanDefinitionParser {
             } else {
                 setFirstChildAsProperty(elem, context, beanMetadata, name);
             }
+            elem = DOMUtils.getNextElement(elem);
         } 
  
         if (StringUtils.isEmpty(bus)) {

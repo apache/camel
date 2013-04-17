@@ -1,7 +1,7 @@
 Camel Data Format Project
 =========================
 
-This Project is a template of a Camel data format.
+This project is a template of a Camel data format.
 
 To build this project use
 
@@ -9,5 +9,5 @@ To build this project use
 
 For more help see the Apache Camel documentation:
 
-    http://camel.apache.org/
+    http://camel.apache.org/writing-components.html
     

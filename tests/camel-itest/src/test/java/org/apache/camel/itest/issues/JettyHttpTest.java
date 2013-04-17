@@ -23,9 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyHttpTest extends CamelTestSupport {
 
     private String targetProducerUri = "http://localhost:8542/someservice?bridgeEndpoint=true&throwExceptionOnFailure=false";
@@ -60,7 +57,7 @@ public class JettyHttpTest extends CamelTestSupport {
                 from(targetConsumerUri)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+                            String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
                             exchange.getOut().setBody("Hi! " + path);
                         }   
                     });

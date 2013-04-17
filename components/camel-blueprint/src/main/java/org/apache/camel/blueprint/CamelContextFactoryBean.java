@@ -105,6 +105,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     @Deprecated
     private Boolean lazyLoadTypeConverters;
+    @XmlAttribute(required = false)
+    private Boolean typeConverterStatisticsEnabled;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class, required = false)
@@ -349,6 +351,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
+    }
+
+    public Boolean getTypeConverterStatisticsEnabled() {
+        return typeConverterStatisticsEnabled;
+    }
+
+    public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
+        this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
     }
 
     public ShutdownRoute getShutdownRoute() {

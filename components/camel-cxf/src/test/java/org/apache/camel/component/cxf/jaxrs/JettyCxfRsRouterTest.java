@@ -14,20 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.bam;
+package org.apache.camel.component.cxf.jaxrs;
 
-/**
- * Main class to make it easy to run this example.
- *
- * @version 
- */
-public final class Main {
+import org.apache.camel.component.cxf.CXFTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-    private Main() {
-        // do nothing here
+public class JettyCxfRsRouterTest extends CxfRsRouterTest {
+    private static final int PORT2 = CXFTestSupport.getPort5();
+    @Override
+    protected int getPort() {
+        return PORT2;
     }
 
-    public static void main(String[] args) throws Exception {
-        org.apache.camel.spring.Main.main(args);
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {        
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/JettyCxfRsSpringRouter.xml");
     }
+    
+    @Test 
+    public void testEndpointUris() throws Exception {
+        // Don't test anything here
+    }
+
 }

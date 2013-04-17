@@ -33,10 +33,14 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfRsRouterTest extends CamelSpringTestSupport {
-    private static final int PORT0 = CXFTestSupport.getPort1();
+    private static final int PORT = CXFTestSupport.getPort1();
     
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
+    
+    protected int getPort() {
+        return PORT;
+    }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {        
@@ -55,7 +59,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     
     @Test
     public void testGetCustomer() throws Exception {      
-        HttpGet get = new HttpGet("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers/123");
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/123");
         get.addHeader("Accept" , "application/json");
         HttpClient httpclient = new DefaultHttpClient();
 
@@ -72,7 +76,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
 
     @Test
     public void testGetCustomerWithQuery() throws Exception {      
-        HttpGet get = new HttpGet("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers?id=123");
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers?id=123");
         get.addHeader("Accept" , "application/json");
         HttpClient httpclient = new DefaultHttpClient();
 
@@ -87,8 +91,8 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetCustomers() throws Exception {      
-        HttpGet get = new HttpGet("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers/");
+    public void testGetCustomers() throws Exception {
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/");
         get.addHeader("Accept" , "application/xml");
         HttpClient httpclient = new DefaultHttpClient();
 
@@ -111,7 +115,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     
     @Test
     public void testGetSubResource() throws Exception {
-        HttpGet get = new HttpGet("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/orders/223/products/323");
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/orders/223/products/323");
         get.addHeader("Accept" , "application/json");
         HttpClient httpclient = new DefaultHttpClient();
 
@@ -127,7 +131,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     
     @Test
     public void testPutConsumer() throws Exception {
-        HttpPut put = new HttpPut("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers");
+        HttpPut put = new HttpPut("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.setEntity(entity);
@@ -144,7 +148,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     
     @Test
     public void testPostConsumer() throws Exception {
-        HttpPost post = new HttpPost("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers");
+        HttpPost post = new HttpPost("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers");
         post.addHeader("Accept" , "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
@@ -157,7 +161,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
             
-            HttpDelete del = new HttpDelete("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers/124/");
+            HttpDelete del = new HttpDelete("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/124/");
             httpclient.execute(del);
         } finally {
             httpclient.getConnectionManager().shutdown();
@@ -167,7 +171,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
-        HttpPost post = new HttpPost("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customersUniqueResponseCode");
+        HttpPost post = new HttpPost("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customersUniqueResponseCode");
         post.addHeader("Accept" , "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
@@ -180,7 +184,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
 
-            HttpDelete del = new HttpDelete("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers/124/");
+            HttpDelete del = new HttpDelete("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/124/");
             httpclient.execute(del);
         } finally {
             httpclient.getConnectionManager().shutdown();

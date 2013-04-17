@@ -24,6 +24,9 @@
     <requiredProperty key="camel-version">
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="exec-maven-plugin-version">
+      <defaultValue>${exec-maven-plugin-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="log4j-version">
       <defaultValue>${log4j-version}</defaultValue>
     </requiredProperty>

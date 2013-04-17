@@ -74,7 +74,7 @@
 
   <camel:camelContext id="camel">
     <!-- property which contains port number -->
-    <camel:propertyPlaceholder id="properties" location="classpath:incident.properties,file:target/custom.properties"/>
+    <camel:propertyPlaceholder id="properties" ignoreMissingLocation="true" location="classpath:incident.properties,file:target/custom.properties"/>
 
     <camel:route>
       <camel:from uri="cxf:bean:reportIncident"/>

@@ -94,11 +94,11 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
                     try {
                         Thread.sleep(timeToSleep);
                     } catch (InterruptedException e) {
-                        LOG.debug("Caught: " + e, e);
+                        // ignore
                     }
                 }
             } catch (Exception e) {
-                LOG.error("Caught: " + e, e);
+                LOG.warn("Error during running ActivityMonitorEngine. This exception is ignored.", e);
             }
         }
     }
@@ -110,9 +110,9 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 // let's try locking the object first
                 if (isUseLocking()) {
-                    LOG.info("Attempting to lock: " + activityState);
+                    LOG.debug("Attempting to lock: {}", activityState);
                     entityManager.lock(activityState, LockModeType.WRITE);
-                    LOG.info("Grabbed lock: " + activityState);
+                    LOG.debug("Grabbed lock: {}", activityState);
                 }
 
                 try {
