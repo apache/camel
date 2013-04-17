@@ -52,6 +52,8 @@ import org.slf4j.LoggerFactory;
  */
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
+	public static final String FTP_REPLY_STRING = "FtpReplyString";
+	
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
     protected final FTPClientConfig clientConfig;
@@ -566,7 +568,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
                         new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName, answer});
             }
-
+            
+           	exchange.getIn().setHeader(FTP_REPLY_STRING, client.getReplyString());
+            
             return answer;
 
         } catch (IOException e) {
