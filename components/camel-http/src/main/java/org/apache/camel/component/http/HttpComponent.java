@@ -33,6 +33,7 @@ import org.apache.camel.util.URISupport;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
 /**
  * Defines the <a href="http://camel.apache.org/http.html">HTTP
@@ -42,7 +43,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  */
 public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpClientConfigurer httpClientConfigurer;
-    protected HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
+    protected HttpConnectionManager httpConnectionManager;
     protected HttpBinding httpBinding;
     protected HttpConfiguration httpConfiguration;
 
@@ -217,14 +218,28 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, parameters, "httpClient.");       
-        
+        // http client can be configured from URI options
+        HttpConnectionManagerParams connectionManagerParams = new HttpConnectionManagerParams();
+        // setup the httpConnectionManagerParams
+        IntrospectionSupport.setProperties(connectionManagerParams, parameters, "httpConnectionManager.");
+        validateParameters(uri, parameters, "httpConnectionManager.");
+        // make sure the component httpConnectionManager is take effect
+        HttpConnectionManager thisHttpConnectionManager = httpConnectionManager;
+        if (thisHttpConnectionManager == null) {
+            // only set the params on the new created http connection manager
+            thisHttpConnectionManager = new MultiThreadedHttpConnectionManager();
+            thisHttpConnectionManager.setParams(connectionManagerParams);
+        }
         // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
         final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
        
         // create the endpoint
-        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, httpConnectionManager, configurer);
+        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, thisHttpConnectionManager, configurer);
+        
+        endpoint.getHttpConnectionManager().setParams(connectionManagerParams);
+        
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
