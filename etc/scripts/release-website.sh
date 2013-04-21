@@ -24,7 +24,6 @@ mkdir ${DOWNLOAD} 2>/dev/null
 RUNDIR=$(cd ${0%/*} && echo $PWD)
 COMPLIST=( "camel-spring:spring"
   "camel-cxf:cxf"
-  "camel-osgi:osgi"
   "camel-spring-integration:spring/integration"
   "camel-spring-security:spring-security"
   "camel-blueprint:blueprint" )
@@ -34,7 +33,7 @@ WEBSITE_URL="https://svn.apache.org/repos/infra/websites/production/camel/conten
 
 if [ -z "${VERSION}" -o ! -d "${DOWNLOAD}" ]
 then
- echo "Usage: publish_camel-distro.sh <camel-version> [temp-directory]"
+ echo "Usage: release-website.sh <camel-version> [temp-directory]"
  exit 1
 fi
 

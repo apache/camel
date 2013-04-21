@@ -34,7 +34,7 @@ SITE_DIR="/www/camel.apache.org"
 
 if [ -z "${VERSION}" -o ! -d "${DOWNLOAD}" ]
 then
- echo "Usage: publish_camel-distro.sh <camel-version> [temp-directory]"
+ echo "Usage: release-distro.sh <camel-version> [temp-directory]"
  exit 1
 fi
 
