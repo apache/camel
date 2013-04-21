@@ -63,7 +63,7 @@ echo "##########################################################################
 mkdir -p ${DOWNLOAD}/dist 2>/dev/null
 svn mkdir ${DIST_REPO}/${VERSION} -m "Apache Camel ${VERSION} release distro placeholder."
 cd ${DOWNLOAD}/dist; svn co ${DIST_REPO}/${VERSION}
-cp "${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/*" "${DOWNLOAD}/dist/${VERSION}/"
+cp ${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/* ${DOWNLOAD}/dist/${VERSION}/
 cd "${DOWNLOAD}/dist/${VERSION}/"; svn add *
 echo
 
