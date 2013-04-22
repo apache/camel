@@ -26,7 +26,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ManagementAgent;
@@ -75,7 +74,7 @@ public class RouteInfo extends OsgiCommandSupport {
             ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
             if (agent != null) {
                 MBeanServer mBeanServer = agent.getMBeanServer();
-                Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=routes,name=\"" + route + "\",*"), null);
+                Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + route + "\",*"), null);
                 Iterator<ObjectName> iterator = set.iterator();
                 if (iterator.hasNext()) {
                     ObjectName routeMBean = iterator.next();
@@ -83,6 +82,8 @@ public class RouteInfo extends OsgiCommandSupport {
                     // the route must be part of the camel context
                     String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
                     if (camelId != null && camelId.equals(camelContext.getName())) {
+                        Integer inflightExchange = (Integer) mBeanServer.getAttribute(routeMBean, "InflightExchanges");
+                        System.out.println(StringEscapeUtils.unescapeJava("\tInflight Exchanges: " + inflightExchange));
                         Long exchangesTotal = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesTotal");
                         System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Total: " + exchangesTotal));
                         Long exchangesCompleted = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesCompleted");
@@ -90,17 +91,17 @@ public class RouteInfo extends OsgiCommandSupport {
                         Long exchangesFailed = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesFailed");
                         System.out.println(StringEscapeUtils.unescapeJava("\tExchanges Failed: " + exchangesFailed));
                         Long minProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MinProcessingTime");
-                        System.out.println(StringEscapeUtils.unescapeJava("\tMin Processing Time: " + minProcessingTime + "ms"));
+                        System.out.println(StringEscapeUtils.unescapeJava("\tMin Processing Time: " + minProcessingTime + " ms"));
                         Long maxProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MaxProcessingTime");
-                        System.out.println(StringEscapeUtils.unescapeJava("\tMax Processing Time: " + maxProcessingTime + "ms"));
+                        System.out.println(StringEscapeUtils.unescapeJava("\tMax Processing Time: " + maxProcessingTime + " ms"));
                         Long meanProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MeanProcessingTime");
-                        System.out.println(StringEscapeUtils.unescapeJava("\tMean Processing Time: " + meanProcessingTime + "ms"));
+                        System.out.println(StringEscapeUtils.unescapeJava("\tMean Processing Time: " + meanProcessingTime + " ms"));
                         Long totalProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "TotalProcessingTime");
-                        System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + "ms"));
+                        System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + " ms"));
                         Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
-                        System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + "ms"));
+                        System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + " ms"));
                         Long deltaProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "DeltaProcessingTime");
-                        System.out.println(StringEscapeUtils.unescapeJava("\tDelta Processing Time: " + deltaProcessingTime + "ms"));
+                        System.out.println(StringEscapeUtils.unescapeJava("\tDelta Processing Time: " + deltaProcessingTime + " ms"));
                         String load01 = (String) mBeanServer.getAttribute(routeMBean, "Load01");
                         String load05 = (String) mBeanServer.getAttribute(routeMBean, "Load05");
                         String load15 = (String) mBeanServer.getAttribute(routeMBean, "Load15");

@@ -23,7 +23,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.felix.gogo.commands.Command;
 
@@ -42,7 +41,7 @@ public class RouteResetStats extends AbstractRouteCommand {
             MBeanServer mBeanServer = agent.getMBeanServer();
 
             // reset route mbeans
-            ObjectName query = ObjectName.getInstance(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=routes,*");
+            ObjectName query = ObjectName.getInstance(agent.getMBeanObjectDomainName() + ":type=routes,*");
             Set<ObjectName> set = mBeanServer.queryNames(query, null);
             Iterator<ObjectName> iterator = set.iterator();
             while (iterator.hasNext()) {
@@ -55,7 +54,7 @@ public class RouteResetStats extends AbstractRouteCommand {
             }
 
             // reset processor mbeans that belongs to the given route
-            query = ObjectName.getInstance(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=processors,*");
+            query = ObjectName.getInstance(agent.getMBeanObjectDomainName() + ":type=processors,*");
             set = mBeanServer.queryNames(query, null);
             iterator = set.iterator();
             while (iterator.hasNext()) {

@@ -25,11 +25,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.util.ProcessorStatDump;
 import org.apache.camel.util.RouteStatDump;
-import org.apache.camel.util.URISupport;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.util.StringEscapeUtils;
 
@@ -68,7 +66,7 @@ public class RouteProfile extends AbstractRouteCommand {
         ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
         if (agent != null) {
             MBeanServer mBeanServer = agent.getMBeanServer();
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=routes,name=\"" + camelRoute.getId() + "\",*"), null);
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + camelRoute.getId() + "\",*"), null);
             for (ObjectName routeMBean : set) {
                 // the route must be part of the camel context
                 String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
