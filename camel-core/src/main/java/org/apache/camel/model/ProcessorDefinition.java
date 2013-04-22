@@ -1006,7 +1006,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type id(String id) {
-        if (getOutputs().isEmpty()) {
+        if (isOutputSupported() && getOutputs().isEmpty()) {
             // set id on this
             setId(id);
         } else {
