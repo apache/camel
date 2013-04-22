@@ -95,4 +95,7 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Dumps the routes stats as XML")
     String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
 
+    @ManagedOperation(description = "Reset counters")
+    void reset(boolean includeProcessors) throws Exception;
+
 }

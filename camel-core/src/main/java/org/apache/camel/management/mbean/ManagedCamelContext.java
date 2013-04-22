@@ -336,4 +336,21 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return CamelContextHelper.findComponents(context);
     }
 
+    public void reset(boolean includeRoutes) throws Exception {
+        reset();
+
+        // and now reset all processors for this route
+        if (includeRoutes) {
+            MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+            if (server != null) {
+                // get all the routes mbeans and sort them accordingly to their index
+                ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=routes,*");
+                Set<ObjectName> names = server.queryNames(query, null);
+                for (ObjectName name : names) {
+                    server.invoke(name, "reset", new Object[]{true}, new String[]{"boolean"});
+                }
+            }
+        }
+    }
+
 }
