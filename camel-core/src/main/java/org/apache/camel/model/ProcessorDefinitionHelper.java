@@ -169,6 +169,25 @@ public final class ProcessorDefinitionHelper {
                 }
             }
 
+            // special for try ... catch ... finally
+            if (out instanceof TryDefinition) {
+                TryDefinition doTry = (TryDefinition) out;
+                List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
+                doFindType(doTryOut, type, found);
+
+                List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
+                for (CatchDefinition doCatch : doTryCatch) {
+                    doFindType(doCatch.getOutputs(), type, found);
+                }
+
+                if (doTry.getFinallyClause() != null) {
+                    doFindType(doTry.getFinallyClause().getOutputs(), type, found);
+                }
+
+                // do not check children as we already did that
+                continue;
+            }
+
             // try children as well
             List<ProcessorDefinition<?>> children = out.getOutputs();
             doFindType(children, type, found);

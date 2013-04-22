@@ -241,6 +241,13 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         super.addOutput(output);
     }
 
+    @Override
+    protected void preCreateProcessor() {
+        // force re-creating initialization to ensure its up-to-date
+        initialized = false;
+        checkInitialized();
+    }
+
     /**
      * Checks whether or not this object has been initialized
      */
