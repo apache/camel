@@ -67,4 +67,11 @@ public class NoOutputExpressionNode extends ExpressionNode {
         getParent().addOutput(output);
     }
 
+    @Override
+    public ExpressionNode id(String id) {
+        // let parent handle assigning the id, as we do not support outputs
+        getParent().id(id);
+        return this;
+    }
 }
+
