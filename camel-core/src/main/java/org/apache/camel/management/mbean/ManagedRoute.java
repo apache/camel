@@ -24,9 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
+import javax.management.Query;
+import javax.management.QueryExp;
+import javax.management.StringValueExp;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -293,6 +297,24 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         answer.append("</routeStat>");
         return answer.toString();
+    }
+
+    public void reset(boolean includeProcessors) throws Exception {
+        reset();
+
+        // and now reset all processors for this route
+        if (includeProcessors) {
+            MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+            if (server != null) {
+                // get all the processor mbeans and sort them accordingly to their index
+                ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=processors,*");
+                QueryExp queryExp = Query.match(new AttributeValueExp("RouteId"), new StringValueExp(getRouteId()));
+                Set<ObjectName> names = server.queryNames(query, queryExp);
+                for (ObjectName name : names) {
+                    server.invoke(name, "reset", null, null);
+                }
+            }
+        }
     }
 
     @Override

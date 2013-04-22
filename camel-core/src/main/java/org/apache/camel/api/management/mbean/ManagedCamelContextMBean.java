@@ -171,4 +171,13 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Find all Camel components available in the classpath")
     Map<String, Properties> findComponents() throws Exception;
 
+    /**
+     * Resets all the performance counters.
+     *
+     * @param includeRoutes  whether to reset all routes as well.
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Reset counters")
+    void reset(boolean includeRoutes) throws Exception;
+
 }
