@@ -339,7 +339,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     public void reset(boolean includeRoutes) throws Exception {
         reset();
 
-        // and now reset all processors for this route
+        // and now reset all routes for this route
         if (includeRoutes) {
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
