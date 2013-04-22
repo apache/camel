@@ -30,6 +30,9 @@ public interface ManagedServiceMBean {
     @ManagedAttribute(description = "Route ID")
     String getRouteId();
 
+    @ManagedAttribute(description = "Service Type")
+    String getServiceType();
+
     @ManagedOperation(description = "Start Service")
     void start() throws Exception;
 
