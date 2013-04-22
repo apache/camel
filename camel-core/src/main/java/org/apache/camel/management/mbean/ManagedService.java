@@ -80,6 +80,13 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         return null;
     }
 
+    public String getServiceType() {
+        if (service != null) {
+            return service.getClass().getSimpleName();
+        }
+        return null;
+    }
+
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
