@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.bean;
 
-import java.util.Map;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.LRUSoftCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * The <a href="http://camel.apache.org/bean.html">Bean Component</a>
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class BeanComponent extends DefaultComponent {
+public class BeanComponent extends UriEndpointComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanComponent.class);
     // use an internal soft cache for BeanInfo as they are costly to introspect
@@ -40,6 +40,7 @@ public class BeanComponent extends DefaultComponent {
     private final LRUSoftCache<BeanInfoCacheKey, BeanInfo> cache = new LRUSoftCache<BeanInfoCacheKey, BeanInfo>(1000);
 
     public BeanComponent() {
+        super(BeanEndpoint.class);
     }
     
     /**

@@ -25,7 +25,7 @@ import javax.jms.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.springframework.beans.BeansException;
@@ -47,7 +47,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  *
  * @version 
  */
-public class JmsComponent extends DefaultComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
+public class JmsComponent extends UriEndpointComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
 
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
     private JmsConfiguration configuration;
@@ -58,13 +58,15 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     private MessageListenerContainerFactory messageListenerContainerFactory;
 
     public JmsComponent() {
+        super(JmsEndpoint.class);
     }
 
     public JmsComponent(CamelContext context) {
-        super(context);
+        super(context, JmsEndpoint.class);
     }
 
     public JmsComponent(JmsConfiguration configuration) {
+        this();
         this.configuration = configuration;
     }
 

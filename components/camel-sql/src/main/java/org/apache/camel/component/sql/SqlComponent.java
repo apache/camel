@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,15 +29,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * @version 
  */
-public class SqlComponent extends DefaultComponent {
+public class SqlComponent extends UriEndpointComponent {
     private DataSource dataSource;
     private boolean usePlaceholder = true;
 
     public SqlComponent() {
+        super(SqlEndpoint.class);
     }
 
     public SqlComponent(CamelContext context) {
-        super(context);
+        super(context, SqlEndpoint.class);
     }
 
     @Override

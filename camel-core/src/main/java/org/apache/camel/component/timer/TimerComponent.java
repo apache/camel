@@ -25,6 +25,7 @@ import java.util.Timer;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link TimerEndpoint}.  It holds the
@@ -32,8 +33,12 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version 
  */
-public class TimerComponent extends DefaultComponent {
+public class TimerComponent extends UriEndpointComponent {
     private final Map<String, Timer> timers = new HashMap<String, Timer>();
+
+    public TimerComponent() {
+        super(TimerEndpoint.class);
+    }
 
     public Timer getTimer(TimerEndpoint endpoint) {
         String key = endpoint.getTimerName();

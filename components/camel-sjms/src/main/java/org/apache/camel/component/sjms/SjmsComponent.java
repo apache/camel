@@ -27,6 +27,7 @@ import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
  */
-public class SjmsComponent extends DefaultComponent implements HeaderFilterStrategyAware {
+public class SjmsComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(SjmsComponent.class);
 
     private ConnectionFactory connectionFactory;
@@ -46,6 +47,10 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
     private Integer connectionCount = 1;
     private TransactionCommitStrategy transactionCommitStrategy;
     private TimedTaskManager timedTaskManager;
+
+    public SjmsComponent() {
+        super(SjmsEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
