@@ -179,7 +179,7 @@ public class ComponentConfigurationTest {
             configuration.setParameter("doesNotExist", 1000);
             fail("Should have got InvalidPropertyException thrown!");
         } catch (InvalidPropertyException e) {
-            System.out.println("Got expected exception: " + e);
+            LOG.info("Got expected exception: " + e);
         }
 
         SedaEndpoint endpoint = TestSupport
@@ -198,7 +198,7 @@ public class ComponentConfigurationTest {
             configuration.setEndpointParameter(endpoint, "doesNotExist", 1000);
             fail("Should have got InvalidPropertyException thrown!");
         } catch (InvalidPropertyException e) {
-            System.out.println("Got expected exception: " + e);
+            LOG.info("Got expected exception: " + e);
         }
     }
 
@@ -221,7 +221,7 @@ public class ComponentConfigurationTest {
         assertEquals("foo", "xyz", endpoint.getFoo());
         assertEquals("bar", 5, endpoint.getBar());
 
-        System.out.println("Created endpoint " + endpoint + " on URI " + endpoint.getEndpointUri());
+        LOG.info("Created endpoint " + endpoint + " on URI " + endpoint.getEndpointUri());
 
         // lets try configure a parameter
         configuration.setEndpointParameter(endpoint, "bar", 6);
@@ -232,7 +232,7 @@ public class ComponentConfigurationTest {
             configuration.setEndpointParameter(endpoint, "doesNotExist", 1000);
             fail("Should have got InvalidPropertyException thrown!");
         } catch (InvalidPropertyException e) {
-            System.out.println("Got expected exception: " + e);
+            LOG.info("Got expected exception: " + e);
         }
 
         ComponentConfiguration badConfiguration = component.createComponentConfiguration();
@@ -249,9 +249,8 @@ public class ComponentConfigurationTest {
             badConfiguration.createEndpoint();
             fail("Should have got ResolveEndpointFailedException thrown!");
         } catch (ResolveEndpointFailedException e) {
-            System.out.println("Got expected exception: " + e);
+            LOG.info("Got expected exception: " + e);
         }
-
     }
 
     /**
@@ -275,7 +274,7 @@ public class ComponentConfigurationTest {
         assertEquals("concurrentConsumersConfig.getParameterType()", int.class,
                 concurrentConsumersConfig.getParameterType());
 
-        System.out.println(component + " has has configuration properties " + parameterMap.keySet());
+        LOG.info("{} has has configuration properties {}", component, parameterMap.keySet());
     }
 
     /**
@@ -333,7 +332,7 @@ public class ComponentConfigurationTest {
             configuration.setEndpointParameter(endpoint, "doesNotExist", 1000);
             fail("Should have got InvalidPropertyException thrown!");
         } catch (InvalidPropertyException e) {
-            System.out.println("Got expected exception: " + e);
+            LOG.info("Got expected exception: " + e);
         }
     }
 
@@ -366,7 +365,7 @@ public class ComponentConfigurationTest {
             configuration.setEndpointParameter(endpoint, "doesNotExist", 1000);
             fail("Should have got InvalidPropertyException thrown!");
         } catch (InvalidPropertyException e) {
-            System.out.println("Got expected exception: " + e);
+            LOG.info("Got expected exception: " + e);
         }
     }
 
