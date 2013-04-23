@@ -58,6 +58,14 @@
             <scope>provided</scope>
             <version>2.2.1</version>
         </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+    </dependency>
 
 
     <!-- add some logging to the classpath -->
