@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.URIField;
@@ -35,6 +36,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * @see ComponentConfigurationTest for tests using the {@link ComponentConfiguration} mechanism
+ */
 public class ConfigurationHelperTest {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ConfigurationHelperTest.class);
@@ -227,6 +231,11 @@ public class ConfigurationHelperTest {
 
         @Override
         public Endpoint createEndpoint(String uri) throws Exception {
+            return null;
+        }
+
+        @Override
+        public ComponentConfiguration createComponentConfiguration() {
             return null;
         }
 

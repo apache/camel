@@ -24,6 +24,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +34,17 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class SedaComponent extends DefaultComponent {
+public class SedaComponent extends UriEndpointComponent {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final int maxConcurrentConsumers = 500;
     protected int queueSize;
     protected int defaultConcurrentConsumers = 1;
     private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
-    
+
+    public SedaComponent() {
+        super(SedaEndpoint.class);
+    }
+
     public void setQueueSize(int size) {
         queueSize = size;
     }

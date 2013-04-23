@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -136,6 +137,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
         afterConfiguration(uri, path, endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    public ComponentConfiguration createComponentConfiguration() {
+        return new DefaultComponentConfiguration(this);
     }
 
     public EndpointConfiguration createConfiguration(String uri) throws Exception {

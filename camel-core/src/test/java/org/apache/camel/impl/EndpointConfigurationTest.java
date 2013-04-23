@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.junit.AfterClass;
@@ -84,6 +85,11 @@ public class EndpointConfigurationTest {
 
         @Override
         public Endpoint createEndpoint(String uri) throws Exception {
+            return null;
+        }
+
+        @Override
+        public ComponentConfiguration createComponentConfiguration() {
             return null;
         }
 

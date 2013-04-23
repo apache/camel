@@ -60,4 +60,15 @@ public interface Component extends CamelContextAware {
      * @since Camel 2.9.0
      */
     EndpointConfiguration createConfiguration(String uri) throws Exception;
+
+    /**
+     * Creates a configuration helper object for a component that lets you configure the various
+     * URI and parameter values; then create the full URI for it, create a new Endpoint from it
+     * or configure an existing Endpoint from the values.
+     *
+     * This method is intended to be used in cases where there is not yet a full URI to
+     * configure an endpoint yet; but rather there are a number of parameters to configure
+     * to then build up a new URI or directly create an Endpoint from the parameter values.
+     */
+    ComponentConfiguration createComponentConfiguration();
 }
