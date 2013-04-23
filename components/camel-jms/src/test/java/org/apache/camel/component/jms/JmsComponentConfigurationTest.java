@@ -20,11 +20,12 @@ package org.apache.camel.component.jms;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ParameterConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jms.ConnectionFactory;
 
@@ -38,6 +39,9 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * Lets test the use of the ComponentConfiguration on the JMS endpoint
  */
 public class JmsComponentConfigurationTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsComponentConfigurationTest.class);
+
     protected String componentName = "activemq456";
     protected boolean verbose = false;
 
@@ -51,7 +55,7 @@ public class JmsComponentConfigurationTest extends CamelTestSupport {
             for (Map.Entry<String, ParameterConfiguration> entry : entries) {
                 String name = entry.getKey();
                 ParameterConfiguration config = entry.getValue();
-                System.out.println("Has name: " + name + " with type " + config.getParameterType().getName());
+                LOG.info("Has name: {} with type {}", name, config.getParameterType().getName());
             }
         }
 
