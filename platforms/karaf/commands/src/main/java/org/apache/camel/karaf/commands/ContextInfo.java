@@ -27,7 +27,6 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -71,7 +70,7 @@ public class ContextInfo extends OsgiCommandSupport {
         if (agent != null) {
             MBeanServer mBeanServer = agent.getMBeanServer();
 
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=context,name=\"" + name + "\",*"), null);
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=context,name=\"" + name + "\",*"), null);
             Iterator<ObjectName> iterator = set.iterator();
             if (iterator.hasNext()) {
                 contextMBean = iterator.next();

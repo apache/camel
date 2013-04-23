@@ -26,7 +26,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ManagementAgent;
@@ -75,7 +74,7 @@ public class RouteInfo extends OsgiCommandSupport {
             ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
             if (agent != null) {
                 MBeanServer mBeanServer = agent.getMBeanServer();
-                Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(DefaultManagementAgent.DEFAULT_DOMAIN + ":type=routes,name=\"" + route + "\",*"), null);
+                Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + route + "\",*"), null);
                 Iterator<ObjectName> iterator = set.iterator();
                 if (iterator.hasNext()) {
                     ObjectName routeMBean = iterator.next();
