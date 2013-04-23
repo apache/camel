@@ -30,30 +30,46 @@ import org.apache.camel.component.sjms.producer.InOnlyProducer;
 import org.apache.camel.component.sjms.producer.InOutProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A JMS Endpoint
  */
+@UriEndpoint(scheme = "sjms", consumerClass = SjmsConsumer.class)
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private SessionPool sessions;
+    @UriParam
     private boolean synchronous = true;
+    @UriParam
     private boolean transacted;
+    @UriParam
     private String namedReplyTo;
     private SessionAcknowledgementType acknowledgementMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
     private boolean topic;
+    @UriParam
     private int sessionCount = 1;
+    @UriParam
     private int producerCount = 1;
+    @UriParam
     private int consumerCount = 1;
+    @UriParam
     private long ttl = -1;
+    @UriParam
     private boolean persistent = true;
+    @UriParam
     private String durableSubscriptionId;
+    @UriParam
     private long responseTimeOut = 5000;
+    @UriParam
     private String messageSelector;
+    @UriParam
     private int transactionBatchCount = -1;
+    @UriParam
     private long transactionBatchTimeout = 5000;
     private TransactionCommitStrategy transactionCommitStrategy;
 

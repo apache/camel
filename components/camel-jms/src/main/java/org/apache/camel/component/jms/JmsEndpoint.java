@@ -45,6 +45,9 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
@@ -65,14 +68,19 @@ import org.springframework.util.ErrorHandler;
  * @version
  */
 @ManagedResource(description = "Managed JMS Endpoint")
+@UriEndpoint(scheme = "jms", consumerClass = JmsConsumer.class)
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
     private String destinationName;
+    @UriPath
     private Destination destination;
+    @UriParam
     private String selector;
+    @UriParam
     private JmsConfiguration configuration;
     private final AtomicBoolean running = new AtomicBoolean();
 

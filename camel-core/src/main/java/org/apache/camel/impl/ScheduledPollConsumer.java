@@ -27,6 +27,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -46,13 +47,21 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private ScheduledFuture<?> future;
 
     // if adding more options then align with ScheduledPollEndpoint#configureScheduledPollConsumerProperties
+    @UriParam
     private boolean startScheduler = true;
+    @UriParam
     private long initialDelay = 1000;
+    @UriParam
     private long delay = 500;
+    @UriParam
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+    @UriParam
     private boolean useFixedDelay = true;
+    @UriParam
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
+    @UriParam
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
+    @UriParam
     private boolean sendEmptyMessageWhenIdle;
     private volatile boolean polling;
 

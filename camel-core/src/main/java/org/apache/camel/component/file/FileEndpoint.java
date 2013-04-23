@@ -23,17 +23,27 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * File endpoint.
  */
+@UriEndpoint(scheme = "file", consumerClass = FileConsumer.class)
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private FileOperations operations = new FileOperations(this);
+    /**
+     *
+     */
+    @UriPath
     private File file;
+    @UriParam
     private boolean copyAndDeleteOnRenameFail = true;
+    @UriParam
     private boolean forceWrites = true;
 
     public FileEndpoint() {

@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -47,6 +48,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
     protected Processor customProcessor;
+    @UriParam
     protected boolean eagerLimitMaxMessagesPerPoll = true;
     protected volatile boolean prepareOnStartup;
 

@@ -28,6 +28,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
@@ -35,14 +37,23 @@ import org.apache.camel.impl.DefaultEndpoint;
  * @version 
  */
 @ManagedResource(description = "Managed TimerEndpoint")
+@UriEndpoint(scheme = "timer", consumerClass = TimerConsumer.class)
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+    @UriParam
     private String timerName;
+    @UriParam
     private Date time;
+    @UriParam
     private long period = 1000;
+    @UriParam
     private long delay = 1000;
+    @UriParam
     private boolean fixedRate;
+    @UriParam
     private boolean daemon = true;
+    @UriParam
     private Timer timer;
+    @UriParam
     private long repeatCount;
 
     public TimerEndpoint() {

@@ -25,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
@@ -38,10 +40,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents an SSH endpoint.
  */
+@UriEndpoint(scheme = "ssh", consumerClass = SshConsumer.class)
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
     private SshClient client;
+    @UriParam
     private SshConfiguration sshConfiguration;
 
     public SshEndpoint() {

@@ -178,6 +178,7 @@
     <module>camel-zookeeper</module>
   </modules>
 
+
   <build>
     <plugins>
       <plugin>
@@ -195,4 +196,33 @@
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <profiles>
+    <!-- enables the APT dependency so that it can be disabled in IDE builds -->
+    <profile>
+      <id>apt</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <dependencies>
+        <!-- enable the APT processor -->
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>apt</artifactId>
+          <version>${project.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

@@ -20,6 +20,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.*;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,17 +30,28 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * question marks (that are parameter placeholders), sharp signs should be used.
  * This is because in camel question mark has other meaning.
  */
+@UriEndpoint(scheme = "sql", consumerClass = SqlConsumer.class)
 public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
+    @UriPath
     private String query;
+    @UriParam
     private boolean batch;
+    @UriParam
     private int maxMessagesPerPoll;
+    @UriParam
     private SqlProcessingStrategy processingStrategy = new DefaultSqlProcessingStrategy();
+    @UriParam
     private SqlPrepareStatementStrategy prepareStatementStrategy = new DefaultSqlPrepareStatementStrategy();
+    @UriParam
     private String onConsume;
+    @UriParam
     private String onConsumeFailed;
+    @UriParam
     private String onConsumeBatchComplete;
+    @UriParam
     private boolean allowNamedParameters = true;
+    @UriParam
     private boolean alwaysPopulateStatement;
 
     public SqlEndpoint() {
@@ -81,6 +93,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return query;
     }
 
+    /**
+     * Sets the SQL query to perform
+     */
     public void setQuery(String query) {
         this.query = query;
     }
@@ -89,6 +104,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return batch;
     }
 
+    /**
+     * Enables or disables batch mode
+     */
     public void setBatch(boolean batch) {
         this.batch = batch;
     }
@@ -97,6 +115,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Sets the maximum number of messages to poll
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }

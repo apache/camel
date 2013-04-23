@@ -29,6 +29,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.dao.DataAccessException;
@@ -45,12 +46,19 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     private final String query;
     private final JdbcTemplate jdbcTemplate;
 
+    @UriParam
     private String onConsume;
+    @UriParam
     private String onConsumeFailed;
+    @UriParam
     private String onConsumeBatchComplete;
+    @UriParam
     private boolean useIterator = true;
+    @UriParam
     private boolean routeEmptyResultSet;
+    @UriParam
     private int expectedUpdateCount = -1;
+    @UriParam
     private boolean breakBatchOnConsumeFail;
 
     private static final class DataHolder {

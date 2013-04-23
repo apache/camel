@@ -33,9 +33,11 @@
 
   <properties>
     <camel.osgi.export.pkg>
+        !org.apache.camel.tools.*,
         org.apache.camel.*;-noimport:=true
     </camel.osgi.export.pkg>
     <camel.osgi.import>
+        org.apache.camel.tools.*;resolution:=optional,
         !org.apache.camel.*,
         !com.googlecode.concurrentlinkedhashmap,
         ${camel.osgi.import.defaults},
@@ -92,6 +94,13 @@
 
     <!-- required dependencies by camel-core -->
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>spi-annotations</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
       <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
       <artifactId>concurrentlinkedhashmap-lru</artifactId>
     </dependency>
@@ -142,6 +151,7 @@
 
   <build>
     <plugins>
+
     <!-- Shade the googlecode stuff for OSGi -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -157,6 +167,9 @@
                 <includes>
                   <include>com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru</include>
                 </includes>
+                <excludes>
+                  <exclude>org.apache.camel:apt</exclude>
+                </excludes>
               </artifactSet>
               <relocations>
                  <relocation>
@@ -374,6 +387,24 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <!-- enables the APT dependency so that it can be disabled in IDE builds -->
+    <profile>
+      <id>apt</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <dependencies>
+        <!-- enable the APT processor -->
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>apt</artifactId>
+          <version>${project.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 

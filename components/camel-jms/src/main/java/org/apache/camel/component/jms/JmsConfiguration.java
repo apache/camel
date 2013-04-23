@@ -26,6 +26,8 @@ import javax.jms.Session;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,7 @@ import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinati
 /**
  * @version
  */
+@UriParams
 public class JmsConfiguration implements Cloneable {
 
     public static final String QUEUE_PREFIX = "queue:";
@@ -65,77 +68,127 @@ public class JmsConfiguration implements Cloneable {
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
     private int acknowledgementMode = -1;
+    @UriParam
     private String acknowledgementModeName;
     // Used to configure the spring Container
     private ExceptionListener exceptionListener;
+    @UriParam
     private ConsumerType consumerType = ConsumerType.Default;
     private ErrorHandler errorHandler;
     private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
+    @UriParam
     private boolean errorHandlerLogStackTrace = true;
+    @UriParam
     private boolean autoStartup = true;
+    @UriParam
     private boolean acceptMessagesWhileStopping;
+    @UriParam
     private String clientId;
+    @UriParam
     private String durableSubscriptionName;
     private boolean subscriptionDurable;
+    @UriParam
     private boolean exposeListenerSession = true;
     private TaskExecutor taskExecutor;
+    @UriParam
     private boolean pubSubNoLocal;
+    @UriParam
     private int concurrentConsumers = 1;
+    @UriParam
     private int maxMessagesPerTask = -1;
     private int cacheLevel = -1;
+    @UriParam
     private String cacheLevelName;
+    @UriParam
     private long recoveryInterval = -1;
+    @UriParam
     private long receiveTimeout = -1;
+    @UriParam
     private long requestTimeout = 20000L;
+    @UriParam
     private long requestTimeoutCheckerInterval = 1000L;
+    @UriParam
     private int idleTaskExecutionLimit = 1;
+    @UriParam
     private int idleConsumerLimit = 1;
+    @UriParam
     private int maxConcurrentConsumers;
     // JmsTemplate only
+    @UriParam
     private Boolean explicitQosEnabled;
+    @UriParam
     private boolean deliveryPersistent = true;
+    @UriParam
     private boolean replyToDeliveryPersistent = true;
+    @UriParam
     private long timeToLive = -1;
     private MessageConverter messageConverter;
+    @UriParam
     private boolean mapJmsMessage = true;
+    @UriParam
     private boolean messageIdEnabled = true;
+    @UriParam
     private boolean messageTimestampEnabled = true;
+    @UriParam
     private int priority = -1;
     // Transaction related configuration
+    @UriParam
     private boolean transacted;
+    @UriParam
     private boolean transactedInOut;
+    @UriParam
     private boolean lazyCreateTransactionManager = true;
     private PlatformTransactionManager transactionManager;
+    @UriParam
     private String transactionName;
+    @UriParam
     private int transactionTimeout = -1;
+    @UriParam
     private boolean preserveMessageQos;
+    @UriParam
     private boolean disableReplyTo;
+    @UriParam
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
+    @UriParam
     private boolean alwaysCopyMessage;
+    @UriParam
     private boolean useMessageIDAsCorrelationID;
     private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
     private JmsOperations metadataJmsOperations;
+    @UriParam
     private String replyToDestination;
+    @UriParam
     private String replyToDestinationSelectorName;
     private JmsMessageType jmsMessageType;
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
+    @UriParam
     private boolean transferExchange;
+    @UriParam
     private boolean transferException;
+    @UriParam
     private boolean testConnectionOnStartup;
+    @UriParam
     private boolean asyncStartListener;
+    @UriParam
     private boolean asyncStopListener;
     // if the message is a JmsMessage and mapJmsMessage=false, force the
     // producer to send the javax.jms.Message body to the next JMS destination
+    @UriParam
     private boolean forceSendOriginalMessage;
     // to force disabling time to live (works in both in-only or in-out mode)
+    @UriParam
     private boolean disableTimeToLive;
     private ReplyToType replyToType;
+    @UriParam
     private boolean asyncConsumer;
     // the cacheLevelName of reply manager
+    @UriParam
     private String replyToCacheLevelName;
+    @UriParam
     private boolean allowNullBody = true;
     private MessageListenerContainerFactory messageListenerContainerFactory;
+    @UriParam
     private boolean includeSentJMSMessageID;
     private DefaultTaskExecutorType defaultTaskExecutorType;
 

@@ -20,16 +20,23 @@ import org.apache.camel.Component;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Endpoint for the bean component.
  *
  * @version 
  */
+@UriEndpoint(scheme = "bean")
 public class BeanEndpoint extends ProcessorEndpoint {
+    @UriParam
     private boolean cache;
+    @UriParam
     private boolean multiParameterArray;
+    @UriParam
     private String beanName;
+    @UriParam
     private String method;
     private BeanHolder beanHolder;
 
@@ -54,6 +61,9 @@ public class BeanEndpoint extends ProcessorEndpoint {
         return beanName;
     }
 
+    /**
+     * Sets the name of the bean to invoke
+     */
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
@@ -78,6 +88,9 @@ public class BeanEndpoint extends ProcessorEndpoint {
         return method;
     }
 
+    /**
+     * Sets the name of the method to invoke on the bean
+     */
     public void setMethod(String method) {
         this.method = method;
     }

@@ -39,6 +39,8 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -52,14 +54,19 @@ import org.slf4j.LoggerFactory;
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  */
 @ManagedResource(description = "Managed SedaEndpoint")
+@UriEndpoint(scheme = "seda", consumerClass = SedaConsumer.class)
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
     private volatile BlockingQueue<Exchange> queue;
+    @UriParam
     private int size = Integer.MAX_VALUE;
+    @UriParam
     private int concurrentConsumers = 1;
     private volatile ExecutorService multicastExecutor;
+    @UriParam
     private boolean multipleConsumers;
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
+    @UriParam
     private long timeout = 30000;
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
     private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
