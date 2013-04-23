@@ -160,8 +160,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     writer.println(value);
                 }
                 writer.println("  </tr>");
-                writer.println("</table>");
             }
+            writer.println("</table>");
         }
     }
 
