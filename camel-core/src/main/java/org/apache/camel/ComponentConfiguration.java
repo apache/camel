@@ -16,11 +16,11 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.impl.ParameterConfiguration;
-
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.SortedMap;
+
+import org.apache.camel.impl.ParameterConfiguration;
 
 /**
  * Represents a set of configuration values for an endpoint URI which can be created from a URI string
@@ -29,7 +29,7 @@ import java.util.SortedMap;
  * The configuration values can then be introspected, modified and converted back into a URI string
  * or Endpoint.
  *
- * For @{link UriEndpointComponent} implementations created for Endpoints annotated with {@link UriEndpoint} and the
+ * For @{link UriEndpointComponent} implementations created for Endpoints annotated with {@link org.apache.camel.spi.UriEndpoint} and the
  * associated annotations then all the parameter values can be introspected and the parameter values are converted to their
  * correct type.
  *
@@ -47,7 +47,6 @@ public interface ComponentConfiguration {
      * Sets the base URI without any query parameters added
      */
     void setBaseUri(String baseUri);
-
 
     /**
      * Returns the current parameters of the configuration (usually encoded as ?foo=bar&whatnot=something URI query parameters)
@@ -100,10 +99,9 @@ public interface ComponentConfiguration {
      */
     SortedMap<String, ParameterConfiguration> getParameterConfigurationMap();
 
-
     /**
      * Converts the configuration into a URI and then looks up the endpoint in the {@link CamelContext}
-     * which typically results in a new {@link Endpoint} instance being creatd.
+     * which typically results in a new {@link Endpoint} instance being created.
      */
     Endpoint createEndpoint() throws Exception;
 
@@ -115,7 +113,6 @@ public interface ComponentConfiguration {
      * @param endpoint
      */
     void configureEndpoint(Endpoint endpoint);
-
 
     /**
      * Gets the named URI parameter value on the given endpoint

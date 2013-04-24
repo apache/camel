@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ProcessorEndpoint;
@@ -23,8 +25,6 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.LRUSoftCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * The <a href="http://camel.apache.org/bean.html">Bean Component</a>

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implements {@link EndpointConfiguration} for Endpoint implementations
- * which are annotated with {@link UriEndpoint} to use the {@link UriParam} and {@link UriParams} annotations
+ * which are annotated with {@link org.apache.camel.spi.UriEndpoint} to use the {@link UriParam} and {@link UriParams} annotations
  * to denote its parameters which can be specified via URI query parameters.
  */
 public class UriEndpointConfiguration implements EndpointConfiguration {
@@ -92,8 +91,8 @@ public class UriEndpointConfiguration implements EndpointConfiguration {
 
     protected void warnMissingUriParamOnProperty(String name) {
         LOG.warn("Using property " + name + " on endpoint " + getEndpointClass().getName()
-                + " which does not have a @UriParam annotation! " +
-                "Please add the @UriParam annotation to the " + name + "field");
+                + " which does not have a @UriParam annotation! "
+                + "Please add the @UriParam annotation to the " + name + " field");
     }
 
     @Override

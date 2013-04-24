@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,6 +32,7 @@ import org.apache.camel.util.IntrospectionSupport;
  * do not have Endpoint classes annotated with {@link org.apache.camel.spi.UriEndpoint}
  */
 public class DefaultComponentConfiguration extends ComponentConfigurationSupport {
+
     public DefaultComponentConfiguration(Component component) {
         super(component);
     }
@@ -42,21 +42,18 @@ public class DefaultComponentConfiguration extends ComponentConfigurationSupport
         try {
             return IntrospectionSupport.getProperty(endpoint, name);
         } catch (Exception e) {
-            throw new RuntimeCamelException(
-                    "Failed to get property " + name + " on endpoint " + endpoint + " due to " + e, e);
+            throw new RuntimeCamelException("Failed to get property " + name + " on endpoint " + endpoint + " due to " + e.getMessage(), e);
         }
     }
 
     @Override
-    public void setEndpointParameter(Endpoint endpoint, String name, Object value)
-            throws RuntimeCamelException {
-        boolean answer = false;
+    public void setEndpointParameter(Endpoint endpoint, String name, Object value) throws RuntimeCamelException {
+        boolean answer;
         try {
             answer = IntrospectionSupport.setProperty(endpoint, name, value);
         } catch (Exception e) {
             throw new RuntimeCamelException(
-                    "Failed to set property " + name + " with value " + value + " on endpoint " + endpoint
-                            + " due to " + e, e);
+                    "Failed to set property " + name + " with value " + value + " on endpoint " + endpoint + " due to " + e.getMessage(), e);
         }
         if (!answer) {
             throw new InvalidPropertyException(endpoint, name);
@@ -81,4 +78,5 @@ public class DefaultComponentConfiguration extends ComponentConfigurationSupport
         }
         return answer;
     }
+
 }

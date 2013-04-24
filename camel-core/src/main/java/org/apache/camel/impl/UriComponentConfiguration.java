@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implements {@link org.apache.camel.EndpointConfiguration} for Endpoint implementations
- * which are annotated with {@link UriEndpoint}
+ * which are annotated with {@link org.apache.camel.spi.UriEndpoint}
  * to use the {@link org.apache.camel.spi.UriParam} and {@link org.apache.camel.spi.UriParams} annotations
  * to denote its parameters which can be specified via URI query parameters.
  */
@@ -78,8 +77,7 @@ public class UriComponentConfiguration extends ComponentConfigurationSupport {
     }
 
     @Override
-    public void setEndpointParameter(Endpoint endpoint, String name, Object value)
-            throws RuntimeCamelException {
+    public void setEndpointParameter(Endpoint endpoint, String name, Object value) throws RuntimeCamelException {
         ParameterConfiguration config = getParameterConfiguration(name);
 
         // lets try set the property regardless of if this maps to a valid property name
@@ -88,9 +86,8 @@ public class UriComponentConfiguration extends ComponentConfigurationSupport {
         try {
             IntrospectionSupport.setProperty(endpoint, name, value);
         } catch (Exception e) {
-            throw new RuntimeCamelException(
-                    "Failed to set property '" + name + "' on " + endpoint + " to value " + value + " due "
-                            + e.getMessage(), e);
+            throw new RuntimeCamelException("Failed to set property '" + name + "' on " + endpoint + " to value "
+                    + value + " due " + e.getMessage(), e);
         }
         if (config == null) {
             unknownPropertyName(name);
@@ -150,8 +147,8 @@ public class UriComponentConfiguration extends ComponentConfigurationSupport {
             throw new InvalidPropertyException(this, name, endpointClass);
         } else {
             LOG.warn("Using parameter " + name + " on endpoint " + getEndpointClass().getName()
-                    + " which does not have a @UriParam annotation! " +
-                    "Please add the @UriParam annotation to the " + name + "field");
+                    + " which does not have a @UriParam annotation! "
+                    + "Please add the @UriParam annotation to the " + name + " field");
         }
     }
 
