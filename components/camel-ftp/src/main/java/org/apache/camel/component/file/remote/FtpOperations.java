@@ -352,6 +352,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 result = client.retrieveFile(remoteName, os);
             }
 
+            // store client reply information after the operation
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+
             // change back to current directory
             if (endpoint.getConfiguration().isStepwise()) {
                 changeCurrentDirectory(currentDir);
@@ -434,6 +438,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             log.trace("Client retrieveFile: {}", remoteName);
             result = client.retrieveFile(remoteName, os);
+
+            // store client reply information after the operation
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
 
             // change back to current directory
             if (endpoint.getConfiguration().isStepwise()) {
@@ -566,6 +574,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
                         new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName, answer});
             }
+
+            // store client reply information after the operation
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+            exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
 
             return answer;
 
