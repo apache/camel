@@ -70,4 +70,12 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer implements Man
     public void setTimeUnit(String timeUnit) {
         getConsumer().setTimeUnit(TimeUnit.valueOf(timeUnit));
     }
+
+    public boolean isSchedulerStarted() {
+        return getConsumer().isSchedulerStarted();
+    }
+
+    public void startScheduler() {
+        getConsumer().startScheduler();
+    }
 }

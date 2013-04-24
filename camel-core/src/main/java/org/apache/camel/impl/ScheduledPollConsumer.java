@@ -44,7 +44,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     private ScheduledExecutorService scheduledExecutorService;
     private boolean shutdownExecutor;
-    private ScheduledFuture<?> future;
+    private volatile ScheduledFuture<?> future;
 
     // if adding more options then align with ScheduledPollEndpoint#configureScheduledPollConsumerProperties
     private boolean startScheduler = true;
@@ -301,6 +301,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     }
 
     /**
+     * Whether the scheduler has been started.
+     * <p/>
+     * The scheduler can be started with the {@link #startScheduler()} method.
+     *
+     * @return <tt>true</tt> if started, <tt>false</tt> if not.
+     */
+    public boolean isSchedulerStarted() {
+        return future != null;
+    }
+
+    /**
      * Sets a custom shared {@link ScheduledExecutorService} to use as thread pool
      * <p/>
      * <b>Notice: </b> When using a custom thread pool, then the lifecycle of this thread
@@ -345,19 +356,27 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         }
     }
 
-    protected void startScheduler() {
-        if (isUseFixedDelay()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
-                        new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
+    /**
+     * Starts the scheduler.
+     * <p/>
+     * If the scheduler is already started, then this is a noop method call.
+     */
+    public void startScheduler() {
+        // only schedule task if we have not already done that
+        if (future == null) {
+            if (isUseFixedDelay()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
+                            new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
+                }
+                future = scheduledExecutorService.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
+                            new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
+                }
+                future = scheduledExecutorService.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
             }
-            future = scheduledExecutorService.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
-                        new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
-            }
-            future = scheduledExecutorService.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
         }
     }
 
@@ -366,6 +385,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         if (future != null) {
             LOG.debug("This consumer is stopping, so cancelling scheduled task: " + future);
             future.cancel(false);
+            future = null;
         }
         super.doStop();
     }

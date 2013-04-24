@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
 
@@ -43,5 +44,11 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
 
     @ManagedAttribute(description = "Scheduled TimeUnit")
     void setTimeUnit(String timeUnit);
+
+    @ManagedAttribute(description = "Is the scheduler started")
+    boolean isSchedulerStarted();
+
+    @ManagedOperation(description = "Starts the scheduler")
+    void startScheduler();
 
 }

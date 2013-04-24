@@ -50,6 +50,9 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
         Boolean fixedDelay = (Boolean) mbeanServer.getAttribute(on, "UseFixedDelay");
         assertEquals(Boolean.TRUE, fixedDelay);
 
+        Boolean schedulerStarted = (Boolean) mbeanServer.getAttribute(on, "SchedulerStarted");
+        assertEquals(Boolean.TRUE, schedulerStarted);
+
         String timeUnit = (String) mbeanServer.getAttribute(on, "TimeUnit");
         assertEquals(TimeUnit.MILLISECONDS.toString(), timeUnit);
 
@@ -58,6 +61,9 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
         // stop it
         mbeanServer.invoke(on, "stop", null, null);
+
+        schedulerStarted = (Boolean) mbeanServer.getAttribute(on, "SchedulerStarted");
+        assertEquals(Boolean.FALSE, schedulerStarted);
 
         // change delay
         mbeanServer.setAttribute(on, new Attribute("Delay", 2000));
