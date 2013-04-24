@@ -81,12 +81,15 @@ public final class StringHelper {
             return s;
         }
 
-        if (s.startsWith("'") && s.endsWith("'")) {
-            return s.substring(1, s.length() - 1);
+        String copy = s.trim();
+        if (copy.startsWith("'") && copy.endsWith("'")) {
+            return copy.substring(1, copy.length() - 1);
         }
-        if (s.startsWith("\"") && s.endsWith("\"")) {
-            return s.substring(1, s.length() - 1);
+        if (copy.startsWith("\"") && copy.endsWith("\"")) {
+            return copy.substring(1, copy.length() - 1);
         }
+
+        // no quotes, so return as-is
         return s;
     }
     

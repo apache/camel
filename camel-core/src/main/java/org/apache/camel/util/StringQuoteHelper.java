@@ -82,12 +82,30 @@ public final class StringQuoteHelper {
                     // its an empty quote so add empty text
                     answer.add("");
                 }
+                // special logic needed if this quote is the end
+                if (i == input.length() - 1) {
+                    if (singleQuoted && sb.length() > 0) {
+                        String text = sb.toString();
+                        // do not trim a quoted string
+                        answer.add(text);
+                        sb.setLength(0);
+                    }
+                }
                 singleQuoted = !singleQuoted;
                 continue;
             } else if (ch == '"') {
                 if (doubleQuoted && prev == ch && sb.length() == 0) {
                     // its an empty quote so add empty text
                     answer.add("");
+                }
+                // special logic needed if this quote is the end
+                if (i == input.length() - 1) {
+                    if (doubleQuoted && sb.length() > 0) {
+                        String text = sb.toString();
+                        // do not trim a quoted string
+                        answer.add(text);
+                        sb.setLength(0);
+                    }
                 }
                 doubleQuoted = !doubleQuoted;
                 continue;
