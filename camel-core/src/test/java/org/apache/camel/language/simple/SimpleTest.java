@@ -1134,6 +1134,21 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.replaceFirst('http:',' ')}", " camel.apache.org");
     }
 
+    public void testBodyOgnlSpaces() throws Exception {
+        exchange.getIn().setBody("Hello World");
+
+        // no quotes, which is discouraged to use
+        assertExpression("${body.compareTo(Hello World)}", 0);
+
+        assertExpression("${body.compareTo('Hello World')}", 0);
+        assertExpression("${body.compareTo(${body})}", 0);
+        assertExpression("${body.compareTo('foo')}", "Hello World".compareTo("foo"));
+
+        assertExpression("${body.compareTo( 'Hello World' )}", 0);
+        assertExpression("${body.compareTo( ${body} )}", 0);
+        assertExpression("${body.compareTo( 'foo' )}", "Hello World".compareTo("foo"));
+    }
+
     public void testClassSimpleName() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         exchange.getIn().setBody(tiger);

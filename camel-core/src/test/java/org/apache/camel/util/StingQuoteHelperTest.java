@@ -117,4 +117,18 @@ public class StingQuoteHelperTest extends TestCase {
         assertEquals("true", out[2]);
     }
 
+    public void testLastIsQuote() throws Exception {
+        String[] out = StringQuoteHelper.splitSafeQuote(" ${body}, 5, 'Hello World'", ',', true);
+        assertEquals(3, out.length);
+        assertEquals("${body}", out[0]);
+        assertEquals("5", out[1]);
+        assertEquals("Hello World", out[2]);
+
+        out = StringQuoteHelper.splitSafeQuote(" ${body}, 5, \"Hello World\"", ',', true);
+        assertEquals(3, out.length);
+        assertEquals("${body}", out[0]);
+        assertEquals("5", out[1]);
+        assertEquals("Hello World", out[2]);
+    }
+
 }
