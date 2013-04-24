@@ -25,20 +25,24 @@ import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.BlueprintEvent;
 import org.osgi.service.blueprint.container.BlueprintListener;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener, BlueprintListener {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
-
+    
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;
     private ServiceRegistration<?> registration;
@@ -75,7 +79,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
         this.blueprintContainer = blueprintContainer;
     }
-
+   
     public void init() throws Exception {
         LOG.trace("init {}", this);
 
@@ -148,23 +152,32 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         Registry reg = new BlueprintContainerRegistry(getBlueprintContainer());
         return OsgiCamelContextHelper.wrapRegistry(this, reg, bundleContext);
     }
+    
+    @Override
+    public void start() throws Exception {
+        final ClassLoader original = Thread.currentThread().getContextClassLoader();
+        try {
+            // let's set a more suitable TCCL while starting the context
+            Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
+            super.start();
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
 
     private void maybeStart() throws Exception {
         LOG.trace("maybeStart: {}", this);
-
+        // for example from unit testing we want to start Camel later and not
+        // when blueprint loading the bundle
         if (!isStarted() && !isStarting()) {
-            final ClassLoader original = Thread.currentThread().getContextClassLoader();
-            try {
-                // let's set a more suitable TCCL while starting the context
-                Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
-                LOG.debug("Starting {}", this);
-                start();
-            } finally {
-                Thread.currentThread().setContextClassLoader(original);
-            }
+            LOG.debug("Starting {}", this);
+            start();
         } else {
             // ignore as Camel is already started
             LOG.trace("Ignoring maybeStart() as {} is already started", this);
         }
+
     }
+    
+    
 }
