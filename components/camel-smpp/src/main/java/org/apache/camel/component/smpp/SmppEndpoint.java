@@ -57,7 +57,9 @@ public class SmppEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new SmppConsumer(this, configuration, processor);
+        SmppConsumer answer = new SmppConsumer(this, configuration, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

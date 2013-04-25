@@ -58,7 +58,9 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new SpringIntegrationConsumer(this, processor);
+        SpringIntegrationConsumer answer = new SpringIntegrationConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public void setInputChannel(String input) {

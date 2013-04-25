@@ -78,6 +78,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(component, "component");
         WebsocketConsumer consumer = new WebsocketConsumer(this, processor);
+        configureConsumer(consumer);
         return consumer;
     }
 

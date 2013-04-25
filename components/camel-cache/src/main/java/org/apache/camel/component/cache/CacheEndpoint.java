@@ -55,7 +55,9 @@ public class CacheEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(config, "config");
         ObjectHelper.notNull(cacheManagerFactory, "cacheManagerFactory");
-        return new CacheConsumer(this, processor, config);
+        CacheConsumer answer = new CacheConsumer(this, processor, config);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

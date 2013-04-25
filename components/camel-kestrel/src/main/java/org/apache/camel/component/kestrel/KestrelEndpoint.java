@@ -70,7 +70,9 @@ public class KestrelEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KestrelConsumer(this, processor, getMemcachedClient());
+        KestrelConsumer answer = new KestrelConsumer(this, processor, getMemcachedClient());
+        configureConsumer(answer);
+        return answer;
     }
 
     /**

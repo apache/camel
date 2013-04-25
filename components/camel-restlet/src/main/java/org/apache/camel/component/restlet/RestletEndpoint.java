@@ -75,7 +75,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new RestletConsumer(this, processor);
+        RestletConsumer answer = new RestletConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

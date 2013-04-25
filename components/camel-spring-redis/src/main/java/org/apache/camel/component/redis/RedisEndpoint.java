@@ -37,7 +37,9 @@ public class RedisEndpoint extends DirectEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new RedisConsumer(this, processor, configuration);
+        RedisConsumer answer = new RedisConsumer(this, processor, configuration);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

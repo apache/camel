@@ -57,7 +57,9 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new StreamConsumer(this, processor, getEndpointUri());
+        StreamConsumer answer = new StreamConsumer(this, processor, getEndpointUri());
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

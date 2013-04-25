@@ -35,7 +35,9 @@ public class HazelcastListEndpoint extends HazelcastDefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new HazelcastListConsumer(hazelcastInstance, this, processor, cacheName);
+        HazelcastListConsumer answer = new HazelcastListConsumer(hazelcastInstance, this, processor, cacheName);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

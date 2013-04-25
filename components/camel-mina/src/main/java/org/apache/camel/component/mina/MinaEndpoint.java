@@ -85,7 +85,9 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         if (!configuration.getProtocol().equalsIgnoreCase("vm")) {
             ObjectHelper.notNull(acceptorConfig, "acceptorConfig");
         }
-        return new MinaConsumer(this, processor);
+        MinaConsumer answer = new MinaConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Exchange createExchange(IoSession session, Object payload) {

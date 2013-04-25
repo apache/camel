@@ -221,10 +221,14 @@ public class JMXEndpoint extends DefaultEndpoint {
                     throw new IllegalArgumentException(ERR_THRESHOLD_LOW);
                 }
             }
-            return new JMXMonitorConsumer(this, aProcessor);
+            JMXMonitorConsumer answer = new JMXMonitorConsumer(this, aProcessor);
+            configureConsumer(answer);
+            return answer;
         } else {
             // shouldn't need any other validation.
-            return new JMXConsumer(this, aProcessor);
+            JMXConsumer answer = new JMXConsumer(this, aProcessor);
+            configureConsumer(answer);
+            return answer;
         }
     }
 

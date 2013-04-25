@@ -37,7 +37,9 @@ public class NettyEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new NettyConsumer(this, processor, configuration);
+        Consumer answer = new NettyConsumer(this, processor, configuration);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

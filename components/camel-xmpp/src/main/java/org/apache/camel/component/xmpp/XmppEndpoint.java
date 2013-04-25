@@ -97,7 +97,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new XmppConsumer(this, processor);
+        XmppConsumer answer = new XmppConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

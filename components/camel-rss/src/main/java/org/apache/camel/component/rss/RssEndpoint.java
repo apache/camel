@@ -56,7 +56,7 @@ public class RssEndpoint extends FeedEndpoint {
             newFeed = (SyndFeed)((SyndFeed) feed).clone();
             newFeed.setEntries(Arrays.asList(entry));
         } catch (CloneNotSupportedException e) {
-            LOG.debug("Could not create a new feed.", e);
+            LOG.debug("Could not create a new feed. This exception will be ignored.", e);
             newFeed = null;
         }        
         exchange.getIn().setBody(newFeed);
@@ -65,12 +65,16 @@ public class RssEndpoint extends FeedEndpoint {
 
     @Override
     protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor,
-                                                             boolean filter, Date lastUpdate, boolean throttleEntries) {
-        return new RssEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
+                                                             boolean filter, Date lastUpdate, boolean throttleEntries) throws Exception {
+        RssEntryPollingConsumer answer = new RssEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
+        configureConsumer(answer);
+        return answer;
     }  
     
     @Override
-    protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) {
-        return new RssPollingConsumer(this, processor); 
+    protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) throws Exception {
+        RssPollingConsumer answer = new RssPollingConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 }

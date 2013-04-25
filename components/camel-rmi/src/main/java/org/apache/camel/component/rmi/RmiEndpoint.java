@@ -64,12 +64,14 @@ public class RmiEndpoint extends DefaultEndpoint {
         return uri.toString();
     }
 
-    public Consumer createConsumer(Processor processor) {
+    public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(uri, "uri");
         if (remoteInterfaces == null || remoteInterfaces.size() == 0) {
             throw new IllegalArgumentException("To create a RMI consumer, the RMI endpoint's remoteInterfaces property must be be configured.");
         }
-        return new RmiConsumer(this, processor);
+        RmiConsumer answer = new RmiConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

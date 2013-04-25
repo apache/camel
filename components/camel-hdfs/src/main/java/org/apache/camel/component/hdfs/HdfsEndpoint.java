@@ -37,9 +37,11 @@ public class HdfsEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) {
+    public Consumer createConsumer(Processor processor) throws Exception {
         config.checkConsumerOptions();
-        return new HdfsConsumer(this, processor, config);
+        HdfsConsumer answer = new HdfsConsumer(this, processor, config);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

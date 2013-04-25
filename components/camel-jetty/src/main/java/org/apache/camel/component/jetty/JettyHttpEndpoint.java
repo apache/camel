@@ -105,7 +105,9 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new HttpConsumer(this, processor);
+        HttpConsumer answer = new HttpConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }   
 
     public void setSessionSupport(boolean support) {

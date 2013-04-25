@@ -139,7 +139,9 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     }
 
     public QuartzConsumer createConsumer(Processor processor) throws Exception {
-        return new QuartzConsumer(this, processor);
+        QuartzConsumer answer = new QuartzConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

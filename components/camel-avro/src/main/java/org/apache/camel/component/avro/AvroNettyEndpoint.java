@@ -58,6 +58,8 @@ public class AvroNettyEndpoint extends AvroEndpoint {
      */
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AvroNettyConsumer(this, processor);
+        AvroNettyConsumer answer = new AvroNettyConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 }

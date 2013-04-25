@@ -53,7 +53,9 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new MQTTConsumer(this, processor);
+        MQTTConsumer answer = new MQTTConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

@@ -47,7 +47,9 @@ public class RouteboxDirectEndpoint extends RouteboxEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new RouteboxDirectConsumer(this, processor);
+        RouteboxDirectConsumer answer = new RouteboxDirectConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

@@ -106,13 +106,14 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             consumerType = MongoDbConsumerType.tailable;
         }
         
-        Consumer consumer = null;
+        Consumer consumer;
         if (consumerType == MongoDbConsumerType.tailable) {
             consumer = new MongoDbTailableCursorConsumer(this, processor);
         } else {
             throw new CamelMongoDbException("Consumer type not supported: " + consumerType);
         }
-        
+
+        configureConsumer(consumer);
         return consumer;
     }
 

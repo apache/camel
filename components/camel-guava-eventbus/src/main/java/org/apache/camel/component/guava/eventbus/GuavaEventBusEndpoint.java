@@ -48,7 +48,9 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new GuavaEventBusConsumer(this, processor, eventBus, eventClass, listenerInterface);
+        GuavaEventBusConsumer answer = new GuavaEventBusConsumer(this, processor, eventBus, eventClass, listenerInterface);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

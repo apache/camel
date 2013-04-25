@@ -81,7 +81,9 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
 
     public EventConsumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(applicationContext, "applicationContext");
-        return new EventConsumer(this, processor);
+        EventConsumer answer = new EventConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
