@@ -1055,13 +1055,32 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // with custom tokens, we cannot know if the URI contains a property or not without having
         // the component.  We also lose fail-fast behavior for the missing component with this change.
         PropertiesComponent pc = getPropertiesComponent();
-        
+
         // Do not parse uris that are designated for the properties component as it will handle that itself
         if (text != null && !text.startsWith("properties:")) {
             // No component, assume default tokens.
             if (pc == null && text.contains(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
-                throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                        + " in CamelContext to support property placeholders.");
+
+                // try to lookup component, as we may be initializing CamelContext itself
+                Component existing = lookupPropertiesComponent();
+                if (existing != null) {
+                    if (existing instanceof PropertiesComponent) {
+                        pc = (PropertiesComponent) existing;
+                    } else {
+                        // properties component must be expected type
+                        throw new IllegalArgumentException("Found properties component of type: " + existing.getClass() + " instead of expected: " + PropertiesComponent.class);
+                    }
+                }
+
+                if (pc != null) {
+                    // the parser will throw exception if property key was not found
+                    String answer = pc.parseUri(text);
+                    log.debug("Resolved text: {} -> {}", text, answer);
+                    return answer;
+                } else {
+                    throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
+                            + " in CamelContext to support property placeholders.");
+                }
                 
             // Component available, use actual tokens
             } else if (pc != null && text.contains(pc.getPrefixToken())) {
@@ -1585,14 +1604,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
         // due we use properties component for property placeholder resolution at runtime
-        Component existing = hasComponent("properties");
-        if (existing == null) {
-            // no existing properties component so lookup and add as component if possible
-            propertiesComponent = getRegistry().lookupByNameAndType("properties", PropertiesComponent.class);
-            if (propertiesComponent != null) {
-                addComponent("properties", propertiesComponent);
-            }
-        } else {
+        Component existing = lookupPropertiesComponent();
+        if (existing != null) {
             // store reference to the existing properties component
             if (existing instanceof PropertiesComponent) {
                 propertiesComponent = (PropertiesComponent) existing;
@@ -2494,6 +2507,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // need to ignore not same type and return it as null
             return null;
         }
+    }
+
+    protected Component lookupPropertiesComponent() {
+        // no existing properties component so lookup and add as component if possible
+        PropertiesComponent answer = (PropertiesComponent) hasComponent("properties");
+        if (answer == null) {
+            answer = getRegistry().lookupByNameAndType("properties", PropertiesComponent.class);
+            if (answer != null) {
+                addComponent("properties", answer);
+            }
+        }
+        return answer;
     }
 
     public ShutdownStrategy getShutdownStrategy() {
