@@ -86,4 +86,8 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
         return true;
     }
 
+    @Override
+    public boolean isDeadLetterChannel() {
+        return true;
+    }
 }
