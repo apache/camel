@@ -69,7 +69,9 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new LoadBalancerConsumer(this, processor, loadBalancer);
+        Consumer answer = new LoadBalancerConsumer(this, processor, loadBalancer);
+        configureConsumer(answer);
+        return answer;
     }
 
     protected List<Exchange> createExchangeList() {

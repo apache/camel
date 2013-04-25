@@ -94,7 +94,9 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new SedaConsumer(this, processor);
+        Consumer answer = new SedaConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public synchronized BlockingQueue<Exchange> getQueue() {

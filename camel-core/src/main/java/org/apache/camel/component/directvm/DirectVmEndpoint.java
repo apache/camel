@@ -42,7 +42,9 @@ public class DirectVmEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DirectVmConsumer(this, new DirectVmProcessor(processor, this));
+        Consumer answer = new DirectVmConsumer(this, new DirectVmProcessor(processor, this));
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

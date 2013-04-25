@@ -53,7 +53,9 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DirectConsumer(this, processor);
+        Consumer answer = new DirectConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

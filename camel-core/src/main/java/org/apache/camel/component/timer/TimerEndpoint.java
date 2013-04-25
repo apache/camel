@@ -58,7 +58,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new TimerConsumer(this, processor);
+        Consumer answer = new TimerConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override
