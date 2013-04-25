@@ -96,7 +96,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     }
 
     public PollingConsumer createPollingConsumer() throws Exception {
-        return new HttpPollingConsumer(this);
+        HttpPollingConsumer answer = new HttpPollingConsumer(this);
+        configureConsumer(answer);
+        return answer;
     }
 
     /**

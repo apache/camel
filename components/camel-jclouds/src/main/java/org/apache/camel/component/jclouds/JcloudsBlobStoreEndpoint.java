@@ -42,8 +42,10 @@ public class JcloudsBlobStoreEndpoint extends JcloudsEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) {
-        return new JcloudsBlobStoreConsumer(this, processor, blobStore);
+    public Consumer createConsumer(Processor processor) throws Exception {
+        JcloudsBlobStoreConsumer answer = new JcloudsBlobStoreConsumer(this, processor, blobStore);
+        configureConsumer(answer);
+        return answer;
     }
 
     public String getLocationId() {

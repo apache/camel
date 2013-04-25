@@ -55,7 +55,9 @@ public class EventAdminEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EventAdminConsumer(this, processor);
+        EventAdminConsumer answer = new EventAdminConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

@@ -91,7 +91,9 @@ public class KratiEndpoint extends DefaultEndpoint {
             dataStore = KratiHelper.createDataStore(path, initialCapacity, segmentFileSize, segmentFactory, hashFunction, keySerializer, valueSerializer);
             dataStoreRegistry.put(path, new KratiDataStoreRegistration(dataStore));
         }
-        return new KratiConsumer(this, processor, dataStore);
+        KratiConsumer answer = new KratiConsumer(this, processor, dataStore);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

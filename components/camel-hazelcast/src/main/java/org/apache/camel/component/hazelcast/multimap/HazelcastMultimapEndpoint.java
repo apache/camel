@@ -30,7 +30,9 @@ public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new HazelcastMultimapConsumer(hazelcastInstance, this, processor, cacheName);
+        HazelcastMultimapConsumer answer = new HazelcastMultimapConsumer(hazelcastInstance, this, processor, cacheName);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

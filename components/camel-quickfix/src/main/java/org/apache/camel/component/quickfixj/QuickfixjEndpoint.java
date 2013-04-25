@@ -68,6 +68,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
+        configureConsumer(consumer);
         consumers.add(consumer);
         return consumer;
     }

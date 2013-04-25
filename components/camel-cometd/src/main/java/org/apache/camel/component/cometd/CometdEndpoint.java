@@ -64,6 +64,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(component, "component");
         CometdConsumer consumer = new CometdConsumer(this, processor);
+        configureConsumer(consumer);
         return consumer;
     }
 

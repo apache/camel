@@ -30,7 +30,9 @@ public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new HazelcastMapConsumer(hazelcastInstance, this, processor, cacheName);
+        HazelcastMapConsumer answer = new HazelcastMapConsumer(hazelcastInstance, this, processor, cacheName);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

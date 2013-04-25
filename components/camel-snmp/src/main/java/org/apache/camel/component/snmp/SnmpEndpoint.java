@@ -62,9 +62,13 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         if (this.type == SnmpActionType.TRAP) {
-            return new SnmpTrapConsumer(this, processor);
+            SnmpTrapConsumer answer = new SnmpTrapConsumer(this, processor);
+            configureConsumer(answer);
+            return answer;
         } else if (this.type == SnmpActionType.POLL) {
-            return new SnmpOIDPoller(this, processor);
+            SnmpOIDPoller answer = new SnmpOIDPoller(this, processor);
+            configureConsumer(answer);
+            return answer;
         } else {
             throw new IllegalArgumentException("The type '" + this.type + "' is not valid!");
         }

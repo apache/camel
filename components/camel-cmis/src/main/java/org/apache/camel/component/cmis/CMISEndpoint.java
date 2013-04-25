@@ -49,7 +49,9 @@ public class CMISEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new CMISConsumer(this, processor, sessionFacade);
+        CMISConsumer answer = new CMISConsumer(this, processor, sessionFacade);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

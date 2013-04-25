@@ -54,7 +54,9 @@ public class ServletEndpoint extends HttpEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new ServletConsumer(this, processor);
+        ServletConsumer answer = new ServletConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

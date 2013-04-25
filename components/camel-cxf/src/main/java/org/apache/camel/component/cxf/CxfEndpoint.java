@@ -203,7 +203,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new CxfConsumer(this, processor);
+        CxfConsumer answer = new CxfConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

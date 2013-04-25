@@ -247,13 +247,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
         JmsConsumer consumer = new JmsConsumer(this, processor, listenerContainer);
         configureListenerContainer(listenerContainer, consumer);
+        configureConsumer(consumer);
         return consumer;
     }
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         JmsOperations template = createInOnlyTemplate();
-        return new JmsPollingConsumer(this, template);
+        JmsPollingConsumer answer = new JmsPollingConsumer(this, template);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

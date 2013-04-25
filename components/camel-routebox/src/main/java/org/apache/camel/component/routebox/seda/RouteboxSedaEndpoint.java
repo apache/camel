@@ -53,7 +53,9 @@ public class RouteboxSedaEndpoint extends RouteboxEndpoint implements BrowsableE
     }
     
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new RouteboxSedaConsumer(this, processor);        
+        RouteboxSedaConsumer answer = new RouteboxSedaConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

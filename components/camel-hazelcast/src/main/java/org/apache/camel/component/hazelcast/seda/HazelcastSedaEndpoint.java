@@ -49,7 +49,9 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
     }
 
     public Consumer createConsumer(final Processor processor) throws Exception {
-        return new HazelcastSedaConsumer(this, processor);
+        HazelcastSedaConsumer answer = new HazelcastSedaConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public BlockingQueue<Object> getQueue() {

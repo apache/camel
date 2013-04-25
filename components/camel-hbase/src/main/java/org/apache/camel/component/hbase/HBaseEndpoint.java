@@ -65,6 +65,7 @@ public class HBaseEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         HBaseConsumer consumer =  new HBaseConsumer(this, processor, tablePool, tableName);
+        configureConsumer(consumer);
         consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
         return consumer;
     }

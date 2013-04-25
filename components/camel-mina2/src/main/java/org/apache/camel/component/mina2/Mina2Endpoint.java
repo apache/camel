@@ -52,7 +52,9 @@ public class Mina2Endpoint extends DefaultEndpoint implements MultipleConsumersS
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(configuration, "configuration");
-        return new Mina2Consumer(this, processor);
+        Mina2Consumer answer = new Mina2Consumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Exchange createExchange(IoSession session, Object payload) {

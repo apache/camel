@@ -54,12 +54,16 @@ public class AtomEndpoint extends FeedEndpoint {
     }
 
     @Override
-    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
-        return new AtomEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
+    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) throws Exception {
+        AtomEntryPollingConsumer answer = new AtomEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
+        configureConsumer(answer);
+        return answer;
     }  
     
     @Override
-    protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) {
-        return new AtomPollingConsumer(this, processor); 
+    protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) throws Exception {
+        AtomPollingConsumer answer = new AtomPollingConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 }

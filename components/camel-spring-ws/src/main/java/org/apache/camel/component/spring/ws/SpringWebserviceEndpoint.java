@@ -36,6 +36,7 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
         if (configuration.getEndpointDispatcher() != null) {
             configuration.getEndpointDispatcher().setConsumerMessageEndpoint(consumer);
         }
+        configureConsumer(consumer);
         return consumer;
     }
 

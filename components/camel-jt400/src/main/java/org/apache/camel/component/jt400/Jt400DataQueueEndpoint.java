@@ -142,7 +142,9 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        return new Jt400DataQueueConsumer(this);
+        Jt400DataQueueConsumer answer = new Jt400DataQueueConsumer(this);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

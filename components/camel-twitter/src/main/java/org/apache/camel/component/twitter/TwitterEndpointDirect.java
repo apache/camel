@@ -40,7 +40,9 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
-        return new TwitterConsumerDirect(this, processor, twitter4jConsumer);
+        TwitterConsumerDirect answer = new TwitterConsumerDirect(this, processor, twitter4jConsumer);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

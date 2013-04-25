@@ -70,12 +70,10 @@ public class JcrEndpoint extends DefaultEndpoint {
         }
     }
 
-    /**
-     * Currently unsupported
-     * @throws RuntimeCamelException
-     */
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new JcrConsumer(this, processor);
+        JcrConsumer answer = new JcrConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {
@@ -83,7 +81,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     /**

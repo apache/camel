@@ -83,7 +83,9 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new JavaSpaceConsumer(this, processor);
+        JavaSpaceConsumer answer = new JavaSpaceConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public void setConcurrentConsumers(int concurrentConsumers) {

@@ -47,7 +47,9 @@ public class PaxLoggingEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new PaxLoggingConsumer(this, processor);
+        PaxLoggingConsumer answer = new PaxLoggingConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

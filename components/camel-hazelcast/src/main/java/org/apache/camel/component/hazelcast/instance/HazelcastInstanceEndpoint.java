@@ -30,7 +30,9 @@ public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new HazelcastInstanceConsumer(hazelcastInstance, this, processor);
+        HazelcastInstanceConsumer answer = new HazelcastInstanceConsumer(hazelcastInstance, this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {

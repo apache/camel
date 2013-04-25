@@ -117,7 +117,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new SjmsConsumer(this, processor);
+        SjmsConsumer answer = new SjmsConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

@@ -74,7 +74,9 @@ public class CouchDbEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new CouchDbConsumer(this, createClient(), processor);
+        CouchDbConsumer answer = new CouchDbConsumer(this, createClient(), processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override

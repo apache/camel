@@ -45,7 +45,9 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new ZooKeeperConsumer(this, processor);
+        ZooKeeperConsumer answer = new ZooKeeperConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {

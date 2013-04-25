@@ -129,7 +129,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new CxfRsConsumer(this, processor);
+        CxfRsConsumer answer = new CxfRsConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     public Producer createProducer() throws Exception {
