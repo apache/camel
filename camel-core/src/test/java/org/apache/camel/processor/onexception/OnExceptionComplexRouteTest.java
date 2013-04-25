@@ -47,12 +47,8 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "<order><type>myType</type><user>Func</user></order>");
-            fail("Should have thrown a MyFunctionalException");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(MyFunctionalException.class, e.getCause());
-        }
+        // we use DLC so all exceptions gets handled
+        template.sendBody("direct:start", "<order><type>myType</type><user>Func</user></order>");
 
         assertMockEndpointsSatisfied();
     }

@@ -107,6 +107,13 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
     public abstract boolean supportTransacted();
 
     /**
+     * Whether this error handler handles exhausted errors by moving the exchange to a dead letter channel.
+     */
+    public boolean isDeadLetterChannel() {
+        return false;
+    }
+
+    /**
      * Gets the output
      */
     public abstract Processor getOutput();

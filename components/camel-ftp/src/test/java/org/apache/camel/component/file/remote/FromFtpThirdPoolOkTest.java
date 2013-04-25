@@ -39,7 +39,7 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/thridpool");
+        deleteDirectory("target/thirdpool");
         super.setUp();
     }
 
@@ -68,8 +68,10 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // no redeliveries as we want the ftp consumer to try again
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false));
-                onException(IllegalArgumentException.class).handled(false);     // DLC should not handle
+                // use no delay for fast unit testing
+                onException(IllegalArgumentException.class)
+                        .logStackTrace(false)
+                        .to("mock:error");
 
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

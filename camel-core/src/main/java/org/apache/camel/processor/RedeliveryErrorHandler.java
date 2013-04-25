@@ -270,7 +270,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 }
                 // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
                 // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
-                boolean sync = deliverToFailureProcessor(target, exchange, data, callback);
+                boolean isDeadLetterChannel = isDeadLetterChannel() && target == data.deadLetterProcessor;
+                boolean sync = deliverToFailureProcessor(target, isDeadLetterChannel, exchange, data, callback);
                 // we are breaking out
                 return sync;
             }
@@ -440,7 +441,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
             // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
             // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
-            deliverToFailureProcessor(target, exchange, data, callback);
+            boolean isDeadLetterChannel = isDeadLetterChannel() && target == data.deadLetterProcessor;
+            deliverToFailureProcessor(target, isDeadLetterChannel, exchange, data, callback);
             // we are breaking out
             return;
         }
@@ -706,7 +708,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     /**
      * All redelivery attempts failed so move the exchange to the dead letter queue
      */
-    protected boolean deliverToFailureProcessor(final Processor processor, final Exchange exchange,
+    protected boolean deliverToFailureProcessor(final Processor processor, final boolean isDeadLetterChannel, final Exchange exchange,
                                                 final RedeliveryData data, final AsyncCallback callback) {
         boolean sync = true;
 
@@ -716,7 +718,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // clear exception as we let the failure processor handle it
         exchange.setException(null);
 
-        final boolean shouldHandle = shouldHandled(exchange, data);
+        // always handle if dead letter channel
+        final boolean shouldHandle = isDeadLetterChannel || shouldHandled(exchange, data);
         final boolean shouldContinue = shouldContinue(exchange, data);
         // regard both handled or continued as being handled
         boolean handled = false;
