@@ -75,7 +75,9 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        return new ProcessorPollingConsumer(this, getProcessor());
+        PollingConsumer answer = new ProcessorPollingConsumer(this, getProcessor());
+        configureConsumer(answer);
+        return answer;
     }
 
     public Processor getProcessor() throws Exception {

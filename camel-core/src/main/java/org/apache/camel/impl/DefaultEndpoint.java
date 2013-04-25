@@ -206,6 +206,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     public PollingConsumer createPollingConsumer() throws Exception {
+        // should not configure consumer
         return new EventDrivenPollingConsumer(this);
     }
 
@@ -259,7 +260,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     public void configureProperties(Map<String, Object> options) {
         Map<String, Object> consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
-        if (consumerProperties != null) {
+        if (consumerProperties != null && !consumerProperties.isEmpty()) {
             setConsumerProperties(consumerProperties);
         }
     }
@@ -317,11 +318,22 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     public Map<String, Object> getConsumerProperties() {
+        if (consumerProperties == null) {
+            // must create empty if none exists
+            consumerProperties = new HashMap<String, Object>();
+        }
         return consumerProperties;
     }
 
     public void setConsumerProperties(Map<String, Object> consumerProperties) {
-        this.consumerProperties = consumerProperties;
+        // append consumer properties
+        if (consumerProperties != null && !consumerProperties.isEmpty()) {
+            if (this.consumerProperties == null) {
+                this.consumerProperties = new HashMap<String, Object>(consumerProperties);
+            } else {
+                this.consumerProperties.putAll(consumerProperties);
+            }
+        }
     }
 
     protected void configureConsumer(Consumer consumer) throws Exception {

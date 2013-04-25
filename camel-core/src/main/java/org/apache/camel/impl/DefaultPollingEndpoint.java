@@ -46,7 +46,7 @@ public abstract class DefaultPollingEndpoint extends ScheduledPollEndpoint  {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        DefaultScheduledPollConsumer result = new DefaultScheduledPollConsumer(this, processor);
+        Consumer result = new DefaultScheduledPollConsumer(this, processor);
         configureConsumer(result);
         return result;
     }

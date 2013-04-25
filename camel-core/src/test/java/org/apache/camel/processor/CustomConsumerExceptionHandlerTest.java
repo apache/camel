@@ -16,7 +16,8 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,9 +25,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
 
-public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
+public class CustomConsumerExceptionHandlerTest extends ContextTestSupport {
 
-    private static final AtomicBoolean CALLLED = new AtomicBoolean();
+    private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -38,14 +39,13 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
     public void testDeadLetterChannelAlwaysHandled() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         template.sendBody("seda:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should not have called", CALLLED.get());
+        assertTrue("Should have been called", LATCH.await(5, TimeUnit.SECONDS));
     }
 
     @Override
@@ -53,8 +53,6 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead"));
-
                 from("seda:foo?synchronous=true&consumer.exceptionHandler=#myHandler").routeId("foo")
                     .to("mock:foo")
                     .to("direct:bar")
@@ -72,17 +70,17 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
         @Override
         public void handleException(Throwable exception) {
-            CALLLED.set(true);
+            LATCH.countDown();
         }
 
         @Override
         public void handleException(String message, Throwable exception) {
-            CALLLED.set(true);
+            LATCH.countDown();
         }
 
         @Override
         public void handleException(String message, Exchange exchange, Throwable exception) {
-            CALLLED.set(true);
+            LATCH.countDown();
         }
     }
 }

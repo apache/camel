@@ -71,7 +71,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DataSetConsumer(this, processor);
+        Consumer answer = new DataSetConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
     }
 
     @Override
