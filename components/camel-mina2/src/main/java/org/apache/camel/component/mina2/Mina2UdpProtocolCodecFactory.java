@@ -17,8 +17,6 @@
 package org.apache.camel.component.mina2;
 
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -31,28 +29,21 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 /**
- * @version 
+ * @version
  */
 public class Mina2UdpProtocolCodecFactory implements ProtocolCodecFactory {
 
-    private final Charset charset;
     private final CamelContext context;
 
-    public Mina2UdpProtocolCodecFactory(CamelContext context, Charset charset) {
+    public Mina2UdpProtocolCodecFactory(CamelContext context) {
         this.context = context;
-        this.charset = charset;
     }
 
     public ProtocolEncoder getEncoder(IoSession session) throws Exception {
         return new ProtocolEncoder() {
 
-            private CharsetEncoder encoder;
-
             public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
-                if (encoder == null) {
-                    encoder = charset.newEncoder();
-                }
-                IoBuffer buf = toIoBuffer(message, encoder);
+                IoBuffer buf = toIoBuffer(message);
                 buf.flip();
                 out.write(buf);
             }
@@ -83,16 +74,16 @@ public class Mina2UdpProtocolCodecFactory implements ProtocolCodecFactory {
         };
     }
 
-    private IoBuffer toIoBuffer(Object message, CharsetEncoder encoder)
-        throws CharacterCodingException, NoTypeConversionAvailableException {
-        String value = context.getTypeConverter().convertTo(String.class, message);
+    private IoBuffer toIoBuffer(Object message) throws CharacterCodingException, NoTypeConversionAvailableException {
+        //try to convert it to a byte array
+        byte[] value = context.getTypeConverter().tryConvertTo(byte[].class, message);
         if (value != null) {
-            IoBuffer answer = IoBuffer.allocate(value.length()).setAutoExpand(true);
-            answer.putString(value, encoder);
+            IoBuffer answer = IoBuffer.allocate(value.length).setAutoExpand(true);
+            answer.put(value);
             return answer;
         }
 
-        // failback to use a byte buffer converter
+        // fallback to use a byte buffer converter
         return context.getTypeConverter().mandatoryConvertTo(IoBuffer.class, message);
     }
 }

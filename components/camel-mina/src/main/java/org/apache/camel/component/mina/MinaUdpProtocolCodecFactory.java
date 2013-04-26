@@ -17,8 +17,6 @@
 package org.apache.camel.component.mina;
 
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -31,27 +29,21 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 /**
- * @version 
+ * @version
  */
 public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
 
-    private final Charset charset;
     private final CamelContext context;
 
-    public MinaUdpProtocolCodecFactory(CamelContext context, Charset charset) {
+    public MinaUdpProtocolCodecFactory(CamelContext context) {
         this.context = context;
-        this.charset = charset;
     }
 
     public ProtocolEncoder getEncoder() throws Exception {
         return new ProtocolEncoder() {
-            private CharsetEncoder encoder;
 
             public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
-                if (encoder == null) {
-                    encoder = charset.newEncoder();
-                }
-                ByteBuffer buf = toByteBuffer(message, encoder);
+                ByteBuffer buf = toByteBuffer(message);
                 buf.flip();
                 out.write(buf);
             }
@@ -64,10 +56,11 @@ public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
 
     public ProtocolDecoder getDecoder() throws Exception {
         return new ProtocolDecoder() {
-            public void decode(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) throws Exception {
-                // convert to bytes to write, we can not pass in the byte buffer as it could be sent to
-                // multiple mina sessions so we must convert it to bytes
-                byte[] bytes = context.getTypeConverter().convertTo(byte[].class, in);
+            public void decode(IoSession session, ByteBuffer in,
+                               ProtocolDecoderOutput out) throws Exception {
+                // convert to bytes to write, we can not pass in the byte buffer
+                // as it could be sent to multiple mina sessions so we must convert it to bytes
+                byte[] bytes = context.getTypeConverter().mandatoryConvertTo(byte[].class, in);
                 out.write(bytes);
             }
 
@@ -81,17 +74,15 @@ public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
         };
     }
 
-    private ByteBuffer toByteBuffer(Object message, CharsetEncoder encoder)
-        throws CharacterCodingException, NoTypeConversionAvailableException {
-        String value = context.getTypeConverter().convertTo(String.class, message);
+    private ByteBuffer toByteBuffer(Object message) throws CharacterCodingException, NoTypeConversionAvailableException {
+        // try to convert it to a byte array
+        byte[] value = context.getTypeConverter().tryConvertTo(byte[].class, message);
         if (value != null) {
-            ByteBuffer answer = ByteBuffer.allocate(value.length()).setAutoExpand(false);
-            answer.putString(value, encoder);
+            ByteBuffer answer = ByteBuffer.allocate(value.length).setAutoExpand(false);
+            answer.put(value);
             return answer;
         }
-
-        // failback to use a byte buffer converter
+        // fallback to use a byte buffer converter
         return context.getTypeConverter().mandatoryConvertTo(ByteBuffer.class, message);
     }
-
 }
