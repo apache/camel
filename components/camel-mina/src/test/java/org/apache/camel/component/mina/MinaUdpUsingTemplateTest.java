@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class MinaUdpUsingTemplateTest extends BaseMinaTest {
 
@@ -37,8 +37,6 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived("Hello Message: 0", "Hello Message: 1", "Hello Message: 2");
 
         sendUdpMessages();
-        // sleeping for while to let the mock endpoint get all the message
-        Thread.sleep(2000);
 
         assertMockEndpointsSatisfied();
     }
@@ -57,9 +55,6 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         byte[] in = "Hello from bytes".getBytes();
         template.sendBody("mina:udp://127.0.0.1:{{port}}?sync=false", in);
 
-        // sleeping for while to let the mock endpoint get all the message
-        Thread.sleep(2000);
-
         assertMockEndpointsSatisfied();
         List<Exchange> list = endpoint.getReceivedExchanges();
         byte[] out = list.get(0).getIn().getBody(byte[].class);
@@ -69,10 +64,49 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         }
     }
 
+    @Test
+    public void testSendingRawByteMessage() throws Exception {
+        MockEndpoint endpoint = getMockEndpoint("mock:result");
+        endpoint.expectedMessageCount(1);
+
+        String toSend = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
+                + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
+        byte[] in = fromHexString(toSend);
+        template.sendBody("mina:udp://127.0.0.1:{{port}}?sync=false", in);
+
+        assertMockEndpointsSatisfied();
+        List<Exchange> list = endpoint.getReceivedExchanges();
+        byte[] out = list.get(0).getIn().getBody(byte[].class);
+
+        for (int i = 0; i < in.length; i++) {
+            assertEquals("The bytes should be the same", in[i], out[i]);
+        }
+        assertEquals("The strings should be the same", toSend, byteArrayToHex(out));
+    }
+
+    private String byteArrayToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b & 0xff));
+        }
+        return sb.toString();
+    }
+
+    private byte[] fromHexString(String hexstr) {
+        byte data[] = new byte[hexstr.length() / 2];
+        int i = 0;
+        for (int n = hexstr.length(); i < n; i += 2) {
+            data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i)
+                    + hexstr.charAt(i + 1))).byteValue();
+        }
+        return data;
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina:udp://127.0.0.1:{{port}}?sync=false&minaLogger=true").to("mock:result");
+                from("mina:udp://127.0.0.1:{{port}}?sync=false&minaLogger=true")
+                        .to("mock:result");
             }
         };
     }
