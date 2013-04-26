@@ -34,6 +34,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -254,6 +255,11 @@ public abstract class CamelTestSupport extends TestSupport {
 
         // set debugger if enabled
         if (isUseDebugger()) {
+            if (context.getStatus().equals(ServiceStatus.Started)) {
+                log.info("Cannot setting the Debugger to the starting CamelConetxt, stop the CamelContext now.");
+                // we need to stop the context first to setup the debugger
+                context.stop();
+            }
             context.setDebugger(new DefaultDebugger());
             context.getDebugger().addBreakpoint(breakpoint);
             // note: when stopping CamelContext it will automatic remove the breakpoint
