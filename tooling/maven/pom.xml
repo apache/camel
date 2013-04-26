@@ -68,8 +68,6 @@
           <linksource>true</linksource>
           <maxmemory>900m</maxmemory>
           <source>1.6</source>
-          <!-- TODO we can't aggregate as it won't find the CSS file :( -->
-          <!--<aggregate>true</aggregate>-->
         </configuration>
       </plugin>
     </plugins>
