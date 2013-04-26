@@ -330,12 +330,10 @@ public class MinaComponent extends DefaultComponent {
     protected void configureDataGramCodecFactory(final String type, final IoServiceConfig config, final MinaConfiguration configuration) {
         ProtocolCodecFactory codecFactory = configuration.getCodec();
         if (codecFactory == null) {
-            final Charset charset = getEncodingParameter(type, configuration);
-            
-            codecFactory = new MinaUdpProtocolCodecFactory(getCamelContext(), charset);
+            codecFactory = new MinaUdpProtocolCodecFactory(getCamelContext());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {} using encoding: {}", new Object[]{type, codecFactory, charset});
+                LOG.debug("{}: Using CodecFactory: {}", new Object[]{type, codecFactory});
             }
         }
 

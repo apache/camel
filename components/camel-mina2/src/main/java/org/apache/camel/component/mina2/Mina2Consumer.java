@@ -224,12 +224,10 @@ public class Mina2Consumer extends DefaultConsumer {
     protected void configureDataGramCodecFactory(final String type, final IoService service, final Mina2Configuration configuration) {
         ProtocolCodecFactory codecFactory = configuration.getCodec();
         if (codecFactory == null) {
-            final Charset charset = getEncodingParameter(type, configuration);
-
-            codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext(), charset);
+            codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {} using encoding: {}", new Object[]{type, codecFactory, charset});
+                LOG.debug("{}: Using CodecFactory: {}", new Object[]{type, codecFactory});
             }
         }
 
