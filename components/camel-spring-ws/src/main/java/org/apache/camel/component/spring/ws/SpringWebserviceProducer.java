@@ -30,6 +30,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
@@ -38,6 +39,8 @@ import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.EndpointReference;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
@@ -52,6 +55,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceProducer.class);
     private static final SourceExtractor<Object> SOURCE_EXTRACTOR = new NoopSourceExtractor();
+    private static final XmlConverter XML_CONVERTER = new XmlConverter();
 
     public SpringWebserviceProducer(Endpoint endpoint) {
         super(endpoint);
@@ -73,15 +77,18 @@ public class SpringWebserviceProducer extends DefaultProducer {
         URI wsAddressingActionHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, URI.class);
         URI wsReplyToHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, URI.class);
         URI wsFaultToHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, URI.class);
+        Source soapHeaderSource = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, Source.class);
 
-        WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapActionHeader, wsAddressingActionHeader, wsReplyToHeader, 
-                                                                                  wsFaultToHeader, getEndpoint().getConfiguration(), exchange);
-        Object body = null;
+        WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapActionHeader, wsAddressingActionHeader,
+                wsReplyToHeader, wsFaultToHeader, soapHeaderSource, getEndpoint().getConfiguration(), exchange);
+
+        Object body;
         if (endpointUriHeader != null) {
             body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(endpointUriHeader, sourcePayload, callback, SOURCE_EXTRACTOR);
         } else {
             body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(sourcePayload, callback, SOURCE_EXTRACTOR);
         }
+
         if (ExchangeHelper.isOutCapable(exchange)) {
             exchange.getOut().copyFrom(exchange.getIn());
             exchange.getOut().setBody(body);
@@ -99,19 +106,19 @@ public class SpringWebserviceProducer extends DefaultProducer {
         WebServiceTemplate webServiceTemplate = configuration.getWebServiceTemplate();
 
         WebServiceMessageSender[] messageSenders = webServiceTemplate.getMessageSenders();
-        
+
         for (int i = 0; i < messageSenders.length; i++) {
             WebServiceMessageSender messageSender = messageSenders[i];
             if (messageSender instanceof CommonsHttpMessageSender) {
                 if (configuration.getSslContextParameters() != null) {
                     LOG.warn("Not applying SSLContextParameters based configuration to CommonsHttpMessageSender.  "
-                             + "If you are using this MessageSender, which you are not by default, you will need "
-                             + "to configure SSL using the Commons HTTP 3.x Protocol registry.");
+                            + "If you are using this MessageSender, which you are not by default, you will need "
+                            + "to configure SSL using the Commons HTTP 3.x Protocol registry.");
                 }
-                
+
                 if (configuration.getTimeout() > -1) {
                     if (messageSender.getClass().equals(CommonsHttpMessageSender.class)) {
-                        ((CommonsHttpMessageSender)messageSender).setReadTimeout(configuration.getTimeout());
+                        ((CommonsHttpMessageSender) messageSender).setReadTimeout(configuration.getTimeout());
                     } else {
                         LOG.warn("Not applying timeout configuration to CommonsHttpMessageSender based implementation.  "
                                 + "You are using what appears to be a custom MessageSender, which you are not doing by default. "
@@ -121,7 +128,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             } else if (messageSender.getClass().equals(HttpUrlConnectionMessageSender.class)) {
                 // Only if exact match denoting likely use of default configuration.  We don't want to get
                 // sub-classes that might have been otherwise injected.
-                messageSenders[i] = new AbstractHttpWebServiceMessageSenderDecorator((HttpUrlConnectionMessageSender)messageSender, configuration);
+                messageSenders[i] = new AbstractHttpWebServiceMessageSenderDecorator((HttpUrlConnectionMessageSender) messageSender, configuration);
             } else {
                 // For example this will be the case during unit-testing with the net.javacrumbs.spring-ws-test API
                 LOG.warn("Ignoring the timeout and SSLContextParameters options for {}.  You will need to configure "
@@ -129,20 +136,20 @@ public class SpringWebserviceProducer extends DefaultProducer {
             }
         }
     }
-    
+
     /**
      * A decorator of {@link HttpUrlConnectionMessageSender} instances that can apply configuration options
      * from the Camel component/endpoint configuration without replacing the actual implementation which may
      * actually be an end-user implementation and not one of the built-in implementations.
      */
     protected static final class AbstractHttpWebServiceMessageSenderDecorator extends AbstractHttpWebServiceMessageSender {
-        
+
         private final AbstractHttpWebServiceMessageSender delegate;
-        
+
         private final SpringWebserviceConfiguration configuration;
-        
+
         private SSLContext sslContext;
-        
+
         public AbstractHttpWebServiceMessageSenderDecorator(AbstractHttpWebServiceMessageSender delegate, SpringWebserviceConfiguration configuration) {
             this.delegate = delegate;
             this.configuration = configuration;
@@ -152,12 +159,12 @@ public class SpringWebserviceProducer extends DefaultProducer {
         public WebServiceConnection createConnection(URI uri) throws IOException {
             WebServiceConnection wsc = delegate.createConnection(uri);
             if (wsc instanceof HttpUrlConnection) {
-                HttpURLConnection connection = ((HttpUrlConnection)wsc).getConnection();
-                
+                HttpURLConnection connection = ((HttpUrlConnection) wsc).getConnection();
+
                 if (configuration.getTimeout() > -1) {
                     connection.setReadTimeout(configuration.getTimeout());
                 }
-                
+
                 if (configuration.getSslContextParameters() != null && connection instanceof HttpsURLConnection) {
                     try {
                         synchronized (this) {
@@ -168,14 +175,14 @@ public class SpringWebserviceProducer extends DefaultProducer {
                     } catch (GeneralSecurityException e) {
                         throw new RuntimeCamelException("Error creating SSLContext based on SSLContextParameters.", e);
                     }
-                    
+
                     ((HttpsURLConnection) connection).setSSLSocketFactory(sslContext.getSocketFactory());
                 }
             } else {
                 throw new RuntimeCamelException("Unsupported delegate.  Delegate must return a org.springframework.ws.transport.http.HttpUrlConnection.  Found "
                         + wsc.getClass());
             }
-            
+
             return wsc;
         }
 
@@ -200,14 +207,17 @@ public class SpringWebserviceProducer extends DefaultProducer {
         private final URI wsAddressingActionHeader;
         private final URI wsReplyToHeader;
         private final URI wsFaultToHeader;
+        private final Source soapHeaderSource;
         private final SpringWebserviceConfiguration configuration;
         private final Exchange exchange;
 
-        public DefaultWebserviceMessageCallback(String soapAction, URI wsAddressingAction, URI wsReplyTo, URI wsFaultTo, SpringWebserviceConfiguration configuration, Exchange exchange) {
+        public DefaultWebserviceMessageCallback(String soapAction, URI wsAddressingAction, URI wsReplyTo, URI wsFaultTo, Source soapHeaderSource,
+                                                SpringWebserviceConfiguration configuration, Exchange exchange) {
             this.soapActionHeader = soapAction;
             this.wsAddressingActionHeader = wsAddressingAction;
             this.wsReplyToHeader = wsReplyTo;
             this.wsFaultToHeader = wsFaultTo;
+            this.soapHeaderSource = soapHeaderSource;
             this.configuration = configuration;
             this.exchange = exchange;
         }
@@ -225,7 +235,13 @@ public class SpringWebserviceProducer extends DefaultProducer {
             URI wsAddressingAction = wsAddressingActionHeader != null ? wsAddressingActionHeader : configuration.getWsAddressingAction();
             URI wsReplyTo = wsReplyToHeader != null ? wsReplyToHeader : configuration.getReplyTo();
             URI wsFaultTo = wsFaultToHeader != null ? wsFaultToHeader : configuration.getFaultTo();
-            
+
+            // Create the SOAP header
+            if (soapHeaderSource != null) {
+                SoapHeader header = ((SoapMessage) message).getSoapHeader();
+                XML_CONVERTER.toResult(soapHeaderSource, header.getResult());
+            }
+
             if (wsAddressingAction != null) {
                 ActionCallback actionCallback = new ActionCallback(wsAddressingAction);
                 if (wsReplyTo != null) {
@@ -237,7 +253,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 }
                 actionCallback.doWithMessage(message);
             }
-            
+
             configuration.getMessageFilter().filterProducer(exchange, message);
         }
     }

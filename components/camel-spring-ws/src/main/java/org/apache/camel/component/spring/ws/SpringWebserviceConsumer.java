@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -66,9 +65,9 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             if (responseMessage != null) {
                 Source responseBody = responseMessage.getBody(Source.class);
                 WebServiceMessage response = messageContext.getResponse();
-                
+
                 configuration.getMessageFilter().filterConsumer(exchange, response);
-                
+
                 XmlConverter xmlConverter = configuration.getXmlConverter();
                 xmlConverter.toResult(responseBody, response.getPayloadResult());
             }
@@ -81,7 +80,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         // create inbound message
         WebServiceMessage request = messageContext.getRequest();
         SpringWebserviceMessage inMessage = new SpringWebserviceMessage(request);
-        inMessage.setHeaders(extractSoapHeadersFromWebServiceMessage(request));
+        extractSourceFromSoapHeader(inMessage.getHeaders(), request);
         exchange.setIn(inMessage);
     }
 
@@ -96,28 +95,40 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         }
     }
 
-    private Map<String, Object> extractSoapHeadersFromWebServiceMessage(WebServiceMessage request) {
-        Map<String, Object> headers = new HashMap<String, Object>();
+    /**
+     * Extracts the SOAP headers and set them as headers in the Exchange. Also sets
+     * it as a header with the key SpringWebserviceConstants.SPRING_WS_SOAP_HEADER
+     * and a value of type Source.
+     *
+     * @param headers   the Exchange Headers
+     * @param request   the WebService Request
+     */
+    private void extractSourceFromSoapHeader(Map<String, Object> headers, WebServiceMessage request) {
         if (request instanceof SoapMessage) {
             SoapMessage soapMessage = (SoapMessage) request;
             SoapHeader soapHeader = soapMessage.getSoapHeader();
+
             if (soapHeader != null) {
-                Iterator<?> attibutesIterator = soapHeader.getAllAttributes();
-                while (attibutesIterator.hasNext()) {
-                    QName name = (QName) attibutesIterator.next();
-                    headers.put(name.toString(), soapHeader.getAttributeValue(name));
+                //Set the raw soap header as a header in the exchange.
+                headers.put(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader.getSource());
+
+                //Set header values for the soap header attributes
+                Iterator<QName> attIter = soapHeader.getAllAttributes();
+                while (attIter.hasNext()) {
+                    QName name = attIter.next();
+                    headers.put(name.getLocalPart(), soapHeader.getAttributeValue(name));
                 }
-                Iterator<?> elementIter = soapHeader.examineAllHeaderElements();
+
+                //Set header values for the soap header elements
+                Iterator<SoapHeaderElement> elementIter = soapHeader.examineAllHeaderElements();
                 while (elementIter.hasNext()) {
-                    Object element = elementIter.next();
-                    if (element instanceof SoapHeaderElement) {
-                        QName name = ((SoapHeaderElement) element).getName();
-                        headers.put(name.toString(), element);
-                    }
+                    SoapHeaderElement element = elementIter.next();
+                    QName name = element.getName();
+                    headers.put(name.getLocalPart(), element);
+
                 }
             }
         }
-        return headers;
     }
 
     @Override
