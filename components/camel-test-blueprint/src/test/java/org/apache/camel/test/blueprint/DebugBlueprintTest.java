@@ -16,8 +16,6 @@
  */
 package org.apache.camel.test.blueprint;
 
-import org.junit.Assert;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.model.ProcessorDefinition;
 import org.junit.Test;
@@ -27,9 +25,8 @@ import org.junit.Test;
 // and add your unit tests methods as shown below.
 public class DebugBlueprintTest extends CamelBlueprintTestSupport {
 
-    public boolean wasDebugBeforeCalled = false;
-    public boolean wasDebugAfterCalled = false;
-
+    private boolean debugBeforeMethodCalled;
+    private boolean debugAfterMethodCalled;
 
     // override this method, and return the location of our Blueprint XML file to be used for testing
     @Override
@@ -37,7 +34,7 @@ public class DebugBlueprintTest extends CamelBlueprintTestSupport {
         return "org/apache/camel/test/blueprint/camelContext.xml";
     }
    
-    // here we have regular Junit @Test method
+    // here we have regular JUnit @Test method
     @Test
     public void testRoute() throws Exception {
 
@@ -49,10 +46,11 @@ public class DebugBlueprintTest extends CamelBlueprintTestSupport {
 
         // assert mocks
         assertMockEndpointsSatisfied();
-        Assert.assertTrue(wasDebugBeforeCalled);
-        Assert.assertTrue(wasDebugAfterCalled);
-    }
 
+        // assert on the debugBefore/debugAfter methods below being called as we've enabled the debugger
+        assertTrue(debugBeforeMethodCalled);
+        assertTrue(debugAfterMethodCalled);
+    }
 
     @Override
     public boolean isUseDebugger() {
@@ -60,18 +58,16 @@ public class DebugBlueprintTest extends CamelBlueprintTestSupport {
         return true;
     }
 
-
     @Override
     protected void debugBefore(Exchange exchange, org.apache.camel.Processor processor, ProcessorDefinition<?> definition, String id, String label) {
         log.info("Before " + definition + " with body " + exchange.getIn().getBody());
-        wasDebugBeforeCalled = true;
+        debugBeforeMethodCalled = true;
     }
-
 
     @Override
     protected void debugAfter(Exchange exchange, org.apache.camel.Processor processor, ProcessorDefinition<?> definition, String id, String label, long timeTaken) {
         log.info("After " + definition + " with body " + exchange.getIn().getBody());
-        wasDebugAfterCalled = true;
+        debugAfterMethodCalled = true;
     }
 }
 // END SNIPPET: example
