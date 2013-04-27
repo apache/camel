@@ -19,8 +19,9 @@ package org.apache.camel.component.jclouds;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.jclouds.ContextBuilder;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -28,19 +29,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
 
-
     @EndpointInject(uri = "mock:result-foo")
     protected MockEndpoint resultFoo;
-
 
     @EndpointInject(uri = "mock:result-bar")
     protected MockEndpoint resultBar;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "id", "credential");
-        context.getBlobStore().createContainerInLocation(null, "foo");
-        context.getBlobStore().createContainerInLocation(null, "bar");
+        BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("id", "credential").buildView(BlobStoreContext.class).getBlobStore();
+        blobStore.createContainerInLocation(null, "foo");
+        blobStore.createContainerInLocation(null, "bar");
     }
 
     @Override

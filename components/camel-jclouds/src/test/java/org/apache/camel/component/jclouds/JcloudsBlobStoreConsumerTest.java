@@ -20,9 +20,9 @@ import com.google.common.collect.Lists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.io.payloads.StringPayload;
 import org.junit.Test;
 
@@ -36,9 +36,7 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     private static final String TEST_BLOB_IN_DIR = "dir/testBlob";
     private static final String TEST_BLOB_IN_OTHER = "other/testBlob";
 
-    BlobStoreContextFactory contextFactory = new BlobStoreContextFactory();
-    BlobStoreContext blobStoreContext = contextFactory.createContext("transient", "identity", "credential");
-    BlobStore blobStore = blobStoreContext.getBlobStore();
+    BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("id", "credential").buildView(BlobStoreContext.class).getBlobStore();
 
     @Test
     public void testBlobStoreGetOneBlob() throws InterruptedException {
