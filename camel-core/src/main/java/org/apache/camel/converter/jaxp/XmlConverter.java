@@ -99,7 +99,6 @@ public class XmlConverter {
         DOM_TO_SAX_CLASS = cl;
     }
 
-
     public XmlConverter() {
     }
 
@@ -907,6 +906,7 @@ public class XmlConverter {
 
     // Properties
     //-------------------------------------------------------------------------
+
     public DocumentBuilderFactory getDocumentBuilderFactory() {
         if (documentBuilderFactory == null) {
             documentBuilderFactory = createDocumentBuilderFactory();
@@ -918,28 +918,6 @@ public class XmlConverter {
         this.documentBuilderFactory = documentBuilderFactory;
     }
 
-
-    // Helper methods
-    //-------------------------------------------------------------------------
-    public DocumentBuilderFactory createDocumentBuilderFactory() {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setIgnoringElementContentWhitespace(true);
-        factory.setIgnoringComments(true);
-        return factory;
-    }
-
-
-    public DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-        DocumentBuilderFactory factory = getDocumentBuilderFactory();
-        return factory.newDocumentBuilder();
-    }
-
-    public Document createDocument() throws ParserConfigurationException {
-        DocumentBuilder builder = createDocumentBuilder();
-        return builder.newDocument();
-    }
-
     public TransformerFactory getTransformerFactory() {
         if (transformerFactory == null) {
             transformerFactory = createTransformerFactory();
@@ -949,6 +927,27 @@ public class XmlConverter {
 
     public void setTransformerFactory(TransformerFactory transformerFactory) {
         this.transformerFactory = transformerFactory;
+    }
+
+    // Helper methods
+    //-------------------------------------------------------------------------
+
+    public DocumentBuilderFactory createDocumentBuilderFactory() {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
+        return factory;
+    }
+
+    public DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
+        DocumentBuilderFactory factory = getDocumentBuilderFactory();
+        return factory.newDocumentBuilder();
+    }
+
+    public Document createDocument() throws ParserConfigurationException {
+        DocumentBuilder builder = createDocumentBuilder();
+        return builder.newDocument();
     }
 
     /**
