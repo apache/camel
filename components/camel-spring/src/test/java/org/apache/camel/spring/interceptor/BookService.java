@@ -18,7 +18,7 @@ package org.apache.camel.spring.interceptor;
 
 import javax.sql.DataSource;
 
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Used for unit testing
@@ -26,13 +26,13 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 // START SNIPPET: e1
 public class BookService {
 
-    private SimpleJdbcTemplate jdbc;
+    private JdbcTemplate jdbc;
 
     public BookService() {
     }
 
     public void setDataSource(DataSource ds) {
-        jdbc = new SimpleJdbcTemplate(ds);
+        jdbc = new JdbcTemplate(ds);
     }
 
     public void orderBook(String title) throws Exception {

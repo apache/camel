@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +52,7 @@ public class AnnotatedBookServiceImpl implements AnnotatedBookStore {
         }
 
         // create new local datasource to store in DB
-        new SimpleJdbcTemplate(dataSource).update("insert into books (title) values (?)", title);
+        new JdbcTemplate(dataSource).update("insert into books (title) values (?)", title);
 
         template.sendBody(title);
     }

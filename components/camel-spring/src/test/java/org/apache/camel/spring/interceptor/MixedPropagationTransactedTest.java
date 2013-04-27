@@ -24,14 +24,14 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * For testing with mixed transacted propagation (required, requires new)
  */
 public class MixedPropagationTransactedTest extends SpringTestSupport {
 
-    protected SimpleJdbcTemplate jdbc;
+    protected JdbcTemplate jdbc;
     protected boolean useTransactionErrorHandler = true;
 
     protected AbstractXmlApplicationContext createApplicationContext() {
@@ -45,7 +45,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
         // create database and insert dummy data
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
-        jdbc = new SimpleJdbcTemplate(ds);
+        jdbc = new JdbcTemplate(ds);
     }
 
     public void testRequiredOnly() throws Exception {
