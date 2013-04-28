@@ -84,7 +84,7 @@
 
     <!-- Service definition -->
     <wsdl:service name="ReportIncidentEndpointService">
-        <wsdl:port name="ReportIncidentService" binding="tns:ReportIncidentBinding">
+        <wsdl:port name="ReportIncidentEndpoint" binding="tns:ReportIncidentBinding">
             <soap:address location="http://localhost:9080/part-five/webservices/incident"/>
         </wsdl:port>
     </wsdl:service>

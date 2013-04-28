@@ -30,8 +30,11 @@
 
   <camelcxf:cxfEndpoint id="reportIncident"
                         address="/camel-example-cxf-blueprint/webservices/incident"
+                        endpointName="s:ReportIncidentEndpoint"
+                        serviceName="s:ReportIncidentEndpointService"
                         wsdlURL="META-INF/wsdl/report_incident.wsdl"
-                        serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
+                        serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"
+                        xmlns:s="http://reportincident.example.camel.apache.org"/>
 
   <bean id="reportIncidentRoutes" class="org.apache.camel.example.reportincident.ReportIncidentRoutes"/>
 
