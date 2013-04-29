@@ -407,8 +407,6 @@ public class BeanInfo {
                     LOG.trace("Parameter #{} is the body parameter using expression {}", i, expression);
                     parameterInfo.setExpression(expression);
                     bodyParameters.add(parameterInfo);
-                } else {
-                    // will ignore the expression for parameter evaluation
                 }
             }
             LOG.trace("Parameter #{} has parameter info: ", i, parameterInfo);
