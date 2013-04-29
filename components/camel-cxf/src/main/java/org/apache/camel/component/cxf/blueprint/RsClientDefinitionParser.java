@@ -56,8 +56,7 @@ public class RsClientDefinitionParser extends AbstractBeanDefinitionParser {
             }
         }
 
-        Element elem = DOMUtils.getFirstElement(element);
-        while (elem != null) {
+        for (Element elem = DOMUtils.getFirstElement(element); elem != null; elem = DOMUtils.getNextElement(elem)) {
             String name = elem.getLocalName();
             if ("properties".equals(name) || "headers".equals(name)) {
                 Metadata map = parseMapData(context, beanMetadata, elem);
@@ -80,7 +79,6 @@ public class RsClientDefinitionParser extends AbstractBeanDefinitionParser {
             } else {
                 setFirstChildAsProperty(elem, context, beanMetadata, name);
             }
-            elem = DOMUtils.getNextElement(elem);
         } 
  
         if (StringUtils.isEmpty(bus)) {
