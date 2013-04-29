@@ -59,7 +59,7 @@ import java.util.TreeMap;
  */
 //@SupportedOptions({"foo"})
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class EndpointAnnotationProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
