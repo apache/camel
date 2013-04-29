@@ -393,7 +393,8 @@
     <profile>
       <id>apt</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <!-- don't enable on jdk 1.6 as that causes build problem on CI-Server -->
+        <jdk>[1.7,)</jdk>
       </activation>
 
       <dependencies>
