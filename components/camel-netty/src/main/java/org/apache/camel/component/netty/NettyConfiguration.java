@@ -135,24 +135,32 @@ public class NettyConfiguration implements Cloneable {
         }
     }
 
-    public void parseURI(URI uri, Map<String, Object> parameters, NettyComponent component) throws Exception {
+    public void parseURI(URI uri, Map<String, Object> parameters, NettyComponent component, String... supportedProtocols) throws Exception {
         protocol = uri.getScheme();
 
-        if ((!protocol.equalsIgnoreCase("tcp")) && (!protocol.equalsIgnoreCase("udp"))) {
+        boolean found = false;
+        for (String supportedProtocol : supportedProtocols) {
+            if (protocol.equalsIgnoreCase(supportedProtocol)) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
             throw new IllegalArgumentException("Unrecognized Netty protocol: " + protocol + " for uri: " + uri);
         }
 
         setHost(uri.getHost());
         setPort(uri.getPort());
 
-        sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, null);
-        passphrase = component.resolveAndRemoveReferenceParameter(parameters, "passphrase", String.class, null);
-        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, "JKS");
-        securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, "SunX509");
-        keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, null);
-        trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, null);
-        clientPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, null);
-        serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, null);
+        sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
+        passphrase = component.resolveAndRemoveReferenceParameter(parameters, "passphrase", String.class, passphrase);
+        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
+        securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, securityProvider == null ? "SunX509" : securityProvider);
+        keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, keyStoreFile);
+        trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
+        clientPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, clientPipelineFactory);
+        serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, serverPipelineFactory);
 
         // set custom encoders and decoders first
         List<ChannelHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);

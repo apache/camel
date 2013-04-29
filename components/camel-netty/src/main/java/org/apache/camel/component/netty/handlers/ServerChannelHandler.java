@@ -131,12 +131,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     }
 
     private void sendResponse(MessageEvent messageEvent, Exchange exchange) throws Exception {
-        Object body;
-        if (exchange.hasOut()) {
-            body = NettyPayloadHelper.getOut(consumer.getEndpoint(), exchange);
-        } else {
-            body = NettyPayloadHelper.getIn(consumer.getEndpoint(), exchange);
-        }
+        Object body = getResponseBody(exchange);
 
         boolean failed = exchange.isFailed();
         if (failed && !consumer.getEndpoint().getConfiguration().isTransferExchange()) {
@@ -171,6 +166,20 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             } else {
                 NettyHelper.writeBodyAsync(LOG, messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange, listener);
             }
+        }
+    }
+
+    /**
+     * Gets the object we want to use as the response object for sending to netty.
+     *
+     * @param exchange the exchange
+     * @return the object to use as response
+     */
+    protected Object getResponseBody(Exchange exchange) {
+        if (exchange.hasOut()) {
+            return NettyPayloadHelper.getOut(consumer.getEndpoint(), exchange);
+        } else {
+            return NettyPayloadHelper.getIn(consumer.getEndpoint(), exchange);
         }
     }
 

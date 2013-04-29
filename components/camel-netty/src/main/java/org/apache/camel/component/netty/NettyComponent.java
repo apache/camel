@@ -51,7 +51,7 @@ public class NettyComponent extends DefaultComponent {
             config = new NettyConfiguration();
         }
 
-        config.parseURI(new URI(remaining), parameters, this);
+        config = parseConfiguration(config, remaining, parameters);
 
         // validate config
         config.validateConfiguration();
@@ -60,6 +60,16 @@ public class NettyComponent extends DefaultComponent {
         nettyEndpoint.setTimer(getTimer());
         setProperties(nettyEndpoint.getConfiguration(), parameters);
         return nettyEndpoint;
+    }
+
+    /**
+     * Parses the configuration
+     *
+     * @return the parsed and valid configuration to use
+     */
+    protected NettyConfiguration parseConfiguration(NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
+        configuration.parseURI(new URI(remaining), parameters, this, "tcp", "udp");
+        return configuration;
     }
 
     public NettyConfiguration getConfiguration() {

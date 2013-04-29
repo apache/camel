@@ -127,6 +127,7 @@
     <module>camel-mybatis</module>
     <module>camel-nagios</module>
     <module>camel-netty</module>
+    <module>camel-netty-http</module>
     <module>camel-ognl</module>
     <module>camel-paxlogging</module>
     <module>camel-printer</module>
