@@ -56,8 +56,7 @@ public class RsServerDefinitionParser extends AbstractBeanDefinitionParser {
             }
         }
 
-        Element elem = DOMUtils.getFirstElement(element);
-        while (elem != null) {
+        for (Element elem = DOMUtils.getFirstElement(element); elem != null; elem = DOMUtils.getNextElement(elem)) {
             String name = elem.getLocalName();
             if ("properties".equals(name)
                 || "extensionMappings".equals(name)
@@ -83,7 +82,6 @@ public class RsServerDefinitionParser extends AbstractBeanDefinitionParser {
             } else {
                 setFirstChildAsProperty(elem, context, beanMetadata, name);
             }
-            elem = DOMUtils.getNextElement(elem);
         } 
  
         if (StringUtils.isEmpty(bus)) {
