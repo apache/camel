@@ -25,12 +25,16 @@ import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
+import org.jboss.netty.handler.codec.http.HttpContentCompressor;
 import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * {@link ServerPipelineFactory} for the Netty HTTP server.
+ */
 public class HttpServerPipelineFactory extends ServerPipelineFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerPipelineFactory.class);
@@ -71,10 +75,13 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
         // Uncomment the following line if you don't want to handle HttpChunks.
-        pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
+        if (supportChunked()) {
+            pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
+        }
         pipeline.addLast("encoder", new HttpResponseEncoder());
-        // Remove the following line if you don't want automatic content compression.
-        //pipeline.addLast("deflater", new HttpContentCompressor());
+        if (supportCompressed()) {
+            pipeline.addLast("deflater", new HttpContentCompressor());
+        }
 
         // handler to route Camel messages
         pipeline.addLast("handler", new HttpServerChannelHandler(consumer));
@@ -92,6 +99,14 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         }
 
         return null;
+    }
+
+    private boolean supportChunked() {
+        return consumer.getEndpoint().getConfiguration().isChunked();
+    }
+
+    private boolean supportCompressed() {
+        return consumer.getEndpoint().getConfiguration().isCompression();
     }
 
 }

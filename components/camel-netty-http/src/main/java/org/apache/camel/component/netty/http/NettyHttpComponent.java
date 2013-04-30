@@ -25,6 +25,9 @@ import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 
+/**
+ * Netty HTTP based component.
+ */
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
 
     private NettyHttpBinding nettyHttpBinding;
@@ -37,10 +40,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
     }
 
-    // TODO: allow to turn mapMessage=true|false
+    // TODO: allow to turn mapMessage=true|false and rely on on-demand mapping
     // TODO: netty http producer
-    // TODO: make it easy to turn chunked on|off
-    // TODO: make it easy to turn compression on|off
+    // TODO: make it easy to turn keep-alive on|off on producer
     // TODO: add logging
 
     @Override

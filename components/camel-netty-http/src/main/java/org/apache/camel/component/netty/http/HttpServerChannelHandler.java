@@ -39,7 +39,8 @@ import static org.jboss.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
- * Our http server channel handler to handle HTTP status 100 to continue.
+ * Netty HTTP {@link ServerChannelHandler} that handles the incoming HTTP requests and routes
+ * the received message in Camel.
  */
 public class HttpServerChannelHandler extends ServerChannelHandler {
 

@@ -19,6 +19,12 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.impl.DefaultMessage;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
+/**
+ * Netty HTTP based {@link org.apache.camel.Message}.
+ * <p/>
+ * This implementation allows direct access to the Netty {@link HttpRequest} using
+ * the {@link #getHttpRequest()} method.
+ */
 public class NettyHttpMessage extends DefaultMessage {
 
     private final transient HttpRequest httpRequest;

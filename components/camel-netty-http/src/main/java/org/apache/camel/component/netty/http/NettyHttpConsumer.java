@@ -21,7 +21,7 @@ import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConsumer;
 
 /**
- * Http {@link NettyConsumer}
+ * HTTP based {@link NettyConsumer}
  */
 public class NettyHttpConsumer extends NettyConsumer {
 

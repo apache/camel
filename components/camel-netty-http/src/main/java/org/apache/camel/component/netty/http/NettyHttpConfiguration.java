@@ -28,6 +28,9 @@ import org.jboss.netty.channel.ChannelHandler;
  */
 public class NettyHttpConfiguration extends NettyConfiguration {
 
+    private boolean chunked = true;
+    private boolean compression;
+
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
         setSync(true);
@@ -51,4 +54,19 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         }
     }
 
+    public boolean isChunked() {
+        return chunked;
+    }
+
+    public void setChunked(boolean chunked) {
+        this.chunked = chunked;
+    }
+
+    public boolean isCompression() {
+        return compression;
+    }
+
+    public void setCompression(boolean compression) {
+        this.compression = compression;
+    }
 }

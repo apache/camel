@@ -30,6 +30,9 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
+/**
+ * HTTP based {@link NettyEndpoint}
+ */
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private NettyHttpBinding nettyHttpBinding;
@@ -61,11 +64,16 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         in.setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
         in.setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, messageEvent.getChannel().getLocalAddress());
 
-        // Honor the character encoding
-        String contentType = request.getHeader("content-type");
+        // honor the character encoding
+        String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
         NettyHttpHelper.setCharsetFromContentType(contentType, exchange);
 
         return exchange;
+    }
+
+    @Override
+    public NettyHttpConfiguration getConfiguration() {
+        return (NettyHttpConfiguration) super.getConfiguration();
     }
 
     public NettyHttpBinding getNettyHttpBinding() {
