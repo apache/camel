@@ -35,10 +35,9 @@ public class MessagePredicate {
     private final List<Field<String>> bodyCriteria = new ArrayList<Field<String>>();
     
     public MessagePredicate(SessionID requestingSessionID, String msgType) {
-        // Reverse session ID for reply
         // TODO may need to optionally include subID and locationID
-        addHeaderFieldIfPresent(SenderCompID.FIELD, requestingSessionID.getTargetCompID());
-        addHeaderFieldIfPresent(TargetCompID.FIELD, requestingSessionID.getSenderCompID());
+        addHeaderFieldIfPresent(SenderCompID.FIELD, requestingSessionID.getSenderCompID());
+        addHeaderFieldIfPresent(TargetCompID.FIELD, requestingSessionID.getTargetCompID());
         withMessageType(msgType);
     }
     

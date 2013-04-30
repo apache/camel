@@ -115,9 +115,11 @@ public class QuickfixjProducerTest {
 
     @Test
     public void processInOutExchangeSuccess() throws Exception {
+        Mockito.when(mockExchange.copy()).thenReturn(mockExchange);
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
+        SessionID responseSessionID = new SessionID(sessionID.getBeginString(), sessionID.getTargetCompID(), sessionID.getSenderCompID());
         Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY)).thenReturn(
-            new MessagePredicate(sessionID, MsgType.EMAIL));
+            new MessagePredicate(responseSessionID, MsgType.EMAIL));
         Mockito.when(mockExchange.getProperty(
             QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
             1000L, Long.class)).thenReturn(5000L);

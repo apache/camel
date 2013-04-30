@@ -81,4 +81,21 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!--
+              TODO: should fork always as otherwise running tests would cause 'java.lang.OutOfMemoryError: PermGen space'.
+              interestingly there's a quick & dirty solution for this which would be to remove the <filter> tag inside the
+              test resource QuickfixjSpringTest-context.xml then the build would run perfectly without a need to fork always!
+          -->
+          <forkMode>always</forkMode>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
