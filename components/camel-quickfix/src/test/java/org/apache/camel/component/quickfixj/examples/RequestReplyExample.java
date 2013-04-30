@@ -118,7 +118,7 @@ public class RequestReplyExample {
                 sb.append('\n');
                 line = orderStatusReply.readLine();
             }
-            LOG.info("Web request:\n" + sb);
+            LOG.info("Web reply:\n" + sb);
         }
         orderStatusReply.close();
         
@@ -146,7 +146,7 @@ public class RequestReplyExample {
             // and having the requested OrderID. This is a loose correlation but the best
             // we can do with FIX 4.2. Newer versions of FIX have an optional explicit correlation field.
             exchange.setProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY, new MessagePredicate(
-                new SessionID(replySessionID), MsgType.ORDER_STATUS_REQUEST).withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
+                new SessionID(replySessionID), MsgType.EXECUTION_REPORT).withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
             
             exchange.getIn().setBody(request);
         }
