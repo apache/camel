@@ -104,6 +104,7 @@ public class QuickfixjConsumerTest {
         Mockito.doReturn(null).when(consumer).getSession(mockSessionId);
 
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
+        Mockito.when(mockExchange.copy()).thenReturn(mockExchange);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
         Mockito.when(mockExchange.getOut()).thenReturn(mockCamelOutMessage);
         Message outboundFixMessage = new Message();
@@ -131,6 +132,7 @@ public class QuickfixjConsumerTest {
         Mockito.doReturn(true).when(mockSession).send(Mockito.isA(Message.class));
 
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
+        Mockito.when(mockExchange.copy()).thenReturn(mockExchange);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
         Mockito.when(mockExchange.getOut()).thenReturn(mockCamelOutMessage);
         Message outboundFixMessage = new Message();

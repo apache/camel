@@ -87,7 +87,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) throws Exception {
         if (this.sessionID == null || isMatching(sessionID)) {
             for (QuickfixjConsumer consumer : consumers) {
-                Exchange exchange = QuickfixjConverters.toExchange(this, sessionID, message, eventCategory);
+                Exchange exchange = QuickfixjConverters.toExchange(this, sessionID, message, eventCategory, getExchangePattern());
                 consumer.onExchange(exchange);
                 if (exchange.getException() != null) {
                     throw exchange.getException();

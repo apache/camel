@@ -117,7 +117,11 @@ public final class QuickfixjConverters {
     }
 
     public static Exchange toExchange(Endpoint endpoint, SessionID sessionID, Message message, QuickfixjEventCategory eventCategory) {
-        Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
+        return toExchange(endpoint, sessionID, message, eventCategory, ExchangePattern.InOnly);
+    }
+
+    public static Exchange toExchange(Endpoint endpoint, SessionID sessionID, Message message, QuickfixjEventCategory eventCategory, ExchangePattern exchangePattern) {
+        Exchange exchange = endpoint.createExchange(exchangePattern);
 
         org.apache.camel.Message camelMessage = exchange.getIn();
         camelMessage.setHeader(EVENT_CATEGORY_KEY, eventCategory);
