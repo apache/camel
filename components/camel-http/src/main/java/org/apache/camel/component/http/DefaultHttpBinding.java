@@ -268,7 +268,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
-        if (MessageHelper.getContentType(message) != null) {
+        if (contentType != null) {
             response.setContentType(contentType);
         }
 

@@ -99,7 +99,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     }
 
     @Override
-    protected Object getResponseBody(Exchange exchange) {
+    protected Object getResponseBody(Exchange exchange) throws Exception {
         // use the binding
         if (exchange.hasOut()) {
             return consumer.getEndpoint().getNettyHttpBinding().fromCamelMessage(exchange.getOut());

@@ -174,8 +174,9 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
      *
      * @param exchange the exchange
      * @return the object to use as response
+     * @throws Exception is thrown if error getting the response body
      */
-    protected Object getResponseBody(Exchange exchange) {
+    protected Object getResponseBody(Exchange exchange) throws Exception {
         if (exchange.hasOut()) {
             return NettyPayloadHelper.getOut(consumer.getEndpoint(), exchange);
         } else {

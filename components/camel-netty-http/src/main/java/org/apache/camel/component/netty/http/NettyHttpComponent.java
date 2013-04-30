@@ -22,21 +22,25 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 
-public class NettyHttpComponent extends NettyComponent {
+public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
 
     private NettyHttpBinding nettyHttpBinding;
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public NettyHttpComponent() {
-        // use the http configuration
+        // use the http configuration and filter strategy
         setConfiguration(new NettyHttpConfiguration());
+        setHeaderFilterStrategy(new NettyHttpHeaderFilterStrategy());
+        setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
     }
 
     // TODO: allow to turn mapMessage=true|false
     // TODO: netty http producer
     // TODO: make it easy to turn chunked on|off
     // TODO: make it easy to turn compression on|off
-    // TODO: use HeaderFilterStrategy to filter headers
     // TODO: add logging
 
     @Override
@@ -53,10 +57,17 @@ public class NettyHttpComponent extends NettyComponent {
         // validate config
         config.validateConfiguration();
 
-        NettyHttpEndpoint nettyEndpoint = new NettyHttpEndpoint(remaining, this, config);
-        nettyEndpoint.setTimer(getTimer());
-        setProperties(nettyEndpoint.getConfiguration(), parameters);
-        return nettyEndpoint;
+        NettyHttpEndpoint answer = new NettyHttpEndpoint(remaining, this, config);
+        answer.setTimer(getTimer());
+        setProperties(answer.getConfiguration(), parameters);
+        // set component options on endpoint as defaults
+        if (answer.getNettyHttpBinding() == null) {
+            answer.setNettyHttpBinding(getNettyHttpBinding());
+        }
+        if (answer.getHeaderFilterStrategy() == null) {
+            answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+        return answer;
     }
 
     @Override
@@ -76,5 +87,13 @@ public class NettyHttpComponent extends NettyComponent {
 
     public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 }

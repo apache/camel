@@ -51,7 +51,7 @@ public class NettyEndpoint extends DefaultEndpoint {
         }
     }
 
-    public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) {
+    public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         Exchange exchange = createExchange();
         exchange.getIn().setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
         exchange.getIn().setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);

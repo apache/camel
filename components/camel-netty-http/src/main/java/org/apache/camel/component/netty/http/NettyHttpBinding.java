@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
@@ -32,14 +33,31 @@ public interface NettyHttpBinding {
      * @param request   the netty http request
      * @param exchange  the exchange that should contain the returned message.
      * @return the message to store on the given exchange
+     * @throws Exception is thrown if error during binding
      */
-    Message toCamelMessage(HttpRequest request, Exchange exchange);
+    Message toCamelMessage(HttpRequest request, Exchange exchange) throws Exception;
 
     /**
      * Binds from Camel {@link Message} to Netty {@link HttpResponse}.
      *
-     * @param msg  the Camel message
+     * @param message  the Camel message
      * @return the http response
+     * @throws Exception is thrown if error during binding
      */
-    HttpResponse fromCamelMessage(Message msg);
+    HttpResponse fromCamelMessage(Message message) throws Exception;
+
+    /**
+     * Gets the header filter strategy
+     *
+     * @return the strategy
+     */
+    HeaderFilterStrategy getHeaderFilterStrategy();
+
+    /**
+     * Sets the header filter strategy to use.
+     *
+     * @param headerFilterStrategy the custom strategy
+     */
+    void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
+
 }

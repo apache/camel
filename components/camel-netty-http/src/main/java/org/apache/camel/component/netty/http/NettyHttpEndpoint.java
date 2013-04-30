@@ -23,21 +23,20 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
-public class NettyHttpEndpoint extends NettyEndpoint {
+public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private NettyHttpBinding nettyHttpBinding;
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
-        this.nettyHttpBinding = component.getNettyHttpBinding();
-        // ensure a default binding is created if not configured on component
-        if (this.nettyHttpBinding == null) {
-            this.nettyHttpBinding = new DefaultNettyHttpBinding();
-        }
     }
 
     @Override
@@ -48,7 +47,7 @@ public class NettyHttpEndpoint extends NettyEndpoint {
     }
 
     @Override
-    public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) {
+    public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         Exchange exchange = createExchange();
 
         // use the http binding
@@ -75,5 +74,21 @@ public class NettyHttpEndpoint extends NettyEndpoint {
 
     public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        ObjectHelper.notNull(nettyHttpBinding, "nettyHttpBinding", this);
+        ObjectHelper.notNull(headerFilterStrategy, "headerFilterStrategy", this);
     }
 }

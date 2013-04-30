@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 
@@ -37,6 +41,34 @@ public final class NettyHttpHelper {
                 exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
             }
         }
+    }
+
+    /**
+     * Appends the key/value to the headers.
+     * <p/>
+     * This implementation supports keys with multiple values. In such situations the value
+     * will be a {@link java.util.List} that contains the multiple values.
+     *
+     * @param headers  headers
+     * @param key      the key
+     * @param value    the value
+     */
+    @SuppressWarnings("unchecked")
+    public static void appendHeader(Map<String, Object> headers, String key, Object value) {
+        if (headers.containsKey(key)) {
+            Object existing = headers.get(key);
+            List<Object> list;
+            if (existing instanceof List) {
+                list = (List<Object>) existing;
+            } else {
+                list = new ArrayList<Object>();
+                list.add(existing);
+            }
+            list.add(value);
+            value = list;
+        }
+
+        headers.put(key, value);
     }
 
 }

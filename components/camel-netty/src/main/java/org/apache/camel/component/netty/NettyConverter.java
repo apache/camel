@@ -25,7 +25,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.DynamicChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 
 /**
  * A set of converter methods for working with Netty types
@@ -67,8 +67,20 @@ public final class NettyConverter {
 
     @Converter
     public static ChannelBuffer toByteBuffer(byte[] bytes) {
-        ChannelBuffer buf = new DynamicChannelBuffer(bytes.length);
+        ChannelBuffer buf = ChannelBuffers.dynamicBuffer(bytes.length);
         buf.writeBytes(bytes);
         return buf;
+    }
+
+    @Converter
+    public static ChannelBuffer toByteBuffer(String s, Exchange exchange) {
+        byte[] bytes;
+        if (exchange != null) {
+            // use type converter as it can handle encoding set on the Exchange
+            bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, s);
+        } else {
+            bytes = s.getBytes();
+        }
+        return toByteBuffer(bytes);
     }
 }
