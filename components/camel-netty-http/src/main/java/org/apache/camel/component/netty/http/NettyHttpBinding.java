@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -36,6 +38,16 @@ public interface NettyHttpBinding {
      * @throws Exception is thrown if error during binding
      */
     Message toCamelMessage(HttpRequest request, Exchange exchange) throws Exception;
+
+    /**
+     * Binds from Netty {@link HttpRequest} to Camel headers as a {@link Map}.
+     *
+     * @param request   the netty http request
+     * @param headers   the Camel headers that should be populated
+     * @param exchange  the exchange that should contain the returned message.
+     * @throws Exception is thrown if error during binding
+     */
+    void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange) throws Exception;
 
     /**
      * Binds from Camel {@link Message} to Netty {@link HttpResponse}.

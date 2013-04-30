@@ -40,10 +40,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
     }
 
-    // TODO: allow to turn mapMessage=true|false and rely on on-demand mapping
     // TODO: netty http producer
     // TODO: make it easy to turn keep-alive on|off on producer
-    // TODO: add logging
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

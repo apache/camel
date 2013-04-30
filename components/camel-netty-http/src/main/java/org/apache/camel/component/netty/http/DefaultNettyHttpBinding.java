@@ -34,12 +34,15 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link NettyHttpBinding}.
  */
 public class DefaultNettyHttpBinding implements NettyHttpBinding {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultNettyHttpBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
 
     public DefaultNettyHttpBinding() {
@@ -51,12 +54,28 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
 
     @Override
     public Message toCamelMessage(HttpRequest request, Exchange exchange) throws Exception {
-        NettyHttpMessage answer = new NettyHttpMessage(request);
-        answer.setHeader(Exchange.HTTP_METHOD, request.getMethod().getName());
-        answer.setHeader(Exchange.HTTP_URI, request.getUri());
+        LOG.trace("toCamelMessage: {}", request);
 
-        // populate the headers from the request
-        Map<String, Object> headers = answer.getHeaders();
+        NettyHttpMessage answer = new NettyHttpMessage(request, this);
+        // force getting headers which will populate them
+        answer.getHeaders();
+
+        // keep the body as is, and use type converters
+        answer.setBody(request.getContent());
+        return answer;
+    }
+
+    @Override
+    public void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange) throws Exception {
+        LOG.trace("populateCamelHeaders: {}", request);
+
+        headers.put(Exchange.HTTP_METHOD, request.getMethod().getName());
+        headers.put(Exchange.HTTP_URI, request.getUri());
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP-Method {}", request.getMethod().getName());
+            LOG.trace("HTTP-Uri {}", request.getUri());
+        }
 
         for (String name : request.getHeaderNames()) {
             // mapping the content-type
@@ -68,24 +87,23 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             Iterator<?> it = ObjectHelper.createIterator(values);
             while (it.hasNext()) {
                 Object extracted = it.next();
+                LOG.trace("HTTP-header: {}", extracted);
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, exchange)) {
                     NettyHttpHelper.appendHeader(headers, name, extracted);
                 }
             }
         }
-
-        // keep the body as is, and use type converters
-        answer.setBody(request.getContent());
-        return answer;
     }
 
     @Override
     public HttpResponse fromCamelMessage(Message message) throws Exception {
+        LOG.trace("fromCamelMessage: {}", message);
 
         // the status code is default 200, but a header can override that
         Integer code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, 200, Integer.class);
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code));
+        LOG.trace("HTTP Status Code: {}", code);
 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 
@@ -100,6 +118,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
                 String headerValue = tc.convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                    LOG.trace("HTTP-Header: {}={}", key, headerValue);
                     response.addHeader(key, headerValue);
                 }
             }
@@ -122,18 +141,25 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             }
             if (buffer != null) {
                 response.setContent(buffer);
-                response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, buffer.readableBytes());
+                int len = buffer.readableBytes();
+                // set content-length
+                response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, len);
+                LOG.trace("Content-Length: {}", len);
             }
         }
 
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
+            // set content-type
             response.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType);
+            LOG.trace("Content-Type: {}", contentType);
         }
 
         // TODO: keep alive should be something we can control
-        response.setHeader(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
+        String keepAlive = HttpHeaders.Values.CLOSE;
+        response.setHeader(HttpHeaders.Names.CONNECTION, keepAlive);
+        LOG.trace("Connection: {}", keepAlive);
 
         return response;
     }
