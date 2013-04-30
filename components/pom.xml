@@ -95,6 +95,7 @@
     <module>camel-hdfs</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
+    <module>camel-ical</module>
     <module>camel-irc</module>
     <module>camel-jackson</module>
     <module>camel-javaspace</module>
