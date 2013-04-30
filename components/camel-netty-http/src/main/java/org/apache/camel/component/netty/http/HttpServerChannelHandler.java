@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import static org.jboss.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static org.jboss.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
+import static org.jboss.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
+import static org.jboss.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
@@ -60,17 +62,37 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         request = (HttpRequest) messageEvent.getMessage();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Message received: keep-alive {}", isKeepAlive(request));
+            LOG.debug("Message received: {} keep-alive: {}", request, isKeepAlive(request));
         }
 
         if (is100ContinueExpected(request)) {
             // send back http 100 response to continue
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, CONTINUE);
             messageEvent.getChannel().write(response);
-        } else {
-            // let Camel process this message
-            super.messageReceived(ctx, messageEvent);
+            return;
         }
+
+        if (consumer.isSuspended()) {
+            // are we suspended?
+            LOG.debug("Consumer suspended, cannot service request {}", request);
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE);
+            messageEvent.getChannel().write(response);
+            return;
+        }
+        if (consumer.getEndpoint().getHttpMethodRestrict() != null
+                && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod().getName())) {
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
+            messageEvent.getChannel().write(response);
+            return;
+        }
+        if ("TRACE".equals(request.getMethod().getName()) && !consumer.getEndpoint().isTraceEnabled()) {
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
+            messageEvent.getChannel().write(response);
+            return;
+        }
+
+        // let Camel process this message
+        super.messageReceived(ctx, messageEvent);
     }
 
     @Override

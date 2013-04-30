@@ -100,6 +100,11 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
     public HttpResponse fromCamelMessage(Message message) throws Exception {
         LOG.trace("fromCamelMessage: {}", message);
 
+        // the message body may already be a Netty HTTP response
+        if (message.getBody() instanceof HttpResponse) {
+            return (HttpResponse) message.getBody();
+        }
+
         // the status code is default 200, but a header can override that
         Integer code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, 200, Integer.class);
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code));

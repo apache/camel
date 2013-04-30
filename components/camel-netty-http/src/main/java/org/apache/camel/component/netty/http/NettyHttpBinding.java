@@ -52,11 +52,12 @@ public interface NettyHttpBinding {
     /**
      * Binds from Camel {@link Message} to Netty {@link HttpResponse}.
      *
+     *
      * @param message  the Camel message
      * @return the http response
      * @throws Exception is thrown if error during binding
      */
-    HttpResponse fromCamelMessage(Message message) throws Exception;
+    Object fromCamelMessage(Message message) throws Exception;
 
     /**
      * Gets the header filter strategy

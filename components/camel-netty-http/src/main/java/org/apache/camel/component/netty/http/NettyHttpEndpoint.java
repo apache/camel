@@ -37,6 +37,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
+    private boolean traceEnabled;
+    private String httpMethodRestrict;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -90,6 +92,22 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isTraceEnabled() {
+        return traceEnabled;
+    }
+
+    public void setTraceEnabled(boolean traceEnabled) {
+        this.traceEnabled = traceEnabled;
+    }
+
+    public String getHttpMethodRestrict() {
+        return httpMethodRestrict;
+    }
+
+    public void setHttpMethodRestrict(String httpMethodRestrict) {
+        this.httpMethodRestrict = httpMethodRestrict;
     }
 
     @Override
