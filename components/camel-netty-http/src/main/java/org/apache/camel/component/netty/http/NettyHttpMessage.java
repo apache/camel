@@ -16,30 +16,23 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultMessage;
 import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
 
-/**
- * To bind Netty http codec with the Camel {@link org.apache.camel.Message} api.
- */
-public interface NettyHttpBinding {
+public class NettyHttpMessage extends DefaultMessage {
 
-    /**
-     * Binds from Netty {@link HttpRequest} to Camel {@Message}.
-     *
-     * @param request   the netty http request
-     * @param exchange  the exchange that should contain the returned message.
-     * @return the message to store on the given exchange
-     */
-    Message toCamelMessage(HttpRequest request, Exchange exchange);
+    private final transient HttpRequest httpRequest;
 
-    /**
-     * Binds from Camel {@link Message} to Netty {@link HttpResponse}.
-     *
-     * @param msg  the Camel message
-     * @return the http response
-     */
-    HttpResponse fromCamelMessage(Message msg);
+    public NettyHttpMessage(HttpRequest httpRequest) {
+        this.httpRequest = httpRequest;
+    }
+
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    @Override
+    public DefaultMessage newInstance() {
+        return new NettyHttpMessage(httpRequest);
+    }
 }

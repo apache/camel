@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -32,17 +34,29 @@ import org.jboss.netty.handler.codec.http.HttpVersion;
 public class DefaultNettyHttpBinding implements NettyHttpBinding {
 
     @Override
-    public Message toCamelMessage(Exchange exchange, HttpRequest request) {
-        // map http headers to Camel message
+    public Message toCamelMessage(HttpRequest request, Exchange exchange) {
+        NettyHttpMessage answer = new NettyHttpMessage(request);
+        answer.setHeader(Exchange.HTTP_METHOD, request.getMethod().getName());
+        answer.setHeader(Exchange.HTTP_URI, request.getUri());
 
-        // TODO: map from request to Camel
-        exchange.getIn().setBody("TODO");
+        for (String name : request.getHeaderNames()) {
+            List<String> values = request.getHeaders(name);
+            if (values.size() == 1) {
+                // flatten the list and store as single value
+                answer.setHeader(name, values.get(0));
+            } else {
+                // if multiple values store them as list
+                answer.setHeader(name, values);
+            }
+        }
 
-        return exchange.getIn();
+        // keep the body as is, and use type converters
+        answer.setBody(request.getContent());
+        return answer;
     }
 
     @Override
-    public HttpResponse toHttpResponse(Message msg) {
+    public HttpResponse fromCamelMessage(Message msg) {
 
         // the status code is default 200, but a header can override that
         Integer code = msg.getHeader(Exchange.HTTP_RESPONSE_CODE, 200, Integer.class);

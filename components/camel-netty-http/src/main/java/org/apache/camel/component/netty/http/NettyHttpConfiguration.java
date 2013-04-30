@@ -38,6 +38,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     @Override
     public NettyHttpConfiguration copy() {
         try {
+            // clone as NettyHttpConfiguration
             NettyHttpConfiguration answer = (NettyHttpConfiguration) clone();
             // make sure the lists is copied in its own instance
             List<ChannelHandler> encodersCopy = new ArrayList<ChannelHandler>(getEncoders());

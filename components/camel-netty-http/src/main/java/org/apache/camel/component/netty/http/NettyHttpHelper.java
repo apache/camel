@@ -17,29 +17,26 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.apache.camel.converter.IOConverter;
 
 /**
- * To bind Netty http codec with the Camel {@link org.apache.camel.Message} api.
+ * Helpers.
  */
-public interface NettyHttpBinding {
+public final class NettyHttpHelper {
 
-    /**
-     * Binds from Netty {@link HttpRequest} to Camel {@Message}.
-     *
-     * @param request   the netty http request
-     * @param exchange  the exchange that should contain the returned message.
-     * @return the message to store on the given exchange
-     */
-    Message toCamelMessage(HttpRequest request, Exchange exchange);
+    private NettyHttpHelper() {
+    }
 
-    /**
-     * Binds from Camel {@link Message} to Netty {@link HttpResponse}.
-     *
-     * @param msg  the Camel message
-     * @return the http response
-     */
-    HttpResponse fromCamelMessage(Message msg);
+    @SuppressWarnings("deprecation")
+    public static void setCharsetFromContentType(String contentType, Exchange exchange) {
+        if (contentType != null) {
+            // find the charset and set it to the Exchange
+            int index = contentType.indexOf("charset=");
+            if (index > 0) {
+                String charset = contentType.substring(index + 8);
+                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+            }
+        }
+    }
+
 }

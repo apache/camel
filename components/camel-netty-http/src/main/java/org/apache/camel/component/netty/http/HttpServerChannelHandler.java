@@ -43,8 +43,8 @@ import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public class HttpServerChannelHandler extends ServerChannelHandler {
 
-    // use NettyConsumer as logger to make it easier to read the logs as this is part of the consumer
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
+    // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
+    private static final transient Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
     private final NettyHttpConsumer consumer;
     private HttpRequest request;
 
@@ -102,9 +102,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected Object getResponseBody(Exchange exchange) {
         // use the binding
         if (exchange.hasOut()) {
-            return consumer.getEndpoint().getNettyHttpBinding().toHttpResponse(exchange.getOut());
+            return consumer.getEndpoint().getNettyHttpBinding().fromCamelMessage(exchange.getOut());
         } else {
-            return consumer.getEndpoint().getNettyHttpBinding().toHttpResponse(exchange.getIn());
+            return consumer.getEndpoint().getNettyHttpBinding().fromCamelMessage(exchange.getIn());
         }
     }
 }

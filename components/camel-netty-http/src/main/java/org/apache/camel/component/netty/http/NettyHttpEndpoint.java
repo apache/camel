@@ -34,6 +34,7 @@ public class NettyHttpEndpoint extends NettyEndpoint {
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
         this.nettyHttpBinding = component.getNettyHttpBinding();
+        // ensure a default binding is created if not configured on component
         if (this.nettyHttpBinding == null) {
             this.nettyHttpBinding = new DefaultNettyHttpBinding();
         }
@@ -49,14 +50,21 @@ public class NettyHttpEndpoint extends NettyEndpoint {
     @Override
     public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) {
         Exchange exchange = createExchange();
-        exchange.getIn().setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
-        exchange.getIn().setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
-        exchange.getIn().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
-        exchange.getIn().setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, messageEvent.getChannel().getLocalAddress());
 
+        // use the http binding
         HttpRequest request = (HttpRequest) messageEvent.getMessage();
-        Message in = getNettyHttpBinding().toCamelMessage(exchange, request);
+        Message in = getNettyHttpBinding().toCamelMessage(request, exchange);
         exchange.setIn(in);
+
+        // set additional headers
+        in.setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
+        in.setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
+        in.setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
+        in.setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, messageEvent.getChannel().getLocalAddress());
+
+        // Honor the character encoding
+        String contentType = request.getHeader("content-type");
+        NettyHttpHelper.setCharsetFromContentType(contentType, exchange);
 
         return exchange;
     }
