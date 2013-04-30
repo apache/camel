@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dataformat.bindy.fixed.link;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -58,10 +62,22 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
 
         // check the model
         Exchange exchange = unmarshallResult.getReceivedExchanges().get(0);
-        BindySimpleFixedLengthWithLinkTest.Order order = (BindySimpleFixedLengthWithLinkTest.Order) exchange.getIn().getBody();
-        assertEquals("AAA", order.fieldA);
-        assertEquals("BBB", order.subRec.fieldB);
-        assertEquals("CCC", order.fieldC);
+        List<HashMap<String, Object>> results = (List) exchange.getIn().getBody();
+        String orderKey = "org.apache.camel.dataformat.bindy.fixed.link.BindySimpleFixedLengthWithLinkTest$Order";
+
+        for (int i = 0; i < results.size(); i++) {
+            Map<String, Object> map = results.get(i);
+            for ( String key : map.keySet() ) {
+                if (key.equals(orderKey)) {
+                    Order order = (Order) map.get(orderKey);
+                    assertEquals("AAA", order.fieldA);
+                    assertEquals("CCC", order.fieldC);
+                    assertEquals("BBB", order.subRec.fieldB);
+                }
+            }
+
+        }
+
 
     }
 
@@ -76,12 +92,12 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(BindySimpleFixedLengthWithLinkTest.Order.class);
+                bindy.setPackages(new String[]{"org.apache.camel.dataformat.bindy.fixed.link"});
                 bindy.setLocale("en");
                 bindy.setType(BindyType.Fixed);
 
                 from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal().bindy(BindyType.Fixed, BindySimpleFixedLengthWithLinkTest.Order.class)
+                        .unmarshal(bindy)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
@@ -89,9 +105,6 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         return routeBuilder;
     }
 
-    // *************
-    // DATA FORMATS
-    // *************
     @FixedLengthRecord
     public static class Order {
         // 'AAA'
@@ -102,7 +115,7 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         private SubRec subRec;
 
         // 'CCC'
-        @DataField(pos = 3, length = 3)
+        @DataField(pos = 7, length = 3)
         private String fieldC;
 
         public String getFieldA() {
@@ -129,13 +142,14 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
             this.subRec = subRec;
         }
 
+
     }
 
     @Link
     @FixedLengthRecord
     public static class SubRec {
 
-        @DataField(pos = 2, length = 3)
+        @DataField(pos = 4, length = 3)
         private String fieldB;
 
         public String getFieldB() {
@@ -147,4 +161,5 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         }
 
     }
+
 }

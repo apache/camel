@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,6 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +48,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
     boolean isOneToMany;
 
-    private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
-    private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
+    //private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
+    private Map<Integer, DataField> dataFields = new TreeMap<Integer, DataField>();
+    //private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
+    private Map<Integer, Field> annotatedFields = new TreeMap<Integer, Field>();
    
     private int numberOptionalFields;
     private int numberMandatoryFields;
