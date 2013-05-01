@@ -16,26 +16,44 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
-import org.apache.camel.component.netty.NettyProducer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.http.NettyHttpProducer;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Netty HTTP {@link org.apache.camel.component.netty.handlers.ClientChannelHandler} that handles the response combing
+ * back from thhe HTTP server, called by this client.
+ *
+ */
 public class HttpClientChannelHandler extends ClientChannelHandler {
 
-    // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the producer
+    // use NettyHttpProducer as logger to make it easier to read the logs as this is part of the producer
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyHttpProducer.class);
+    private final NettyHttpProducer producer;
+    private HttpResponse response;
 
-    public HttpClientChannelHandler(NettyProducer producer) {
+    public HttpClientChannelHandler(NettyHttpProducer producer) {
         super(producer);
+        this.producer = producer;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
-        super.messageReceived(ctx, messageEvent);    //To change body of overridden methods use File | Settings | File Templates.
+        // store response, as this channel handler is created per pipeline
+        response = (HttpResponse) messageEvent.getMessage();
+
+        super.messageReceived(ctx, messageEvent);
     }
 
+    @Override
+    protected Message getResponseMessage(Exchange exchange, MessageEvent messageEvent) throws Exception {
+        // use the binding
+        return producer.getEndpoint().getNettyHttpBinding().toCamelMessage(response, exchange);
+    }
 }

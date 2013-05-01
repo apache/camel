@@ -50,7 +50,27 @@ public interface NettyHttpBinding {
     void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange) throws Exception;
 
     /**
-     * Binds from Camel {@link Message} to Netty {@link org.jboss.netty.handler.codec.http.HttpResponse}.
+     * Binds from Netty {@link HttpResponse} to Camel {@Message}.
+     *
+     * @param response  the netty http response
+     * @param exchange  the exchange that should contain the returned message.
+     * @return the message to store on the given exchange
+     * @throws Exception is thrown if error during binding
+     */
+    Message toCamelMessage(HttpResponse response, Exchange exchange) throws Exception;
+
+    /**
+     * Binds from Netty {@link HttpResponse} to Camel headers as a {@link Map}.
+     *
+     * @param response   the netty http response
+     * @param headers   the Camel headers that should be populated
+     * @param exchange  the exchange that should contain the returned message.
+     * @throws Exception is thrown if error during binding
+     */
+    void populateCamelHeaders(HttpResponse response, Map<String, Object> headers, Exchange exchange) throws Exception;
+
+    /**
+     * Binds from Camel {@link Message} to Netty {@link HttpResponse}.
      *
      * @param message  the Camel message
      * @return the http response

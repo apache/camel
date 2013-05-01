@@ -37,14 +37,14 @@ import org.slf4j.LoggerFactory;
 public class HttpClientPipelineFactory extends ClientPipelineFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpClientPipelineFactory.class);
-    private NettyProducer producer;
+    private NettyHttpProducer producer;
     private SSLContext sslContext;
 
     public HttpClientPipelineFactory() {
         // default constructor needed
     }
 
-    public HttpClientPipelineFactory(NettyProducer nettyProducer) {
+    public HttpClientPipelineFactory(NettyHttpProducer nettyProducer) {
         this.producer = nettyProducer;
         try {
             this.sslContext = createSSLContext(producer);
@@ -52,12 +52,14 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
-        LOG.info("Created SslContext {}", sslContext);
+        if (sslContext != null) {
+            LOG.info("Created SslContext {}", sslContext);
+        }
     }
 
     @Override
     public ClientPipelineFactory createPipelineFactory(NettyProducer nettyProducer) {
-        return new HttpClientPipelineFactory(nettyProducer);
+        return new HttpClientPipelineFactory((NettyHttpProducer) nettyProducer);
     }
 
     @Override

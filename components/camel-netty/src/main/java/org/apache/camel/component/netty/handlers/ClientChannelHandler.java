@@ -19,7 +19,7 @@ package org.apache.camel.component.netty.handlers;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Message;
 import org.apache.camel.component.netty.NettyCamelState;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyHelper;
@@ -125,27 +125,20 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         Exchange exchange = getExchange(ctx);
         AsyncCallback callback = getAsyncCallback(ctx);
 
-        Object body = messageEvent.getMessage();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{messageEvent.getChannel(), body});
+        Message message;
+        try {
+            message = getResponseMessage(exchange, messageEvent);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(false);
+            return;
         }
-
-        // if textline enabled then covert to a String which must be used for textline
-        if (producer.getConfiguration().isTextline()) {
-            try {
-                body = producer.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
-            } catch (NoTypeConversionAvailableException e) {
-                exchange.setException(e);
-                callback.done(false);
-            }
-        }
-
 
         // set the result on either IN or OUT on the original exchange depending on its pattern
         if (ExchangeHelper.isOutCapable(exchange)) {
-            NettyPayloadHelper.setOut(exchange, body);
+            exchange.setOut(message);
         } else {
-            NettyPayloadHelper.setIn(exchange, body);
+            exchange.setIn(message);
         }
 
         try {
@@ -171,6 +164,37 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         } finally {
             // signal callback
             callback.done(false);
+        }
+    }
+
+    /**
+     * Gets the Camel {@link Message} to use as the message to be set on the current {@link Exchange} when
+     * we have received a reply message.
+     * <p/>
+     *
+     * @param exchange      the current exchange
+     * @param messageEvent  the incoming event which has the response message from Netty.
+     * @return the Camel {@link Message} to set on the current {@link Exchange} as the response message.
+     * @throws Exception is thrown if error getting the response message
+     */
+    protected Message getResponseMessage(Exchange exchange, MessageEvent messageEvent) throws Exception {
+        Object body = messageEvent.getMessage();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Channel: {} received body: {}", new Object[]{messageEvent.getChannel(), body});
+        }
+
+        // if textline enabled then covert to a String which must be used for textline
+        if (producer.getConfiguration().isTextline()) {
+           body = producer.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+        }
+
+        // set the result on either IN or OUT on the original exchange depending on its pattern
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            NettyPayloadHelper.setOut(exchange, body);
+            return exchange.getOut();
+        } else {
+            NettyPayloadHelper.setIn(exchange, body);
+            return exchange.getIn();
         }
     }
 

@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.netty.http;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.junit.Test;
 
 public class NettyHttpProducerSimpleTest extends BaseNettyTest {
@@ -27,6 +30,31 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTest {
 
         String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
         assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpSimpleExchange() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+
+        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+            }
+        });
+        assertNotNull(out);
+        assertTrue(out.hasOut());
+
+        NettyHttpMessage response = out.getOut(NettyHttpMessage.class);
+        assertNotNull(response);
+        assertEquals(200, response.getHttpResponse().getStatus().getCode());
+
+        // we can also get the response as body
+        HttpResponse body = out.getOut().getBody(HttpResponse.class);
+        assertNotNull(body);
+        assertEquals(200, body.getStatus().getCode());
 
         assertMockEndpointsSatisfied();
     }

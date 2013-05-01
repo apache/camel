@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
  * Netty HTTP based {@link org.apache.camel.Message}.
@@ -31,10 +32,12 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 public class NettyHttpMessage extends DefaultMessage {
 
     private final transient HttpRequest httpRequest;
+    private final transient HttpResponse httpResponse;
     private final transient NettyHttpBinding httpBinding;
 
-    public NettyHttpMessage(HttpRequest httpRequest, NettyHttpBinding httpBinding) {
+    public NettyHttpMessage(HttpRequest httpRequest, HttpResponse httpResponse, NettyHttpBinding httpBinding) {
         this.httpRequest = httpRequest;
+        this.httpResponse = httpResponse;
         this.httpBinding = httpBinding;
     }
 
@@ -42,10 +45,18 @@ public class NettyHttpMessage extends DefaultMessage {
         return httpRequest;
     }
 
+    public HttpResponse getHttpResponse() {
+        return httpResponse;
+    }
+
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         try {
-            httpBinding.populateCamelHeaders(httpRequest, map, getExchange());
+            if (httpRequest != null) {
+                httpBinding.populateCamelHeaders(httpRequest, map, getExchange());
+            } else {
+                httpBinding.populateCamelHeaders(httpResponse, map, getExchange());
+            }
         } catch (Exception e) {
             throw new RuntimeCamelException("Error populating initial headers", e);
         }
@@ -53,6 +64,6 @@ public class NettyHttpMessage extends DefaultMessage {
 
     @Override
     public DefaultMessage newInstance() {
-        return new NettyHttpMessage(httpRequest, httpBinding);
+        return new NettyHttpMessage(httpRequest, httpResponse, httpBinding);
     }
 }

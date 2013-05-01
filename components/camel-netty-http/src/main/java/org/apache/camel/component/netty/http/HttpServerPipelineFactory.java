@@ -55,7 +55,9 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
-        LOG.info("Created SslContext {}", sslContext);
+        if (sslContext != null) {
+            LOG.info("Created SslContext {}", sslContext);
+        }
     }
 
     @Override

@@ -58,7 +58,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
     public Message toCamelMessage(HttpRequest request, Exchange exchange) throws Exception {
         LOG.trace("toCamelMessage: {}", request);
 
-        NettyHttpMessage answer = new NettyHttpMessage(request, this);
+        NettyHttpMessage answer = new NettyHttpMessage(request, null, this);
         // force getting headers which will populate them
         answer.getHeaders();
 
@@ -86,6 +86,46 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             }
             // add the headers one by one, and use the header filter strategy
             List<String> values = request.getHeaders(name);
+            Iterator<?> it = ObjectHelper.createIterator(values);
+            while (it.hasNext()) {
+                Object extracted = it.next();
+                LOG.trace("HTTP-header: {}", extracted);
+                if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, exchange)) {
+                    NettyHttpHelper.appendHeader(headers, name, extracted);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Message toCamelMessage(HttpResponse response, Exchange exchange) throws Exception {
+        LOG.trace("toCamelMessage: {}", response);
+
+        NettyHttpMessage answer = new NettyHttpMessage(null, response, this);
+        // force getting headers which will populate them
+        answer.getHeaders();
+
+        // keep the body as is, and use type converters
+        answer.setBody(response.getContent());
+        return answer;
+    }
+
+    @Override
+    public void populateCamelHeaders(HttpResponse response, Map<String, Object> headers, Exchange exchange) throws Exception {
+        LOG.trace("populateCamelHeaders: {}", response);
+
+        headers.put(Exchange.HTTP_RESPONSE_CODE, response.getStatus().getCode());
+        // TODO: use another status header
+        headers.put("CamelHttpResponseText", response.getStatus().getReasonPhrase());
+
+        for (String name : response.getHeaderNames()) {
+            // mapping the content-type
+            if (name.toLowerCase().equals("content-type")) {
+                name = Exchange.CONTENT_TYPE;
+            }
+            // add the headers one by one, and use the header filter strategy
+            List<String> values = response.getHeaders(name);
             Iterator<?> it = ObjectHelper.createIterator(values);
             while (it.hasNext()) {
                 Object extracted = it.next();
