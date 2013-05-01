@@ -106,6 +106,7 @@
         <include>org.apache.camel:camel-mybatis</include>
         <include>org.apache.camel:camel-nagios</include>
         <include>org.apache.camel:camel-netty</include>
+        <include>org.apache.camel:camel-netty-http</include>
         <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-paxlogging</include>
         <include>org.apache.camel:camel-printer</include>
