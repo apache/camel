@@ -225,6 +225,7 @@ public class QuickfixjComponentTest {
         final CountDownLatch latch = new CountDownLatch(1);
         
         Consumer consumer = endpoint.createConsumer(new Processor() {
+            @Override
             public void process(Exchange exchange) throws Exception {
                 QuickfixjEventCategory eventCategory = 
                     (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
@@ -280,6 +281,7 @@ public class QuickfixjComponentTest {
         final CountDownLatch messageLatch = new CountDownLatch(2);
                 
         Consumer consumer = endpoint.createConsumer(new Processor() {
+            @Override
             public void process(Exchange exchange) throws Exception {
                 QuickfixjEventCategory eventCategory = 
                     (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);

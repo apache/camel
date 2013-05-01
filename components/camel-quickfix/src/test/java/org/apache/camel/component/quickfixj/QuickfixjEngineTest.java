@@ -417,6 +417,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         final CountDownLatch logonLatch = new CountDownLatch(2);
 
         QuickfixjEventListener logonListener = new QuickfixjEventListener() {
+            @Override
             public synchronized void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
                 events.add(new EventRecord(eventCategory, sessionID, message));
                 if (eventCategory == QuickfixjEventCategory.SessionLogon) {
@@ -454,6 +455,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         final CountDownLatch messageLatch = new CountDownLatch(1);
 
         QuickfixjEventListener messageListener = new QuickfixjEventListener() {
+            @Override
             public synchronized void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
                 EventRecord event = new EventRecord(eventCategory, sessionID, message);
                 events.add(event);
@@ -489,6 +491,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         final CountDownLatch logoffLatch = new CountDownLatch(2);
 
         QuickfixjEventListener logoffListener = new QuickfixjEventListener() {
+            @Override
             public synchronized void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
                 EventRecord event = new EventRecord(eventCategory, sessionID, message);
                 events.add(event);

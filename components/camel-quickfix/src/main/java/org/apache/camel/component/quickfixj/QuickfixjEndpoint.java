@@ -65,6 +65,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         this.sessionID = sessionID;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
@@ -73,6 +74,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         return consumer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         LOG.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
         if (isWildcarded()) {
@@ -81,10 +83,12 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         return new QuickfixjProducer(this);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }
 
+    @Override
     public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) throws Exception {
         if (this.sessionID == null || isMatching(sessionID)) {
             for (QuickfixjConsumer consumer : consumers) {
@@ -127,6 +131,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
             || sessionID.getTargetLocationID().equals("*");
     }
 
+    @Override
     public boolean isMultipleConsumersSupported() {
         return true;
     }

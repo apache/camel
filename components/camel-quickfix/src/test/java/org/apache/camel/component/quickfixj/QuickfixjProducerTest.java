@@ -83,7 +83,7 @@ public class QuickfixjProducerTest {
     public void setExceptionOnExchange() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
-        Mockito.doThrow(new TestException()).when(mockSession).send(Mockito.isA(Message.class));
+        Mockito.doThrow(new TestException()).when(mockSession).send(Matchers.isA(Message.class));
 
         producer.process(mockExchange);
         Mockito.verify(mockExchange).setException(Matchers.isA(TestException.class));
@@ -93,7 +93,7 @@ public class QuickfixjProducerTest {
     public void processInOnlyExchangeSuccess() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
-        Mockito.doReturn(true).when(mockSession).send(Mockito.isA(Message.class));
+        Mockito.doReturn(true).when(mockSession).send(Matchers.isA(Message.class));
         
         producer.process(mockExchange);
         
@@ -105,7 +105,7 @@ public class QuickfixjProducerTest {
     public void processInOnlyExchangeSendUnsuccessful() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
-        Mockito.doReturn(false).when(mockSession).send(Mockito.isA(Message.class));
+        Mockito.doReturn(false).when(mockSession).send(Matchers.isA(Message.class));
 
         producer.process(mockExchange);
         
@@ -115,7 +115,6 @@ public class QuickfixjProducerTest {
 
     @Test
     public void processInOutExchangeSuccess() throws Exception {
-        Mockito.when(mockExchange.copy()).thenReturn(mockExchange);
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         SessionID responseSessionID = new SessionID(sessionID.getBeginString(), sessionID.getTargetCompID(), sessionID.getSenderCompID());
         Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY)).thenReturn(
@@ -148,7 +147,7 @@ public class QuickfixjProducerTest {
                 }, 10);
                 return true;
             }            
-        }).when(mockSession).send(Mockito.isA(Message.class));
+        }).when(mockSession).send(Matchers.isA(Message.class));
 
         producer.process(mockExchange);
         
@@ -190,11 +189,11 @@ public class QuickfixjProducerTest {
                 }, 10);
                 return false;
             }            
-        }).when(mockSession).send(Mockito.isA(Message.class));
+        }).when(mockSession).send(Matchers.isA(Message.class));
 
         producer.process(mockExchange);
         
-        Mockito.verify(mockOutboundCamelMessage, Mockito.never()).setBody(Mockito.isA(Message.class));
+        Mockito.verify(mockOutboundCamelMessage, Mockito.never()).setBody(Matchers.isA(Message.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
         Mockito.verify(mockExchange).setException(Matchers.isA(CannotSendException.class));
     }    

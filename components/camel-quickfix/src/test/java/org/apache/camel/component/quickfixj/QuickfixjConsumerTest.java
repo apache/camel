@@ -20,7 +20,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.StatefulService;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,7 +63,7 @@ public class QuickfixjConsumerTest {
         QuickfixjConsumer consumer = new QuickfixjConsumer(mockEndpoint, mockProcessor);
         
         Assert.assertThat("Consumer should not be automatically started", 
-            ((StatefulService)consumer).isStarted(), CoreMatchers.is(false));
+            consumer.isStarted(), CoreMatchers.is(false));
         
         consumer.onExchange(mockExchange);
         
@@ -72,7 +71,7 @@ public class QuickfixjConsumerTest {
         Mockito.verifyZeroInteractions(mockProcessor);
         
         consumer.start();
-        Assert.assertThat(((StatefulService)consumer).isStarted(), CoreMatchers.is(true));
+        Assert.assertThat(consumer.isStarted(), CoreMatchers.is(true));
         
         consumer.onExchange(mockExchange);
         
@@ -104,7 +103,6 @@ public class QuickfixjConsumerTest {
         Mockito.doReturn(null).when(consumer).getSession(mockSessionId);
 
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        Mockito.when(mockExchange.copy()).thenReturn(mockExchange);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
         Mockito.when(mockExchange.getOut()).thenReturn(mockCamelOutMessage);
         Message outboundFixMessage = new Message();
@@ -117,7 +115,7 @@ public class QuickfixjConsumerTest {
         // Simulate a message from the FIX engine
         consumer.onExchange(mockExchange);
 
-        Mockito.verify(mockExchange).setException(Mockito.isA(IllegalStateException.class));
+        Mockito.verify(mockExchange).setException(Matchers.isA(IllegalStateException.class));
     }
 
     @Test
@@ -129,10 +127,9 @@ public class QuickfixjConsumerTest {
 
         QuickfixjConsumer consumer = Mockito.spy(new QuickfixjConsumer(mockEndpoint, mockProcessor));
         Mockito.doReturn(mockSession).when(consumer).getSession(mockSessionId);
-        Mockito.doReturn(true).when(mockSession).send(Mockito.isA(Message.class));
+        Mockito.doReturn(true).when(mockSession).send(Matchers.isA(Message.class));
 
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        Mockito.when(mockExchange.copy()).thenReturn(mockExchange);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
         Mockito.when(mockExchange.getOut()).thenReturn(mockCamelOutMessage);
         Message outboundFixMessage = new Message();
@@ -143,7 +140,7 @@ public class QuickfixjConsumerTest {
         consumer.start();
 
         consumer.onExchange(mockExchange);
-        Mockito.verify(mockExchange, Mockito.never()).setException(Mockito.isA(Exception.class));
+        Mockito.verify(mockExchange, Mockito.never()).setException(Matchers.isA(Exception.class));
         Mockito.verify(mockSession).send(outboundFixMessage);
     }
 }

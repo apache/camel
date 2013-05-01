@@ -57,6 +57,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
 
     private QuickfixjEngine quickfixjEngine;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -74,6 +75,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
         settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, TransportType.VM_PIPE.toString());
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         Thread.currentThread().setContextClassLoader(contextClassLoader);

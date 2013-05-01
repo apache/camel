@@ -66,6 +66,7 @@ public class TradeExecutorComponent extends DefaultComponent {
     }
     
     private static class TradeExecutorThreadFactory implements ThreadFactory {
+        @Override
         public Thread newThread(Runnable r) {
             Thread thread = new Thread(r, "Trade Executor");
             thread.setDaemon(true);
@@ -98,8 +99,9 @@ public class TradeExecutorComponent extends DefaultComponent {
             super(uri, TradeExecutorComponent.this);
             this.tradeExecutor = tradeExecutor;
             tradeExecutor.addListener(new QuickfixjMessageListener() {
+                @Override
                 public void onMessage(SessionID sessionID, Message message) throws Exception {
-                    // Inject session ID into message so produce will know where to send it
+                    // Inject session ID into message so producer will know where to send it
                     Header header = message.getHeader();
                     setOptionalField(header, sessionID, SenderCompID.FIELD, sessionID.getTargetCompID());
                     setOptionalField(header, sessionID, SenderSubID.FIELD, sessionID.getTargetSubID());
@@ -125,10 +127,13 @@ public class TradeExecutorComponent extends DefaultComponent {
             });
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             return new DefaultProducer(this) {
+                @Override
                 public void process(final Exchange exchange) throws Exception {
                     executor.execute(new Runnable() {
+                        @Override
                         public void run() {
                             try {
                                 tradeExecutor.execute(exchange.getIn().getMandatoryBody(Message.class));
@@ -141,6 +146,7 @@ public class TradeExecutorComponent extends DefaultComponent {
             };
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return new DefaultConsumer(this, processor) {
                 @Override
@@ -148,12 +154,14 @@ public class TradeExecutorComponent extends DefaultComponent {
                     processors.add(getProcessor());
                 }
                 
+                @Override
                 protected void doStop() throws Exception {
                     processors.remove(getProcessor());                   
                 }
             };
         }
 
+        @Override
         public boolean isSingleton() {
             return false;
         }        

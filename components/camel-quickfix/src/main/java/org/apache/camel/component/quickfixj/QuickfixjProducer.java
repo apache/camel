@@ -40,6 +40,7 @@ public class QuickfixjProducer extends DefaultProducer {
         return (QuickfixjEndpoint) super.getEndpoint();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             sendMessage(exchange, exchange.getIn());

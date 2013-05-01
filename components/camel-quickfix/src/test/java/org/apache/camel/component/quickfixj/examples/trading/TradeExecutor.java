@@ -424,10 +424,12 @@ public class TradeExecutor {
             this.defaultMarketPrice = defaultMarketPrice;
         }
 
+        @Override
         public double getAsk(String symbol) {
             return defaultMarketPrice;
         }
 
+        @Override
         public double getBid(String symbol) {
             return defaultMarketPrice;
         }

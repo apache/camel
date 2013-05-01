@@ -400,6 +400,7 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private class Dispatcher implements Application {
+        @Override
         public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
             try {
                 dispatch(QuickfixjEventCategory.AdminMessageReceived, sessionID, message);
@@ -414,6 +415,7 @@ public class QuickfixjEngine extends ServiceSupport {
             }
         }
         
+        @Override
         public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
             try {
                 dispatch(QuickfixjEventCategory.AppMessageReceived, sessionID, message);
@@ -428,6 +430,7 @@ public class QuickfixjEngine extends ServiceSupport {
             }
         }
 
+        @Override
         public void onCreate(SessionID sessionID) {
             try {
                 dispatch(QuickfixjEventCategory.SessionCreated, sessionID, null);
@@ -436,6 +439,7 @@ public class QuickfixjEngine extends ServiceSupport {
             }
         }
 
+        @Override
         public void onLogon(SessionID sessionID) {
             try {
                 dispatch(QuickfixjEventCategory.SessionLogon, sessionID, null);
@@ -444,6 +448,7 @@ public class QuickfixjEngine extends ServiceSupport {
             }
         }
 
+        @Override
         public void onLogout(SessionID sessionID) {
             try {
                 dispatch(QuickfixjEventCategory.SessionLogoff, sessionID, null);
@@ -452,6 +457,7 @@ public class QuickfixjEngine extends ServiceSupport {
             }
         }
 
+        @Override
         public void toAdmin(Message message, SessionID sessionID) {
             try {
                 dispatch(QuickfixjEventCategory.AdminMessageSent, sessionID, message);
@@ -460,6 +466,7 @@ public class QuickfixjEngine extends ServiceSupport {
             }
         }
 
+        @Override
         public void toApp(Message message, SessionID sessionID) throws DoNotSend {
             try {
                 dispatch(QuickfixjEventCategory.AppMessageSent, sessionID, message);
