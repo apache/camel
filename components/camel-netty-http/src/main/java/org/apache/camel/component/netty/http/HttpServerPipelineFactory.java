@@ -21,6 +21,7 @@ import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.ServerPipelineFactory;
+import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
@@ -48,7 +49,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
     public HttpServerPipelineFactory(NettyHttpConsumer nettyConsumer) {
         this.consumer = nettyConsumer;
         try {
-            this.sslContext = createSSLContext();
+            this.sslContext = createSSLContext(consumer);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -66,11 +67,10 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         // Create a default pipeline implementation.
         ChannelPipeline pipeline = Channels.pipeline();
 
-        if (sslContext != null) {
-            SSLEngine engine = sslContext.createSSLEngine();
-            engine.setUseClientMode(false);
-            engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
-            pipeline.addLast("ssl", new SslHandler(engine));
+        SslHandler sslHandler = configureServerSSLOnDemand();
+        if (sslHandler != null) {
+            LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
+            pipeline.addLast("ssl", sslHandler);
         }
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
@@ -89,16 +89,44 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         return pipeline;
     }
 
-    private SSLContext createSSLContext() throws Exception {
+    private SSLContext createSSLContext(NettyConsumer consumer) throws Exception {
         if (!consumer.getConfiguration().isSsl()) {
             return null;
         }
 
+        // create ssl context once
         if (consumer.getConfiguration().getSslContextParameters() != null) {
-            return consumer.getConfiguration().getSslContextParameters().createSSLContext();
+            SSLContext context = consumer.getConfiguration().getSslContextParameters().createSSLContext();
+            return context;
         }
 
         return null;
+    }
+
+    private SslHandler configureServerSSLOnDemand() throws Exception {
+        if (!consumer.getConfiguration().isSsl()) {
+            return null;
+        }
+
+        if (consumer.getConfiguration().getSslHandler() != null) {
+            return consumer.getConfiguration().getSslHandler();
+        } else if (sslContext != null) {
+            SSLEngine engine = sslContext.createSSLEngine();
+            engine.setUseClientMode(false);
+            engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
+            return new SslHandler(engine);
+        } else {
+            SSLEngineFactory sslEngineFactory = new SSLEngineFactory(
+                    consumer.getConfiguration().getKeyStoreFormat(),
+                    consumer.getConfiguration().getSecurityProvider(),
+                    consumer.getConfiguration().getKeyStoreFile(),
+                    consumer.getConfiguration().getTrustStoreFile(),
+                    consumer.getConfiguration().getPassphrase().toCharArray());
+            SSLEngine sslEngine = sslEngineFactory.createServerSSLEngine();
+            sslEngine.setUseClientMode(false);
+            sslEngine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
+            return new SslHandler(sslEngine);
+        }
     }
 
     private boolean supportChunked() {
