@@ -36,6 +36,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         setSync(true);
         setReuseAddress(true);
         setServerPipelineFactory(new HttpServerPipelineFactory());
+        setClientPipelineFactory(new HttpClientPipelineFactory());
     }
 
     @Override

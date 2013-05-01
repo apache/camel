@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
+package org.apache.camel.component.netty.http.handlers;
 
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
+import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -125,9 +126,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected Object getResponseBody(Exchange exchange) throws Exception {
         // use the binding
         if (exchange.hasOut()) {
-            return consumer.getEndpoint().getNettyHttpBinding().fromCamelMessage(exchange.getOut());
+            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getOut());
         } else {
-            return consumer.getEndpoint().getNettyHttpBinding().fromCamelMessage(exchange.getIn());
+            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getIn());
         }
     }
 }

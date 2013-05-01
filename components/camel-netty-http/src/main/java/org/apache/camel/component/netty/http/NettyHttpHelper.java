@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Helpers.
@@ -33,14 +34,22 @@ public final class NettyHttpHelper {
 
     @SuppressWarnings("deprecation")
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
+        String charset = getCharsetFromContentType(contentType);
+        if (charset != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+        }
+    }
+
+    public static String getCharsetFromContentType(String contentType) {
         if (contentType != null) {
             // find the charset and set it to the Exchange
             int index = contentType.indexOf("charset=");
             if (index > 0) {
                 String charset = contentType.substring(index + 8);
-                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+                return IOHelper.normalizeCharset(charset);
             }
         }
+        return null;
     }
 
     /**

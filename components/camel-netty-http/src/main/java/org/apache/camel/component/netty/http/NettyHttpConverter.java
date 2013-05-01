@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.nio.charset.Charset;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.jboss.netty.handler.codec.http.HttpResponse;
 
 @Converter
 public final class NettyHttpConverter {
@@ -46,6 +49,25 @@ public final class NettyHttpConverter {
         }
 
         return null;
+    }
+
+    @Converter
+    public static String toString(HttpResponse response, Exchange exchange) {
+        String contentType = response.getHeader(Exchange.CONTENT_TYPE);
+        String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
+        if (charset == null && exchange != null) {
+            charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+        }
+        if (charset != null) {
+            return response.getContent().toString(Charset.forName(charset));
+        } else {
+            return response.getContent().toString(Charset.defaultCharset());
+        }
+    }
+
+    @Converter
+    public static byte[] toBytes(HttpResponse response, Exchange exchange) {
+        return response.getContent().toByteBuffer().array();
     }
 
 }

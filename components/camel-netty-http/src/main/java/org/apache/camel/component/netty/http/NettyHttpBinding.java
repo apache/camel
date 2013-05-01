@@ -50,14 +50,23 @@ public interface NettyHttpBinding {
     void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange) throws Exception;
 
     /**
-     * Binds from Camel {@link Message} to Netty {@link HttpResponse}.
-     *
+     * Binds from Camel {@link Message} to Netty {@link org.jboss.netty.handler.codec.http.HttpResponse}.
      *
      * @param message  the Camel message
      * @return the http response
      * @throws Exception is thrown if error during binding
      */
-    Object fromCamelMessage(Message message) throws Exception;
+    HttpResponse toNettyResponse(Message message) throws Exception;
+
+    /**
+     * Binds from Camel {@link Message} to Netty {@link org.jboss.netty.handler.codec.http.HttpRequest}.
+     *
+     * @param message  the Camel message
+     * @param uri      the uri which is the intended uri to call, though the message may override the uri
+     * @return the http request
+     * @throws Exception is thrown if error during binding
+     */
+    HttpRequest toNettyRequest(Message message, String uri) throws Exception;
 
     /**
      * Gets the header filter strategy

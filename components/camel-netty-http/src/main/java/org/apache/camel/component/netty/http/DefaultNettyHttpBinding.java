@@ -28,8 +28,10 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.handler.codec.http.DefaultHttpRequest;
 import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
+import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
@@ -97,8 +99,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
     }
 
     @Override
-    public HttpResponse fromCamelMessage(Message message) throws Exception {
-        LOG.trace("fromCamelMessage: {}", message);
+    public HttpResponse toNettyResponse(Message message) throws Exception {
+        LOG.trace("toNettyResponse: {}", message);
 
         // the message body may already be a Netty HTTP response
         if (message.getBody() instanceof HttpResponse) {
@@ -167,6 +169,77 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         LOG.trace("Connection: {}", keepAlive);
 
         return response;
+    }
+
+    @Override
+    public HttpRequest toNettyRequest(Message message, String uri) throws Exception {
+        LOG.trace("toNettyRequest: {}", message);
+
+        // the message body may already be a Netty HTTP response
+        if (message.getBody() instanceof HttpRequest) {
+            return (HttpRequest) message.getBody();
+        }
+
+        // TODO: Compute the method to use
+        HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri);
+
+        TypeConverter tc = message.getExchange().getContext().getTypeConverter();
+
+        // append headers
+        // must use entrySet to ensure case of keys is preserved
+        for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            // use an iterator as there can be multiple values. (must not use a delimiter)
+            final Iterator<?> it = ObjectHelper.createIterator(value, null);
+            while (it.hasNext()) {
+                String headerValue = tc.convertTo(String.class, it.next());
+                if (headerValue != null && headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                    LOG.trace("HTTP-Header: {}={}", key, headerValue);
+                    request.addHeader(key, headerValue);
+                }
+            }
+        }
+
+        Object body = message.getBody();
+        if (body != null) {
+            // support bodies as native Netty
+            ChannelBuffer buffer;
+            if (body instanceof ChannelBuffer) {
+                buffer = (ChannelBuffer) body;
+            } else {
+                // try to convert to buffer first
+                buffer = message.getBody(ChannelBuffer.class);
+                if (buffer == null) {
+                    // fallback to byte array as last resort
+                    byte[] data = message.getMandatoryBody(byte[].class);
+                    buffer = ChannelBuffers.copiedBuffer(data);
+                }
+            }
+            if (buffer != null) {
+                request.setContent(buffer);
+                int len = buffer.readableBytes();
+                // set content-length
+                request.setHeader(HttpHeaders.Names.CONTENT_LENGTH, len);
+                LOG.trace("Content-Length: {}", len);
+            }
+        }
+
+        // set the content type in the response.
+        String contentType = MessageHelper.getContentType(message);
+        if (contentType != null) {
+            // set content-type
+            request.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType);
+            LOG.trace("Content-Type: {}", contentType);
+        }
+
+        // TODO: keep alive should be something we can control
+        String keepAlive = HttpHeaders.Values.CLOSE;
+        request.setHeader(HttpHeaders.Names.CONNECTION, keepAlive);
+        LOG.trace("Connection: {}", keepAlive);
+
+        return request;
     }
 
     @Override

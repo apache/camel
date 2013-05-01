@@ -20,9 +20,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyEndpoint;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
@@ -49,6 +51,16 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         Consumer answer = new NettyHttpConsumer(this, processor, getConfiguration());
         configureConsumer(answer);
         return answer;
+    }
+
+    @Override
+    public Producer createProducer() throws Exception {
+        Producer answer = new NettyHttpProducer(this, getConfiguration());
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(answer);
+        } else {
+            return answer;
+        }
     }
 
     @Override

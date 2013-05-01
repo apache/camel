@@ -21,6 +21,7 @@ import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.ServerPipelineFactory;
+import org.apache.camel.component.netty.http.handlers.HttpServerChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -43,7 +44,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
     private SSLContext sslContext;
 
     public HttpServerPipelineFactory() {
-        // needed for blueprint IoC
+        // default constructor needed
     }
 
     public HttpServerPipelineFactory(NettyHttpConsumer nettyConsumer) {

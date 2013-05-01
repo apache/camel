@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
@@ -182,22 +181,18 @@ public class NettyProducer extends DefaultAsyncProducer {
             return true;
         }
 
-        Object body = NettyPayloadHelper.getIn(getEndpoint(), exchange);
-        if (body == null) {
-            noReplyLogger.log("No payload to send for exchange: " + exchange);
-            callback.done(true);
-            return true;
-        }
-
-        // if textline enabled then covert to a String which must be used for textline
-        if (getConfiguration().isTextline()) {
-            try {
-                body = NettyHelper.getTextlineBody(body, exchange, getConfiguration().getDelimiter(), getConfiguration().isAutoAppendDelimiter());
-            } catch (NoTypeConversionAvailableException e) {
-                exchange.setException(e);
+        Object body;
+        try {
+            body = getRequestBody(exchange);
+            if (body == null) {
+                noReplyLogger.log("No payload to send for exchange: " + exchange);
                 callback.done(true);
                 return true;
             }
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
         // set the exchange encoding property
@@ -279,6 +274,27 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         // continue routing asynchronously
         return false;
+    }
+
+    /**
+     * Gets the object we want to use as the request object for sending to netty.
+     *
+     * @param exchange the exchange
+     * @return the object to use as request
+     * @throws Exception is thrown if error getting the request body
+     */
+    protected Object getRequestBody(Exchange exchange) throws Exception {
+        Object body = NettyPayloadHelper.getIn(getEndpoint(), exchange);
+        if (body == null) {
+            return null;
+        }
+
+        // if textline enabled then covert to a String which must be used for textline
+        if (getConfiguration().isTextline()) {
+            body = NettyHelper.getTextlineBody(body, exchange, getConfiguration().getDelimiter(), getConfiguration().isAutoAppendDelimiter());
+        }
+
+        return body;
     }
 
     /**
