@@ -61,6 +61,9 @@ public class FopProducer extends DefaultProducer {
 
         OutputStream out = transform(userAgent, outputFormat, src);
         exchange.getOut().setBody(out);
+
+        // propagate headers
+        exchange.getOut().setHeaders(headers);
     }
 
     private String getOutputFormat(Exchange exchange) {

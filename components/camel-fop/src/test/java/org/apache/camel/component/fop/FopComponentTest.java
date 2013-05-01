@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.junit.Before;
 import org.junit.Test;
 
 public class FopComponentTest extends CamelTestSupport {
@@ -35,6 +36,14 @@ public class FopComponentTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory("target/data");
+
+        super.setUp();
+    }
 
     @Test
     public void createPdfUsingXmlDataAndXsltTransformation() throws Exception {
@@ -48,6 +57,10 @@ public class FopComponentTest extends CamelTestSupport {
         String pdfText = FopHelper.extractTextFrom(document);
         assertTrue(pdfText.contains("Project"));    //from xsl template
         assertTrue(pdfText.contains("John Doe"));   //from data xml
+
+        // assert on the header "foo" being populated
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        assertEquals("Header value is lost!", "bar", exchange.getIn().getHeader("foo"));
     }
 
     @Override
@@ -56,6 +69,7 @@ public class FopComponentTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("xslt:xslt/template.xsl")
+                        .setHeader("foo", constant("bar"))
                         .to("fop:application/pdf")
                         .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
                         .to("file:target/data")
