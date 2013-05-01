@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Test;
@@ -66,15 +64,6 @@ public class NettyHttpSSLTest extends BaseNettyTest {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("password", "changeit");
-        registry.bind("ksf", new File("src/test/resources/jsse/localhost.ks"));
-        registry.bind("tsf", new File("src/test/resources/jsse/localhost.ks"));
-        return registry;
-    }
-
-    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
@@ -90,7 +79,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty-http:http://localhost:{{port}}?ssl=true&passphrase=#password&keyStoreFile=#ksf&trustStoreFile=#tsf")
+                from("netty-http:http://localhost:{{port}}?ssl=true&passphrase=changeit&keyStoreResource=jsse/localhost.ks&trustStoreResource=jsse/localhost.ks")
                         .to("mock:input")
                         .transform().constant("Bye World");
             }

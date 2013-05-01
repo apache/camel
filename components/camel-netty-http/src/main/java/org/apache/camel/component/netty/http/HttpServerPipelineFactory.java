@@ -116,12 +116,31 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
             return new SslHandler(engine);
         } else {
-            SSLEngineFactory sslEngineFactory = new SSLEngineFactory(
-                    consumer.getConfiguration().getKeyStoreFormat(),
-                    consumer.getConfiguration().getSecurityProvider(),
-                    consumer.getConfiguration().getKeyStoreFile(),
-                    consumer.getConfiguration().getTrustStoreFile(),
-                    consumer.getConfiguration().getPassphrase().toCharArray());
+            if (consumer.getConfiguration().getKeyStoreFile() == null && consumer.getConfiguration().getKeyStoreResource() == null) {
+                LOG.debug("keystorefile is null");
+            }
+            if (consumer.getConfiguration().getTrustStoreFile() == null && consumer.getConfiguration().getTrustStoreResource() == null) {
+                LOG.debug("truststorefile is null");
+            }
+            if (consumer.getConfiguration().getPassphrase().toCharArray() == null) {
+                LOG.debug("passphrase is null");
+            }
+            SSLEngineFactory sslEngineFactory;
+            if (consumer.getConfiguration().getKeyStoreFile() != null || consumer.getConfiguration().getTrustStoreFile() != null) {
+                sslEngineFactory = new SSLEngineFactory(
+                        consumer.getConfiguration().getKeyStoreFormat(),
+                        consumer.getConfiguration().getSecurityProvider(),
+                        consumer.getConfiguration().getKeyStoreFile(),
+                        consumer.getConfiguration().getTrustStoreFile(),
+                        consumer.getConfiguration().getPassphrase().toCharArray());
+            } else {
+                sslEngineFactory = new SSLEngineFactory(consumer.getContext().getClassResolver(),
+                        consumer.getConfiguration().getKeyStoreFormat(),
+                        consumer.getConfiguration().getSecurityProvider(),
+                        consumer.getConfiguration().getKeyStoreResource(),
+                        consumer.getConfiguration().getTrustStoreResource(),
+                        consumer.getConfiguration().getPassphrase().toCharArray());
+            }
             SSLEngine sslEngine = sslEngineFactory.createServerSSLEngine();
             sslEngine.setUseClientMode(false);
             sslEngine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());

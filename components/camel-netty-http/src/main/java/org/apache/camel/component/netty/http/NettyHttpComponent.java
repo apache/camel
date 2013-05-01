@@ -30,6 +30,13 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
  */
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
 
+    // TODO: consider supporting on consumer
+    // - bridgeEndpoint
+    // - matchOnUriPrefix
+
+    // TODO: netty http producer
+    // TODO: make it easy to turn keep-alive on|off on producer
+
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -39,9 +46,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         setHeaderFilterStrategy(new NettyHttpHeaderFilterStrategy());
         setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
     }
-
-    // TODO: netty http producer
-    // TODO: make it easy to turn keep-alive on|off on producer
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
