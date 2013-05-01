@@ -57,6 +57,8 @@ public class NettyConfiguration implements Cloneable {
     private String passphrase;
     private File keyStoreFile;
     private File trustStoreFile;
+    private String keyStoreResource;
+    private String trustStoreResource;
     private SslHandler sslHandler;
     private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
@@ -154,11 +156,13 @@ public class NettyConfiguration implements Cloneable {
         setPort(uri.getPort());
 
         sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
-        passphrase = component.resolveAndRemoveReferenceParameter(parameters, "passphrase", String.class, passphrase);
+        passphrase = component.getAndRemoveParameter(parameters, "passphrase", String.class, passphrase);
         keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
         securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, securityProvider == null ? "SunX509" : securityProvider);
         keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, keyStoreFile);
         trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
+        keyStoreResource = component.getAndRemoveParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
+        trustStoreResource = component.getAndRemoveParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
         clientPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, clientPipelineFactory);
         serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, serverPipelineFactory);
 
@@ -427,20 +431,40 @@ public class NettyConfiguration implements Cloneable {
         this.passphrase = passphrase;
     }
 
+    @Deprecated
     public File getKeyStoreFile() {
         return keyStoreFile;
     }
 
+    @Deprecated
     public void setKeyStoreFile(File keyStoreFile) {
         this.keyStoreFile = keyStoreFile;
     }
 
+    @Deprecated
     public File getTrustStoreFile() {
         return trustStoreFile;
     }
 
+    @Deprecated
     public void setTrustStoreFile(File trustStoreFile) {
         this.trustStoreFile = trustStoreFile;
+    }
+
+    public String getKeyStoreResource() {
+        return keyStoreResource;
+    }
+
+    public void setKeyStoreResource(String keyStoreResource) {
+        this.keyStoreResource = keyStoreResource;
+    }
+
+    public String getTrustStoreResource() {
+        return trustStoreResource;
+    }
+
+    public void setTrustStoreResource(String trustStoreResource) {
+        this.trustStoreResource = trustStoreResource;
     }
 
     public String getKeyStoreFormat() {
