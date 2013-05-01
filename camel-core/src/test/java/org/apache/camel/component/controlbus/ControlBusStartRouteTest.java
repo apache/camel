@@ -42,6 +42,29 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
         assertEquals("Stopped", context.getRouteStatus("foo").name());
     }
 
+    public void testControlBusSuspendResume() throws Exception {
+        assertEquals("Stopped", context.getRouteStatus("foo").name());
+
+        // store a pending message
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+        template.sendBody("seda:foo", "Hello World");
+
+        // start the route using control bus
+        template.sendBody("controlbus:route?routeId=foo&action=start", null);
+
+        assertMockEndpointsSatisfied();
+
+        // now suspend the route, using a header
+        template.sendBody("controlbus:route?routeId=foo&action=suspend", null);
+
+        assertEquals("Suspended", context.getRouteStatus("foo").name());
+
+        // now resume the route, using a header
+        template.sendBody("controlbus:route?routeId=foo&action=resume", null);
+
+        assertEquals("Started", context.getRouteStatus("foo").name());
+    }
+
     public void testControlBusStatus() throws Exception {
         assertEquals("Stopped", context.getRouteStatus("foo").name());
 
