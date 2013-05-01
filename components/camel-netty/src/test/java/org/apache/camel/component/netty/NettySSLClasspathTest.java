@@ -17,24 +17,13 @@
 
 package org.apache.camel.component.netty;
 
-import java.io.File;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-public class NettySSLTest extends BaseNettyTest {
+public class NettySSLClasspathTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("ksf", new File("src/test/resources/keystore.jks"));
-        registry.bind("tsf", new File("src/test/resources/keystore.jks"));
-        return registry;
-    }
-    
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -49,7 +38,7 @@ public class NettySSLTest extends BaseNettyTest {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf")
+                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");                           
@@ -60,7 +49,7 @@ public class NettySSLTest extends BaseNettyTest {
         context.start();
 
         String response = template.requestBody(
-                "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf",
+                "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks",
                 "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }

@@ -57,6 +57,8 @@ public class NettyConfiguration implements Cloneable {
     private String passphrase;
     private File keyStoreFile;
     private File trustStoreFile;
+    private String keyStoreResource;
+    private String trustStoreResource;
     private SslHandler sslHandler;
     private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
@@ -145,14 +147,16 @@ public class NettyConfiguration implements Cloneable {
         setHost(uri.getHost());
         setPort(uri.getPort());
 
-        sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, null);
-        passphrase = component.resolveAndRemoveReferenceParameter(parameters, "passphrase", String.class, null);
-        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, "JKS");
-        securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, "SunX509");
-        keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, null);
-        trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, null);
-        clientPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, null);
-        serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, null);
+        sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
+        passphrase = component.getAndRemoveParameter(parameters, "passphrase", String.class, passphrase);
+        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
+        securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, securityProvider == null ? "SunX509" : securityProvider);
+        keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, keyStoreFile);
+        trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
+        keyStoreResource = component.getAndRemoveParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
+        trustStoreResource = component.getAndRemoveParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
+        clientPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, clientPipelineFactory);
+        serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, serverPipelineFactory);
 
         // set custom encoders and decoders first
         List<ChannelHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);
@@ -419,20 +423,40 @@ public class NettyConfiguration implements Cloneable {
         this.passphrase = passphrase;
     }
 
+    @Deprecated
     public File getKeyStoreFile() {
         return keyStoreFile;
     }
 
+    @Deprecated
     public void setKeyStoreFile(File keyStoreFile) {
         this.keyStoreFile = keyStoreFile;
     }
 
+    @Deprecated
     public File getTrustStoreFile() {
         return trustStoreFile;
     }
 
+    @Deprecated
     public void setTrustStoreFile(File trustStoreFile) {
         this.trustStoreFile = trustStoreFile;
+    }
+
+    public String getKeyStoreResource() {
+        return keyStoreResource;
+    }
+
+    public void setKeyStoreResource(String keyStoreResource) {
+        this.keyStoreResource = keyStoreResource;
+    }
+
+    public String getTrustStoreResource() {
+        return trustStoreResource;
+    }
+
+    public void setTrustStoreResource(String trustStoreResource) {
+        this.trustStoreResource = trustStoreResource;
     }
 
     public String getKeyStoreFormat() {
