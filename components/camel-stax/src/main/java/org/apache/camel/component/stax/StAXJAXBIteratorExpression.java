@@ -18,12 +18,14 @@ package org.apache.camel.component.stax;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
@@ -49,6 +51,7 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
 
     private final Class<T> handled;
     private final String handledName;
+    private final boolean isNamespaceAware;
 
     /**
      * Creates this expression.
@@ -59,6 +62,7 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
         ObjectHelper.notNull(handled, "handled");
         this.handled = handled;
         this.handledName = null;
+        this.isNamespaceAware = true;
     }
 
     /**
@@ -70,6 +74,33 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
         ObjectHelper.notNull(handledName, "handledName");
         this.handledName = handledName;
         this.handled = null;
+        this.isNamespaceAware = true;
+    }
+
+    /**
+     * Creates this expression.
+     *
+     * @param handled the class which has JAXB annotations to bind POJO.
+     * @param isNamespaceAware sets the namespace awareness of the xml reader
+     */
+    public StAXJAXBIteratorExpression(Class<T> handled, boolean isNamespaceAware) {
+        ObjectHelper.notNull(handled, "handled");
+        this.handled = handled;
+        this.handledName = null;
+        this.isNamespaceAware = isNamespaceAware;
+    }
+
+    /**
+     * Creates this expression.
+     *
+     * @param handledName the FQN name of the class which has JAXB annotations to bind POJO.
+     * @param isNamespaceAware sets the namespace awareness of the xml reader
+     */
+    public StAXJAXBIteratorExpression(String handledName, boolean isNamespaceAware) {
+        ObjectHelper.notNull(handledName, "handledName");
+        this.handledName = handledName;
+        this.handled = null;
+        this.isNamespaceAware = isNamespaceAware;
     }
 
     private static JAXBContext jaxbContext(Class<?> handled) throws JAXBException {
@@ -89,7 +120,15 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     @SuppressWarnings("unchecked")
     public Object evaluate(Exchange exchange) {
         try {
-            XMLEventReader reader = exchange.getIn().getMandatoryBody(XMLEventReader.class);
+            XMLEventReader reader;
+            if (isNamespaceAware) {
+                reader = exchange.getIn().getMandatoryBody(XMLEventReader.class);
+            } else {
+                InputStream inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
+                XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+                xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
+                reader = xmlInputFactory.createXMLEventReader(inputStream);
+            }
             Class<T> clazz = handled;
             if (clazz == null && handledName != null) {
                 clazz = (Class<T>) exchange.getContext().getClassResolver().resolveMandatoryClass(handledName);
@@ -102,6 +141,9 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
             exchange.setException(e);
             return null;
         } catch (ClassNotFoundException e) {
+            exchange.setException(e);
+            return null;
+        } catch (XMLStreamException e) {
             exchange.setException(e);
             return null;
         }

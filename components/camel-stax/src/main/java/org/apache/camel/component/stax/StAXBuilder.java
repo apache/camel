@@ -44,4 +44,24 @@ public final class StAXBuilder {
     public static <T> Expression stax(String clazzName) {
         return new StAXJAXBIteratorExpression<T>(clazzName);
     }
+
+    /**
+     * Creates a {@link org.apache.camel.component.stax.StAXJAXBIteratorExpression}.
+     *
+     * @param clazz the class which has JAXB annotations to bind POJO.
+     * @param isNamespaceAware sets the namespace awareness of the xml reader
+     */
+    public static <T> Expression stax(Class<T> clazz, boolean isNamespaceAware) {
+        return new StAXJAXBIteratorExpression<T>(clazz, isNamespaceAware);
+    }
+
+    /**
+     * Creates a {@link org.apache.camel.component.stax.StAXJAXBIteratorExpression}.
+     *
+     * @param clazzName the FQN name of the class which has JAXB annotations to bind POJO.
+     * @param isNamespaceAware sets the namespace awareness of the xml reader
+     */
+    public static <T> Expression stax(String clazzName, boolean isNamespaceAware) {
+        return new StAXJAXBIteratorExpression<T>(clazzName, isNamespaceAware);
+    }
 }
