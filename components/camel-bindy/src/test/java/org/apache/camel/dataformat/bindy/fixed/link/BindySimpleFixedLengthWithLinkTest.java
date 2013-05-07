@@ -67,7 +67,7 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
 
         for (int i = 0; i < results.size(); i++) {
             Map<String, Object> map = results.get(i);
-            for ( String key : map.keySet() ) {
+            for (String key : map.keySet()) {
                 if (key.equals(orderKey)) {
                     Order order = (Order) map.get(orderKey);
                     assertEquals("AAA", order.fieldA);

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+
+import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -27,13 +32,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.ConnectionFactory;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 
 /**
  * Lets test the use of the ComponentConfiguration on the JMS endpoint
@@ -43,13 +44,13 @@ public class JmsComponentConfigurationTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JmsComponentConfigurationTest.class);
 
     protected String componentName = "activemq456";
-    protected boolean verbose = false;
+    protected boolean verbose;
 
     @Test
     public void testConfiguration() throws Exception {
         Component component = context().getComponent(componentName);
         ComponentConfiguration configuration = component.createComponentConfiguration();
-        SortedMap<String,ParameterConfiguration> parameterConfigurationMap = configuration.getParameterConfigurationMap();
+        SortedMap<String, ParameterConfiguration> parameterConfigurationMap = configuration.getParameterConfigurationMap();
         if (verbose) {
             Set<Map.Entry<String, ParameterConfiguration>> entries = parameterConfigurationMap.entrySet();
             for (Map.Entry<String, ParameterConfiguration> entry : entries) {

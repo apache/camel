@@ -185,7 +185,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
         // if textline enabled then covert to a String which must be used for textline
         if (producer.getConfiguration().isTextline()) {
-           body = producer.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+            body = producer.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
         }
 
         // set the result on either IN or OUT on the original exchange depending on its pattern
