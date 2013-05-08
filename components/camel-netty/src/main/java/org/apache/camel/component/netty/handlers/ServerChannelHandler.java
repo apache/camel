@@ -25,6 +25,7 @@ import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.util.CamelLogger;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -133,16 +134,6 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     private void sendResponse(MessageEvent messageEvent, Exchange exchange) throws Exception {
         Object body = getResponseBody(exchange);
 
-        boolean failed = exchange.isFailed();
-        if (failed && !consumer.getEndpoint().getConfiguration().isTransferExchange()) {
-            if (exchange.getException() != null) {
-                body = exchange.getException();
-            } else {
-                // failed and no exception, must be a fault
-                body = exchange.getOut().getBody();
-            }
-        }
-
         if (body == null) {
             noReplyLogger.log("No payload to send as reply for exchange: " + exchange);
             if (consumer.getConfiguration().isDisconnectOnNoReply()) {
@@ -177,6 +168,11 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
      * @throws Exception is thrown if error getting the response body
      */
     protected Object getResponseBody(Exchange exchange) throws Exception {
+        // if there was an exception then use that as response body
+        boolean exception = exchange.getException() != null && !consumer.getEndpoint().getConfiguration().isTransferExchange();
+        if (exception) {
+            return exchange.getException();
+        }
         if (exchange.hasOut()) {
             return NettyPayloadHelper.getOut(consumer.getEndpoint(), exchange);
         } else {

@@ -19,13 +19,11 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class NettyHttpReturnFaultTest extends BaseNettyTest {
 
     @Test
-    @Ignore
     public void testHttpFault() throws Exception {
         Exchange exchange = template.request("netty-http:http://localhost:{{port}}/test", new Processor() {
             @Override
