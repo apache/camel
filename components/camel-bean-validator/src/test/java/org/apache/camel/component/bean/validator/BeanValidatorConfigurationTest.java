@@ -29,9 +29,9 @@ import javax.validation.TraversableResolver;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.hibernate.validator.engine.ConstraintValidatorFactoryImpl;
-import org.hibernate.validator.engine.ValidatorImpl;
-import org.hibernate.validator.engine.resolver.DefaultTraversableResolver;
+import org.hibernate.validator.internal.engine.ConstraintValidatorFactoryImpl;
+import org.hibernate.validator.internal.engine.ValidatorImpl;
+import org.hibernate.validator.internal.engine.resolver.DefaultTraversableResolver;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.junit.Test;
 

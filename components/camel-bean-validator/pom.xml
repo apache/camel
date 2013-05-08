@@ -29,25 +29,9 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <hibernate-validator-version>4.1.0.Final</hibernate-validator-version>
         <camel.osgi.export.pkg>org.apache.camel.component.bean.validator.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=bean-validator</camel.osgi.export.service>
     </properties>
-
-    <repositories>
-        <!-- for Hibernate Validator -->
-        <repository>
-            <id>jboss</id>
-            <name>JBoss Maven Repository</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
 
@@ -59,6 +43,17 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate-validator-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss.logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>${jboss-logging-version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
