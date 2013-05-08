@@ -142,7 +142,7 @@ public class NettyConfiguration implements Cloneable {
 
         boolean found = false;
         for (String supportedProtocol : supportedProtocols) {
-            if (protocol.equalsIgnoreCase(supportedProtocol)) {
+            if (protocol != null && protocol.equalsIgnoreCase(supportedProtocol)) {
                 found = true;
                 break;
             }
