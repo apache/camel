@@ -16,14 +16,14 @@
  */
 package org.apache.camel.language.groovy;
 
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.util.ExchangeHelper;
 
@@ -47,30 +47,38 @@ public class GroovyExpression extends ExpressionSupport {
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        // use application classloader if given
-        ClassLoader cl = exchange.getContext().getApplicationContextClassLoader();
-        GroovyShell shell = cl != null ? new GroovyShell(cl) : new GroovyShell();
-
-        // need to re-parse script due thread-safe with binding
-        Script script = shell.parse(text);
-        configure(exchange, script.getBinding());
-        Object value = script.evaluate(text);
+        Script script = instantiateScript(exchange);
+        script.setBinding(createBinding(exchange));
+        Object value = script.run();
 
         return exchange.getContext().getTypeConverter().convertTo(type, value);
     }
 
-    private void configure(Exchange exchange, final Binding binding) {
-        ExchangeHelper.populateVariableMap(exchange, new AbstractMap<String, Object>() {
-            @Override
-            public Object put(String key, Object value) {
-                binding.setProperty(key, value);
-                return null;
-            }
+    @SuppressWarnings("unchecked")
+    private Script instantiateScript(Exchange exchange) {
+        // Get the script from the cache, or create a new instance
+        GroovyLanguage language = (GroovyLanguage) exchange.getContext().resolveLanguage("groovy");
+        Class<Script> scriptClass = language.getScriptFromCache(text);
+        if (scriptClass == null) {
+            ClassLoader cl = exchange.getContext().getApplicationContextClassLoader();
+            GroovyShell shell = cl != null ? new GroovyShell(cl) : new GroovyShell();
+            scriptClass = shell.getClassLoader().parseClass(text);
+            language.addScriptToCache(text, scriptClass);
+        }
 
-            @Override
-            public Set<Entry<String, Object>> entrySet() {
-                return Collections.emptySet();
-            }
-        });
+        // New instance of the script
+        try {
+            return scriptClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeCamelException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    private Binding createBinding(Exchange exchange) {
+        Map<String, Object> variables = new HashMap<String, Object>();
+        ExchangeHelper.populateVariableMap(exchange, variables);
+        return new Binding(variables);
     }
 }
