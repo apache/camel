@@ -218,6 +218,22 @@ public class RunMojo extends AbstractExecMojo {
      * @parameter property="camel.fileApplicationContextUri"
      */
     private String fileApplicationContextUri;
+    
+    /**
+     * The configureAdmin persistent id, it will be used when loading the 
+     * camel context from blueprint.
+     * 
+     * @parameter property="camel.configAdminPid"
+     */
+    private String configAdminPid;
+    
+    /**
+     * The configureAdmin persistent file name, it will be used when 
+     * loading the camel context from blueprint.
+     * 
+     * * @parameter property="camel.configAdminFileName"
+     */
+    private String configAdminFileName;
 
     /**
      * The class arguments.
@@ -406,8 +422,6 @@ public class RunMojo extends AbstractExecMojo {
         if (arguments != null) {
             args.addAll(Arrays.asList(arguments));
         }
-        arguments = new String[args.size()];
-        args.toArray(arguments);
         
         if (usingSpringJavaConfigureMain) {
             mainClass = "org.apache.camel.spring.javaconfig.Main";
@@ -421,6 +435,16 @@ public class RunMojo extends AbstractExecMojo {
             mainClass = "org.apache.camel.test.blueprint.Main";
             // must include plugin dependencies for blueprint
             extraPluginDependencyArtifactId = "camel-test-blueprint";
+            // set the configAdmin pid
+            if (configAdminPid != null) {
+                args.add("-pid");
+                args.add(configAdminPid);
+            }
+            // set the configAdmin pFile
+            if (configAdminFileName != null) {
+                args.add("-pf");
+                args.add(configAdminFileName);
+            }
             getLog().info("Using org.apache.camel.test.blueprint.Main to initiate a CamelContext");
         } else if (mainClass != null) {
             getLog().info("Using custom " + mainClass + " to initiate a CamelContext");
@@ -429,6 +453,9 @@ public class RunMojo extends AbstractExecMojo {
             getLog().info("Using org.apache.camel.spring.Main to initiate a CamelContext");
             mainClass = "org.apache.camel.spring.Main";
         }
+        
+        arguments = new String[args.size()];
+        args.toArray(arguments);
         
         if (getLog().isDebugEnabled()) {
             StringBuilder msg = new StringBuilder("Invoking: ");

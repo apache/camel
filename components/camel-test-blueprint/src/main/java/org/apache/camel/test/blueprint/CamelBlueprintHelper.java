@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.JarInputStream;
 
 import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
@@ -57,6 +59,8 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,6 +163,40 @@ public final class CamelBlueprintHelper {
             if (tempDir != null) {
                 LOG.info("Deleting work directory {}", tempDir);
                 deleteDirectory(tempDir);
+            }
+        }
+    }
+    
+    // pick up persistent file configuration
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static void setPersistentFileForConfigAdmin(BundleContext bundleContext, String pid,
+                                                       String fileName, Dictionary props) throws IOException {
+        if (pid != null) {
+            if (fileName == null) {
+                throw new IllegalArgumentException("The persistent file should not be null");
+            } else {
+                File load = new File(fileName);
+                LOG.debug("Loading properties from OSGi config admin file: {}", load);
+                org.apache.felix.utils.properties.Properties cfg = new org.apache.felix.utils.properties.Properties(load);
+                Iterator<String> it = cfg.keySet().iterator();
+                while (it.hasNext()) {
+                    String key = it.next();
+                    // must force type cast to have code compile with both java6
+                    // and 7 with the
+                    // (org.apache.felix.utils.properties.Properties)
+                    String value = (String)cfg.get(key);
+                    props.put(key, value);
+                }
+
+                ConfigurationAdmin configAdmin = CamelBlueprintHelper
+                    .getOsgiService(bundleContext, ConfigurationAdmin.class);
+                if (configAdmin != null) {
+                    // ensure we update
+                    Configuration config = configAdmin.getConfiguration(pid);
+                    LOG.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
+                    config.update(props);
+                }
+
             }
         }
     }

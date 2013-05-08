@@ -17,45 +17,35 @@
 package org.apache.camel.test.blueprint;
 
 
-
-import java.util.Map;
-
-import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
-public class MyMainAppTest {
-
-    public static void main(String[] args) throws Exception {
-        MyMainAppTest me = new MyMainAppTest();
-        me.testMyMain();
-    }
-
+public class MainTest {
+    
     @Test
     public void testMyMain() throws Exception {
         Main main = new Main();
-        run(main);
-        
-        Map<String, CamelContext> contexts = main.getCamelContextMap();
-        // we should get at least one CamelContext
-        assertTrue("We should get at least one camelcontext", contexts.size() >= 1);
-        
-        
-    }
-
-    public void run(Main main) throws Exception {
-        
         main.setBundleName("MyMainBundle");
         // as we run this test without packing ourselves as bundle, then include ourselves
         main.setIncludeSelfAsBundle(true);
-        // we support *.xml to find any blueprint xml files
-        main.setDescriptors("org/apache/camel/test/blueprint/xpath/*.xml");
-        main.enableHangupSupport();
-
-        // run for 1 second and then stop automatic
-        main.setDuration(1000);
-        main.run();
+        // setup the blueprint file here
+        main.setDescriptors("org/apache/camel/test/blueprint/main-loadfile.xml");
+        // set the adminConfig persistent id
+        main.setPid("stuff");
+        // set the adminConfig persistent file name
+        main.setPFileName("src/test/resources/etc/stuff.cfg");
+        main.start();
+        
+        ProducerTemplate template = main.getCamelTemplate();
+        assertNotNull("We should get the template here", template);
+        
+        String result = template.requestBody("direct:start", "hello", String.class);
+        assertEquals("Get a wrong response", "Bye hello", result);
+        main.stop();
     }
+
 }

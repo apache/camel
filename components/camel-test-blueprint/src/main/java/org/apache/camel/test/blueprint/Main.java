@@ -19,6 +19,8 @@ package org.apache.camel.test.blueprint;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Properties;
+
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
@@ -38,6 +40,8 @@ public class Main extends MainSupport {
     private CamelContext camelContext;
     private String bundleName = "MyBundle";
     private boolean includeSelfAsBundle;
+    private String configAdminPid;
+    private String configAdminFileName;
 
     public Main() {
 
@@ -52,6 +56,20 @@ public class Main extends MainSupport {
                 "Sets the filesystem based OSGi Blueprint", "fileApplicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDescriptors(parameter);
+            }
+        });
+        
+        addOption(new ParameterOption("pid", "persistentId", 
+                 "Sets the ConfigAdmin persistentId", "persistentId") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setConfigAdminPid(parameter);
+            }
+        });
+        
+        addOption(new ParameterOption("pf", "persistentFileName", 
+                  "Sets the ConfigAdmin persistent file name", "persistentFileName") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setConfigAdminFileName(parameter);
             }
         });
 
@@ -82,7 +100,7 @@ public class Main extends MainSupport {
             }
             LOG.debug("Starting Blueprint XML file: " + descriptors);
             bundleContext = createBundleContext(bundleName);
-
+            CamelBlueprintHelper.setPersistentFileForConfigAdmin(bundleContext, configAdminPid, configAdminFileName, new Properties());
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {
                 throw new IllegalArgumentException("Cannot find CamelContext in blueprint XML file: " + descriptors);
@@ -102,6 +120,8 @@ public class Main extends MainSupport {
         // call completed to properly stop as we count down the waiting latch
         completed();
     }
+    
+   
 
     @Override
     protected ProducerTemplate findOrCreateCamelTemplate() {
@@ -119,6 +139,9 @@ public class Main extends MainSupport {
     protected BundleContext createBundleContext(String name) throws Exception {
         return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle());
     }
+    
+   
+    
 
     @Override
     protected Map<String, CamelContext> getCamelContextMap() {
@@ -156,5 +179,21 @@ public class Main extends MainSupport {
 
     public void setIncludeSelfAsBundle(boolean includeSelfAsBundle) {
         this.includeSelfAsBundle = includeSelfAsBundle;
+    }
+
+    public String getConfigAdminPid() {
+        return configAdminPid;
+    }
+
+    public void setConfigAdminPid(String pid) {
+        this.configAdminPid = pid;
+    }
+
+    public String getConfigAdminFileName() {
+        return configAdminFileName;
+    }
+
+    public void setConfigAdminFileName(String fileName) {
+        this.configAdminFileName = fileName;
     }
 }

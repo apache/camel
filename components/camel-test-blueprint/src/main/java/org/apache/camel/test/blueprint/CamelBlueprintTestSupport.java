@@ -16,9 +16,7 @@
  */
 package org.apache.camel.test.blueprint;
 
-import java.io.File;
 import java.util.Dictionary;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -40,6 +38,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
     private volatile BundleContext bundleContext;
     
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected BundleContext createBundleContext() throws Exception {
         String symbolicName = getClass().getSimpleName();
         BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
@@ -61,27 +60,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         }
 
         if (file != null) {
-            String fileName = file[0];
-            String pid = file[1];
-
-            File load = new File(fileName);
-            log.debug("Loading properties from OSGi config admin file: {}", load);
-            org.apache.felix.utils.properties.Properties cfg = new org.apache.felix.utils.properties.Properties(load);
-            Iterator<String> it = cfg.keySet().iterator();
-            while (it.hasNext()) {
-                String key = it.next();
-                // must force type cast to have code compile with both java6 and 7 with the (org.apache.felix.utils.properties.Properties)
-                String value = (String) cfg.get(key);
-                props.put(key, value);
-            }
-
-            ConfigurationAdmin configAdmin = CamelBlueprintHelper.getOsgiService(answer, ConfigurationAdmin.class);
-            if (configAdmin != null) {
-                // ensure we update
-                Configuration config = configAdmin.getConfiguration(pid);
-                log.info("Updating ConfigAdmin {} by overriding properties {}", config, props);
-                config.update(props);
-            }
+            CamelBlueprintHelper.setPersistentFileForConfigAdmin(answer, file[1], file[0], props);
         }
 
         // allow end user to override properties
