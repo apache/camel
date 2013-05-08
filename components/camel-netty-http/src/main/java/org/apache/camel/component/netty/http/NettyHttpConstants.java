@@ -16,26 +16,15 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.netty.NettyConfiguration;
-import org.apache.camel.component.netty.NettyConsumer;
-
 /**
- * HTTP based {@link NettyConsumer}
+ * Netty HTTP constants.
  */
-public class NettyHttpConsumer extends NettyConsumer {
+public final class NettyHttpConstants {
 
-    public NettyHttpConsumer(NettyHttpEndpoint nettyEndpoint, Processor processor, NettyConfiguration configuration) {
-        super(nettyEndpoint, processor, configuration);
-    }
+    public static final String CONTENT_TYPE_JAVA_SERIALIZED_OBJECT = "application/x-java-serialized-object";
+    public static final String CONTENT_TYPE_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+    public static final String HTTP_RESPONSE_TEXT = "CamelHttpResponseText";
 
-    @Override
-    public NettyHttpEndpoint getEndpoint() {
-        return (NettyHttpEndpoint) super.getEndpoint();
-    }
-
-    @Override
-    public NettyHttpConfiguration getConfiguration() {
-        return (NettyHttpConfiguration) super.getConfiguration();
+    private NettyHttpConstants() {
     }
 }

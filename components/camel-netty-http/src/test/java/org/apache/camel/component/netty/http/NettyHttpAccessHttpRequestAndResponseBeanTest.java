@@ -34,10 +34,10 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
     public void testRawHttpRequestAndResponseInBean() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("World", "Camel");
 
-        String out = template.requestBody("http://localhost:{{port}}/foo", "World", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
         assertEquals("Bye World", out);
 
-        String out2 = template.requestBody("http://localhost:{{port}}/foo", "Camel", String.class);
+        String out2 = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Camel", String.class);
         assertEquals("Bye Camel", out2);
 
         assertMockEndpointsSatisfied();

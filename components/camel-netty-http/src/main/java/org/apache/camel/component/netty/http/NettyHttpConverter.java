@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import org.apache.camel.Converter;
@@ -98,6 +100,12 @@ public final class NettyHttpConverter {
     @Converter
     public static byte[] toBytes(HttpResponse response, Exchange exchange) {
         return response.getContent().toByteBuffer().array();
+    }
+
+    @Converter
+    public static InputStream toInputStream(HttpResponse response, Exchange exchange) {
+        byte[] bytes = toBytes(response, exchange);
+        return new ByteArrayInputStream(bytes);
     }
 
 }

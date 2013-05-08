@@ -16,26 +16,20 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class NettyHttpContentTypeTest extends BaseNettyTest {
+public class NettyHttpEndpointUriEncodingIssueUrlDecodeDisabledTest extends BaseNettyTest {
 
     @Test
-    public void testContentType() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=\"iso-8859-1\"");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+    public void testEndpointUriWithDanishCharEncodingIssue() throws Exception {
+        String uri = "netty-http:http://localhost:{{port}}/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
+        String out = template.requestBody(uri, null, String.class);
 
-        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", data,
-                "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
+        assertEquals("We got claus%2Cs%C3%B8ren columns", out);
     }
 
     @Override
@@ -43,9 +37,12 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                from("netty-http:http://localhost:{{port}}/myapp/mytest?urlDecodeHeaders=false").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String columns = exchange.getIn().getHeader("columns", String.class);
+                        exchange.getOut().setBody("We got " + columns + " columns");
+                    }
+                });
             }
         };
     }

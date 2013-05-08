@@ -28,7 +28,7 @@ public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
     public void testAccessHttpRequest() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("World");
 
-        String out = template.requestBody("http://localhost:{{port}}/foo", "World", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

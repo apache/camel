@@ -54,6 +54,6 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
     @Override
     protected Message getResponseMessage(Exchange exchange, MessageEvent messageEvent) throws Exception {
         // use the binding
-        return producer.getEndpoint().getNettyHttpBinding().toCamelMessage(response, exchange);
+        return producer.getEndpoint().getNettyHttpBinding().toCamelMessage(response, exchange, producer.getConfiguration());
     }
 }

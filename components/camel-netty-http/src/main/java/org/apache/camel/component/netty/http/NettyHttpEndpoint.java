@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.netty.NettyConfiguration;
@@ -37,6 +38,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
  */
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
+    private String uriParameters;
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean traceEnabled;
@@ -55,7 +57,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     @Override
     public Producer createProducer() throws Exception {
-        Producer answer = new NettyHttpProducer(this, getConfiguration());
+        Producer answer = new NettyHttpProducer(this, getConfiguration(), getUriParameters());
         if (isSynchronous()) {
             return new SynchronousDelegateProducer(answer);
         } else {
@@ -64,12 +66,17 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     }
 
     @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        throw new UnsupportedOperationException("This component does not support polling consumer");
+    }
+
+    @Override
     public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         Exchange exchange = createExchange();
 
         // use the http binding
         HttpRequest request = (HttpRequest) messageEvent.getMessage();
-        Message in = getNettyHttpBinding().toCamelMessage(request, exchange);
+        Message in = getNettyHttpBinding().toCamelMessage(request, exchange, getConfiguration());
         exchange.setIn(in);
 
         // set additional headers
@@ -83,6 +90,12 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         NettyHttpHelper.setCharsetFromContentType(contentType, exchange);
 
         return exchange;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
+        return true;
     }
 
     @Override
@@ -120,6 +133,14 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
+    }
+
+    public String getUriParameters() {
+        return uriParameters;
+    }
+
+    public void setUriParameters(String uriParameters) {
+        this.uriParameters = uriParameters;
     }
 
     @Override

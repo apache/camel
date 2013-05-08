@@ -24,18 +24,23 @@ import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.URISupport;
 
 /**
  * Netty HTTP based component.
  */
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
 
-    // TODO: consider supporting on consumer
+    // TODO: support on consumer
     // - bridgeEndpoint
     // - matchOnUriPrefix
+    // - urlrewrite
 
-    // TODO: netty http producer
-    // TODO: make it easy to turn keep-alive on|off on producer
+    // TODO: producer
+    // - add support for HTTP_URI / HTTP_QUERY overrides
+    // - add actual url to state so we know exactly which url we called also for done callback
+    // - add support for connection timeout
+    // - add support for request timeout
 
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
@@ -64,6 +69,13 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         NettyHttpEndpoint answer = new NettyHttpEndpoint(remaining, this, config);
         answer.setTimer(getTimer());
         setProperties(answer.getConfiguration(), parameters);
+
+        // any leftover parameters is uri parameters
+        if (!parameters.isEmpty()) {
+            String query = URISupport.createQueryString(parameters);
+            answer.setUriParameters(query);
+        }
+
         // set component options on endpoint as defaults
         if (answer.getNettyHttpBinding() == null) {
             answer.setNettyHttpBinding(getNettyHttpBinding());

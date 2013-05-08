@@ -16,26 +16,31 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.netty.NettyConfiguration;
-import org.apache.camel.component.netty.NettyConsumer;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * HTTP based {@link NettyConsumer}
- */
-public class NettyHttpConsumer extends NettyConsumer {
+public class NettyHttpSimpleUriParametersTest extends BaseNettyTest {
 
-    public NettyHttpConsumer(NettyHttpEndpoint nettyEndpoint, Processor processor, NettyConfiguration configuration) {
-        super(nettyEndpoint, processor, configuration);
+    @Test
+    public void testHttpSimple() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?name=bar", "Hello World", String.class);
+        assertEquals("Bye bar", out);
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
-    public NettyHttpEndpoint getEndpoint() {
-        return (NettyHttpEndpoint) super.getEndpoint();
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                    .to("mock:input")
+                    .transform().simple("Bye ${header.name}");
+            }
+        };
     }
 
-    @Override
-    public NettyHttpConfiguration getConfiguration() {
-        return (NettyHttpConfiguration) super.getConfiguration();
-    }
 }

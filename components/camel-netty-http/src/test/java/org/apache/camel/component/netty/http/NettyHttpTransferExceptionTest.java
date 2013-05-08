@@ -16,24 +16,23 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
-
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpContentTypeTest extends BaseNettyTest {
+public class NettyHttpTransferExceptionTest extends BaseNettyTest {
 
     @Test
-    public void testContentType() throws Exception {
+    public void testHttpTransferException() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=\"iso-8859-1\"");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
 
-        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", data,
-                "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
-        assertEquals("Bye World", out);
+        try {
+            template.requestBody("netty-http:http://localhost:{{port}}/foo?transferException=true", "Hello World", String.class);
+            fail("Should have failed");
+        } catch (CamelExecutionException e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Camel cannot do this", cause.getMessage());
+        }
 
         assertMockEndpointsSatisfied();
     }
@@ -43,9 +42,9 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                from("netty-http:http://0.0.0.0:{{port}}/foo?transferException=true")
                     .to("mock:input")
-                    .transform().constant("Bye World");
+                    .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

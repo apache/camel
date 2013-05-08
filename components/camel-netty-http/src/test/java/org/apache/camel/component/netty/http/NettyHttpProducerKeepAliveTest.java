@@ -16,23 +16,32 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpContentTypeTest extends BaseNettyTest {
+public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
 
     @Test
-    public void testContentType() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=\"iso-8859-1\"");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+    public void testHttpKeepAlive() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World", "Hello Again");
 
-        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", data,
-                "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello World", String.class);
+        assertEquals("Bye World", out);
+
+        out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello Again", String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpKeepAliveFalse() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World", "Hello Again");
+
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello World", String.class);
+        assertEquals("Bye World", out);
+
+        out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello Again", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

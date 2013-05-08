@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
+import org.jboss.netty.handler.codec.http.HttpMethod;
+import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
  * Helpers.
@@ -78,6 +84,87 @@ public final class NettyHttpHelper {
         }
 
         headers.put(key, value);
+    }
+
+    /**
+     * Creates the {@link HttpMethod} to use to call the remote server, often either its GET or POST.
+     *
+     * @param message  the Camel message
+     * @return the created method
+     */
+    public static HttpMethod createMethod(Message message, boolean hasPayload) {
+        // use header first
+        HttpMethod m = message.getHeader(Exchange.HTTP_METHOD, HttpMethod.class);
+        if (m != null) {
+            return m;
+        }
+        String name = message.getHeader(Exchange.HTTP_METHOD, String.class);
+        if (name != null) {
+            return HttpMethod.valueOf(name);
+        }
+
+        if (hasPayload) {
+            // use POST if we have payload
+            return HttpMethod.POST;
+        } else {
+            // fallback to GET
+            return HttpMethod.GET;
+        }
+    }
+
+    public static Exception populateNettyHttpOperationFailedException(Exchange exchange, HttpResponse response, int responseCode, boolean transferException) {
+        // TODO: we need to have the uri of the http server we called
+        String uri = "TODO";
+        String statusText = response.getStatus().getReasonPhrase();
+
+        if (responseCode >= 300 && responseCode < 400) {
+            String redirectLocation = response.getHeader("location");
+            if (redirectLocation != null) {
+                return new NettyHttpOperationFailedException(uri, responseCode, statusText, redirectLocation, response);
+            } else {
+                // no redirect location
+                return new NettyHttpOperationFailedException(uri, responseCode, statusText, null, response);
+            }
+        }
+
+        if (transferException) {
+            String contentType = response.getHeader(Exchange.CONTENT_TYPE);
+            if (NettyHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+                // if the response was a serialized exception then use that
+                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, response);
+                if (is != null) {
+                    try {
+                        Object body = deserializeJavaObjectFromStream(is);
+                        if (body instanceof Exception) {
+                            return (Exception) body;
+                        }
+                    } catch (Exception e) {
+                        return e;
+                    } finally {
+                        IOHelper.close(is);
+                    }
+                }
+            }
+        }
+
+        // internal server error (error code 500)
+        return new NettyHttpOperationFailedException(uri, responseCode, statusText, null, response);
+    }
+
+    public static Object deserializeJavaObjectFromStream(InputStream is) throws ClassNotFoundException, IOException {
+        if (is == null) {
+            return null;
+        }
+
+        Object answer = null;
+        ObjectInputStream ois = new ObjectInputStream(is);
+        try {
+            answer = ois.readObject();
+        } finally {
+            IOHelper.close(ois);
+        }
+
+        return answer;
     }
 
 }

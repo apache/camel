@@ -16,23 +16,39 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpContentTypeTest extends BaseNettyTest {
+public class NettyHttpProducerSimpleGetTest extends BaseNettyTest {
 
     @Test
-    public void testContentType() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=\"iso-8859-1\"");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+    public void testHttpSimple() throws Exception {
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", data,
-                "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", null, String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpSimpleHeader() throws Exception {
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "GET", String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpSimpleHeaderAndBody() throws Exception {
+        // even if we have a body we force it to be GET
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "GET", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

@@ -25,7 +25,7 @@ public class NettyHttpSimpleTest extends BaseNettyTest {
     public void testHttpSimple() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("http://localhost:{{port}}/foo", "Hello World", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

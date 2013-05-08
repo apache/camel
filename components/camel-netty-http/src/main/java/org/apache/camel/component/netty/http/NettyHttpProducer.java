@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.netty.http;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyProducer;
+import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
  * HTTP based {@link NettyProducer}.
  */
 public class NettyHttpProducer extends NettyProducer {
 
-    public NettyHttpProducer(NettyHttpEndpoint nettyEndpoint, NettyConfiguration configuration) {
+    private final String uriParameters;
+
+    public NettyHttpProducer(NettyHttpEndpoint nettyEndpoint, NettyConfiguration configuration, String uriParameters) {
         super(nettyEndpoint, configuration);
+        this.uriParameters = uriParameters;
     }
 
     @Override
@@ -35,12 +40,66 @@ public class NettyHttpProducer extends NettyProducer {
     }
 
     @Override
+    public NettyHttpConfiguration getConfiguration() {
+        return (NettyHttpConfiguration) super.getConfiguration();
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        return super.process(exchange, new NettyHttpProducerCallback(exchange, callback));
+    }
+
+    @Override
     protected Object getRequestBody(Exchange exchange) throws Exception {
         String uri = getEndpoint().getEndpointUri();
+
+        if (uriParameters != null) {
+            uri += "?" + uriParameters;
+        }
+
         if (exchange.hasOut()) {
-            return getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getOut(), uri);
+            return getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getOut(), uri, getConfiguration());
         } else {
-            return getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), uri);
+            return getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), uri, getConfiguration());
         }
     }
+
+    /**
+     * Callback that ensures the channel is returned to the pool when we are done.
+     */
+    private final class NettyHttpProducerCallback implements AsyncCallback {
+
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+
+        private NettyHttpProducerCallback(Exchange exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.callback = callback;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            try {
+                NettyHttpMessage nettyMessage = exchange.hasOut() ? exchange.getOut(NettyHttpMessage.class) : exchange.getIn(NettyHttpMessage.class);
+                if (nettyMessage != null) {
+                    HttpResponse response = nettyMessage.getHttpResponse();
+                    if (response != null) {
+                        int code = response.getStatus() != null ? response.getStatus().getCode() : -1;
+                        log.debug("Http responseCode: {}", code);
+
+                        // if there was a http error code (300 or higher) then check if we should throw an exception
+                        if (code >= 300 && getConfiguration().isThrowExceptionOnFailure()) {
+                            // operation failed so populate exception to throw
+                            Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, response, code, getConfiguration().isTransferException());
+                            exchange.setException(cause);
+                        }
+                    }
+                }
+            } finally {
+                // ensure we call the delegated callback
+                callback.done(doneSync);
+            }
+        }
+    }
+
 }

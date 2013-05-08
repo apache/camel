@@ -16,26 +16,17 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpContentTypeTest extends BaseNettyTest {
+public class NettyHttpReturnDataNotInputStreamConvertableTest extends BaseNettyTest {
 
     @Test
-    public void testContentType() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=\"iso-8859-1\"");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
-
-        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", data,
-                "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
+    public void testHttpReturnDataNotInputStreamConvertableTest() throws Exception {
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/test", "Hello World", String.class);
+        assertEquals("This is the response", out);
     }
 
     @Override
@@ -43,11 +34,20 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                from("netty-http:http://localhost:{{port}}/test")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getOut().setBody(new MyResponseBean());
+                            }
+                        });
             }
         };
     }
 
+    private static class MyResponseBean {
+        @Override
+        public String toString() {
+            return "This is the response";
+        }
+    }
 }

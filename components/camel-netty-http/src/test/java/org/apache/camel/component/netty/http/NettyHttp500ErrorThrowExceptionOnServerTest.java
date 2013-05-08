@@ -16,27 +16,40 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
-
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpContentTypeTest extends BaseNettyTest {
+public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTest {
 
     @Test
-    public void testContentType() throws Exception {
+    public void testHttp500Error() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=\"iso-8859-1\"");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
 
-        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", data,
-                "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
-        assertEquals("Bye World", out);
+        try {
+            template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
+            fail("Should have failed");
+        } catch (CamelExecutionException e) {
+            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            assertEquals(500, cause.getStatusCode());
+            String trace = context.getTypeConverter().convertTo(String.class, cause.getResponse().getContent());
+            assertNotNull(trace);
+            assertTrue(trace.startsWith("java.lang.IllegalArgumentException: Camel cannot do this"));
+        }
 
         assertMockEndpointsSatisfied();
     }
+
+    @Test
+    public void testHttp500ErrorDisabled() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+
+        String body = template.requestBody("netty-http:http://localhost:{{port}}/foo?throwExceptionOnFailure=false", "Hello World", String.class);
+        assertTrue(body.startsWith("java.lang.IllegalArgumentException: Camel cannot do this"));
+
+        assertMockEndpointsSatisfied();
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -45,7 +58,7 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                     .to("mock:input")
-                    .transform().constant("Bye World");
+                    .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

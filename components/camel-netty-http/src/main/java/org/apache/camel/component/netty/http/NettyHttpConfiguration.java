@@ -29,7 +29,11 @@ import org.jboss.netty.channel.ChannelHandler;
 public class NettyHttpConfiguration extends NettyConfiguration {
 
     private boolean chunked = true;
+    private boolean urlDecodeHeaders = true;
+    private boolean mapHeaders = true;
     private boolean compression;
+    private boolean throwExceptionOnFailure = true;
+    private boolean transferException;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -69,5 +73,37 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public void setCompression(boolean compression) {
         this.compression = compression;
+    }
+
+    public boolean isThrowExceptionOnFailure() {
+        return throwExceptionOnFailure;
+    }
+
+    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
+        this.throwExceptionOnFailure = throwExceptionOnFailure;
+    }
+
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
+    }
+
+    public boolean isUrlDecodeHeaders() {
+        return urlDecodeHeaders;
+    }
+
+    public void setUrlDecodeHeaders(boolean urlDecodeHeaders) {
+        this.urlDecodeHeaders = urlDecodeHeaders;
+    }
+
+    public boolean isMapHeaders() {
+        return mapHeaders;
+    }
+
+    public void setMapHeaders(boolean mapHeaders) {
+        this.mapHeaders = mapHeaders;
     }
 }

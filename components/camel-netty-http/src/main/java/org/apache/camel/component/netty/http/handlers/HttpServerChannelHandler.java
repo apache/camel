@@ -63,7 +63,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         request = (HttpRequest) messageEvent.getMessage();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Message received: {} keep-alive: {}", request, isKeepAlive(request));
+            LOG.debug("Message received: {}", request);
+            LOG.debug("   is keep-alive: {}", isKeepAlive(request));
         }
 
         if (is100ContinueExpected(request)) {
@@ -102,7 +103,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         if (consumer.isRunAllowed()) {
 
             if (exceptionEvent.getCause() instanceof ClosedChannelException) {
-                LOG.warn("Channel already closed. Ignoring this exception.");
+                LOG.debug("Channel already closed. Ignoring this exception.");
             } else {
                 LOG.warn("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
                 // close channel in case an exception was thrown
@@ -115,9 +116,10 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected ChannelFutureListener createResponseFutureListener(NettyConsumer consumer, Exchange exchange, SocketAddress remoteAddress) {
         // make sure to close channel if not keep-alive
         if (request != null && isKeepAlive(request)) {
+            LOG.trace("Request has Connection: keep-alive so Channel is not being closed");
             return null;
         } else {
-            LOG.debug("Closing channel as not keep-alive");
+            LOG.trace("Request is not Connection: close so Channel is being closed");
             return ChannelFutureListener.CLOSE;
         }
     }
@@ -126,9 +128,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected Object getResponseBody(Exchange exchange) throws Exception {
         // use the binding
         if (exchange.hasOut()) {
-            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getOut());
+            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getOut(), consumer.getConfiguration());
         } else {
-            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getIn());
+            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getIn(), consumer.getConfiguration());
         }
     }
 }
