@@ -61,7 +61,7 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
         delay(500);
         client.delete("/camel");
 
-        mock.assertIsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(30, TimeUnit.SECONDS);
 
         int lastVersion = -1;
         for (int i = 0; i < mock.getExchanges().size(); i++) {
@@ -90,7 +90,7 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
         createCamelNode();
         updateNode(10);
   
-        mock.assertIsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(30, TimeUnit.SECONDS);
 
         client.delete("/camel");
     }
