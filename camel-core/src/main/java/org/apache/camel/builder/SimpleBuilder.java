@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Creates an {@link org.apache.camel.language.Simple} language builder.
@@ -70,7 +71,7 @@ public class SimpleBuilder implements Predicate, Expression {
 
     public boolean matches(Exchange exchange) {
         if (predicate == null) {
-            predicate = exchange.getContext().resolveLanguage("simple").createPredicate(text);
+            predicate = createPredicate(exchange);
         }
         return predicate.matches(exchange);
     }
@@ -82,12 +83,32 @@ public class SimpleBuilder implements Predicate, Expression {
         return expression.evaluate(exchange, type);
     }
 
+    private Predicate createPredicate(Exchange exchange) {
+        SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
+        if (resultType != null) {
+            simple.setResultType(resultType);
+        }
+        // resolve property placeholders
+        try {
+            String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
+            return simple.createPredicate(resolve);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+        }
+    }
+
     private Expression createExpression(Exchange exchange) {
         SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
         if (resultType != null) {
             simple.setResultType(resultType);
         }
-        return simple.createExpression(text);
+        // resolve property placeholders
+        try {
+            String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
+            return simple.createExpression(resolve);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+        }
     }
 
     public String toString() {
