@@ -26,7 +26,7 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest
     
     @Test
     public void testSendToJetty() throws Exception {
-        Exchange exchange = template.send("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {
+        Exchange exchange = template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("b1=x&b2=y");

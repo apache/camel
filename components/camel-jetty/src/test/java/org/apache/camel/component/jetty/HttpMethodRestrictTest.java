@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-
-
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -28,7 +25,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Test;
-
 
 public class HttpMethodRestrictTest extends BaseJettyTest {
 
