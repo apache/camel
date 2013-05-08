@@ -34,10 +34,10 @@ public class MainTest {
         main.setIncludeSelfAsBundle(true);
         // setup the blueprint file here
         main.setDescriptors("org/apache/camel/test/blueprint/main-loadfile.xml");
-        // set the adminConfig persistent id
-        main.setPid("stuff");
-        // set the adminConfig persistent file name
-        main.setPFileName("src/test/resources/etc/stuff.cfg");
+        // set the configAdmin persistent id
+        main.setConfigAdminPid("stuff");
+        // set the configAdmin persistent file name
+        main.setConfigAdminFileName("src/test/resources/etc/stuff.cfg");
         main.start();
         
         ProducerTemplate template = main.getCamelTemplate();

@@ -59,15 +59,15 @@ public class Main extends MainSupport {
             }
         });
         
-        addOption(new ParameterOption("pid", "persistentId", 
-                 "Sets the ConfigAdmin persistentId", "persistentId") {
+        addOption(new ParameterOption("pid", "configAdminPid", 
+                 "Sets the ConfigAdmin persistentId", "configAdminPid") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setConfigAdminPid(parameter);
             }
         });
         
-        addOption(new ParameterOption("pf", "persistentFileName", 
-                  "Sets the ConfigAdmin persistent file name", "persistentFileName") {
+        addOption(new ParameterOption("pf", "configAdminFileName", 
+                  "Sets the ConfigAdmin persistent file name", "configAdminFileName") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setConfigAdminFileName(parameter);
             }
