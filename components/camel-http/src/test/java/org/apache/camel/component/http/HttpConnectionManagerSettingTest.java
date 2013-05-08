@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import static org.apache.camel.component.http.HttpMethods.POST;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -25,6 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.junit.Before;
 import org.junit.Test;
+import static org.apache.camel.component.http.HttpMethods.POST;
 
 public class HttpConnectionManagerSettingTest extends CamelTestSupport {
     

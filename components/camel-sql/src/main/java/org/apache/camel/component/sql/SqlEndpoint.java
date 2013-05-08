@@ -20,8 +20,10 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.*;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
