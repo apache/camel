@@ -18,11 +18,17 @@ package org.apache.camel.language.groovy;
 
 import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.LRUSoftCache;
+
+import groovy.lang.Script;
 
 /**
- * @version 
+ * @version
  */
 public class GroovyLanguage implements Language, IsSingleton {
+
+    // Cache used to stores the compiled scripts (aka their classes)
+    private final LRUSoftCache<String, Class<Script>> scriptCache = new LRUSoftCache<String, Class<Script>>(1000);
 
     public static GroovyExpression groovy(String expression) {
         return new GroovyLanguage().createExpression(expression);
@@ -39,4 +45,13 @@ public class GroovyLanguage implements Language, IsSingleton {
     public boolean isSingleton() {
         return true;
     }
+
+    Class<Script> getScriptFromCache(String script) {
+        return scriptCache.get(script);
+    }
+
+    void addScriptToCache(String script, Class<Script> scriptClass) {
+        scriptCache.put(script, scriptClass);
+    }
+
 }
