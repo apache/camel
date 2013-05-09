@@ -220,6 +220,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     public void setTimeout(long timeout) {
+        if (timeout < 0) {
+            throw new IllegalArgumentException("Timeout must not be lesser than 0.");
+        }
         this.timeout = timeout;
     }
 
@@ -533,9 +536,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 }
                 if (size > 0) {
                     try {
-                        LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
+                        if (timeout > 0) {
+                            LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
                                  + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.");
-                        Thread.sleep(loopDelaySeconds * 1000);
+                            Thread.sleep(loopDelaySeconds * 1000);
+                        } else {
+                            // we should not wait here 
+                            throw new InterruptedException();
+                        }
                     } catch (InterruptedException e) {
                         if (abortAfterTimeout) {
                             LOG.warn("Interrupted while waiting during graceful shutdown, will abort.");
