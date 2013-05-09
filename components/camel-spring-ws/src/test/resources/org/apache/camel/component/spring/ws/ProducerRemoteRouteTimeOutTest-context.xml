@@ -27,7 +27,7 @@
 		<constructor-arg ref="messageFactory" />
 		<property name="messageSender">
 			<bean
-				class="org.springframework.ws.transport.http.CommonsHttpMessageSender" />
+				class="org.springframework.ws.transport.http.HttpComponentsMessageSender" />
 		</property>
 	</bean>
   
@@ -35,7 +35,7 @@
         <constructor-arg ref="messageFactory" />
         <property name="messageSender">
             <bean
-                class="org.springframework.ws.transport.http.CommonsHttpMessageSender" />
+                class="org.springframework.ws.transport.http.HttpComponentsMessageSender" />
         </property>
     </bean>
 

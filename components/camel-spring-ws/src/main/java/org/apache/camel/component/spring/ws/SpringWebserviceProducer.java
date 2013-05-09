@@ -47,7 +47,7 @@ import org.springframework.ws.soap.client.core.SoapActionCallback;
 import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.WebServiceMessageSender;
 import org.springframework.ws.transport.http.AbstractHttpWebServiceMessageSender;
-import org.springframework.ws.transport.http.CommonsHttpMessageSender;
+import org.springframework.ws.transport.http.HttpComponentsMessageSender;
 import org.springframework.ws.transport.http.HttpUrlConnection;
 import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
 
@@ -109,18 +109,18 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
         for (int i = 0; i < messageSenders.length; i++) {
             WebServiceMessageSender messageSender = messageSenders[i];
-            if (messageSender instanceof CommonsHttpMessageSender) {
+            if (messageSender instanceof HttpComponentsMessageSender) {
                 if (configuration.getSslContextParameters() != null) {
-                    LOG.warn("Not applying SSLContextParameters based configuration to CommonsHttpMessageSender.  "
+                    LOG.warn("Not applying SSLContextParameters based configuration to HttpComponentsMessageSender.  "
                             + "If you are using this MessageSender, which you are not by default, you will need "
                             + "to configure SSL using the Commons HTTP 3.x Protocol registry.");
                 }
 
                 if (configuration.getTimeout() > -1) {
-                    if (messageSender.getClass().equals(CommonsHttpMessageSender.class)) {
-                        ((CommonsHttpMessageSender) messageSender).setReadTimeout(configuration.getTimeout());
+                    if (messageSender.getClass().equals(HttpComponentsMessageSender.class)) {
+                        ((HttpComponentsMessageSender) messageSender).setReadTimeout(configuration.getTimeout());
                     } else {
-                        LOG.warn("Not applying timeout configuration to CommonsHttpMessageSender based implementation.  "
+                        LOG.warn("Not applying timeout configuration to HttpComponentsMessageSender based implementation.  "
                                 + "You are using what appears to be a custom MessageSender, which you are not doing by default. "
                                 + "You will need configure timeout on your own.");
                     }
