@@ -93,15 +93,11 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
-        Configuration auth = Configuration.getConfiguration();
-        log.trace("Existing JAAS Configuration {}", auth);
+        Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
             return doPoll();
         } finally {
-            if (auth != null) {
-                log.trace("Restoring existing JAAS Configuration {}", auth);
-                Configuration.setConfiguration(auth);
-            }
+            HdfsComponent.setJAASConfiguration(auth);
         }
     }
 
