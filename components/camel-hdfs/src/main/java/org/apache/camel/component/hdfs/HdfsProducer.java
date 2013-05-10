@@ -94,8 +94,7 @@ public class HdfsProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
-        Configuration auth = Configuration.getConfiguration();
-        log.trace("Existing JAAS Configuration {}", auth);
+        Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
             super.doStart();
 
@@ -117,10 +116,7 @@ public class HdfsProducer extends DefaultProducer {
                 scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
             }
         } finally {
-            if (auth != null) {
-                log.trace("Restoring existing JAAS Configuration {}", auth);
-                Configuration.setConfiguration(auth);
-            }
+            HdfsComponent.setJAASConfiguration(auth);
         }
     }
 
@@ -172,15 +168,11 @@ public class HdfsProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
-        Configuration auth = Configuration.getConfiguration();
-        log.trace("Existing JAAS Configuration {}", auth);
+        Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
             doProcess(exchange);
         } finally {
-            if (auth != null) {
-                log.trace("Restoring existing JAAS Configuration {}", auth);
-                Configuration.setConfiguration(auth);
-            }
+            HdfsComponent.setJAASConfiguration(auth);
         }
     }
 
