@@ -23,9 +23,12 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
@@ -37,25 +40,21 @@ import org.exolab.castor.xml.XMLContext;
  * href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * interface which leverage the Castor library for XML marshaling and
  * unmarshaling
- *
- * @version 
  */
-public abstract class AbstractCastorDataFormat implements DataFormat {
+public abstract class AbstractCastorDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
     /**
      * The default encoding used for stream access.
      */
     public static final String DEFAULT_ENCODING = "UTF-8";
 
+    private CamelContext camelContext;
     private String encoding = DEFAULT_ENCODING;
     private String mappingFile;
     private String[] classNames;
     private String[] packages;
     private boolean validation;
-
     private volatile XMLContext xmlContext;
-    private volatile Marshaller marshaller;
-    private volatile Unmarshaller unmarshaller;
 
     public AbstractCastorDataFormat() {
     }
@@ -66,57 +65,63 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         Writer writer = new OutputStreamWriter(outputStream, encoding);
-        Marshaller.marshal(body, writer);
+
+        Marshaller marshaller = createMarshaller(exchange);
+        marshaller.setWriter(writer);
+        marshaller.marshal(body);
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         Reader reader = new InputStreamReader(inputStream, encoding);
-        return getUnmarshaller(exchange).unmarshal(reader);
+        return createUnmarshaller(exchange).unmarshal(reader);
     }
 
-    public XMLContext getXmlContext(ClassResolver resolver, ClassLoader contextClassLoader) throws Exception {
-        if (xmlContext == null) {
-            xmlContext = new XMLContext();
+    protected XMLContext createXMLContext(ClassResolver resolver, ClassLoader contextClassLoader) throws Exception {
+        XMLContext xmlContext = new XMLContext();
 
-            if (ObjectHelper.isNotEmpty(getMappingFile())) {
-                Mapping xmlMap;
-                if (contextClassLoader != null) {
-                    xmlMap = new Mapping(contextClassLoader);
-                } else {
-                    xmlMap = new Mapping();
-                }
-                xmlMap.loadMapping(resolver.loadResourceAsURL(getMappingFile()));
-                xmlContext.addMapping(xmlMap);
+        if (ObjectHelper.isNotEmpty(getMappingFile())) {
+            Mapping xmlMap;
+            if (contextClassLoader != null) {
+                xmlMap = new Mapping(contextClassLoader);
+            } else {
+                xmlMap = new Mapping();
             }
-
-            if (getPackages() != null) {
-                xmlContext.addPackages(getPackages());
-            }
-            if (getClassNames() != null) {
-                for (String name : getClassNames()) {
-                    Class<?> clazz = resolver.resolveClass(name);
-                    xmlContext.addClass(clazz);
-                }
-            }
+            xmlMap.loadMapping(resolver.loadResourceAsURL(getMappingFile()));
+            xmlContext.addMapping(xmlMap);
         }
 
+        if (getPackages() != null) {
+            xmlContext.addPackages(getPackages());
+        }
+        if (getClassNames() != null) {
+            for (String name : getClassNames()) {
+                Class<?> clazz = resolver.resolveClass(name);
+                xmlContext.addClass(clazz);
+            }
+        }
         return xmlContext;
     }
 
-    public Unmarshaller getUnmarshaller(Exchange exchange) throws Exception {
-        if (this.unmarshaller == null) {
-            this.unmarshaller = getXmlContext(exchange.getContext().getClassResolver(), exchange.getContext().getApplicationContextClassLoader()).createUnmarshaller();
-            this.unmarshaller.setValidation(isValidation());
-        }
-        return this.unmarshaller;
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
-    public Marshaller getMarshaller(Exchange exchange) throws Exception {
-        if (this.marshaller == null) {
-            this.marshaller = getXmlContext(exchange.getContext().getClassResolver(), exchange.getContext().getApplicationContextClassLoader()).createMarshaller();
-            this.marshaller.setValidation(isValidation());
-        }
-        return this.marshaller;
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public Unmarshaller createUnmarshaller(Exchange exchange) throws Exception {
+        // need to create new marshaller as we may have concurrent processing
+        Unmarshaller answer = xmlContext.createUnmarshaller();
+        answer.setValidation(isValidation());
+        return answer;
+    }
+
+    public Marshaller createMarshaller(Exchange exchange) throws Exception {
+        // need to create new marshaller as we may have concurrent processing
+        Marshaller answer = xmlContext.createMarshaller();
+        answer.setValidation(isValidation());
+        return answer;
     }
 
     public void setXmlContext(XMLContext xmlContext) {
@@ -129,14 +134,6 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
 
     public void setMappingFile(String mappingFile) {
         this.mappingFile = mappingFile;
-    }
-
-    public void setMarshaller(Marshaller marshaller) {
-        this.marshaller = marshaller;
-    }
-
-    public void setUnmarshaller(Unmarshaller unmarshaller) {
-        this.unmarshaller = unmarshaller;
     }
 
     public String[] getClassNames() {
@@ -170,4 +167,17 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
     public void setValidation(boolean validation) {
         this.validation = validation;
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (xmlContext == null) {
+            xmlContext = createXMLContext(getCamelContext().getClassResolver(), getCamelContext().getApplicationContextClassLoader());
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
 }

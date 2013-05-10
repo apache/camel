@@ -17,7 +17,8 @@
 package org.apache.camel.dataformat.castor;
 
 public class Student {
-    private String stuName;
+    private String stuFirstName;
+    private String stuLastName;
     private Integer stuAge;
 
     public Integer getStuAge() {
@@ -28,17 +29,43 @@ public class Student {
         this.stuAge = stuAge;
     }
 
-    public String getStuName() {
-        return stuName;
+    public String getStuFirstName() {
+        return stuFirstName;
     }
 
-    public void setStuName(String stuName) {
-        this.stuName = stuName;
+    public void setStuFirstName(String stuFirstName) {
+        this.stuFirstName = stuFirstName;
+    }
+
+    public String getStuLastName() {
+        return stuLastName;
+    }
+
+    public void setStuLastName(String stuLastName) {
+        this.stuLastName = stuLastName;
     }
 
     @Override
     public String toString() {
-        return "Name : " + getStuName();
+        return "Name : " + getStuLastName()
+                + ", " + getStuFirstName()
+                + " [" + stuAge + "]";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            Student student = (Student) obj;
+            return stuLastName.equals(student.stuLastName)
+                    && stuFirstName.equals(student.stuFirstName)
+                    && stuAge.equals(student.stuAge);
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

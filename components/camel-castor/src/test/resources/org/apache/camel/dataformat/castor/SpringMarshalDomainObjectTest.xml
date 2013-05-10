@@ -25,7 +25,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">        
        
         <dataFormats>
-            <castor id="castor"/>
+            <castor id="castor" mappingFile="map.xml"/>
         </dataFormats>
 
         <route>
@@ -37,6 +37,13 @@
         <route>
             <from uri="direct:marshal"/>
             <marshal ref="castor"/>
+            <to uri="mock:result"/>	
+        </route>
+        
+        <route>
+            <from uri="direct:unmarshal"/>
+            <unmarshal ref="castor"/>
+            <to uri="mock:result"/>	
         </route>
 
     </camelContext>   

@@ -37,7 +37,7 @@ public class MarshalWithMappingDomainObjectTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         Student student = new Student();
-        student.setStuName("Dilshan");
+        student.setStuLastName("Dilshan");
         student.setStuAge(25);
         template.sendBody("direct:marshal", student);
 
@@ -54,11 +54,12 @@ public class MarshalWithMappingDomainObjectTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         mock.expectedMessageCount(1);
 
-        String xml = "<student><name>Sagara Gunathunga</name><age>27</age></student>";
+        String xml = "<student><firstname>Sagara</firstname><lastname>Gunathunga</lastname><age>27</age></student>";
         template.sendBody("direct:unmarshal", xml);
 
         Student student = new Student();
-        student.setStuName("Sagara Gunathunga");
+        student.setStuLastName("Gunathunga");
+        student.setStuFirstName("Sagara");
         student.setStuAge(27);
 
         mock.assertIsSatisfied();

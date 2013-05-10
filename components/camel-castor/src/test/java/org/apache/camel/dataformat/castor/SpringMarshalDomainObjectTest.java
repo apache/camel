@@ -45,6 +45,36 @@ public class SpringMarshalDomainObjectTest extends CamelSpringTestSupport {
     }
 
     @Test
+    public void testMappingOfDomainObject() throws Exception {
+        // some platform cannot test using Castor as it uses a SUN dependent Xerces
+        if (isJavaVendor("IBM")) {
+            return;
+        }
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+
+        Student expectedStudent = new Student();
+        expectedStudent.setStuFirstName("John");
+        expectedStudent.setStuLastName("Doe");
+        expectedStudent.setStuAge(21);
+
+        String expectedString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<student><firstname>John</firstname><lastname>Doe</lastname><age>21</age></student>";
+
+        template.sendBody("direct:unmarshal", expectedString);
+        template.sendBody("direct:marshal", expectedStudent);
+
+        mock.assertIsSatisfied();
+        Student actualStudent = mock.getExchanges().get(0).getIn().getBody(Student.class);
+        String actualString = mock.getExchanges().get(1).getIn().getBody(String.class);
+
+        // compare objects
+        assertEquals("The expected student does not match the unmarshal XML student.", expectedStudent, actualStudent);
+        // compare XML
+        assertEquals("The expected XML does not match the marshal student XML.", expectedString, actualString);
+    }
+
+    @Test
     public void testMarshalDomainObjectTwice() throws Exception {
         // some platform cannot test using Castor as it uses a SUN dependent Xerces
         if (isJavaVendor("IBM")) {
