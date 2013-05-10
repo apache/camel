@@ -195,7 +195,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 return;
             }
         } else {
-            out = exchange.getOut();
+            out = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
         }
 
         // get content type
