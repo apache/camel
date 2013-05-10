@@ -44,7 +44,6 @@
     <module>camel-bam</module>
     <module>camel-groovy</module>
     <module>camel-scala</module>
-    <module>camel-scala29</module>
     <module>camel-http</module>
     <module>camel-http4</module>
     <module>camel-jetty</module>

@@ -737,12 +737,6 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala/${project.version}</bundle>
   </feature>
-  <feature name='camel-scala_2.9' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>The camel-scala_2.9 feature is deprecated and will be removed in Camel 3.0/2.12 onwards.</details>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.scala-library/${scala29-bundle-version}</bundle>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-scala_2.9/${project.version}</bundle>
-  </feature>
   <feature name='camel-script-jruby' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-jruby/${scriptengines-version}</bundle>
     <bundle dependency='true'>mvn:org.jruby/jruby/${jruby-version}</bundle>

@@ -121,7 +121,6 @@
         <include>org.apache.camel:camel-rx</include>
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scala</include>
-        <include>org.apache.camel:camel-scala_2.9</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-servlet</include>
         <include>org.apache.camel:camel-servletlistener</include>
