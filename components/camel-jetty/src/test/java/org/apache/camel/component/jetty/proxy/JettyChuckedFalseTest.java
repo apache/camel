@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 public class JettyChuckedFalseTest extends BaseJettyTest {
@@ -59,6 +60,7 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
                         CachedOutputStream stream = new CachedOutputStream(exchange);
                         stream.write("This is hello world.".getBytes());
                         exchange.getOut().setBody(stream.getInputStream());
+                        IOHelper.close(stream);
                     }
                 });
             }

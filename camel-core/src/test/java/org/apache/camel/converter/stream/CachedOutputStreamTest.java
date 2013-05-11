@@ -92,6 +92,8 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
         files = file.list();
         assertEquals("we should have no temp file", files.length, 0);
+
+        IOHelper.close(cos);
     }
     
     public void testCacheStreamToFileAndCloseStreamEncrypted() throws IOException {
@@ -131,6 +133,8 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
         files = file.list();
         assertEquals("we should have no temp file", files.length, 0);
+
+        IOHelper.close(cos);
     }
 
     public void testCacheStreamToFileCloseStreamBeforeDone() throws IOException {
@@ -155,6 +159,8 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         
         files = file.list();
         assertEquals("we should have no temp file", files.length, 0);       
+
+        IOHelper.close(cos);
     }
     
     public void testCacheStreamToMemory() throws IOException {
@@ -171,6 +177,8 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertTrue("Should get the InputStreamCache", cache instanceof InputStreamCache);
         String temp = IOConverter.toString((InputStream)cache, null);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
+
+        IOHelper.close(cos);
     }
 
     public void testCacheStreamToMemoryAsDiskIsdisabled() throws IOException {
@@ -190,6 +198,8 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("Cached a wrong file", temp, TEST_STRING);
 
         exchange.getUnitOfWork().done(exchange);
+
+        IOHelper.close(cos);
     }
     
     public void testCachedOutputStreamCustomBufferSize() throws IOException {
@@ -220,5 +230,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         
         files = file.list();
         assertEquals("we should have no temp file", files.length, 0);       
+
+        IOHelper.close(cos);
     }
 }
