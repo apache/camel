@@ -101,8 +101,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     private static final String SECURE_RANDOM_PARAMETERS = "secureRandomParameters";
     private static final String SSL_CONTEXT_PARAMETERS = "sslContextParameters";
 
-    private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
+    private static final String PLACEHOLDER_NS = "http://camel.apache.org/schema/placeholder";
+    private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
 

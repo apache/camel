@@ -21,10 +21,14 @@
 
     <service interface="org.apache.aries.blueprint.NamespaceHandler">
         <service-properties>
-            <entry key="osgi.service.blueprint.namespace" value="http://camel.apache.org/schema/blueprint"/>
+            <entry key="osgi.service.blueprint.namespace">
+                <array value-type="java.lang.String">
+                    <value>http://camel.apache.org/schema/blueprint</value>
+                    <value>http://camel.apache.org/schema/placeholder</value>
+                </array>
+            </entry>
         </service-properties>
-        <bean class="org.apache.camel.blueprint.handler.CamelNamespaceHandler">
-        </bean>
+        <bean class="org.apache.camel.blueprint.handler.CamelNamespaceHandler"/>
     </service>
 
 </blueprint>
