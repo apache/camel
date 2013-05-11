@@ -18,9 +18,6 @@ package org.apache.camel.scala.converter
 import org.apache.camel.Converter
 import collection.JavaConversions._
 
-/**
- * @author Alexander Azarov <azarov@osinka.ru>
- */
 @Converter
 class ScalaImmutableCollections {
   import collection.{Iterator, Iterable, Map, Seq, Set}

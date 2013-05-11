@@ -200,5 +200,5 @@ class ConverterSpec extends FunSpec with CamelSpec with MustMatchers {
 
   }
 
-  private def to[T](x: AnyRef)(implicit m: Manifest[T]): Option[T] = Option( context.getTypeConverter.mandatoryConvertTo(m.erasure, createExchange, x).asInstanceOf[T] )
+  private def to[T](x: AnyRef)(implicit m: Manifest[T]): Option[T] = Option( context.getTypeConverter.mandatoryConvertTo(m.runtimeClass, createExchange, x).asInstanceOf[T] )
 }

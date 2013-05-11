@@ -37,7 +37,7 @@ class RollbackTest extends ScalaTestSupport {
       } catch {
         // oh no, not the Joker again, let's send Batman
         case e: RuntimeCamelException if (e.getCause.isInstanceOf[RollbackExchangeException]) => template.requestBody("direct:a", "Batman")
-        case unknown => fail("We didn't expect " + unknown)
+        case unknown : Throwable => fail("We didn't expect " + unknown)
       }
     }
   }
@@ -53,7 +53,7 @@ class RollbackTest extends ScalaTestSupport {
       } catch {
         // oh no, not Lex Luthor again, let's send Superman
         case e: RuntimeCamelException if (e.getCause.isInstanceOf[RollbackExchangeException]) => template.requestBody("direct:b", "Superman")
-        case unknown => fail("We didn't expect " + unknown)
+        case unknown : Throwable => fail("We didn't expect " + unknown)
       }
     }
   }
