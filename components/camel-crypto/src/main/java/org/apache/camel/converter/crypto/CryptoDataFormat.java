@@ -165,7 +165,8 @@ public class CryptoDataFormat implements DataFormat {
                 hmac.validate();
                 unmarshalled = plaintextStream.toByteArray();
             } finally {
-                IOHelper.close(cipherStream,  plaintextStream);
+                IOHelper.close(cipherStream, "cipher", LOG);
+                IOHelper.close(plaintextStream, "plaintext", LOG);
             }
         }
         return unmarshalled;
