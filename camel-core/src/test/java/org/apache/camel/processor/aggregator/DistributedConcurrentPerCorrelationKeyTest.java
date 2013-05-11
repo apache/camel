@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
-import org.junit.Test;
 
 /**
  * @version
@@ -39,7 +38,6 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
     private int size = 200;
     private final String uri = "direct:start";
 
-    @Test
     public void testAggregateConcurrentPerCorrelationKey() throws Exception {
         ExecutorService service = Executors.newFixedThreadPool(50);
         List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();

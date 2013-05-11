@@ -38,6 +38,7 @@ import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
+import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
@@ -58,6 +59,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private ExpressionSubElementDefinition completionTimeoutExpression;
     @XmlElement(name = "completionSize")
     private ExpressionSubElementDefinition completionSizeExpression;
+    @XmlElement(name = "optimisticLockRetryPolicy")
+    private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
     @XmlTransient
     private ExpressionDefinition expression;
     @XmlElementRef
@@ -70,6 +73,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private ScheduledExecutorService timeoutCheckerExecutorService;
     @XmlTransient
     private AggregationRepository aggregationRepository;
+    @XmlTransient
+    private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
     @XmlAttribute
     private Boolean parallelProcessing;
     @XmlAttribute
@@ -237,7 +242,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (getForceCompletionOnStop() != null) {
             answer.setForceCompletionOnStop(getForceCompletionOnStop());
         }
-
+        if (optimisticLockRetryPolicy == null) {
+            if (getOptimisticLockRetryPolicyDefinition() != null) {
+                answer.setOptimisticLockRetryPolicy(getOptimisticLockRetryPolicyDefinition().createOptimisticLockRetryPolicy());
+            }
+        } else {
+            answer.setOptimisticLockRetryPolicy(optimisticLockRetryPolicy);
+        }
         return answer;
     }
 
@@ -314,6 +325,22 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setCompletionSize(Integer completionSize) {
         this.completionSize = completionSize;
+    }
+
+    public OptimisticLockRetryPolicyDefinition getOptimisticLockRetryPolicyDefinition() {
+        return optimisticLockRetryPolicyDefinition;
+    }
+
+    public void setOptimisticLockRetryPolicyDefinition(OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition) {
+        this.optimisticLockRetryPolicyDefinition = optimisticLockRetryPolicyDefinition;
+    }
+
+    public OptimisticLockRetryPolicy getOptimisticLockRetryPolicy() {
+        return optimisticLockRetryPolicy;
+    }
+
+    public void setOptimisticLockRetryPolicy(OptimisticLockRetryPolicy optimisticLockRetryPolicy) {
+        this.optimisticLockRetryPolicy = optimisticLockRetryPolicy;
     }
 
     public Long getCompletionInterval() {
@@ -736,6 +763,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public AggregateDefinition optimisticLocking() {
         setOptimisticLocking(true);
+        return this;
+    }
+
+    public AggregateDefinition optimisticLockRetryPolicy(OptimisticLockRetryPolicy policy) {
+        setOptimisticLockRetryPolicy(policy);
         return this;
     }
     
