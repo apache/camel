@@ -120,14 +120,15 @@ public class CryptoDataFormat implements DataFormat {
         byte[] iv = getInitializationVector(exchange);
         Key key = getKey(exchange);
 
-        CipherOutputStream cipherStream = new CipherOutputStream(outputStream, initializeCipher(ENCRYPT_MODE, key, iv));
         InputStream plaintextStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
         HMACAccumulator hmac = getMessageAuthenticationCode(key);
         if (plaintextStream != null) {
             inlineInitVector(outputStream, iv);
             byte[] buffer = new byte[bufferSize];
             int read;
+            CipherOutputStream cipherStream = null;
             try {
+                cipherStream = new CipherOutputStream(outputStream, initializeCipher(ENCRYPT_MODE, key, iv));
                 while ((read = plaintextStream.read(buffer)) > 0) {
                     cipherStream.write(buffer, 0, read);
                     cipherStream.flush();
