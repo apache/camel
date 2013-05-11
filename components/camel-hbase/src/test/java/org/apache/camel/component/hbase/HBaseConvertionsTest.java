@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.client.Get;
@@ -105,6 +106,8 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
             result = bar.get(get);
             resultValue = result.value();
             assertArrayEquals(Bytes.toBytes((String) body[2]), resultValue);
+
+            IOHelper.close(bar);
         }
     }
 

@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseTestingUtility;
 import org.apache.hadoop.hbase.client.HTable;
@@ -94,5 +95,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
             put.add(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
             table.put(put);
         }
+
+        IOHelper.close(table);
     }
 }

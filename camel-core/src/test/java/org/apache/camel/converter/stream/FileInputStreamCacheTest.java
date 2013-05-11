@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.IOHelper;
 
 /**
  * @version 
@@ -39,6 +40,8 @@ public class FileInputStreamCacheTest extends ContextTestSupport {
         String s = context.getTypeConverter().convertTo(String.class, bos);
         assertNotNull(s);
         assertTrue(s.contains("<firstName>James</firstName>"));
+
+        IOHelper.close(cache, bos);
     }
 
 }

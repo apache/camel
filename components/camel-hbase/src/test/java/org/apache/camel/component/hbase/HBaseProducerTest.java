@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.client.Get;
@@ -77,6 +78,8 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             Result result = table.get(get);
             byte[] resultValue = result.value();
             assertArrayEquals(body[0][0][0].getBytes(), resultValue);
+
+            IOHelper.close(table);
         }
     }
 
@@ -157,6 +160,8 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
                 byte[] resultValue = result.value();
                 assertArrayEquals(body[row][0][0].getBytes(), resultValue);
             }
+
+            IOHelper.close(bar);
         }
     }
 
@@ -207,6 +212,8 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
                 byte[] resultValue = result.value();
                 assertArrayEquals(body[0][col][0].getBytes(), resultValue);
             }
+
+            IOHelper.close(bar);
         }
     }
 

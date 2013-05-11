@@ -34,6 +34,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.After;
 import org.junit.Assume;
@@ -118,6 +119,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
             int index = i % scientists.length;
             Formatter f = new Formatter();
             String doc = f.format("{\"_id\":\"%d\", \"scientist\":\"%s\", \"fixedField\": \"fixedValue\"}", i, scientists[index]).toString();
+            IOHelper.close(f);
             testCollection.insert((DBObject) JSON.parse(doc), WriteConcern.SAFE);
         }
         assertEquals("Data pumping of 1000 entries did not complete entirely", 1000L, testCollection.count());

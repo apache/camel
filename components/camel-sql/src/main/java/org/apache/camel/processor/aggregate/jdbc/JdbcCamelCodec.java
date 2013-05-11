@@ -27,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Adapted from HawtDBCamelCodec
@@ -76,9 +77,17 @@ public final class JdbcCamelCodec {
 
     private DefaultExchangeHolder decode(CamelContext camelContext, byte[] dataIn) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bytesIn = new ByteArrayInputStream(dataIn);
-        ObjectInputStream objectIn = new ClassLoadingAwareObjectInputStream(camelContext, bytesIn);
-        Object obj = objectIn.readObject();
-        return (DefaultExchangeHolder) obj;
+
+        ObjectInputStream objectIn = null;
+        Object obj = null;
+        try {
+            objectIn = new ClassLoadingAwareObjectInputStream(camelContext, bytesIn);
+            obj = objectIn.readObject();
+        } finally {
+            IOHelper.close(objectIn);
+        }
+
+        return (DefaultExchangeHolder)obj;
     }
 
 }

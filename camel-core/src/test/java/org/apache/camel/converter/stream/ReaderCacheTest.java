@@ -19,6 +19,7 @@ package org.apache.camel.converter.stream;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.IOHelper;
 
 /**
  * @version 
@@ -34,6 +35,8 @@ public class ReaderCacheTest extends ContextTestSupport {
 
         String s = context.getTypeConverter().convertTo(String.class, bos);
         assertEquals("<foo>bar</foo>", s);
+
+        IOHelper.close(cache, bos);
     }
 
 }
