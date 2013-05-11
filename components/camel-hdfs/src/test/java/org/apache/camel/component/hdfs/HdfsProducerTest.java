@@ -19,6 +19,7 @@ package org.apache.camel.component.hdfs;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -65,6 +66,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
         assertEquals("PAPPO", value.toString());
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -90,6 +93,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
             assertEquals("PAPPO" + i, txt.toString());
             ++i;
         }
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -109,6 +114,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         Boolean rBoolean = ((BooleanWritable) value).get();
         assertEquals(rBoolean, aBoolean);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -128,6 +135,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         byte rByte = ((ByteWritable) value).get();
         assertEquals(rByte, aByte);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -147,6 +156,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         int rInt = ((IntWritable) value).get();
         assertEquals(rInt, anInt);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -166,6 +177,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         float rFloat = ((FloatWritable) value).get();
         assertEquals(rFloat, aFloat, 0.0F);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -185,6 +198,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         Double rDouble = ((DoubleWritable) value).get();
         assertEquals(rDouble, aDouble);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -204,6 +219,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         long rLong = ((LongWritable) value).get();
         assertEquals(rLong, aLong);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -223,6 +240,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         String rTxt = value.toString();
         assertEquals(rTxt, txt);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -243,6 +262,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         assertEquals(key.toString(), txtKey);
         assertEquals(value.toString(), txtValue);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -263,6 +284,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         assertEquals(key.toString(), txtKey);
         assertEquals(value.toString(), txtValue);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -280,6 +303,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         Text value = (Text) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(value);
         assertEquals(value.toString(), txtValue);
+
+        IOHelper.close(reader);
     }
 
     @Test
@@ -300,6 +325,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
         reader.next(key, value);
         assertEquals(key.toString(), txtKey);
         assertEquals(value.toString(), txtValue);
+
+        IOHelper.close(reader);
     }
 
     @Override

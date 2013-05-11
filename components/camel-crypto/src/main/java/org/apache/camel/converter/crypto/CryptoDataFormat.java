@@ -150,18 +150,23 @@ public class CryptoDataFormat implements DataFormat {
         if (encryptedStream != null) {
             byte[] iv = getInlinedInitializationVector(exchange, encryptedStream);
             Key key = getKey(exchange);
-            CipherInputStream cipherStream = new CipherInputStream(encryptedStream, initializeCipher(DECRYPT_MODE, key, iv));
-
-            ByteArrayOutputStream plaintextStream = new ByteArrayOutputStream(bufferSize);
-            HMACAccumulator hmac = getMessageAuthenticationCode(key);
-            byte[] buffer = new byte[bufferSize];
-            hmac.attachStream(plaintextStream);
-            int read;
-            while ((read = cipherStream.read(buffer)) >= 0) {
-                hmac.decryptUpdate(buffer, read);
+            CipherInputStream cipherStream = null;
+            ByteArrayOutputStream plaintextStream = null;
+            try {
+                cipherStream = new CipherInputStream(encryptedStream, initializeCipher(DECRYPT_MODE, key, iv));
+                plaintextStream = new ByteArrayOutputStream(bufferSize);
+                HMACAccumulator hmac = getMessageAuthenticationCode(key);
+                byte[] buffer = new byte[bufferSize];
+                hmac.attachStream(plaintextStream);
+                int read;
+                while ((read = cipherStream.read(buffer)) >= 0) {
+                    hmac.decryptUpdate(buffer, read);
+                }
+                hmac.validate();
+                unmarshalled = plaintextStream.toByteArray();
+            } finally {
+                IOHelper.close(cipherStream,  plaintextStream);
             }
-            hmac.validate();
-            unmarshalled = plaintextStream.toByteArray();
         }
         return unmarshalled;
     }

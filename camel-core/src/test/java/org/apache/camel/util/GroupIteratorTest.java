@@ -54,6 +54,8 @@ public class GroupIteratorTest extends TestSupport {
         assertEquals("JKL\nMNO\nPQR", gi.next());
         assertEquals("STU\nVW", gi.next());
         assertFalse(gi.hasNext());
+
+        IOHelper.close(gi);
     }
 
 }
