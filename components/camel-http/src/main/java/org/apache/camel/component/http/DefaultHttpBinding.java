@@ -212,20 +212,20 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
+        Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
         if (exchange.isFailed()) {
             if (exchange.getException() != null) {
                 doWriteExceptionResponse(exchange.getException(), response);
             } else {
                 // it must be a fault, no need to check for the fault flag on the message
-                doWriteFaultResponse(exchange.getOut(), response, exchange);
+                doWriteFaultResponse(target, response, exchange);
             }
         } else {
-            // just copy the protocol relates header
-            copyProtocolHeaders(exchange.getIn(), exchange.getOut());
-            Message out = exchange.getOut();            
-            if (out != null) {
-                doWriteResponse(out, response, exchange);
+            if (exchange.hasOut()) {
+                // just copy the protocol relates header if we do not have them
+                copyProtocolHeaders(exchange.getIn(), exchange.getOut());
             }
+            doWriteResponse(target, response, exchange);
         }
     }
 
