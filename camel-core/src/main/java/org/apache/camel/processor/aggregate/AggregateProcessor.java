@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -90,6 +89,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final Expression correlationExpression;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
+    private OptimisticLockRetryPolicy optimisticLockRetryPolicy = new OptimisticLockRetryPolicy();
     private ScheduledExecutorService timeoutCheckerExecutorService;
     private boolean shutdownTimeoutCheckerExecutorService;
     private ScheduledExecutorService recoverService;
@@ -194,24 +194,27 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         // when optimist locking is enabled we keep trying until we succeed
         if (optimisticLocking) {
-            boolean done = false;
+            boolean exhaustedRetries = true;
             int attempt = 0;
-            while (!done) {
+            do {
                 attempt++;
                 // copy exchange, and do not share the unit of work
                 // the aggregated output runs in another unit of work
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
                 try {
                     doAggregation(key, copy);
-                    done = true;
+                    exhaustedRetries = false;
+                    break;
                 } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
                     LOG.trace("On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to add() key: {} and exchange: {}",
                               new Object[]{attempt, aggregationRepository, key, copy, e});
+                    optimisticLockRetryPolicy.doDelay(attempt);
                 }
-                // use a little random delay to avoid being to aggressive when retrying, and avoid potential clashing
-                int ran = new Random().nextInt(1000);
-                LOG.trace("Sleeping for {} millis before attempting again", ran);
-                Thread.sleep(ran);
+            } while (optimisticLockRetryPolicy.shouldRetry(attempt));
+
+            if (exhaustedRetries) {
+                throw new CamelExchangeException("Exhausted optimistic locking retry attempts, tried " + attempt + " times", exchange,
+                        new OptimisticLockingAggregationRepository.OptimisticLockingException());
             }
         } else {
             // copy exchange, and do not share the unit of work
@@ -687,6 +690,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     public void setShutdownTimeoutCheckerExecutorService(boolean shutdownTimeoutCheckerExecutorService) {
         this.shutdownTimeoutCheckerExecutorService = shutdownTimeoutCheckerExecutorService;
+    }
+
+    public void setOptimisticLockRetryPolicy(OptimisticLockRetryPolicy optimisticLockRetryPolicy) {
+        this.optimisticLockRetryPolicy = optimisticLockRetryPolicy;
+    }
+
+    public OptimisticLockRetryPolicy getOptimisticLockRetryPolicy() {
+        return optimisticLockRetryPolicy;
     }
 
     /**
