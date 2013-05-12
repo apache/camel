@@ -27,7 +27,7 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.junit.Test;
 
-public class ShiroAuthenticationTest extends CamelTestSupport {
+public class ShiroAuthenticationReauthenticateFalseAndNewUserTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:success")
     protected MockEndpoint successEndpoint;
@@ -42,36 +42,25 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};    
     
     @Test
-    public void testShiroAuthenticationFailure() throws Exception {        
-        //Incorrect password
-        ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "stirr");
-        TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
-        
-        successEndpoint.expectedMessageCount(0);
-        failureEndpoint.expectedMessageCount(1);
-        
-        template.send("direct:secureEndpoint", shiroSecurityTokenInjector);
-        
-        successEndpoint.assertIsSatisfied();
-        failureEndpoint.assertIsSatisfied();
-    }
-    
-    @Test
     public void testSuccessfulShiroAuthenticationWithNoAuthorization() throws Exception {        
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
         TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
-        
-        successEndpoint.expectedMessageCount(1);
+
+        ShiroSecurityToken shiroSecurityToken2 = new ShiroSecurityToken("george", "harrison");
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector2 = new TestShiroSecurityTokenInjector(shiroSecurityToken2, passPhrase);
+
+        successEndpoint.expectedMessageCount(2);
         failureEndpoint.expectedMessageCount(0);
         
         template.send("direct:secureEndpoint", shiroSecurityTokenInjector);
-        
+        template.send("direct:secureEndpoint", shiroSecurityTokenInjector2);
+
         successEndpoint.assertIsSatisfied();
         failureEndpoint.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase);
+        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase, false);
         
         return new RouteBuilder() {
             @SuppressWarnings("unchecked")

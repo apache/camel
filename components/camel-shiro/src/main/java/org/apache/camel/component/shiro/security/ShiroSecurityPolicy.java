@@ -192,7 +192,11 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     }
 
     private void authenticateUser(Subject currentUser, ShiroSecurityToken securityToken) {
-        if (!currentUser.isAuthenticated()) {
+        boolean authenticated = currentUser.isAuthenticated();
+        boolean sameUser = securityToken.getUsername().equals(currentUser.getPrincipal());
+        LOG.debug("Authenticated: {}, same Username: {}", authenticated, sameUser);
+
+        if (!authenticated || !sameUser) {
             UsernamePasswordToken token = new UsernamePasswordToken(securityToken.getUsername(), securityToken.getPassword());
             if (alwaysReauthenticate) {
                 token.setRememberMe(false);
