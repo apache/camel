@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.shiro.security;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -70,6 +73,33 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         failureEndpoint.assertIsSatisfied();
     }
 
+    @Test
+    public void testSuccessfulTokenHeader() throws Exception {
+        ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
+
+        successEndpoint.expectedMessageCount(1);
+        failureEndpoint.expectedMessageCount(0);
+
+        template.sendBodyAndHeader("direct:secureEndpoint", "Beatle Mania", ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, shiroSecurityToken);
+
+        successEndpoint.assertIsSatisfied();
+        failureEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testSuccessfulUsernameHeader() throws Exception {
+        successEndpoint.expectedMessageCount(1);
+        failureEndpoint.expectedMessageCount(0);
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
+        headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
+        template.sendBodyAndHeaders("direct:secureEndpoint", "Beatle Mania", headers);
+
+        successEndpoint.assertIsSatisfied();
+        failureEndpoint.assertIsSatisfied();
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
         
@@ -96,7 +126,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         }
         
         public void process(Exchange exchange) throws Exception {
-            exchange.getIn().setHeader(ShiroConstants.SHIRO_SECURITY_TOKEN, encrypt());
+            exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encrypt());
             exchange.getIn().setBody("Beatle Mania");
         }
     }

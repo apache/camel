@@ -19,11 +19,13 @@ package org.apache.camel.component.shiro.security;
 /**
  * Shiro constants.
  */
-public final class ShiroConstants {
+public final class ShiroSecurityConstants {
 
     public static final String SHIRO_SECURITY_TOKEN = "SHIRO_SECURITY_TOKEN";
+    public static final String SHIRO_SECURITY_USERNAME = "SHIRO_SECURITY_USERNAME";
+    public static final String SHIRO_SECURITY_PASSWORD = "SHIRO_SECURITY_PASSWORD";
 
-    private ShiroConstants() {
+    private ShiroSecurityConstants() {
     }
 
 }

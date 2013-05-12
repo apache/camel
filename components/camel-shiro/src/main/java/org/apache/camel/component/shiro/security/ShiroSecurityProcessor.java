@@ -21,11 +21,13 @@ import java.io.ObjectInputStream;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -69,12 +71,44 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
 
     private void applySecurityPolicy(Exchange exchange) throws Exception {
         ByteSource encryptedToken;
-        if (policy.isBase64()) {
-            String base64 = ExchangeHelper.getMandatoryHeader(exchange, ShiroConstants.SHIRO_SECURITY_TOKEN, String.class);
-            byte[] bytes = Base64.decode(base64);
-            encryptedToken = ByteSource.Util.bytes(bytes);
+
+        // if we have username and password as headers then use them to create a token
+        String username = exchange.getIn().getHeader(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, String.class);
+        String password = exchange.getIn().getHeader(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, String.class);
+        if (username != null && password != null) {
+            ShiroSecurityToken token = new ShiroSecurityToken(username, password);
+
+            // store the token as header, either as base64 or as the object as-is
+            if (policy.isBase64()) {
+                ByteSource bytes = ShiroSecurityHelper.encrypt(token, policy.getPassPhrase(), policy.getCipherService());
+                String base64 = bytes.toBase64();
+                exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, base64);
+            } else {
+                exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, token);
+            }
+            // and now remove the headers as we turned those into the token instead
+            exchange.getIn().removeHeader(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME);
+            exchange.getIn().removeHeader(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD);
+        }
+
+        Object token = ExchangeHelper.getMandatoryHeader(exchange, ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, Object.class);
+
+        // we support the token in a number of ways
+        if (token instanceof ShiroSecurityToken) {
+            ShiroSecurityToken sst = (ShiroSecurityToken) token;
+            encryptedToken = ShiroSecurityHelper.encrypt(sst, policy.getPassPhrase(), policy.getCipherService());
+        } else if (token instanceof String) {
+            String data = (String) token;
+            if (policy.isBase64()) {
+                byte[] bytes = Base64.decode(data);
+                encryptedToken = ByteSource.Util.bytes(bytes);
+            } else {
+                encryptedToken = ByteSource.Util.bytes(data);
+            }
+        } else if (token instanceof ByteSource) {
+            encryptedToken = (ByteSource) token;
         } else {
-            encryptedToken = ExchangeHelper.getMandatoryHeader(exchange, ShiroConstants.SHIRO_SECURITY_TOKEN, ByteSource.class);
+            throw new CamelExchangeException("Shiro security header " + ShiroSecurityConstants.SHIRO_SECURITY_TOKEN + " is unsupported type: " + ObjectHelper.classCanonicalName(token), exchange);
         }
 
         ByteSource decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());

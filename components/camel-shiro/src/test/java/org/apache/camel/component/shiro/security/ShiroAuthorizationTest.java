@@ -119,7 +119,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         }
         
         public void process(Exchange exchange) throws Exception {
-            exchange.getIn().setHeader(ShiroConstants.SHIRO_SECURITY_TOKEN, encrypt());
+            exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encrypt());
             exchange.getIn().setBody("Beatle Mania");
         }
     }

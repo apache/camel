@@ -16,15 +16,14 @@
  */
 package org.apache.camel.itest.shiro;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.naming.Context;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.shiro.security.ShiroSecurityConstants;
 import org.apache.camel.component.shiro.security.ShiroSecurityPolicy;
-import org.apache.camel.component.shiro.security.ShiroSecurityToken;
-import org.apache.camel.component.shiro.security.ShiroSecurityTokenInjector;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
@@ -43,18 +42,10 @@ public class ShiroOverJmsTest extends CamelTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        ShiroSecurityToken token = new ShiroSecurityToken("ringo", "starr");
-
-        final ShiroSecurityTokenInjector injector = new ShiroSecurityTokenInjector(token, passPhrase);
-        injector.setBase64(true);
-
-        template.request("direct:start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-                injector.process(exchange);
-            }
-        });
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
+        headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
+        template.requestBodyAndHeaders("direct:start", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
     }

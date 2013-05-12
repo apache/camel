@@ -65,7 +65,7 @@ public class ShiroSecurityTokenInjector implements Processor {
             token = bytes;
         }
 
-        exchange.getIn().setHeader(ShiroConstants.SHIRO_SECURITY_TOKEN, token);
+        exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, token);
     }
 
     public byte[] getPassPhrase() {
