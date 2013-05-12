@@ -366,7 +366,7 @@
     <taglist-maven-plugin-version>2.4</taglist-maven-plugin-version>
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
-    <testng-version>6.8</testng-version>
+    <testng-version>6.8.1</testng-version>
     <twitter4j-bundle-version>3.0.3_1</twitter4j-bundle-version>
     <twitter4j-version>3.0.3</twitter4j-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
