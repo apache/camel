@@ -16,44 +16,26 @@
  */
 package org.apache.camel.component.shiro.security;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
-import org.apache.camel.CamelAuthorizationException;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.Permission;
-import org.apache.shiro.codec.Base64;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShiroSecurityPolicy implements AuthorizationPolicy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ShiroSecurityPolicy.class);  
+    private static final transient Logger LOG = LoggerFactory.getLogger(ShiroSecurityPolicy.class);
     private final byte[] bits128 = {
         (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
         (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
@@ -119,138 +101,16 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     }
 
     public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {  
-        //Not implemented
+        // noop
     }
     
-    public Processor wrap(RouteContext routeContext, final Processor processor) {        
-        return new AsyncProcessor() {
-            public boolean process(Exchange exchange, final AsyncCallback callback)  {
-                boolean sync;
-                try {
-                    applySecurityPolicy(exchange);
-                } catch (Exception e) {
-                    // exception occurred so break out
-                    exchange.setException(e);
-                    callback.done(true);
-                    return true;
-                }
-                
-                // If here, then user is authenticated and authorized
-                // Now let the original processor continue routing supporting the async routing engine
-                AsyncProcessor ap = AsyncProcessorConverterHelper.convert(processor);
-                sync = AsyncProcessorHelper.process(ap, exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // we only have to handle async completion of this policy
-                        if (doneSync) {
-                            return;
-                        }
-                        callback.done(false);
-                    }
-                });                    
-                
-                if (!sync) {
-                    // if async, continue routing async
-                    return false;
-                }
-
-                // we are done synchronously, so do our after work and invoke the callback
-                callback.done(true);
-                return true;                
-            }
-
-            public void process(Exchange exchange) throws Exception {
-                applySecurityPolicy(exchange);               
-                processor.process(exchange);
-            }
-            
-            private void applySecurityPolicy(Exchange exchange) throws Exception {
-                ByteSource encryptedToken;
-                if (isBase64()) {
-                    String base64 = ExchangeHelper.getMandatoryHeader(exchange, ShiroConstants.SHIRO_SECURITY_TOKEN, String.class);
-                    byte[] bytes = Base64.decode(base64);
-                    encryptedToken = ByteSource.Util.bytes(bytes);
-                } else {
-                    encryptedToken = ExchangeHelper.getMandatoryHeader(exchange, ShiroConstants.SHIRO_SECURITY_TOKEN, ByteSource.class);
-                }
-
-                ByteSource decryptedToken = getCipherService().decrypt(encryptedToken.getBytes(), getPassPhrase());
-                
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decryptedToken.getBytes());
-                ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-                ShiroSecurityToken securityToken;
-                try {
-                    securityToken = (ShiroSecurityToken)objectInputStream.readObject();
-                } finally {
-                    IOHelper.close(objectInputStream, byteArrayInputStream);
-                }
-
-                Subject currentUser = SecurityUtils.getSubject();
-
-                // Authenticate user if not authenticated
-                try {
-                    authenticateUser(currentUser, securityToken);
-                
-                    // Test whether user's role is authorized to perform functions in the permissions list  
-                    authorizeUser(currentUser, exchange);
-                } finally {
-                    if (alwaysReauthenticate) {
-                        currentUser.logout();
-                    }
-                }
-            }
-        };
-    }
-
-    private void authenticateUser(Subject currentUser, ShiroSecurityToken securityToken) {
-        boolean authenticated = currentUser.isAuthenticated();
-        boolean sameUser = securityToken.getUsername().equals(currentUser.getPrincipal());
-        LOG.debug("Authenticated: {}, same Username: {}", authenticated, sameUser);
-
-        if (!authenticated || !sameUser) {
-            UsernamePasswordToken token = new UsernamePasswordToken(securityToken.getUsername(), securityToken.getPassword());
-            if (alwaysReauthenticate) {
-                token.setRememberMe(false);
-            } else {
-                token.setRememberMe(true);
-            }
-            
-            try {
-                currentUser.login(token);
-                LOG.debug("Current User {} successfully authenticated", currentUser.getPrincipal());
-            } catch (UnknownAccountException uae) {
-                throw new UnknownAccountException("Authentication Failed. There is no user with username of " + token.getPrincipal(), uae.getCause());
-            } catch (IncorrectCredentialsException ice) {
-                throw new IncorrectCredentialsException("Authentication Failed. Password for account " + token.getPrincipal() + " was incorrect!", ice.getCause());
-            } catch (LockedAccountException lae) {
-                throw new LockedAccountException("Authentication Failed. The account for username " + token.getPrincipal() + " is locked."
-                    + "Please contact your administrator to unlock it.", lae.getCause());
-            } catch (AuthenticationException ae) {
-                throw new AuthenticationException("Authentication Failed.", ae.getCause());
-            }
+    public Processor wrap(RouteContext routeContext, final Processor processor) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Securing route {} using Shiro policy {}", routeContext.getRoute().getId(), this);
         }
+        return new ShiroSecurityProcessor(processor, this);
     }
-    
-    private void authorizeUser(Subject currentUser, Exchange exchange) throws CamelAuthorizationException {
-        boolean authorized = false;
-        if (!permissionsList.isEmpty()) {
-            for (Permission permission : permissionsList) {
-                if (currentUser.isPermitted(permission)) {
-                    authorized = true;
-                    break;
-                }
-            }
-        } else {
-            LOG.debug("Valid Permissions List not specified for ShiroSecurityPolicy. No authorization checks will be performed for current user");
-            authorized = true;
-        }
-        
-        if (!authorized) {
-            throw new CamelAuthorizationException("Authorization Failed. Subject's role set does not have the necessary permissions to perform further processing", exchange);
-        } 
-        
-        LOG.debug("Current User {} is successfully authorized. The exchange will be allowed to proceed", currentUser.getPrincipal());
-    }
-    
+
     public CipherService getCipherService() {
         return cipherService;
     }
