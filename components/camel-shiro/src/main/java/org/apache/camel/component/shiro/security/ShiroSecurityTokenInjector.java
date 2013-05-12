@@ -37,6 +37,7 @@ public class ShiroSecurityTokenInjector implements Processor {
     private byte[] passPhrase;
     private ShiroSecurityToken securityToken;
     private CipherService cipherService;
+    private boolean base64;
     
     public ShiroSecurityTokenInjector() {
         this.passPhrase = bits128;
@@ -69,7 +70,16 @@ public class ShiroSecurityTokenInjector implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        exchange.getIn().setHeader("SHIRO_SECURITY_TOKEN", encrypt());
+        ByteSource bytes = encrypt();
+
+        Object token;
+        if (isBase64()) {
+            token = bytes.toBase64();
+        } else {
+            token = bytes;
+        }
+
+        exchange.getIn().setHeader(ShiroConstants.SHIRO_SECURITY_TOKEN, token);
     }
 
     public byte[] getPassPhrase() {
@@ -94,6 +104,14 @@ public class ShiroSecurityTokenInjector implements Processor {
 
     public void setCipherService(CipherService cipherService) {
         this.cipherService = cipherService;
+    }
+
+    public boolean isBase64() {
+        return base64;
+    }
+
+    public void setBase64(boolean base64) {
+        this.base64 = base64;
     }
 
     private static void close(ObjectOutput output) {

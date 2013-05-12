@@ -40,6 +40,7 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.Permission;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.crypto.AesCipherService;
@@ -63,6 +64,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     private SecurityManager securityManager;
     private List<Permission> permissionsList;
     private boolean alwaysReauthenticate;
+    private boolean base64;
     
     public ShiroSecurityPolicy() {
         this.passPhrase = bits128;
@@ -162,7 +164,15 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
             }
             
             private void applySecurityPolicy(Exchange exchange) throws Exception {
-                ByteSource encryptedToken = ExchangeHelper.getMandatoryHeader(exchange, "SHIRO_SECURITY_TOKEN", ByteSource.class);
+                ByteSource encryptedToken;
+                if (isBase64()) {
+                    String base64 = ExchangeHelper.getMandatoryHeader(exchange, ShiroConstants.SHIRO_SECURITY_TOKEN, String.class);
+                    byte[] bytes = Base64.decode(base64);
+                    encryptedToken = ByteSource.Util.bytes(bytes);
+                } else {
+                    encryptedToken = ExchangeHelper.getMandatoryHeader(exchange, ShiroConstants.SHIRO_SECURITY_TOKEN, ByteSource.class);
+                }
+
                 ByteSource decryptedToken = getCipherService().decrypt(encryptedToken.getBytes(), getPassPhrase());
                 
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decryptedToken.getBytes());
@@ -280,5 +290,12 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     public void setAlwaysReauthenticate(boolean alwaysReauthenticate) {
         this.alwaysReauthenticate = alwaysReauthenticate;
     }
- 
+
+    public boolean isBase64() {
+        return base64;
+    }
+
+    public void setBase64(boolean base64) {
+        this.base64 = base64;
+    }
 }

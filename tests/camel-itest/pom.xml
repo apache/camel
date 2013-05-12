@@ -170,6 +170,11 @@
 	  <artifactId>camel-netty</artifactId>
 	  <scope>test</scope>
 	</dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-shiro</artifactId>
+      <scope>test</scope>
+    </dependency>
 
 	  <dependency>
       <groupId>org.apache.camel</groupId>
