@@ -49,7 +49,7 @@
     <jaxb-version>2.1.13</jaxb-version>
 
     <maven-bundle-version>2.3.7</maven-bundle-version>
-    <openjpa-version>2.2.0</openjpa-version>
+    <openjpa-version>2.2.2</openjpa-version>
   </properties>
 
   <mailingLists>
