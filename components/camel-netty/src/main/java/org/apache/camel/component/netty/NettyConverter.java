@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -45,13 +46,13 @@ public final class NettyConverter {
     }
 
     @Converter
-    public static String toString(ChannelBuffer buffer, Exchange exchange) {
+    public static String toString(ChannelBuffer buffer, Exchange exchange) throws UnsupportedEncodingException {
         byte[] bytes = toByteArray(buffer);
         // use type converter as it can handle encoding set on the Exchange
         if (exchange != null) {
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, bytes);
         }
-        return new String(bytes);
+        return new String(bytes, "UTF-8");
     }
 
     @Converter
