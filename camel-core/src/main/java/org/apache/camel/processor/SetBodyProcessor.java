@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ServiceSupport;
 
 /**
- * A processor which sets the body on the IN message with an {@link Expression}
+ * A processor which sets the body on the IN or OUT message with an {@link Expression}
  */
 public class SetBodyProcessor extends ServiceSupport implements Processor, Traceable {
     private final Expression expression;
@@ -37,13 +37,19 @@ public class SetBodyProcessor extends ServiceSupport implements Processor, Trace
     public void process(Exchange exchange) throws Exception {
         Object newBody = expression.evaluate(exchange, Object.class);
 
-        Message old = exchange.getIn();
+        boolean out = exchange.hasOut();
+        Message old = out ? exchange.getOut() : exchange.getIn();
 
         // create a new message container so we do not drag specialized message objects along
         Message msg = new DefaultMessage();
         msg.copyFrom(old);
         msg.setBody(newBody);
-        exchange.setIn(msg);
+
+        if (out) {
+            exchange.setOut(msg);
+        } else {
+            exchange.setIn(msg);
+        }
     }
 
     @Override

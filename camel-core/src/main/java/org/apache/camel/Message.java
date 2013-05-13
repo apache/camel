@@ -160,6 +160,9 @@ public interface Message {
 
     /**
      * Set all the headers associated with this message
+     * <p/>
+     * <b>Important:</b> If you want to copy headers from another {@link Message} to this {@link Message}, then
+     * use <tt>getHeaders().putAll(other)</tt> to copy the headers, where <tt>other</tt> is the other headers.
      *
      * @param headers headers to set
      */

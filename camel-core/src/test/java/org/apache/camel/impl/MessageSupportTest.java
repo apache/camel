@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -62,5 +64,23 @@ public class MessageSupportTest extends ContextTestSupport {
         Message in = new DefaultMessage();
         
         assertNotNull(in.getMessageId());
+    }
+
+    public void testCopyFromSameHeadersInstance() {
+        Exchange exchange = new DefaultExchange(context);
+
+        Message in = exchange.getIn();
+        Map<String, Object> headers = in.getHeaders();
+        headers.put("foo", 123);
+
+        Message out = new DefaultMessage();
+        out.setBody("Bye World");
+        out.setHeaders(headers);
+
+        out.copyFrom(in);
+
+        assertEquals(123, headers.get("foo"));
+        assertEquals(123, in.getHeader("foo"));
+        assertEquals(123, out.getHeader("foo"));
     }
 }
