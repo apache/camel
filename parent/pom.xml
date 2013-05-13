@@ -289,7 +289,7 @@
     <openwebbeans-version>1.1.5</openwebbeans-version>
     <ognl-version>3.0.6_1</ognl-version>
     <openejb-version>4.5.1</openejb-version>
-    <openjpa-version>2.2.1</openjpa-version>
+    <openjpa-version>2.2.2</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
