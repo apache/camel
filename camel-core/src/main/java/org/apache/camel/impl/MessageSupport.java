@@ -135,11 +135,21 @@ public abstract class MessageSupport implements Message {
         setBody(that.getBody());
         setFault(that.isFault());
 
-        if (hasHeaders()) {
-            getHeaders().clear();
+        // the headers may be the same instance if the end user has made some mistake
+        // and set the OUT message with the same header instance of the IN message etc
+        boolean sameHeadersInstance = false;
+        if (hasHeaders() && that.hasHeaders() && getHeaders() == that.getHeaders()) {
+            sameHeadersInstance = true;
         }
-        if (that.hasHeaders()) {
-            getHeaders().putAll(that.getHeaders());
+
+        if (!sameHeadersInstance) {
+            if (hasHeaders()) {
+                // okay its safe to clear the headers
+                getHeaders().clear();
+            }
+            if (that.hasHeaders()) {
+                getHeaders().putAll(that.getHeaders());
+            }
         }
         
         if (hasAttachments()) {
