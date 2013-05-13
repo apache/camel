@@ -419,7 +419,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (!isMatched(file, isDirectory, files)) {
             log.trace("File did not match. Will skip this file: {}", file);
             return false;
-        } else if (endpoint.isIdempotent()) {
+        }
+
+        // if its a file then check if its already in progress
+        if (!isDirectory && isInProgress(file)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Skipping as file is already in progress: {}", file.getFileName());
+            }
+            return false;
+        }
+
+        if (endpoint.isIdempotent()) {
             // use absolute file path as default key, but evaluate if an expression key was configured
             String key = file.getAbsoluteFilePath();
             if (endpoint.getIdempotentKey() != null) {

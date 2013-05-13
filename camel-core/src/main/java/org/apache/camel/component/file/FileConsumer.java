@@ -83,7 +83,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset());
 
             if (file.isDirectory()) {
-                if (endpoint.isRecursive() && isValidFile(gf, true, files) && depth < endpoint.getMaxDepth()) {
+                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = fileName + File.separator + file.getName();
                     boolean canPollMore = pollDirectory(subDirectory, fileList, depth);
@@ -93,16 +93,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 }
             } else {
                 // Windows can report false to a file on a share so regard it always as a file (if its not a directory)
-                if (isValidFile(gf, false, files) && depth >= endpoint.minDepth) {
-                    if (isInProgress(gf)) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Skipping as file is already in progress: {}", gf.getFileName());
-                        }
-                    } else {
-                        log.trace("Adding valid file: {}", file);
-                        // matched file so add
-                        fileList.add(gf);
-                    }
+                if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
+                    log.trace("Adding valid file: {}", file);
+                    // matched file so add
+                    fileList.add(gf);
                 }
 
             }

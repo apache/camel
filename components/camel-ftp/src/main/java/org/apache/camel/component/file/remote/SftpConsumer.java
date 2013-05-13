@@ -109,7 +109,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
             if (file.getAttrs().isDir()) {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
-                if (endpoint.isRecursive() && isValidFile(remote, true, files) && depth < endpoint.getMaxDepth()) {
+                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();
                     String path = absolutePath + "/" + subDirectory;
@@ -122,15 +122,9 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 // just assuming its a file we should poll
             } else {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
-                if (isValidFile(remote, false, files) && depth >= endpoint.getMinDepth()) {
-                    if (isInProgress(remote)) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Skipping as file is already in progress: {}", remote.getFileName());
-                        }
-                    } else {
-                        // matched file so add
-                        fileList.add(remote);
-                    }
+                if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
+                    // matched file so add
+                    fileList.add(remote);
                 }
             }
         }
