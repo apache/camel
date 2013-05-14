@@ -106,7 +106,7 @@
     <cxf-version-range>[2.6,2.9)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
-    <derby-version>10.9.1.0</derby-version>
+    <derby-version>10.10.1.1</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dnsjava-bundle-version>2.1.1_1</dnsjava-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
