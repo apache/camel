@@ -1134,6 +1134,16 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.replaceFirst('http:',' ')}", " camel.apache.org");
     }
 
+    public void testBodyOgnlReplaceSingleQuoteInDouble() throws Exception {
+        exchange.getIn().setBody("Hello O'Conner");
+
+        assertExpression("${body.replace(\"O'C\", \"OC\")}", "Hello OConner");
+        assertExpression("${body.replace(\"O'C\", \"O C\")}", "Hello O Conner");
+        assertExpression("${body.replace(\"O'C\", \"O-C\")}", "Hello O-Conner");
+        assertExpression("${body.replace(\"O'C\", \"O''C\")}", "Hello O''Conner");
+        assertExpression("${body.replace(\"O'C\", \"O\n'C\")}", "Hello O\n'Conner");
+    }
+
     public void testBodyOgnlSpaces() throws Exception {
         exchange.getIn().setBody("Hello World");
 

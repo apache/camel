@@ -76,8 +76,9 @@ public final class StringQuoteHelper {
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
             char prev = i > 0 ? input.charAt(i - 1) : 0;
+            boolean isQuoting = singleQuoted || doubleQuoted;
 
-            if (ch == '\'') {
+            if (!doubleQuoted &&  ch == '\'') {
                 if (singleQuoted && prev == ch && sb.length() == 0) {
                     // its an empty quote so add empty text
                     answer.add("");
@@ -93,7 +94,7 @@ public final class StringQuoteHelper {
                 }
                 singleQuoted = !singleQuoted;
                 continue;
-            } else if (ch == '"') {
+            } else if (!singleQuoted && ch == '"') {
                 if (doubleQuoted && prev == ch && sb.length() == 0) {
                     // its an empty quote so add empty text
                     answer.add("");
@@ -109,13 +110,13 @@ public final class StringQuoteHelper {
                 }
                 doubleQuoted = !doubleQuoted;
                 continue;
-            } else if (ch == ' ') {
-                if (!singleQuoted && !doubleQuoted && skipLeadingWhitespace) {
+            } else if (!isQuoting && ch == ' ') {
+                if (skipLeadingWhitespace) {
                     continue;
                 }
-            } else if (ch == separator) {
+            } else if (!isQuoting && ch == separator) {
                 // add as answer if we are not in a quote
-                if (!singleQuoted && !doubleQuoted && sb.length() > 0) {
+                if (sb.length() > 0) {
                     String text = sb.toString();
                     if (trim) {
                         text = text.trim();

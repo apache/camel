@@ -36,7 +36,6 @@
     <module>camel-itest-standalone</module>
     <module>camel-itest</module>
     <module>camel-itest-cdi</module>
-    <module>camel-itest-spring30</module>
     <module>camel-itest-spring31</module>
     <module>camel-blueprint-cxf-test</module>
     <module>camel-partial-classpath-test</module>
