@@ -22,7 +22,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 /**
  *
  */
-@CsvRecord(separator = ";", skipFirstLine = true)
+@CsvRecord(separator = ";", skipFirstLine = true, quoting = true, crlf = "UNIX")
 public class Car {
 
     @DataField(pos = 1)
@@ -48,7 +48,7 @@ public class Car {
     @DataField(pos = 11)
     private String body;
     @DataField(pos = 12)
-    private String colour;
+    private Colour colour;
     @DataField(pos = 13)
     private String enginesize;
     @DataField(pos = 14)
@@ -154,11 +154,11 @@ public class Car {
         this.body = body;
     }
 
-    public String getColour() {
+    public Colour getColour() {
         return colour;
     }
 
-    public void setColour(String colour) {
+    public void setColour(Colour colour) {
         this.colour = colour;
     }
 
@@ -225,4 +225,9 @@ public class Car {
     public void setNvic(String nvic) {
         this.nvic = nvic;
     }
+
+    public static enum Colour {
+        BLACK
+    }
+
 }

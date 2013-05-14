@@ -32,6 +32,7 @@ import org.apache.camel.dataformat.bindy.format.CharacterFormat;
 import org.apache.camel.dataformat.bindy.format.DatePatternFormat;
 import org.apache.camel.dataformat.bindy.format.DoubleFormat;
 import org.apache.camel.dataformat.bindy.format.DoublePatternFormat;
+import org.apache.camel.dataformat.bindy.format.EnumFormat;
 import org.apache.camel.dataformat.bindy.format.FloatFormat;
 import org.apache.camel.dataformat.bindy.format.FloatPatternFormat;
 import org.apache.camel.dataformat.bindy.format.IntegerFormat;
@@ -54,7 +55,7 @@ public final class FormatFactory {
 
     /**
      * Retrieves the format to use for the given type
-     * 
+     *
      * @param clazz represents the type of the format (String, Integer, Byte)
      * @param pattern is the pattern to be used during the formatting of the data
      * @param locale optional locale for NumberFormat and DateFormat parsing.
@@ -63,6 +64,7 @@ public final class FormatFactory {
      * @return Format the formatter
      * @throws IllegalArgumentException if not suitable formatter is found
      */
+    @SuppressWarnings("unchcecked")
     private static Format<?> doGetFormat(Class<?> clazz, String pattern, String locale, int precision, boolean impliedDecimalSeparator) throws Exception {
         if (clazz == byte.class || clazz == Byte.class) {
             return ObjectHelper.isNotEmpty(pattern)
@@ -98,6 +100,8 @@ public final class FormatFactory {
             return new DatePatternFormat(pattern, getLocale(locale));
         } else if (clazz == char.class || clazz == Character.class) {
             return new CharacterFormat();
+        } else if (clazz.isEnum()) {
+            return new EnumFormat(clazz);
         } else {
             throw new IllegalArgumentException("Can not find a suitable formatter for the type: " + clazz.getCanonicalName());
         }
