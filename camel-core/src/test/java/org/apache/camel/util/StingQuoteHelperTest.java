@@ -131,4 +131,32 @@ public class StingQuoteHelperTest extends TestCase {
         assertEquals("Hello World", out[2]);
     }
 
+    public void testSingleInDoubleQuote() throws Exception {
+        String[] out = StringQuoteHelper.splitSafeQuote("\"Hello O'Connor\", 5, 'foo bar'", ',', true);
+        assertEquals(3, out.length);
+        assertEquals("Hello O'Connor", out[0]);
+        assertEquals("5", out[1]);
+        assertEquals("foo bar", out[2]);
+
+        out = StringQuoteHelper.splitSafeQuote("\"Hello O'Connor O'Bannon\", 5, 'foo bar'", ',', true);
+        assertEquals(3, out.length);
+        assertEquals("Hello O'Connor O'Bannon", out[0]);
+        assertEquals("5", out[1]);
+        assertEquals("foo bar", out[2]);
+    }
+
+    public void testDoubleInSingleQuote() throws Exception {
+        String[] out = StringQuoteHelper.splitSafeQuote("'Hello O\"Connor', 5, 'foo bar'", ',', true);
+        assertEquals(3, out.length);
+        assertEquals("Hello O\"Connor", out[0]);
+        assertEquals("5", out[1]);
+        assertEquals("foo bar", out[2]);
+
+        out = StringQuoteHelper.splitSafeQuote("'Hello O\"Connor O\"Bannon', 5, 'foo bar'", ',', true);
+        assertEquals(3, out.length);
+        assertEquals("Hello O\"Connor O\"Bannon", out[0]);
+        assertEquals("5", out[1]);
+        assertEquals("foo bar", out[2]);
+    }
+
 }
