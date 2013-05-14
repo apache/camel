@@ -1017,11 +1017,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             answer = getLanguageResolver().resolveLanguage(language, this);
 
             // inject CamelContext if aware
-            if (answer != null && answer instanceof CamelContextAware) {
-                ((CamelContextAware) answer).setCamelContext(this);
-            }
-
             if (answer != null) {
+                if (answer instanceof CamelContextAware) {
+                    ((CamelContextAware) answer).setCamelContext(this);
+                }
+                if (answer instanceof Service) {
+                    try {
+                        startService((Service) answer);
+                    } catch (Exception e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+                }
+
                 languages.put(language, answer);
             }
         }
@@ -1669,6 +1676,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         shutdownServices(components.values());
         components.clear();
+
+        shutdownServices(languages.values());
+        languages.clear();
 
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
