@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy.format;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Locale;
 
 
@@ -35,12 +36,12 @@ public class BigDecimalFormat extends AbstractNumberFormat<BigDecimal> {
     public BigDecimal parse(String string) throws Exception {
         BigDecimal result = new BigDecimal(string.trim());
         if (super.hasImpliedDecimalPosition()) {
-            result = result.divide(new BigDecimal(super.getMultiplier()));
+            result = result.divide(new BigDecimal(super.getMultiplier()), super.getPrecision(), RoundingMode.HALF_EVEN);
+        } else {
+            if (super.getPrecision() != -1) {
+                result = result.setScale(super.getPrecision());
+            }
         }
-        if (super.getPrecision() != -1) {
-            result = result.setScale(super.getPrecision());
-        }
-
         return result;
     }
 }
