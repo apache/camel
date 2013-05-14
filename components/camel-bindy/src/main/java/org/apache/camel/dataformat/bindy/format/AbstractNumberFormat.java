@@ -29,7 +29,7 @@ public abstract class AbstractNumberFormat<T extends Number> implements Format<T
     private boolean impliedDecimalPosition;
     private int precision;
     private DecimalFormat format;
-    private int multiplier;
+    private double multiplier;
 
     /**
      *
@@ -58,7 +58,7 @@ public abstract class AbstractNumberFormat<T extends Number> implements Format<T
         if (this.impliedDecimalPosition) {
             this.format.setMinimumFractionDigits(0);
             this.format.setMaximumFractionDigits(0);
-            this.multiplier = (int)Math.pow(10D, precision);
+            this.multiplier = Math.pow(10D, precision);
         } else {
             this.format.setMinimumFractionDigits(this.precision);
             this.format.setMaximumFractionDigits(this.precision);
@@ -77,7 +77,7 @@ public abstract class AbstractNumberFormat<T extends Number> implements Format<T
         return this.format;
     }
 
-    protected int getMultiplier() {
+    protected double getMultiplier() {
         return multiplier;
     }
 }
