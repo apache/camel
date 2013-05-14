@@ -75,18 +75,34 @@ public class SchemaValidationException extends ValidationException {
 
     protected static String message(Object schema, List<SAXParseException> fatalErrors,
                                     List<SAXParseException> errors, List<SAXParseException> warnings) {
-        StringBuilder buffer = new StringBuilder("Validation failed for: ");
-        buffer.append(schema);
+        StringBuilder buffer = new StringBuilder("Validation failed for: ")
+            .append(schema)
+            .append("\n");
 
         if (!fatalErrors.isEmpty()) {
-            buffer.append(" fatal errors: ");
-            buffer.append(fatalErrors);
+            buffer.append("fatal errors: [")
+                .append("\n");
+            appendDetails(buffer, fatalErrors);
+            buffer.append("]")
+                .append("\n");
         }
+
         if (!errors.isEmpty()) {
-            buffer.append(" errors: ");
-            buffer.append(errors);
+            buffer.append("errors: [")
+                .append("\n");
+            appendDetails(buffer, errors);
+            buffer.append("]");
         }
 
         return buffer.toString();
+    }
+
+    private static void appendDetails(StringBuilder buffer, List<SAXParseException> saxParseExceptions) {
+        for (SAXParseException e : saxParseExceptions) {
+            buffer.append(e.getClass().getName()).append(": ");
+            buffer.append(e.getMessage()).append(", ");
+            buffer.append("Line : ").append(e.getLineNumber()).append(", ");
+            buffer.append("Column : ").append(e.getColumnNumber()).append("\n");
+        }
     }
 }

@@ -89,6 +89,14 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
             assertEquals(0, e.getWarnings().size());
             assertNotNull(e.getSchema());
             assertNotNull(e.getExchange());
+
+            assertTrue(e.getMessage().startsWith("Validation failed for: org.apache.camel.processor.validation.DefaultValidationErrorHandlerTest"));
+            assertTrue(e.getMessage().contains("fatal errors: ["));
+            assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: cheese, Line : 13, Column : 17"));
+            assertTrue(e.getMessage().contains("errors: ["));
+            assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: foo, Line : 3, Column : 5"));
+            assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: bar, Line : 9, Column : 12"));
+            assertTrue(e.getMessage().contains("Exchange[null]"));
         }
     }
 
@@ -110,6 +118,12 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
             assertEquals(0, e.getWarnings().size());
             assertNotNull(e.getSchema());
             assertNotNull(e.getExchange());
+
+            assertTrue(e.getMessage().startsWith("Validation failed for: org.apache.camel.processor.validation.DefaultValidationErrorHandlerTest"));
+            assertTrue(e.getMessage().contains("errors: ["));
+            assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: foo, Line : 3, Column : 5"));
+            assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: bar, Line : 9, Column : 12"));
+            assertTrue(e.getMessage().contains("Exchange[null]"));
         }
     }
 
