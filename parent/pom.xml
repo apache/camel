@@ -398,8 +398,8 @@
     <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
     <xpp3-version>1.1.4c</xpp3-version>
     <xsdlib-version>2013.2</xsdlib-version>
-    <xstream-bundle-version>1.4.3_1</xstream-bundle-version>
-    <xstream-version>1.4.3</xstream-version>
+    <xstream-bundle-version>1.4.4_1</xstream-bundle-version>
+    <xstream-version>1.4.4</xstream-version>
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.4.5</zookeeper-version>
 
