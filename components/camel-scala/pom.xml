@@ -52,9 +52,9 @@
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.10</artifactId>
-            <version>1.9.1</version>
+            <version>${scalatest-version}</version>
             <scope>test</scope>
-            <!-- TODO: remove the following exclusions as soon as the scala version being used by scalatest_2.10 is in sync with ${scala-version} -->
+            <!-- exclude scala compiler so we can control which version we are using -->
             <exclusions>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
