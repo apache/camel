@@ -6,7 +6,7 @@ This example shows how to leverage the Spring Security to secure the camel endpo
 The example consumes messages from a servlet endpoint which is secured by Spring Security 
 with http basic authentication, there are two service:
  "http://localhost:8080/camel/user" is for the authenticated user whose role is ROLE_USER
- "http://localhost:8080/camel/admim" is for the authenticated user whose role is ROLE_ADMIN
+ "http://localhost:8080/camel/admin" is for the authenticated user whose role is ROLE_ADMIN
 
 You will need to compile this example first:
   mvn clean install
