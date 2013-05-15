@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -14,21 +13,40 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
--->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+--%>
+<%@ import val it: ThreadPoolsResource %>
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <jmxAgent id="agent" createConnector="true"/>
+#{ attributes("title") = "Thread Pools"}#
 
-        <route>
-            <description>This is an example route which you can start, stop and modify</description>
-            <from uri="seda:foo"/>
-            <to uri="mock:results"/>
-        </route>
-    </camelContext>
+<h2>Thread Pools</h2>
 
-</beans>
+<table>
+  <tr>
+    <th>Thread Pool</th>
+    <th>Core pool size</th>
+    <th>Pool size</th>
+    <th>Maximum pool size</th>
+    <th>Task count</th>
+  </tr>
+<ul>
+  #for(i <- it.getThreadPools)
+  <tr>
+    <td>
+      <a class='endpoint' href='${uri("/threadpools/" + i.getName)}'>${i.getName}</a>
+    </td>
+    <td>
+      ${i.getCorePoolSize}
+    </td>
+    <td>
+      ${i.getPoolSize}
+    </td>
+    <td>
+      ${i.getMaximumPoolSize}
+    </td>
+    <td>
+      ${i.getTaskCount}
+    </td>
+  </tr>
+  #end
+</ul>
+</table>

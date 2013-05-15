@@ -1,0 +1,81 @@
+<%--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+--%>
+<%@ import val it: ThreadPoolResource %>
+
+#{ attributes("title") = "Thread Pool " + it.getThreadPool.getName}#
+
+<script type='text/javascript' src="${uri("/js/dojo/dojo.js")}"></script>
+
+<script type='text/javascript'>
+  var threadPoolName = "${it.getThreadPool.getName}"
+  var limit = "${it.getThreadPool.getMaximumPoolSize}";
+  limit = parseInt(limit.replace(/\s/g, ""));
+  if(limit > 100) {
+    limit = 100;
+  }
+
+</script>
+
+<script type='text/javascript' src="${uri("/js/threadPool.js")}"></script>
+
+<h2>Thread Pool: ${it.getThreadPool.getName}</h2>
+
+<table>
+  <tr>
+    <th>Core pool size</th>
+    <th>Pool size</th>
+    <th>Maximum pool size</th>
+    <th>Task count</th>
+    <th>Keep alive time</th>
+    <th>Actions</th>
+  </tr>
+<ul>
+  <tr>
+    <td>
+      <form action='${uri("/threadpools/" + it.getThreadPool.getName + "/corePoolSize")}' method="POST" name="setCorePoolSize">
+        <input type="text" name="corePoolSize" value="${it.getThreadPool.getCorePoolSize}" width="80">
+        <input type="submit" value="update">
+      </form>
+    </td>
+    <td>
+      ${it.getThreadPool.getPoolSize}
+    </td>
+    <td>
+      <form action='${uri("/threadpools/" + it.getThreadPool.getName + "/maximumPoolSize")}' method="POST" name="setMaximumPoolSize">
+        <input type="text" name="maximumPoolSize" value="${it.getThreadPool.getMaximumPoolSize}" width="80">
+        <input type="submit" value="update">
+      </form>
+    </td>
+    <td>
+      ${it.getThreadPool.getTaskCount}
+    </td>
+    <td>
+      <form action='${uri("/threadpools/" + it.getThreadPool.getName + "/keepAliveTime")}' method="POST" name="setKeepAliveTime">
+        <input type="text" name="keepAliveTime" value="${it.getThreadPool.getKeepAliveTime}" width="80">
+        <input type="submit" value="update">
+      </form>
+    </td>
+    <td>
+      <form action='${uri("/threadpools/" + it.getThreadPool.getName + "/purge")}' method="GET" name="purge">
+        <input type="submit" value="purge">
+      </form>
+    </td>
+  </tr>
+</ul>
+</table>
+
+<div id="threadPoolSize" style="width: 900px; height: 300px;"></div>

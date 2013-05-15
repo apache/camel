@@ -16,6 +16,7 @@
  */
 package org.apache.camel.web.resources;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.annotation.PreDestroy;
@@ -30,6 +31,8 @@ import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.web.connectors.CamelConnection;
+import org.apache.camel.web.connectors.CamelConnectionFactory;
 import org.apache.camel.web.model.Camel;
 
 /**
@@ -120,6 +123,34 @@ public class CamelContextResource {
     @Path("endpoints")
     public EndpointsResource getEndpointsResource() {
         return new EndpointsResource(this);
+    }
+
+    /**
+     * Returns the active consumers
+     */
+    @Path("consumers")
+    public ConsumersResource geConsumersResource() {
+        CamelConnection camelConnection = null;
+        try {
+            camelConnection = CamelConnectionFactory.getInstance().getJmxConnection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new ConsumersResource(camelConnection);
+    }
+    
+    /**
+     * Returns the active thread pools
+     */
+    @Path("threadpools")
+    public ThreadPoolsResource geThreadPoolsResource() {
+        CamelConnection camelConnection = null;
+        try {
+            camelConnection = CamelConnectionFactory.getInstance().getJmxConnection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new ThreadPoolsResource(camelConnection);
     }
 
     /**
