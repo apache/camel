@@ -17,7 +17,8 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -26,11 +27,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class RouteBuilderRefTest extends XmlConfigTestSupport {
 
     public void testUsingRouteBuilderRefInCamelXml() throws Exception {
-        ApplicationContext applicationContext =
-            new ClassPathXmlApplicationContext("org/apache/camel/spring/config/routeBuilderRef.xml");
+        AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/routeBuilderRef.xml");
 
         CamelContext context = applicationContext.getBean("camel5", CamelContext.class);
         assertValidContext(context);
+
+        // we're done so let's properly close the application context
+        IOHelper.close(applicationContext);
     }
 
 }

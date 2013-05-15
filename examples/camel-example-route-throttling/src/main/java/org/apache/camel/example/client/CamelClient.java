@@ -22,7 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ProducerTemplate;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -42,7 +43,7 @@ public final class CamelClient {
     public static void main(final String[] args) throws Exception {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
         final ProducerTemplate producer = context.getBean("camelTemplate", ProducerTemplate.class);
@@ -71,7 +72,9 @@ public final class CamelClient {
         latch.await(300, TimeUnit.SECONDS);
         System.out.println("... Send " + SIZE + " message to JMS broker");
         executors.shutdownNow();
-        System.exit(0);
+
+        // we're done so let's properly close the application context
+        IOHelper.close(context);
     }
 
 }

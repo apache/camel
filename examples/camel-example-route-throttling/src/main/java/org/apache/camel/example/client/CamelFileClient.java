@@ -18,7 +18,8 @@ package org.apache.camel.example.client;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -33,7 +34,7 @@ public final class CamelFileClient {
     }
 
     public static void main(final String[] args) throws Exception {
-        ApplicationContext context = new ClassPathXmlApplicationContext("camel-file-client.xml");
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-file-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
         final ProducerTemplate producer = context.getBean("camelTemplate", ProducerTemplate.class);
@@ -47,7 +48,8 @@ public final class CamelFileClient {
 
         System.out.println("... Wrote " + SIZE + " files");
 
-        System.exit(0);
+        // we're done so let's properly close the application context
+        IOHelper.close(context);
     }
 
 }

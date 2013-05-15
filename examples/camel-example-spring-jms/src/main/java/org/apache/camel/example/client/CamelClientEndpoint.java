@@ -21,7 +21,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -42,7 +43,7 @@ public final class CamelClientEndpoint {
     public static void main(final String[] args) throws Exception {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
         CamelContext camel = context.getBean("camel-client", CamelContext.class);
 
         // get the endpoint from the camel context
@@ -68,9 +69,12 @@ public final class CamelClientEndpoint {
         int response = exchange.getOut().getBody(Integer.class);
         System.out.println("... the result is: " + response);
 
-        // stop and exit the client
+        // stopping the JMS producer has the side effect of the "ReplyTo Queue" being properly
+        // closed, making this client not to try any further reads for the replies from the server
         producer.stop();
-        System.exit(0);
+
+        // we're done so let's properly close the application context
+        IOHelper.close(context);
     }
     // END SNIPPET: e1
 
