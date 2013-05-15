@@ -21,10 +21,13 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringComponentScanTest extends ContextTestSupport {
+
+    private AbstractApplicationContext applicationContext;
 
     @Override
     protected void setUp() throws Exception {
@@ -32,15 +35,18 @@ public class SpringComponentScanTest extends ContextTestSupport {
         if (context != null) {
             context.stop();
         }
-        ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
-        context = c.getBean("camelScan", ModelCamelContext.class);
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
+        context = applicationContext.getBean("camelScan", ModelCamelContext.class);
         template = context.createProducerTemplate();
-        template.start();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        template.stop();
+        if (applicationContext != null) {
+            // we're done so let's properly close the application context
+            IOHelper.close(applicationContext);
+        }
+
         super.tearDown();
     }
 

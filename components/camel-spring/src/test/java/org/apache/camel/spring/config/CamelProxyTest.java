@@ -19,7 +19,8 @@ package org.apache.camel.spring.config;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -28,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CamelProxyTest extends TestSupport {
 
     public void testCamelProxy() throws Exception {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyTest.xml");
+        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyTest.xml");
 
         MyProxySender sender = ac.getBean("myProxySender", MyProxySender.class);
         String reply = sender.hello("World");
@@ -51,6 +52,9 @@ public class CamelProxyTest extends TestSupport {
         result.expectedBodiesReceived("Hello my friends again!");
         myProxySenderWithCamelContextId.greeting("Hello my friends again!");
         result.assertIsSatisfied();
+
+        // we're done so let's properly close the application context
+        IOHelper.close(ac);
     }
     
 }

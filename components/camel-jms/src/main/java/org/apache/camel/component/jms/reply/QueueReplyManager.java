@@ -213,7 +213,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             answer.setTaskExecutor(endpoint.getTaskExecutor());
         }
 
-        // setup a bean name which is used ny Spring JMS as the thread name
+        // setup a bean name which is used by Spring JMS as the thread name
         String name = "QueueReplyManager[" + answer.getDestinationName() + "]";
         answer.setBeanName(name);
 

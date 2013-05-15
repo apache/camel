@@ -25,8 +25,10 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -35,6 +37,8 @@ import org.springframework.core.io.ClassPathResource;
  * @version 
  */
 public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
+
+    private AbstractApplicationContext applicationContext;
 
     @Override
     protected void setUp() throws Exception {
@@ -48,25 +52,30 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         super.tearDown();
         // enable JMX
         System.clearProperty(JmxSystemPropertyKeys.DISABLED);
+
+        if (applicationContext != null) {
+            // we're done so let's properly close the application context
+            IOHelper.close(applicationContext);
+        }
     }
 
     public void testClassPathRouteLoading() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel");
         assertValidContext(context);
     }
 
     public void testClassPathRouteLoadingUsingNamespaces() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
         CamelContext context = applicationContext.getBean("camel3", CamelContext.class);
         assertValidContext(context);
     }
 
     public void testGenericApplicationContextUsingNamespaces() throws Exception {
-        GenericApplicationContext applicationContext = new GenericApplicationContext();
-        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
+        applicationContext = new GenericApplicationContext();
+        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader((BeanDefinitionRegistry) applicationContext);
         xmlReader.loadBeanDefinitions(new ClassPathResource("org/apache/camel/spring/camelContextFactoryBean.xml"));
 
         // lets refresh to inject the applicationContext into beans
@@ -77,7 +86,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
     }    
     
     public void testXMLRouteLoading() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
         assertNotNull("No context found!", context);
@@ -99,7 +108,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
     }
     
     public void testRouteBuilderRef() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextRouteBuilderRef.xml");
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextRouteBuilderRef.xml");
 
         CamelContext context = applicationContext.getBean("camel5", CamelContext.class);
         assertNotNull("No context found!", context);
@@ -108,7 +117,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
     }
 
     public void testAutoStartup() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
         SpringCamelContext context = applicationContext.getBean("camel4", SpringCamelContext.class);
         assertFalse(context.isAutoStartup());
