@@ -18,7 +18,8 @@ package org.apache.camel.example.client;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -35,7 +36,7 @@ public final class CamelClient {
     public static void main(final String[] args) throws Exception {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
         ProducerTemplate camelTemplate = context.getBean("camelTemplate", ProducerTemplate.class);
@@ -45,7 +46,8 @@ public final class CamelClient {
         int response = (Integer)camelTemplate.sendBody("jms:queue:numbers", ExchangePattern.InOut, 22);
         System.out.println("... the result is: " + response);
 
-        System.exit(0);
+        // we're done so let's properly close the application context
+        IOHelper.close(context);
     }
     // END SNIPPET: e1
 

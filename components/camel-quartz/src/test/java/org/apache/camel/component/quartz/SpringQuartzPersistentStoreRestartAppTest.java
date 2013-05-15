@@ -19,6 +19,7 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.TestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -70,6 +71,9 @@ public class SpringQuartzPersistentStoreRestartAppTest extends TestSupport {
         mock2.assertIsSatisfied();
 
         app2.stop();
+
+        // we're done so let's properly close the application contexts
+        IOHelper.close(app, app2);
     }
 
 }

@@ -17,7 +17,9 @@
 package org.apache.camel.spring.config;
 
 import junit.framework.TestCase;
-import org.springframework.context.ApplicationContext;
+
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -26,12 +28,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CamelProxyUsingRefTest extends TestCase {
 
     public void testCamelProxyUsingRef() throws Exception {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyUsingRefTest.xml");
+        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyUsingRefTest.xml");
 
         MyProxySender sender = ac.getBean("myProxySender", MyProxySender.class);
         String reply = sender.hello("World");
 
         assertEquals("Hello World", reply);
+
+        // we're done so let's properly close the application context
+        IOHelper.close(ac);
     }
 
 }

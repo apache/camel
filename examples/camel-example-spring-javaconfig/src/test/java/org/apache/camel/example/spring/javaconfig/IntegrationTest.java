@@ -18,9 +18,10 @@ package org.apache.camel.example.spring.javaconfig;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.javaconfig.Main;
+import org.apache.camel.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -37,11 +38,14 @@ public class IntegrationTest extends Assert {
     @Test
     public void testStartApplicationContext() throws Exception {
         // test to boot up the application context from spring configuration
-        ApplicationContext context = new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
         String[] names = context.getBeanNamesForType(CamelContext.class);
         assertEquals("There should be a camel context ", 1, names.length);
         CamelContext camelContext = context.getBean(names[0], CamelContext.class);
         assertNotNull(camelContext);
         Thread.sleep(2000);
+
+        // we're done so let's properly close the application context
+        IOHelper.close(context);
     }
 }

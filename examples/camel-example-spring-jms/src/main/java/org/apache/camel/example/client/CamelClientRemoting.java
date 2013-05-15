@@ -17,7 +17,8 @@
 package org.apache.camel.example.client;
 
 import org.apache.camel.example.server.Multiplier;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.util.IOHelper;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -34,7 +35,7 @@ public final class CamelClientRemoting {
     public static void main(final String[] args) {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
         // just get the proxy to the service and we as the client can use the "proxy" as it was
         // a local object we are invoking. Camel will under the covers do the remote communication
         // to the remote ActiveMQ server and fetch the response.
@@ -44,7 +45,8 @@ public final class CamelClientRemoting {
         int response = multiplier.multiply(33);
         System.out.println("... the result is: " + response);
 
-        System.exit(0);
+        // we're done so let's properly close the application context
+        IOHelper.close(context);
     }
     // END SNIPPET: e1
 
