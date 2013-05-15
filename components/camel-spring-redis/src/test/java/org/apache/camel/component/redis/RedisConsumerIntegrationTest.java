@@ -54,9 +54,12 @@ public class RedisConsumerIntegrationTest extends RedisTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=one,two&listenerContainer=#listenerContainer&redisTemplate=#redisTemplate")
+                        .startupOrder(1)
                         .to("mock:result");
 
                 from("direct:start")
+                        .startupOrder(2)
+                        .delay(2000)
                         .to("spring-redis://localhost:6379?redisTemplate=#redisTemplate");
             }
         };

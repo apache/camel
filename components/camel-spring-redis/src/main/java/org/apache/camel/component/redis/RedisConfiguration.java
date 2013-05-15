@@ -126,6 +126,7 @@ public class RedisConfiguration {
         managedListenerContainer = true;
         listenerContainer.setConnectionFactory(getConnectionFactory());
         listenerContainer.afterPropertiesSet();
+        listenerContainer.start();
         return listenerContainer;
     }
 
