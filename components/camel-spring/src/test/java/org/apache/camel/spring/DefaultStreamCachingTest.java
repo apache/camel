@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,7 +30,7 @@ public class DefaultStreamCachingTest extends TestCase {
         assertFalse("StreamCaching should not be enabled", camelContext.isStreamCaching());
 
         // we're done so let's properly close the application context
-        IOHelper.close(appContext);
+        appContext.close();
     }
 
 }
