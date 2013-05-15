@@ -18,7 +18,6 @@ package org.apache.camel.example.spring.javaconfig;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.javaconfig.Main;
-import org.apache.camel.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -46,6 +45,6 @@ public class IntegrationTest extends Assert {
         Thread.sleep(2000);
 
         // we're done so let's properly close the application context
-        IOHelper.close(context);
+        context.close();
     }
 }

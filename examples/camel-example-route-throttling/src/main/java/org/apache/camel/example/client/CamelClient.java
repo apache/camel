@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -74,7 +73,7 @@ public final class CamelClient {
         executors.shutdownNow();
 
         // we're done so let's properly close the application context
-        IOHelper.close(context);
+        context.close();
     }
 
 }

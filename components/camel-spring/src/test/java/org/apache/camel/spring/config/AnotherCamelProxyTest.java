@@ -18,7 +18,6 @@ package org.apache.camel.spring.config;
 
 import junit.framework.TestCase;
 
-import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -37,7 +36,7 @@ public class AnotherCamelProxyTest extends TestCase {
         assertEquals("Bye Camel", reply);
 
         // we're done so let's properly close the application context
-        IOHelper.close(ac);
+        ac.close();
         // END SNIPPET: e1
     }
 
