@@ -32,7 +32,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
-    <spring-version>${spring31-version}</spring-version>
   </properties>
   
   <dependencies>
