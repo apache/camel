@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.customerrelations;
 
-import org.apache.camel.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -41,7 +40,12 @@ public class CustomerServicesWsAddressingTest extends Assert {
             assertNotNull("We should get Customer here", customer);
         } finally {
             // we're done so let's properly close the application context
-            IOHelper.close(clientContext, serverContext);
+            if (clientContext != null) {
+                clientContext.close();
+            }
+            if (serverContext != null) {
+                serverContext.close();
+            }
         }
     }
 

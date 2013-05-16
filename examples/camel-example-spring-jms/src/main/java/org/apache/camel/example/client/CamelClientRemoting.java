@@ -17,7 +17,6 @@
 package org.apache.camel.example.client;
 
 import org.apache.camel.example.server.Multiplier;
-import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -46,7 +45,7 @@ public final class CamelClientRemoting {
         System.out.println("... the result is: " + response);
 
         // we're done so let's properly close the application context
-        IOHelper.close(context);
+        context.close();
     }
     // END SNIPPET: e1
 

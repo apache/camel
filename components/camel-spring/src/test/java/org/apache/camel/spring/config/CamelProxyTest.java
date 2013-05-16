@@ -19,7 +19,6 @@ package org.apache.camel.spring.config;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -54,7 +53,7 @@ public class CamelProxyTest extends TestSupport {
         result.assertIsSatisfied();
 
         // we're done so let's properly close the application context
-        IOHelper.close(ac);
+        ac.close();
     }
     
 }
