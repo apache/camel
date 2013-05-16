@@ -27,11 +27,14 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 import org.stringtemplate.v4.NoIndentWriter;
 import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
 
 /**
- * @version 
+ * @version
  */
 public class StringTemplateEndpoint extends ResourceEndpoint {
+    private char delimiterStart = STGroup.defaultGroup.delimiterStartChar;
+    private char delimiterStop = STGroup.defaultGroup.delimiterStopChar;
 
     public StringTemplateEndpoint() {
     }
@@ -50,6 +53,22 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         return ExchangePattern.InOut;
     }
 
+    public char getDelimiterStart() {
+        return delimiterStart;
+    }
+
+    public void setDelimiterStart(char delimiterStart) {
+        this.delimiterStart = delimiterStart;
+    }
+
+    public char getDelimiterStop() {
+        return delimiterStop;
+    }
+
+    public void setDelimiterStop(char delimiterStop) {
+        this.delimiterStop = delimiterStop;
+    }
+
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         StringWriter buffer = new StringWriter();
@@ -57,7 +76,7 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
 
         // getResourceAsInputStream also considers the content cache
         String text = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, getResourceAsInputStream());
-        ST template = new ST(text);
+        ST template = new ST(text, delimiterStart, delimiterStop);
         for (Map.Entry<String, Object> entry : variableMap.entrySet()) {
             template.add(entry.getKey(), entry.getValue());
         }
@@ -71,5 +90,4 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, getResourceUri());
         out.setAttachments(exchange.getIn().getAttachments());
     }
-
 }
