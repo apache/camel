@@ -85,8 +85,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final Lock lock = new ReentrantLock();
     private final CamelContext camelContext;
     private final Processor processor;
-    private final AggregationStrategy aggregationStrategy;
-    private final Expression correlationExpression;
+    private AggregationStrategy aggregationStrategy;
+    private Expression correlationExpression;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy = new OptimisticLockRetryPolicy();
@@ -699,6 +699,24 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     public OptimisticLockRetryPolicy getOptimisticLockRetryPolicy() {
         return optimisticLockRetryPolicy;
     }
+
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public Expression getCorrelationExpression() {
+        return correlationExpression;
+    }
+
+    public void setCorrelationExpression(Expression correlationExpression) {
+        this.correlationExpression = correlationExpression;
+    }
+
+
 
     /**
      * On completion task which keeps the booking of the in progress up to date
