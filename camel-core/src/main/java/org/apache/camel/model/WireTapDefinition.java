@@ -107,7 +107,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         }
         if (headers != null && !headers.isEmpty()) {
             for (SetHeaderDefinition header : headers) {
-                Processor processor = header.createProcessor(routeContext);
+                Processor processor = createProcessor(routeContext, header);
                 answer.addNewExchangeProcessor(processor);
             }
         }

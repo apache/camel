@@ -106,7 +106,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
      * @throws Exception is thrown if error creating the processor
      */
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
+        Processor childProcessor = createOutputsProcessor(routeContext);
         return new FilterProcessor(createPredicate(routeContext), childProcessor);
     }
 

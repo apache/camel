@@ -17,13 +17,13 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
-import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.support.ServiceSupport;
@@ -32,6 +32,8 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * Implements a Choice structure where one or more predicates are used which if
@@ -42,12 +44,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
     private static final transient Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
-    private final List<FilterProcessor> filters;
-    private final AsyncProcessor otherwise;
+    private final List<Processor> filters;
+    private final Processor otherwise;
 
-    public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
+    public ChoiceProcessor(List<Processor> filters, Processor otherwise) {
         this.filters = filters;
-        this.otherwise = otherwise != null ? AsyncProcessorConverterHelper.convert(otherwise) : null;
+        this.otherwise = otherwise;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -55,54 +57,104 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        for (int i = 0; i < filters.size(); i++) {
-            FilterProcessor filter = filters.get(i);
-            Predicate predicate = filter.getPredicate();
+        Iterator<Processor> processors = next().iterator();
 
-            boolean matches = false;
-            try {
-                // ensure we handle exceptions thrown when matching predicate
-                if (predicate != null) {
-                    matches = predicate.matches(exchange);
+        exchange.setProperty(Exchange.FILTER_MATCHED, false);
+        while (continueRouting(processors, exchange)) {
+            // get the next processor
+            Processor processor = processors.next();
+
+            AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
+            boolean sync = process(exchange, callback, processors, async);
+
+            // continue as long its being processed synchronously
+            if (!sync) {
+                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+                // the remainder of the CBR will be completed async
+                // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                return false;
+            }
+
+            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+
+            // check for error if so we should break out
+            if (!continueProcessing(exchange, "so breaking out of content based router", LOG)) {
+                break;
+            }
+        }
+
+        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+
+        callback.done(true);
+        return true;
+    }
+
+    protected boolean continueRouting(Iterator<Processor> it, Exchange exchange) {
+        boolean answer = it.hasNext();
+        if (answer) {
+            Object matched = exchange.getProperty(Exchange.FILTER_MATCHED);
+            if (matched != null) {
+                boolean hasMatched = exchange.getContext().getTypeConverter().convertTo(Boolean.class, matched);
+                if (hasMatched) {
+                    LOG.debug("ExchangeId: {} has been matched: {}", exchange.getExchangeId(), exchange);
+                    answer = false;
                 }
-            } catch (Throwable e) {
-                exchange.setException(e);
-                callback.done(true);
-                return true;
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("#{} - {} matches: {} for: {}", new Object[]{i, predicate, matches, exchange});
-            }
-
-            if (matches) {
-                // process next will also take care (has not null test) if next was a stop().
-                // stop() has no processor to execute, and thus we will end in a NPE
-                return filter.processNext(exchange, callback);
             }
         }
-        if (otherwise != null) {
-            return AsyncProcessorHelper.process(otherwise, exchange, callback);
-        } else {
-            callback.done(true);
-            return true;
-        }
+        LOG.trace("ExchangeId: {} should continue matching: {}", exchange.getExchangeId(), answer);
+        return answer;
+    }
+
+    private boolean process(final Exchange exchange, final AsyncCallback callback,
+                            final Iterator<Processor> processors, final AsyncProcessor asyncProcessor) {
+        // this does the actual processing so log at trace level
+        LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+
+        // implement asynchronous routing logic in callback so we can have the callback being
+        // triggered and then continue routing where we left
+        boolean sync = AsyncProcessorHelper.process(asyncProcessor, exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                // we only have to handle async completion of the pipeline
+                if (doneSync) {
+                    return;
+                }
+
+                // continue processing the pipeline asynchronously
+                while (continueRouting(processors, exchange)) {
+                    AsyncProcessor processor = AsyncProcessorConverterHelper.convert(processors.next());
+
+                    // check for error if so we should break out
+                    if (!continueProcessing(exchange, "so breaking out of pipeline", LOG)) {
+                        break;
+                    }
+
+                    doneSync = process(exchange, callback, processors, processor);
+                    if (!doneSync) {
+                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+                        return;
+                    }
+                }
+
+                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                callback.done(false);
+            }
+        });
+
+        return sync;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("choice{");
         boolean first = true;
-        for (FilterProcessor processor : filters) {
+        for (Processor processor : filters) {
             if (first) {
                 first = false;
             } else {
                 builder.append(", ");
             }
             builder.append("when ");
-            builder.append(processor.getPredicate().toString());
-            builder.append(": ");
-            builder.append(processor.getProcessor());
+            builder.append(processor);
         }
         if (otherwise != null) {
             builder.append(", otherwise: ");
@@ -116,7 +168,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
         return "choice";
     }
 
-    public List<FilterProcessor> getFilters() {
+    public List<Processor> getFilters() {
         return filters;
     }
 

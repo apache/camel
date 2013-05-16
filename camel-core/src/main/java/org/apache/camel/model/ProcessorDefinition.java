@@ -410,15 +410,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 }
             }
 
-            Processor processor = null;
-            // at first use custom factory
-            if (routeContext.getCamelContext().getProcessorFactory() != null) {
-                processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, output);
-            }
-            // fallback to default implementation if factory did not create the processor
-            if (processor == null) {
-                processor = output.createProcessor(routeContext);
-            }
+            Processor processor = createProcessor(routeContext, output);
 
             if (output instanceof Channel && processor == null) {
                 continue;
@@ -438,6 +430,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             }
         }
 
+        return processor;
+    }
+
+    protected Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> output) throws Exception {
+        Processor processor = null;
+        // at first use custom factory
+        if (routeContext.getCamelContext().getProcessorFactory() != null) {
+            processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, output);
+        }
+        // fallback to default implementation if factory did not create the processor
+        if (processor == null) {
+            processor = output.createProcessor(routeContext);
+        }
         return processor;
     }
 

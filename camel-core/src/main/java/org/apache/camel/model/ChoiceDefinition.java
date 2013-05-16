@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,7 +29,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.ChoiceProcessor;
-import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
@@ -132,13 +130,13 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
+        List<Processor> filters = new ArrayList<Processor>();
         for (WhenDefinition whenClause : whenClauses) {
-            filters.add(whenClause.createProcessor(routeContext));
+            filters.add(createProcessor(routeContext, whenClause));
         }
         Processor otherwiseProcessor = null;
         if (otherwise != null) {
-            otherwiseProcessor = otherwise.createProcessor(routeContext);
+            otherwiseProcessor = createProcessor(routeContext, otherwise);
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }

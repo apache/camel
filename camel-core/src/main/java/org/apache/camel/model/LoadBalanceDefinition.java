@@ -122,7 +122,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
 
         LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorDefinition<?> processorType : outputs) {
-            Processor processor = processorType.createProcessor(routeContext);
+            Processor processor = createProcessor(routeContext, processorType);
             loadBalancer.addProcessor(processor);
         }
         return loadBalancer;
@@ -138,7 +138,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
             if (LoadBalanceDefinition.class.isInstance(processorType)) {
                 throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + processorType);
             }
-            Processor processor = processorType.createProcessor(routeContext);
+            Processor processor = createProcessor(routeContext, processorType);
             processor = wrapChannel(routeContext, processor, processorType);
             loadBalancer.addProcessor(processor);
         }

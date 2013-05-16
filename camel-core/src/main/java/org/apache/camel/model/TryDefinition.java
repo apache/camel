@@ -78,7 +78,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
 
         Processor finallyProcessor = null;
         if (finallyClause != null) {
-            finallyProcessor = finallyClause.createProcessor(routeContext);
+            finallyProcessor = createProcessor(routeContext, finallyClause);
         }
 
         List<CatchProcessor> catchProcessors = new ArrayList<CatchProcessor>();

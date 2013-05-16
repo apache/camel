@@ -108,7 +108,7 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
         if (afterUri != null) {
             pipe.add(new ToDefinition(afterUri));
         } else if (afterFinallyUri != null) {
-            finallyProcessor = new ToDefinition(afterFinallyUri).createProcessor(routeContext);
+            finallyProcessor = createProcessor(routeContext, new ToDefinition(afterFinallyUri));
         }
 
         Processor tryProcessor = createOutputsProcessor(routeContext, pipe);
