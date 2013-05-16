@@ -90,6 +90,7 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.Container;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
@@ -231,6 +232,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
         }
+
+        Container.Instance.manage(this);
     }
 
     /**
