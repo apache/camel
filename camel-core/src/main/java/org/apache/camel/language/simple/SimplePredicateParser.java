@@ -287,16 +287,23 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * which makes the succeeding parsing easier.
      */
     private void removeIgnorableWhiteSpaceTokens() {
-        // white space can be removed if its not part of a quoted text
+        // white space can be removed if its not part of a quoted text or within function(s)
         boolean quote = false;
+        int functionCount = 0;
 
         Iterator<SimpleToken> it = tokens.iterator();
         while (it.hasNext()) {
             SimpleToken token = it.next();
             if (token.getType().isSingleQuote()) {
                 quote = !quote;
-            } else if (token.getType().isWhitespace() && !quote) {
-                it.remove();
+            } else if (!quote) {
+                if (token.getType().isFunctionStart()) {
+                    functionCount++;
+                } else if (token.getType().isFunctionEnd()) {
+                    functionCount--;
+                } else if (token.getType().isWhitespace() && functionCount == 0) {
+                    it.remove();
+                }
             }
         }
     }
