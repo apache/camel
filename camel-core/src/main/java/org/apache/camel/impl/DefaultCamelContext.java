@@ -1718,7 +1718,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         stopWatch.stop();
         if (log.isInfoEnabled()) {
-            log.info("Uptime {}", getUptime());
+            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") uptime {}", getUptime());
             log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()));
         }
 
