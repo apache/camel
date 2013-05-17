@@ -106,6 +106,7 @@ public interface Exchange {
     String DUPLICATE_MESSAGE         = "CamelDuplicateMessage";
 
     String EXCEPTION_CAUGHT           = "CamelExceptionCaught";
+    String EXCEPTION_HANDLED          = "CamelExceptionHandled";
     String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
     String ERRORHANDLER_HANDLED       = "CamelErrorHandlerHandled";
     String EXTERNAL_REDELIVERED       = "CamelExternalRedelivered";

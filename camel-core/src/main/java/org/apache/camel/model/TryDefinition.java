@@ -76,17 +76,19 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             throw new IllegalArgumentException("Definition has no children on " + this);
         }
 
-        Processor finallyProcessor = null;
-        if (finallyClause != null) {
-            finallyProcessor = createProcessor(routeContext, finallyClause);
-        }
-
-        List<CatchProcessor> catchProcessors = new ArrayList<CatchProcessor>();
+        List<Processor> catchProcessors = new ArrayList<Processor>();
         if (catchClauses != null) {
             for (CatchDefinition catchClause : catchClauses) {
-                catchProcessors.add(catchClause.createProcessor(routeContext));
+                catchProcessors.add(createProcessor(routeContext, catchClause));
             }
         }
+
+        FinallyDefinition finallyDefinition = finallyClause;
+        if (finallyDefinition == null) {
+            finallyDefinition = new FinallyDefinition();
+            finallyDefinition.setParent(this);
+        }
+        Processor finallyProcessor = createProcessor(routeContext, finallyDefinition);
 
         // must have either a catch or finally
         if (finallyClause == null && catchClauses == null) {

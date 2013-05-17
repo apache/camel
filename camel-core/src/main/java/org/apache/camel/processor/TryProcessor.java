@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,20 +42,20 @@ import org.slf4j.LoggerFactory;
 public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
     private static final transient Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
-    protected final AsyncProcessor tryProcessor;
-    protected final DoCatchProcessor catchProcessor;
-    protected final DoFinallyProcessor finallyProcessor;
-    private List<AsyncProcessor> processors;
+    protected final Processor tryProcessor;
+    protected final List<Processor> catchClauses;
+    protected final Processor finallyProcessor;
 
-    public TryProcessor(Processor tryProcessor, List<CatchProcessor> catchClauses, Processor finallyProcessor) {
-        this.tryProcessor = AsyncProcessorConverterHelper.convert(tryProcessor);
-        this.catchProcessor = new DoCatchProcessor(catchClauses);
-        this.finallyProcessor = new DoFinallyProcessor(finallyProcessor);
+    public TryProcessor(Processor tryProcessor, List<Processor> catchClauses, Processor finallyProcessor) {
+        this.tryProcessor = tryProcessor;
+        this.catchClauses = catchClauses;
+        this.finallyProcessor = finallyProcessor;
     }
 
     public String toString() {
+        String catchText = catchClauses == null || catchClauses.isEmpty() ? "": " Catches {" + catchClauses + "}";
         String finallyText = (finallyProcessor == null) ? "" : " Finally {" + finallyProcessor + "}";
-        return "Try {" + tryProcessor + "} " + (catchProcessor != null ? catchProcessor : "") + finallyText;
+        return "Try {" + tryProcessor + "}" + catchText + finallyText;
     }
 
     public String getTraceLabel() {
@@ -68,14 +67,18 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        Iterator<AsyncProcessor> processors = getProcessors().iterator();
+        Iterator<Processor> processors = next().iterator();
+
+        Object lastHandled = exchange.getProperty(Exchange.EXCEPTION_HANDLED);
+        exchange.setProperty(Exchange.EXCEPTION_HANDLED, null);
 
         while (continueRouting(processors, exchange)) {
             ExchangeHelper.prepareOutToIn(exchange);
 
             // process the next processor
-            AsyncProcessor processor = processors.next();
-            boolean sync = process(exchange, callback, processor, processors);
+            Processor processor = processors.next();
+            AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
+            boolean sync = process(exchange, callback, processors, async, lastHandled);
 
             // continue as long its being processed synchronously
             if (!sync) {
@@ -89,13 +92,15 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         }
 
         ExchangeHelper.prepareOutToIn(exchange);
+        exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
         LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
         callback.done(true);
         return true;
     }
 
     protected boolean process(final Exchange exchange, final AsyncCallback callback,
-                              final AsyncProcessor processor, final Iterator<AsyncProcessor> processors) {
+                              final Iterator<Processor> processors, final AsyncProcessor processor,
+                              final Object lastHandled) {
         // this does the actual processing so log at trace level
         LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
@@ -113,8 +118,8 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                     ExchangeHelper.prepareOutToIn(exchange);
 
                     // process the next processor
-                    AsyncProcessor processor = processors.next();
-                    doneSync = process(exchange, callback, processor, processors);
+                    AsyncProcessor processor = AsyncProcessorConverterHelper.convert(processors.next());
+                    doneSync = process(exchange, callback, processors, processor, lastHandled);
 
                     if (!doneSync) {
                         LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
@@ -125,6 +130,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 }
 
                 ExchangeHelper.prepareOutToIn(exchange);
+                exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
                 LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
             }
@@ -133,11 +139,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         return sync;
     }
 
-    protected Collection<AsyncProcessor> getProcessors() {
-        return processors;
-    }
-
-    protected boolean continueRouting(Iterator<AsyncProcessor> it, Exchange exchange) {
+    protected boolean continueRouting(Iterator<Processor> it, Exchange exchange) {
         Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
@@ -152,16 +154,11 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
     }
 
     protected void doStart() throws Exception {
-        processors = new ArrayList<AsyncProcessor>();
-        processors.add(tryProcessor);
-        processors.add(catchProcessor);
-        processors.add(finallyProcessor);
-        ServiceHelper.startServices(tryProcessor, catchProcessor, finallyProcessor);
+        ServiceHelper.startServices(tryProcessor, catchClauses, finallyProcessor);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(finallyProcessor, catchProcessor, tryProcessor);
-        processors.clear();
+        ServiceHelper.stopServices(tryProcessor, catchClauses, finallyProcessor);
     }
 
     public List<Processor> next() {
@@ -172,8 +169,8 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         if (tryProcessor != null) {
             answer.add(tryProcessor);
         }
-        if (catchProcessor != null) {
-            answer.add(catchProcessor);
+        if (catchClauses != null) {
+            answer.addAll(catchClauses);
         }
         if (finallyProcessor != null) {
             answer.add(finallyProcessor);
@@ -182,230 +179,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
     }
 
     public boolean hasNext() {
-        return tryProcessor != null;
-    }
-
-    /**
-     * Processor to handle do catch supporting asynchronous routing engine
-     */
-    private final class DoCatchProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
-
-        private final List<CatchProcessor> catchClauses;
-
-        private DoCatchProcessor(List<CatchProcessor> catchClauses) {
-            this.catchClauses = catchClauses;
-        }
-
-        public void process(Exchange exchange) throws Exception {
-            AsyncProcessorHelper.process(this, exchange);
-        }
-
-        public boolean process(final Exchange exchange, final AsyncCallback callback) {
-            Exception e = exchange.getException();
-
-            if (catchClauses == null || e == null) {
-                return true;
-            }
-
-            // find a catch clause to use
-            CatchProcessor processor = null;
-            for (CatchProcessor catchClause : catchClauses) {
-                Throwable caught = catchClause.catches(exchange, e);
-                if (caught != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("This TryProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
-                    }
-                    processor = catchClause;
-                    break;
-                }
-            }
-
-            if (processor != null) {
-                // create the handle processor which performs the actual logic
-                // this processor just lookup the right catch clause to use and then let the
-                // HandleDoCatchProcessor do all the hard work (separate of concerns)
-                HandleDoCatchProcessor cool = new HandleDoCatchProcessor(processor);
-                return AsyncProcessorHelper.process(cool, exchange, callback);
-            } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("This TryProcessor does not catch the exception: {} caused by: {}", e.getClass().getName(), e.getMessage());
-                }
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void doStart() throws Exception {
-            ServiceHelper.startService(catchClauses);
-        }
-
-        @Override
-        protected void doStop() throws Exception {
-            ServiceHelper.stopServices(catchClauses);
-        }
-
-        @Override
-        public String toString() {
-            return "Catches{" + catchClauses + "}";
-        }
-
-        public String getTraceLabel() {
-            return "doCatch";
-        }
-
-        public List<Processor> next() {
-            List<Processor> answer = new ArrayList<Processor>();
-            if (catchProcessor != null) {
-                answer.addAll(catchClauses);
-            }
-            return answer;
-        }
-
-        public boolean hasNext() {
-            return catchClauses != null && catchClauses.size() > 0;
-        }
-    }
-
-    /**
-     * Processor to handle do finally supporting asynchronous routing engine
-     */
-    private final class DoFinallyProcessor extends DelegateAsyncProcessor implements Traceable {
-
-        private DoFinallyProcessor(Processor processor) {
-            super(processor);
-        }
-
-        @Override
-        protected boolean processNext(final Exchange exchange, final AsyncCallback callback) {
-            // clear exception so finally block can be executed
-            final Exception e = exchange.getException();
-            exchange.setException(null);
-            // but store the caught exception as a property
-            if (e != null) {
-                exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
-            }
-            // store the last to endpoint as the failure endpoint
-            if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
-            }
-
-            boolean sync = super.processNext(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // we only have to handle async completion of the pipeline
-                    if (doneSync) {
-                        return;
-                    }
-
-                    if (e == null) {
-                        exchange.removeProperty(Exchange.FAILURE_ENDPOINT);
-                    } else {
-                        // set exception back on exchange
-                        exchange.setException(e);
-                        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
-                    }
-
-                    // signal callback to continue routing async
-                    ExchangeHelper.prepareOutToIn(exchange);
-                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-                    callback.done(false);
-                }
-            });
-
-            if (sync) {
-                if (e == null) {
-                    exchange.removeProperty(Exchange.FAILURE_ENDPOINT);
-                } else {
-                    // set exception back on exchange
-                    exchange.setException(e);
-                    exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
-                }
-            }
-
-            return sync;
-        }
-
-        @Override
-        public String toString() {
-            return "Finally{" + getProcessor() + "}";
-        }
-
-        public String getTraceLabel() {
-            return "doFinally";
-        }
-    }
-
-    /**
-     * Processor to handle do catch supporting asynchronous routing engine
-     */
-    private final class HandleDoCatchProcessor extends DelegateAsyncProcessor {
-
-        private final CatchProcessor catchClause;
-
-        private HandleDoCatchProcessor(CatchProcessor processor) {
-            super(processor);
-            this.catchClause = processor;
-        }
-
-        @Override
-        protected boolean processNext(final Exchange exchange, final AsyncCallback callback) {
-            final Exception caught = exchange.getException();
-            if (caught == null) {
-                return true;
-            }
-
-            // store the last to endpoint as the failure endpoint
-            if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
-            }
-            // give the rest of the pipeline another chance
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
-            exchange.setException(null);
-            // and we should not be regarded as exhausted as we are in a try .. catch block
-            exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
-
-            // is the exception handled by the catch clause
-            final Boolean handled = catchClause.handles(exchange);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("The exception is handled: {} for the exception: {} caused by: {}",
-                        new Object[]{handled, caught.getClass().getName(), caught.getMessage()});
-            }
-
-            boolean sync = super.processNext(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // we only have to handle async completion of the pipeline
-                    if (doneSync) {
-                        return;
-                    }
-
-                    if (!handled) {
-                        if (exchange.getException() == null) {
-                            exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-                        }
-                    }
-                    // always clear redelivery exhausted in a catch clause
-                    exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
-
-                    // signal callback to continue routing async
-                    ExchangeHelper.prepareOutToIn(exchange);
-                    callback.done(false);
-                }
-            });
-
-            if (sync) {
-                // set exception back on exchange
-                if (!handled) {
-                    if (exchange.getException() == null) {
-                        exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-                    }
-                }
-                // always clear redelivery exhausted in a catch clause
-                exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
-            }
-
-            return sync;
-        }
+        return tryProcessor != null || catchClauses != null && !catchClauses.isEmpty() || finallyProcessor != null;
     }
 
 }

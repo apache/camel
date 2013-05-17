@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
  */
 public class AOPProcessor extends TryProcessor {
 
-    public AOPProcessor(Processor tryProcessor, List<CatchProcessor> catchClauses, Processor finallyProcessor) {
+    public AOPProcessor(Processor tryProcessor, List<Processor> catchClauses, Processor finallyProcessor) {
         super(tryProcessor, catchClauses, finallyProcessor);
     }
 

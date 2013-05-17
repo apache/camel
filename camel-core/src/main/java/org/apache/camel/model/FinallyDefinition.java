@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
+import org.apache.camel.processor.FinallyProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -55,6 +56,6 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
         }
 
         // do finally does mandate a child processor
-        return this.createChildProcessor(routeContext, true);
+        return new FinallyProcessor(this.createChildProcessor(routeContext, false));
     }
 }
