@@ -180,7 +180,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
         assertTrue("Should match", pre.matches(exchange));
     }
-    
+
     public void testSimpleExpressionPredicate() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("number", "1234");
@@ -203,6 +203,10 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         parser = new SimplePredicateParser("${body['foo bar']} == 456", true);
         pre = parser.parsePredicate();
         assertTrue("Should match", pre.matches(exchange));
-    }
 
+        // the predicate has whitespace in the function
+        parser = new SimplePredicateParser("${body[foo bar]} == 456", true);
+        pre = parser.parsePredicate();
+        assertTrue("Should match", pre.matches(exchange));
+    }
 }
