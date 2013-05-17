@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.krati;
 
 import org.junit.Test;
@@ -32,7 +31,6 @@ public class KratiEndpointTest {
         endpoint.start();
         endpoint.stop();
         assertEquals("target/test/endpointtest", endpoint.getPath());
-
     }
 
     @Test

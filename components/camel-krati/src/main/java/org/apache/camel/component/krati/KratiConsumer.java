@@ -30,7 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * The Krati consumer.
  */
@@ -51,18 +50,27 @@ public class KratiConsumer extends ScheduledBatchPollingConsumer {
     protected int poll() throws Exception {
         shutdownRunningTask = null;
         pendingExchanges = 0;
+        int max = getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : Integer.MAX_VALUE;
 
         Queue<Exchange> queue = new LinkedList<Exchange>();
 
         Iterator<Object> keyIterator = dataStore.keyIterator();
-        while (keyIterator.hasNext()) {
+        int index = 0;
+        while (keyIterator.hasNext() && index < max) {
             Object key = keyIterator.next();
             Object value = dataStore.get(key);
             Exchange exchange = endpoint.createExchange();
             exchange.setProperty(KratiConstants.KEY, key);
             exchange.getIn().setBody(value);
             queue.add(exchange);
+            index++;
         }
+
+        // did we cap at max?
+        if (index == max && keyIterator.hasNext()) {
+            log.debug("Limiting to maximum messages to poll {} as there was more messages in this poll.", max);
+        }
+
         return queue.isEmpty() ? 0 : processBatch(CastUtils.cast(queue));
     }
 
