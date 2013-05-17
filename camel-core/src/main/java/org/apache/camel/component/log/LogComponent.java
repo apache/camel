@@ -68,9 +68,9 @@ public class LogComponent extends DefaultComponent {
             logger = new CamelLogProcessor(camelLogger, localFormatter);
         }
 
-        LogEndpoint endpoint = new LogEndpoint(uri, this);
+        LogEndpoint endpoint = new LogEndpoint(uri, this, logger);
         setProperties(endpoint, parameters);
-        return new LogEndpoint(uri, this, logger);
+        return endpoint;
     }
 
     /**
