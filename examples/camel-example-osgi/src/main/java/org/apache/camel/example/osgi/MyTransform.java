@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MyTransform  {
     private static final transient Logger LOG = LoggerFactory.getLogger(MyTransform.class);
-    private boolean verbose = true;
+    private boolean verbose;
     private String prefix = "MyTransform";
 
     public Object transform(Object body) {

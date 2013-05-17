@@ -14,6 +14,15 @@ To run the example using Maven type
 
 To stop the example hit ctrl + c
 
+The example outputs to the log, which you can see using
+
+  log:display
+
+... or you can tail the log with
+
+  log:tail
+
+And use ctrl+c to break the tail.
 
 
 Running inside OSGi container
