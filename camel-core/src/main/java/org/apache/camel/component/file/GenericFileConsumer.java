@@ -431,7 +431,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return false;
         }
 
-        if (endpoint.isIdempotent()) {
+        // if its a file then check we have the file in the idempotent registry already
+        if (!isDirectory && endpoint.isIdempotent()) {
             // use absolute file path as default key, but evaluate if an expression key was configured
             String key = file.getAbsoluteFilePath();
             if (endpoint.getIdempotentKey() != null) {
