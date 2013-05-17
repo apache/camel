@@ -175,6 +175,9 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             try {
                 // use the end user configured poll timeout
                 exchange = queue.poll(pollTimeout, TimeUnit.MILLISECONDS);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Polled queue {} with timeout {} ms. -> {}", new Object[]{ObjectHelper.getIdentityHashCode(queue), pollTimeout, exchange});
+                }
                 if (exchange != null) {
                     try {
                         // send a new copied exchange with new camel context
@@ -242,18 +245,17 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
      * @throws Exception can be thrown if processing of the exchange failed
      */
     protected void sendToConsumers(final Exchange exchange) throws Exception {
+        // validate multiple consumers has been enabled
         int size = endpoint.getConsumers().size();
+        if (size > 1 && !endpoint.isMultipleConsumersSupported()) {
+            throw new IllegalStateException("Multiple consumers for the same endpoint is not allowed: " + endpoint);
+        }
 
         // if there are multiple consumers then multicast to them
-        if (size > 1) {
+        if (endpoint.isMultipleConsumersSupported()) {
 
-            // validate multiple consumers has been enabled
-            if (!endpoint.isMultipleConsumersSupported()) {
-                throw new IllegalStateException("Multiple consumers for the same endpoint is not allowed: " + endpoint);
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Multicasting to {} consumers for Exchange: {}", endpoint.getConsumers().size(), exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Multicasting to {} consumers for Exchange: {}", size, exchange);
             }
 
             // handover completions, as we need to done this when the multicast is done
