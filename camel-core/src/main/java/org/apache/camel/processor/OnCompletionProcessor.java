@@ -56,8 +56,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
         this.camelContext = camelContext;
-        // wrap processor in UnitOfWork so what we send out runs in a UoW
-        this.processor = new UnitOfWorkProcessor(processor);
+        this.processor = processor;
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
         this.onCompleteOnly = onCompleteOnly;
