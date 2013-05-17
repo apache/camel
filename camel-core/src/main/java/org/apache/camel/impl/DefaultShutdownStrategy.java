@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -161,21 +162,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             Collections.reverse(routesOrdered);
         }
 
-        if (timeout > 0) {
-            LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH) + ")");
-        } else {
-            LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (no timeout)");
-        }
+        LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH) + ")");
 
         // use another thread to perform the shutdowns so we can support timeout
-        Future<?> future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout));
+        final AtomicBoolean timeoutOccurred = new AtomicBoolean();
+        Future<?> future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred));
         try {
-            if (timeout > 0) {
-                future.get(timeout, timeUnit);
-            } else {
-                future.get();
-            }
+            future.get(timeout, timeUnit);
         } catch (TimeoutException e) {
+            // we hit a timeout, so set the flag
+            timeoutOccurred.set(true);
+
             // timeout then cancel the task
             future.cancel(true);
 
@@ -220,6 +217,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     public void setTimeout(long timeout) {
+        if (timeout <= 0) {
+            throw new IllegalArgumentException("Timeout must be a positive value");
+        }
         this.timeout = timeout;
     }
 
@@ -422,15 +422,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         private final boolean abortAfterTimeout;
         private final long timeout;
         private final TimeUnit timeUnit;
+        private final AtomicBoolean timeoutOccurred;
 
         public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
-                            boolean suspendOnly, boolean abortAfterTimeout) {
+                            boolean suspendOnly, boolean abortAfterTimeout, AtomicBoolean timeoutOccurred) {
             this.context = context;
             this.routes = routes;
             this.suspendOnly = suspendOnly;
             this.abortAfterTimeout = abortAfterTimeout;
             this.timeout = timeout;
             this.timeUnit = timeUnit;
+            this.timeoutOccurred = timeoutOccurred;
         }
 
         public void run() {
@@ -502,7 +504,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             boolean done = false;
             long loopDelaySeconds = 1;
             long loopCount = 0;
-            while (!done) {
+            while (!done && !timeoutOccurred.get()) {
                 int size = 0;
                 for (RouteStartupOrder order : routes) {
                     int inflight = context.getInflightRepository().size(order.getRoute().getId());
