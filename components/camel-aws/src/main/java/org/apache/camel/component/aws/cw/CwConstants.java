@@ -25,4 +25,7 @@ public interface CwConstants {
     String METRIC_VALUE = "CamelAwsCwMetricValue";
     String METRIC_UNIT = "CamelAwsCwMetricUnit";
     String METRIC_TIMESTAMP = "CamelAwsCwMetricTimestamp";
+    String METRIC_DIMENSIONS = "CamelAwsCwMetricDimensions";
+    String METRIC_DIMENSION_NAME = "CamelAwsCwMetricDimensionName";
+    String METRIC_DIMENSION_VALUE = "CamelAwsCwMetricDimensionValue";
 }

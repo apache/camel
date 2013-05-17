@@ -17,8 +17,12 @@
 package org.apache.camel.component.aws.cw;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
+import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
 import com.amazonaws.services.cloudwatch.model.StandardUnit;
@@ -29,8 +33,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import org.mockito.ArgumentCaptor;
+
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -81,7 +86,6 @@ public class CwComponentTest extends CamelTestSupport {
         assertEquals(Double.valueOf(0), argument.getValue().getMetricData().get(0).getValue());
     }
 
-
     @Test
     public void useDefaultValuesForMetricUnitAndMetricValue() throws Exception {
         template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -97,6 +101,28 @@ public class CwComponentTest extends CamelTestSupport {
         assertEquals("errorCount", argument.getValue().getMetricData().get(0).getMetricName());
         assertEquals(Double.valueOf(1), argument.getValue().getMetricData().get(0).getValue());
         assertEquals(StandardUnit.Count.toString(), argument.getValue().getMetricData().get(0).getUnit());
+    }
+
+    @Test
+    public void setsMeticDimensions() throws Exception {
+        template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(CwConstants.METRIC_NAME, "errorCount");
+                Map<String, String> dimensionsMap = new LinkedHashMap<String, String>();
+                dimensionsMap.put("keyOne", "valueOne");
+                dimensionsMap.put("keyTwo", "valueTwo");
+                exchange.getIn().setHeader(CwConstants.METRIC_DIMENSIONS, dimensionsMap);
+            }
+        });
+
+        ArgumentCaptor<PutMetricDataRequest> argument = ArgumentCaptor.forClass(PutMetricDataRequest.class);
+        verify(cloudWatchClient).putMetricData(argument.capture());
+
+        List<Dimension> dimensions = argument.getValue().getMetricData().get(0).getDimensions();
+        Dimension dimension = dimensions.get(0);
+        assertThat(dimensions.size(), is(2));
+        assertEquals("keyOne", dimension.getName());
+        assertEquals("valueOne", dimension.getValue());
     }
 
     @Override

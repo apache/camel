@@ -17,10 +17,14 @@
 package org.apache.camel.component.aws.cw;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
 import com.amazonaws.services.cloudwatch.model.StandardUnit;
@@ -53,18 +57,38 @@ public class CwProducer extends DefaultProducer {
     private List<MetricDatum> getMetricData(Exchange exchange) {
         Object body = exchange.getIn().getBody();
         if (body instanceof List) {
-            return CastUtils.cast((List<?>)body);
+            return CastUtils.cast((List<?>) body);
         }
 
         if (body instanceof MetricDatum) {
             return Arrays.asList((MetricDatum) body);
         }
 
-        return Arrays.asList(new MetricDatum()
+        MetricDatum metricDatum = new MetricDatum()
                 .withMetricName(determineName(exchange))
                 .withValue(determineValue(exchange))
                 .withUnit(determineUnit(exchange))
-                .withTimestamp(determineTimestamp(exchange)));
+                .withTimestamp(determineTimestamp(exchange));
+        setDimension(metricDatum, exchange);
+        return Arrays.asList(metricDatum);
+    }
+
+    private void setDimension(MetricDatum metricDatum, Exchange exchange) {
+        String name = exchange.getIn().getHeader(CwConstants.METRIC_DIMENSION_NAME, String.class);
+        String value = exchange.getIn().getHeader(CwConstants.METRIC_DIMENSION_VALUE, String.class);
+        if (name != null && value != null) {
+            metricDatum.withDimensions(new Dimension().withName(name).withValue(value));
+        } else {
+            Map<String, String> dimensions = exchange.getIn().getHeader(CwConstants.METRIC_DIMENSIONS, Map.class);
+            if (dimensions != null) {
+                Collection<Dimension> dimensionCollection = new ArrayList<Dimension>();
+                for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
+                    Dimension dimension = new Dimension().withName(dimensionEntry.getKey()).withValue(dimensionEntry.getValue());
+                    dimensionCollection.add(dimension);
+                }
+                metricDatum.withDimensions(dimensionCollection);
+            }
+        }
     }
 
     private Date determineTimestamp(Exchange exchange) {
