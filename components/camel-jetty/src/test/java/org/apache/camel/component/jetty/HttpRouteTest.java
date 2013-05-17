@@ -34,6 +34,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -160,6 +161,15 @@ public class HttpRouteTest extends BaseJettyTest {
                                           in, Exchange.CONTENT_TYPE, "application/txt", String.class);
         assertEquals("Got a wrong response.", fileSize, response.length());        
     }
+    
+    @Test
+    public void testResponseCode() throws Exception {
+        HttpClient client = new HttpClient();
+        GetMethod get = new GetMethod("http://localhost:" + port1 + "/responseCode");
+        client.executeMethod(get);
+        // just make sure we get the right
+        assertEquals("Get a wrong status code.", 400, get.getStatusCode());
+    }
 
 
     protected void invokeHttpEndpoint() throws IOException {
@@ -194,6 +204,8 @@ public class HttpRouteTest extends BaseJettyTest {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
+                
+                from("jetty:http://localhost:" + port1 + "/responseCode").setHeader(Exchange.HTTP_RESPONSE_CODE, simple("400"));
 
                 Processor printProcessor = new Processor() {
                     public void process(Exchange exchange) throws Exception {
