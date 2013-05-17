@@ -36,13 +36,17 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Creates a processor which sets the body of the IN message to the value of the expression
+     * Creates a processor which sets the body of the message to the value of the expression
      */
     public static Processor setBody(final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
                 Object newBody = expression.evaluate(exchange, Object.class);
-                exchange.getIn().setBody(newBody);
+                if (exchange.hasOut()) {
+                    exchange.getOut().setBody(newBody);
+                } else {
+                    exchange.getIn().setBody(newBody);
+                }
             }
 
             @Override
@@ -54,7 +58,10 @@ public final class ProcessorBuilder {
 
     /**
      * Creates a processor which sets the body of the OUT message to the value of the expression
+     *
+     * @deprecated use {@link #setBody(org.apache.camel.Expression)}
      */
+    @Deprecated
     public static Processor setOutBody(final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
@@ -70,7 +77,7 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Creates a processor which sets the body of the FAULT message to the value of the expression
+     * Creates a processor which sets the body of the FAULT message (FAULT must be OUT) to the value of the expression
      */
     public static Processor setFaultBody(final Expression expression) {
         return new Processor() {
@@ -88,13 +95,17 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Sets the header on the IN message
+     * Sets the header on the message.
      */
     public static Processor setHeader(final String name, final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                exchange.getIn().setHeader(name, value);
+                if (exchange.hasOut()) {
+                    exchange.getOut().setHeader(name, value);
+                } else {
+                    exchange.getIn().setHeader(name, value);
+                }
             }
 
             @Override
@@ -106,7 +117,10 @@ public final class ProcessorBuilder {
 
     /**
      * Sets the header on the OUT message
+     *
+     * @deprecated use {@link #setHeader(String, org.apache.camel.Expression)}
      */
+    @Deprecated
     public static Processor setOutHeader(final String name, final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
@@ -122,7 +136,7 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Sets the header on the FAULT message
+     * Sets the header on the FAULT message (FAULT must be OUT)
      */
     public static Processor setFaultHeader(final String name, final Expression expression) {
         return new Processor() {
@@ -157,12 +171,16 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Removes the header on the IN message
+     * Removes the header on the message.
      */
     public static Processor removeHeader(final String name) {
         return new Processor() {
             public void process(Exchange exchange) {
-                exchange.getIn().removeHeader(name);
+                if (exchange.hasOut()) {
+                    exchange.getOut().removeHeader(name);
+                } else {
+                    exchange.getIn().removeHeader(name);
+                }
             }
 
             @Override
@@ -173,12 +191,16 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Removes the headers on the IN message
+     * Removes the headers on the message
      */
     public static Processor removeHeaders(final String pattern) {
         return new Processor() {
             public void process(Exchange exchange) {
-                exchange.getIn().removeHeaders(pattern);
+                if (exchange.hasOut()) {
+                    exchange.getOut().removeHeaders(pattern);
+                } else {
+                    exchange.getIn().removeHeaders(pattern);
+                }
             }
 
             @Override
@@ -189,12 +211,16 @@ public final class ProcessorBuilder {
     }
     
     /**
-     * Removes all headers on the IN message, except for the ones provided in the <tt>names</tt> parameter
+     * Removes all headers on the message, except for the ones provided in the <tt>names</tt> parameter
      */
     public static Processor removeHeaders(final String pattern, final String... exceptionPatterns) {
         return new Processor() {
             public void process(Exchange exchange) {
-                exchange.getIn().removeHeaders(pattern, exceptionPatterns);
+                if (exchange.hasOut()) {
+                    exchange.getOut().removeHeaders(pattern, exceptionPatterns);
+                } else {
+                    exchange.getIn().removeHeaders(pattern, exceptionPatterns);
+                }
             }
 
             @Override
@@ -205,7 +231,7 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Removes the header on the FAULT message
+     * Removes the header on the FAULT message (FAULT must be OUT)
      * @deprecated will be removed in the near future. Instead use {@link #removeHeader(String)}
      */
     @Deprecated
