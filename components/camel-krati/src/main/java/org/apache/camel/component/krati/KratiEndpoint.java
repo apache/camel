@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+
 import krati.core.segment.ChannelSegmentFactory;
 import krati.core.segment.SegmentFactory;
 import krati.io.Serializer;
@@ -30,12 +31,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.krati.serializer.KratiDefaultSerializer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 
 /**
  * Represents a Krati endpoint.
  */
-public class KratiEndpoint extends DefaultEndpoint {
+public class KratiEndpoint extends ScheduledPollEndpoint {
 
     protected static Map<String, KratiDataStoreRegistration> dataStoreRegistry = new HashMap<String, KratiDataStoreRegistration>();
 
@@ -53,6 +54,7 @@ public class KratiEndpoint extends DefaultEndpoint {
     protected HashFunction<byte[]> hashFunction = new FnvHashFunction();
 
     protected String path;
+    protected int maxMessagesPerPoll;
 
     public KratiEndpoint(String uri, KratiComponent component) throws URISyntaxException {
         super(uri, component);
@@ -91,7 +93,10 @@ public class KratiEndpoint extends DefaultEndpoint {
             dataStore = KratiHelper.createDataStore(path, initialCapacity, segmentFileSize, segmentFactory, hashFunction, keySerializer, valueSerializer);
             dataStoreRegistry.put(path, new KratiDataStoreRegistration(dataStore));
         }
-        return new KratiConsumer(this, processor, dataStore);
+        KratiConsumer answer = new KratiConsumer(this, processor, dataStore);
+        answer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+        configureConsumer(answer);
+        return answer;
     }
 
     public boolean isSingleton() {
@@ -177,5 +182,11 @@ public class KratiEndpoint extends DefaultEndpoint {
         return path;
     }
 
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
 
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
 }
