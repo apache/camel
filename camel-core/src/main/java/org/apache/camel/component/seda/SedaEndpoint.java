@@ -149,17 +149,19 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     protected synchronized void updateMulticastProcessor() throws Exception {
+        // only needed if we support multiple consumers
+        if (!isMultipleConsumersSupported()) {
+            return;
+        }
+
+        // stop old before we create a new
         if (consumerMulticastProcessor != null) {
             ServiceHelper.stopService(consumerMulticastProcessor);
+            consumerMulticastProcessor = null;
         }
 
         int size = getConsumers().size();
-        if (size == 0 && multicastExecutor != null) {
-            // stop the multicast executor as its not needed anymore when size is zero
-            getCamelContext().getExecutorServiceManager().shutdownGraceful(multicastExecutor);
-            multicastExecutor = null;
-        }
-        if (size > 1) {
+        if (size >= 1) {
             if (multicastExecutor == null) {
                 // create multicast executor as we need it when we have more than 1 processor
                 multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
@@ -172,9 +174,6 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             // create multicast processor
             multicastStarted = false;
             consumerMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null, true, multicastExecutor, false, false, false, 0, null, false);
-        } else {
-            // not needed
-            consumerMulticastProcessor = null;
         }
     }
 
@@ -394,11 +393,35 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     @Override
-    protected void doShutdown() throws Exception {
+    public void stop() throws Exception {
+        if (getConsumers().isEmpty()) {
+            super.stop();
+        } else {
+            LOG.debug("There is still active consumers.");
+        }
+    }
+
+    @Override
+    public void shutdown() throws Exception {
+        if (shutdown.get()) {
+            LOG.trace("Service already shut down");
+            return;
+        }
+
         // notify component we are shutting down this endpoint
         if (getComponent() != null) {
             getComponent().onShutdownEndpoint(this);
         }
+
+        if (getConsumers().isEmpty()) {
+            super.shutdown();
+        } else {
+            LOG.debug("There is still active consumers.");
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
         // shutdown thread pool if it was in use
         if (multicastExecutor != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(multicastExecutor);
@@ -407,7 +430,5 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         // clear queue, as we are shutdown, so if re-created then the queue must be updated
         queue = null;
-
-        super.doShutdown();
     }
 }
