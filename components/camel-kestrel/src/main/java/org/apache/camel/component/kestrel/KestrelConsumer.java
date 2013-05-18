@@ -191,7 +191,9 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
 
                     // We didn't get a value back from kestrel
                     if (isRunAllowed() && !shutdownPending) {
-                        if (endpoint.getConfiguration().getWaitTimeMs() <= 0) {
+                        if (endpoint.getConfiguration().getWaitTimeMs() > 0) {
+                            // Kestrel did the blocking for us
+                        } else {
                             // We're doing non-blocking get, so in between we
                             // should at least sleep some short period of time
                             // so this loop doesn't go nuts so tightly.

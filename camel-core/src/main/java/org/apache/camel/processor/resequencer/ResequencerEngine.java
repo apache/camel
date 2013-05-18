@@ -205,7 +205,11 @@ public class ResequencerEngine<E> {
         }
 
         // start delivery if current element is successor of last delivered element
-        if (!successorOfLastDelivered(element) && sequence.predecessor(element) != null) {
+        if (successorOfLastDelivered(element)) {
+            // nothing to schedule
+        } else if (sequence.predecessor(element) != null) {
+            // nothing to schedule
+        } else {
             element.schedule(defineTimeout());
         }
     }

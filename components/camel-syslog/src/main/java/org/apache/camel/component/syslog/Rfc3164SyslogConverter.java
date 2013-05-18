@@ -207,7 +207,10 @@ public final class Rfc3164SyslogConverter {
         charFound = (char) (byteBuffer.get() & 0xff);
 
         int day = 0;
-        if (charFound != ' ') {
+        if (charFound == ' ') {
+            //Extra space for the day - this is okay.
+            //Just ignored per the spec.
+        } else {
             day *= 10;
             day += Character.digit(charFound, 10);
         }
