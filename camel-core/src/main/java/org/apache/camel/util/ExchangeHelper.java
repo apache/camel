@@ -260,7 +260,9 @@ public final class ExchangeHelper {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
-            if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
+            if (result.getPattern() == ExchangePattern.InOptionalOut) {
+                // keep as is
+            } else if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
                 // copy IN to OUT as we expect a OUT response
                 result.getOut().copyFrom(source.getIn());
             }
@@ -315,7 +317,9 @@ public final class ExchangeHelper {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
-            if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
+            if (result.getPattern() == ExchangePattern.InOptionalOut) {
+                // keep as is
+            } else if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
                 // copy IN to OUT as we expect a OUT response
                 result.getOut().copyFrom(source.getIn());
             }
