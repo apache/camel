@@ -29,6 +29,7 @@ import org.apache.camel.util.MessageHelper;
 /**
  * An interceptor for tracing messages by using the {@link BacklogTracer}.
  */
+@Deprecated
 public class BacklogTracerInterceptor extends DelegateAsyncProcessor {
 
     private final Queue<DefaultBacklogTracerEventMessage> queue;

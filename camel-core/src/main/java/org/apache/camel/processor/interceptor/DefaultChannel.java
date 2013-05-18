@@ -32,15 +32,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
-import org.apache.camel.processor.RouteContextProcessor;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -72,7 +73,7 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
     private ProcessorDefinition<?> childDefinition;
     private CamelContext camelContext;
     private RouteContext routeContext;
-    private RouteContextProcessor routeContextProcessor;
+    private CamelInternalProcessor internalProcessor;
 
     public List<Processor> next() {
         List<Processor> answer = new ArrayList<Processor>(1);
@@ -148,20 +149,23 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
 
     @Override
     protected void doStart() throws Exception {
-        // create route context processor to wrap output
-        routeContextProcessor = new RouteContextProcessor(routeContext, getOutput());
-        ServiceHelper.startServices(errorHandler, output, routeContextProcessor);
+        // the output has now been created, so assign the output to the internal processor
+        internalProcessor.setProcessor(getOutput());
+        ServiceHelper.startServices(errorHandler, output, internalProcessor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(output, errorHandler, routeContextProcessor);
+        ServiceHelper.stopServices(output, errorHandler, internalProcessor);
     }
 
     public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         this.routeContext = routeContext;
         this.definition = outputDefinition;
         this.camelContext = routeContext.getCamelContext();
+        this.internalProcessor = new CamelInternalProcessor();
+        // TODO: The route context task can likely be only added in DefaultRouteContext once per route
+        this.internalProcessor.addTask(new CamelInternalProcessor.RouteContextTask(routeContext));
 
         Processor target = nextProcessor;
         Processor next;
@@ -194,8 +198,22 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         }
 
         // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to tracer the backlog)
-        BacklogTracerInterceptor backlog = (BacklogTracerInterceptor) getOrCreateBacklogTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
-        TraceInterceptor trace = (TraceInterceptor) getOrCreateTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, backlog, null);
+        InterceptStrategy tracer = getOrCreateBacklogTracer();
+        if (tracer instanceof BacklogTracer) {
+            BacklogTracer backlogTracer = (BacklogTracer) tracer;
+            backlogTracer.addDefinition(targetOutputDef);
+
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
+            boolean first = false;
+            if (route != null && !route.getOutputs().isEmpty()) {
+                first = route.getOutputs().get(0) == definition;
+            }
+
+            internalProcessor.addTask(new CamelInternalProcessor.BacklogTracerTask(backlogTracer.getQueue(), backlogTracer, targetOutputDef, route, first));
+        }
+
+        // TODO: trace interceptor can be a task on internalProcessor
+        TraceInterceptor trace = (TraceInterceptor) getOrCreateTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
         // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
         trace.setRouteContext(routeContext);
         target = trace;
@@ -323,16 +341,13 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        Processor processor = getOutput();
-        if (processor == null || !continueProcessing(exchange)) {
+        if (!continueProcessing(exchange)) {
             // we should not continue routing so we are done
             callback.done(true);
             return true;
         }
 
-        // process the exchange using the route context processor
-        ObjectHelper.notNull(routeContextProcessor, "RouteContextProcessor", this);
-        return routeContextProcessor.process(exchange, callback);
+        return internalProcessor.process(exchange, callback);
     }
 
     /**

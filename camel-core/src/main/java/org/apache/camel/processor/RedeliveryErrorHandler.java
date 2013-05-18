@@ -126,7 +126,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // this redelivery task was scheduled from synchronous, which we forced to be asynchronous from
                 // this error handler, which means we have to invoke the callback with false, to have the callback
                 // be notified when we are done
-                sync = AsyncProcessorHelper.process(outputAsync, exchange, new AsyncCallback() {
+                sync = outputAsync.process(exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         log.trace("Redelivering exchangeId: {} done sync: {}", exchange.getExchangeId(), doneSync);
 
@@ -147,7 +147,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             } else {
                 // this redelivery task was scheduled from asynchronous, which means we should only
                 // handle when the asynchronous task was done
-                sync = AsyncProcessorHelper.process(outputAsync, exchange, new AsyncCallback() {
+                sync = outputAsync.process(exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         log.trace("Redelivering exchangeId: {} done sync: {}", exchange.getExchangeId(), doneSync);
 
@@ -388,7 +388,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // process the exchange (also redelivery)
-            boolean sync = AsyncProcessorHelper.process(outputAsync, exchange, new AsyncCallback() {
+            boolean sync = outputAsync.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     // this callback should only handle the async case
                     if (sync) {
@@ -483,12 +483,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             boolean deliver = true;
 
             // the unit of work may have an optional callback associated we need to leverage
-            SubUnitOfWorkCallback uowCallback = exchange.getUnitOfWork().getSubUnitOfWorkCallback();
-            if (uowCallback != null) {
-                // signal to the callback we are exhausted
-                uowCallback.onExhausted(exchange);
-                // do not deliver to the failure processor as its been handled by the callback instead
-                deliver = false;
+            UnitOfWork uow = exchange.getUnitOfWork();
+            if (uow != null) {
+                SubUnitOfWorkCallback uowCallback = uow.getSubUnitOfWorkCallback();
+                if (uowCallback != null) {
+                    // signal to the callback we are exhausted
+                    uowCallback.onExhausted(exchange);
+                    // do not deliver to the failure processor as its been handled by the callback instead
+                    deliver = false;
+                }
             }
 
             if (deliver) {
@@ -825,7 +828,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // the failure processor could also be asynchronous
             AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
-            sync = AsyncProcessorHelper.process(afp, exchange, new AsyncCallback() {
+            sync = afp.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     log.trace("Failure processor done: {} processing Exchange: {}", processor, exchange);
                     try {

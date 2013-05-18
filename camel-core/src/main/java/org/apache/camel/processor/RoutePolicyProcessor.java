@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@Deprecated
 public class RoutePolicyProcessor extends DelegateAsyncProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutePolicyProcessor.class);

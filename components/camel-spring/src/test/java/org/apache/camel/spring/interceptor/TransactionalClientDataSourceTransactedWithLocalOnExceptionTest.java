@@ -28,22 +28,22 @@ public class TransactionalClientDataSourceTransactedWithLocalOnExceptionTest ext
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 from("direct:okay")
-                    .transacted()
                     // use local on exception
                     .onException(IllegalArgumentException.class)
                         .handled(false)
                         .to("mock:error")
                     .end()
+                    .transacted()
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Elephant in Action")).beanRef("bookService");
 
                 from("direct:fail")
-                    .transacted()
                     // use local on exception
                     .onException(IllegalArgumentException.class)
                         .handled(false)
                         .to("mock:error")
                     .end()
+                    .transacted()
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Donkey in Action")).beanRef("bookService");
             }

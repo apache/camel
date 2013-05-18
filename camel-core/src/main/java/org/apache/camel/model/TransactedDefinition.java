@@ -147,6 +147,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         // wrap
         Processor target = policy.wrap(routeContext, childProcessor);
 
+        // TODO: should not be needed as its already a service
         // wrap the target so it becomes a service and we can manage its lifecycle
         WrapProcessor wrap = new WrapProcessor(target, childProcessor);
         return wrap;

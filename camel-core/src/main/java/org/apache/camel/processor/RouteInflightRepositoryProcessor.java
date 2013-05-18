@@ -27,6 +27,7 @@ import org.apache.camel.spi.RouteContext;
  * This processor tracks the current {@link RouteContext} while processing the {@link Exchange}.
  * This ensures that the {@link Exchange} have details under which route its being currently processed.
  */
+@Deprecated
 public class RouteInflightRepositoryProcessor extends DelegateAsyncProcessor {
     
     private final InflightRepository inflightRepository;

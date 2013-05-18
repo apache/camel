@@ -75,6 +75,14 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         this.camelContext = camelContext;
     }
 
+    public void addDefinition(ProcessorDefinition<?> definition) {
+        processors.add(definition);
+    }
+
+    public Queue<DefaultBacklogTracerEventMessage> getQueue() {
+        return queue;
+    }
+
     @Override
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
         // is this the first output from a route, as we want to know this so we can do special logic in first
@@ -317,7 +325,7 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         queue.clear();
     }
 
-    long incrementTraceCounter() {
+    public long incrementTraceCounter() {
         return traceCounter.incrementAndGet();
     }
 

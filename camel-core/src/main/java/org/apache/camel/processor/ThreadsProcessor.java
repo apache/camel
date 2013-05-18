@@ -36,6 +36,11 @@ import org.slf4j.LoggerFactory;
  * Threads processor that leverage a thread pool for continue processing the {@link Exchange}s
  * using the asynchronous routing engine.
  * <p/>
+ * <b>Notice:</b> For transacted routes then this {@link ThreadsProcessor} is not in use, as we want to
+ * process messages using the same thread to support all work done in the same transaction. The reason
+ * is that the transaction manager that orchestrate the transaction, requires all the work to be done
+ * on the same thread.
+ * <p/>
  * Pay attention to how this processor handles rejected tasks.
  * <ul>
  * <li>Abort - The current exchange will be set with a {@link RejectedExecutionException} exception,
@@ -118,6 +123,14 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (shutdown.get()) {
             throw new IllegalStateException("ThreadsProcessor is not running.");
+        }
+
+        // we cannot execute this asynchronously for transacted exchanges, as the transaction manager doesn't support
+        // using different threads in the same transaction
+        if (exchange.isTransacted()) {
+            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            callback.done(true);
+            return true;
         }
 
         ProcessCall call = new ProcessCall(exchange, callback);

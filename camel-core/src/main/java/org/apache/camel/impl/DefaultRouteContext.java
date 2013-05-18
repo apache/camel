@@ -34,9 +34,8 @@ import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.RouteInflightRepositoryProcessor;
-import org.apache.camel.processor.RoutePolicyProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -154,8 +153,9 @@ public class DefaultRouteContext implements RouteContext {
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             UnitOfWorkProcessor unitOfWorkProcessor = new UnitOfWorkProcessor(this, target);
 
+            CamelInternalProcessor internal = new CamelInternalProcessor(unitOfWorkProcessor);
+
             // and then optionally add route policy processor if a custom policy is set
-            RoutePolicyProcessor routePolicyProcessor = null;
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
             if (routePolicyList != null && !routePolicyList.isEmpty()) {
                 for (RoutePolicy policy : routePolicyList) {
@@ -169,25 +169,23 @@ public class DefaultRouteContext implements RouteContext {
                         }
                     }
                 }
-                routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, routePolicyList);
-                target = routePolicyProcessor;
-            } else {
-                target = unitOfWorkProcessor;
+
+                internal.addTask(new CamelInternalProcessor.RoutePolicyTask(routePolicyList));
             }
 
             // wrap in route inflight processor to track number of inflight exchanges for the route
-            RouteInflightRepositoryProcessor inflight = new RouteInflightRepositoryProcessor(camelContext.getInflightRepository(), target);
+            String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
+            internal.addTask(new CamelInternalProcessor.RouteInflightRepositoryTask(camelContext.getInflightRepository(), routeId));
 
+            // TODO: This should be a task as well
             // and wrap it by a instrumentation processor that is to be used for performance stats
             // for this particular route
             InstrumentationProcessor instrument = new InstrumentationProcessor();
             instrument.setType("route");
-            instrument.setProcessor(inflight);
+            instrument.setProcessor(internal);
 
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), instrument);
-            // create the route id
-            String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             if (route.getGroup() != null) {
@@ -195,11 +193,10 @@ public class DefaultRouteContext implements RouteContext {
             }
 
             // after the route is created then set the route on the policy processor so we get hold of it
-            if (routePolicyProcessor != null) {
-                routePolicyProcessor.setRoute(edcr);
+            CamelInternalProcessor.RoutePolicyTask task = internal.getTask(CamelInternalProcessor.RoutePolicyTask.class);
+            if (task != null) {
+                task.setRoute(edcr);
             }
-            // after the route is created then set the route on the inflight processor so we get hold of it
-            inflight.setRoute(edcr);
 
             // invoke init on route policy
             if (routePolicyList != null && !routePolicyList.isEmpty()) {

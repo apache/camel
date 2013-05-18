@@ -46,7 +46,10 @@ public final class AsyncProcessorHelper {
      * @param callback  the callback
      * @return <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
      */
+    @Deprecated
     public static boolean process(final AsyncProcessor processor, final Exchange exchange, final AsyncCallback callback) {
+        // TODO: This method is no longer needed, and we can avoid using it
+
         boolean sync;
 
         if (exchange.isTransacted()) {

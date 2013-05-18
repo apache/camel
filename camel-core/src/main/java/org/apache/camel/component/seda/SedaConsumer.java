@@ -38,7 +38,6 @@ import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnitOfWorkHelper;
@@ -266,7 +265,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             ObjectHelper.notNull(mp, "ConsumerMulticastProcessor", this);
 
             // and use the asynchronous routing engine to support it
-            AsyncProcessorHelper.process(mp, exchange, new AsyncCallback() {
+            mp.process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // done the uow on the completions
                     UnitOfWorkHelper.doneSynchronizations(exchange, completions, LOG);
@@ -274,7 +273,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             });
         } else {
             // use the regular processor and use the asynchronous routing engine to support it
-            AsyncProcessorHelper.process(processor, exchange, new AsyncCallback() {
+            processor.process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // noop
                 }

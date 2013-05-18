@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@Deprecated
 public class InstrumentationProcessor extends DelegateAsyncProcessor {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(InstrumentationProcessor.class);

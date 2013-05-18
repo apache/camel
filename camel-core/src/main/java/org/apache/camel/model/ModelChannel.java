@@ -20,6 +20,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.spi.RouteContext;
 
 public interface ModelChannel extends Channel {
+
     /**
      * Initializes the channel.
      *

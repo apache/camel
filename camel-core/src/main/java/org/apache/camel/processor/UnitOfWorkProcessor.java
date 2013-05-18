@@ -82,6 +82,7 @@ public class UnitOfWorkProcessor extends DelegateAsyncProcessor {
         // if a route context has been configured, then wrap the processor with a
         // RouteContextProcessor to ensure we track the route context properly during
         // processing of the exchange, but only do this once
+        // TODO: This can possible be removed!
         if (routeContext != null && (!(processor instanceof RouteContextProcessor))) {
             processor = new RouteContextProcessor(routeContext, processor);
         }
