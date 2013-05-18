@@ -33,9 +33,10 @@ public interface Container {
      */
     public static final class Instance {
 
-        private Instance() {}
-
         private static Container container;
+
+        private Instance() {
+        }
 
         /**
          * Access the registered Container.

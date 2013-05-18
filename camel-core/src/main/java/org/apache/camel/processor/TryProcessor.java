@@ -53,7 +53,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
     }
 
     public String toString() {
-        String catchText = catchClauses == null || catchClauses.isEmpty() ? "": " Catches {" + catchClauses + "}";
+        String catchText = catchClauses == null || catchClauses.isEmpty() ? "" : " Catches {" + catchClauses + "}";
         String finallyText = (finallyProcessor == null) ? "" : " Finally {" + finallyProcessor + "}";
         return "Try {" + tryProcessor + "}" + catchText + finallyText;
     }
