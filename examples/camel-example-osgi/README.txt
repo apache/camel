@@ -14,6 +14,18 @@ To run the example using Maven type
 
 To stop the example hit ctrl + c
 
+Running inside OSGi container
+=============================
+
+You will need to compile and install this example first:
+  mvn install
+
+If using Apache Karaf / Apache ServiceMix you can install this example
+from the shell using this example's "features.xml" for easy provisioning.
+
+  features:addUrl mvn:org.apache.camel/camel-example-osgi/${version}/xml/features
+  features:install camel-example-osgi
+
 The example outputs to the log, which you can see using
 
   log:display
@@ -23,19 +35,6 @@ The example outputs to the log, which you can see using
   log:tail
 
 And use ctrl+c to break the tail.
-
-
-Running inside OSGi container
-=============================
-
-You will need to compile and install this example first:
-  mvn install
-
-If using Apache Karaf / Apache ServiceMix you can install this example
-from the shell
-  features:chooseurl camel ${version}
-  features:install camel-spring
-  osgi:install -s mvn:org.apache.camel/camel-example-osgi/${version}
 
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
