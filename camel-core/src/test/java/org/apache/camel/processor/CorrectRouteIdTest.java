@@ -16,5 +16,41 @@
  */
 package org.apache.camel.processor;
 
-public class CorrectRouteIdTest {
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+
+public class CorrectRouteIdTest extends ContextTestSupport {
+
+    public void testCorrectRouteId() throws Exception {
+        getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "foo");
+        getMockEndpoint("mock:bar").expectedHeaderReceived("bar", "bar");
+        getMockEndpoint("mock:baz").expectedHeaderReceived("baz", "baz");
+
+        template.requestBody("direct:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").routeId("foo")
+                    .setHeader("foo").simple("routeId")
+                    .to("mock:foo")
+                    .to("seda:bar")
+                    .to("mock:result");
+
+                from("seda:bar").routeId("bar")
+                    .setHeader("bar").simple("routeId")
+                    .to("mock:bar")
+                    .to("direct:baz");
+
+                from("direct:baz").routeId("baz")
+                    .setHeader("baz").simple("routeId")
+                    .to("mock:baz");
+            }
+        };
+    }
 }

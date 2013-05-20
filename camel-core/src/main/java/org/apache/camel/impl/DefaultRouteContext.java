@@ -36,7 +36,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -153,8 +152,6 @@ public class DefaultRouteContext implements RouteContext {
             String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            //UnitOfWorkProcessor unitOfWorkProcessor = new UnitOfWorkProcessor(this, target);
-
             CamelInternalProcessor internal = new CamelInternalProcessor(target);
             internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
 
