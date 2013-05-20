@@ -284,7 +284,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
                 exchange.setProperty(Exchange.SLIP_ENDPOINT, endpoint.getEndpointUri());
 
-                boolean sync = AsyncProcessorHelper.process(asyncProducer, exchange, new AsyncCallback() {
+                boolean sync = asyncProducer.process(exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         // we only have to handle async completion of the routing slip
                         if (doneSync) {

@@ -31,7 +31,6 @@ import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatcher;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +92,7 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
                     LOG.debug("Dispatching to inner route: {}", exchange);
                     RouteboxDispatcher dispatcher = new RouteboxDispatcher(producer);
                     result = dispatcher.dispatchAsync(getRouteboxEndpoint(), exchange); 
-                    AsyncProcessorHelper.process(processor, result, new AsyncCallback() {
+                    processor.process(result, new AsyncCallback() {
                         public void done(boolean doneSync) {
                             // noop
                         }

@@ -37,7 +37,6 @@ import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -118,7 +117,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
                     // do so
                     log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
                     try {
-                        AsyncProcessorHelper.process(getProcessor(), exchange);
+                        getProcessor().process(exchange);
                     } catch (Exception e) {
                         exchange.setException(e);
                     } finally {
@@ -127,11 +126,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
                 } else {
                     // process asynchronous using the async routing engine
                     log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
-                    boolean sync = AsyncProcessorHelper.process(getProcessor(), exchange, callback);
-                    if (!sync) {
-                        // will be done async so return now
-                        return;
-                    }
+                    getProcessor().process(exchange, callback);
                 }
             }
         } catch (Exception e) {

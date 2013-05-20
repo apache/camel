@@ -568,7 +568,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // let the prepared process it, remember to begin the exchange pair
             AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
             pair.begin();
-            sync = AsyncProcessorHelper.process(async, exchange, new AsyncCallback() {
+            sync = async.process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // we are done with the exchange pair
                     pair.done();

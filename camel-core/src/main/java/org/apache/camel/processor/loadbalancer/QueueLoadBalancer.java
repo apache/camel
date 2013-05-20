@@ -22,7 +22,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
@@ -40,25 +39,18 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
             if (processor == null) {
                 throw new IllegalStateException("No processors could be chosen to process " + exchange);
             } else {
-                AsyncProcessor albp = AsyncProcessorConverterHelper.convert(processor);
-                boolean sync = AsyncProcessorHelper.process(albp, exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // only handle the async case
-                        if (doneSync) {
-                            return;
-                        }
-
-                        callback.done(false);
+                if (processor instanceof AsyncProcessor) {
+                    AsyncProcessor async = (AsyncProcessor) processor;
+                    return async.process(exchange, callback);
+                } else {
+                    try {
+                        processor.process(exchange);
+                    } catch (Exception e) {
+                        exchange.setException(e);
                     }
-                });
-
-                if (!sync) {
-                    // will continue routing asynchronously
-                    return false;
+                    callback.done(true);
+                    return true;
                 }
-
-                callback.done(true);
-                return true;
             }
         }
 

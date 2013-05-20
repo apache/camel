@@ -22,7 +22,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * An InOnly {@link AbstractMessageHandler}
@@ -66,7 +65,7 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
                     log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
                 }
                 try {
-                    AsyncProcessorHelper.process(getProcessor(), exchange);
+                    getProcessor().process(exchange);
                 } catch (Exception e) {
                     exchange.setException(e);
                 } finally {
@@ -75,13 +74,8 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
             } else {
                 // process asynchronous using the async routing engine
                 log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
-                boolean sync = false;
 
-                sync = AsyncProcessorHelper.process(getProcessor(), exchange, callback);
-                if (!sync) {
-                    // will be done async so return now
-                    return;
-                }
+                getProcessor().process(exchange, callback);
             }
         }
     }

@@ -31,7 +31,6 @@ import org.apache.camel.Traceable;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
@@ -119,7 +118,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                                              ExchangePattern pattern, final AsyncCallback callback) {
                 final Exchange target = configureExchange(exchange, pattern);
                 log.debug(">>>> {} {}", destination, exchange);
-                return AsyncProcessorHelper.process(asyncProducer, target, new AsyncCallback() {
+                return asyncProducer.process(target, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         // restore previous MEP
                         target.setPattern(existingPattern);

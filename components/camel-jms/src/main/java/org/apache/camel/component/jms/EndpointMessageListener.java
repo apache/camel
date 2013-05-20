@@ -30,7 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +111,7 @@ public class EndpointMessageListener implements MessageListener {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing exchange {} asynchronously", exchange.getExchangeId());
                 }
-                boolean sync = AsyncProcessorHelper.process(processor, exchange, callback);
+                boolean sync = processor.process(exchange, callback);
                 if (!sync) {
                     // will be done async so return now
                     return;

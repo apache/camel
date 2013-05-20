@@ -106,7 +106,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
         // implement asynchronous routing logic in callback so we can have the callback being
         // triggered and then continue routing where we left
-        boolean sync = AsyncProcessorHelper.process(processor, exchange, new AsyncCallback() {
+        boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 // we only have to handle async completion of the pipeline
                 if (doneSync) {

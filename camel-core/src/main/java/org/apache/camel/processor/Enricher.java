@@ -111,7 +111,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
         final Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
 
         AsyncProcessor ap = AsyncProcessorConverterHelper.convert(producer);
-        boolean sync = AsyncProcessorHelper.process(ap, resourceExchange, new AsyncCallback() {
+        boolean sync = ap.process(resourceExchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 // we only have to handle async completion of the routing slip
                 if (doneSync) {

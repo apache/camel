@@ -17,11 +17,8 @@
 package org.apache.camel.component.direct;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +53,7 @@ public class DirectProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         } else {
-            AsyncProcessor processor = AsyncProcessorConverterHelper.convert(endpoint.getConsumer().getProcessor());
-            return AsyncProcessorHelper.process(processor, exchange, callback);
+            return endpoint.getConsumer().getAsyncProcessor().process(exchange, callback);
         }
     }
 

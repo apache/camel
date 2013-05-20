@@ -29,8 +29,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,9 +157,19 @@ public class InterceptSendToEndpoint implements Endpoint {
                         exchange.setOut(null);
                     }
 
-                    // route to original destination leveraging the asynchronous routing engine
-                    AsyncProcessor async = AsyncProcessorConverterHelper.convert(producer);
-                    return AsyncProcessorHelper.process(async, exchange, callback);
+                    // route to original destination leveraging the asynchronous routing engine if possible
+                    if (producer instanceof AsyncProcessor) {
+                        AsyncProcessor async = (AsyncProcessor) producer;
+                        return async.process(exchange, callback);
+                    } else {
+                        try {
+                            producer.process(exchange);
+                        } catch (Exception e) {
+                            exchange.setException(e);
+                        }
+                        callback.done(true);
+                        return true;
+                    }
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpoint(), exchange);

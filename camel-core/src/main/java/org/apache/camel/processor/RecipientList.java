@@ -148,7 +148,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         }
 
         // now let the multicast process the exchange
-        return AsyncProcessorHelper.process(target, exchange, callback);
+        return target.process(exchange, callback);
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
