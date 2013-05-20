@@ -155,6 +155,9 @@ public class DefaultRouteContext implements RouteContext {
             CamelInternalProcessor internal = new CamelInternalProcessor(target);
             internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
 
+            // and then in route context so we can keep track which route this is at runtime
+            internal.addTask(new CamelInternalProcessor.RouteContextTask(this));
+
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
             if (routePolicyList != null && !routePolicyList.isEmpty()) {

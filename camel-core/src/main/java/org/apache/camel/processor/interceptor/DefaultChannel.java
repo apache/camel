@@ -164,8 +164,6 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         this.definition = outputDefinition;
         this.camelContext = routeContext.getCamelContext();
         this.internalProcessor = new CamelInternalProcessor();
-        // TODO: The route context task can likely be only added in DefaultRouteContext once per route
-        this.internalProcessor.addTask(new CamelInternalProcessor.RouteContextTask(routeContext));
 
         Processor target = nextProcessor;
         Processor next;
