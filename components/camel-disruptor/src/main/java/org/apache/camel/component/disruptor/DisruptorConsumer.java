@@ -1,0 +1,197 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.camel.component.disruptor;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.SuspendableService;
+import org.apache.camel.impl.LoggingExceptionHandler;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * A Consumer for the Disruptor component.
+ */
+public class DisruptorConsumer extends ServiceSupport implements Consumer, SuspendableService, ShutdownAware {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorConsumer.class);
+
+    private final DisruptorEndpoint endpoint;
+    private final AsyncProcessor processor;
+    private ExceptionHandler exceptionHandler;
+
+    public DisruptorConsumer(final DisruptorEndpoint endpoint, final Processor processor) {
+        this.endpoint = endpoint;
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        if (exceptionHandler == null) {
+            exceptionHandler = new LoggingExceptionHandler(getClass());
+        }
+        return exceptionHandler;
+    }
+
+    public void setExceptionHandler(final ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+    }
+
+    @Override
+    public DisruptorEndpoint getEndpoint() {
+        return endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        getEndpoint().onStarted(this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        getEndpoint().onStopped(this);
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        getEndpoint().onStopped(this);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        getEndpoint().onStarted(this);
+    }
+
+    Set<LifecycleAwareExchangeEventHandler> createEventHandlers(final int concurrentConsumers) {
+        final Set<LifecycleAwareExchangeEventHandler> eventHandlers
+                = new HashSet<LifecycleAwareExchangeEventHandler>();
+
+        for (int i = 0; i < concurrentConsumers; ++i) {
+            eventHandlers.add(new ConsumerEventHandler(i, concurrentConsumers));
+        }
+
+        return eventHandlers;
+    }
+
+    @Override
+    public boolean deferShutdown(final ShutdownRunningTask shutdownRunningTask) {
+        // deny stopping on shutdown as we want disruptor consumers to run in case some other queues
+        // depend on this consumer to run, so it can complete its exchanges
+        return true;
+    }
+
+    @Override
+    public void prepareShutdown(final boolean forced) {
+        // nothing
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return getEndpoint().getDisruptor().getPendingExchangeCount();
+    }
+
+    @Override
+    public String toString() {
+        return "DisruptorConsumer[" + endpoint + "]";
+    }
+
+    private Exchange prepareExchange(final Exchange exchange) {
+        // send a new copied exchange with new camel context
+        // don't copy handovers as they are handled by the Disruptor Event Handlers
+        final Exchange newExchange = ExchangeHelper
+                .copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
+        // set the from endpoint
+        newExchange.setFromEndpoint(endpoint);
+        return newExchange;
+    }
+
+    private void process(final ExchangeEvent exchangeEvent) {
+        Exchange exchange = exchangeEvent.getExchange();
+
+        final boolean ignore = exchange
+                .getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class);
+        if (ignore) {
+            // Property was set and it was set to true, so don't process Exchange.
+            LOGGER.trace("Ignoring exchange {}", exchange);
+            return;
+        }
+
+        // send a new copied exchange with new camel context
+        final Exchange result = prepareExchange(exchange);
+        // use the regular processor and use the asynchronous routing engine to support it
+        AsyncCallback callback = new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+                exchangeEvent.consumed(result);
+            }
+        };
+        AsyncProcessorHelper.process(processor, result, callback);
+    }
+
+    /**
+     * Implementation of the {@link LifecycleAwareExchangeEventHandler} interface that passes all Exchanges to the
+     * {@link Processor} registered at this {@link DisruptorConsumer}.
+     */
+    private class ConsumerEventHandler extends AbstractLifecycleAwareExchangeEventHandler {
+
+        private final int ordinal;
+
+        private final int concurrentConsumers;
+
+        public ConsumerEventHandler(final int ordinal, final int concurrentConsumers) {
+            this.ordinal = ordinal;
+            this.concurrentConsumers = concurrentConsumers;
+        }
+
+        @Override
+        public void onEvent(final ExchangeEvent event, final long sequence, final boolean endOfBatch)
+                throws Exception {
+            // Consumer threads are managed at the endpoint to achieve the optimal performance.
+            // However, both multiple consumers (pub-sub style multicasting) as well as 'worker-pool' consumers dividing
+            // exchanges amongst them are scheduled on their own threads and are provided with all exchanges.
+            // To prevent duplicate exchange processing by worker-pool event handlers, they are all given an ordinal,
+            // which can be used to determine whether he should process the exchange, or leave it for his brethren.
+            //see http://code.google.com/p/disruptor/wiki/FrequentlyAskedQuestions#How_do_you_arrange_a_Disruptor_with_multiple_consumers_so_that_e
+            if (sequence % concurrentConsumers == ordinal) {
+                try {
+                    process(event);
+                } catch (Exception e) {
+                    final Exchange exchange = event.getExchange();
+                    if (exchange != null) {
+                        getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                    } else {
+                        getExceptionHandler().handleException(e);
+                    }
+                }
+            }
+        }
+
+    }
+}
