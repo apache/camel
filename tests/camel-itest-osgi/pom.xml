@@ -396,6 +396,11 @@
           <scope>test</scope>
       </dependency>
       <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-disruptor</artifactId>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derby</artifactId>
         <scope>test</scope>
