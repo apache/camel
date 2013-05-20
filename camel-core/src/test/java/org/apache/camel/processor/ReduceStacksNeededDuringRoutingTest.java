@@ -54,7 +54,7 @@ public class ReduceStacksNeededDuringRoutingTest extends ContextTestSupport {
                                 try {
                                     throw new IllegalArgumentException("Forced to dump stacktrace");
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    log.error("Dump stacktrace to log", e);
 
                                     StringWriter sw = new StringWriter();
                                     PrintWriter pw = new PrintWriter(sw);
@@ -68,7 +68,7 @@ public class ReduceStacksNeededDuringRoutingTest extends ContextTestSupport {
                                         scanner.next();
                                         count++;
                                     }
-                                    System.out.println("There is " + count + " lines in the stacktrace");
+                                    log.info("There is " + count + " lines in the stacktrace");
                                 }
                             }
                         })

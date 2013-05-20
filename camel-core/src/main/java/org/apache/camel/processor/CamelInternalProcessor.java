@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * <ul>
  *     <li>Keeping track which route currently is being routed</li>
  *     <li>Gather JMX performance statics</li>
- *     <li>Tracing the routing using</li>
+ *     <li>Tracing</li>
  *     <li>Execute {@link RoutePolicy}</li>
  * </ul>
  * ... and much more.
@@ -112,6 +112,7 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
         }
 
+        // create internal callback which will execute the tasks in reverse order when done
         callback = new InternalCallback(states, exchange, callback);
 
         if (exchange.isTransacted()) {
@@ -164,17 +165,21 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void done(boolean doneSync) {
             // we should call after in reverse order
-            for (int i = tasks.size() - 1; i >= 0; i--) {
-                CamelInternalProcessorTask task = tasks.get(i);
-                Object state = states.get(i);
-                try {
-                    task.after(exchange, state);
-                } catch (Throwable e) {
-                    exchange.setException(e);
-                    break;
+            try {
+                for (int i = tasks.size() - 1; i >= 0; i--) {
+                    CamelInternalProcessorTask task = tasks.get(i);
+                    Object state = states.get(i);
+                    try {
+                        task.after(exchange, state);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                        // allow all tasks to complete even if there was an exception
+                    }
                 }
+            } finally {
+                // callback must be called
+                callback.done(doneSync);
             }
-            callback.done(doneSync);
         }
     }
 
