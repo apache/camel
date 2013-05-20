@@ -341,6 +341,7 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        // TODO: This logic can be in internal processor
         if (!continueProcessing(exchange)) {
             // we should not continue routing so we are done
             callback.done(true);

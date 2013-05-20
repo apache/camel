@@ -29,6 +29,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.PerformanceCounter;
+import org.apache.camel.impl.DefaultUnitOfWork;
+import org.apache.camel.impl.MDCUnitOfWork;
 import org.apache.camel.management.DelegatePerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.model.ProcessorDefinition;
@@ -46,10 +48,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Internal {@link Processor} that Camel routing engine used during routing for cross cutting functionality such as:
  * <ul>
+ *     <li>Execute {@link UnitOfWork}</li>
  *     <li>Keeping track which route currently is being routed</li>
+ *     <li>Execute {@link RoutePolicy}</li>
  *     <li>Gather JMX performance statics</li>
  *     <li>Tracing</li>
- *     <li>Execute {@link RoutePolicy}</li>
  * </ul>
  * ... and much more.
  * <p/>
@@ -115,9 +118,17 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         // create internal callback which will execute the tasks in reverse order when done
         callback = new InternalCallback(states, exchange, callback);
 
-        if (exchange.isTransacted()) {
+        // UNIT_OF_WORK_PROCESS_SYNC is @deprecated and we should remove it from Camel 3.0
+        Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);
+        if (exchange.isTransacted() || synchronous != null) {
             // must be synchronized for transacted exchanges
-            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            if (LOG.isTraceEnabled()) {
+                if (exchange.isTransacted()) {
+                    LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                } else {
+                    LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                }
+            }
             try {
                 processor.process(exchange);
             } catch (Throwable e) {
@@ -135,6 +146,9 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
                 async = uow.beforeProcess(processor, exchange, callback);
             }
 
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            }
             boolean sync = processor.process(exchange, async);
 
             // execute any after processor work (in current thread, not in the callback)
@@ -412,6 +426,82 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         public void after(Exchange exchange, Object data) throws Exception {
             // noop
         }
+    }
+
+    public static class UnitOfWorkProcessorTask implements CamelInternalProcessorTask<UnitOfWork> {
+
+        private final String routeId;
+
+        public UnitOfWorkProcessorTask(String routeId) {
+            this.routeId = routeId;
+        }
+
+        @Override
+        public UnitOfWork before(Exchange exchange) throws Exception {
+            // if the exchange doesn't have from route id set, then set it if it originated
+            // from this unit of work
+            if (routeId != null && exchange.getFromRouteId() == null) {
+                exchange.setFromRouteId(routeId);
+            }
+
+            if (exchange.getUnitOfWork() == null) {
+                // If there is no existing UoW, then we should start one and
+                // terminate it once processing is completed for the exchange.
+                final UnitOfWork uow = createUnitOfWork(exchange);
+                exchange.setUnitOfWork(uow);
+                uow.start();
+                return uow;
+            }
+
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, UnitOfWork uow) throws Exception {
+            if (uow != null) {
+                doneUow(uow, exchange);
+            }
+        }
+
+            /**
+             * Strategy to create the unit of work for the given exchange.
+             *
+             * @param exchange the exchange
+             * @return the created unit of work
+             */
+        protected UnitOfWork createUnitOfWork(Exchange exchange) {
+            UnitOfWork answer;
+            if (exchange.getContext().isUseMDCLogging()) {
+                answer = new MDCUnitOfWork(exchange);
+            } else {
+                answer = new DefaultUnitOfWork(exchange);
+            }
+            return answer;
+        }
+
+        private void doneUow(UnitOfWork uow, Exchange exchange) {
+            // unit of work is done
+            try {
+                if (uow != null) {
+                    uow.done(exchange);
+                }
+            } catch (Throwable e) {
+                LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
+                        + ". This exception will be ignored.", e);
+            }
+            try {
+                if (uow != null) {
+                    uow.stop();
+                }
+            } catch (Throwable e) {
+                LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
+                        + ". This exception will be ignored.", e);
+            }
+
+            // remove uow from exchange as its done
+            exchange.setUnitOfWork(null);
+        }
+
     }
 
 }

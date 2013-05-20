@@ -150,10 +150,13 @@ public class DefaultRouteContext implements RouteContext {
         if (!eventDrivenProcessors.isEmpty()) {
             Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
 
-            // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            UnitOfWorkProcessor unitOfWorkProcessor = new UnitOfWorkProcessor(this, target);
+            String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
 
-            CamelInternalProcessor internal = new CamelInternalProcessor(unitOfWorkProcessor);
+            // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
+            //UnitOfWorkProcessor unitOfWorkProcessor = new UnitOfWorkProcessor(this, target);
+
+            CamelInternalProcessor internal = new CamelInternalProcessor(target);
+            internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
 
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
@@ -174,7 +177,6 @@ public class DefaultRouteContext implements RouteContext {
             }
 
             // wrap in route inflight processor to track number of inflight exchanges for the route
-            String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
             internal.addTask(new CamelInternalProcessor.RouteInflightRepositoryTask(camelContext.getInflightRepository(), routeId));
 
             // TODO: This should be a task as well

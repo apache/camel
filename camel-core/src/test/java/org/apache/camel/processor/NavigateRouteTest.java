@@ -42,7 +42,7 @@ public class NavigateRouteTest extends ContextTestSupport {
         Navigate<Processor> nav = context.getRoutes().get(0).navigate();
         navigateRoute(nav);
 
-        assertEquals("There should be 8 processors to navigate", 8, count);
+        assertEquals("There should be 6 processors to navigate", 6, count);
     }
 
     @SuppressWarnings("unchecked")

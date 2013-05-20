@@ -193,6 +193,10 @@ public interface Exchange {
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";
+    /**
+     * @deprecated UNIT_OF_WORK_PROCESS_SYNC is not in use and will be removed in future Camel release
+     */
+    @Deprecated
     String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
 
     String XSLT_FILE_NAME = "CamelXsltFileName";
