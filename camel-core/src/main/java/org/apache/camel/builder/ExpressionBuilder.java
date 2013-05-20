@@ -43,6 +43,8 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLPairExpressionIterator;
@@ -1400,7 +1402,12 @@ public final class ExpressionBuilder {
     public static Expression routeIdExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getFromRouteId();
+                UnitOfWork uow = exchange.getUnitOfWork();
+                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                if (rc != null) {
+                    return rc.getRoute().getId();
+                }
+                return null;
             }
 
             @Override
