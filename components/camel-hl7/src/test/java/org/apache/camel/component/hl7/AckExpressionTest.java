@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hl7;
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
@@ -54,7 +55,7 @@ public class AckExpressionTest extends CamelTestSupport {
         assertEquals("AE", ack.getMSA().getAcknowledgementCode().getValue());
         assertEquals(a01.getMSH().getMessageControlID().getValue(), ack.getMSA().getMessageControlID()
             .getValue());
-        assertEquals(String.valueOf(HL7Exception.APPLICATION_INTERNAL_ERROR), ack.getERR()
+        assertEquals(String.valueOf(ErrorCode.APPLICATION_INTERNAL_ERROR.getCode()), ack.getERR()
             .getErrorCodeAndLocation(0).getCodeIdentifyingError().getIdentifier().getValue());
     }
 
@@ -65,7 +66,7 @@ public class AckExpressionTest extends CamelTestSupport {
         assertEquals("AR", ack.getMSA().getAcknowledgementCode().getValue());
         assertEquals(a01.getMSH().getMessageControlID().getValue(), ack.getMSA().getMessageControlID()
             .getValue());
-        assertEquals(String.valueOf(HL7Exception.APPLICATION_INTERNAL_ERROR), ack.getERR()
+        assertEquals(String.valueOf(ErrorCode.APPLICATION_INTERNAL_ERROR.getCode()), ack.getERR()
             .getErrorCodeAndLocation(0).getCodeIdentifyingError().getIdentifier().getValue());
         assertEquals("Problem!", ack.getERR().getErrorCodeAndLocation(0).getCodeIdentifyingError()
             .getAlternateText().getValue());
@@ -78,7 +79,7 @@ public class AckExpressionTest extends CamelTestSupport {
         assertEquals("AR", ack.getMSA().getAcknowledgementCode().getValue());
         assertEquals(a01.getMSH().getMessageControlID().getValue(), ack.getMSA().getMessageControlID()
             .getValue());
-        assertEquals(String.valueOf(HL7Exception.DATA_TYPE_ERROR), ack.getERR().getErrorCodeAndLocation(0)
+        assertEquals(String.valueOf(ErrorCode.DATA_TYPE_ERROR.getCode()), ack.getERR().getErrorCodeAndLocation(0)
             .getCodeIdentifyingError().getIdentifier().getValue());
         assertEquals("Problem!", ack.getERR().getErrorCodeAndLocation(0).getCodeIdentifyingError()
             .getAlternateText().getValue());
@@ -94,9 +95,9 @@ public class AckExpressionTest extends CamelTestSupport {
                 from("direct:test3").onException(HL7Exception.class).handled(true).transform(ack()).end()
                     .transform(terser("/.BLORG"));
                 from("direct:test4").onException(HL7Exception.class).handled(true)
-                    .transform(ack(AckCode.AR, "Problem!", HL7Exception.APPLICATION_INTERNAL_ERROR)).end()
+                    .transform(ack(AckCode.AR, "Problem!", ErrorCode.APPLICATION_INTERNAL_ERROR.getCode())).end()
                     .transform(terser("/.BLORG"));
-                from("direct:test5").transform(ack(AckCode.AR, "Problem!", HL7Exception.DATA_TYPE_ERROR));
+                from("direct:test5").transform(ack(AckCode.AR, "Problem!", ErrorCode.DATA_TYPE_ERROR.getCode()));
             }
         };
     }

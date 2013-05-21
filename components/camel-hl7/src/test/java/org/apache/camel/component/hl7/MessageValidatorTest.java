@@ -68,6 +68,11 @@ public class MessageValidatorTest extends CamelTestSupport {
                 return VALIDATION_OK;
             }
 
+            @Override
+            public ValidationException[] apply(Message msg) {
+                return test(msg);
+            }
+
         };
         MessageRuleBinding binding = new MessageRuleBinding("2.4", "ADT", "A01", rule);
         customContext.getMessageRuleBindings().add(binding);

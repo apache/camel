@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 import org.apache.camel.CamelExecutionException;
@@ -44,7 +46,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(HL7Exception.class, e.getCause());
             assertIsInstanceOf(DataTypeException.class, e.getCause());
-            assertTrue("Should be a validation error message", e.getCause().getMessage().startsWith("Failed validation rule"));
+            assertTrue("Should be a validation error message", e.getCause().getMessage().startsWith("ca.uhn.hl7v2.validation.ValidationException: Validation failed:"));
         }
 
         assertMockEndpointsSatisfied();
@@ -74,8 +76,9 @@ public class HL7ValidateTest extends CamelTestSupport {
     }    
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        Parser p = new PipeParser();
-        p.setValidationContext(new NoValidation());
+        HapiContext hapiContext = new DefaultHapiContext();
+        hapiContext.setValidationContext(new NoValidation());
+        Parser p = new GenericParser(hapiContext);
         hl7 = new HL7DataFormat();
         hl7.setParser(p);
         

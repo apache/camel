@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
 import org.apache.camel.Exchange;
@@ -56,7 +57,7 @@ public final class HL7 {
 
     public static Expression ack(AckCode code, String errorMessage,
             int errorCode) {
-        return new AckExpression(code, errorMessage, errorCode);
+        return new AckExpression(code, errorMessage, ErrorCode.errorCodeFor(errorCode));
     }
 
     public static Predicate messageConformsTo(

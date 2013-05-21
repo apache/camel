@@ -86,7 +86,7 @@ class HL7MLLPConfig {
     }
 
     public boolean isValidate() {
-        return parser.getValidationContext() instanceof NoValidation;
+        return !(parser.getValidationContext() instanceof NoValidation);
     }
 
     public void setValidate(boolean validate) {

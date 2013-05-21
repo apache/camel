@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
@@ -62,8 +64,9 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
     }    
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        Parser p = new GenericParser();
-        p.setValidationContext(new NoValidation());
+        HapiContext hapiContext = new DefaultHapiContext();
+        hapiContext.setValidationContext(new NoValidation());
+        Parser p = new GenericParser(hapiContext);
         hl7 = new HL7DataFormat();
         hl7.setParser(p);
         

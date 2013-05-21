@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 
@@ -27,7 +28,7 @@ public class AckExpression extends ExpressionAdapter {
 
     private AckCode acknowledgementCode;
     private String errorMessage;
-    private int errorCode = HL7Exception.APPLICATION_INTERNAL_ERROR;
+    private ErrorCode errorCode = ErrorCode.APPLICATION_INTERNAL_ERROR;
 
     public AckExpression() {
     }
@@ -36,7 +37,17 @@ public class AckExpression extends ExpressionAdapter {
         this.acknowledgementCode = acknowledgementCode;
     }
 
+    /**
+     * @deprecated Use {@link #AckExpression(AckCode, String, ErrorCode)}
+     */
+    @Deprecated
     public AckExpression(AckCode acknowledgementCode, String errorMessage, int errorCode) {
+        this(acknowledgementCode);
+        this.errorMessage = errorMessage;
+        this.errorCode = ErrorCode.errorCodeFor(errorCode);
+    }
+
+    public AckExpression(AckCode acknowledgementCode, String errorMessage, ErrorCode errorCode) {
         this(acknowledgementCode);
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
