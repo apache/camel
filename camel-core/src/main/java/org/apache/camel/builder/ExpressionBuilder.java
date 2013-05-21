@@ -1402,12 +1402,17 @@ public final class ExpressionBuilder {
     public static Expression routeIdExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                String answer = null;
                 UnitOfWork uow = exchange.getUnitOfWork();
                 RouteContext rc = uow != null ? uow.getRouteContext() : null;
                 if (rc != null) {
-                    return rc.getRoute().getId();
+                    answer = rc.getRoute().getId();
                 }
-                return null;
+                if (answer == null) {
+                    // fallback and get from route id on the exchange
+                    answer = exchange.getFromRouteId();
+                }
+                return answer;
             }
 
             @Override
