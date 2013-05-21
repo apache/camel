@@ -34,6 +34,7 @@ import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
 import org.apache.camel.processor.WrapProcessor;
@@ -187,6 +188,9 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         if (childDefinition != null && outputDefinition != childDefinition) {
             childDefinition.setParent(outputDefinition);
         }
+
+        // force the creation of an id
+        RouteDefinitionHelper.forceAssignIds(routeContext.getCamelContext(), definition);
 
         // first wrap the output with the managed strategy if any
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();

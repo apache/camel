@@ -155,6 +155,8 @@ public class ManagedTracerOptionsTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 from("direct:start").to("mock:result");
             }
         };

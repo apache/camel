@@ -121,6 +121,8 @@ public abstract class TracingTestBase extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 from("direct:start")
                         .tracing()
                         .process(processor)

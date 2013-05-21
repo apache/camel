@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * @version 
@@ -58,7 +59,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
         assertEquals("direct://bar", order.get(3).getRoute().getEndpoint().getEndpointUri());
 
         // assert route service was started in order as well
-        assertEquals("22114433", startOrder);
+        assertEquals("2143", startOrder);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
         };
     }
 
-    public class MyServiceBean implements Processor, Service {
+    public class MyServiceBean extends ServiceSupport implements Processor {
 
         private String name;
         private boolean started;
@@ -86,12 +87,12 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
             this.name = name;
         }
 
-        public void start() throws Exception {
+        protected void doStart() throws Exception {
             startOrder += name;
             started = true;
         }
 
-        public void stop() throws Exception {
+        protected void doStop() throws Exception {
             started = false;
         }
 

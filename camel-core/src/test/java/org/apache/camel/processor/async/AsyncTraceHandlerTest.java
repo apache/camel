@@ -63,6 +63,8 @@ public class AsyncTraceHandlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
