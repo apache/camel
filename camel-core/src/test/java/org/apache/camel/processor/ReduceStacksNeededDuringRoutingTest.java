@@ -31,6 +31,11 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ReduceStacksNeededDuringRoutingTest extends ContextTestSupport {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     public void testReduceStacksNeeded() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -45,9 +50,12 @@ public class ReduceStacksNeededDuringRoutingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // context.setTracing(true);
+
                 from("seda:start")
                         .to("log:foo")
                         .to("log:bar")
+                        .to("log:baz")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {

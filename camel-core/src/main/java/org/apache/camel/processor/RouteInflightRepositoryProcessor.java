@@ -43,7 +43,7 @@ public class RouteInflightRepositoryProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
-    protected boolean processNext(final Exchange exchange, final AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         inflightRepository.add(exchange, id);
         
         boolean sync = processor.process(exchange, new AsyncCallback() {

@@ -89,7 +89,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable 
                     new Object[]{handled, e.getClass().getName(), e.getMessage()});
         }
 
-        boolean sync = super.processNext(exchange, new AsyncCallback() {
+        boolean sync = super.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (!handled) {
                     if (exchange.getException() == null) {

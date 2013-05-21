@@ -90,9 +90,9 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
 
         public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
             return new DelegateAsyncProcessor(target) {
-                protected boolean processNext(Exchange exchange, AsyncCallback callback) {
+                public boolean process(Exchange exchange, AsyncCallback callback) {
                     invoked = true;
-                    return super.processNext(exchange, callback);
+                    return super.process(exchange, callback);
                 }
             };
         }

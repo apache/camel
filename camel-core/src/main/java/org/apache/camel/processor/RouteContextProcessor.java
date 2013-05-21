@@ -37,7 +37,7 @@ public class RouteContextProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
-    protected boolean processNext(final Exchange exchange, final AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // push the current route context
         final UnitOfWork unitOfWork = exchange.getUnitOfWork();
         if (unitOfWork != null) {

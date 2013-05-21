@@ -37,9 +37,9 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
     }
 
     @Override
-    protected boolean processNext(final Exchange exchange, final AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // support the asynchronous routing engine
-        boolean sync = super.processNext(exchange, new AsyncCallback() {
+        boolean sync = super.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (exchange.getException() != null) {
                     // an exception occurred during processing onException

@@ -87,16 +87,15 @@ public class DelegateAsyncProcessor extends ServiceSupport implements DelegatePr
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        return processNext(exchange, callback);
+        return processor.process(exchange, callback);
     }
 
+    /**
+     * @deprecated use {@link #process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} instead
+     */
+    @Deprecated
     protected boolean processNext(Exchange exchange, AsyncCallback callback) {
-        if (processor == null) {
-            // no processor then we are done
-            callback.done(true);
-            return true;
-        }
-        return processor.process(exchange, callback);
+        throw new UnsupportedOperationException("This method is deprecated, use process(Exchange, AsyncCallback) instead");
     }
 
     public boolean hasNext() {

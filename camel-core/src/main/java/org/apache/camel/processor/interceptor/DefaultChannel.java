@@ -210,11 +210,13 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
             internalProcessor.addTask(new CamelInternalProcessor.BacklogTracerTask(backlogTracer.getQueue(), backlogTracer, targetOutputDef, route, first));
         }
 
-        // TODO: trace interceptor can be a task on internalProcessor
-        TraceInterceptor trace = (TraceInterceptor) getOrCreateTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
-        // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
-        trace.setRouteContext(routeContext);
-        target = trace;
+        tracer = getOrCreateTracer();
+        if (tracer != null) {
+            TraceInterceptor trace = (TraceInterceptor) tracer.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
+            // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
+            trace.setRouteContext(routeContext);
+            target = trace;
+        }
 
         // sort interceptors according to ordered
         Collections.sort(interceptors, new OrderedComparator());
@@ -274,6 +276,11 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
     }
 
     private InterceptStrategy getOrCreateTracer() {
+        // only use tracer if explicit enabled
+        if (camelContext.isTracing() != null && !camelContext.isTracing()) {
+            return null;
+        }
+
         InterceptStrategy tracer = Tracer.getTracer(camelContext);
         if (tracer == null) {
             if (camelContext.getRegistry() != null) {
