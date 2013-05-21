@@ -999,6 +999,23 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setDefaultBacklogTracer(InterceptStrategy backlogTracer);
 
     /**
+     * Gets the default backlog debugger
+     *
+     * @return the default backlog debugger
+     */
+    InterceptStrategy getDefaultBacklogDebugger();
+
+    /**
+     * Sets a custom backlog debugger to be used as the default backlog debugger.
+     * <p/>
+     * <b>Note:</b> This must be set before any routes are created,
+     * changing the default backlog debugger for existing routes is not supported.
+     *
+     * @param backlogDebugger the custom debugger to use as default backlog debugger
+     */
+    void setDefaultBacklogDebugger(InterceptStrategy backlogDebugger);
+
+    /**
      * Disables using JMX as {@link org.apache.camel.spi.ManagementStrategy}.
      */
     void disableJMX();

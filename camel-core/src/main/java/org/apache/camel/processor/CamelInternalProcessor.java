@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Queue;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,6 +33,7 @@ import org.apache.camel.impl.MDCUnitOfWork;
 import org.apache.camel.management.DelegatePerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.InflightRepository;
@@ -53,8 +53,9 @@ import org.slf4j.LoggerFactory;
  *     <li>Execute {@link RoutePolicy}</li>
  *     <li>Gather JMX performance statics</li>
  *     <li>Tracing</li>
+ *     <li>Debugging</li>
  * </ul>
- * ... and much more.
+ * ... and more.
  * <p/>
  * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorTask} task
  * by executing the {@link CamelInternalProcessorTask#before(org.apache.camel.Exchange)} and
@@ -74,16 +75,8 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         super(processor);
     }
 
-    public CamelInternalProcessor(AsyncProcessor processor) {
-        super(processor);
-    }
-
     public void addTask(CamelInternalProcessorTask task) {
         tasks.add(task);
-    }
-
-    public void addFirstTask(CamelInternalProcessorTask task) {
-        tasks.add(0, task);
     }
 
     public <T> T getTask(Class<T> type) {
@@ -97,6 +90,9 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        // NOTE: if you are debugging Camel routes, then all the code that happens before the processor.process method
+        // is internal code only, so you can go straight to the processor (see next NOTE in this method)
+
         if (processor == null) {
             // no processor then we are done
             callback.done(true);
@@ -146,6 +142,8 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
                 async = uow.beforeProcess(processor, exchange, callback);
             }
 
+            // NOTE: Here we call the next processor in the Camel routes, so you can step into the processor.process call
+            // to continue debugging
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
@@ -178,6 +176,9 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public void done(boolean doneSync) {
+            // NOTE: if you are debugging Camel routes, then all the code in the for loop below is internal only
+            // so you can step straight to the finally block and invoke the callback
+
             // we should call after in reverse order
             try {
                 for (int i = tasks.size() - 1; i >= 0; i--) {
@@ -432,7 +433,40 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static class UnitOfWorkProcessorTask implements CamelInternalProcessorTask<UnitOfWork> {
+    public static final class BacklogDebuggerTask implements CamelInternalProcessorTask<StopWatch> {
+
+        private final BacklogDebugger backlogDebugger;
+        private final Processor target;
+        private final ProcessorDefinition<?> definition;
+        private final String nodeId;
+
+        public BacklogDebuggerTask(BacklogDebugger backlogDebugger, Processor target, ProcessorDefinition<?> definition) {
+            this.backlogDebugger = backlogDebugger;
+            this.target = target;
+            this.definition = definition;
+            this.nodeId = definition.getId();
+        }
+
+        @Override
+        public StopWatch before(Exchange exchange) throws Exception {
+            if (backlogDebugger.isEnabled() && backlogDebugger.hasBreakpoint(nodeId)) {
+                StopWatch watch = new StopWatch();
+                backlogDebugger.beforeProcess(exchange, target, definition);
+                return watch;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
+            if (stopWatch != null) {
+                backlogDebugger.afterProcess(exchange, target, definition, stopWatch.stop());
+            }
+        }
+    }
+
+    public static final class UnitOfWorkProcessorTask implements CamelInternalProcessorTask<UnitOfWork> {
 
         private final String routeId;
 
@@ -467,12 +501,6 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
         }
 
-            /**
-             * Strategy to create the unit of work for the given exchange.
-             *
-             * @param exchange the exchange
-             * @return the created unit of work
-             */
         protected UnitOfWork createUnitOfWork(Exchange exchange) {
             UnitOfWork answer;
             if (exchange.getContext().isUseMDCLogging()) {

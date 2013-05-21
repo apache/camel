@@ -212,8 +212,18 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
             }
 
             internalProcessor.addTask(new CamelInternalProcessor.BacklogTracerTask(backlogTracer.getQueue(), backlogTracer, targetOutputDef, route, first));
+
+            // add debugger as well so we have both tracing and debugging out of the box
+            InterceptStrategy debugger = getOrCreateBacklogDebugger();
+            if (debugger instanceof BacklogDebugger) {
+                BacklogDebugger backlogDebugger = (BacklogDebugger) debugger;
+                internalProcessor.addTask(new CamelInternalProcessor.BacklogDebuggerTask(backlogDebugger, target, targetOutputDef));
+            }
         }
 
+        // the regular tracer is not a task on internalProcessor as this is not really needed
+        // end users have to explicit enable the tracer to use it, and then its okay if we wrap
+        // the processors (but by default tracer is disabled, and therefore we do not wrap processors)
         tracer = getOrCreateTracer();
         if (tracer != null) {
             TraceInterceptor trace = (TraceInterceptor) tracer.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
@@ -343,6 +353,32 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         }
 
         return tracer;
+    }
+
+    private InterceptStrategy getOrCreateBacklogDebugger() {
+        InterceptStrategy debugger = BacklogDebugger.getBacklogDebugger(camelContext);
+        if (debugger == null) {
+            if (camelContext.getRegistry() != null) {
+                // lookup in registry
+                Map<String, BacklogDebugger> map = camelContext.getRegistry().findByTypeWithName(BacklogDebugger.class);
+                if (map.size() == 1) {
+                    debugger = map.values().iterator().next();
+                }
+            }
+            if (debugger == null) {
+                // fallback to use the default debugger
+                debugger = camelContext.getDefaultBacklogDebugger();
+            }
+        }
+
+        // which we must manage as well
+        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+            if (debugger instanceof Service) {
+                strategy.onServiceAdd(camelContext, (Service) debugger, null);
+            }
+        }
+
+        return debugger;
     }
 
     public void process(Exchange exchange) throws Exception {

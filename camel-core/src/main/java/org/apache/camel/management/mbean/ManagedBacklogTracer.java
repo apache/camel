@@ -29,7 +29,7 @@ import org.apache.camel.spi.ManagementStrategy;
  * @version 
  */
 @ManagedResource(description = "Managed BacklogTracer")
-public class ManagedBacklogTracer implements  ManagedTracerBacklogMBean {
+public class ManagedBacklogTracer implements ManagedTracerBacklogMBean {
     private final CamelContext camelContext;
     private final BacklogTracer backlogTracer;
 

@@ -51,6 +51,7 @@ import org.apache.camel.impl.EndpointRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
@@ -71,6 +72,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.EventNotifier;
@@ -114,6 +116,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private final Set<String> knowRouteIds = new HashSet<String>();
     private final Map<Tracer, ManagedTracer> managedTracers = new HashMap<Tracer, ManagedTracer>();
     private final Map<BacklogTracer, ManagedBacklogTracer> managedBacklogTracers = new HashMap<BacklogTracer, ManagedBacklogTracer>();
+    private final Map<BacklogDebugger, ManagedBacklogDebugger> managedBacklogDebuggers = new HashMap<BacklogDebugger, ManagedBacklogDebugger>();
     private final Map<ThreadPoolExecutor, Object> managedThreadPools = new HashMap<ThreadPoolExecutor, Object>();
 
     public DefaultManagementLifecycleStrategy() {
@@ -426,6 +429,16 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 managedBacklogTracers.put(backlogTracer, mt);
             }
             return mt;
+        } else if (service instanceof BacklogDebugger) {
+            // special for backlog debugger
+            BacklogDebugger backlogDebugger = (BacklogDebugger) service;
+            ManagedBacklogDebugger md = managedBacklogDebuggers.get(backlogDebugger);
+            if (md == null) {
+                md = new ManagedBacklogDebugger(context, backlogDebugger);
+                md.init(getManagementStrategy());
+                managedBacklogDebuggers.put(backlogDebugger, md);
+            }
+            return md;
         } else if (service instanceof EventNotifier) {
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service instanceof Producer) {
@@ -890,6 +903,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         wrappedProcessors.clear();
         managedTracers.clear();
         managedBacklogTracers.clear();
+        managedBacklogDebuggers.clear();
         managedThreadPools.clear();
     }
 
