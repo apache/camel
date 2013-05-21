@@ -70,6 +70,7 @@ import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.EventNotifier;
@@ -515,16 +516,19 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             if (route instanceof EventDrivenConsumerRoute) {
                 EventDrivenConsumerRoute edcr = (EventDrivenConsumerRoute) route;
                 Processor processor = edcr.getProcessor();
-                if (processor instanceof InstrumentationProcessor && mr instanceof ManagedRoute) {
-                    InstrumentationProcessor ip = (InstrumentationProcessor) processor;
+                if (processor instanceof CamelInternalProcessor && mr instanceof ManagedRoute) {
+                    CamelInternalProcessor internal = (CamelInternalProcessor) processor;
                     ManagedRoute routeMBean = (ManagedRoute) mr;
 
-                    // we need to wrap the counter with the camel context so we get stats updated on the context as well
-                    if (camelContextMBean != null) {
-                        CompositePerformanceCounter wrapper = new CompositePerformanceCounter(routeMBean, camelContextMBean);
-                        ip.setCounter(wrapper);
-                    } else {
-                        ip.setCounter(routeMBean);
+                    CamelInternalProcessor.InstrumentationTask task = internal.getTask(CamelInternalProcessor.InstrumentationTask.class);
+                    if (task != null) {
+                        // we need to wrap the counter with the camel context so we get stats updated on the context as well
+                        if (camelContextMBean != null) {
+                            CompositePerformanceCounter wrapper = new CompositePerformanceCounter(routeMBean, camelContextMBean);
+                            task.setCounter(wrapper);
+                        } else {
+                            task.setCounter(routeMBean);
+                        }
                     }
                 }
             }

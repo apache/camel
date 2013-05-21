@@ -30,7 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -179,15 +178,11 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in route inflight processor to track number of inflight exchanges for the route
             internal.addTask(new CamelInternalProcessor.RouteInflightRepositoryTask(camelContext.getInflightRepository(), routeId));
 
-            // TODO: This should be a task as well
-            // and wrap it by a instrumentation processor that is to be used for performance stats
-            // for this particular route
-            InstrumentationProcessor instrument = new InstrumentationProcessor();
-            instrument.setType("route");
-            instrument.setProcessor(internal);
+            // wrap in JMX instrumentation processor that is used for performance stats
+            internal.addTask(new CamelInternalProcessor.InstrumentationTask("route"));
 
             // and create the route that wraps the UoW
-            Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), instrument);
+            Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             if (route.getGroup() != null) {

@@ -202,6 +202,10 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         private PerformanceCounter counter;
         private String type;
 
+        public InstrumentationTask(String type) {
+            this.type = type;
+        }
+
         public void setCounter(Object counter) {
             ManagedPerformanceCounter mpc = null;
             if (counter instanceof ManagedPerformanceCounter) {
