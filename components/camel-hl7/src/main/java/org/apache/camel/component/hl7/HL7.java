@@ -55,9 +55,16 @@ public final class HL7 {
         };
     }
 
-    public static Expression ack(AckCode code, String errorMessage,
-            int errorCode) {
-        return new AckExpression(code, errorMessage, ErrorCode.errorCodeFor(errorCode));
+    /**
+     * @deprecated Use {@link #ack(AckCode, String, ErrorCode)}
+     */
+    @Deprecated
+    public static Expression ack(AckCode code, String errorMessage, int errorCode) {
+        return ack(code, errorMessage, ErrorCode.errorCodeFor(errorCode));
+    }
+
+    public static Expression ack(AckCode code, String errorMessage, ErrorCode errorCode) {
+        return new AckExpression(code, errorMessage, errorCode);
     }
 
     public static Predicate messageConformsTo(

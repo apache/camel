@@ -95,9 +95,9 @@ public class AckExpressionTest extends CamelTestSupport {
                 from("direct:test3").onException(HL7Exception.class).handled(true).transform(ack()).end()
                     .transform(terser("/.BLORG"));
                 from("direct:test4").onException(HL7Exception.class).handled(true)
-                    .transform(ack(AckCode.AR, "Problem!", ErrorCode.APPLICATION_INTERNAL_ERROR.getCode())).end()
+                    .transform(ack(AckCode.AR, "Problem!", ErrorCode.APPLICATION_INTERNAL_ERROR)).end()
                     .transform(terser("/.BLORG"));
-                from("direct:test5").transform(ack(AckCode.AR, "Problem!", ErrorCode.DATA_TYPE_ERROR.getCode()));
+                from("direct:test5").transform(ack(AckCode.AR, "Problem!", ErrorCode.DATA_TYPE_ERROR));
             }
         };
     }
