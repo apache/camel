@@ -84,16 +84,9 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     }
 
     @Override
+    @Deprecated
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
-        // is this the first output from a route, as we want to know this so we can do special logic in first
-        boolean first = false;
-        RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
-        if (route != null && !route.getOutputs().isEmpty()) {
-            first = route.getOutputs().get(0) == definition;
-        }
-
-        processors.add(definition);
-        return new BacklogTracerInterceptor(queue, target, definition, route, first, this);
+        throw new UnsupportedOperationException("Deprecated");
     }
 
     /**
