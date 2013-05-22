@@ -33,7 +33,7 @@ public interface ManagedBacklogDebuggerMBean {
     void disableDebugger();
 
     @ManagedOperation(description = "Add a breakpoint at the given node id")
-    void addBreakpoint(String nodeId);
+    void addBreakpoint(String nodeId, boolean internal);
 
     @ManagedOperation(description = "Remote the breakpoint from the given node id")
     void removeBreakpoint(String nodeId);
@@ -41,8 +41,17 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Continue debugging the suspended breakpoints at the given node id")
     void continueBreakpoint(String nodeId);
 
+    @ManagedOperation(description = "Return the node ids which has breakpoints")
+    Set<String> getBreakpoints(boolean includeInternal);
+
     @ManagedOperation(description = "Return the node ids which is currently suspended")
     Set<String> getSuspendedBreakpointNodeIds();
+
+    @ManagedOperation(description = "Suspend a breakpoint")
+    public void suspendBreakpoint(String nodeId);
+
+    @ManagedOperation(description = "Activate a breakpoint")
+    public void activateBreakpoint(String nodeId);
 
     @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node")
     String dumpTracedMessagesAsXml(String nodeId);

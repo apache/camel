@@ -33,6 +33,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("Should not be enabled", Boolean.FALSE, enabled);
 
         // TODO: add more to this test
+        Thread.sleep(999999);
     }
 
     @Override

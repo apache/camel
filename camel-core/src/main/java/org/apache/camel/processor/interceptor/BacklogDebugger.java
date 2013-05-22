@@ -124,9 +124,9 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         return breakpoints.containsKey(nodeId);
     }
 
-    public void addBreakpoint(String nodeId) {
+    public void addBreakpoint(String nodeId, boolean internal) {
         if (!breakpoints.containsKey(nodeId)) {
-            NodeBreakpoint breakpoint = new NodeBreakpoint(nodeId);
+            NodeBreakpoint breakpoint = new NodeBreakpoint(nodeId, internal);
             breakpoints.put(nodeId, breakpoint);
             debugger.addBreakpoint(breakpoint);
         }
@@ -145,6 +145,16 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
+    public Set<String> getBreakpoints(boolean includeInternal) {
+        Set<String> answer = new LinkedHashSet<String>();
+        for (NodeBreakpoint breakpoint : breakpoints.values()) {
+            if (!breakpoint.isInternal() || includeInternal) {
+                answer.add(breakpoint.getNodeId());
+            }
+        }
+        return answer;
+    }
+
     public void continueBreakpoint(String nodeId) {
         // remember to remove the dumped message as its no longer in need
         suspendedBreakpointMessages.remove(nodeId);
@@ -156,6 +166,20 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
 
     public Set<String> getSuspendedBreakpointNodeIds() {
         return new LinkedHashSet<String>(suspendedBreakpoints.keySet());
+    }
+
+    public void suspendBreakpoint(String nodeId) {
+        NodeBreakpoint breakpoint = breakpoints.get(nodeId);
+        if (breakpoint != null) {
+            breakpoint.suspend();
+        }
+    }
+
+    public void activateBreakpoint(String nodeId) {
+        NodeBreakpoint breakpoint = breakpoints.get(nodeId);
+        if (breakpoint != null) {
+            breakpoint.activate();
+        }
     }
 
     public String dumpTracedMessagesAsXml(String nodeId) {
@@ -198,9 +222,19 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     private final class NodeBreakpoint extends BreakpointSupport implements Condition {
 
         private final String nodeId;
+        private final boolean internal;
 
-        private NodeBreakpoint(String nodeId) {
+        private NodeBreakpoint(String nodeId, boolean internal) {
             this.nodeId = nodeId;
+            this.internal = internal;
+        }
+
+        public String getNodeId() {
+            return nodeId;
+        }
+
+        public boolean isInternal() {
+            return internal;
         }
 
         @Override
