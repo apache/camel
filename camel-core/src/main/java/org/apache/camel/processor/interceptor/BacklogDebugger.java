@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.util.Date;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -24,17 +25,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -49,9 +54,11 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
 
     private final AtomicBoolean enabled = new AtomicBoolean();
+    private final AtomicLong debugCounter = new AtomicLong(0);
     private final Debugger debugger;
     private final Map<String, NodeBreakpoint> breakpoints = new HashMap<String, NodeBreakpoint>();
     private final Map<String, CountDownLatch> suspendedBreakpoints = new HashMap<String, CountDownLatch>();
+    private final Map<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new HashMap<String, BacklogTracerEventMessage>();
 
     public BacklogDebugger() {
         this.debugger = new DefaultDebugger();
@@ -106,6 +113,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             latch.countDown();
         }
         suspendedBreakpoints.clear();
+        suspendedBreakpointMessages.clear();
     }
 
     public boolean isEnabled() {
@@ -126,6 +134,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
 
     public void removeBreakpoint(String nodeId) {
         // when removing a break point then ensure latches is cleared and counted down so we wont have hanging threads
+        suspendedBreakpointMessages.remove(nodeId);
         CountDownLatch latch = suspendedBreakpoints.remove(nodeId);
         NodeBreakpoint breakpoint = breakpoints.remove(nodeId);
         if (breakpoint != null) {
@@ -137,6 +146,8 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     }
 
     public void continueBreakpoint(String nodeId) {
+        // remember to remove the dumped message as its no longer in need
+        suspendedBreakpointMessages.remove(nodeId);
         CountDownLatch latch = suspendedBreakpoints.remove(nodeId);
         if (latch != null) {
             latch.countDown();
@@ -145,6 +156,23 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
 
     public Set<String> getSuspendedBreakpointNodeIds() {
         return new LinkedHashSet<String>(suspendedBreakpoints.keySet());
+    }
+
+    public String dumpTracedMessagesAsXml(String nodeId) {
+        BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
+        if (msg != null) {
+            return msg.toXml(4);
+        } else {
+            return null;
+        }
+    }
+
+    public long getDebugCounter() {
+        return debugCounter.get();
+    }
+
+    public void resetDebugCounter() {
+        debugCounter.set(0);
     }
 
     public boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
@@ -171,12 +199,23 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
 
         private final String nodeId;
 
-        public NodeBreakpoint(String nodeId) {
+        private NodeBreakpoint(String nodeId) {
             this.nodeId = nodeId;
         }
 
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            // store a copy of the message so we can see that from the debugger
+            Date timestamp = new Date();
+            String toNode = nodeId;
+            String routeId = ProcessorDefinitionHelper.getRouteId(definition);
+            String exchangeId = exchange.getExchangeId();
+            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4, false, false, 1000);
+            long uid = debugCounter.incrementAndGet();
+
+            BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
+            suspendedBreakpointMessages.put(nodeId, msg);
+
             // mark as suspend
             final CountDownLatch latch = new CountDownLatch(1);
             suspendedBreakpoints.put(nodeId, latch);

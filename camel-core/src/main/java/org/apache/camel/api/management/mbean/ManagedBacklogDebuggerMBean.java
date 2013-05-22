@@ -44,4 +44,13 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Return the node ids which is currently suspended")
     Set<String> getSuspendedBreakpointNodeIds();
 
+    @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node")
+    String dumpTracedMessagesAsXml(String nodeId);
+
+    @ManagedAttribute(description = "Number of total debugged messages")
+    public long getDebugCounter();
+
+    @ManagedOperation(description = "Resets the debug counter")
+    public void resetDebugCounter();
+
 }

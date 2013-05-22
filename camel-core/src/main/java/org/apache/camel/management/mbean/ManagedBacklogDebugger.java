@@ -75,4 +75,16 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return backlogDebugger.getSuspendedBreakpointNodeIds();
     }
 
+    public String dumpTracedMessagesAsXml(String nodeId) {
+        return backlogDebugger.dumpTracedMessagesAsXml(nodeId);
+    }
+
+    public long getDebugCounter() {
+        return backlogDebugger.getDebugCounter();
+    }
+
+    public void resetDebugCounter() {
+        backlogDebugger.resetDebugCounter();
+    }
+
 }

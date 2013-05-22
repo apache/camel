@@ -138,6 +138,17 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
+     * Gets the route id the given node belongs to.
+     *
+     * @param node the node
+     * @return the route id, or <tt>null</tt> if not possible to find
+     */
+    public static String getRouteId(ProcessorDefinition<?> node) {
+        RouteDefinition route = getRoute(node);
+        return route != null ? route.getId() : null;
+    }
+
+    /**
      * Traverses the node, including its children (recursive), and gathers all the node ids.
      *
      * @param node  the target node
