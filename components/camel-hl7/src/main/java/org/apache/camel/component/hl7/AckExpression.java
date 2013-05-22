@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -28,13 +29,14 @@ public class AckExpression extends ExpressionAdapter {
 
     private AckCode acknowledgementCode;
     private String errorMessage;
-    private ErrorCode errorCode = ErrorCode.APPLICATION_INTERNAL_ERROR;
+    private ErrorCode errorCode;
 
     public AckExpression() {
+        this(null, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
     }
 
     public AckExpression(AckCode acknowledgementCode) {
-        this.acknowledgementCode = acknowledgementCode;
+        this(acknowledgementCode, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
     }
 
     /**
@@ -42,13 +44,11 @@ public class AckExpression extends ExpressionAdapter {
      */
     @Deprecated
     public AckExpression(AckCode acknowledgementCode, String errorMessage, int errorCode) {
-        this(acknowledgementCode);
-        this.errorMessage = errorMessage;
-        this.errorCode = ErrorCode.errorCodeFor(errorCode);
+        this(acknowledgementCode, errorMessage, ErrorCode.errorCodeFor(errorCode));
     }
 
     public AckExpression(AckCode acknowledgementCode, String errorMessage, ErrorCode errorCode) {
-        this(acknowledgementCode);
+        this.acknowledgementCode = acknowledgementCode;
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
     }
@@ -63,7 +63,7 @@ public class AckExpression extends ExpressionAdapter {
             if (t != null && code == null) {
                 code = AckCode.AE;
             }
-            return msg.generateACK(code == null ? null : code.name(), hl7e);
+            return msg.generateACK(code == null ? AcknowledgmentCode.AA : code.asAcknowledgmentCode(), hl7e);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }

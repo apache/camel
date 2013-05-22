@@ -67,8 +67,7 @@ public final class HL7 {
         return new AckExpression(code, errorMessage, errorCode);
     }
 
-    public static Predicate messageConformsTo(
-            ValidationContext validationContext) {
+    public static Predicate messageConformsTo(ValidationContext validationContext) {
         return new ValidationContextPredicate(validationContext);
     }
 

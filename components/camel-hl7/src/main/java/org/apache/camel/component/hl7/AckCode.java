@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.AcknowledgmentCode;
+
 public enum AckCode {
     AA(false), CA(false), AR(true), CR(true), AE(true), CE(true);
 
@@ -27,6 +29,11 @@ public enum AckCode {
 
     public boolean isError() {
         return error;
+    }
+
+    public AcknowledgmentCode asAcknowledgmentCode() {
+        // we share the same names with the AcknowledgmentCode enum
+        return Enum.valueOf(AcknowledgmentCode.class, name());
     }
 
 }
