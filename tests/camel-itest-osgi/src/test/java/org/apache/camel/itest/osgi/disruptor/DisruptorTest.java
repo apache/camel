@@ -22,7 +22,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+
+import static org.ops4j.pax.exam.OptionUtils.combine;
+
 
 /**
  * @version 
@@ -61,6 +66,16 @@ public class DisruptorTest extends OSGiIntegrationTestSupport {
         String id = "" + bundleContext.getBundle().getBundleId();
         assertTrue(name1.startsWith(id));
         assertTrue(name2.startsWith(id));
+    }
+    
+    @Configuration
+    public static Option[] configure() {
+        Option[] options = combine(
+            getDefaultCamelKarafOptions(),
+            // using the features to install the other camel components             
+            loadCamelFeatures("camel-disruptor"));
+        
+        return options;
     }
    
 }

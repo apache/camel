@@ -30,11 +30,11 @@
   <description>Performs OSGi compliance integration tests</description>
 
   <repositories>
-    <repository>
+    <!--repository>
       <id>hapi</id>
       <name>HAPI Maven Repository</name>
       <url>http://hl7api.sourceforge.net/m2/</url>
-    </repository>
+    </repository-->
   </repositories>
 
   <dependencies>

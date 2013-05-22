@@ -20,7 +20,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+
+import static org.ops4j.pax.exam.OptionUtils.combine;
+
+
 
 /**
  * @version 
@@ -57,4 +63,16 @@ public class DisruptorVmTest extends OSGiIntegrationTestSupport {
         
         assertMockEndpointsSatisfied();        
     }
+    
+
+    @Configuration
+    public static Option[] configure() {
+        Option[] options = combine(
+            getDefaultCamelKarafOptions(),
+            // using the features to install the other camel components             
+            loadCamelFeatures("camel-disruptor"));
+        
+        return options;
+    }
+   
 }
