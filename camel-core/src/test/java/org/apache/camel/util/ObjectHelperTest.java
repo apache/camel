@@ -646,4 +646,27 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.isNaN(true));
     }
 
+    public void testNotNull() {
+        Long expected = 3L;
+        Long actual = ObjectHelper.notNull(expected, "expected");
+        assertSame("Didn't get the same object back!", expected, actual);
+
+        Long actual2 = ObjectHelper.notNull(expected, "expected", "holder");
+        assertSame("Didn't get the same object back!", expected, actual2);
+
+        Long expected2 = null;
+        try {
+            ObjectHelper.notNull(expected2, "expected2");
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException iae) {
+            assertEquals("expected2 must be specified", iae.getMessage());
+        }
+
+        try {
+            ObjectHelper.notNull(expected2, "expected2", "holder");
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException iae) {
+            assertEquals("expected2 must be specified on: holder", iae.getMessage());
+        }
+    }
 }

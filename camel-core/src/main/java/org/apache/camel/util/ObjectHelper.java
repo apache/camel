@@ -275,7 +275,7 @@ public final class ObjectHelper {
             return (Boolean)value;
         }
         if (value instanceof String) {
-            return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;
+            return Boolean.valueOf((String)value);
         }
         if (value instanceof Integer) {
             return (Integer)value > 0 ? Boolean.TRUE : Boolean.FALSE;
@@ -291,7 +291,7 @@ public final class ObjectHelper {
      * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
-    public static Object notNull(Object value, String name) {
+    public static <T> T notNull(T value, String name) {
         if (value == null) {
             throw new IllegalArgumentException(name + " must be specified");
         }
@@ -308,7 +308,7 @@ public final class ObjectHelper {
      * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
-    public static Object notNull(Object value, String name, Object on) {
+    public static <T> T notNull(T value, String name, Object on) {
         if (on == null) {
             notNull(value, name);
         } else if (value == null) {
