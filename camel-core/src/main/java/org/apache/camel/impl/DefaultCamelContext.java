@@ -2427,7 +2427,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public InterceptStrategy getDefaultBacklogDebugger() {
         if (defaultBacklogDebugger == null) {
-            defaultBacklogDebugger = new BacklogDebugger();
+            defaultBacklogDebugger = new BacklogDebugger(this);
         }
         return defaultBacklogDebugger;
     }

@@ -39,8 +39,10 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +54,12 @@ import org.slf4j.LoggerFactory;
 public class DefaultDebugger implements Debugger, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDebugger.class);
+    private final EventNotifier debugEventNotifier = new DebugEventNotifier();
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<BreakpointConditions>();
     private final int maxConcurrentSingleSteps = 1;
     private final Map<String, Breakpoint> singleSteps = new HashMap<String, Breakpoint>(maxConcurrentSingleSteps);
     private CamelContext camelContext;
+    private boolean useTracer = true;
 
     /**
      * Holder class for breakpoint and the associated conditions
@@ -95,6 +99,14 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public boolean isUseTracer() {
+        return useTracer;
+    }
+
+    public void setUseTracer(boolean useTracer) {
+        this.useTracer = useTracer;
     }
 
     public void addBreakpoint(Breakpoint breakpoint) {
@@ -325,23 +337,29 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     public void start() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
+
         // register our event notifier
-        camelContext.getManagementStrategy().addEventNotifier(new DebugEventNotifier());
-        Tracer tracer = Tracer.getTracer(camelContext);
-        if (tracer == null) {
-            // tracer is disabled so enable it silently so we can leverage it to trace the Exchanges for us
-            tracer = Tracer.createTracer(camelContext);
-            tracer.setLogLevel(LoggingLevel.OFF);
-            camelContext.addService(tracer);
-            camelContext.addInterceptStrategy(tracer);
+        ServiceHelper.startService(debugEventNotifier);
+        camelContext.getManagementStrategy().addEventNotifier(debugEventNotifier);
+
+        if (isUseTracer()) {
+            Tracer tracer = Tracer.getTracer(camelContext);
+            if (tracer == null) {
+                // tracer is disabled so enable it silently so we can leverage it to trace the Exchanges for us
+                tracer = Tracer.createTracer(camelContext);
+                tracer.setLogLevel(LoggingLevel.OFF);
+                camelContext.addService(tracer);
+                camelContext.addInterceptStrategy(tracer);
+            }
+            // make sure tracer is enabled so the debugger can leverage the tracer for debugging purposes
+            tracer.setEnabled(true);
         }
-        // make sure tracer is enabled so the debugger can leverage the tracer for debugging purposes
-        tracer.setEnabled(true);
     }
 
     public void stop() throws Exception {
         breakpoints.clear();
         singleSteps.clear();
+        ServiceHelper.stopServices(debugEventNotifier);
     }
 
     @Override

@@ -23,6 +23,12 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedBacklogDebuggerMBean {
 
+    @ManagedAttribute(description = "Logging Level")
+    String getLoggingLevel();
+
+    @ManagedAttribute(description = "Logging Level")
+    void setLoggingLevel(String level);
+
     @ManagedAttribute(description = "Is debugger enabled")
     boolean isEnabled();
 
@@ -38,8 +44,20 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Remote the breakpoint from the given node id")
     void removeBreakpoint(String nodeId);
 
-    @ManagedOperation(description = "Continue debugging the suspended breakpoints at the given node id")
-    void continueBreakpoint(String nodeId);
+    @ManagedOperation(description = "Resume running from the suspended breakpoint at the given node id")
+    void resumeBreakpoint(String nodeId);
+
+    @ManagedOperation(description = "Resume running any suspended breakpoints, and exits step mode")
+    void resumeAll();
+
+    @ManagedOperation(description = "Starts single step debugging from the suspended breakpoint at the given node id")
+    void stepBreakpoint(String nodeId);
+
+    @ManagedAttribute(description = "Whether currently in step mode")
+    boolean isSingleStepMode();
+
+    @ManagedOperation(description = "Steps to next node in step mode")
+    void step();
 
     @ManagedOperation(description = "Return the node ids which has breakpoints")
     Set<String> getBreakpoints(boolean includeInternal);

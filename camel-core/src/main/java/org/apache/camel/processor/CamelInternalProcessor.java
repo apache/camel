@@ -449,7 +449,7 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
-            if (backlogDebugger.isEnabled() && backlogDebugger.hasBreakpoint(nodeId)) {
+            if (backlogDebugger.isEnabled() && (backlogDebugger.hasBreakpoint(nodeId) || backlogDebugger.isSingleStepMode())) {
                 StopWatch watch = new StopWatch();
                 backlogDebugger.beforeProcess(exchange, target, definition);
                 return watch;

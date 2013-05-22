@@ -43,11 +43,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
 
-                from("timer:foo?period=10s").setBody().constant("Hello World").to("seda:start");
+                // from("timer:foo?period=10s").setBody().constant("Hello World").to("seda:start");
 
                 from("seda:start")
                         .to("log:foo").id("foo")
-                        .to("log:bar").id("bar");
+                        .to("log:bar").id("bar")
+                        .transform().constant("Bye World").id("transform")
+                        .to("log:cheese").id("cheese");
             }
         };
     }
