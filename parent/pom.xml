@@ -108,6 +108,7 @@
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
     <derby-version>10.10.1.1</derby-version>
+    <disruptor.version>3.0.1</disruptor.version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dnsjava-bundle-version>2.1.1_1</dnsjava-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
@@ -593,6 +594,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-transport</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-disruptor</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1584,6 +1590,13 @@
         <groupId>org.apache.servicemix.bundles</groupId>
         <artifactId>org.apache.servicemix.bundles.castor</artifactId>
         <version>${castor-bundle-version}</version>
+      </dependency>
+
+      <!-- optional disruptor dependencies -->
+      <dependency>
+        <groupId>com.lmax</groupId>
+        <artifactId>disruptor</artifactId>
+        <version>${disruptor.version}</version>
       </dependency>
 
       <!-- optional dozer dependencies -->
