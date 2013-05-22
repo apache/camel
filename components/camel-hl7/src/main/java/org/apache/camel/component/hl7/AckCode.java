@@ -31,7 +31,7 @@ public enum AckCode {
         return error;
     }
 
-    public AcknowledgmentCode asAcknowledgmentCode() {
+    public AcknowledgmentCode toAcknowledgmentCode() {
         // we share the same names with the AcknowledgmentCode enum
         return Enum.valueOf(AcknowledgmentCode.class, name());
     }

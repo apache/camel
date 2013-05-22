@@ -26,12 +26,12 @@ public class AckCodeTest extends CamelTestSupport {
     public void verifyAcknowledgmentCodeConversion() {
         assertEquals("Not the expected same count of enum members", AckCode.values().length, AcknowledgmentCode.values().length);
 
-        assertSame("Not the expect 'Application Accept' enum member", AcknowledgmentCode.AA, AckCode.AA.asAcknowledgmentCode());
-        assertSame("Not the expect 'Application Error' enum member", AcknowledgmentCode.AE, AckCode.AE.asAcknowledgmentCode());
-        assertSame("Not the expect 'Application Reject' enum member", AcknowledgmentCode.AR, AckCode.AR.asAcknowledgmentCode());
-        assertSame("Not the expect 'Commit Accept' enum member", AcknowledgmentCode.CA, AckCode.CA.asAcknowledgmentCode());
-        assertSame("Not the expect 'Commit Error' enum member", AcknowledgmentCode.CE, AckCode.CE.asAcknowledgmentCode());
-        assertSame("Not the expect 'Commit Reject' enum member", AcknowledgmentCode.CR, AckCode.CR.asAcknowledgmentCode());
+        assertSame("Should be the 'Application Accept' enum member", AcknowledgmentCode.AA, AckCode.AA.toAcknowledgmentCode());
+        assertSame("Should be the 'Application Error' enum member", AcknowledgmentCode.AE, AckCode.AE.toAcknowledgmentCode());
+        assertSame("Should be the 'Application Reject' enum member", AcknowledgmentCode.AR, AckCode.AR.toAcknowledgmentCode());
+        assertSame("Should be the 'Commit Accept' enum member", AcknowledgmentCode.CA, AckCode.CA.toAcknowledgmentCode());
+        assertSame("Should be the 'Commit Error' enum member", AcknowledgmentCode.CE, AckCode.CE.toAcknowledgmentCode());
+        assertSame("Should be the 'Commit Reject' enum member", AcknowledgmentCode.CR, AckCode.CR.toAcknowledgmentCode());
     }
 
 }

@@ -63,7 +63,7 @@ public class AckExpression extends ExpressionAdapter {
             if (t != null && code == null) {
                 code = AckCode.AE;
             }
-            return msg.generateACK(code == null ? AcknowledgmentCode.AA : code.asAcknowledgmentCode(), hl7e);
+            return msg.generateACK(code == null ? AcknowledgmentCode.AA : code.toAcknowledgmentCode(), hl7e);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
