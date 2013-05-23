@@ -75,9 +75,9 @@ public interface ManagedBacklogDebuggerMBean {
     String dumpTracedMessagesAsXml(String nodeId);
 
     @ManagedAttribute(description = "Number of total debugged messages")
-    public long getDebugCounter();
+    long getDebugCounter();
 
     @ManagedOperation(description = "Resets the debug counter")
-    public void resetDebugCounter();
+    void resetDebugCounter();
 
 }
