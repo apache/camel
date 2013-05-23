@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -169,10 +168,14 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             logger.log("Adding conditional breakpoint " + nodeId + " [" + predicate + "]");
             breakpoint = new NodeBreakpoint(nodeId, condition);
             breakpoints.put(nodeId, breakpoint);
-            debugger.addBreakpoint(breakpoint);
-        } else {
+            debugger.addBreakpoint(breakpoint, breakpoint);
+        } else if (breakpoint.getCondition() == null) {
+            logger.log("Updating to conditional breakpoint " + nodeId + " [" + predicate + "]");
+            debugger.removeBreakpoint(breakpoint);
+            breakpoints.put(nodeId, breakpoint);
+            debugger.addBreakpoint(breakpoint, breakpoint);
+        } else if (breakpoint.getCondition() != null) {
             logger.log("Updating conditional breakpoint " + nodeId + " [" + predicate + "]");
-            // update condition
             breakpoint.setCondition(condition);
         }
     }
@@ -281,7 +284,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         logger.log("Dump trace message from breakpoint " + nodeId);
         BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
         if (msg != null) {
-            return msg.toXml(4);
+            return msg.toXml(0);
         } else {
             return null;
         }
@@ -329,6 +332,10 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             return nodeId;
         }
 
+        public Predicate getCondition() {
+            return condition;
+        }
+
         public void setCondition(Predicate predicate) {
             this.condition = predicate;
         }
@@ -340,7 +347,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             String toNode = nodeId;
             String routeId = ProcessorDefinitionHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4, false, false, 1000);
+            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, false, false, 1000);
             long uid = debugCounter.incrementAndGet();
 
             BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
@@ -389,7 +396,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             String toNode = definition.getId();
             String routeId = ProcessorDefinitionHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4, false, false, 1000);
+            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, false, false, 1000);
             long uid = debugCounter.incrementAndGet();
 
             BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);

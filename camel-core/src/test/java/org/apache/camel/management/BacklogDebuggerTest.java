@@ -16,13 +16,16 @@
  */
 package org.apache.camel.management;
 
+import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 public class BacklogDebuggerTest extends ManagementTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testBacklogDebugger() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogDebugger");
@@ -32,8 +35,212 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
         assertEquals("Should not be enabled", Boolean.FALSE, enabled);
 
-        // TODO: add more to this test
-        //Thread.sleep(999999);
+        // enable debugger
+        mbeanServer.invoke(on, "enableDebugger", null, null);
+
+        enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+
+        // add breakpoint at bar
+        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(1000);
+
+        template.sendBody("seda:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // add breakpoint at bar
+        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("bar", nodes.iterator().next());
+
+        // the message should be ours
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue("Should contain our body", xml.contains("Hello World"));
+        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+
+        resetMocks();
+        mock.expectedMessageCount(1);
+
+        // resume breakpoint
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+
+        assertMockEndpointsSatisfied();
+
+        // and no suspended anymore
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(0, nodes.size());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testBacklogDebuggerConditional() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogDebugger");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable debugger
+        mbeanServer.invoke(on, "enableDebugger", null, null);
+
+        enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+
+        // add breakpoint at bar
+        mbeanServer.invoke(on, "addConditionalBreakpoint", new Object[]{"bar", "simple", "${body} contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String", "java.lang.String"});
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("seda:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // add not breakpoint at bar as condition did not match
+        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(0, nodes.size());
+
+        resetMocks();
+
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(1000);
+
+        template.sendBody("seda:start", "Hello Camel");
+
+        assertMockEndpointsSatisfied();
+
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("bar", nodes.iterator().next());
+
+        // the message should be ours
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue("Should contain our body", xml.contains("Hello Camel"));
+        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+
+        resetMocks();
+        mock.expectedMessageCount(1);
+
+        // resume breakpoint
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+
+        assertMockEndpointsSatisfied();
+
+        // and no suspended anymore
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(0, nodes.size());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testBacklogDebuggerStep() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogDebugger");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable debugger
+        mbeanServer.invoke(on, "enableDebugger", null, null);
+
+        enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+
+        // add breakpoint at bar
+        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(1000);
+
+        template.sendBody("seda:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // add breakpoint at bar
+        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("foo", nodes.iterator().next());
+
+        Boolean stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+
+        // step breakpoint
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+
+        // then at bar now
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("bar", nodes.iterator().next());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+
+        // step
+        mbeanServer.invoke(on, "step", null, null);
+
+        // then at transform now
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("transform", nodes.iterator().next());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+
+        // step
+        mbeanServer.invoke(on, "step", null, null);
+
+        // then at cheese now
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("cheese", nodes.iterator().next());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+
+        // step
+        mbeanServer.invoke(on, "step", null, null);
+
+        // then at result now
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("result", nodes.iterator().next());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+
+        // step
+        mbeanServer.invoke(on, "step", null, null);
+
+        // then the exchange is completed
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(0, nodes.size());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
     }
 
     @Override
@@ -43,13 +250,12 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
 
-                // from("timer:foo?period=10s").setBody().constant("Hello World").to("seda:start");
-
                 from("seda:start")
                         .to("log:foo").id("foo")
                         .to("log:bar").id("bar")
                         .transform().constant("Bye World").id("transform")
-                        .to("log:cheese").id("cheese");
+                        .to("log:cheese").id("cheese")
+                        .to("mock:result").id("result");
             }
         };
     }
