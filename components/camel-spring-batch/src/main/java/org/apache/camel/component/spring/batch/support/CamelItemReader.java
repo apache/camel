@@ -17,9 +17,13 @@
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.ConsumerTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
 
 public class CamelItemReader<I> implements ItemReader<I> {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemReader.class);
 
     private final ConsumerTemplate consumerTemplate;
 
@@ -33,7 +37,10 @@ public class CamelItemReader<I> implements ItemReader<I> {
     @Override
     @SuppressWarnings("unchecked")
     public I read() throws Exception {
-        return (I) consumerTemplate.receiveBody(endpointUri);
+        LOG.debug("reading new item...");
+        I item = (I) consumerTemplate.receiveBody(endpointUri);
+        LOG.debug("read item [{}]", item);
+        return item;
     }
 
 }

@@ -17,9 +17,13 @@
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.ProducerTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 
 public class CamelItemProcessor<I, O> implements ItemProcessor<I, O> {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemProcessor.class);
 
     private final ProducerTemplate producerTemplate;
 
@@ -33,7 +37,10 @@ public class CamelItemProcessor<I, O> implements ItemProcessor<I, O> {
     @Override
     @SuppressWarnings("unchecked")
     public O process(I i) throws Exception {
-        return (O) producerTemplate.requestBody(endpointUri, i);
+        LOG.debug("processing item [{}]...", i);
+        O result = (O) producerTemplate.requestBody(endpointUri, i);
+        LOG.debug("processed item");
+        return result;
     }
 
 }
