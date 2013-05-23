@@ -24,8 +24,6 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.Assert.assertTrue;
-
 public class SpringBatchIntegrationTest {
 
     ApplicationContext applicationContext;
@@ -36,7 +34,7 @@ public class SpringBatchIntegrationTest {
 
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
-    String[] inputMessages;
+    String[] inputMessages = new String[]{"foo", "bar", "baz", null};
 
     @Before
     public void setUp() {
@@ -44,34 +42,27 @@ public class SpringBatchIntegrationTest {
         producerTemplate = applicationContext.getBean(ProducerTemplate.class);
         outputEndpoint = applicationContext.getBean(CamelContext.class).getEndpoint("mock:output", MockEndpoint.class);
         jobExecutionEventsQueueEndpoint = applicationContext.getBean(CamelContext.class).getEndpoint("mock:jobExecutionEventsQueue", MockEndpoint.class);
-        inputMessages = new String[]{"foo", "bar", "baz"};
 
         for (String message : inputMessages) {
             producerTemplate.sendBody("seda:inputQueue", message);
         }
-        producerTemplate.sendBody("seda:inputQueue", null);
-
     }
 
     @Test
     public void shouldEchoInBatch() throws InterruptedException {
-        // When
+        outputEndpoint.expectedBodiesReceived("Echo foo", "Echo bar", "Echo baz");
+
         producerTemplate.sendBody("direct:start", "Start batch!");
 
-        // Then
-        outputEndpoint.setExpectedMessageCount(inputMessages.length);
         outputEndpoint.assertIsSatisfied();
-        assertTrue(outputEndpoint.getExchanges().get(0).getIn().getBody(String.class).startsWith("Echo "));
     }
 
     @Test
     public void shouldGenerateBatchExecutionEvents() throws InterruptedException {
-        // When
+        jobExecutionEventsQueueEndpoint.setExpectedMessageCount(2);
+
         producerTemplate.sendBody("direct:start", "Start batch!");
 
-        // Then
-        jobExecutionEventsQueueEndpoint.setExpectedMessageCount(2);
         jobExecutionEventsQueueEndpoint.assertIsSatisfied();
     }
-
 }
