@@ -37,15 +37,16 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
 
     @Test
     public void testDisruptorUOW() throws Exception {
-        final NotifyBuilder notify = new NotifyBuilder(context).from("disruptor:foo").whenDone(1).create();
+        final NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        notify.create();
+        
         
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+        notify.matchesMockWaitTime();
         // need to sleep a while to wait for the calling of onComplete
         Thread.sleep(200);
         
