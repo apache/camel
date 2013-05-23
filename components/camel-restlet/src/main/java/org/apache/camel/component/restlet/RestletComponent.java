@@ -135,13 +135,18 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         RestletEndpoint endpoint = consumer.getEndpoint();
         addServerIfNecessary(endpoint);
 
+        // if restlet servlet server is created, the offsetPath is set in component context
+        // see http://restlet.tigris.org/issues/show_bug.cgi?id=988
+        String offsetPath = (String) this.component.getContext()
+                .getAttributes().get("org.restlet.ext.servlet.offsetPath");
+        
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
-            attachUriPatternToRestlet(endpoint.getUriPattern(), endpoint, consumer.getRestlet());
+            attachUriPatternToRestlet(offsetPath, endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
 
         if (endpoint.getRestletUriPatterns() != null) {
             for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                attachUriPatternToRestlet(uriPattern, endpoint, consumer.getRestlet());
+                attachUriPatternToRestlet(offsetPath, uriPattern, endpoint, consumer.getRestlet());
             }
         }
     }
@@ -266,7 +271,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         return endpoint.getHost() + ":" + endpoint.getPort();
     }
 
-    private void attachUriPatternToRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
+    private void attachUriPatternToRestlet(String offsetPath, String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
         uriPattern = decodePattern(uriPattern);
         MethodBasedRouter router = getMethodRouter(uriPattern, true);
 
@@ -297,7 +302,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         }
 
         if (!router.hasBeenAttached()) {
-            component.getDefaultHost().attach(uriPattern, router);
+            component.getDefaultHost().attach(
+                    offsetPath == null ? uriPattern : offsetPath + uriPattern, router);
             LOG.debug("Attached methodRouter uriPattern: {}", uriPattern);
         }
 
