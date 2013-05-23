@@ -81,6 +81,62 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    public void testBacklogDebuggerSuspendOnlyOneAtBreakpoint() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogDebugger");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable debugger
+        mbeanServer.invoke(on, "enableDebugger", null, null);
+
+        enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+
+        // add breakpoint at bar
+        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+
+        // only one of them is suspended
+        template.sendBody("seda:start", "Hello World");
+        template.sendBody("seda:start", "Hello Camel");
+        template.sendBody("seda:start", "Hello Earth");
+
+        assertMockEndpointsSatisfied();
+
+        // add breakpoint at bar
+        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("bar", nodes.iterator().next());
+
+        // the message should be ours
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+
+        resetMocks();
+        mock.expectedMessageCount(1);
+
+        // resume breakpoint
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+
+        assertMockEndpointsSatisfied();
+
+        // and no suspended anymore
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(0, nodes.size());
+    }
+
+    @SuppressWarnings("unchecked")
     public void testBacklogDebuggerConditional() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogDebugger");
@@ -250,11 +306,11 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
 
-                from("seda:start")
+                from("seda:start?concurrentConsumers=2")
                         .to("log:foo").id("foo")
                         .to("log:bar").id("bar")
                         .transform().constant("Bye World").id("transform")
-                        .to("log:cheese").id("cheese")
+                        .to("log:cheese?showExchangeId=true").id("cheese")
                         .to("mock:result").id("result");
             }
         };

@@ -23,6 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -63,9 +65,9 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong(0);
     private final Debugger debugger;
-    private final Map<String, NodeBreakpoint> breakpoints = new HashMap<String, NodeBreakpoint>();
-    private final Map<String, CountDownLatch> suspendedBreakpoints = new HashMap<String, CountDownLatch>();
-    private final Map<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new HashMap<String, BacklogTracerEventMessage>();
+    private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<String, NodeBreakpoint>();
+    private final ConcurrentMap<String, CountDownLatch> suspendedBreakpoints = new ConcurrentHashMap<String, CountDownLatch>();
+    private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<String, BacklogTracerEventMessage>();
     private volatile String singleStepExchangeId;
 
     public BacklogDebugger(CamelContext camelContext) {
@@ -155,7 +157,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             logger.log("Adding breakpoint " + nodeId);
             breakpoint = new NodeBreakpoint(nodeId, null);
             breakpoints.put(nodeId, breakpoint);
-            debugger.addBreakpoint(breakpoint);
+            debugger.addBreakpoint(breakpoint, breakpoint);
         } else {
             breakpoint.setCondition(null);
         }
@@ -304,7 +306,8 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     }
 
     public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
-        return debugger.afterProcess(exchange, processor, definition, timeTaken);
+        // noop
+        return false;
     }
 
     protected void doStart() throws Exception {
@@ -344,7 +347,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
             // store a copy of the message so we can see that from the debugger
             Date timestamp = new Date();
-            String toNode = nodeId;
+            String toNode = definition.getId();
             String routeId = ProcessorDefinitionHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
             String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, false, false, 1000);
@@ -354,28 +357,34 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             suspendedBreakpointMessages.put(nodeId, msg);
 
             // mark as suspend
-            final CountDownLatch latch = new CountDownLatch(1);
-            suspendedBreakpoints.put(nodeId, latch);
+            final CountDownLatch latch = suspendedBreakpoints.get(nodeId);
 
             // now wait until we should continue
-            logger.log("NodeBreakpoint at node " + nodeId + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
+            logger.log("NodeBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
             try {
                 // TODO: have a fallback timeout so we wont wait forever
                 latch.await();
-                logger.log("NodeBreakpoint at node " + nodeId + " is continued exchangeId: " + exchange.getExchangeId());
+                logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchange.getExchangeId());
             } catch (InterruptedException e) {
                 // ignore
             }
-            super.beforeProcess(exchange, processor, definition);
         }
 
         @Override
         public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
-            boolean match = nodeId.equals(definition.getId());
-            if (match && condition != null) {
-                return condition.matches(exchange);
+            // must match node
+            if (!nodeId.equals(definition.getId())) {
+                return false;
             }
-            return match;
+
+            // if condition then must match
+            if (condition != null && !condition.matches(exchange)) {
+                return false;
+            }
+
+            // we only want to break one exchange at a time, so if there is already a suspended breakpoint then do not match
+            boolean existing = suspendedBreakpoints.putIfAbsent(nodeId, new CountDownLatch(1)) != null;
+            return !existing;
         }
 
         @Override
@@ -415,7 +424,6 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             } catch (InterruptedException e) {
                 // ignore
             }
-            super.beforeProcess(exchange, processor, definition);
         }
 
         @Override
