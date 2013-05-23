@@ -17,10 +17,14 @@
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.ProducerTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 
 public class CamelJobExecutionListener implements JobExecutionListener {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelJobExecutionListener.class);
 
     private final ProducerTemplate producerTemplate;
 
@@ -33,12 +37,16 @@ public class CamelJobExecutionListener implements JobExecutionListener {
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
+        LOG.debug("sending before job execution event [{}]...", jobExecution);
         producerTemplate.sendBodyAndHeader(endpointUri, jobExecution, EventType.HEADER_KEY, EventType.BEFORE.name());
+        LOG.debug("sent before job execution event");
     }
 
     @Override
     public void afterJob(JobExecution jobExecution) {
+        LOG.debug("sending after job execution event [{}]...", jobExecution);
         producerTemplate.sendBodyAndHeader(endpointUri, jobExecution, EventType.HEADER_KEY, EventType.AFTER.name());
+        LOG.debug("sent after job execution event");
     }
 
     public static enum EventType {

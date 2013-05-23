@@ -21,14 +21,17 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.InitializingBean;
 
 public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>, InitializingBean {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemReader.class);
+
     private final CamelContext camelContext;
     private final ConsumerTemplate consumerTemplate;
-
     private final String endpointUri;
 
     public CamelItemReader(ConsumerTemplate consumerTemplate, String endpointUri) {
@@ -47,7 +50,10 @@ public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>,
     @Override
     @SuppressWarnings("unchecked")
     public I read() throws Exception {
-        return (I) consumerTemplate.receiveBody(endpointUri);
+        LOG.debug("reading new item...");
+        I item = (I) consumerTemplate.receiveBody(endpointUri);
+        LOG.debug("read item [{}]", item);
+        return item;
     }
 
     @Override
