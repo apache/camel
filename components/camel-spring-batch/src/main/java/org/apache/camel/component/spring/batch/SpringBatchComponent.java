@@ -37,7 +37,9 @@ public class SpringBatchComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Job resolvedJob = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, Job.class);
-        return new SpringBatchEndpoint(uri, this, jobLauncher, defaultResolvedJobLauncher, allResolvedJobLaunchers, resolvedJob);
+        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(uri, this, jobLauncher, defaultResolvedJobLauncher, allResolvedJobLaunchers, resolvedJob);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     @Override

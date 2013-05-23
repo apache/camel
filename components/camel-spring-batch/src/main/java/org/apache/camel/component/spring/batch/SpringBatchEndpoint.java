@@ -28,6 +28,10 @@ import org.springframework.batch.core.launch.JobLauncher;
 
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
+    /**
+     * @deprecated will be removed in Camel 3.0
+     * use jobLauncher instead
+     */
     private String jobLauncherRef;
 
     private JobLauncher jobLauncher;
@@ -97,4 +101,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         this.jobLauncherRef = jobLauncherRef;
     }
 
+    public void setJobLauncher(JobLauncher jobLauncher) {
+        this.jobLauncher = jobLauncher;
+    }
 }
