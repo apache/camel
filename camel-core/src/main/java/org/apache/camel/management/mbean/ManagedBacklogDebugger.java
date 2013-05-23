@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
@@ -67,16 +68,20 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         backlogDebugger.disableDebugger();
     }
 
-    public void addBreakpoint(String nodeId, boolean internal) {
-        backlogDebugger.addBreakpoint(nodeId, internal);
+    public void addBreakpoint(String nodeId) {
+        backlogDebugger.addBreakpoint(nodeId);
+    }
+
+    public void addConditionalBreakpoint(String nodeId, String simplePredicate) {
+        backlogDebugger.addConditionalBreakpoint(nodeId, simplePredicate);
     }
 
     public void removeBreakpoint(String nodeId) {
         backlogDebugger.removeBreakpoint(nodeId);
     }
 
-    public Set<String> getBreakpoints(boolean includeInternal) {
-        return backlogDebugger.getBreakpoints(includeInternal);
+    public Set<String> getBreakpoints() {
+        return backlogDebugger.getBreakpoints();
     }
 
     public void resumeBreakpoint(String nodeId) {

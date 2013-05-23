@@ -29,7 +29,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.impl.BreakpointSupport;
@@ -148,16 +150,30 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         return singleStepExchangeId != null;
     }
 
-    public void addBreakpoint(String nodeId, boolean internal) {
-        if (internal) {
-            logger.log("Adding internal breakpoint " + nodeId);
-        } else {
+    public void addBreakpoint(String nodeId) {
+        NodeBreakpoint breakpoint = breakpoints.get(nodeId);
+        if (breakpoint == null) {
             logger.log("Adding breakpoint " + nodeId);
-        }
-        if (!breakpoints.containsKey(nodeId)) {
-            NodeBreakpoint breakpoint = new NodeBreakpoint(nodeId, internal);
+            breakpoint = new NodeBreakpoint(nodeId, null);
             breakpoints.put(nodeId, breakpoint);
             debugger.addBreakpoint(breakpoint);
+        } else {
+            breakpoint.setCondition(null);
+        }
+    }
+
+    public void addConditionalBreakpoint(String nodeId, String simplePredicate) {
+        Predicate condition = camelContext.resolveLanguage("simple").createPredicate(simplePredicate);
+        NodeBreakpoint breakpoint = breakpoints.get(nodeId);
+        if (breakpoint == null) {
+            logger.log("Adding conditional breakpoint " + nodeId + " [" + simplePredicate + "]");
+            breakpoint = new NodeBreakpoint(nodeId, condition);
+            breakpoints.put(nodeId, breakpoint);
+            debugger.addBreakpoint(breakpoint);
+        } else {
+            logger.log("Updating conditional breakpoint " + nodeId + " [" + simplePredicate + "]");
+            // update condition
+            breakpoint.setCondition(condition);
         }
     }
 
@@ -175,14 +191,8 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
-    public Set<String> getBreakpoints(boolean includeInternal) {
-        Set<String> answer = new LinkedHashSet<String>();
-        for (NodeBreakpoint breakpoint : breakpoints.values()) {
-            if (!breakpoint.isInternal() || includeInternal) {
-                answer.add(breakpoint.getNodeId());
-            }
-        }
-        return answer;
+    public Set<String> getBreakpoints() {
+        return new LinkedHashSet<String>(breakpoints.keySet());
     }
 
     public void resumeBreakpoint(String nodeId) {
@@ -308,26 +318,26 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     private final class NodeBreakpoint extends BreakpointSupport implements Condition {
 
         private final String nodeId;
-        private final boolean internal;
+        private Predicate condition;
 
-        private NodeBreakpoint(String nodeId, boolean internal) {
+        private NodeBreakpoint(String nodeId, Predicate condition) {
             this.nodeId = nodeId;
-            this.internal = internal;
+            this.condition = condition;
         }
 
         public String getNodeId() {
             return nodeId;
         }
 
-        public boolean isInternal() {
-            return internal;
+        public void setCondition(Predicate predicate) {
+            this.condition = predicate;
         }
 
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
             // store a copy of the message so we can see that from the debugger
             Date timestamp = new Date();
-            String toNode = definition.getId();
+            String toNode = nodeId;
             String routeId = ProcessorDefinitionHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
             String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4, false, false, 1000);
@@ -341,11 +351,11 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             suspendedBreakpoints.put(nodeId, latch);
 
             // now wait until we should continue
-            logger.log("NodeBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
+            logger.log("NodeBreakpoint at node " + nodeId + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
             try {
                 // TODO: have a fallback timeout so we wont wait forever
                 latch.await();
-                logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchange.getExchangeId());
+                logger.log("NodeBreakpoint at node " + nodeId + " is continued exchangeId: " + exchange.getExchangeId());
             } catch (InterruptedException e) {
                 // ignore
             }
@@ -354,7 +364,11 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
 
         @Override
         public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
-            return nodeId.equals(definition.getId());
+            boolean match = nodeId.equals(definition.getId());
+            if (match && condition != null) {
+                return condition.matches(exchange);
+            }
+            return match;
         }
 
         @Override

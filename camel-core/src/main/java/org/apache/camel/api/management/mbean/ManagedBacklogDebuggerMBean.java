@@ -39,7 +39,10 @@ public interface ManagedBacklogDebuggerMBean {
     void disableDebugger();
 
     @ManagedOperation(description = "Add a breakpoint at the given node id")
-    void addBreakpoint(String nodeId, boolean internal);
+    void addBreakpoint(String nodeId);
+
+    @ManagedOperation(description = "Add a conditional breakpoint at the given node id (condition is Simple language)")
+    void addConditionalBreakpoint(String nodeId, String simplePredicate);
 
     @ManagedOperation(description = "Remote the breakpoint from the given node id")
     void removeBreakpoint(String nodeId);
@@ -60,7 +63,7 @@ public interface ManagedBacklogDebuggerMBean {
     void step();
 
     @ManagedOperation(description = "Return the node ids which has breakpoints")
-    Set<String> getBreakpoints(boolean includeInternal);
+    Set<String> getBreakpoints();
 
     @ManagedOperation(description = "Return the node ids which is currently suspended")
     Set<String> getSuspendedBreakpointNodeIds();
