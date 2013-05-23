@@ -105,11 +105,20 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         return answer;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected Properties loadPropertiesFromRegistry(CamelContext context, boolean ignoreMissingLocation, String path) throws IOException {
         if (path.startsWith("ref:")) {
             path = ObjectHelper.after(path, "ref:");
         }
-        Properties answer = context.getRegistry().lookupByNameAndType(path, Properties.class);
+        Properties answer = null;
+        try {
+            answer = context.getRegistry().lookupByNameAndType(path, Properties.class);
+        } catch (Exception ex) {
+            // just look up the Map as a fault back
+            Map map = context.getRegistry().lookupByNameAndType(path, Map.class);
+            answer = new Properties();
+            answer.putAll(map);
+        }
         if (answer == null && (!ignoreMissingLocation)) {
             throw new FileNotFoundException("Properties " + path + " not found in registry");
         }
