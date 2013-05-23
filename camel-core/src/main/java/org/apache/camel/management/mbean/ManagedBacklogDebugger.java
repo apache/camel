@@ -19,7 +19,6 @@ package org.apache.camel.management.mbean;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
@@ -108,12 +107,36 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return backlogDebugger.getSuspendedBreakpointNodeIds();
     }
 
-    public void suspendBreakpoint(String nodeId) {
-        backlogDebugger.suspendBreakpoint(nodeId);
+    public void disableBreakpoint(String nodeId) {
+        backlogDebugger.disableBreakpoint(nodeId);
     }
 
-    public void activateBreakpoint(String nodeId) {
-        backlogDebugger.activateBreakpoint(nodeId);
+    public void enableBreakpoint(String nodeId) {
+        backlogDebugger.enableBreakpoint(nodeId);
+    }
+
+    public int getBodyMaxChars() {
+        return backlogDebugger.getBodyMaxChars();
+    }
+
+    public void setBodyMaxChars(int bodyMaxChars) {
+        backlogDebugger.setBodyMaxChars(bodyMaxChars);
+    }
+
+    public boolean isBodyIncludeStreams() {
+        return backlogDebugger.isBodyIncludeStreams();
+    }
+
+    public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
+        backlogDebugger.setBodyIncludeStreams(bodyIncludeStreams);
+    }
+
+    public boolean isBodyIncludeFiles() {
+        return backlogDebugger.isBodyIncludeFiles();
+    }
+
+    public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
+        backlogDebugger.setBodyIncludeFiles(bodyIncludeFiles);
     }
 
     public String dumpTracedMessagesAsXml(String nodeId) {

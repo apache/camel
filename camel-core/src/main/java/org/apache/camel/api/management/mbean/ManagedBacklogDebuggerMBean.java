@@ -68,11 +68,29 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Return the node ids which is currently suspended")
     Set<String> getSuspendedBreakpointNodeIds();
 
-    @ManagedOperation(description = "Suspend a breakpoint")
-    public void suspendBreakpoint(String nodeId);
+    @ManagedOperation(description = "Disables a breakpoint")
+    public void disableBreakpoint(String nodeId);
 
-    @ManagedOperation(description = "Activate a breakpoint")
-    public void activateBreakpoint(String nodeId);
+    @ManagedOperation(description = "Enables a breakpoint which has been disabled")
+    public void enableBreakpoint(String nodeId);
+
+    @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
+    int getBodyMaxChars();
+
+    @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
+    void setBodyMaxChars(int bodyMaxChars);
+
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    boolean isBodyIncludeStreams();
+
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    void setBodyIncludeStreams(boolean bodyIncludeStreams);
+
+    @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
+    boolean isBodyIncludeFiles();
+
+    @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
+    void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
     @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node")
     String dumpTracedMessagesAsXml(String nodeId);
