@@ -216,10 +216,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         // build up the http uri
-        URI httpUri = URISupport.createRemainingURI(new URI(httpUriAddress), parameters);
+        URI uriHttpUriAddress = new URI(httpUriAddress);
 
         // validate http uri that end-user did not duplicate the http part that can be a common error
-        String part = httpUri.getSchemeSpecificPart();
+        String part = uriHttpUriAddress.getSchemeSpecificPart();
         if (part != null) {
             part = part.toLowerCase();
             if (part.startsWith("//http//") || part.startsWith("//https//") || part.startsWith("//http://") || part.startsWith("//https://")) {
@@ -227,6 +227,21 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
                         "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
             }
         }
+
+        // determine the portnumber (special case: default portnumber)
+        int port = getPort(uriHttpUriAddress);
+
+        // we can not change the port of an URI, we must create a new one with an explicit port value
+        URI httpUri = URISupport.createRemainingURI(
+                new URI(uriHttpUriAddress.getScheme(),
+                        uriHttpUriAddress.getUserInfo(),
+                        uriHttpUriAddress.getHost(),
+                        port,
+                        uriHttpUriAddress.getPath(),
+                        uriHttpUriAddress.getQuery(),
+                        uriHttpUriAddress.getFragment()),
+                        parameters);
+
         endpoint.setHttpUri(httpUri);
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
@@ -245,7 +260,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             endpoint.setHttpContext(httpContext);
         }
         // register port on schema registry
-        int port = getPort(httpUri);
         registerPort(secure, x509HostnameVerifier, port, sslContextParameters);
 
         return endpoint;
