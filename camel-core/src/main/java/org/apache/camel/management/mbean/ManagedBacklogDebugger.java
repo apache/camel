@@ -72,8 +72,8 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         backlogDebugger.addBreakpoint(nodeId);
     }
 
-    public void addConditionalBreakpoint(String nodeId, String simplePredicate) {
-        backlogDebugger.addConditionalBreakpoint(nodeId, simplePredicate);
+    public void addConditionalBreakpoint(String nodeId, String language, String predicate) {
+        backlogDebugger.addConditionalBreakpoint(nodeId, language, predicate);
     }
 
     public void removeBreakpoint(String nodeId) {

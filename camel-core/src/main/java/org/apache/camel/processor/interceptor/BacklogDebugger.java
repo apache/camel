@@ -162,16 +162,16 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
-    public void addConditionalBreakpoint(String nodeId, String simplePredicate) {
-        Predicate condition = camelContext.resolveLanguage("simple").createPredicate(simplePredicate);
+    public void addConditionalBreakpoint(String nodeId, String language, String predicate) {
+        Predicate condition = camelContext.resolveLanguage(language).createPredicate(predicate);
         NodeBreakpoint breakpoint = breakpoints.get(nodeId);
         if (breakpoint == null) {
-            logger.log("Adding conditional breakpoint " + nodeId + " [" + simplePredicate + "]");
+            logger.log("Adding conditional breakpoint " + nodeId + " [" + predicate + "]");
             breakpoint = new NodeBreakpoint(nodeId, condition);
             breakpoints.put(nodeId, breakpoint);
             debugger.addBreakpoint(breakpoint);
         } else {
-            logger.log("Updating conditional breakpoint " + nodeId + " [" + simplePredicate + "]");
+            logger.log("Updating conditional breakpoint " + nodeId + " [" + predicate + "]");
             // update condition
             breakpoint.setCondition(condition);
         }
