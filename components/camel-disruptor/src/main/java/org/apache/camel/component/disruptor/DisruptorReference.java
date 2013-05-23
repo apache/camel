@@ -386,7 +386,7 @@ public class DisruptorReference {
         @Override
         public void onEvent(final ExchangeEvent event, final long sequence, final boolean endOfBatch) throws Exception {
             blockingLatch.await();
-            final Exchange exchange = event.getExchange();
+            final Exchange exchange = event.getSynchronizedExchange().cancelAndGetOriginalExchange();
 
             if (exchange.getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class)) {
                 // Property was set and it was set to true, so don't process Exchange.

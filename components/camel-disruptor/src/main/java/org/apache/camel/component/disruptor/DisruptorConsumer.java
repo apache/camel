@@ -131,27 +131,38 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
         return newExchange;
     }
 
-    private void process(final ExchangeEvent exchangeEvent) {
-        Exchange exchange = exchangeEvent.getExchange();
+    private void process(final SynchronizedExchange synchronizedExchange) {
+        try {
+            Exchange exchange = synchronizedExchange.getExchange();
 
-        final boolean ignore = exchange
-                .getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class);
-        if (ignore) {
-            // Property was set and it was set to true, so don't process Exchange.
-            LOGGER.trace("Ignoring exchange {}", exchange);
-            return;
-        }
-
-        // send a new copied exchange with new camel context
-        final Exchange result = prepareExchange(exchange);
-        // use the regular processor and use the asynchronous routing engine to support it
-        AsyncCallback callback = new AsyncCallback() {
-            @Override
-            public void done(boolean doneSync) {
-                exchangeEvent.consumed(result);
+            final boolean ignore = exchange.hasProperties() && exchange
+                    .getProperties().containsKey(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
+            if (ignore) {
+                // Property was set and it was set to true, so don't process Exchange.
+                LOGGER.trace("Ignoring exchange {}", exchange);
+                return;
             }
-        };
-        AsyncProcessorHelper.process(processor, result, callback);
+
+            // send a new copied exchange with new camel context
+            final Exchange result = prepareExchange(exchange);
+            // use the regular processor and use the asynchronous routing engine to support it
+            AsyncCallback callback = new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    synchronizedExchange.consumed(result);
+                }
+            };
+            AsyncProcessorHelper.process(processor, result, callback);
+        } catch (Exception e) {
+            Exchange exchange = synchronizedExchange.getExchange();
+
+            if (exchange != null) {
+                getExceptionHandler().handleException("Error processing exchange",
+                        exchange, e);
+            } else {
+                getExceptionHandler().handleException(e);
+            }
+        }
     }
 
     /**
@@ -178,16 +189,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
             // which can be used to determine whether he should process the exchange, or leave it for his brethren.
             //see http://code.google.com/p/disruptor/wiki/FrequentlyAskedQuestions#How_do_you_arrange_a_Disruptor_with_multiple_consumers_so_that_e
             if (sequence % concurrentConsumers == ordinal) {
-                try {
-                    process(event);
-                } catch (Exception e) {
-                    final Exchange exchange = event.getExchange();
-                    if (exchange != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange, e);
-                    } else {
-                        getExceptionHandler().handleException(e);
-                    }
-                }
+                process(event.getSynchronizedExchange());
             }
         }
 

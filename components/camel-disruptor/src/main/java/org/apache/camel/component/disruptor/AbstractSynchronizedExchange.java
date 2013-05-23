@@ -14,44 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * This is a mutable reference to an {@link Exchange}, used as contents of the Disruptors ringbuffer
- */
-public class ExchangeEvent {
+public abstract class AbstractSynchronizedExchange implements SynchronizedExchange {
+    private static final Logger LOG = LoggerFactory.getLogger(SynchronizedExchange.class);
+    protected final List<Synchronization> synchronizations;
+    private final Exchange exchange;
 
-    private SynchronizedExchange synchronizedExchange;
-    
-    public SynchronizedExchange getSynchronizedExchange() {
-        return synchronizedExchange;
-    }
-
-    public void setExchange(final Exchange exchange, int expectedConsumers) {
-        synchronizedExchange = createSynchronizedExchange(exchange, expectedConsumers);
-    }
-
-    private SynchronizedExchange createSynchronizedExchange(Exchange exchange, int expectedConsumers) {
-        if (expectedConsumers > 1) {
-            return new MultipleConsumerSynchronizedExchange(exchange, expectedConsumers);
-        } else {
-            return new SingleConsumerSynchronizedExchange(exchange);
-        }
+    public AbstractSynchronizedExchange(Exchange exchange) {
+        this.exchange = exchange;
+        synchronizations = exchange.handoverCompletions();
     }
 
     @Override
-    public String toString() {
-        return "ExchangeEvent{" + "exchange=" + synchronizedExchange.getExchange()  + '}';
+    public Exchange getExchange() {
+        return exchange;
+    }
+
+    @Override
+    public Exchange cancelAndGetOriginalExchange() {
+        if (synchronizations != null) {
+            for (Synchronization synchronization : synchronizations) {
+                exchange.addOnCompletion(synchronization);
+            }
+        }
+
+        return exchange;
+    }
+
+    protected void performSynchronization() {
+        //call synchronizations with the result
+        UnitOfWorkHelper.doneSynchronizations(getExchange(),
+                synchronizations, AbstractSynchronizedExchange.LOG);
     }
 }
