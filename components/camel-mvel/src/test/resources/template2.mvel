@@ -1,0 +1,1 @@
+{ "text": "@{"The result is " + request.body * 4}" }
