@@ -17,10 +17,10 @@
 package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class AckCodeTest extends CamelTestSupport {
+public class AckCodeTest extends Assert {
 
     @Test
     public void verifyAcknowledgmentCodeConversion() {
