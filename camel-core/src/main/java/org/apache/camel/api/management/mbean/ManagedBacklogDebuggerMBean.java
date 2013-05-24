@@ -50,6 +50,12 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Resume running from the suspended breakpoint at the given node id")
     void resumeBreakpoint(String nodeId);
 
+    @ManagedOperation(description = "Updates the message body on the suspended breakpoint at the given node id")
+    void setMessageBodyOnBreakpoint(String nodeId, String body);
+
+    @ManagedOperation(description = "Updates/adds the message header on the suspended breakpoint at the given node id")
+    void setMessageHeaderOnBreakpoint(String nodeId, String headerName, String value);
+
     @ManagedOperation(description = "Resume running any suspended breakpoints, and exits step mode")
     void resumeAll();
 
@@ -69,10 +75,10 @@ public interface ManagedBacklogDebuggerMBean {
     Set<String> getSuspendedBreakpointNodeIds();
 
     @ManagedOperation(description = "Disables a breakpoint")
-    public void disableBreakpoint(String nodeId);
+    void disableBreakpoint(String nodeId);
 
     @ManagedOperation(description = "Enables a breakpoint which has been disabled")
-    public void enableBreakpoint(String nodeId);
+    void enableBreakpoint(String nodeId);
 
     @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     int getBodyMaxChars();

@@ -75,12 +75,37 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     private final AtomicLong debugCounter = new AtomicLong(0);
     private final Debugger debugger;
     private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<String, NodeBreakpoint>();
-    private final ConcurrentMap<String, CountDownLatch> suspendedBreakpoints = new ConcurrentHashMap<String, CountDownLatch>();
+    private final ConcurrentMap<String, SuspendedExchange> suspendedBreakpoints = new ConcurrentHashMap<String, SuspendedExchange>();
     private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<String, BacklogTracerEventMessage>();
     private volatile String singleStepExchangeId;
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
+
+    /**
+     * A suspend {@link Exchange} at a breakpoint.
+     */
+    private static final class SuspendedExchange {
+        private final Exchange exchange;
+        private final CountDownLatch latch;
+
+        /**
+         * @param exchange the suspend exchange
+         * @param latch    the latch to use to continue routing the exchange
+         */
+        private SuspendedExchange(Exchange exchange, CountDownLatch latch) {
+            this.exchange = exchange;
+            this.latch = latch;
+        }
+
+        public Exchange getExchange() {
+            return exchange;
+        }
+
+        public CountDownLatch getLatch() {
+            return latch;
+        }
+    }
 
     public BacklogDebugger(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -144,8 +169,8 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
 
         // make sure to clear state and latches is counted down so we wont have hanging threads
         breakpoints.clear();
-        for (CountDownLatch latch : suspendedBreakpoints.values()) {
-            latch.countDown();
+        for (SuspendedExchange se : suspendedBreakpoints.values()) {
+            se.getLatch().countDown();
         }
         suspendedBreakpoints.clear();
         suspendedBreakpointMessages.clear();
@@ -198,13 +223,13 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         logger.log("Removing breakpoint " + nodeId);
         // when removing a break point then ensure latches is cleared and counted down so we wont have hanging threads
         suspendedBreakpointMessages.remove(nodeId);
-        CountDownLatch latch = suspendedBreakpoints.remove(nodeId);
+        SuspendedExchange se = suspendedBreakpoints.remove(nodeId);
         NodeBreakpoint breakpoint = breakpoints.remove(nodeId);
         if (breakpoint != null) {
             debugger.removeBreakpoint(breakpoint);
         }
-        if (latch != null) {
-            latch.countDown();
+        if (se != null) {
+            se.getLatch().countDown();
         }
     }
 
@@ -228,9 +253,33 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
 
         // remember to remove the dumped message as its no longer in need
         suspendedBreakpointMessages.remove(nodeId);
-        CountDownLatch latch = suspendedBreakpoints.remove(nodeId);
-        if (latch != null) {
-            latch.countDown();
+        SuspendedExchange se = suspendedBreakpoints.remove(nodeId);
+        if (se != null) {
+            se.getLatch().countDown();
+        }
+    }
+
+    public void setMessageBodyOnBreakpoint(String nodeId, String body) {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            logger.log("Breakpoint at node " + nodeId + " is updating message body on exchangeId: " + se.getExchange().getExchangeId() + " with new body: " + body);
+            if (se.getExchange().hasOut()) {
+                se.getExchange().getOut().setBody(body);
+            } else {
+                se.getExchange().getIn().setBody(body);
+            }
+        }
+    }
+
+    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, String value) {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            logger.log("Breakpoint at node " + nodeId + " is updating message header on exchangeId: " + se.getExchange().getExchangeId() + " with header: " + headerName + " and value: " + value);
+            if (se.getExchange().hasOut()) {
+                se.getExchange().getOut().setHeader(headerName, value);
+            } else {
+                se.getExchange().getIn().setHeader(headerName, value);
+            }
         }
     }
 
@@ -242,9 +291,9 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         for (String node : getSuspendedBreakpointNodeIds()) {
             // remember to remove the dumped message as its no longer in need
             suspendedBreakpointMessages.remove(node);
-            CountDownLatch latch = suspendedBreakpoints.remove(node);
-            if (latch != null) {
-                latch.countDown();
+            SuspendedExchange se = suspendedBreakpoints.remove(node);
+            if (se != null) {
+                se.getLatch().countDown();
             }
         }
     }
@@ -267,9 +316,9 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         for (String node : getSuspendedBreakpointNodeIds()) {
             // remember to remove the dumped message as its no longer in need
             suspendedBreakpointMessages.remove(node);
-            CountDownLatch latch = suspendedBreakpoints.remove(node);
-            if (latch != null) {
-                latch.countDown();
+            SuspendedExchange se = suspendedBreakpoints.remove(node);
+            if (se != null) {
+                se.getLatch().countDown();
             }
         }
     }
@@ -392,20 +441,21 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
             suspendedBreakpointMessages.put(nodeId, msg);
 
-            // mark as suspend
-            final CountDownLatch latch = suspendedBreakpoints.get(nodeId);
-
-            // now wait until we should continue
-            logger.log("NodeBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
-            try {
-                boolean hit = latch.await(fallbackTimeout, TimeUnit.SECONDS);
-                if (!hit) {
-                    logger.log("NodeBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchange.getExchangeId(), LoggingLevel.WARN);
-                } else {
-                    logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchange.getExchangeId());
+            // suspend at this breakpoint
+            final SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+            if (se != null) {
+                // now wait until we should continue
+                logger.log("NodeBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
+                try {
+                    boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
+                    if (!hit) {
+                        logger.log("NodeBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchange.getExchangeId(), LoggingLevel.WARN);
+                    } else {
+                        logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchange.getExchangeId());
+                    }
+                } catch (InterruptedException e) {
+                    // ignore
                 }
-            } catch (InterruptedException e) {
-                // ignore
             }
         }
 
@@ -422,7 +472,8 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             }
 
             // we only want to break one exchange at a time, so if there is already a suspended breakpoint then do not match
-            boolean existing = suspendedBreakpoints.putIfAbsent(nodeId, new CountDownLatch(1)) != null;
+            SuspendedExchange se = new SuspendedExchange(exchange, new CountDownLatch(1));
+            boolean existing = suspendedBreakpoints.putIfAbsent(nodeId, se) != null;
             return !existing;
         }
 
@@ -450,14 +501,14 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
             suspendedBreakpointMessages.put(toNode, msg);
 
-            // mark as suspend
-            final CountDownLatch latch = new CountDownLatch(1);
-            suspendedBreakpoints.put(toNode, latch);
+            // suspend at this breakpoint
+            SuspendedExchange se = new SuspendedExchange(exchange, new CountDownLatch(1));
+            suspendedBreakpoints.put(toNode, se);
 
             // now wait until we should continue
             logger.log("StepBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
             try {
-                boolean hit = latch.await(fallbackTimeout, TimeUnit.SECONDS);
+                boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
                 if (!hit) {
                     logger.log("StepBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchange.getExchangeId(), LoggingLevel.WARN);
                 } else {
@@ -491,4 +542,5 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             }
         }
     }
+
 }
