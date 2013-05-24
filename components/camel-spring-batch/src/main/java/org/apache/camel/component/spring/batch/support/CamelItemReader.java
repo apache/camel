@@ -16,15 +16,22 @@
  */
 package org.apache.camel.component.spring.batch.support;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.InitializingBean;
 
-public class CamelItemReader<I> implements ItemReader<I> {
+public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>, InitializingBean, CamelContextAware {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemReader.class);
 
+    private CamelContext camelContext;
     private final ConsumerTemplate consumerTemplate;
 
     private final String endpointUri;
@@ -32,6 +39,21 @@ public class CamelItemReader<I> implements ItemReader<I> {
     public CamelItemReader(ConsumerTemplate consumerTemplate, String endpointUri) {
         this.consumerTemplate = consumerTemplate;
         this.endpointUri = endpointUri;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+        // register this as service so we get lifecycle callback when Camel is starting/stopping
+        camelContext.addService(this);
     }
 
     @Override
@@ -43,4 +65,13 @@ public class CamelItemReader<I> implements ItemReader<I> {
         return item;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(consumerTemplate);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumerTemplate);
+    }
 }
