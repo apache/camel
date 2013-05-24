@@ -181,6 +181,16 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Find all Camel components names available in the classpath")
     List<String> findComponentNames() throws Exception;
 
+
+    /**
+     * Returns the JSON schema representation of the endpoint parameters for the given component name
+     *
+     * @param componentName the name of the component to lookup
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
+    String componentParameterJsonSchema(String componentName) throws Exception;
+
     /**
      * Resets all the performance counters.
      *

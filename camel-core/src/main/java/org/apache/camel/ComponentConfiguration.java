@@ -149,5 +149,13 @@ public interface ComponentConfiguration {
      * @return a list of matches
      */
     List<String> completeEndpointPath(String completionText);
+
+    /**
+     * Creates a <a href="http://json-schema.org/">JSON schema</a> representation of the
+     * configuration parameters for this endpoint and the types and validation rules.
+     *
+     * @return a JSON string which represents the JSON schema for this endpoints configuration parameters.
+     */
+    String createParameterJsonSchema();
 }
 

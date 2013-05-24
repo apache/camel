@@ -31,7 +31,8 @@ public class EndpointCompletionTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     public void testEndpointCompletion() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -45,16 +46,40 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         completions = assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/b");
     }
 
+
+    public void testEndpointConfigurationJson() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        assertParameterJsonSchema(mbeanServer, on, "bean");
+        assertParameterJsonSchema(mbeanServer, on, "timer");
+    }
+
     private List<String> assertCompletion(MBeanServer mbeanServer, ObjectName on, String componentName,
                                           HashMap<String, Object> properties, String completionText) throws Exception {
         Object[] params = {componentName, properties, completionText};
-        String[] signature = {"java.lang.String", "java.util.Map", "java.lang.String"};
+        String[] signature = { "java.lang.String",  "java.util.Map",  "java.lang.String" };
 
         List completions = assertIsInstanceOf(List.class,
                 mbeanServer.invoke(on, "completeEndpointPath", params, signature));
 
         LOG.info("Component " + componentName + " with '" + completionText + "' Returned: " + completions);
         return completions;
+    }
+
+    private String assertParameterJsonSchema(MBeanServer mbeanServer, ObjectName on, String componentName)
+            throws Exception {
+        Object[] params = {componentName};
+        String[] signature = { "java.lang.String" };
+
+        String answer = assertIsInstanceOf(String.class,
+                mbeanServer.invoke(on, "componentParameterJsonSchema", params, signature));
+
+        LOG.info("Component " + componentName + " returned JSON: " + answer);
+        return answer;
     }
 
     @Override

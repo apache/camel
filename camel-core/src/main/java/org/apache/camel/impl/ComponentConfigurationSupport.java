@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
@@ -161,6 +162,26 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
             return completer.completeEndpointPath(this, completionText);
         }
         return new ArrayList<String>();
+    }
+
+    public String createParameterJsonSchema() {
+        SortedMap<String,ParameterConfiguration> map = getParameterConfigurationMap();
+        Set<Map.Entry<String, ParameterConfiguration>> entries = map.entrySet();
+        StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
+        boolean first = true;
+        for (Map.Entry<String, ParameterConfiguration> entry : entries) {
+            String key = entry.getKey();
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\n    ");
+            ParameterConfiguration value = entry.getValue();
+            buffer.append(value.toJson());
+        }
+        buffer.append("\n  }\n}\n");
+        return buffer.toString();
     }
 
     /**
