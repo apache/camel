@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.spring.batch.support;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.InitializingBean;
 
-public class CamelItemReader<I> implements ItemReader<I> {
+public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>, InitializingBean, CamelContextAware {
 
+    private CamelContext camelContext;
     private final ConsumerTemplate consumerTemplate;
 
     private final String endpointUri;
@@ -30,10 +37,34 @@ public class CamelItemReader<I> implements ItemReader<I> {
         this.endpointUri = endpointUri;
     }
 
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+        // register this as service so we get lifecycle callback when Camel is starting/stopping
+        camelContext.addService(this);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public I read() throws Exception {
         return (I) consumerTemplate.receiveBody(endpointUri);
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(consumerTemplate);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumerTemplate);
+    }
 }
