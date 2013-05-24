@@ -194,12 +194,16 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     /**
      * Helper method for tooling which returns the completion list of the endpoint path
      * from the given endpoint name, properties and current path expression.
-     *
+     * <p/>
      * For example if using the file endpoint, this should complete a list of files (rather like bash completion)
      * or for an ActiveMQ component this should complete the list of queues or topics.
      *
+     * @param componentName  the component name
+     * @param endpointParameters  parameters of the endpoint
+     * @param completionText  the entered text which we want to have completion suggestions for
+     * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the list of available endpoint paths for the given component name, endpoint properties and completion text")
-    List<String> completeEndpointPath(String componentName, Map<String,Object> endpointParameters, String completionText) throws Exception;
+    List<String> completeEndpointPath(String componentName, Map<String, Object> endpointParameters, String completionText) throws Exception;
 
 }

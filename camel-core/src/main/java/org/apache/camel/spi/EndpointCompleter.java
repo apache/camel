@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +28,7 @@ import org.apache.camel.ComponentConfiguration;
  * behave nicer in command line, IDE and web based tools.
  */
 public interface EndpointCompleter {
+
     /**
      * Given the configuration and completion text, return a list of possible completion values
      * for a command line, IDE or web based tool.
@@ -36,6 +36,5 @@ public interface EndpointCompleter {
      * @returns the list of completion values if any (rather like bash completion, prefix values can be returned
      * - such as just the directories in the current path rather than returning every possible file name on a disk).
      */
-    List<String> completeEndpointPath(ComponentConfiguration configuration,
-                              String completionText);
+    List<String> completeEndpointPath(ComponentConfiguration configuration, String completionText);
 }

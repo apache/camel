@@ -18,17 +18,10 @@ package org.apache.camel.management;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
-
-import com.sun.javafx.tools.packager.Log;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,14 +43,12 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         completions = assertCompletion(mbeanServer, on, componentName, properties, "/usr/local");
         completions = assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/");
         completions = assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/b");
-
     }
 
     private List<String> assertCompletion(MBeanServer mbeanServer, ObjectName on, String componentName,
-                                          HashMap<String, Object> properties, String completionText)
-            throws InstanceNotFoundException, MBeanException, ReflectionException {
+                                          HashMap<String, Object> properties, String completionText) throws Exception {
         Object[] params = {componentName, properties, completionText};
-        String[] signature = { "java.lang.String",  "java.util.Map",  "java.lang.String" };
+        String[] signature = {"java.lang.String", "java.util.Map", "java.lang.String"};
 
         List completions = assertIsInstanceOf(List.class,
                 mbeanServer.invoke(on, "completeEndpointPath", params, signature));
