@@ -87,15 +87,17 @@ public class BeanLanguage implements Language, IsSingleton {
 
         // we support both the .method name and the ?method= syntax
         // as the ?method= syntax is very common for the bean component
-        int idx = expression.lastIndexOf('.');
-        if (idx > 0) {
-            beanName = expression.substring(0, idx);
-            method = expression.substring(idx + 1);
-        } else if (expression.contains("?method=")) {
+        if (expression.contains("?method=")) {
             beanName = ObjectHelper.before(expression, "?");
             method = ObjectHelper.after(expression, "?method=");
+        } else {
+            int idx = expression.lastIndexOf('.');
+            if (idx > 0) {
+                beanName = expression.substring(0, idx);
+                method = expression.substring(idx + 1);
+            }
         }
-        
+
         return new BeanExpression(beanName, method);
     }
 
