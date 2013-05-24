@@ -47,7 +47,6 @@
         org.apache.camel.spring.*;${camel.osgi.version},
         org.apache.camel.osgi.*;${camel.osgi.version},
         org.apache.camel.util.spring.*;${camel.osgi.version},
-        org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
       </camel.osgi.export>
