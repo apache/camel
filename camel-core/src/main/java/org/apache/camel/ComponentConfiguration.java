@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -134,5 +135,19 @@ public interface ComponentConfiguration {
      */
     void setEndpointParameter(Endpoint endpoint, String name, Object value) throws RuntimeCamelException;
 
+    /**
+     * A helper method for tools such as CLIs, IDEs or web tools that provides a completion list for Endpoint Paths
+     * rather like bash tab completion or Karaf attribute or option completion handers.
+     *
+     * So given the current configuration data, return a list of completions given the specified text.
+     *
+     * e.g. return the files in a directory, the matching queues in a message broker, the database tables in a database component etc
+     *
+     * @param completionText the prefix text used to complete on (usually a matching bit of text)
+     *
+     * @return a list of matches
+     * @return a list of matches
+     */
+    List<String> completeEndpointPath(String completionText);
 }
 

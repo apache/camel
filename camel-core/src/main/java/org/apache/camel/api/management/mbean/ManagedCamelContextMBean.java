@@ -16,6 +16,7 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -172,6 +173,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     Map<String, Properties> findComponents() throws Exception;
 
     /**
+     * Find the names of all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
+     *
+     * @return a list with the names of the camel components
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Find all Camel components names available in the classpath")
+    List<String> findComponentNames() throws Exception;
+
+    /**
      * Resets all the performance counters.
      *
      * @param includeRoutes  whether to reset all routes as well.
@@ -179,5 +189,17 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeRoutes) throws Exception;
+
+
+    /**
+     * Helper method for tooling which returns the completion list of the endpoint path
+     * from the given endpoint name, properties and current path expression.
+     *
+     * For example if using the file endpoint, this should complete a list of files (rather like bash completion)
+     * or for an ActiveMQ component this should complete the list of queues or topics.
+     *
+     */
+    @ManagedOperation(description = "Returns the list of available endpoint paths for the given component name, endpoint properties and completion text")
+    List<String> completeEndpointPath(String componentName, Map<String,Object> endpointParameters, String completionText) throws Exception;
 
 }

@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.EndpointCompleter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -152,6 +153,14 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
     @Override
     public ParameterConfiguration getParameterConfiguration(String name) {
         return getParameterConfigurationMap().get(name);
+    }
+
+    public List<String> completeEndpointPath(String completionText) {
+        if (component instanceof EndpointCompleter) {
+            EndpointCompleter completer = (EndpointCompleter) component;
+            return completer.completeEndpointPath(this, completionText);
+        }
+        return new ArrayList<String>();
     }
 
     /**

@@ -17,15 +17,20 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.ComponentConfiguration;
+import org.apache.camel.spi.EndpointCompleter;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
  * File component.
  */
-public class FileComponent extends GenericFileComponent<File> {
+public class FileComponent extends GenericFileComponent<File> implements EndpointCompleter {
 
     /**
      * GenericFile property on Camel Exchanges.
@@ -59,5 +64,54 @@ public class FileComponent extends GenericFileComponent<File> {
 
     protected void afterPropertiesSet(GenericFileEndpoint<File> endpoint) throws Exception {
         // noop
+    }
+
+    public List<String> completeEndpointPath(ComponentConfiguration configuration, String completionText) {
+        boolean empty = ObjectHelper.isEmpty(completionText);
+        String pattern = completionText;
+        File file = new File(completionText);
+        String prefix = completionText;
+        if (file.exists()) {
+            pattern = "";
+        } else {
+            String startPath = ".";
+            if (!empty) {
+                int idx = completionText.lastIndexOf('/');
+                if (idx >= 0) {
+                    startPath = completionText.substring(0, idx);
+                    if (startPath.length() == 0) {
+                        startPath = "/";
+                    }
+                    pattern = completionText.substring(idx + 1);
+                }
+            }
+            file = new File(startPath);
+            prefix = startPath;
+        }
+        if (prefix.length() > 0 && !prefix.endsWith("/")) {
+            prefix += "/";
+        }
+        if (prefix.equals("./")) {
+            prefix = "";
+        }
+        File[] list = file.listFiles();
+        List<String> answer = new ArrayList<String>();
+        for (File aFile : list) {
+            String name = aFile.getName();
+            if (pattern.length() == 0 || name.contains(pattern)) {
+                if (isValidEndpointCompletion(configuration, completionText, aFile)) {
+                    answer.add(prefix + name);
+                }
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Returns true if this is a valid file for completion. By default we should ignore files that start with a "."
+     */
+    protected boolean isValidEndpointCompletion(ComponentConfiguration configuration, String completionText,
+                                           File file) {
+        return !file.getName().startsWith(".");
     }
 }

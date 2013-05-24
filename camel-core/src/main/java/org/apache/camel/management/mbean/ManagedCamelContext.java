@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,6 +30,8 @@ import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
@@ -334,6 +337,22 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public Map<String, Properties> findComponents() throws Exception {
         return CamelContextHelper.findComponents(context);
+    }
+
+    public List<String> findComponentNames() throws Exception {
+        Map<String, Properties> map = findComponents();
+        return new ArrayList<String>(map.keySet());
+    }
+
+    public List<String> completeEndpointPath(String componentName, Map<String, Object> endpointParameters,
+                                             String completionText) throws Exception {
+        if (completionText == null) {
+            completionText = "";
+        }
+        Component component = context.getComponent(componentName);
+        ComponentConfiguration configuration = component.createComponentConfiguration();
+        configuration.setParameters(endpointParameters);
+        return configuration.completeEndpointPath(completionText);
     }
 
     public void reset(boolean includeRoutes) throws Exception {
