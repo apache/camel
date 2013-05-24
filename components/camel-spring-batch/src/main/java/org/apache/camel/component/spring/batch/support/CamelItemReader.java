@@ -17,7 +17,6 @@
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -27,26 +26,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.InitializingBean;
 
-public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>, InitializingBean, CamelContextAware {
+public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>, InitializingBean {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemReader.class);
 
-    private CamelContext camelContext;
+    private final CamelContext camelContext;
     private final ConsumerTemplate consumerTemplate;
 
     private final String endpointUri;
 
     public CamelItemReader(ConsumerTemplate consumerTemplate, String endpointUri) {
         this.consumerTemplate = consumerTemplate;
+        this.camelContext = consumerTemplate.getCamelContext();
         this.endpointUri = endpointUri;
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
     @Override
