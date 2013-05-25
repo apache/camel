@@ -64,6 +64,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     private Boolean pipeliningConnections;
     private Integer threadMaxIdleTimeMs;
     private Boolean useForwardedForHeader;
+    private Boolean reuseAddress;
 
     public RestletComponent() {
         this(new Component());
@@ -257,6 +258,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
                 if (getUseForwardedForHeader() != null) {
                     params.add("useForwardedForHeader", getUseForwardedForHeader().toString());
                 }
+                if (getReuseAddress() != null) {
+                    params.add("reuseAddress", getReuseAddress().toString());
+                }
                 LOG.debug("Setting parameters: {} to server: {}", params, server);
                 server.getContext().setParameters(params);
 
@@ -425,4 +429,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         this.useForwardedForHeader = useForwardedForHeader;
     }
 
+    public Boolean getReuseAddress() {
+        return reuseAddress;
+    }
+
+    public void setReuseAddress(Boolean reuseAddress) {
+        this.reuseAddress = reuseAddress;
+    }
 }
