@@ -16,35 +16,30 @@
  */
 package org.apache.camel.component.spring.batch;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringBatchIntegrationTest {
+public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
 
-    ApplicationContext applicationContext;
-
-    ProducerTemplate producerTemplate;
-
+    @EndpointInject(uri = "mock:output")
     MockEndpoint outputEndpoint;
 
+    @EndpointInject(uri = "mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
     String[] inputMessages = new String[]{"foo", "bar", "baz", null};
 
     @Before
-    public void setUp() {
-        applicationContext = new ClassPathXmlApplicationContext("classpath:org/apache/camel/component/spring/batch/springBatchtestContext.xml");
-        producerTemplate = applicationContext.getBean(ProducerTemplate.class);
-        outputEndpoint = applicationContext.getBean(CamelContext.class).getEndpoint("mock:output", MockEndpoint.class);
-        jobExecutionEventsQueueEndpoint = applicationContext.getBean(CamelContext.class).getEndpoint("mock:jobExecutionEventsQueue", MockEndpoint.class);
+    public void setUp() throws Exception {
+        super.setUp();
 
         for (String message : inputMessages) {
-            producerTemplate.sendBody("seda:inputQueue", message);
+            template.sendBody("seda:inputQueue", message);
         }
     }
 
@@ -52,7 +47,7 @@ public class SpringBatchIntegrationTest {
     public void shouldEchoInBatch() throws InterruptedException {
         outputEndpoint.expectedBodiesReceived("Echo foo", "Echo bar", "Echo baz");
 
-        producerTemplate.sendBody("direct:start", "Start batch!");
+        template.sendBody("direct:start", "Start batch!");
 
         outputEndpoint.assertIsSatisfied();
     }
@@ -61,8 +56,13 @@ public class SpringBatchIntegrationTest {
     public void shouldGenerateBatchExecutionEvents() throws InterruptedException {
         jobExecutionEventsQueueEndpoint.setExpectedMessageCount(2);
 
-        producerTemplate.sendBody("direct:start", "Start batch!");
+        template.sendBody("direct:start", "Start batch!");
 
         jobExecutionEventsQueueEndpoint.assertIsSatisfied();
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/batch/springBatchtestContext.xml");
     }
 }
