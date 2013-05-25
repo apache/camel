@@ -18,10 +18,12 @@ package org.apache.camel.component.solr;
 
 import java.io.File;
 import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
@@ -32,13 +34,13 @@ import org.apache.solr.common.SolrInputDocument;
  * The Solr producer.
  */
 public class SolrProducer extends DefaultProducer {
-    private SolrServer solrServer;
-    private SolrServer streamingSolrServer;
+    private HttpSolrServer solrServer;
+    private ConcurrentUpdateSolrServer streamingSolrServer;
 
-    public SolrProducer(SolrEndpoint endpoint) {
+    public SolrProducer(SolrEndpoint endpoint, HttpSolrServer solrServer, ConcurrentUpdateSolrServer streamingSolrServer) {
         super(endpoint);
-        solrServer = endpoint.getSolrServer();
-        streamingSolrServer = endpoint.getStreamingSolrServer();
+        this.solrServer = solrServer;
+        this.streamingSolrServer = streamingSolrServer;
     }
 
     @Override
@@ -166,4 +168,10 @@ public class SolrProducer extends DefaultProducer {
     public SolrEndpoint getEndpoint() {
         return (SolrEndpoint) super.getEndpoint();
     }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        getEndpoint().onProducerShutdown(this);
+    }
+
 }
