@@ -74,9 +74,12 @@ public class StreamProducer extends DefaultProducer {
         delay(endpoint.getDelay());
 
         synchronized (this) {
-            openStream(exchange);
-            writeToStream(outputStream, exchange);
-            closeStream(exchange, false);
+            try {
+                openStream(exchange);
+                writeToStream(outputStream, exchange);
+            } finally {
+                closeStream(exchange, false);
+            }
         }
     }
 
@@ -112,7 +115,7 @@ public class StreamProducer extends DefaultProducer {
         Thread.sleep(ms);
     }
 
-    private synchronized void writeToStream(OutputStream outputStream, Exchange exchange) throws IOException, CamelExchangeException {
+    private void writeToStream(OutputStream outputStream, Exchange exchange) throws IOException, CamelExchangeException {
         Object body = exchange.getIn().getBody();
 
         if (body == null) {
@@ -143,7 +146,7 @@ public class StreamProducer extends DefaultProducer {
         bw.flush();
     }
 
-    private synchronized void openStream() throws Exception {
+    private void openStream() throws Exception {
         if (outputStream != null) {
             return;
         }
@@ -161,7 +164,7 @@ public class StreamProducer extends DefaultProducer {
         LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
     }
 
-    private synchronized void openStream(final Exchange exchange) throws Exception {
+    private void openStream(final Exchange exchange) throws Exception {
         if (outputStream != null) {
             return;
         }
@@ -177,7 +180,7 @@ public class StreamProducer extends DefaultProducer {
         return exchange != null && exchange.getProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE, Boolean.class);
     }
 
-    private synchronized void closeStream(Exchange exchange, boolean force) throws Exception {
+    private void closeStream(Exchange exchange, boolean force) throws Exception {
         if (outputStream == null) {
             return;
         }
