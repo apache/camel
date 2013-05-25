@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class JdbcProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
@@ -223,6 +223,7 @@ public class JdbcProducer extends DefaultProducer {
         List<Map<String, Object>> data = extractResultSetData(rs);
 
         exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, data.size());
+        exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
         exchange.getOut().setBody(data);
     }
 
