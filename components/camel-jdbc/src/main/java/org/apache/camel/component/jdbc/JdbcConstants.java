@@ -25,6 +25,8 @@ public final class JdbcConstants {
 
     public static final String JDBC_ROW_COUNT = "CamelJdbcRowCount";
 
+    public static final String JDBC_COLUMN_NAMES = "CamelJdbcColumnNames";
+
     /**
      * Boolean input header.
      * Set its value to true to retrieve generated keys, default is false
