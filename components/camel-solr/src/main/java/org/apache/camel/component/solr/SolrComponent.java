@@ -16,18 +16,117 @@
  */
 package org.apache.camel.component.solr;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link SolrEndpoint}.
  */
 public class SolrComponent extends DefaultComponent {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
+    private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<SolrEndpoint, SolrServerReference>();
+
+    protected  static final class SolrServerReference {
+
+        private final AtomicInteger referenceCounter = new AtomicInteger();
+        private final SolrEndpoint endpoint;
+        private HttpSolrServer solrServer;
+        private ConcurrentUpdateSolrServer updateSolrServer;
+
+        SolrServerReference(SolrEndpoint endpoint) {
+            this.endpoint = endpoint;
+        }
+
+        public HttpSolrServer getSolrServer() {
+            return solrServer;
+        }
+
+        public void setSolrServer(HttpSolrServer solrServer) {
+            this.solrServer = solrServer;
+        }
+
+        public ConcurrentUpdateSolrServer getUpdateSolrServer() {
+            return updateSolrServer;
+        }
+
+        public void setUpdateSolrServer(ConcurrentUpdateSolrServer updateSolrServer) {
+            this.updateSolrServer = updateSolrServer;
+        }
+
+        public int addReference() {
+            return referenceCounter.incrementAndGet();
+        }
+
+        public int decReference() {
+            return referenceCounter.decrementAndGet();
+        }
+    }
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new SolrEndpoint(uri, this, remaining, parameters);
+        Endpoint endpoint = new SolrEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public SolrServerReference getSolrServers(SolrEndpoint endpoint) {
+        return servers.get(endpoint);
+    }
+
+    public void addSolrServers(SolrEndpoint endpoint, SolrServerReference servers) {
+        this.servers.put(endpoint, servers);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        for (SolrServerReference server : servers.values()) {
+            shutdownServers(server);
+        }
+        servers.clear();
+    }
+
+    void shutdownServers(SolrServerReference ref) {
+        shutdownServers(ref, false);
+    }
+
+    void shutdownServers(SolrServerReference ref, boolean remove) {
+        try {
+            if (ref.getSolrServer() != null) {
+                LOG.info("Shutting down solr server: " + ref.getSolrServer());
+                ref.getSolrServer().shutdown();
+            }
+        } catch (Exception e) {
+            LOG.warn("Error shutting down solr server. This exception is ignored.", e);
+        }
+        try {
+            if (ref.getUpdateSolrServer() != null) {
+                LOG.info("Shutting down update solr server: " + ref.getUpdateSolrServer());
+                ref.getUpdateSolrServer().shutdownNow();
+            }
+        } catch (Exception e) {
+            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
+        }
+
+        if (remove) {
+            SolrEndpoint key = null;
+            for (Map.Entry<SolrEndpoint, SolrServerReference> entry : servers.entrySet()) {
+                if (entry.getValue() == ref) {
+                    key = entry.getKey();
+                    break;
+                }
+            }
+            if (key != null) {
+                servers.remove(key);
+            }
+        }
+
     }
 }

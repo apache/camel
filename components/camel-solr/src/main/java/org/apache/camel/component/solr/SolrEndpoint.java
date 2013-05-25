@@ -17,7 +17,6 @@
 package org.apache.camel.component.solr;
 
 import java.net.URL;
-import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,32 +30,81 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
  */
 public class SolrEndpoint extends DefaultEndpoint {
 
-    private HttpSolrServer solrServer;
-    private ConcurrentUpdateSolrServer streamingSolrServer;
     private String requestHandler;
-    private int streamingThreadCount;
-    private int streamingQueueSize;
+    private String url;
+    private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
+    private int streamingThreadCount = SolrConstants.DEFAULT_STREAMING_THREAD_COUNT;
+    private Integer maxRetries;
+    private Integer soTimeout;
+    private Integer connectionTimeout;
+    private Integer defaultMaxConnectionsPerHost;
+    private Integer maxTotalConnections;
+    private Boolean followRedirects;
+    private Boolean allowCompression;
 
-    public SolrEndpoint(String endpointUri, SolrComponent component, String address, Map<String, Object> parameters) throws Exception {
+    public SolrEndpoint(String endpointUri, SolrComponent component, String address) throws Exception {
         super(endpointUri, component);
-        // check the url address
         URL url = new URL("http://" + address);
-        solrServer = new HttpSolrServer(url.toString());
-        streamingQueueSize = getIntFromString((String) parameters.get(SolrConstants.PARAM_STREAMING_QUEUE_SIZE), SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE);
-        streamingThreadCount = getIntFromString((String) parameters.get(SolrConstants.PARAM_STREAMING_THREAD_COUNT), SolrConstants.DEFAULT_STREAMING_THREAD_COUNT);
-        streamingSolrServer = new ConcurrentUpdateSolrServer(url.toString(), streamingQueueSize, streamingThreadCount);
+        this.url = url.toString();
     }
 
-    public static int getIntFromString(String value, int defaultValue) {
-        if (value != null && value.length() > 0) {
-            return Integer.parseInt(value);
-        }
-        return defaultValue;
+    @Override
+    public SolrComponent getComponent() {
+        return (SolrComponent) super.getComponent();
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new SolrProducer(this);
+        // do we have servers?
+        SolrComponent.SolrServerReference ref = getComponent().getSolrServers(this);
+        if (ref == null) {
+
+            // no then create new servers
+            HttpSolrServer solrServer = new HttpSolrServer(url);
+            ConcurrentUpdateSolrServer solrStreamingServer = new ConcurrentUpdateSolrServer(url, streamingQueueSize, streamingThreadCount);
+
+            // set the properties on the solr server
+            if (maxRetries != null) {
+                solrServer.setMaxRetries(maxRetries);
+            }
+            if (soTimeout != null) {
+                solrServer.setSoTimeout(soTimeout);
+            }
+            if (connectionTimeout != null) {
+                solrServer.setConnectionTimeout(connectionTimeout);
+            }
+            if (defaultMaxConnectionsPerHost != null) {
+                solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
+            }
+            if (maxTotalConnections != null) {
+                solrServer.setMaxTotalConnections(maxTotalConnections);
+            }
+            if (followRedirects != null) {
+                solrServer.setFollowRedirects(followRedirects);
+            }
+            if (allowCompression != null) {
+                solrServer.setAllowCompression(allowCompression);
+            }
+
+            ref = new SolrComponent.SolrServerReference(this);
+            ref.setSolrServer(solrServer);
+            ref.setUpdateSolrServer(solrStreamingServer);
+
+            getComponent().addSolrServers(this, ref);
+        }
+
+        ref.addReference();
+        return new SolrProducer(this, ref.getSolrServer(), ref.getUpdateSolrServer());
+    }
+
+    protected void onProducerShutdown(SolrProducer producer) {
+        SolrComponent.SolrServerReference ref = getComponent().getSolrServers(this);
+        if (ref != null) {
+            int counter = ref.decReference();
+            if (counter <= 0) {
+                getComponent().shutdownServers(ref, true);
+            }
+        }
     }
 
     @Override
@@ -67,46 +115,6 @@ public class SolrEndpoint extends DefaultEndpoint {
     @Override
     public boolean isSingleton() {
         return true;
-    }
-
-    public HttpSolrServer getSolrServer() {
-        return solrServer;
-    }
-
-    public ConcurrentUpdateSolrServer getStreamingSolrServer() {
-        return streamingSolrServer;
-    }
-
-    public void setStreamingSolrServer(ConcurrentUpdateSolrServer streamingSolrServer) {
-        this.streamingSolrServer = streamingSolrServer;
-    }
-
-    public void setMaxRetries(int maxRetries) {
-        solrServer.setMaxRetries(maxRetries);
-    }
-
-    public void setSoTimeout(int soTimeout) {
-        solrServer.setSoTimeout(soTimeout);
-    }
-
-    public void setConnectionTimeout(int connectionTimeout) {
-        solrServer.setConnectionTimeout(connectionTimeout);
-    }
-
-    public void setDefaultMaxConnectionsPerHost(int defaultMaxConnectionsPerHost) {
-        solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
-    }
-
-    public void setMaxTotalConnections(int maxTotalConnections) {
-        solrServer.setMaxTotalConnections(maxTotalConnections);
-    }
-
-    public void setFollowRedirects(boolean followRedirects) {
-        solrServer.setFollowRedirects(followRedirects);
-    }
-
-    public void setAllowCompression(boolean allowCompression) {
-        solrServer.setAllowCompression(allowCompression);
     }
 
     public void setRequestHandler(String requestHandler) {
@@ -132,4 +140,61 @@ public class SolrEndpoint extends DefaultEndpoint {
     public void setStreamingQueueSize(int streamingQueueSize) {
         this.streamingQueueSize = streamingQueueSize;
     }
+
+    public Integer getMaxRetries() {
+        return maxRetries;
+    }
+
+    public void setMaxRetries(Integer maxRetries) {
+        this.maxRetries = maxRetries;
+    }
+
+    public Integer getSoTimeout() {
+        return soTimeout;
+    }
+
+    public void setSoTimeout(Integer soTimeout) {
+        this.soTimeout = soTimeout;
+    }
+
+    public Integer getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(Integer connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public Integer getDefaultMaxConnectionsPerHost() {
+        return defaultMaxConnectionsPerHost;
+    }
+
+    public void setDefaultMaxConnectionsPerHost(Integer defaultMaxConnectionsPerHost) {
+        this.defaultMaxConnectionsPerHost = defaultMaxConnectionsPerHost;
+    }
+
+    public Integer getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    public void setMaxTotalConnections(Integer maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
+    }
+
+    public Boolean getFollowRedirects() {
+        return followRedirects;
+    }
+
+    public void setFollowRedirects(Boolean followRedirects) {
+        this.followRedirects = followRedirects;
+    }
+
+    public Boolean getAllowCompression() {
+        return allowCompression;
+    }
+
+    public void setAllowCompression(Boolean allowCompression) {
+        this.allowCompression = allowCompression;
+    }
+
 }
