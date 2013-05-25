@@ -25,6 +25,7 @@ import org.apache.camel.component.properties.PropertiesResolver;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.core.Constants;
 import org.springframework.util.PropertyPlaceholderHelper;
 
 /**
@@ -47,6 +48,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     private String configuredPlaceholderSuffix;
     private String configuredValueSeparator;
     private Boolean configuredIgnoreUnresolvablePlaceholders;
+    private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
 
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
@@ -65,6 +67,19 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     public void setBeanName(String beanName) {
         this.id = beanName;
         super.setBeanName(beanName);
+    }
+
+    @Override
+    public void setSystemPropertiesModeName(String constantName) throws IllegalArgumentException {
+        super.setSystemPropertiesModeName(constantName);
+        Constants constants = new Constants(PropertyPlaceholderConfigurer.class);
+        this.systemPropertiesMode = constants.asNumber(constantName).intValue();
+    }
+
+    @Override
+    public void setSystemPropertiesMode(int systemPropertiesMode) {
+        super.setSystemPropertiesMode(systemPropertiesMode);
+        this.systemPropertiesMode = systemPropertiesMode;
     }
 
     @Override
@@ -162,7 +177,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
      * @return the parsed text with replaced placeholders, or the original text as is
      */
     protected String springResolvePlaceholders(String text, Properties properties) {
-        return helper.replacePlaceholders(text, properties);
+        return helper.replacePlaceholders(text, new BridgePropertyPlaceholderResolver(properties));
     }
 
     public void setResolver(PropertiesResolver resolver) {
@@ -172,5 +187,32 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     public void setParser(PropertiesParser parser) {
         this.parser = parser;
     }
+
+    /**
+     * {@link PropertyPlaceholderHelper.PlaceholderResolver} to support using
+     */
+    private class BridgePropertyPlaceholderResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
+
+        private final Properties properties;
+
+        public BridgePropertyPlaceholderResolver(Properties properties) {
+            this.properties = properties;
+        }
+
+        public String resolvePlaceholder(String placeholderName) {
+            String propVal = null;
+            if (systemPropertiesMode  == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+                propVal = resolveSystemProperty(placeholderName);
+            }
+            if (propVal == null) {
+                propVal = (String) properties.get(placeholderName);
+            }
+            if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
+                propVal = resolveSystemProperty(placeholderName);
+            }
+            return propVal;
+        }
+    }
+
 
 }
