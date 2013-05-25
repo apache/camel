@@ -35,9 +35,16 @@ import org.apache.camel.util.ExchangeHelper;
  */
 public class StAXProcessor implements Processor {
     private final Class<ContentHandler> contentHandlerClass;
+    private final ContentHandler contentHandler;
 
     public StAXProcessor(Class<ContentHandler> contentHandlerClass) {
         this.contentHandlerClass = contentHandlerClass;
+        this.contentHandler = null;
+    }
+
+    public StAXProcessor(ContentHandler contentHandler) {
+        this.contentHandler = contentHandler;
+        this.contentHandlerClass = null;
     }
 
     @Override
@@ -46,7 +53,12 @@ public class StAXProcessor implements Processor {
         XMLStreamReader stream = exchange.getIn().getMandatoryBody(XMLStreamReader.class);
         XMLReader reader = new StaxStreamXMLReader(stream);
 
-        ContentHandler handler = contentHandlerClass.newInstance();
+        ContentHandler handler;
+        if (contentHandlerClass != null) {
+            handler = contentHandlerClass.newInstance();
+        } else {
+            handler = contentHandler;
+        }
         reader.setContentHandler(handler);
         reader.parse(is);
 

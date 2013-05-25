@@ -23,15 +23,22 @@ import org.xml.sax.ContentHandler;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.util.EndpointHelper;
 
 public class StAXComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Class<ContentHandler> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(remaining, ContentHandler.class);
-
-        StAXProcessor processor = new StAXProcessor(clazz);
+        StAXProcessor processor;
+        if (EndpointHelper.isReferenceParameter(remaining)) {
+            ContentHandler handler = EndpointHelper.resolveReferenceParameter(getCamelContext(), remaining.substring(1), ContentHandler.class, true);
+            processor = new StAXProcessor(handler);
+        } else {
+            Class clazz = getCamelContext().getClassResolver().resolveMandatoryClass(remaining, ContentHandler.class);
+            processor = new StAXProcessor(clazz);
+        }
         setProperties(processor, parameters);
         return new ProcessorEndpoint(uri, this, processor);
     }
+
 }
