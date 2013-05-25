@@ -427,7 +427,7 @@ public final class IntrospectionSupport {
             // we did not find a setter method to use, and if we did try to use a type converter then throw
             // this kind of exception as the caused by will hint this error
             throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
-                    + " as there isn't a setter method with same type: " + value.getClass().getCanonicalName()
+                    + " as there isn't a setter method with same type: " + (value != null ? value.getClass().getCanonicalName() : "[null]")
                     + " nor type conversion possible: " + typeConversionFailed.getMessage());
         } else {
             return false;
