@@ -99,6 +99,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure) throws Exception {
         // prefer to use endpoint configured over component configured
+        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
         HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
         if (configurer == null) {
             // try without ref
@@ -172,16 +173,19 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, parameters, "httpClient.");
         
+        // TODO cmueller: remove the "httpBindingRef" look up in Camel 3.0
         HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         if (httpBinding == null) {
             httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         }
 
+        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
         HttpClientConfigurer httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
         if (httpClientConfigurer == null) {
             httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         }
 
+        // TODO cmueller: remove the "httpContextRef" look up in Camel 3.0
         HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContextRef", HttpContext.class);
         if (httpContext == null) {
             httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
@@ -191,8 +195,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (x509HostnameVerifier == null) {
             x509HostnameVerifier = getX509HostnameVerifier();
         }
-        
+
+        // TODO cmueller: remove the "sslContextParametersRef" look up in Camel 3.0
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
+        if (sslContextParameters == null) {
+            sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
+        }
         if (sslContextParameters == null) {
             sslContextParameters = getSslContextParameters();
         }

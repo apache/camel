@@ -72,6 +72,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, Set<AuthMethod> authMethods) {
         // prefer to use endpoint configured over component configured
+        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
         HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
         if (configurer == null) {
             // try without ref
@@ -202,6 +203,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // must extract well known parameters before we create the endpoint
+        // TODO cmueller: remove the "httpBindingRef" look up in Camel 3.0
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         if (binding == null) {
             // try without ref
