@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,8 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
-import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -117,12 +116,15 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
 
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-        // wrap the on completion route in a unit of work processor
-        childProcessor = new UnitOfWorkProcessor(routeContext, childProcessor);
-
         String id = routeContext.getRoute().getId();
-        onCompletions.put(id, childProcessor);
+
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
+
+        // wrap the on completion route in a unit of work processor
+        CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(id));
+
+        onCompletions.put(id, internal);
 
         Predicate when = null;
         if (onWhen != null) {
@@ -135,7 +137,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
         // should be false by default
         boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;
-        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor,
+        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), internal,
                 threadPool, shutdownThreadPool, isOnCompleteOnly(), isOnFailureOnly(), when, original);
         return answer;
     }

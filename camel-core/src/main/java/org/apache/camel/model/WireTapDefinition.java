@@ -33,7 +33,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -89,12 +89,15 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         // create the producer to send to the wire tapped endpoint
         Endpoint endpoint = resolveEndpoint(routeContext);
         Producer producer = endpoint.createProducer();
+
         // create error handler we need to use for processing the wire tapped
         Processor target = wrapInErrorHandler(routeContext, producer);
-        // and wrap in UoW, which is needed for error handler as well
-        target = new UnitOfWorkProcessor(routeContext, target);
 
-        WireTapProcessor answer = new WireTapProcessor(endpoint, target, getPattern(), threadPool, shutdownThreadPool);
+        // and wrap in unit of work
+        CamelInternalProcessor internal = new CamelInternalProcessor(target);
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeContext.getRoute().getId()));
+
+        WireTapProcessor answer = new WireTapProcessor(endpoint, internal, getPattern(), threadPool, shutdownThreadPool);
         answer.setCopy(isCopy());
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.mandatoryLookup(newExchangeProcessorRef, Processor.class);

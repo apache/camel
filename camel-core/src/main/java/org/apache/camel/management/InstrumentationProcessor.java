@@ -69,7 +69,7 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
         // only record time if stats is enabled
         final StopWatch watch = (counter != null && counter.isStatisticsEnabled()) ? new StopWatch() : null;
 
-        return super.process(exchange, new AsyncCallback() {
+        return processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 try {
                     // record end time

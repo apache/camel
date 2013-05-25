@@ -34,6 +34,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -157,9 +158,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
-        Processor processor = this.createChildProcessor(routeContext, true);
-        // wrap the aggregated route in a unit of work processor
-        processor = new UnitOfWorkProcessor(routeContext, processor);
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
+
+        // wrap the aggregate route in a unit of work processor
+        CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeContext.getRoute().getId()));
 
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
@@ -173,7 +176,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             shutdownThreadPool = true;
         }
 
-        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor,
+        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), internal,
                 correlation, strategy, threadPool, shutdownThreadPool);
 
         AggregationRepository repository = createAggregationRepository(routeContext);
