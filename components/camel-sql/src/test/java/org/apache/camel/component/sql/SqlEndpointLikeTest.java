@@ -64,7 +64,7 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("sql:select * from projects where license like 'A%25'?dataSourceRef=jdbc/myDataSource")
+                    .to("sql:select * from projects where license like 'A%25'?dataSource=#jdbc/myDataSource")
                     .split(body())
                     .to("mock:result");
             }

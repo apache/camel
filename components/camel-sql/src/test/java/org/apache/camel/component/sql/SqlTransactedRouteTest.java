@@ -42,7 +42,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     private JdbcTemplate jdbc;
     
     private String startEndpoint = "direct:start";
-    private String sqlEndpoint = "sql:overriddenByTheHeader?dataSourceRef=testdb";
+    private String sqlEndpoint = "sql:overriddenByTheHeader?dataSource=#testdb";
     
     @Before
     public void setUp() throws Exception {

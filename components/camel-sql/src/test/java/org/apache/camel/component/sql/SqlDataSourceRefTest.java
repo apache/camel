@@ -90,7 +90,7 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:simple")
-                    .to("sql:select * from projects where license = # order by id?dataSourceRef=jdbc/myDataSource")
+                    .to("sql:select * from projects where license = # order by id?dataSource=#jdbc/myDataSource")
                     .to("mock:result");
                 // END SNIPPET: e1
             }
