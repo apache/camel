@@ -895,7 +895,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     /**
-     * Strategy to create the {@link UnitOfWorkProcessor} to be used for the sub route
+     * Strategy to create the unit of work to be used for the sub route
      *
      * @param routeContext the route context
      * @param processor    the processor

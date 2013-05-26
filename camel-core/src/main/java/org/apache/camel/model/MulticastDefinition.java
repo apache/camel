@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,8 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.MulticastProcessor;
-import org.apache.camel.processor.SubUnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -231,7 +230,9 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
                                       threadPool, shutdownThreadPool, isStreaming(), isStopOnException(), timeout, onPrepare, isShareUnitOfWork());
         if (isShareUnitOfWork()) {
             // wrap answer in a sub unit of work, since we share the unit of work
-            return new SubUnitOfWorkProcessor(answer);
+            CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
+            internalProcessor.addTask(new CamelInternalProcessor.SubUnitOfWorkProcessorTask());
+            return internalProcessor;
         }
         return answer;
     }

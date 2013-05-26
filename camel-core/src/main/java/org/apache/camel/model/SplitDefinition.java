@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Splitter;
-import org.apache.camel.processor.SubUnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -113,7 +113,9 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
                             timeout, onPrepare, isShareUnitOfWork());
         if (isShareUnitOfWork()) {
             // wrap answer in a sub unit of work, since we share the unit of work
-            return new SubUnitOfWorkProcessor(answer);
+            CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
+            internalProcessor.addTask(new CamelInternalProcessor.SubUnitOfWorkProcessorTask());
+            return internalProcessor;
         }
         return answer;
     }

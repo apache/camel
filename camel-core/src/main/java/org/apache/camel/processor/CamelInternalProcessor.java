@@ -551,7 +551,22 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
             return parent.createChildUnitOfWork(exchange);
         }
 
+    }
 
+    public static class SubUnitOfWorkProcessorTask implements CamelInternalProcessorTask<UnitOfWork> {
+
+        @Override
+        public UnitOfWork before(Exchange exchange) throws Exception {
+            // begin savepoint
+            exchange.getUnitOfWork().beginSubUnitOfWork(exchange);
+            return exchange.getUnitOfWork();
+        }
+
+        @Override
+        public void after(Exchange exchange, UnitOfWork unitOfWork) throws Exception {
+            // end sub unit of work
+            unitOfWork.endSubUnitOfWork(exchange);
+        }
     }
 
 }

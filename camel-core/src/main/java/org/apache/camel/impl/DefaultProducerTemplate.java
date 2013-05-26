@@ -619,9 +619,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 Exchange answer = send(endpoint, pattern, createSetBodyProcessor(body));
 
                 // invoke callback before returning answer
-                // as it allows callback to be used without UnitOfWorkProcessor invoking it
+                // as it allows callback to be used without unit of work invoking it
                 // and thus it works directly from a producer template as well, as opposed
-                // to the UnitOfWorkProcessor that is injected in routes
+                // to the unit of work that is injected in routes
                 if (answer.isFailed()) {
                     onCompletion.onFailure(answer);
                 } else {
@@ -647,9 +647,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 send(endpoint, exchange);
 
                 // invoke callback before returning answer
-                // as it allows callback to be used without UnitOfWorkProcessor invoking it
+                // as it allows callback to be used without unit of work invoking it
                 // and thus it works directly from a producer template as well, as opposed
-                // to the UnitOfWorkProcessor that is injected in routes
+                // to the unit of work that is injected in routes
                 if (exchange.isFailed()) {
                     onCompletion.onFailure(exchange);
                 } else {
@@ -668,9 +668,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 Exchange answer = send(endpoint, processor);
 
                 // invoke callback before returning answer
-                // as it allows callback to be used without UnitOfWorkProcessor invoking it
+                // as it allows callback to be used without unit of work invoking it
                 // and thus it works directly from a producer template as well, as opposed
-                // to the UnitOfWorkProcessor that is injected in routes
+                // to the unit of work that is injected in routes
                 if (answer.isFailed()) {
                     onCompletion.onFailure(answer);
                 } else {

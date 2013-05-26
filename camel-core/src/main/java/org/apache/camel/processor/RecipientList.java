@@ -144,7 +144,9 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         AsyncProcessor target = rlp;
         if (isShareUnitOfWork()) {
             // wrap answer in a sub unit of work, since we share the unit of work
-            target = new SubUnitOfWorkProcessor(rlp);
+            CamelInternalProcessor internalProcessor = new CamelInternalProcessor(rlp);
+            internalProcessor.addTask(new CamelInternalProcessor.SubUnitOfWorkProcessorTask());
+            target = internalProcessor;
         }
 
         // now let the multicast process the exchange

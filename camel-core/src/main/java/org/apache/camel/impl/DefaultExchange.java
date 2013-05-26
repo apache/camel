@@ -374,7 +374,7 @@ public final class DefaultExchange implements Exchange {
     public void addOnCompletion(Synchronization onCompletion) {
         if (unitOfWork == null) {
             // unit of work not yet registered so we store the on completion temporary
-            // until the unit of work is assigned to this exchange by the UnitOfWorkProcessor
+            // until the unit of work is assigned to this exchange by the unit of work
             if (onCompletions == null) {
                 onCompletions = new ArrayList<Synchronization>();
             }
