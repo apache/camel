@@ -51,7 +51,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
         }
 
-        boolean sync = super.process(exchange, new AsyncCallback() {
+        boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (e == null) {
                     exchange.removeProperty(Exchange.FAILURE_ENDPOINT);

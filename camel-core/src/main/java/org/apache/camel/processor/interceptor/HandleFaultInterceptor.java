@@ -38,7 +38,7 @@ public class HandleFaultInterceptor extends DelegateAsyncProcessor {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        return getProcessor().process(exchange, new AsyncCallback() {
+        return processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 try {
                     // handle fault after we are done

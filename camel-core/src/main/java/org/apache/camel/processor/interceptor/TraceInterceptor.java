@@ -160,7 +160,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
             }
 
             // process the exchange
-            sync = super.process(exchange, new AsyncCallback() {
+            sync = processor.process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
                     try {

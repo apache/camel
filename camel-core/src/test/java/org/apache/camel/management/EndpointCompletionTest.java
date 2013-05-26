@@ -28,11 +28,6 @@ import org.slf4j.LoggerFactory;
 public class EndpointCompletionTest extends ManagementTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(EndpointCompletionTest.class);
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @SuppressWarnings("unchecked")
     public void testEndpointCompletion() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
@@ -83,6 +78,16 @@ public class EndpointCompletionTest extends ManagementTestSupport {
 
         LOG.info("Component " + componentName + " returned JSON: " + answer);
         return answer;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // noop
+            }
+        };
     }
 
 }

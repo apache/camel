@@ -55,7 +55,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         exchange.setProperty(Exchange.FILTER_MATCHED, matches);
 
         if (matches) {
-            return super.process(exchange, callback);
+            return processor.process(exchange, callback);
         } else {
             callback.done(true);
             return true;

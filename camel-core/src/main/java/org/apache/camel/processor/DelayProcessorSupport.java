@@ -62,7 +62,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             }
 
             // process the exchange now that we woke up
-            DelayProcessorSupport.super.process(exchange, new AsyncCallback() {
+            DelayProcessorSupport.this.processor.process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
                     log.trace("Delayed task done for exchangeId: {}", exchange.getExchangeId());
@@ -114,7 +114,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             try {
                 delay(delay, exchange);
                 // then continue routing
-                return super.process(exchange, callback);
+                return processor.process(exchange, callback);
             } catch (Exception e) {
                 // exception occurred so we are done
                 exchange.setException(e);
@@ -143,7 +143,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                             exchange.setException(ie);
                         }
                         // then continue routing
-                        return super.process(exchange, callback);
+                        return processor.process(exchange, callback);
                     }
                 } else {
                     exchange.setException(e);

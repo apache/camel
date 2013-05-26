@@ -100,7 +100,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
         LOG.debug("LoopProcessor: iteration #{}", index.get());
         exchange.setProperty(Exchange.LOOP_INDEX, index.get());
 
-        boolean sync = super.process(exchange, new AsyncCallback() {
+        boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 // we only have to handle async completion of the routing slip
                 if (doneSync) {

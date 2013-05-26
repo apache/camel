@@ -48,7 +48,7 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
     private TimeUnit units;
     private long timeOfLastExchange;
     private StopProcessor stopper = new StopProcessor();
-    private Object calculationLock = new Object();
+    private final Object calculationLock = new Object();
     private SampleStats sampled = new SampleStats();
 
     public SamplingThrottler(Processor processor, long messageFrequency) {
@@ -120,7 +120,7 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
 
         if (doSend) {
             // continue routing
-            return super.process(exchange, callback);
+            return processor.process(exchange, callback);
         } else {
             // okay to invoke this synchronously as the stopper
             // will just set a property

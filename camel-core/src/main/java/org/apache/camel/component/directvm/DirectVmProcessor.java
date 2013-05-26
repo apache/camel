@@ -52,7 +52,7 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
                 Thread.currentThread().setContextClassLoader(appClassLoader);
                 changed = true;
             }
-            return getProcessor().process(copy, new AsyncCallback() {
+            return processor.process(copy, new AsyncCallback() {
                 @Override
                 public void done(boolean done) {
                     try {

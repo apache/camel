@@ -49,7 +49,7 @@ public class StreamCachingInterceptor extends DelegateAsyncProcessor {
         }
         MessageHelper.resetStreamCache(exchange.getIn());
 
-        return getProcessor().process(exchange, callback);
+        return processor.process(exchange, callback);
     }
 
 }
