@@ -165,7 +165,7 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
     }
 
     public String createParameterJsonSchema() {
-        SortedMap<String,ParameterConfiguration> map = getParameterConfigurationMap();
+        SortedMap<String, ParameterConfiguration> map = getParameterConfigurationMap();
         Set<Map.Entry<String, ParameterConfiguration>> entries = map.entrySet();
         StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
         boolean first = true;

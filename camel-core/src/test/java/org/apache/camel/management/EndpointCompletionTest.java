@@ -28,6 +28,11 @@ import org.slf4j.LoggerFactory;
 public class EndpointCompletionTest extends ManagementTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(EndpointCompletionTest.class);
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     @SuppressWarnings("unchecked")
     public void testEndpointCompletion() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
@@ -46,7 +51,6 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         completions = assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/b");
     }
 
-
     public void testEndpointConfigurationJson() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance(
@@ -61,7 +65,7 @@ public class EndpointCompletionTest extends ManagementTestSupport {
     private List<String> assertCompletion(MBeanServer mbeanServer, ObjectName on, String componentName,
                                           HashMap<String, Object> properties, String completionText) throws Exception {
         Object[] params = {componentName, properties, completionText};
-        String[] signature = { "java.lang.String",  "java.util.Map",  "java.lang.String" };
+        String[] signature = {"java.lang.String",  "java.util.Map",  "java.lang.String"};
 
         List completions = assertIsInstanceOf(List.class,
                 mbeanServer.invoke(on, "completeEndpointPath", params, signature));
@@ -70,25 +74,15 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         return completions;
     }
 
-    private String assertParameterJsonSchema(MBeanServer mbeanServer, ObjectName on, String componentName)
-            throws Exception {
+    private String assertParameterJsonSchema(MBeanServer mbeanServer, ObjectName on, String componentName) throws Exception {
         Object[] params = {componentName};
-        String[] signature = { "java.lang.String" };
+        String[] signature = {"java.lang.String"};
 
         String answer = assertIsInstanceOf(String.class,
                 mbeanServer.invoke(on, "componentParameterJsonSchema", params, signature));
 
         LOG.info("Component " + componentName + " returned JSON: " + answer);
         return answer;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-            }
-        };
     }
 
 }
