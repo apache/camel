@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -109,8 +110,8 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         // ----------------------------------------------------------
 
 
-        if (processor == null) {
-            // no processor then we are done
+        if (processor == null || !continueProcessing(exchange)) {
+            // no processor or we should not continue then we are done
             callback.done(true);
             return true;
         }
@@ -228,6 +229,33 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // ----------------------------------------------------------
             }
         }
+    }
+
+    /**
+     * Strategy to determine if we should continue processing the {@link Exchange}.
+     */
+    protected boolean continueProcessing(Exchange exchange) {
+        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
+        if (stop != null) {
+            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
+            if (doStop) {
+                LOG.debug("Exchange is marked to stop routing: {}", exchange);
+                return false;
+            }
+        }
+
+        // determine if we can still run, or the camel context is forcing a shutdown
+        boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
+        if (forceShutdown) {
+            LOG.debug("Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: {}", exchange);
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+            return false;
+        }
+
+        // yes we can continue
+        return true;
     }
 
     public static class InstrumentationTask implements CamelInternalProcessorTask<StopWatch> {

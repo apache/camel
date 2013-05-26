@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -386,41 +385,8 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // TODO: This logic can be in internal processor
-        if (!continueProcessing(exchange)) {
-            // we should not continue routing so we are done
-            callback.done(true);
-            return true;
-        }
-
+        // TODO: We do not need to have DefaultChannel wrapped in the routes, but can just rely on CamelInternalProcessor
         return internalProcessor.process(exchange, callback);
-    }
-
-    /**
-     * Strategy to determine if we should continue processing the {@link Exchange}.
-     */
-    protected boolean continueProcessing(Exchange exchange) {
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
-            if (doStop) {
-                LOG.debug("Exchange is marked to stop routing: {}", exchange);
-                return false;
-            }
-        }
-
-        // determine if we can still run, or the camel context is forcing a shutdown
-        boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
-        if (forceShutdown) {
-            LOG.debug("Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: {}", exchange);
-            if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException());
-            }
-            return false;
-        }
-
-        // yes we can continue
-        return true;
     }
 
     @Override
