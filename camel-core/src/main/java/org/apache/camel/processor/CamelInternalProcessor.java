@@ -62,6 +62,10 @@ import org.slf4j.LoggerFactory;
  * {@link CamelInternalProcessorTask#after(org.apache.camel.Exchange, Object)} callbacks in correct order during routing.
  * This reduces number of stack frames needed during routing, and reduce the number of lines in stacktraces, as well
  * makes debugging the routing engine easier for end users.
+ * <p/>
+ * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then make sure to
+ * read the source code of this class about the debugging tips, which you can find in the
+ * {@link #process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method.
  */
 public final class CamelInternalProcessor extends DelegateAsyncProcessor {
 
@@ -90,8 +94,20 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // NOTE: if you are debugging Camel routes, then all the code that happens before the processor.process method
-        // is internal code only, so you can go straight to the processor (see next NOTE in this method)
+        // ----------------------------------------------------------
+        // CAMEL END USER - READ ME FOR DEBUGGING TIPS
+        // ----------------------------------------------------------
+        // If you want to debug the Camel routing engine, then there is a lot of internal functionality
+        // the routing engine executes during routing messages. You can skip debugging this internal
+        // functionality and instead debug where the routing engine continues routing to the next node
+        // in the routes. The CamelInternalProcessor is a vital part of the routing engine, as its
+        // being used in between the nodes. As an end user you can just debug the code in this class
+        // in between the:
+        //   CAMEL END USER - DEBUG ME HERE +++ START +++
+        //   CAMEL END USER - DEBUG ME HERE +++ END +++
+        // you can see in the code below.
+        // ----------------------------------------------------------
+
 
         if (processor == null) {
             // no processor then we are done
@@ -125,11 +141,17 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
                     LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
                 }
             }
+            // ----------------------------------------------------------
+            // CAMEL END USER - DEBUG ME HERE +++ START +++
+            // ----------------------------------------------------------
             try {
                 processor.process(exchange);
             } catch (Throwable e) {
                 exchange.setException(e);
             }
+            // ----------------------------------------------------------
+            // CAMEL END USER - DEBUG ME HERE +++ END +++
+            // ----------------------------------------------------------
             callback.done(true);
             return true;
         } else {
@@ -142,12 +164,16 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
                 async = uow.beforeProcess(processor, exchange, callback);
             }
 
-            // NOTE: Here we call the next processor in the Camel routes, so you can step into the processor.process call
-            // to continue debugging
+            // ----------------------------------------------------------
+            // CAMEL END USER - DEBUG ME HERE +++ START +++
+            // ----------------------------------------------------------
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
             boolean sync = processor.process(exchange, async);
+            // ----------------------------------------------------------
+            // CAMEL END USER - DEBUG ME HERE +++ END +++
+            // ----------------------------------------------------------
 
             // execute any after processor work (in current thread, not in the callback)
             if (uow != null) {
@@ -192,8 +218,14 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
                     }
                 }
             } finally {
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ START +++
+                // ----------------------------------------------------------
                 // callback must be called
                 callback.done(doneSync);
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ END +++
+                // ----------------------------------------------------------
             }
         }
     }
