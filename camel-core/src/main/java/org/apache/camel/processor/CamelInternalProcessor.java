@@ -466,7 +466,7 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static final class UnitOfWorkProcessorTask implements CamelInternalProcessorTask<UnitOfWork> {
+    public static class UnitOfWorkProcessorTask implements CamelInternalProcessorTask<UnitOfWork> {
 
         private final String routeId;
 
@@ -533,6 +533,24 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
             // remove uow from exchange as its done
             exchange.setUnitOfWork(null);
         }
+
+    }
+
+    public static class ChildUnitOfWorkProcessorTask extends UnitOfWorkProcessorTask {
+
+        private final UnitOfWork parent;
+
+        public ChildUnitOfWorkProcessorTask(String routeId, UnitOfWork parent) {
+            super(routeId);
+            this.parent = parent;
+        }
+
+        @Override
+        protected UnitOfWork createUnitOfWork(Exchange exchange) {
+            // let the parent create a child unit of work to be used
+            return parent.createChildUnitOfWork(exchange);
+        }
+
 
     }
 

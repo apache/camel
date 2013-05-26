@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * Handles calling the {@link org.apache.camel.spi.UnitOfWork#done(org.apache.camel.Exchange)} method
  * when processing of an {@link Exchange} is complete.
  */
+@Deprecated
 public class UnitOfWorkProcessor extends DelegateAsyncProcessor {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(UnitOfWorkProcessor.class);

@@ -872,16 +872,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
 
+                boolean child = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
+
                 // must start the error handler
                 ServiceHelper.startServices(answer);
+
+                // here we don't cache the child unit of work
+                if (!child) {
+                    // add to cache
+                    errorHandlers.putIfAbsent(key, answer);
+                }
+
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
-            }
-            // here we don't cache the ChildUnitOfWorkProcessor
-            // As the UnitOfWorkProcess will be delegate to the Parent
-            if (!(answer instanceof ChildUnitOfWorkProcessor)) {
-                // add to cache
-                errorHandlers.putIfAbsent(key, answer);
             }
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
@@ -895,17 +898,21 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * Strategy to create the {@link UnitOfWorkProcessor} to be used for the sub route
      *
      * @param routeContext the route context
-     * @param processor    the processor wrapped in this unit of work processor
+     * @param processor    the processor
      * @param exchange     the exchange
      * @return the unit of work processor
      */
-    protected UnitOfWorkProcessor createUnitOfWorkProcessor(RouteContext routeContext, Processor processor, Exchange exchange) {
+    protected Processor createUnitOfWorkProcessor(RouteContext routeContext, Processor processor, Exchange exchange) {
+        String routeId = routeContext != null ? routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory()) : null;
+        CamelInternalProcessor internal = new CamelInternalProcessor(processor);
+
         UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
-            return new ChildUnitOfWorkProcessor(parent, routeContext, processor);
+            internal.addTask(new CamelInternalProcessor.ChildUnitOfWorkProcessorTask(routeId, parent));
         } else {
-            return new UnitOfWorkProcessor(routeContext, processor);
+            internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
         }
+        return internal;
     }
 
     /**
