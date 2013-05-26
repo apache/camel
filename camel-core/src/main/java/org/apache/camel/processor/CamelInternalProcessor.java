@@ -189,6 +189,11 @@ public final class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
+    @Override
+    public String toString() {
+        return processor != null ? processor.toString() : super.toString();
+    }
+
     private final class InternalCallback implements AsyncCallback {
 
         private final List<Object> states;

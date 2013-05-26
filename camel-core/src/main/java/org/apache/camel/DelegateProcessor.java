@@ -22,7 +22,8 @@ package org.apache.camel;
 public interface DelegateProcessor extends Processor {
 
     /**
-     * 
+     * Gets the delegated {@link Processor}.
+     *
      * @return the processor we delegate to
      */
     Processor getProcessor();
