@@ -18,8 +18,8 @@ package org.apache.camel.component.weather;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Scanner;
 
 import org.apache.camel.spi.UriParam;
@@ -107,13 +107,15 @@ public class WeatherConfiguration {
         try {
             String urlStr = "http://freegeoip.net/json/";
             URL url = new URL(urlStr);
-            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String inputLine;
             String temp = "";
             while ((inputLine = in.readLine()) != null) {
                 temp += inputLine;
             }
+            in.close();
+            urlConnection.disconnect();
 
             if (temp != null && !temp.isEmpty()) {
                 ObjectMapper mapper = new ObjectMapper();

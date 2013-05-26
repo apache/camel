@@ -18,8 +18,9 @@ package org.apache.camel.component.weather;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -42,13 +43,15 @@ public class WeatherConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         LOG.debug("Executing Weather Query " + this.query);
         URL url = new URL(this.query);
-        URLConnection urlConnection = url.openConnection();
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
         String inputLine;
         String answer = "";
         while ((inputLine = in.readLine()) != null) {
             answer += inputLine;
         }
+        in.close();
+        urlConnection.disconnect();
         LOG.debug("result = " + answer);
         if (answer != null && !answer.isEmpty()) {
             Exchange exchange = endpoint.createExchange();
