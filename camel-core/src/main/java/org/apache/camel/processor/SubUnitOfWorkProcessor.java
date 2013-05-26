@@ -30,7 +30,9 @@ import org.apache.camel.spi.RouteContext;
  *
  * @see org.apache.camel.spi.SubUnitOfWork
  * @see org.apache.camel.spi.SubUnitOfWorkCallback
+ * @deprecated is to be removed in the future, as replaced by {@link CamelInternalProcessor}
  */
+@Deprecated
 public class SubUnitOfWorkProcessor extends UnitOfWorkProcessor {
 
     // See code comment in DefaultUnitOfWork for reasons why this implementation is named SubUnitOfWorkProcessor

@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Handles calling the {@link org.apache.camel.spi.UnitOfWork#done(org.apache.camel.Exchange)} method
  * when processing of an {@link Exchange} is complete.
+ *
+ * @deprecated is to be removed in the future, as replaced by {@link CamelInternalProcessor}
  */
 @Deprecated
 public class UnitOfWorkProcessor extends DelegateAsyncProcessor {

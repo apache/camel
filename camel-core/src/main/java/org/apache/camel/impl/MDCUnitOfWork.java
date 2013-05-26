@@ -118,7 +118,13 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
-        return new MDCCallback(callback);
+        String routeId = MDC.get(MDC_ROUTE_ID);
+        if (routeId != null) {
+            // only need MDC callback if we have a route id
+            return new MDCCallback(callback, routeId);
+        } else {
+            return callback;
+        }
     }
 
     @Override
@@ -186,10 +192,9 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         private final AsyncCallback delegate;
         private final String routeId;
 
-        private MDCCallback(AsyncCallback delegate) {
+        private MDCCallback(AsyncCallback delegate, String routeId) {
             this.delegate = delegate;
-            // we only need to keep track of route id as we may change routes during routing
-            this.routeId = MDC.get(MDC_ROUTE_ID);
+            this.routeId = routeId;
         }
 
         public void done(boolean doneSync) {
