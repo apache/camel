@@ -18,7 +18,11 @@ package org.apache.camel.processor;
 
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -45,6 +49,32 @@ public class WrapProcessor extends DelegateAsyncProcessor {
         List<Processor> list = super.next();
         list.add(wrapped);
         return list;
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        if (wrapped instanceof AsyncProcessor) {
+            AsyncProcessor async = (AsyncProcessor) wrapped;
+            AsyncProcessorHelper.process(async, exchange);
+        } else {
+            wrapped.process(exchange);
+        }
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        if (wrapped instanceof AsyncProcessor) {
+            AsyncProcessor async = (AsyncProcessor) wrapped;
+            return async.process(exchange, callback);
+        } else {
+            try {
+                wrapped.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            return true;
+        }
     }
 
     @Override

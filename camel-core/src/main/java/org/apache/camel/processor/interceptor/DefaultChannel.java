@@ -262,8 +262,8 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
                 bridge.setTarget(wrapped);
                 wrapped = bridge;
             }
-            // ensure target gets wrapped so we can control its lifecycle
-            if (!(wrapped instanceof WrapProcessor)) {
+            if (!(wrapped instanceof Service)) {
+                // wrap the target so it becomes a service and we can manage its lifecycle
                 wrapped = new WrapProcessor(wrapped, target);
             }
             target = wrapped;
