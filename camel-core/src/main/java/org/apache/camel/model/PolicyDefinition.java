@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Service;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
@@ -134,9 +135,11 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
         // wrap
         Processor target = policy.wrap(routeContext, childProcessor);
 
-        // wrap the target so it becomes a service and we can manage its lifecycle
-        WrapProcessor wrap = new WrapProcessor(target, childProcessor);
-        return wrap;
+        if (!(target instanceof Service)) {
+            // wrap the target so it becomes a service and we can manage its lifecycle
+            target = new WrapProcessor(target, childProcessor);
+        }
+        return target;
     }
 
     protected Policy resolvePolicy(RouteContext routeContext) {
