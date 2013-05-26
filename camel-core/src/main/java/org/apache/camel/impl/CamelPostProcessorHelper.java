@@ -35,7 +35,7 @@ import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -129,7 +129,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         BeanInfo info = new BeanInfo(getCamelContext(), method);
         BeanProcessor answer = new BeanProcessor(pojo, info);
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
-        return new UnitOfWorkProcessor(answer);
+        CamelInternalProcessor internal = new CamelInternalProcessor(answer);
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(null));
+        return internal;
     }
 
     public Endpoint getEndpointInjection(Object bean, String uri, String name, String propertyName,

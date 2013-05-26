@@ -32,6 +32,7 @@ import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
@@ -345,10 +346,15 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         Processor processor = this.createChildProcessor(routeContext, true);
         Expression expression = getExpression().createExpression(routeContext);
 
+        // and wrap in unit of work
+        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        CamelInternalProcessor internal = new CamelInternalProcessor(processor);
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
+
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
 
-        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, expression,
+        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression,
                 config.isAllowDuplicates(), config.isReverse());
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
@@ -371,13 +377,18 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         Processor processor = this.createChildProcessor(routeContext, true);
         Expression expression = getExpression().createExpression(routeContext);
 
+        // and wrap in unit of work
+        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        CamelInternalProcessor internal = new CamelInternalProcessor(processor);
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
+
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
 
         ExpressionResultComparator comparator = config.getComparator();
         comparator.setExpression(expression);
 
-        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), processor, comparator);
+        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator);
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());
         resequencer.setRejectOld(config.getRejectOld());

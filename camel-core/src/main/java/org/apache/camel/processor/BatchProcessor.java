@@ -81,7 +81,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
 
         // wrap processor in UnitOfWork so what we send out of the batch runs in a UoW
         this.camelContext = camelContext;
-        this.processor = new UnitOfWorkProcessor(processor);
+        this.processor = processor;
         this.collection = collection;
         this.expression = expression;
         this.sender = new BatchSender();
@@ -236,7 +236,6 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
 
     protected void doStop() throws Exception {
         sender.cancel();
-        ServiceHelper.stopServices(sender);
         ServiceHelper.stopServices(processor);
         collection.clear();
     }
