@@ -88,14 +88,14 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // do not trace if tracing is disabled
         if (!tracer.isEnabled() || (routeContext != null && !routeContext.isTracing())) {
-            return super.process(exchange, callback);
+            return processor.process(exchange, callback);
         }
 
         // interceptor will also trace routes supposed only for TraceEvents so we need to skip
         // logging TraceEvents to avoid infinite looping
         if (exchange.getProperty(Exchange.TRACE_EVENT, false, Boolean.class)) {
             // but we must still process to allow routing of TraceEvents to eg a JPA endpoint
-            return super.process(exchange, callback);
+            return processor.process(exchange, callback);
         }
 
         final boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);

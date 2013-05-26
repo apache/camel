@@ -98,8 +98,8 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
                     // we just want to count number of interceptions
                     counter.incrementAndGet();
 
-                    // invoke super to continue routing the message
-                    return super.process(exchange, callback);
+                    // invoke processor to continue routing the message
+                    return processor.process(exchange, callback);
                 }
             };
         }

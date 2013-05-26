@@ -92,7 +92,7 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
             return new DelegateAsyncProcessor(target) {
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     invoked = true;
-                    return super.process(exchange, callback);
+                    return processor.process(exchange, callback);
                 }
             };
         }

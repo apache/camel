@@ -101,7 +101,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             if (delay <= 0) {
                 // no delay then continue routing
                 log.trace("No delay for exchangeId: {}", exchange.getExchangeId());
-                return super.process(exchange, callback);
+                return processor.process(exchange, callback);
             }
         } catch (Throwable e) {
             exchange.setException(e);
