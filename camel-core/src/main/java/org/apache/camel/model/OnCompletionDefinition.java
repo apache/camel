@@ -116,15 +116,15 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
 
-        String id = routeContext.getRoute().getId();
+        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
 
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
         // wrap the on completion route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
-        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(id));
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
 
-        onCompletions.put(id, internal);
+        onCompletions.put(routeId, internal);
 
         Predicate when = null;
         if (onWhen != null) {

@@ -94,8 +94,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         Processor target = wrapInErrorHandler(routeContext, producer);
 
         // and wrap in unit of work
+        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
         CamelInternalProcessor internal = new CamelInternalProcessor(target);
-        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeContext.getRoute().getId()));
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
 
         WireTapProcessor answer = new WireTapProcessor(endpoint, internal, getPattern(), threadPool, shutdownThreadPool);
         answer.setCopy(isCopy());

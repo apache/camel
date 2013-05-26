@@ -160,9 +160,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
+        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+
         // wrap the aggregate route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
-        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeContext.getRoute().getId()));
+        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
 
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
