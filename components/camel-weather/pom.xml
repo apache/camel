@@ -31,7 +31,7 @@
   <description>Camel Weather support</description>
   
   <properties>
-   	<camel.osgi.export.pkg>org.apache.camel.component.weather.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.weather.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=weather</camel.osgi.export.service>
   </properties>
  
@@ -40,12 +40,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-      <dependency>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-          <version>${jackson-version}</version>
-      </dependency>
-
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>${jackson-version}</version>
+    </dependency>
     
     <!-- test dependencies -->
     <dependency>
@@ -58,11 +57,6 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>    
   </dependencies>
 
 </project>
