@@ -27,7 +27,6 @@
         <version>2.12-SNAPSHOT</version>
     </parent>
 
-
     <name>Camel :: Disruptor</name>
     <artifactId>camel-disruptor</artifactId>
     <description>Camel :: Disruptor component</description>
@@ -35,19 +34,17 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.disruptor.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=disruptor
-        </camel.osgi.export.service>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=disruptor-vm
+        <camel.osgi.export.service>
+          org.apache.camel.spi.ComponentResolver;component=disruptor,
+          org.apache.camel.spi.ComponentResolver;component=disruptor-vm
         </camel.osgi.export.service>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
@@ -55,23 +52,15 @@
         </dependency>
 
         <!-- Test dependencies -->
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <type>test-jar</type>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -79,4 +68,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>
