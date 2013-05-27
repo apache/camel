@@ -32,7 +32,6 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
-
         Map<String, Object> in = new HashMap<String, Object>();
         in.put("name", "Camel");
 
@@ -52,7 +51,6 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
-
         TestPojo in = new TestPojo();
         in.setName("Camel");
 
@@ -66,6 +64,24 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
         assertEquals("{\"name\":\"Camel\"}", marshalledAsString);
 
         template.sendBody("direct:backPojo", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalAgeView() throws Exception {
+        TestPojoView in = new TestPojoView();
+
+        MockEndpoint mock = getMockEndpoint("mock:reverseAgeView");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(TestPojoView.class);
+        mock.message(0).body().equals(in);
+
+        Object marshalled = template.requestBody("direct:inAgeView", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        assertEquals("{\"age\":30,\"height\":190}", marshalledAsString);
+
+        template.sendBody("direct:backAgeView", marshalled);
 
         mock.assertIsSatisfied();
     }

@@ -43,6 +43,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
+    @XmlAttribute
+    private Class<?> jsonView;
 
     public JsonDataFormat() {
     }
@@ -83,6 +85,14 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.library = library;
     }
 
+    public Class<?> getJsonView() {
+        return jsonView;
+    }
+
+    public void setJsonView(Class<?> jsonView) {
+        this.jsonView = jsonView;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
@@ -111,6 +121,10 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (prettyPrint != null) {
             setProperty(dataFormat, "prettyPrint", unmarshalType);
+        }
+
+        if (jsonView != null) {
+            setProperty(dataFormat, "jsonView", jsonView);
         }
     }
 

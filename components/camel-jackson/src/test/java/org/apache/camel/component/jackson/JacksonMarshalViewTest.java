@@ -18,6 +18,7 @@ package org.apache.camel.component.jackson;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -69,14 +70,12 @@ public class JacksonMarshalViewTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 // START SNIPPET: format
-                JacksonDataFormat ageViewFormat = new JacksonDataFormat(TestPojoView.class, Views.Age.class);
-                from("direct:inPojoAgeView").marshal(ageViewFormat);
+                from("direct:inPojoAgeView").marshal().json(TestPojoView.class, Views.Age.class);
                 // END SNIPPET: format
-                from("direct:backPojoAgeView").unmarshal(ageViewFormat).to("mock:reversePojoAgeView");
+                from("direct:backPojoAgeView").unmarshal().json(JsonLibrary.Jackson, TestPojoView.class).to("mock:reversePojoAgeView");
 
-                JacksonDataFormat weightViewFormat = new JacksonDataFormat(TestPojoView.class, Views.Weight.class);
-                from("direct:inPojoWeightView").marshal(weightViewFormat);
-                from("direct:backPojoWeightView").unmarshal(weightViewFormat).to("mock:reversePojoWeightView");
+                from("direct:inPojoWeightView").marshal().json(TestPojoView.class, Views.Weight.class);
+                from("direct:backPojoWeightView").unmarshal().json(JsonLibrary.Jackson, TestPojoView.class).to("mock:reversePojoWeightView");
             }
         };
     }

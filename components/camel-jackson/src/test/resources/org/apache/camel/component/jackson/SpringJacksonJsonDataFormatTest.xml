@@ -31,6 +31,8 @@
             <json id="jack" library="Jackson"/>
             <!-- and this one uses our own TestPojo class as unmarshal type -->
             <json id="pojo" library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojo"/>
+            <!-- in addition to our own TestPojoView class we make use of the jsonView attribute here as filter -->
+            <json id="view" library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojoView" jsonView="org.apache.camel.component.jackson.Views$Age"/>
         </dataFormats>
 
         <route>
@@ -53,6 +55,17 @@
             <from uri="direct:backPojo"/>
             <unmarshal ref="pojo"/>
             <to uri="mock:reversePojo"/>
+        </route>
+
+        <route>
+            <from uri="direct:inAgeView"/>
+            <marshal ref="view"/>
+        </route>
+
+        <route>
+            <from uri="direct:backAgeView"/>
+            <unmarshal ref="view"/>
+            <to uri="mock:reverseAgeView"/>
         </route>
 
     </camelContext>

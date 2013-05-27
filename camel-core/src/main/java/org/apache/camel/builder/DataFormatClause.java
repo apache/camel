@@ -351,6 +351,20 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the JSON data format
+     *
+     * @param type          the json type to use
+     * @param unmarshalType unmarshal type for json jackson type
+     * @param jsonView the  view type for json jackson type
+     */
+    public T json(Class<?> unmarshalType, Class<?> jsonView) {
+        JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
+        json.setUnmarshalType(unmarshalType);
+        json.setJsonView(jsonView);
+        return dataFormat(json);
+    }
+
+    /**
      * Uses the protobuf data format
      */
     public T protobuf() {
