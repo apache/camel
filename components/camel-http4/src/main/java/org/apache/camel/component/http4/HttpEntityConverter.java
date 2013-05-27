@@ -61,7 +61,9 @@ public final class HttpEntityConverter {
         InputStreamEntity entity;
         if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
-            entity = new InputStreamEntity(GZIPHelper.compressGzip(contentEncoding, in), -1);        
+            InputStream stream = GZIPHelper.compressGzip(contentEncoding, in);
+            entity = new InputStreamEntity(stream, stream instanceof ByteArrayInputStream
+                ? stream.available() != 0 ? stream.available() : -1 : -1);
         } else {
             entity = new InputStreamEntity(in, -1);
         }
@@ -78,9 +80,11 @@ public final class HttpEntityConverter {
         InputStreamEntity entity;
         if (exchange != null && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
-            entity = new InputStreamEntity(GZIPHelper.compressGzip(contentEncoding, data), -1);
+            InputStream stream = GZIPHelper.compressGzip(contentEncoding, data);
+            entity = new InputStreamEntity(stream, stream instanceof ByteArrayInputStream
+                ? stream.available() != 0 ? stream.available() : -1 : -1);
         } else {
-            entity = new InputStreamEntity(new ByteArrayInputStream(data), -1);
+            entity = new InputStreamEntity(new ByteArrayInputStream(data), data.length);
         }
         if (exchange != null) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
