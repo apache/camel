@@ -16,51 +16,39 @@
  */
 package org.apache.camel.component.weather;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WeatherConsumer extends ScheduledPollConsumer {
+    public static final long DEFAULT_CONSUMER_DELAY = 60 * 60 * 1000L;
     private static final transient Logger LOG = LoggerFactory.getLogger(WeatherConsumer.class);
-    public static final long DEFAULT_CONSUMER_DELAY = 60 * 60 *1000L;
-    private final WeatherEndpoint endpoint;
-    private String query;
-
+    private final String query;
 
     public WeatherConsumer(WeatherEndpoint endpoint, Processor processor, String query) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
         this.query = query;
     }
 
+    @Override
     protected int poll() throws Exception {
-        LOG.debug("Executing Weather Query " + this.query);
-        URL url = new URL(this.query);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-        String inputLine;
-        String answer = "";
-        while ((inputLine = in.readLine()) != null) {
-            answer += inputLine;
+        LOG.debug("Going to execute the query '{}'", query);
+        String answer = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL(query));
+        LOG.debug("Got back the answer '{}'", answer);
+        if (ObjectHelper.isEmpty(answer)) {
+            throw new IllegalStateException("Got the empty string '" + answer + "' as the result of the query '" + query + "'");
         }
-        in.close();
-        urlConnection.disconnect();
-        LOG.debug("result = " + answer);
-        if (answer != null && !answer.isEmpty()) {
-            Exchange exchange = endpoint.createExchange();
-            exchange.getIn().setBody(answer);
-            exchange.setProperty("query", this.query);
-            getProcessor().process(exchange);
-            return 1;
-        } else {
-            return 0;
-        }
+
+        Exchange exchange = getEndpoint().createExchange();
+        exchange.getIn().setBody(answer);
+        exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, query);
+        getProcessor().process(exchange);
+
+        return 1;
     }
 }

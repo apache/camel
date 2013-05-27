@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.weather;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
 import org.apache.camel.spi.UriParam;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import static org.apache.camel.component.weather.WeatherUnits.METRIC;
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 public class WeatherConfiguration {
 
@@ -33,42 +34,36 @@ public class WeatherConfiguration {
     @UriParam
     private String period = "";
     @UriParam
-    private String units = "metric";
+    private WeatherUnits units = METRIC;
+    private WeatherComponent component;
 
+    public WeatherConfiguration(WeatherComponent component) {
+        this.component = notNull(component, "component");
+    }
 
     public String getPeriod() {
         return period;
     }
 
     public void setPeriod(String period) {
-        if (period != null) {
-            int result = 0;
-            try {
-                result = new Scanner(period).useDelimiter("\\D+").nextInt();
-            } catch (Throwable e) {
-            }
-            if (result != 0) {
-                this.period = "" + result;
-            } else {
-                this.period = "";
-            }
+        notNull(period, "period");
+        int result = 0;
+        try {
+            result = new Scanner(period).useDelimiter("\\D+").nextInt();
+        } catch (Throwable e) {
+            // ignore and fallback the period to be an empty string
+        }
+        if (result != 0) {
+            this.period = "" + result;
         }
     }
 
-    public String getUnits() {
+    public WeatherUnits getUnits() {
         return units;
     }
 
-
-    public void setUnits(String units) {
-        if (units != null) {
-            units = units.trim();
-            if (units.equalsIgnoreCase("IMPERIAL")) {
-                this.units = "imperial";
-            } else {
-                this.units = "metric";
-            }
-        }
+    public void setUnits(WeatherUnits units) {
+        this.units = notNull(units, "units");
     }
 
     public String getLocation() {
@@ -79,56 +74,37 @@ public class WeatherConfiguration {
         this.location = location;
     }
 
-    public String getQuery() {
+    public String getQuery() throws Exception {
         String result = "http://api.openweathermap.org/data/2.5/";
         String location = "";
-        if (getLocation() == null || getLocation().isEmpty()) {
+        if (isEmpty(getLocation())) {
             location = getGeoLocation();
         } else {
-            //assuming the location is a town,country
+            // assuming the location is a town or country
             location = "q=" + getLocation();
         }
-        if (getPeriod() != null && getPeriod().isEmpty()) {
 
+        if (isEmpty(getPeriod())) {
             result += "weather?" + location;
-
         } else {
             result += "forecast/daily?" + location + "&cnt=" + getPeriod();
         }
-        result += "&units=" + this.units;
+        result += "&units=" + units.name().toLowerCase();
+
         return result;
     }
 
-    private String getGeoLocation() {
-        final String LATITUDE = "latitude";
-        final String LONGITUDE = "longitude";
-        String result = "";
-
-        try {
-            String urlStr = "http://freegeoip.net/json/";
-            URL url = new URL(urlStr);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String inputLine;
-            String temp = "";
-            while ((inputLine = in.readLine()) != null) {
-                temp += inputLine;
-            }
-            in.close();
-            urlConnection.disconnect();
-
-            if (temp != null && !temp.isEmpty()) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode node = mapper.readValue(temp, JsonNode.class);
-                JsonNode latitudeNode = node.get(LATITUDE);
-                JsonNode longitudeNode = node.get(LONGITUDE);
-                if (latitudeNode != null && longitudeNode != null) {
-                    result = "lat=" + latitudeNode.toString() + "&lon=" + longitudeNode.toString();
-                }
-            }
-        } catch (Exception e) {
-            //this is going to fail if using this offline
+    private String getGeoLocation() throws Exception {
+        String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.net/json/"));
+        if (isEmpty(geoLocation)) {
+            throw new IllegalStateException("Retrieved an unexpected value: '" + geoLocation + "' for the geographical location");
         }
-        return result;
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readValue(geoLocation, JsonNode.class);
+        JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
+        JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
+
+        return "lat=" + latitudeNode.toString() + "&lon=" + longitudeNode.toString();
     }
 }

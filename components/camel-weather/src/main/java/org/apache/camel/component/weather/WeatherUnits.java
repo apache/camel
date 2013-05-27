@@ -16,18 +16,11 @@
  */
 package org.apache.camel.component.weather;
 
-import org.apache.camel.builder.RouteBuilder;
+/**
+ * The possible units for temperature measurement
+ */
+public enum WeatherUnits {
 
-public class Forecast7WeatherMadridConsumerTest extends BaseWeatherConsumerTest {
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("weather:foo?location=Madrid,Spain&period=7 days&units=IMPERIAL").to("mock:result");
-            }
-        };
-    }
+    IMPERIAL, METRIC;
 
 }

@@ -20,9 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class CurrentWeatherConsumerTest extends BaseWeatherConsumerTest {
 
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
                 from("weather:foo").to("mock:result");
             }

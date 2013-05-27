@@ -23,12 +23,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * An <a href="http://camel.apache.org/weather.html">Weather Component</a>.
+ * A <a href="http://camel.apache.org/weather.html">Weather Component</a>.
  * <p/>
  * Camel uses <a href="http://openweathermap.org/api#weather">Open Weather</a> to get the information.
  */
 public class WeatherComponent extends UriEndpointComponent {
-
 
     public WeatherComponent() {
         super(WeatherEndpoint.class);
@@ -38,8 +37,9 @@ public class WeatherComponent extends UriEndpointComponent {
         super(context, WeatherEndpoint.class);
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        WeatherConfiguration configuration = new WeatherConfiguration();
+        WeatherConfiguration configuration = new WeatherConfiguration(this);
 
         // and then override from parameters
         setProperties(configuration, parameters);

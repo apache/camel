@@ -16,18 +16,15 @@
  */
 package org.apache.camel.component.weather;
 
-import org.apache.camel.builder.RouteBuilder;
+/**
+ * The Weather constants
+ */
+public final class WeatherConstants {
 
-public class Forecast7WeatherMadridConsumerTest extends BaseWeatherConsumerTest {
+    public static final String WEATHER_QUERY = "CamelWeatherQuery";
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("weather:foo?location=Madrid,Spain&period=7 days&units=IMPERIAL").to("mock:result");
-            }
-        };
+    private WeatherConstants() {
+        // utility class
     }
 
 }
