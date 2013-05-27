@@ -50,7 +50,7 @@ public class WeatherConfiguration {
         int result = 0;
         try {
             result = new Scanner(period).useDelimiter("\\D+").nextInt();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore and fallback the period to be an empty string
         }
         if (result != 0) {
