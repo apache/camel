@@ -22,9 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class NetWeaverProducer extends DefaultProducer {
@@ -53,13 +51,14 @@ public class NetWeaverProducer extends DefaultProducer {
         http.process(dummy);
 
         String json = dummy.hasOut() ? dummy.getOut().getBody(String.class) : dummy.getIn().getBody(String.class);
-        System.out.println(json);
 
-        ObjectMapper mapper = new ObjectMapper();
-        Map map = mapper.readValue(json, Map.class);
-        System.out.println(map);
+        // map json string to json map
+        if (json != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            Map map = mapper.readValue(json, Map.class);
 
-        exchange.getIn().setBody(map);
+            exchange.getIn().setBody(map);
+        }
     }
 
     @Override

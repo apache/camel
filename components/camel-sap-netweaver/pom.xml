@@ -15,52 +15,95 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>components</artifactId>
+    <parent>
+        <artifactId>components</artifactId>
+        <groupId>org.apache.camel</groupId>
+        <version>2.12-SNAPSHOT</version>
+    </parent>
+
     <groupId>org.apache.camel</groupId>
-    <version>2.12-SNAPSHOT</version>
-  </parent>
+    <artifactId>camel-sap-netweaver</artifactId>
+    <packaging>bundle</packaging>
+    <name>Camel :: Weather</name>
+    <description>Camel SAP NetWeaver support</description>
 
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-sap-netweaver</artifactId>
-  <packaging>bundle</packaging>
-  <name>Camel :: Weather</name>
-  <description>Camel SAP NetWeaver support</description>
-  
-  <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.sap.netweaver.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=sap-netweaver</camel.osgi.export.service>
-  </properties>
- 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
-      <version>${jackson-version}</version>
-    </dependency>
-    
-    <!-- test dependencies -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>      
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <properties>
+        <camel.osgi.export.pkg>org.apache.camel.component.sap.netweaver.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=sap-netweaver
+        </camel.osgi.export.service>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson-version}</version>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <childDelegation>false</childDelegation>
+                    <useFile>true</useFile>
+                    <forkMode>once</forkMode>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                    <includes>
+                        <!-- Here we only run test of  -->
+                        <include>**/*UriConfigurationTest.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- requires online access and a valid SAP account -->
+    <profiles>
+        <profile>
+            <id>sap-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <childDelegation>false</childDelegation>
+                            <useFile>true</useFile>
+                            <forkMode>once</forkMode>
+                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
