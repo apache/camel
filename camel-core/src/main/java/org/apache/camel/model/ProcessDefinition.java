@@ -22,9 +22,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
-import org.apache.camel.processor.WrapProcessor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.processor.DelegateSyncProcessor;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -92,7 +94,13 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
         // ensure its wrapped in a Service so we can manage it from eg. JMX
         // (a Processor must be a Service to be enlisted in JMX)
         if (!(answer instanceof Service)) {
-            answer = new WrapProcessor(answer, answer);
+            if (answer instanceof AsyncProcessor) {
+                // the processor is async by nature so use the async delegate
+                answer = new DelegateAsyncProcessor(answer);
+            } else {
+                // the processor is sync by nature so use the sync delegate
+                answer = new DelegateSyncProcessor(answer);
+            }
         }
         return answer;
     }
