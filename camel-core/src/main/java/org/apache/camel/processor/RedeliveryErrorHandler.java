@@ -269,14 +269,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
-        return processErrorHandler(exchange, callback, new RedeliveryData());
-    }
-
     /**
      * Process the exchange using redelivery error handling.
      */
-    protected boolean processErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        final RedeliveryData data = new RedeliveryData();
 
         // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
         // original Exchange is being redelivered, and not a mutated Exchange
