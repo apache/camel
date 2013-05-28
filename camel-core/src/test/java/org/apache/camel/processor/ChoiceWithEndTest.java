@@ -55,7 +55,6 @@ public class ChoiceWithEndTest extends ContextTestSupport {
             }
         }
         return answer;
-        
     }
 
     public void testChoiceHello() throws Exception {

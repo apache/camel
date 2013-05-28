@@ -391,11 +391,17 @@ public final class ServiceHelper {
             if (nav.hasNext()) {
                 List<?> children = nav.next();
                 for (Object child : children) {
-                    // special for error handler as they are tied to the Channel
-                    if (child instanceof Channel && includeErrorHandler) {
-                        Processor errorHandler = ((Channel) child).getErrorHandler();
-                        if (errorHandler != null && errorHandler instanceof Service) {
-                            services.add((Service) errorHandler);
+                    if (child instanceof Channel) {
+                        if (includeErrorHandler) {
+                            // special for error handler as they are tied to the Channel
+                            Processor errorHandler = ((Channel) child).getErrorHandler();
+                            if (errorHandler != null && errorHandler instanceof Service) {
+                                services.add((Service) errorHandler);
+                            }
+                        }
+                        Processor next = ((Channel) child).getNextProcessor();
+                        if (next != null && next instanceof Service) {
+                            services.add((Service) next);
                         }
                     }
                     if (child instanceof Service) {

@@ -55,7 +55,9 @@ public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                        .to("log:foo").delay(100).to("mock:result");
+                        .to("log:foo").id("to-log")
+                        .delay(100)
+                        .to("mock:result").id("to-mock");
             }
         };
     }

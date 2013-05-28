@@ -76,17 +76,16 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
     public Navigate<Processor> navigate() {
         Processor answer = getProcessor();
 
-        // we do not want to navigate the instrument and inflight processors
-        // which is the first 2 delegate async processors, so skip them
-        // skip the instrumentation processor if this route was wrapped by one
-        if (answer instanceof DelegateAsyncProcessor) {
-            answer = ((DelegateAsyncProcessor) answer).getProcessor();
-            if (answer instanceof DelegateAsyncProcessor) {
-                answer = ((DelegateAsyncProcessor) answer).getProcessor();
-            }
-        }
-
+        // we want navigating routes to be easy, so skip the initial channel
+        // and navigate to its output where it all starts from end user point of view
         if (answer instanceof Navigate) {
+            Navigate<Processor> nav = (Navigate<Processor>) answer;
+            if (nav.next().size() == 1) {
+                Object first = nav.next().get(0);
+                if (first instanceof Navigate) {
+                    return (Navigate<Processor>) first;
+                }
+            }
             return (Navigate<Processor>) answer;
         }
         return null;

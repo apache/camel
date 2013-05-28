@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -40,8 +39,6 @@ import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -59,7 +56,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultChannel extends ServiceSupport implements ModelChannel {
+public class DefaultChannel extends CamelInternalProcessor implements ModelChannel {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
 
@@ -73,17 +70,6 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
     private ProcessorDefinition<?> childDefinition;
     private CamelContext camelContext;
     private RouteContext routeContext;
-    private CamelInternalProcessor internalProcessor;
-
-    public List<Processor> next() {
-        List<Processor> answer = new ArrayList<Processor>(1);
-        answer.add(nextProcessor);
-        return answer;
-    }
-
-    public boolean hasNext() {
-        return nextProcessor != null;
-    }
 
     public void setNextProcessor(Processor next) {
         this.nextProcessor = next;
@@ -96,6 +82,21 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         // TODO: Camel 3.0 we should determine the output dynamically at runtime instead of having the
         // the error handlers, interceptors, etc. woven in at design time
         return errorHandler != null ? errorHandler : output;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return nextProcessor != null;
+    }
+
+    @Override
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(nextProcessor);
+        return answer;
     }
 
     public void setOutput(Processor output) {
@@ -149,21 +150,20 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
 
     @Override
     protected void doStart() throws Exception {
-        // the output has now been created, so assign the output to the internal processor
-        internalProcessor.setProcessor(getOutput());
-        ServiceHelper.startServices(errorHandler, output, internalProcessor);
+        // the output has now been created, so assign the output as the processor
+        setProcessor(getOutput());
+        ServiceHelper.startServices(errorHandler, output);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(output, errorHandler, internalProcessor);
+        ServiceHelper.stopServices(output, errorHandler);
     }
 
     public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         this.routeContext = routeContext;
         this.definition = outputDefinition;
         this.camelContext = routeContext.getCamelContext();
-        this.internalProcessor = new CamelInternalProcessor();
 
         Processor target = nextProcessor;
         Processor next;
@@ -210,13 +210,13 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
                 first = route.getOutputs().get(0) == definition;
             }
 
-            internalProcessor.addTask(new CamelInternalProcessor.BacklogTracerTask(backlogTracer.getQueue(), backlogTracer, targetOutputDef, route, first));
+            addTask(new CamelInternalProcessor.BacklogTracerTask(backlogTracer.getQueue(), backlogTracer, targetOutputDef, route, first));
 
             // add debugger as well so we have both tracing and debugging out of the box
             InterceptStrategy debugger = getOrCreateBacklogDebugger();
             if (debugger instanceof BacklogDebugger) {
                 BacklogDebugger backlogDebugger = (BacklogDebugger) debugger;
-                internalProcessor.addTask(new CamelInternalProcessor.BacklogDebuggerTask(backlogDebugger, target, targetOutputDef));
+                addTask(new CamelInternalProcessor.BacklogDebuggerTask(backlogDebugger, target, targetOutputDef));
             }
         }
 
@@ -378,15 +378,6 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         }
 
         return debugger;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // TODO: We do not need to have DefaultChannel wrapped in the routes, but can just rely on CamelInternalProcessor
-        return internalProcessor.process(exchange, callback);
     }
 
     @Override

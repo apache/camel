@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  * read the source code of this class about the debugging tips, which you can find in the
  * {@link #process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method.
  */
-public final class CamelInternalProcessor extends DelegateAsyncProcessor {
+public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
     private final List<CamelInternalProcessorTask> tasks = new ArrayList<CamelInternalProcessorTask>();
