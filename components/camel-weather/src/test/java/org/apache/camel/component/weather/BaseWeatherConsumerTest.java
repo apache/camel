@@ -37,6 +37,7 @@ public abstract class BaseWeatherConsumerTest extends CamelTestSupport {
         assertNotNull(in);
         assertNotNull(in.getBody());
         String body = assertIsInstanceOf(String.class, in.getBody());
+        assertStringContains(body, "\"coord\":{");
         assertStringContains(body, "temp");
     }
 

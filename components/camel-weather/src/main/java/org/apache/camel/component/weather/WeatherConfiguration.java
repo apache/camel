@@ -35,7 +35,7 @@ public class WeatherConfiguration {
     private String period = "";
     @UriParam
     private WeatherUnits units = METRIC;
-    private WeatherComponent component;
+    private final WeatherComponent component;
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
@@ -75,8 +75,9 @@ public class WeatherConfiguration {
     }
 
     public String getQuery() throws Exception {
-        String result = "http://api.openweathermap.org/data/2.5/";
-        String location = "";
+        String answer = "http://api.openweathermap.org/data/2.5/";
+
+        String location;
         if (isEmpty(getLocation())) {
             location = getGeoLocation();
         } else {
@@ -85,13 +86,13 @@ public class WeatherConfiguration {
         }
 
         if (isEmpty(getPeriod())) {
-            result += "weather?" + location;
+            answer += "weather?" + location;
         } else {
-            result += "forecast/daily?" + location + "&cnt=" + getPeriod();
+            answer += "forecast/daily?" + location + "&cnt=" + getPeriod();
         }
-        result += "&units=" + units.name().toLowerCase();
+        answer += "&units=" + units.name().toLowerCase();
 
-        return result;
+        return answer;
     }
 
     private String getGeoLocation() throws Exception {
@@ -105,6 +106,6 @@ public class WeatherConfiguration {
         JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
         JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
 
-        return "lat=" + latitudeNode.toString() + "&lon=" + longitudeNode.toString();
+        return "lat=" + latitudeNode + "&lon=" + longitudeNode;
     }
 }

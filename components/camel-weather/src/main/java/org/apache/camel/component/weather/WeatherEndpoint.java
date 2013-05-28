@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriParam;
  */
 public class WeatherEndpoint extends DefaultPollingEndpoint {
     @UriParam
-    private WeatherConfiguration configuration;
+    private final WeatherConfiguration configuration;
 
     public WeatherEndpoint(String uri, WeatherComponent component, WeatherConfiguration properties) {
         super(uri, component);
@@ -48,8 +48,8 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         WeatherConsumer answer = new WeatherConsumer(this, processor, this.configuration.getQuery());
 
-        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed,
-        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
+        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed, so we override
+        // with a new default value. End user can override this value by providing a consumer.delay parameter
         answer.setDelay(WeatherConsumer.DEFAULT_CONSUMER_DELAY);
         configureConsumer(answer);
         return answer;
